@@ -1,19 +1,29 @@
 ProgramNode(0...9)(
-  [],
-  StatementsNode(0...9)(
-    [ArrayNode(0...9)(
-       [InterpolatedStringNode(3...8)(
-          nil,
-          [EmbeddedStatementsNode(3...7)(
-             (3...5),
-             StatementsNode(5...6)([IntegerNode(5...6)()]),
-             (6...7)
-           ),
-           StringNode(7...8)(nil, (7...8), nil, "b")],
-          nil
-        )],
-       (0...3),
-       (8...9)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...9)(
+     body:
+      [ArrayNode(0...9)(
+         elements:
+          [InterpolatedStringNode(3...8)(
+             opening_loc: nil,
+             parts:
+              [EmbeddedStatementsNode(3...7)(
+                 opening_loc: (3...5),
+                 statements:
+                  StatementsNode(5...6)(body: [IntegerNode(5...6)()]),
+                 closing_loc: (6...7)
+               ),
+               StringNode(7...8)(
+                 opening_loc: nil,
+                 content_loc: (7...8),
+                 closing_loc: nil,
+                 unescaped: "b"
+               )],
+             closing_loc: nil
+           )],
+         opening_loc: (0...3),
+         closing_loc: (8...9)
+       )]
+   )
 )

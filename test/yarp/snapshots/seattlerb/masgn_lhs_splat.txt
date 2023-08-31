@@ -1,16 +1,26 @@
 ProgramNode(0...12)(
-  [:a],
-  StatementsNode(0...12)(
-    [MultiWriteNode(0...12)(
-       [SplatNode(0...2)((0...1), LocalVariableTargetNode(1...2)(:a, 0))],
-       (3...4),
-       ArrayNode(5...12)(
-         [IntegerNode(5...6)(), IntegerNode(8...9)(), IntegerNode(11...12)()],
-         nil,
-         nil
-       ),
-       nil,
-       nil
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [MultiWriteNode(0...12)(
+         targets:
+          [SplatNode(0...2)(
+             operator_loc: (0...1),
+             expression: LocalVariableTargetNode(1...2)(name: :a, depth: 0)
+           )],
+         operator_loc: (3...4),
+         value:
+          ArrayNode(5...12)(
+            elements:
+             [IntegerNode(5...6)(),
+              IntegerNode(8...9)(),
+              IntegerNode(11...12)()],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         lparen_loc: nil,
+         rparen_loc: nil
+       )]
+   )
 )

@@ -1,15 +1,29 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)(
-    [AliasNode(0...15)(
-       GlobalVariableReadNode(6...10)(),
-       GlobalVariableReadNode(11...15)(),
-       (0...5)
-     ),
-     AliasNode(16...31)(
-       SymbolNode(22...26)((22...23), (23...26), nil, "foo"),
-       SymbolNode(27...31)((27...28), (28...31), nil, "bar"),
-       (16...21)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [AliasNode(0...15)(
+         new_name: GlobalVariableReadNode(6...10)(),
+         old_name: GlobalVariableReadNode(11...15)(),
+         keyword_loc: (0...5)
+       ),
+       AliasNode(16...31)(
+         new_name:
+          SymbolNode(22...26)(
+            opening_loc: (22...23),
+            value_loc: (23...26),
+            closing_loc: nil,
+            unescaped: "foo"
+          ),
+         old_name:
+          SymbolNode(27...31)(
+            opening_loc: (27...28),
+            value_loc: (28...31),
+            closing_loc: nil,
+            unescaped: "bar"
+          ),
+         keyword_loc: (16...21)
+       )]
+   )
 )

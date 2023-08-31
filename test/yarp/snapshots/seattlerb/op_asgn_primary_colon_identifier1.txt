@@ -1,21 +1,24 @@
 ProgramNode(0...9)(
-  [],
-  StatementsNode(0...9)(
-    [CallOperatorWriteNode(0...9)(
-       CallNode(0...4)(
-         ConstantReadNode(0...1)(),
-         (1...3),
-         (3...4),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
-       ),
-       (5...7),
-       IntegerNode(8...9)(),
-       :+
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...9)(
+     body:
+      [CallOperatorWriteNode(0...9)(
+         target:
+          CallNode(0...4)(
+            receiver: ConstantReadNode(0...1)(),
+            operator_loc: (1...3),
+            message_loc: (3...4),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (5...7),
+         value: IntegerNode(8...9)(),
+         operator: :+
+       )]
+   )
 )

@@ -1,47 +1,67 @@
 ProgramNode(0...42)(
-  [],
-  StatementsNode(0...42)(
-    [CallNode(0...42)(
-       CallNode(0...37)(
-         nil,
-         nil,
-         (0...4),
-         nil,
-         nil,
-         nil,
-         BlockNode(5...37)(
-           [],
-           nil,
-           BeginNode(10...37)(
-             nil,
-             StatementsNode(10...16)(
-               [SymbolNode(10...16)((10...11), (11...16), nil, "begin")]
+  locals: [],
+  statements:
+   StatementsNode(0...42)(
+     body:
+      [CallNode(0...42)(
+         receiver:
+          CallNode(0...37)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...4),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block:
+             BlockNode(5...37)(
+               locals: [],
+               parameters: nil,
+               body:
+                BeginNode(10...37)(
+                  begin_keyword_loc: nil,
+                  statements:
+                   StatementsNode(10...16)(
+                     body:
+                      [SymbolNode(10...16)(
+                         opening_loc: (10...11),
+                         value_loc: (11...16),
+                         closing_loc: nil,
+                         unescaped: "begin"
+                       )]
+                   ),
+                  rescue_clause: nil,
+                  else_clause: nil,
+                  ensure_clause:
+                   EnsureNode(17...37)(
+                     ensure_keyword_loc: (17...23),
+                     statements:
+                      StatementsNode(26...33)(
+                        body:
+                         [SymbolNode(26...33)(
+                            opening_loc: (26...27),
+                            value_loc: (27...33),
+                            closing_loc: nil,
+                            unescaped: "ensure"
+                          )]
+                      ),
+                     end_keyword_loc: (34...37)
+                   ),
+                  end_keyword_loc: (34...37)
+                ),
+               opening_loc: (5...7),
+               closing_loc: (34...37)
              ),
-             nil,
-             nil,
-             EnsureNode(17...37)(
-               (17...23),
-               StatementsNode(26...33)(
-                 [SymbolNode(26...33)((26...27), (27...33), nil, "ensure")]
-               ),
-               (34...37)
-             ),
-             (34...37)
-           ),
-           (5...7),
-           (34...37)
-         ),
-         0,
-         "proc"
-       ),
-       (37...38),
-       (38...42),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "call"
-     )]
-  )
+            flags: 0,
+            name: "proc"
+          ),
+         operator_loc: (37...38),
+         message_loc: (38...42),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "call"
+       )]
+   )
 )

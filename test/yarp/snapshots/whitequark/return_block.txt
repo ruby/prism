@@ -1,33 +1,46 @@
 ProgramNode(0...21)(
-  [],
-  StatementsNode(0...21)(
-    [ReturnNode(0...21)(
-       (0...6),
-       ArgumentsNode(7...21)(
-         [CallNode(7...21)(
-            nil,
-            nil,
-            (7...10),
-            nil,
-            ArgumentsNode(11...14)(
-              [CallNode(11...14)(
-                 nil,
-                 nil,
-                 (11...14),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               )]
-            ),
-            nil,
-            BlockNode(15...21)([], nil, nil, (15...17), (18...21)),
-            0,
-            "fun"
-          )]
-       )
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...21)(
+     body:
+      [ReturnNode(0...21)(
+         keyword_loc: (0...6),
+         arguments:
+          ArgumentsNode(7...21)(
+            arguments:
+             [CallNode(7...21)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (7...10),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(11...14)(
+                   arguments:
+                    [CallNode(11...14)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (11...14),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     )]
+                 ),
+                closing_loc: nil,
+                block:
+                 BlockNode(15...21)(
+                   locals: [],
+                   parameters: nil,
+                   body: nil,
+                   opening_loc: (15...17),
+                   closing_loc: (18...21)
+                 ),
+                flags: 0,
+                name: "fun"
+              )]
+          )
+       )]
+   )
 )

@@ -1,24 +1,39 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)(
-    [CaseNode(0...31)(
-       CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "obj"),
-       [InNode(9...27)(
-          ArrayPatternNode(12...20)(
-            ConstantReadNode(12...18)(),
-            [],
-            nil,
-            [],
-            (18...19),
-            (19...20)
+  locals: [],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [CaseNode(0...31)(
+         predicate:
+          CallNode(5...8)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (5...8),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "obj"
           ),
-          StatementsNode(23...27)([TrueNode(23...27)()]),
-          (9...11),
-          nil
-        )],
-       nil,
-       (0...4),
-       (28...31)
-     )]
-  )
+         conditions:
+          [InNode(9...27)(
+             pattern:
+              ArrayPatternNode(12...20)(
+                constant: ConstantReadNode(12...18)(),
+                requireds: [],
+                rest: nil,
+                posts: [],
+                opening_loc: (18...19),
+                closing_loc: (19...20)
+              ),
+             statements: StatementsNode(23...27)(body: [TrueNode(23...27)()]),
+             in_loc: (9...11),
+             then_loc: nil
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (28...31)
+       )]
+   )
 )

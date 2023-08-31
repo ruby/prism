@@ -1,39 +1,66 @@
 ProgramNode(0...52)(
-  [],
-  StatementsNode(0...52)(
-    [CaseNode(0...52)(
-       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
-       [InNode(8...25)(
-          IfNode(11...20)(
-            (13...15),
-            TrueNode(16...20)(),
-            StatementsNode(11...12)([ConstantReadNode(11...12)()]),
-            nil,
-            nil
+  locals: [],
+  statements:
+   StatementsNode(0...52)(
+     body:
+      [CaseNode(0...52)(
+         predicate:
+          SymbolNode(5...7)(
+            opening_loc: (5...6),
+            value_loc: (6...7),
+            closing_loc: nil,
+            unescaped: "a"
           ),
-          StatementsNode(23...25)(
-            [SymbolNode(23...25)((23...24), (24...25), nil, "C")]
-          ),
-          (8...10),
-          nil
-        ),
-        InNode(26...48)(
-          UnlessNode(29...43)(
-            (31...37),
-            FalseNode(38...43)(),
-            StatementsNode(29...30)([ConstantReadNode(29...30)()]),
-            nil,
-            nil
-          ),
-          StatementsNode(46...48)(
-            [SymbolNode(46...48)((46...47), (47...48), nil, "E")]
-          ),
-          (26...28),
-          nil
-        )],
-       nil,
-       (0...4),
-       (49...52)
-     )]
-  )
+         conditions:
+          [InNode(8...25)(
+             pattern:
+              IfNode(11...20)(
+                if_keyword_loc: (13...15),
+                predicate: TrueNode(16...20)(),
+                statements:
+                 StatementsNode(11...12)(body: [ConstantReadNode(11...12)()]),
+                consequent: nil,
+                end_keyword_loc: nil
+              ),
+             statements:
+              StatementsNode(23...25)(
+                body:
+                 [SymbolNode(23...25)(
+                    opening_loc: (23...24),
+                    value_loc: (24...25),
+                    closing_loc: nil,
+                    unescaped: "C"
+                  )]
+              ),
+             in_loc: (8...10),
+             then_loc: nil
+           ),
+           InNode(26...48)(
+             pattern:
+              UnlessNode(29...43)(
+                keyword_loc: (31...37),
+                predicate: FalseNode(38...43)(),
+                statements:
+                 StatementsNode(29...30)(body: [ConstantReadNode(29...30)()]),
+                consequent: nil,
+                end_keyword_loc: nil
+              ),
+             statements:
+              StatementsNode(46...48)(
+                body:
+                 [SymbolNode(46...48)(
+                    opening_loc: (46...47),
+                    value_loc: (47...48),
+                    closing_loc: nil,
+                    unescaped: "E"
+                  )]
+              ),
+             in_loc: (26...28),
+             then_loc: nil
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (49...52)
+       )]
+   )
 )

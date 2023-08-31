@@ -1,81 +1,106 @@
 ProgramNode(6...66)(
-  [],
-  StatementsNode(6...66)(
-    [HashNode(6...66)(
-       (6...7),
-       [AssocNode(16...41)(
-          SymbolNode(16...18)(nil, (16...17), (17...18), "a"),
-          CallNode(19...41)(
-            nil,
-            nil,
-            (19...25),
-            nil,
-            nil,
-            nil,
-            BlockNode(26...41)(
-              [],
-              nil,
-              StatementsNode(28...39)(
-                [IfNode(28...39)(
-                   nil,
-                   CallNode(28...29)(
-                     nil,
-                     nil,
-                     (28...29),
-                     nil,
-                     nil,
-                     nil,
-                     nil,
-                     2,
-                     "b"
-                   ),
-                   StatementsNode(32...35)(
-                     [CallNode(32...35)(
-                        nil,
-                        nil,
-                        (32...33),
-                        (33...34),
-                        nil,
-                        (34...35),
-                        nil,
-                        0,
-                        "c"
-                      )]
-                   ),
-                   ElseNode(36...39)(
-                     (36...37),
-                     StatementsNode(38...39)(
-                       [CallNode(38...39)(
-                          nil,
-                          nil,
-                          (38...39),
-                          nil,
-                          nil,
-                          nil,
-                          nil,
-                          2,
-                          "d"
-                        )]
-                     ),
-                     nil
-                   ),
-                   nil
-                 )]
+  locals: [],
+  statements:
+   StatementsNode(6...66)(
+     body:
+      [HashNode(6...66)(
+         opening_loc: (6...7),
+         elements:
+          [AssocNode(16...41)(
+             key:
+              SymbolNode(16...18)(
+                opening_loc: nil,
+                value_loc: (16...17),
+                closing_loc: (17...18),
+                unescaped: "a"
               ),
-              (26...27),
-              (40...41)
-            ),
-            0,
-            "lambda"
-          ),
-          nil
-        ),
-        AssocNode(51...57)(
-          SymbolNode(51...53)(nil, (51...52), (52...53), "e"),
-          NilNode(54...57)(),
-          nil
-        )],
-       (65...66)
-     )]
-  )
+             value:
+              CallNode(19...41)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (19...25),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(26...41)(
+                   locals: [],
+                   parameters: nil,
+                   body:
+                    StatementsNode(28...39)(
+                      body:
+                       [IfNode(28...39)(
+                          if_keyword_loc: nil,
+                          predicate:
+                           CallNode(28...29)(
+                             receiver: nil,
+                             operator_loc: nil,
+                             message_loc: (28...29),
+                             opening_loc: nil,
+                             arguments: nil,
+                             closing_loc: nil,
+                             block: nil,
+                             flags: 2,
+                             name: "b"
+                           ),
+                          statements:
+                           StatementsNode(32...35)(
+                             body:
+                              [CallNode(32...35)(
+                                 receiver: nil,
+                                 operator_loc: nil,
+                                 message_loc: (32...33),
+                                 opening_loc: (33...34),
+                                 arguments: nil,
+                                 closing_loc: (34...35),
+                                 block: nil,
+                                 flags: 0,
+                                 name: "c"
+                               )]
+                           ),
+                          consequent:
+                           ElseNode(36...39)(
+                             else_keyword_loc: (36...37),
+                             statements:
+                              StatementsNode(38...39)(
+                                body:
+                                 [CallNode(38...39)(
+                                    receiver: nil,
+                                    operator_loc: nil,
+                                    message_loc: (38...39),
+                                    opening_loc: nil,
+                                    arguments: nil,
+                                    closing_loc: nil,
+                                    block: nil,
+                                    flags: 2,
+                                    name: "d"
+                                  )]
+                              ),
+                             end_keyword_loc: nil
+                           ),
+                          end_keyword_loc: nil
+                        )]
+                    ),
+                   opening_loc: (26...27),
+                   closing_loc: (40...41)
+                 ),
+                flags: 0,
+                name: "lambda"
+              ),
+             operator_loc: nil
+           ),
+           AssocNode(51...57)(
+             key:
+              SymbolNode(51...53)(
+                opening_loc: nil,
+                value_loc: (51...52),
+                closing_loc: (52...53),
+                unescaped: "e"
+              ),
+             value: NilNode(54...57)(),
+             operator_loc: nil
+           )],
+         closing_loc: (65...66)
+       )]
+   )
 )

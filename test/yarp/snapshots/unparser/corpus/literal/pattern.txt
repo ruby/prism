@@ -1,291 +1,396 @@
 ProgramNode(0...408)(
-  [:a, :x, :y],
-  StatementsNode(0...408)(
-    [CaseNode(0...345)(
-       CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "foo"),
-       [InNode(9...38)(
-          ArrayPatternNode(12...26)(
-            ConstantReadNode(12...13)(),
-            [IntegerNode(14...15)(), IntegerNode(17...18)()],
-            SplatNode(20...22)(
-              (20...21),
-              LocalVariableTargetNode(21...22)(:a, 0)
-            ),
-            [IntegerNode(24...25)()],
-            (13...14),
-            (25...26)
+  locals: [:a, :x, :y],
+  statements:
+   StatementsNode(0...408)(
+     body:
+      [CaseNode(0...345)(
+         predicate:
+          CallNode(5...8)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (5...8),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
           ),
-          StatementsNode(34...38)([TrueNode(34...38)()]),
-          (9...11),
-          (27...31)
-        ),
-        InNode(39...59)(
-          ArrayPatternNode(42...50)(
-            nil,
-            [IntegerNode(43...44)(), IntegerNode(46...47)()],
-            nil,
-            [],
-            (42...43),
-            (49...50)
+         conditions:
+          [InNode(9...38)(
+             pattern:
+              ArrayPatternNode(12...26)(
+                constant: ConstantReadNode(12...13)(),
+                requireds: [IntegerNode(14...15)(), IntegerNode(17...18)()],
+                rest:
+                 SplatNode(20...22)(
+                   operator_loc: (20...21),
+                   expression:
+                    LocalVariableTargetNode(21...22)(name: :a, depth: 0)
+                 ),
+                posts: [IntegerNode(24...25)()],
+                opening_loc: (13...14),
+                closing_loc: (25...26)
+              ),
+             statements: StatementsNode(34...38)(body: [TrueNode(34...38)()]),
+             in_loc: (9...11),
+             then_loc: (27...31)
+           ),
+           InNode(39...59)(
+             pattern:
+              ArrayPatternNode(42...50)(
+                constant: nil,
+                requireds: [IntegerNode(43...44)(), IntegerNode(46...47)()],
+                rest: nil,
+                posts: [],
+                opening_loc: (42...43),
+                closing_loc: (49...50)
+              ),
+             statements:
+              StatementsNode(58...59)(
+                body:
+                 [CallNode(58...59)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (58...59),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "y"
+                  )]
+              ),
+             in_loc: (39...41),
+             then_loc: (51...55)
+           ),
+           InNode(60...80)(
+             pattern:
+              HashPatternNode(63...68)(
+                constant: ConstantReadNode(63...64)(),
+                assocs:
+                 [AssocNode(65...67)(
+                    key:
+                     SymbolNode(65...67)(
+                       opening_loc: nil,
+                       value_loc: (65...66),
+                       closing_loc: (66...67),
+                       unescaped: "x"
+                     ),
+                    value: nil,
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (64...65),
+                closing_loc: (67...68)
+              ),
+             statements: StatementsNode(76...80)(body: [TrueNode(76...80)()]),
+             in_loc: (60...62),
+             then_loc: (69...73)
+           ),
+           InNode(81...101)(
+             pattern:
+              HashPatternNode(84...89)(
+                constant: nil,
+                assocs:
+                 [AssocNode(85...88)(
+                    key:
+                     AssocSplatNode(85...88)(
+                       value:
+                        LocalVariableTargetNode(87...88)(name: :a, depth: 0),
+                       operator_loc: (85...87)
+                     ),
+                    value: nil,
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (84...85),
+                closing_loc: (88...89)
+              ),
+             statements:
+              StatementsNode(97...101)(body: [TrueNode(97...101)()]),
+             in_loc: (81...83),
+             then_loc: (90...94)
+           ),
+           InNode(102...127)(
+             pattern:
+              IfNode(105...115)(
+                if_keyword_loc: (108...110),
+                predicate: TrueNode(111...115)(),
+                statements:
+                 StatementsNode(105...107)(
+                   body:
+                    [HashPatternNode(105...107)(
+                       constant: nil,
+                       assocs: [],
+                       kwrest: nil,
+                       opening_loc: (105...106),
+                       closing_loc: (106...107)
+                     )]
+                 ),
+                consequent: nil,
+                end_keyword_loc: nil
+              ),
+             statements:
+              StatementsNode(123...127)(body: [TrueNode(123...127)()]),
+             in_loc: (102...104),
+             then_loc: (116...120)
+           ),
+           InNode(128...152)(
+             pattern:
+              ArrayPatternNode(131...140)(
+                constant: nil,
+                requireds:
+                 [LocalVariableTargetNode(132...133)(name: :x, depth: 0),
+                  LocalVariableTargetNode(135...136)(name: :y, depth: 0)],
+                rest:
+                 SplatNode(138...139)(
+                   operator_loc: (138...139), expression: nil
+                 ),
+                posts: [],
+                opening_loc: (131...132),
+                closing_loc: (139...140)
+              ),
+             statements:
+              StatementsNode(148...152)(body: [TrueNode(148...152)()]),
+             in_loc: (128...130),
+             then_loc: (141...145)
+           ),
+           InNode(153...181)(
+             pattern:
+              HashPatternNode(156...169)(
+                constant: nil,
+                assocs:
+                 [AssocNode(157...161)(
+                    key:
+                     SymbolNode(157...159)(
+                       opening_loc: nil,
+                       value_loc: (157...158),
+                       closing_loc: (158...159),
+                       unescaped: "a"
+                     ),
+                    value: IntegerNode(160...161)(),
+                    operator_loc: nil
+                  ),
+                  AssocNode(163...168)(
+                    key:
+                     SymbolNode(163...166)(
+                       opening_loc: nil,
+                       value_loc: (163...165),
+                       closing_loc: (165...166),
+                       unescaped: "aa"
+                     ),
+                    value: IntegerNode(167...168)(),
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (156...157),
+                closing_loc: (168...169)
+              ),
+             statements:
+              StatementsNode(177...181)(body: [TrueNode(177...181)()]),
+             in_loc: (153...155),
+             then_loc: (170...174)
+           ),
+           InNode(182...199)(
+             pattern:
+              HashPatternNode(185...187)(
+                constant: nil,
+                assocs: [],
+                kwrest: nil,
+                opening_loc: (185...186),
+                closing_loc: (186...187)
+              ),
+             statements:
+              StatementsNode(195...199)(body: [TrueNode(195...199)()]),
+             in_loc: (182...184),
+             then_loc: (188...192)
+           ),
+           InNode(200...222)(
+             pattern:
+              HashPatternNode(203...210)(
+                constant: nil,
+                assocs:
+                 [AssocNode(204...209)(
+                    key:
+                     NoKeywordsParameterNode(204...209)(
+                       operator_loc: (204...206), keyword_loc: (206...209)
+                     ),
+                    value: nil,
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (203...204),
+                closing_loc: (209...210)
+              ),
+             statements:
+              StatementsNode(218...222)(body: [TrueNode(218...222)()]),
+             in_loc: (200...202),
+             then_loc: (211...215)
+           ),
+           InNode(223...246)(
+             pattern:
+              HashPatternNode(226...234)(
+                constant: nil,
+                assocs:
+                 [AssocNode(227...233)(
+                    key:
+                     SymbolNode(227...231)(
+                       opening_loc: (227...228),
+                       value_loc: (228...229),
+                       closing_loc: (229...231),
+                       unescaped: "a"
+                     ),
+                    value: IntegerNode(232...233)(),
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (226...227),
+                closing_loc: (233...234)
+              ),
+             statements:
+              StatementsNode(242...246)(body: [TrueNode(242...246)()]),
+             in_loc: (223...225),
+             then_loc: (235...239)
+           ),
+           InNode(247...267)(
+             pattern:
+              AlternationPatternNode(250...255)(
+                left: IntegerNode(250...251)(),
+                right: IntegerNode(254...255)(),
+                operator_loc: (252...253)
+              ),
+             statements:
+              StatementsNode(263...267)(body: [TrueNode(263...267)()]),
+             in_loc: (247...249),
+             then_loc: (256...260)
+           ),
+           InNode(268...289)(
+             pattern:
+              CapturePatternNode(271...277)(
+                value: IntegerNode(271...272)(),
+                target: LocalVariableTargetNode(276...277)(name: :a, depth: 0),
+                operator_loc: (273...275)
+              ),
+             statements:
+              StatementsNode(285...289)(body: [TrueNode(285...289)()]),
+             in_loc: (268...270),
+             then_loc: (278...282)
+           ),
+           InNode(290...307)(
+             pattern:
+              PinnedVariableNode(293...295)(
+                variable: LocalVariableReadNode(294...295)(name: :x, depth: 0),
+                operator_loc: (293...294)
+              ),
+             statements:
+              StatementsNode(303...307)(body: [TrueNode(303...307)()]),
+             in_loc: (290...292),
+             then_loc: (296...300)
+           ),
+           InNode(308...312)(
+             pattern: IntegerNode(311...312)(),
+             statements: nil,
+             in_loc: (308...310),
+             then_loc: nil
+           ),
+           InNode(313...329)(
+             pattern: IntegerNode(316...317)(),
+             statements:
+              StatementsNode(325...329)(body: [TrueNode(325...329)()]),
+             in_loc: (313...315),
+             then_loc: (318...322)
+           )],
+         consequent:
+          ElseNode(330...345)(
+            else_keyword_loc: (330...334),
+            statements:
+             StatementsNode(337...341)(body: [TrueNode(337...341)()]),
+            end_keyword_loc: (342...345)
           ),
-          StatementsNode(58...59)(
-            [CallNode(58...59)(
-               nil,
-               nil,
-               (58...59),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "y"
-             )]
-          ),
-          (39...41),
-          (51...55)
-        ),
-        InNode(60...80)(
-          HashPatternNode(63...68)(
-            ConstantReadNode(63...64)(),
-            [AssocNode(65...67)(
-               SymbolNode(65...67)(nil, (65...66), (66...67), "x"),
-               nil,
-               nil
-             )],
-            nil,
-            (64...65),
-            (67...68)
-          ),
-          StatementsNode(76...80)([TrueNode(76...80)()]),
-          (60...62),
-          (69...73)
-        ),
-        InNode(81...101)(
-          HashPatternNode(84...89)(
-            nil,
-            [AssocNode(85...88)(
-               AssocSplatNode(85...88)(
-                 LocalVariableTargetNode(87...88)(:a, 0),
-                 (85...87)
-               ),
-               nil,
-               nil
-             )],
-            nil,
-            (84...85),
-            (88...89)
-          ),
-          StatementsNode(97...101)([TrueNode(97...101)()]),
-          (81...83),
-          (90...94)
-        ),
-        InNode(102...127)(
-          IfNode(105...115)(
-            (108...110),
-            TrueNode(111...115)(),
-            StatementsNode(105...107)(
-              [HashPatternNode(105...107)(
-                 nil,
-                 [],
-                 nil,
-                 (105...106),
-                 (106...107)
-               )]
-            ),
-            nil,
-            nil
-          ),
-          StatementsNode(123...127)([TrueNode(123...127)()]),
-          (102...104),
-          (116...120)
-        ),
-        InNode(128...152)(
-          ArrayPatternNode(131...140)(
-            nil,
-            [LocalVariableTargetNode(132...133)(:x, 0),
-             LocalVariableTargetNode(135...136)(:y, 0)],
-            SplatNode(138...139)((138...139), nil),
-            [],
-            (131...132),
-            (139...140)
-          ),
-          StatementsNode(148...152)([TrueNode(148...152)()]),
-          (128...130),
-          (141...145)
-        ),
-        InNode(153...181)(
-          HashPatternNode(156...169)(
-            nil,
-            [AssocNode(157...161)(
-               SymbolNode(157...159)(nil, (157...158), (158...159), "a"),
-               IntegerNode(160...161)(),
-               nil
-             ),
-             AssocNode(163...168)(
-               SymbolNode(163...166)(nil, (163...165), (165...166), "aa"),
-               IntegerNode(167...168)(),
-               nil
-             )],
-            nil,
-            (156...157),
-            (168...169)
-          ),
-          StatementsNode(177...181)([TrueNode(177...181)()]),
-          (153...155),
-          (170...174)
-        ),
-        InNode(182...199)(
-          HashPatternNode(185...187)(nil, [], nil, (185...186), (186...187)),
-          StatementsNode(195...199)([TrueNode(195...199)()]),
-          (182...184),
-          (188...192)
-        ),
-        InNode(200...222)(
-          HashPatternNode(203...210)(
-            nil,
-            [AssocNode(204...209)(
-               NoKeywordsParameterNode(204...209)((204...206), (206...209)),
-               nil,
-               nil
-             )],
-            nil,
-            (203...204),
-            (209...210)
-          ),
-          StatementsNode(218...222)([TrueNode(218...222)()]),
-          (200...202),
-          (211...215)
-        ),
-        InNode(223...246)(
-          HashPatternNode(226...234)(
-            nil,
-            [AssocNode(227...233)(
-               SymbolNode(227...231)(
-                 (227...228),
-                 (228...229),
-                 (229...231),
-                 "a"
-               ),
-               IntegerNode(232...233)(),
-               nil
-             )],
-            nil,
-            (226...227),
-            (233...234)
-          ),
-          StatementsNode(242...246)([TrueNode(242...246)()]),
-          (223...225),
-          (235...239)
-        ),
-        InNode(247...267)(
-          AlternationPatternNode(250...255)(
-            IntegerNode(250...251)(),
-            IntegerNode(254...255)(),
-            (252...253)
-          ),
-          StatementsNode(263...267)([TrueNode(263...267)()]),
-          (247...249),
-          (256...260)
-        ),
-        InNode(268...289)(
-          CapturePatternNode(271...277)(
-            IntegerNode(271...272)(),
-            LocalVariableTargetNode(276...277)(:a, 0),
-            (273...275)
-          ),
-          StatementsNode(285...289)([TrueNode(285...289)()]),
-          (268...270),
-          (278...282)
-        ),
-        InNode(290...307)(
-          PinnedVariableNode(293...295)(
-            LocalVariableReadNode(294...295)(:x, 0),
-            (293...294)
-          ),
-          StatementsNode(303...307)([TrueNode(303...307)()]),
-          (290...292),
-          (296...300)
-        ),
-        InNode(308...312)(IntegerNode(311...312)(), nil, (308...310), nil),
-        InNode(313...329)(
-          IntegerNode(316...317)(),
-          StatementsNode(325...329)([TrueNode(325...329)()]),
-          (313...315),
-          (318...322)
-        )],
-       ElseNode(330...345)(
-         (330...334),
-         StatementsNode(337...341)([TrueNode(337...341)()]),
-         (342...345)
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (342...345)
        ),
-       (0...4),
-       (342...345)
-     ),
-     CaseNode(346...376)(
-       CallNode(351...354)(
-         nil,
-         nil,
-         (351...354),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
-       ),
-       [InNode(355...372)(
-          ArrayPatternNode(358...372)(
-            ConstantReadNode(358...359)(),
-            [IntegerNode(360...361)(), IntegerNode(363...364)()],
-            SplatNode(366...368)(
-              (366...367),
-              LocalVariableTargetNode(367...368)(:a, 0)
-            ),
-            [IntegerNode(370...371)()],
-            (359...360),
-            (371...372)
+       CaseNode(346...376)(
+         predicate:
+          CallNode(351...354)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (351...354),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
           ),
-          nil,
-          (355...357),
-          nil
-        )],
-       nil,
-       (346...350),
-       (373...376)
-     ),
-     CaseNode(377...399)(
-       CallNode(382...385)(
-         nil,
-         nil,
-         (382...385),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
+         conditions:
+          [InNode(355...372)(
+             pattern:
+              ArrayPatternNode(358...372)(
+                constant: ConstantReadNode(358...359)(),
+                requireds:
+                 [IntegerNode(360...361)(), IntegerNode(363...364)()],
+                rest:
+                 SplatNode(366...368)(
+                   operator_loc: (366...367),
+                   expression:
+                    LocalVariableTargetNode(367...368)(name: :a, depth: 0)
+                 ),
+                posts: [IntegerNode(370...371)()],
+                opening_loc: (359...360),
+                closing_loc: (371...372)
+              ),
+             statements: nil,
+             in_loc: (355...357),
+             then_loc: nil
+           )],
+         consequent: nil,
+         case_keyword_loc: (346...350),
+         end_keyword_loc: (373...376)
        ),
-       [InNode(386...390)(
-          ConstantReadNode(389...390)(),
-          nil,
-          (386...388),
-          nil
-        )],
-       ElseNode(391...399)((391...395), nil, (396...399)),
-       (377...381),
-       (396...399)
-     ),
-     MatchPredicateNode(400...408)(
-       IntegerNode(400...401)(),
-       ArrayPatternNode(405...408)(
-         nil,
-         [LocalVariableTargetNode(406...407)(:a, 0)],
-         nil,
-         [],
-         (405...406),
-         (407...408)
+       CaseNode(377...399)(
+         predicate:
+          CallNode(382...385)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (382...385),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         conditions:
+          [InNode(386...390)(
+             pattern: ConstantReadNode(389...390)(),
+             statements: nil,
+             in_loc: (386...388),
+             then_loc: nil
+           )],
+         consequent:
+          ElseNode(391...399)(
+            else_keyword_loc: (391...395),
+            statements: nil,
+            end_keyword_loc: (396...399)
+          ),
+         case_keyword_loc: (377...381),
+         end_keyword_loc: (396...399)
        ),
-       (402...404)
-     )]
-  )
+       MatchPredicateNode(400...408)(
+         value: IntegerNode(400...401)(),
+         pattern:
+          ArrayPatternNode(405...408)(
+            constant: nil,
+            requireds:
+             [LocalVariableTargetNode(406...407)(name: :a, depth: 0)],
+            rest: nil,
+            posts: [],
+            opening_loc: (405...406),
+            closing_loc: (407...408)
+          ),
+         operator_loc: (402...404)
+       )]
+   )
 )

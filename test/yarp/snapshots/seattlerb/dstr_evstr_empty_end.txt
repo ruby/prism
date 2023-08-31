@@ -1,26 +1,31 @@
 ProgramNode(0...11)(
-  [],
-  StatementsNode(0...11)(
-    [InterpolatedSymbolNode(0...11)(
-       (0...2),
-       [EmbeddedStatementsNode(2...10)(
-          (2...4),
-          StatementsNode(4...9)(
-            [CallNode(4...9)(
-               nil,
-               nil,
-               (4...9),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "field"
-             )]
-          ),
-          (9...10)
-        )],
-       (10...11)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...11)(
+     body:
+      [InterpolatedSymbolNode(0...11)(
+         opening_loc: (0...2),
+         parts:
+          [EmbeddedStatementsNode(2...10)(
+             opening_loc: (2...4),
+             statements:
+              StatementsNode(4...9)(
+                body:
+                 [CallNode(4...9)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (4...9),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "field"
+                  )]
+              ),
+             closing_loc: (9...10)
+           )],
+         closing_loc: (10...11)
+       )]
+   )
 )

@@ -1,45 +1,58 @@
 ProgramNode(0...30)(
-  [:foo, :bar],
-  StatementsNode(0...30)(
-    [LocalVariableWriteNode(0...17)(
-       :foo,
-       0,
-       LocalVariableWriteNode(6...17)(
-         :bar,
-         0,
-         CallNode(12...17)(
-           nil,
-           nil,
-           (12...13),
-           nil,
-           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(:foo, 0)]),
-           nil,
-           nil,
-           0,
-           "m"
-         ),
-         (6...9),
-         (10...11)
+  locals: [:foo, :bar],
+  statements:
+   StatementsNode(0...30)(
+     body:
+      [LocalVariableWriteNode(0...17)(
+         name: :foo,
+         depth: 0,
+         value:
+          LocalVariableWriteNode(6...17)(
+            name: :bar,
+            depth: 0,
+            value:
+             CallNode(12...17)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (12...13),
+               opening_loc: nil,
+               arguments:
+                ArgumentsNode(14...17)(
+                  arguments:
+                   [LocalVariableReadNode(14...17)(name: :foo, depth: 0)]
+                ),
+               closing_loc: nil,
+               block: nil,
+               flags: 0,
+               name: "m"
+             ),
+            name_loc: (6...9),
+            operator_loc: (10...11)
+          ),
+         name_loc: (0...3),
+         operator_loc: (4...5)
        ),
-       (0...3),
-       (4...5)
-     ),
-     LocalVariableWriteNode(19...30)(
-       :foo,
-       0,
-       CallNode(25...30)(
-         nil,
-         nil,
-         (25...26),
-         nil,
-         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(:foo, 0)]),
-         nil,
-         nil,
-         0,
-         "m"
-       ),
-       (19...22),
-       (23...24)
-     )]
-  )
+       LocalVariableWriteNode(19...30)(
+         name: :foo,
+         depth: 0,
+         value:
+          CallNode(25...30)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (25...26),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(27...30)(
+               arguments:
+                [LocalVariableReadNode(27...30)(name: :foo, depth: 0)]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         name_loc: (19...22),
+         operator_loc: (23...24)
+       )]
+   )
 )

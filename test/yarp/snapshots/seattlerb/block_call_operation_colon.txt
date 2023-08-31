@@ -1,28 +1,61 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [CallNode(0...15)(
-       CallNode(0...12)(
-         CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-         (1...2),
-         (2...3),
-         nil,
-         ArgumentsNode(4...5)(
-           [CallNode(4...5)(nil, nil, (4...5), nil, nil, nil, nil, 2, "c")]
-         ),
-         nil,
-         BlockNode(6...12)([], nil, nil, (6...8), (9...12)),
-         0,
-         "b"
-       ),
-       (12...14),
-       (14...15),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "d"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [CallNode(0...15)(
+         receiver:
+          CallNode(0...12)(
+            receiver:
+             CallNode(0...1)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...1),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "a"
+             ),
+            operator_loc: (1...2),
+            message_loc: (2...3),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(4...5)(
+               arguments:
+                [CallNode(4...5)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (4...5),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "c"
+                 )]
+             ),
+            closing_loc: nil,
+            block:
+             BlockNode(6...12)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (6...8),
+               closing_loc: (9...12)
+             ),
+            flags: 0,
+            name: "b"
+          ),
+         operator_loc: (12...14),
+         message_loc: (14...15),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "d"
+       )]
+   )
 )

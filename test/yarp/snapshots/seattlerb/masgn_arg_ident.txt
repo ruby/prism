@@ -1,23 +1,48 @@
 ProgramNode(0...10)(
-  [:a],
-  StatementsNode(0...10)(
-    [MultiWriteNode(0...10)(
-       [LocalVariableTargetNode(0...1)(:a, 0),
-        CallNode(3...6)(
-          CallNode(3...4)(nil, nil, (3...4), nil, nil, nil, nil, 2, "b"),
-          (4...5),
-          (5...6),
-          nil,
-          nil,
-          nil,
-          nil,
-          0,
-          "C="
-        )],
-       (7...8),
-       CallNode(9...10)(nil, nil, (9...10), nil, nil, nil, nil, 2, "d"),
-       nil,
-       nil
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [MultiWriteNode(0...10)(
+         targets:
+          [LocalVariableTargetNode(0...1)(name: :a, depth: 0),
+           CallNode(3...6)(
+             receiver:
+              CallNode(3...4)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (3...4),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             operator_loc: (4...5),
+             message_loc: (5...6),
+             opening_loc: nil,
+             arguments: nil,
+             closing_loc: nil,
+             block: nil,
+             flags: 0,
+             name: "C="
+           )],
+         operator_loc: (7...8),
+         value:
+          CallNode(9...10)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (9...10),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "d"
+          ),
+         lparen_loc: nil,
+         rparen_loc: nil
+       )]
+   )
 )

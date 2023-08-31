@@ -1,19 +1,34 @@
 ProgramNode(0...47)(
-  [],
-  StatementsNode(0...47)(
-    [ArrayNode(0...17)(
-       [StringNode(1...15)((1...2), (2...14), (14...15), "  some text\n")],
-       (0...1),
-       (16...17)
-     ),
-     ArrayNode(19...47)(
-       [InterpolatedStringNode(20...27)(
-          (20...27),
-          [StringNode(29...41)(nil, (29...41), nil, "  some text\n")],
-          (41...46)
-        )],
-       (19...20),
-       (46...47)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...47)(
+     body:
+      [ArrayNode(0...17)(
+         elements:
+          [StringNode(1...15)(
+             opening_loc: (1...2),
+             content_loc: (2...14),
+             closing_loc: (14...15),
+             unescaped: "  some text\n"
+           )],
+         opening_loc: (0...1),
+         closing_loc: (16...17)
+       ),
+       ArrayNode(19...47)(
+         elements:
+          [InterpolatedStringNode(20...27)(
+             opening_loc: (20...27),
+             parts:
+              [StringNode(29...41)(
+                 opening_loc: nil,
+                 content_loc: (29...41),
+                 closing_loc: nil,
+                 unescaped: "  some text\n"
+               )],
+             closing_loc: (41...46)
+           )],
+         opening_loc: (19...20),
+         closing_loc: (46...47)
+       )]
+   )
 )

@@ -1,27 +1,43 @@
 ProgramNode(0...11)(
-  [],
-  StatementsNode(0...11)(
-    [ConstantPathOperatorWriteNode(0...11)(
-       ConstantPathNode(0...4)(
-         ConstantReadNode(0...1)(),
-         ConstantReadNode(3...4)(),
-         (1...3)
-       ),
-       (5...7),
-       CallNode(8...11)(
-         nil,
-         nil,
-         (8...9),
-         nil,
-         ArgumentsNode(10...11)(
-           [CallNode(10...11)(nil, nil, (10...11), nil, nil, nil, nil, 2, "d")]
-         ),
-         nil,
-         nil,
-         0,
-         "c"
-       ),
-       :*
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...11)(
+     body:
+      [ConstantPathOperatorWriteNode(0...11)(
+         target:
+          ConstantPathNode(0...4)(
+            parent: ConstantReadNode(0...1)(),
+            child: ConstantReadNode(3...4)(),
+            delimiter_loc: (1...3)
+          ),
+         operator_loc: (5...7),
+         value:
+          CallNode(8...11)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (8...9),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(10...11)(
+               arguments:
+                [CallNode(10...11)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (10...11),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "d"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "c"
+          ),
+         operator: :*
+       )]
+   )
 )

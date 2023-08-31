@@ -1,50 +1,75 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [CallNode(0...26)(
-       nil,
-       nil,
-       (0...1),
-       (1...2),
-       ArgumentsNode(2...3)(
-         [CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "a")]
-       ),
-       (3...4),
-       BlockNode(5...26)(
-         [:x, :y],
-         BlockParametersNode(8...14)(
-           ParametersNode(9...13)(
-             [RequiredParameterNode(9...10)(:x),
-              RequiredParameterNode(12...13)(:y)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (8...9),
-           (13...14)
-         ),
-         StatementsNode(17...22)(
-           [CallNode(17...22)(
-              LocalVariableReadNode(17...18)(:x, 0),
-              nil,
-              (19...20),
-              nil,
-              ArgumentsNode(21...22)([LocalVariableReadNode(21...22)(:y, 0)]),
-              nil,
-              nil,
-              0,
-              "+"
-            )]
-         ),
-         (5...7),
-         (23...26)
-       ),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [CallNode(0...26)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: (1...2),
+         arguments:
+          ArgumentsNode(2...3)(
+            arguments:
+             [CallNode(2...3)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (2...3),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         closing_loc: (3...4),
+         block:
+          BlockNode(5...26)(
+            locals: [:x, :y],
+            parameters:
+             BlockParametersNode(8...14)(
+               parameters:
+                ParametersNode(9...13)(
+                  requireds:
+                   [RequiredParameterNode(9...10)(name: :x),
+                    RequiredParameterNode(12...13)(name: :y)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (8...9),
+               closing_loc: (13...14)
+             ),
+            body:
+             StatementsNode(17...22)(
+               body:
+                [CallNode(17...22)(
+                   receiver:
+                    LocalVariableReadNode(17...18)(name: :x, depth: 0),
+                   operator_loc: nil,
+                   message_loc: (19...20),
+                   opening_loc: nil,
+                   arguments:
+                    ArgumentsNode(21...22)(
+                      arguments:
+                       [LocalVariableReadNode(21...22)(name: :y, depth: 0)]
+                    ),
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "+"
+                 )]
+             ),
+            opening_loc: (5...7),
+            closing_loc: (23...26)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

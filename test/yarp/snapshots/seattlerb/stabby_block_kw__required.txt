@@ -1,26 +1,31 @@
 ProgramNode(0...11)(
-  [],
-  StatementsNode(0...11)(
-    [LambdaNode(0...11)(
-       [:k],
-       (0...2),
-       (8...9),
-       (10...11),
-       BlockParametersNode(3...7)(
-         ParametersNode(4...6)(
-           [],
-           [],
-           [],
-           nil,
-           [KeywordParameterNode(4...6)((4...6), nil)],
-           nil,
-           nil
-         ),
-         [],
-         (3...4),
-         (6...7)
-       ),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...11)(
+     body:
+      [LambdaNode(0...11)(
+         locals: [:k],
+         operator_loc: (0...2),
+         opening_loc: (8...9),
+         closing_loc: (10...11),
+         parameters:
+          BlockParametersNode(3...7)(
+            parameters:
+             ParametersNode(4...6)(
+               requireds: [],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords:
+                [KeywordParameterNode(4...6)(name_loc: (4...6), value: nil)],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (3...4),
+            closing_loc: (6...7)
+          ),
+         body: nil
+       )]
+   )
 )

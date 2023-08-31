@@ -1,83 +1,112 @@
 ProgramNode(0...141)(
-  [],
-  StatementsNode(0...141)(
-    [UnlessNode(0...19)(
-       (0...6),
-       TrueNode(7...11)(),
-       StatementsNode(13...14)([IntegerNode(13...14)()]),
-       nil,
-       (16...19)
-     ),
-     UnlessNode(21...45)(
-       (21...27),
-       TrueNode(28...32)(),
-       StatementsNode(33...34)([IntegerNode(33...34)()]),
-       ElseNode(35...45)(
-         (35...39),
-         StatementsNode(40...41)([IntegerNode(40...41)()]),
-         (42...45)
+  locals: [],
+  statements:
+   StatementsNode(0...141)(
+     body:
+      [UnlessNode(0...19)(
+         keyword_loc: (0...6),
+         predicate: TrueNode(7...11)(),
+         statements: StatementsNode(13...14)(body: [IntegerNode(13...14)()]),
+         consequent: nil,
+         end_keyword_loc: (16...19)
        ),
-       (42...45)
-     ),
-     UnlessNode(47...60)(
-       (49...55),
-       TrueNode(56...60)(),
-       StatementsNode(47...48)([IntegerNode(47...48)()]),
-       nil,
-       nil
-     ),
-     UnlessNode(62...79)(
-       (68...74),
-       TrueNode(75...79)(),
-       StatementsNode(62...67)([BreakNode(62...67)(nil, (62...67))]),
-       nil,
-       nil
-     ),
-     UnlessNode(81...97)(
-       (86...92),
-       TrueNode(93...97)(),
-       StatementsNode(81...85)([NextNode(81...85)(nil, (81...85))]),
-       nil,
-       nil
-     ),
-     UnlessNode(99...117)(
-       (106...112),
-       TrueNode(113...117)(),
-       StatementsNode(99...105)([ReturnNode(99...105)((99...105), nil)]),
-       nil,
-       nil
-     ),
-     UnlessNode(119...141)(
-       (130...136),
-       CallNode(137...141)(
-         nil,
-         nil,
-         (137...141),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "bar?"
+       UnlessNode(21...45)(
+         keyword_loc: (21...27),
+         predicate: TrueNode(28...32)(),
+         statements: StatementsNode(33...34)(body: [IntegerNode(33...34)()]),
+         consequent:
+          ElseNode(35...45)(
+            else_keyword_loc: (35...39),
+            statements:
+             StatementsNode(40...41)(body: [IntegerNode(40...41)()]),
+            end_keyword_loc: (42...45)
+          ),
+         end_keyword_loc: (42...45)
        ),
-       StatementsNode(119...129)(
-         [CallNode(119...129)(
-            nil,
-            nil,
-            (119...122),
-            nil,
-            ArgumentsNode(123...129)(
-              [SymbolNode(123...125)((123...124), (124...125), nil, "a"),
-               SymbolNode(127...129)((127...128), (128...129), nil, "b")]
-            ),
-            nil,
-            nil,
-            0,
-            "foo"
-          )]
+       UnlessNode(47...60)(
+         keyword_loc: (49...55),
+         predicate: TrueNode(56...60)(),
+         statements: StatementsNode(47...48)(body: [IntegerNode(47...48)()]),
+         consequent: nil,
+         end_keyword_loc: nil
        ),
-       nil,
-       nil
-     )]
-  )
+       UnlessNode(62...79)(
+         keyword_loc: (68...74),
+         predicate: TrueNode(75...79)(),
+         statements:
+          StatementsNode(62...67)(
+            body: [BreakNode(62...67)(arguments: nil, keyword_loc: (62...67))]
+          ),
+         consequent: nil,
+         end_keyword_loc: nil
+       ),
+       UnlessNode(81...97)(
+         keyword_loc: (86...92),
+         predicate: TrueNode(93...97)(),
+         statements:
+          StatementsNode(81...85)(
+            body: [NextNode(81...85)(arguments: nil, keyword_loc: (81...85))]
+          ),
+         consequent: nil,
+         end_keyword_loc: nil
+       ),
+       UnlessNode(99...117)(
+         keyword_loc: (106...112),
+         predicate: TrueNode(113...117)(),
+         statements:
+          StatementsNode(99...105)(
+            body:
+             [ReturnNode(99...105)(keyword_loc: (99...105), arguments: nil)]
+          ),
+         consequent: nil,
+         end_keyword_loc: nil
+       ),
+       UnlessNode(119...141)(
+         keyword_loc: (130...136),
+         predicate:
+          CallNode(137...141)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (137...141),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "bar?"
+          ),
+         statements:
+          StatementsNode(119...129)(
+            body:
+             [CallNode(119...129)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (119...122),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(123...129)(
+                   arguments:
+                    [SymbolNode(123...125)(
+                       opening_loc: (123...124),
+                       value_loc: (124...125),
+                       closing_loc: nil,
+                       unescaped: "a"
+                     ),
+                     SymbolNode(127...129)(
+                       opening_loc: (127...128),
+                       value_loc: (128...129),
+                       closing_loc: nil,
+                       unescaped: "b"
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "foo"
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: nil
+       )]
+   )
 )

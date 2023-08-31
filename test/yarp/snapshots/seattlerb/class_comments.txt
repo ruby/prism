@@ -1,29 +1,33 @@
 ProgramNode(19...71)(
-  [],
-  StatementsNode(19...71)(
-    [ClassNode(19...71)(
-       [],
-       (19...24),
-       ConstantReadNode(25...26)(),
-       nil,
-       nil,
-       StatementsNode(40...67)(
-         [DefNode(40...67)(
-            (44...48),
-            nil,
-            nil,
-            nil,
-            [],
-            (40...43),
-            nil,
-            nil,
-            nil,
-            nil,
-            (64...67)
-          )]
-       ),
-       (68...71),
-       "X"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(19...71)(
+     body:
+      [ClassNode(19...71)(
+         locals: [],
+         class_keyword_loc: (19...24),
+         constant_path: ConstantReadNode(25...26)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(40...67)(
+            body:
+             [DefNode(40...67)(
+                name_loc: (44...48),
+                receiver: nil,
+                parameters: nil,
+                body: nil,
+                locals: [],
+                def_keyword_loc: (40...43),
+                operator_loc: nil,
+                lparen_loc: nil,
+                rparen_loc: nil,
+                equal_loc: nil,
+                end_keyword_loc: (64...67)
+              )]
+          ),
+         end_keyword_loc: (68...71),
+         name: "X"
+       )]
+   )
 )

@@ -1,11 +1,13 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [StringNode(0...26)(
-       (0...3),
-       (3...25),
-       (25...26),
-       "blah blah \\| blah blah"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [StringNode(0...26)(
+         opening_loc: (0...3),
+         content_loc: (3...25),
+         closing_loc: (25...26),
+         unescaped: "blah blah \\| blah blah"
+       )]
+   )
 )

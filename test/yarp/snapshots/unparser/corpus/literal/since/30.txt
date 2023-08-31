@@ -1,56 +1,65 @@
 ProgramNode(0...51)(
-  [:a, :foo],
-  StatementsNode(0...51)(
-    [MatchRequiredNode(0...8)(
-       IntegerNode(0...1)(),
-       ArrayPatternNode(5...8)(
-         nil,
-         [LocalVariableTargetNode(6...7)(:a, 0)],
-         nil,
-         [],
-         (5...6),
-         (7...8)
+  locals: [:a, :foo],
+  statements:
+   StatementsNode(0...51)(
+     body:
+      [MatchRequiredNode(0...8)(
+         value: IntegerNode(0...1)(),
+         pattern:
+          ArrayPatternNode(5...8)(
+            constant: nil,
+            requireds: [LocalVariableTargetNode(6...7)(name: :a, depth: 0)],
+            rest: nil,
+            posts: [],
+            opening_loc: (5...6),
+            closing_loc: (7...8)
+          ),
+         operator_loc: (2...4)
        ),
-       (2...4)
-     ),
-     MatchRequiredNode(9...17)(
-       IntegerNode(9...10)(),
-       ArrayPatternNode(14...17)(
-         nil,
-         [],
-         SplatNode(15...16)((15...16), nil),
-         [],
-         (14...15),
-         (16...17)
+       MatchRequiredNode(9...17)(
+         value: IntegerNode(9...10)(),
+         pattern:
+          ArrayPatternNode(14...17)(
+            constant: nil,
+            requireds: [],
+            rest: SplatNode(15...16)(operator_loc: (15...16), expression: nil),
+            posts: [],
+            opening_loc: (14...15),
+            closing_loc: (16...17)
+          ),
+         operator_loc: (11...13)
        ),
-       (11...13)
-     ),
-     MatchPredicateNode(18...33)(
-       IntegerNode(18...19)(),
-       FindPatternNode(23...33)(
-         nil,
-         SplatNode(24...25)((24...25), nil),
-         [IntegerNode(27...29)()],
-         SplatNode(31...32)((31...32), nil),
-         (23...24),
-         (32...33)
+       MatchPredicateNode(18...33)(
+         value: IntegerNode(18...19)(),
+         pattern:
+          FindPatternNode(23...33)(
+            constant: nil,
+            left: SplatNode(24...25)(operator_loc: (24...25), expression: nil),
+            requireds: [IntegerNode(27...29)()],
+            right:
+             SplatNode(31...32)(operator_loc: (31...32), expression: nil),
+            opening_loc: (23...24),
+            closing_loc: (32...33)
+          ),
+         operator_loc: (20...22)
        ),
-       (20...22)
-     ),
-     MatchPredicateNode(34...51)(
-       IntegerNode(34...35)(),
-       FindPatternNode(39...51)(
-         nil,
-         SplatNode(40...41)((40...41), nil),
-         [LocalVariableTargetNode(43...44)(:a, 0)],
-         SplatNode(46...50)(
-           (46...47),
-           LocalVariableTargetNode(47...50)(:foo, 0)
-         ),
-         (39...40),
-         (50...51)
-       ),
-       (36...38)
-     )]
-  )
+       MatchPredicateNode(34...51)(
+         value: IntegerNode(34...35)(),
+         pattern:
+          FindPatternNode(39...51)(
+            constant: nil,
+            left: SplatNode(40...41)(operator_loc: (40...41), expression: nil),
+            requireds: [LocalVariableTargetNode(43...44)(name: :a, depth: 0)],
+            right:
+             SplatNode(46...50)(
+               operator_loc: (46...47),
+               expression:
+                LocalVariableTargetNode(47...50)(name: :foo, depth: 0)
+             ),
+            opening_loc: (39...40),
+            closing_loc: (50...51)
+          ),
+         operator_loc: (36...38)
+       )]
+   )
 )

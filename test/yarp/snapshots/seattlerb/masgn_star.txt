@@ -1,12 +1,14 @@
 ProgramNode(0...5)(
-  [],
-  StatementsNode(0...5)(
-    [MultiWriteNode(0...5)(
-       [SplatNode(0...1)((0...1), nil)],
-       (2...3),
-       IntegerNode(4...5)(),
-       nil,
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...5)(
+     body:
+      [MultiWriteNode(0...5)(
+         targets: [SplatNode(0...1)(operator_loc: (0...1), expression: nil)],
+         operator_loc: (2...3),
+         value: IntegerNode(4...5)(),
+         lparen_loc: nil,
+         rparen_loc: nil
+       )]
+   )
 )

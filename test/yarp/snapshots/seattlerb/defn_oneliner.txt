@@ -1,38 +1,47 @@
 ProgramNode(0...27)(
-  [],
-  StatementsNode(0...27)(
-    [DefNode(0...27)(
-       (4...8),
-       nil,
-       ParametersNode(9...12)(
-         [RequiredParameterNode(9...12)(:cmd)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(16...27)(
-         [CallNode(16...27)(
-            nil,
-            nil,
-            (16...22),
-            (22...23),
-            ArgumentsNode(23...26)([LocalVariableReadNode(23...26)(:cmd, 0)]),
-            (26...27),
-            nil,
-            0,
-            "system"
-          )]
-       ),
-       [:cmd],
-       (0...3),
-       nil,
-       (8...9),
-       (12...13),
-       (14...15),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...27)(
+     body:
+      [DefNode(0...27)(
+         name_loc: (4...8),
+         receiver: nil,
+         parameters:
+          ParametersNode(9...12)(
+            requireds: [RequiredParameterNode(9...12)(name: :cmd)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(16...27)(
+            body:
+             [CallNode(16...27)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (16...22),
+                opening_loc: (22...23),
+                arguments:
+                 ArgumentsNode(23...26)(
+                   arguments:
+                    [LocalVariableReadNode(23...26)(name: :cmd, depth: 0)]
+                 ),
+                closing_loc: (26...27),
+                block: nil,
+                flags: 0,
+                name: "system"
+              )]
+          ),
+         locals: [:cmd],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (8...9),
+         rparen_loc: (12...13),
+         equal_loc: (14...15),
+         end_keyword_loc: nil
+       )]
+   )
 )

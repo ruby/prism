@@ -1,82 +1,109 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)(
-    [CallNode(0...11)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...11)(
-         [KeywordHashNode(2...11)(
-            [AssocNode(2...11)(
-               InterpolatedSymbolNode(2...9)(
-                 (2...3),
-                 [EmbeddedStatementsNode(3...7)(
-                    (3...5),
-                    StatementsNode(5...6)(
-                      [CallNode(5...6)(
-                         nil,
-                         nil,
-                         (5...6),
-                         nil,
-                         nil,
-                         nil,
-                         nil,
-                         2,
-                         "k"
-                       )]
-                    ),
-                    (6...7)
-                  )],
-                 (7...9)
-               ),
-               IntegerNode(9...11)(),
-               nil
-             )]
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [CallNode(0...11)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...11)(
+            arguments:
+             [KeywordHashNode(2...11)(
+                elements:
+                 [AssocNode(2...11)(
+                    key:
+                     InterpolatedSymbolNode(2...9)(
+                       opening_loc: (2...3),
+                       parts:
+                        [EmbeddedStatementsNode(3...7)(
+                           opening_loc: (3...5),
+                           statements:
+                            StatementsNode(5...6)(
+                              body:
+                               [CallNode(5...6)(
+                                  receiver: nil,
+                                  operator_loc: nil,
+                                  message_loc: (5...6),
+                                  opening_loc: nil,
+                                  arguments: nil,
+                                  closing_loc: nil,
+                                  block: nil,
+                                  flags: 2,
+                                  name: "k"
+                                )]
+                            ),
+                           closing_loc: (6...7)
+                         )],
+                       closing_loc: (7...9)
+                     ),
+                    value: IntegerNode(9...11)(),
+                    operator_loc: nil
+                  )]
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x"
        ),
-       nil,
-       nil,
-       0,
-       "x"
-     ),
-     CallNode(13...21)(
-       nil,
-       nil,
-       (13...14),
-       nil,
-       ArgumentsNode(15...21)(
-         [KeywordHashNode(15...21)(
-            [AssocNode(15...21)(
-               SymbolNode(15...19)((15...16), (16...17), (17...19), "k"),
-               IntegerNode(19...21)(),
-               nil
-             )]
-          )]
+       CallNode(13...21)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (13...14),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(15...21)(
+            arguments:
+             [KeywordHashNode(15...21)(
+                elements:
+                 [AssocNode(15...21)(
+                    key:
+                     SymbolNode(15...19)(
+                       opening_loc: (15...16),
+                       value_loc: (16...17),
+                       closing_loc: (17...19),
+                       unescaped: "k"
+                     ),
+                    value: IntegerNode(19...21)(),
+                    operator_loc: nil
+                  )]
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x"
        ),
-       nil,
-       nil,
-       0,
-       "x"
-     ),
-     CallNode(23...31)(
-       nil,
-       nil,
-       (23...24),
-       nil,
-       ArgumentsNode(25...31)(
-         [KeywordHashNode(25...31)(
-            [AssocNode(25...31)(
-               SymbolNode(25...29)((25...26), (26...27), (27...29), "k"),
-               IntegerNode(29...31)(),
-               nil
-             )]
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "x"
-     )]
-  )
+       CallNode(23...31)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (23...24),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(25...31)(
+            arguments:
+             [KeywordHashNode(25...31)(
+                elements:
+                 [AssocNode(25...31)(
+                    key:
+                     SymbolNode(25...29)(
+                       opening_loc: (25...26),
+                       value_loc: (26...27),
+                       closing_loc: (27...29),
+                       unescaped: "k"
+                     ),
+                    value: IntegerNode(29...31)(),
+                    operator_loc: nil
+                  )]
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x"
+       )]
+   )
 )

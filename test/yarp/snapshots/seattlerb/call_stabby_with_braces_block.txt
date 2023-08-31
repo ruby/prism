@@ -1,31 +1,36 @@
 ProgramNode(0...19)(
-  [],
-  StatementsNode(0...19)(
-    [CallNode(0...19)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...10)(
-         [LambdaNode(2...10)(
-            [],
-            (2...4),
-            (5...6),
-            (9...10),
-            nil,
-            StatementsNode(7...8)([IntegerNode(7...8)()])
-          )]
-       ),
-       nil,
-       BlockNode(11...19)(
-         [],
-         nil,
-         StatementsNode(14...15)([IntegerNode(14...15)()]),
-         (11...13),
-         (16...19)
-       ),
-       0,
-       "a"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...19)(
+     body:
+      [CallNode(0...19)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...10)(
+            arguments:
+             [LambdaNode(2...10)(
+                locals: [],
+                operator_loc: (2...4),
+                opening_loc: (5...6),
+                closing_loc: (9...10),
+                parameters: nil,
+                body: StatementsNode(7...8)(body: [IntegerNode(7...8)()])
+              )]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(11...19)(
+            locals: [],
+            parameters: nil,
+            body: StatementsNode(14...15)(body: [IntegerNode(14...15)()]),
+            opening_loc: (11...13),
+            closing_loc: (16...19)
+          ),
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

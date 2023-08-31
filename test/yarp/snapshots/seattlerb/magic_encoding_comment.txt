@@ -1,37 +1,49 @@
 ProgramNode(18...90)(
-  [],
-  StatementsNode(18...90)(
-    [ClassNode(18...90)(
-       [],
-       (18...23),
-       ConstantReadNode(24...52)(),
-       nil,
-       nil,
-       StatementsNode(54...86)(
-         [DefNode(54...86)(
-            (63...65),
-            SelfNode(58...62)(),
-            nil,
-            StatementsNode(67...81)(
-              [LocalVariableWriteNode(67...81)(
-                 :così,
-                 0,
-                 SymbolNode(75...81)((75...76), (76...81), nil, "però"),
-                 (67...72),
-                 (73...74)
-               )]
-            ),
-            [:così],
-            (54...57),
-            (62...63),
-            nil,
-            nil,
-            nil,
-            (83...86)
-          )]
-       ),
-       (87...90),
-       "ExampleUTF8ClassNameVarietà"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(18...90)(
+     body:
+      [ClassNode(18...90)(
+         locals: [],
+         class_keyword_loc: (18...23),
+         constant_path: ConstantReadNode(24...52)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(54...86)(
+            body:
+             [DefNode(54...86)(
+                name_loc: (63...65),
+                receiver: SelfNode(58...62)(),
+                parameters: nil,
+                body:
+                 StatementsNode(67...81)(
+                   body:
+                    [LocalVariableWriteNode(67...81)(
+                       name: :così,
+                       depth: 0,
+                       value:
+                        SymbolNode(75...81)(
+                          opening_loc: (75...76),
+                          value_loc: (76...81),
+                          closing_loc: nil,
+                          unescaped: "però"
+                        ),
+                       name_loc: (67...72),
+                       operator_loc: (73...74)
+                     )]
+                 ),
+                locals: [:così],
+                def_keyword_loc: (54...57),
+                operator_loc: (62...63),
+                lparen_loc: nil,
+                rparen_loc: nil,
+                equal_loc: nil,
+                end_keyword_loc: (83...86)
+              )]
+          ),
+         end_keyword_loc: (87...90),
+         name: "ExampleUTF8ClassNameVarietà"
+       )]
+   )
 )

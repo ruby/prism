@@ -1,13 +1,27 @@
 ProgramNode(0...11)(
-  [],
-  StatementsNode(0...11)(
-    [PostExecutionNode(0...11)(
-       StatementsNode(6...9)(
-         [CallNode(6...9)(nil, nil, (6...9), nil, nil, nil, nil, 2, "foo")]
-       ),
-       (0...3),
-       (4...5),
-       (10...11)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...11)(
+     body:
+      [PostExecutionNode(0...11)(
+         statements:
+          StatementsNode(6...9)(
+            body:
+             [CallNode(6...9)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (6...9),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "foo"
+              )]
+          ),
+         keyword_loc: (0...3),
+         opening_loc: (4...5),
+         closing_loc: (10...11)
+       )]
+   )
 )

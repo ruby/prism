@@ -1,26 +1,39 @@
 ProgramNode(0...16)(
-  [],
-  StatementsNode(0...16)(
-    [CallNode(0...16)(
-       nil,
-       nil,
-       (0...1),
-       (1...2),
-       ArgumentsNode(2...15)(
-         [IntegerNode(2...3)(),
-          KeywordHashNode(5...15)(
-            [AssocNode(5...10)(
-               SymbolNode(5...8)(nil, (5...7), (7...8), "kw"),
-               IntegerNode(9...10)(),
-               nil
-             ),
-             AssocSplatNode(12...15)(IntegerNode(14...15)(), (12...14))]
-          )]
-       ),
-       (15...16),
-       nil,
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...16)(
+     body:
+      [CallNode(0...16)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: (1...2),
+         arguments:
+          ArgumentsNode(2...15)(
+            arguments:
+             [IntegerNode(2...3)(),
+              KeywordHashNode(5...15)(
+                elements:
+                 [AssocNode(5...10)(
+                    key:
+                     SymbolNode(5...8)(
+                       opening_loc: nil,
+                       value_loc: (5...7),
+                       closing_loc: (7...8),
+                       unescaped: "kw"
+                     ),
+                    value: IntegerNode(9...10)(),
+                    operator_loc: nil
+                  ),
+                  AssocSplatNode(12...15)(
+                    value: IntegerNode(14...15)(), operator_loc: (12...14)
+                  )]
+              )]
+          ),
+         closing_loc: (15...16),
+         block: nil,
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

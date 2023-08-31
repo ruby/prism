@@ -1,7 +1,14 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)(
-    [StringNode(0...5)((0...1), (1...4), (4...5), "a\n" + "b"),
-     IntegerNode(6...7)()]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [StringNode(0...5)(
+         opening_loc: (0...1),
+         content_loc: (1...4),
+         closing_loc: (4...5),
+         unescaped: "a\n" + "b"
+       ),
+       IntegerNode(6...7)()]
+   )
 )

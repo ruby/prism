@@ -1,48 +1,56 @@
 ProgramNode(0...14)(
-  [],
-  StatementsNode(0...14)(
-    [CallNode(0...14)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...14)(
-         [ParenthesesNode(2...14)(
-            StatementsNode(3...13)(
-              [RescueModifierNode(3...13)(
-                 CallNode(3...4)(
-                   nil,
-                   nil,
-                   (3...4),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "b"
+  locals: [],
+  statements:
+   StatementsNode(0...14)(
+     body:
+      [CallNode(0...14)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...14)(
+            arguments:
+             [ParenthesesNode(2...14)(
+                body:
+                 StatementsNode(3...13)(
+                   body:
+                    [RescueModifierNode(3...13)(
+                       expression:
+                        CallNode(3...4)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (3...4),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "b"
+                        ),
+                       keyword_loc: (5...11),
+                       rescue_expression:
+                        CallNode(12...13)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (12...13),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "c"
+                        )
+                     )]
                  ),
-                 (5...11),
-                 CallNode(12...13)(
-                   nil,
-                   nil,
-                   (12...13),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "c"
-                 )
-               )]
-            ),
-            (2...3),
-            (13...14)
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "a"
-     )]
-  )
+                opening_loc: (2...3),
+                closing_loc: (13...14)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

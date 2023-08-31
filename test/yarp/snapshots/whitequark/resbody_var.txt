@@ -1,73 +1,95 @@
 ProgramNode(0...73)(
-  [:ex],
-  StatementsNode(0...73)(
-    [BeginNode(0...36)(
-       (0...5),
-       StatementsNode(7...11)(
-         [CallNode(7...11)(nil, nil, (7...11), nil, nil, nil, nil, 2, "meth")]
+  locals: [:ex],
+  statements:
+   StatementsNode(0...73)(
+     body:
+      [BeginNode(0...36)(
+         begin_keyword_loc: (0...5),
+         statements:
+          StatementsNode(7...11)(
+            body:
+             [CallNode(7...11)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (7...11),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "meth"
+              )]
+          ),
+         rescue_clause:
+          RescueNode(13...31)(
+            keyword_loc: (13...19),
+            exceptions: [],
+            operator_loc: (20...22),
+            reference: InstanceVariableTargetNode(23...26)(name: :@ex),
+            statements:
+             StatementsNode(28...31)(
+               body:
+                [CallNode(28...31)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (28...31),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )]
+             ),
+            consequent: nil
+          ),
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (33...36)
        ),
-       RescueNode(13...31)(
-         (13...19),
-         [],
-         (20...22),
-         InstanceVariableTargetNode(23...26)(:@ex),
-         StatementsNode(28...31)(
-           [CallNode(28...31)(
-              nil,
-              nil,
-              (28...31),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )]
-         ),
-         nil
-       ),
-       nil,
-       nil,
-       (33...36)
-     ),
-     BeginNode(38...73)(
-       (38...43),
-       StatementsNode(45...49)(
-         [CallNode(45...49)(
-            nil,
-            nil,
-            (45...49),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "meth"
-          )]
-       ),
-       RescueNode(51...68)(
-         (51...57),
-         [],
-         (58...60),
-         LocalVariableTargetNode(61...63)(:ex, 0),
-         StatementsNode(65...68)(
-           [CallNode(65...68)(
-              nil,
-              nil,
-              (65...68),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )]
-         ),
-         nil
-       ),
-       nil,
-       nil,
-       (70...73)
-     )]
-  )
+       BeginNode(38...73)(
+         begin_keyword_loc: (38...43),
+         statements:
+          StatementsNode(45...49)(
+            body:
+             [CallNode(45...49)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (45...49),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "meth"
+              )]
+          ),
+         rescue_clause:
+          RescueNode(51...68)(
+            keyword_loc: (51...57),
+            exceptions: [],
+            operator_loc: (58...60),
+            reference: LocalVariableTargetNode(61...63)(name: :ex, depth: 0),
+            statements:
+             StatementsNode(65...68)(
+               body:
+                [CallNode(65...68)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (65...68),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )]
+             ),
+            consequent: nil
+          ),
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (70...73)
+       )]
+   )
 )

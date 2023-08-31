@@ -1,55 +1,65 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [CallNode(0...15)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...15)(
-         [ParenthesesNode(2...15)(
-            StatementsNode(3...14)(
-              [ConstantPathOperatorWriteNode(3...14)(
-                 ConstantPathNode(3...7)(
-                   ConstantReadNode(3...4)(),
-                   ConstantReadNode(6...7)(),
-                   (4...6)
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [CallNode(0...15)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...15)(
+            arguments:
+             [ParenthesesNode(2...15)(
+                body:
+                 StatementsNode(3...14)(
+                   body:
+                    [ConstantPathOperatorWriteNode(3...14)(
+                       target:
+                        ConstantPathNode(3...7)(
+                          parent: ConstantReadNode(3...4)(),
+                          child: ConstantReadNode(6...7)(),
+                          delimiter_loc: (4...6)
+                        ),
+                       operator_loc: (8...10),
+                       value:
+                        CallNode(11...14)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (11...12),
+                          opening_loc: nil,
+                          arguments:
+                           ArgumentsNode(13...14)(
+                             arguments:
+                              [CallNode(13...14)(
+                                 receiver: nil,
+                                 operator_loc: nil,
+                                 message_loc: (13...14),
+                                 opening_loc: nil,
+                                 arguments: nil,
+                                 closing_loc: nil,
+                                 block: nil,
+                                 flags: 2,
+                                 name: "e"
+                               )]
+                           ),
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 0,
+                          name: "d"
+                        ),
+                       operator: :*
+                     )]
                  ),
-                 (8...10),
-                 CallNode(11...14)(
-                   nil,
-                   nil,
-                   (11...12),
-                   nil,
-                   ArgumentsNode(13...14)(
-                     [CallNode(13...14)(
-                        nil,
-                        nil,
-                        (13...14),
-                        nil,
-                        nil,
-                        nil,
-                        nil,
-                        2,
-                        "e"
-                      )]
-                   ),
-                   nil,
-                   nil,
-                   0,
-                   "d"
-                 ),
-                 :*
-               )]
-            ),
-            (2...3),
-            (14...15)
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "a"
-     )]
-  )
+                opening_loc: (2...3),
+                closing_loc: (14...15)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

@@ -1,42 +1,55 @@
 ProgramNode(0...33)(
-  [],
-  StatementsNode(0...33)(
-    [CallNode(0...33)(
-       nil,
-       nil,
-       (0...3),
-       nil,
-       ArgumentsNode(4...33)(
-         [DefNode(4...33)(
-            (8...11),
-            nil,
-            nil,
-            StatementsNode(13...29)(
-              [CallNode(13...29)(
-                 SelfNode(13...17)(),
-                 (17...18),
-                 (18...22),
-                 nil,
-                 nil,
-                 nil,
-                 BlockNode(23...29)([], nil, nil, (23...25), (26...29)),
-                 0,
-                 "each"
-               )]
-            ),
-            [],
-            (4...7),
-            nil,
-            nil,
-            nil,
-            nil,
-            (30...33)
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "bar"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...33)(
+     body:
+      [CallNode(0...33)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(4...33)(
+            arguments:
+             [DefNode(4...33)(
+                name_loc: (8...11),
+                receiver: nil,
+                parameters: nil,
+                body:
+                 StatementsNode(13...29)(
+                   body:
+                    [CallNode(13...29)(
+                       receiver: SelfNode(13...17)(),
+                       operator_loc: (17...18),
+                       message_loc: (18...22),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block:
+                        BlockNode(23...29)(
+                          locals: [],
+                          parameters: nil,
+                          body: nil,
+                          opening_loc: (23...25),
+                          closing_loc: (26...29)
+                        ),
+                       flags: 0,
+                       name: "each"
+                     )]
+                 ),
+                locals: [],
+                def_keyword_loc: (4...7),
+                operator_loc: nil,
+                lparen_loc: nil,
+                rparen_loc: nil,
+                equal_loc: nil,
+                end_keyword_loc: (30...33)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "bar"
+       )]
+   )
 )

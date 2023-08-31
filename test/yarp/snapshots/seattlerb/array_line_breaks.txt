@@ -1,12 +1,25 @@
 ProgramNode(0...13)(
-  [],
-  StatementsNode(0...13)(
-    [ArrayNode(0...11)(
-       [StringNode(2...5)((2...3), (3...4), (4...5), "a"),
-        StringNode(7...10)((7...8), (8...9), (9...10), "b")],
-       (0...1),
-       (10...11)
-     ),
-     IntegerNode(12...13)()]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [ArrayNode(0...11)(
+         elements:
+          [StringNode(2...5)(
+             opening_loc: (2...3),
+             content_loc: (3...4),
+             closing_loc: (4...5),
+             unescaped: "a"
+           ),
+           StringNode(7...10)(
+             opening_loc: (7...8),
+             content_loc: (8...9),
+             closing_loc: (9...10),
+             unescaped: "b"
+           )],
+         opening_loc: (0...1),
+         closing_loc: (10...11)
+       ),
+       IntegerNode(12...13)()]
+   )
 )

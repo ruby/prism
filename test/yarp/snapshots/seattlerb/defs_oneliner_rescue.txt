@@ -1,132 +1,153 @@
 ProgramNode(0...145)(
-  [],
-  StatementsNode(0...145)(
-    [DefNode(0...49)(
-       (9...13),
-       SelfNode(4...8)(),
-       ParametersNode(14...17)(
-         [RequiredParameterNode(14...17)(:cmd)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
+  locals: [],
+  statements:
+   StatementsNode(0...145)(
+     body:
+      [DefNode(0...49)(
+         name_loc: (9...13),
+         receiver: SelfNode(4...8)(),
+         parameters:
+          ParametersNode(14...17)(
+            requireds: [RequiredParameterNode(14...17)(name: :cmd)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          BeginNode(21...49)(
+            begin_keyword_loc: nil,
+            statements:
+             StatementsNode(21...32)(
+               body:
+                [CallNode(21...32)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (21...27),
+                   opening_loc: (27...28),
+                   arguments:
+                    ArgumentsNode(28...31)(
+                      arguments:
+                       [LocalVariableReadNode(28...31)(name: :cmd, depth: 0)]
+                    ),
+                   closing_loc: (31...32),
+                   block: nil,
+                   flags: 0,
+                   name: "system"
+                 )]
+             ),
+            rescue_clause:
+             RescueNode(33...45)(
+               keyword_loc: (33...39),
+               exceptions: [],
+               operator_loc: nil,
+               reference: nil,
+               statements: StatementsNode(42...45)(body: [NilNode(42...45)()]),
+               consequent: nil
+             ),
+            else_clause: nil,
+            ensure_clause: nil,
+            end_keyword_loc: (46...49)
+          ),
+         locals: [:cmd],
+         def_keyword_loc: (0...3),
+         operator_loc: (8...9),
+         lparen_loc: (13...14),
+         rparen_loc: (17...18),
+         equal_loc: nil,
+         end_keyword_loc: (46...49)
        ),
-       BeginNode(21...49)(
-         nil,
-         StatementsNode(21...32)(
-           [CallNode(21...32)(
-              nil,
-              nil,
-              (21...27),
-              (27...28),
-              ArgumentsNode(28...31)(
-                [LocalVariableReadNode(28...31)(:cmd, 0)]
-              ),
-              (31...32),
-              nil,
-              0,
-              "system"
-            )]
-         ),
-         RescueNode(33...45)(
-           (33...39),
-           [],
-           nil,
-           nil,
-           StatementsNode(42...45)([NilNode(42...45)()]),
-           nil
-         ),
-         nil,
-         nil,
-         (46...49)
+       DefNode(52...99)(
+         name_loc: (61...65),
+         receiver: SelfNode(56...60)(),
+         parameters:
+          ParametersNode(66...69)(
+            requireds: [RequiredParameterNode(66...69)(name: :cmd)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(73...95)(
+            body:
+             [RescueModifierNode(73...95)(
+                expression:
+                 CallNode(73...84)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (73...79),
+                   opening_loc: (79...80),
+                   arguments:
+                    ArgumentsNode(80...83)(
+                      arguments:
+                       [LocalVariableReadNode(80...83)(name: :cmd, depth: 0)]
+                    ),
+                   closing_loc: (83...84),
+                   block: nil,
+                   flags: 0,
+                   name: "system"
+                 ),
+                keyword_loc: (85...91),
+                rescue_expression: NilNode(92...95)()
+              )]
+          ),
+         locals: [:cmd],
+         def_keyword_loc: (52...55),
+         operator_loc: (60...61),
+         lparen_loc: (65...66),
+         rparen_loc: (69...70),
+         equal_loc: nil,
+         end_keyword_loc: (96...99)
        ),
-       [:cmd],
-       (0...3),
-       (8...9),
-       (13...14),
-       (17...18),
-       nil,
-       (46...49)
-     ),
-     DefNode(52...99)(
-       (61...65),
-       SelfNode(56...60)(),
-       ParametersNode(66...69)(
-         [RequiredParameterNode(66...69)(:cmd)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(73...95)(
-         [RescueModifierNode(73...95)(
-            CallNode(73...84)(
-              nil,
-              nil,
-              (73...79),
-              (79...80),
-              ArgumentsNode(80...83)(
-                [LocalVariableReadNode(80...83)(:cmd, 0)]
-              ),
-              (83...84),
-              nil,
-              0,
-              "system"
-            ),
-            (85...91),
-            NilNode(92...95)()
-          )]
-       ),
-       [:cmd],
-       (52...55),
-       (60...61),
-       (65...66),
-       (69...70),
-       nil,
-       (96...99)
-     ),
-     DefNode(102...145)(
-       (111...115),
-       SelfNode(106...110)(),
-       ParametersNode(116...119)(
-         [RequiredParameterNode(116...119)(:cmd)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(123...145)(
-         [RescueModifierNode(123...145)(
-            CallNode(123...134)(
-              nil,
-              nil,
-              (123...129),
-              (129...130),
-              ArgumentsNode(130...133)(
-                [LocalVariableReadNode(130...133)(:cmd, 0)]
-              ),
-              (133...134),
-              nil,
-              0,
-              "system"
-            ),
-            (135...141),
-            NilNode(142...145)()
-          )]
-       ),
-       [:cmd],
-       (102...105),
-       (110...111),
-       (115...116),
-       (119...120),
-       (121...122),
-       nil
-     )]
-  )
+       DefNode(102...145)(
+         name_loc: (111...115),
+         receiver: SelfNode(106...110)(),
+         parameters:
+          ParametersNode(116...119)(
+            requireds: [RequiredParameterNode(116...119)(name: :cmd)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(123...145)(
+            body:
+             [RescueModifierNode(123...145)(
+                expression:
+                 CallNode(123...134)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (123...129),
+                   opening_loc: (129...130),
+                   arguments:
+                    ArgumentsNode(130...133)(
+                      arguments:
+                       [LocalVariableReadNode(130...133)(name: :cmd, depth: 0)]
+                    ),
+                   closing_loc: (133...134),
+                   block: nil,
+                   flags: 0,
+                   name: "system"
+                 ),
+                keyword_loc: (135...141),
+                rescue_expression: NilNode(142...145)()
+              )]
+          ),
+         locals: [:cmd],
+         def_keyword_loc: (102...105),
+         operator_loc: (110...111),
+         lparen_loc: (115...116),
+         rparen_loc: (119...120),
+         equal_loc: (121...122),
+         end_keyword_loc: nil
+       )]
+   )
 )

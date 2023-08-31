@@ -1,15 +1,61 @@
 ProgramNode(0...23)(
-  [],
-  StatementsNode(0...23)(
-    [AndNode(0...10)(
-       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-       CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 2, "bar"),
-       (4...6)
-     ),
-     AndNode(12...23)(
-       CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 2, "foo"),
-       CallNode(20...23)(nil, nil, (20...23), nil, nil, nil, nil, 2, "bar"),
-       (16...19)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...23)(
+     body:
+      [AndNode(0...10)(
+         left:
+          CallNode(0...3)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...3),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         right:
+          CallNode(7...10)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (7...10),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         operator_loc: (4...6)
+       ),
+       AndNode(12...23)(
+         left:
+          CallNode(12...15)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (12...15),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         right:
+          CallNode(20...23)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (20...23),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         operator_loc: (16...19)
+       )]
+   )
 )

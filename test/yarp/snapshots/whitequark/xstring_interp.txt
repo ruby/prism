@@ -1,18 +1,43 @@
 ProgramNode(0...14)(
-  [],
-  StatementsNode(0...14)(
-    [InterpolatedXStringNode(0...14)(
-       (0...1),
-       [StringNode(1...4)(nil, (1...4), nil, "foo"),
-        EmbeddedStatementsNode(4...10)(
-          (4...6),
-          StatementsNode(6...9)(
-            [CallNode(6...9)(nil, nil, (6...9), nil, nil, nil, nil, 2, "bar")]
-          ),
-          (9...10)
-        ),
-        StringNode(10...13)(nil, (10...13), nil, "baz")],
-       (13...14)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...14)(
+     body:
+      [InterpolatedXStringNode(0...14)(
+         opening_loc: (0...1),
+         parts:
+          [StringNode(1...4)(
+             opening_loc: nil,
+             content_loc: (1...4),
+             closing_loc: nil,
+             unescaped: "foo"
+           ),
+           EmbeddedStatementsNode(4...10)(
+             opening_loc: (4...6),
+             statements:
+              StatementsNode(6...9)(
+                body:
+                 [CallNode(6...9)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (6...9),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "bar"
+                  )]
+              ),
+             closing_loc: (9...10)
+           ),
+           StringNode(10...13)(
+             opening_loc: nil,
+             content_loc: (10...13),
+             closing_loc: nil,
+             unescaped: "baz"
+           )],
+         closing_loc: (13...14)
+       )]
+   )
 )

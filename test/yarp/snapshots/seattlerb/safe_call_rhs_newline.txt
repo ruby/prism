@@ -1,22 +1,36 @@
 ProgramNode(0...8)(
-  [:c],
-  StatementsNode(0...8)(
-    [LocalVariableWriteNode(0...8)(
-       :c,
-       0,
-       CallNode(4...8)(
-         CallNode(4...5)(nil, nil, (4...5), nil, nil, nil, nil, 2, "a"),
-         (5...7),
-         (7...8),
-         nil,
-         nil,
-         nil,
-         nil,
-         1,
-         "b"
-       ),
-       (0...1),
-       (2...3)
-     )]
-  )
+  locals: [:c],
+  statements:
+   StatementsNode(0...8)(
+     body:
+      [LocalVariableWriteNode(0...8)(
+         name: :c,
+         depth: 0,
+         value:
+          CallNode(4...8)(
+            receiver:
+             CallNode(4...5)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (4...5),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "a"
+             ),
+            operator_loc: (5...7),
+            message_loc: (7...8),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 1,
+            name: "b"
+          ),
+         name_loc: (0...1),
+         operator_loc: (2...3)
+       )]
+   )
 )

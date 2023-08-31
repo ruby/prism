@@ -1,24 +1,64 @@
 ProgramNode(0...38)(
-  [],
-  StatementsNode(0...38)(
-    [IfNode(0...38)(
-       (0...2),
-       CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(8...11)(
-         [CallNode(8...11)(nil, nil, (8...11), nil, nil, nil, nil, 2, "bar")]
-       ),
-       IfNode(13...38)(
-         (13...18),
-         CallNode(19...22)(nil, nil, (19...22), nil, nil, nil, nil, 2, "baz"),
-         StatementsNode(24...25)([IntegerNode(24...25)()]),
-         ElseNode(27...38)(
-           (27...31),
-           StatementsNode(32...33)([IntegerNode(32...33)()]),
-           (35...38)
-         ),
-         (35...38)
-       ),
-       (35...38)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...38)(
+     body:
+      [IfNode(0...38)(
+         if_keyword_loc: (0...2),
+         predicate:
+          CallNode(3...6)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (3...6),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(8...11)(
+            body:
+             [CallNode(8...11)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (8...11),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent:
+          IfNode(13...38)(
+            if_keyword_loc: (13...18),
+            predicate:
+             CallNode(19...22)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (19...22),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "baz"
+             ),
+            statements:
+             StatementsNode(24...25)(body: [IntegerNode(24...25)()]),
+            consequent:
+             ElseNode(27...38)(
+               else_keyword_loc: (27...31),
+               statements:
+                StatementsNode(32...33)(body: [IntegerNode(32...33)()]),
+               end_keyword_loc: (35...38)
+             ),
+            end_keyword_loc: (35...38)
+          ),
+         end_keyword_loc: (35...38)
+       )]
+   )
 )

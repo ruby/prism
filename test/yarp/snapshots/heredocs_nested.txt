@@ -1,22 +1,43 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)(
-    [InterpolatedStringNode(0...7)(
-       (0...7),
-       [StringNode(8...12)(nil, (8...12), nil, "pre\n"),
-        EmbeddedStatementsNode(12...36)(
-          (12...14),
-          StatementsNode(15...21)(
-            [InterpolatedStringNode(15...21)(
-               (15...21),
-               [StringNode(22...30)(nil, (22...30), nil, "  hello\n")],
-               (30...35)
-             )]
-          ),
-          (35...36)
-        ),
-        StringNode(36...42)(nil, (36...42), nil, "\n" + "post\n")],
-       (42...47)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [InterpolatedStringNode(0...7)(
+         opening_loc: (0...7),
+         parts:
+          [StringNode(8...12)(
+             opening_loc: nil,
+             content_loc: (8...12),
+             closing_loc: nil,
+             unescaped: "pre\n"
+           ),
+           EmbeddedStatementsNode(12...36)(
+             opening_loc: (12...14),
+             statements:
+              StatementsNode(15...21)(
+                body:
+                 [InterpolatedStringNode(15...21)(
+                    opening_loc: (15...21),
+                    parts:
+                     [StringNode(22...30)(
+                        opening_loc: nil,
+                        content_loc: (22...30),
+                        closing_loc: nil,
+                        unescaped: "  hello\n"
+                      )],
+                    closing_loc: (30...35)
+                  )]
+              ),
+             closing_loc: (35...36)
+           ),
+           StringNode(36...42)(
+             opening_loc: nil,
+             content_loc: (36...42),
+             closing_loc: nil,
+             unescaped: "\n" + "post\n"
+           )],
+         closing_loc: (42...47)
+       )]
+   )
 )

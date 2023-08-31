@@ -1,203 +1,223 @@
 ProgramNode(0...179)(
-  [],
-  StatementsNode(0...179)(
-    [DefNode(0...28)(
-       (4...6),
-       nil,
-       ParametersNode(7...12)(
-         [RequiredParameterNode(7...12)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
+  locals: [],
+  statements:
+   StatementsNode(0...179)(
+     body:
+      [DefNode(0...28)(
+         name_loc: (4...6),
+         receiver: nil,
+         parameters:
+          ParametersNode(7...12)(
+            requireds: [RequiredParameterNode(7...12)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(16...28)(
+            body:
+             [CallNode(16...28)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (16...28),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (6...7),
+         rparen_loc: (12...13),
+         equal_loc: (14...15),
+         end_keyword_loc: nil
        ),
-       StatementsNode(16...28)(
-         [CallNode(16...28)(
-            nil,
-            nil,
-            (16...28),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
+       DefNode(30...58)(
+         name_loc: (34...36),
+         receiver: nil,
+         parameters:
+          ParametersNode(37...42)(
+            requireds: [RequiredParameterNode(37...42)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(46...58)(
+            body:
+             [CallNode(46...58)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (46...58),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (30...33),
+         operator_loc: nil,
+         lparen_loc: (36...37),
+         rparen_loc: (42...43),
+         equal_loc: (44...45),
+         end_keyword_loc: nil
        ),
-       [:other],
-       (0...3),
-       nil,
-       (6...7),
-       (12...13),
-       (14...15),
-       nil
-     ),
-     DefNode(30...58)(
-       (34...36),
-       nil,
-       ParametersNode(37...42)(
-         [RequiredParameterNode(37...42)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
+       DefNode(60...88)(
+         name_loc: (64...66),
+         receiver: nil,
+         parameters:
+          ParametersNode(67...72)(
+            requireds: [RequiredParameterNode(67...72)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(76...88)(
+            body:
+             [CallNode(76...88)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (76...88),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (60...63),
+         operator_loc: nil,
+         lparen_loc: (66...67),
+         rparen_loc: (72...73),
+         equal_loc: (74...75),
+         end_keyword_loc: nil
        ),
-       StatementsNode(46...58)(
-         [CallNode(46...58)(
-            nil,
-            nil,
-            (46...58),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
+       DefNode(90...118)(
+         name_loc: (94...96),
+         receiver: nil,
+         parameters:
+          ParametersNode(97...102)(
+            requireds: [RequiredParameterNode(97...102)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(106...118)(
+            body:
+             [CallNode(106...118)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (106...118),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (90...93),
+         operator_loc: nil,
+         lparen_loc: (96...97),
+         rparen_loc: (102...103),
+         equal_loc: (104...105),
+         end_keyword_loc: nil
        ),
-       [:other],
-       (30...33),
-       nil,
-       (36...37),
-       (42...43),
-       (44...45),
-       nil
-     ),
-     DefNode(60...88)(
-       (64...66),
-       nil,
-       ParametersNode(67...72)(
-         [RequiredParameterNode(67...72)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
+       DefNode(120...149)(
+         name_loc: (124...127),
+         receiver: nil,
+         parameters:
+          ParametersNode(128...133)(
+            requireds: [RequiredParameterNode(128...133)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(137...149)(
+            body:
+             [CallNode(137...149)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (137...149),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (120...123),
+         operator_loc: nil,
+         lparen_loc: (127...128),
+         rparen_loc: (133...134),
+         equal_loc: (135...136),
+         end_keyword_loc: nil
        ),
-       StatementsNode(76...88)(
-         [CallNode(76...88)(
-            nil,
-            nil,
-            (76...88),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
-       ),
-       [:other],
-       (60...63),
-       nil,
-       (66...67),
-       (72...73),
-       (74...75),
-       nil
-     ),
-     DefNode(90...118)(
-       (94...96),
-       nil,
-       ParametersNode(97...102)(
-         [RequiredParameterNode(97...102)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(106...118)(
-         [CallNode(106...118)(
-            nil,
-            nil,
-            (106...118),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
-       ),
-       [:other],
-       (90...93),
-       nil,
-       (96...97),
-       (102...103),
-       (104...105),
-       nil
-     ),
-     DefNode(120...149)(
-       (124...127),
-       nil,
-       ParametersNode(128...133)(
-         [RequiredParameterNode(128...133)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(137...149)(
-         [CallNode(137...149)(
-            nil,
-            nil,
-            (137...149),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
-       ),
-       [:other],
-       (120...123),
-       nil,
-       (127...128),
-       (133...134),
-       (135...136),
-       nil
-     ),
-     DefNode(151...179)(
-       (155...157),
-       nil,
-       ParametersNode(158...163)(
-         [RequiredParameterNode(158...163)(:other)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(167...179)(
-         [CallNode(167...179)(
-            nil,
-            nil,
-            (167...179),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "do_something"
-          )]
-       ),
-       [:other],
-       (151...154),
-       nil,
-       (157...158),
-       (163...164),
-       (165...166),
-       nil
-     )]
-  )
+       DefNode(151...179)(
+         name_loc: (155...157),
+         receiver: nil,
+         parameters:
+          ParametersNode(158...163)(
+            requireds: [RequiredParameterNode(158...163)(name: :other)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(167...179)(
+            body:
+             [CallNode(167...179)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (167...179),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "do_something"
+              )]
+          ),
+         locals: [:other],
+         def_keyword_loc: (151...154),
+         operator_loc: nil,
+         lparen_loc: (157...158),
+         rparen_loc: (163...164),
+         equal_loc: (165...166),
+         end_keyword_loc: nil
+       )]
+   )
 )

@@ -1,38 +1,46 @@
 ProgramNode(0...22)(
-  [],
-  StatementsNode(0...22)(
-    [DefNode(0...22)(
-       (4...5),
-       nil,
-       ParametersNode(6...9)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         ForwardingParameterNode(6...9)(),
-         nil
-       ),
-       StatementsNode(12...18)(
-         [CallNode(12...18)(
-            nil,
-            nil,
-            (12...13),
-            (13...14),
-            ArgumentsNode(14...17)([ForwardingArgumentsNode(14...17)()]),
-            (17...18),
-            nil,
-            0,
-            "m"
-          )]
-       ),
-       [:"..."],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       nil,
-       (19...22)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...22)(
+     body:
+      [DefNode(0...22)(
+         name_loc: (4...5),
+         receiver: nil,
+         parameters:
+          ParametersNode(6...9)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: ForwardingParameterNode(6...9)(),
+            block: nil
+          ),
+         body:
+          StatementsNode(12...18)(
+            body:
+             [CallNode(12...18)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (12...13),
+                opening_loc: (13...14),
+                arguments:
+                 ArgumentsNode(14...17)(
+                   arguments: [ForwardingArgumentsNode(14...17)()]
+                 ),
+                closing_loc: (17...18),
+                block: nil,
+                flags: 0,
+                name: "m"
+              )]
+          ),
+         locals: [:"..."],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (19...22)
+       )]
+   )
 )

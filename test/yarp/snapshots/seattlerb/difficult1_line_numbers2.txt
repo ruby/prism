@@ -1,52 +1,77 @@
 ProgramNode(0...48)(
-  [:b, :c],
-  StatementsNode(0...48)(
-    [IfNode(0...46)(
-       (0...2),
-       TrueNode(3...7)(),
-       StatementsNode(15...42)(
-         [CallNode(15...21)(
-            nil,
-            nil,
-            (15...16),
-            (16...17),
-            ArgumentsNode(17...20)(
-              [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
-            ),
-            (20...21),
-            nil,
-            0,
-            "p"
+  locals: [:b, :c],
+  statements:
+   StatementsNode(0...48)(
+     body:
+      [IfNode(0...46)(
+         if_keyword_loc: (0...2),
+         predicate: TrueNode(3...7)(),
+         statements:
+          StatementsNode(15...42)(
+            body:
+             [CallNode(15...21)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (15...16),
+                opening_loc: (16...17),
+                arguments:
+                 ArgumentsNode(17...20)(
+                   arguments:
+                    [StringNode(17...20)(
+                       opening_loc: (17...18),
+                       content_loc: (18...19),
+                       closing_loc: (19...20),
+                       unescaped: "a"
+                     )]
+                 ),
+                closing_loc: (20...21),
+                block: nil,
+                flags: 0,
+                name: "p"
+              ),
+              LocalVariableWriteNode(24...29)(
+                name: :b,
+                depth: 0,
+                value: IntegerNode(28...29)(),
+                name_loc: (24...25),
+                operator_loc: (26...27)
+              ),
+              CallNode(32...35)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (32...33),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(34...35)(
+                   arguments:
+                    [LocalVariableReadNode(34...35)(name: :b, depth: 0)]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "p"
+              ),
+              LocalVariableWriteNode(38...42)(
+                name: :c,
+                depth: 0,
+                value: IntegerNode(41...42)(),
+                name_loc: (38...39),
+                operator_loc: (40...41)
+              )]
           ),
-          LocalVariableWriteNode(24...29)(
-            :b,
-            0,
-            IntegerNode(28...29)(),
-            (24...25),
-            (26...27)
-          ),
-          CallNode(32...35)(
-            nil,
-            nil,
-            (32...33),
-            nil,
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:b, 0)]),
-            nil,
-            nil,
-            0,
-            "p"
-          ),
-          LocalVariableWriteNode(38...42)(
-            :c,
-            0,
-            IntegerNode(41...42)(),
-            (38...39),
-            (40...41)
-          )]
+         consequent: nil,
+         end_keyword_loc: (43...46)
        ),
-       nil,
-       (43...46)
-     ),
-     CallNode(47...48)(nil, nil, (47...48), nil, nil, nil, nil, 2, "a")]
-  )
+       CallNode(47...48)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (47...48),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "a"
+       )]
+   )
 )

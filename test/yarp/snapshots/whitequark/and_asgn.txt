@@ -1,37 +1,64 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [CallOperatorAndWriteNode(0...11)(
-       CallNode(0...5)(
-         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-         (3...4),
-         (4...5),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a="
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [CallOperatorAndWriteNode(0...11)(
+         target:
+          CallNode(0...5)(
+            receiver:
+             CallNode(0...3)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...3),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (3...4),
+            message_loc: (4...5),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "a="
+          ),
+         operator_loc: (6...9),
+         value: IntegerNode(10...11)()
        ),
-       (6...9),
-       IntegerNode(10...11)()
-     ),
-     CallOperatorAndWriteNode(13...28)(
-       CallNode(13...22)(
-         CallNode(13...16)(nil, nil, (13...16), nil, nil, nil, nil, 2, "foo"),
-         nil,
-         (16...22),
-         (16...17),
-         ArgumentsNode(17...21)(
-           [IntegerNode(17...18)(), IntegerNode(20...21)()]
-         ),
-         (21...22),
-         nil,
-         0,
-         "[]="
-       ),
-       (23...26),
-       IntegerNode(27...28)()
-     )]
-  )
+       CallOperatorAndWriteNode(13...28)(
+         target:
+          CallNode(13...22)(
+            receiver:
+             CallNode(13...16)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (13...16),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: nil,
+            message_loc: (16...22),
+            opening_loc: (16...17),
+            arguments:
+             ArgumentsNode(17...21)(
+               arguments: [IntegerNode(17...18)(), IntegerNode(20...21)()]
+             ),
+            closing_loc: (21...22),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (23...26),
+         value: IntegerNode(27...28)()
+       )]
+   )
 )

@@ -1,36 +1,44 @@
 ProgramNode(0...14)(
-  [],
-  StatementsNode(0...14)(
-    [InterpolatedStringNode(0...14)(
-       (0...1),
-       [EmbeddedStatementsNode(1...13)(
-          (1...3),
-          StatementsNode(3...12)(
-            [LambdaNode(3...12)(
-               [:foo],
-               (3...5),
-               (10...11),
-               (11...12),
-               BlockParametersNode(6...9)(
-                 ParametersNode(6...9)(
-                   [RequiredParameterNode(6...9)(:foo)],
-                   [],
-                   [],
-                   nil,
-                   [],
-                   nil,
-                   nil
-                 ),
-                 [],
-                 nil,
-                 nil
-               ),
-               nil
-             )]
-          ),
-          (12...13)
-        )],
-       (13...14)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...14)(
+     body:
+      [InterpolatedStringNode(0...14)(
+         opening_loc: (0...1),
+         parts:
+          [EmbeddedStatementsNode(1...13)(
+             opening_loc: (1...3),
+             statements:
+              StatementsNode(3...12)(
+                body:
+                 [LambdaNode(3...12)(
+                    locals: [:foo],
+                    operator_loc: (3...5),
+                    opening_loc: (10...11),
+                    closing_loc: (11...12),
+                    parameters:
+                     BlockParametersNode(6...9)(
+                       parameters:
+                        ParametersNode(6...9)(
+                          requireds:
+                           [RequiredParameterNode(6...9)(name: :foo)],
+                          optionals: [],
+                          posts: [],
+                          rest: nil,
+                          keywords: [],
+                          keyword_rest: nil,
+                          block: nil
+                        ),
+                       locals: [],
+                       opening_loc: nil,
+                       closing_loc: nil
+                     ),
+                    body: nil
+                  )]
+              ),
+             closing_loc: (12...13)
+           )],
+         closing_loc: (13...14)
+       )]
+   )
 )

@@ -1,53 +1,91 @@
 ProgramNode(0...35)(
-  [],
-  StatementsNode(0...35)(
-    [CallOperatorWriteNode(0...10)(
-       CallNode(0...5)(
-         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-         (3...4),
-         (4...5),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "A="
+  locals: [],
+  statements:
+   StatementsNode(0...35)(
+     body:
+      [CallOperatorWriteNode(0...10)(
+         target:
+          CallNode(0...5)(
+            receiver:
+             CallNode(0...3)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...3),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (3...4),
+            message_loc: (4...5),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "A="
+          ),
+         operator_loc: (6...8),
+         value: IntegerNode(9...10)(),
+         operator: :+
        ),
-       (6...8),
-       IntegerNode(9...10)(),
-       :+
-     ),
-     CallOperatorWriteNode(12...22)(
-       CallNode(12...17)(
-         CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 2, "foo"),
-         (15...16),
-         (16...17),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a="
+       CallOperatorWriteNode(12...22)(
+         target:
+          CallNode(12...17)(
+            receiver:
+             CallNode(12...15)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (12...15),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (15...16),
+            message_loc: (16...17),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "a="
+          ),
+         operator_loc: (18...20),
+         value: IntegerNode(21...22)(),
+         operator: :+
        ),
-       (18...20),
-       IntegerNode(21...22)(),
-       :+
-     ),
-     CallOperatorWriteNode(24...35)(
-       CallNode(24...30)(
-         CallNode(24...27)(nil, nil, (24...27), nil, nil, nil, nil, 2, "foo"),
-         (27...29),
-         (29...30),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a="
-       ),
-       (31...33),
-       IntegerNode(34...35)(),
-       :+
-     )]
-  )
+       CallOperatorWriteNode(24...35)(
+         target:
+          CallNode(24...30)(
+            receiver:
+             CallNode(24...27)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (24...27),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (27...29),
+            message_loc: (29...30),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "a="
+          ),
+         operator_loc: (31...33),
+         value: IntegerNode(34...35)(),
+         operator: :+
+       )]
+   )
 )

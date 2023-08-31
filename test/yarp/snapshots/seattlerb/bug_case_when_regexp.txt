@@ -1,22 +1,32 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [CaseNode(0...26)(
-       SymbolNode(5...7)((5...6), (6...7), nil, "x"),
-       [WhenNode(9...17)(
-          (9...13),
-          [RegularExpressionNode(14...17)(
-             (14...15),
-             (15...16),
-             (16...17),
-             "x",
-             0
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [CaseNode(0...26)(
+         predicate:
+          SymbolNode(5...7)(
+            opening_loc: (5...6),
+            value_loc: (6...7),
+            closing_loc: nil,
+            unescaped: "x"
+          ),
+         conditions:
+          [WhenNode(9...17)(
+             keyword_loc: (9...13),
+             conditions:
+              [RegularExpressionNode(14...17)(
+                 opening_loc: (14...15),
+                 content_loc: (15...16),
+                 closing_loc: (16...17),
+                 unescaped: "x",
+                 flags: 0
+               )],
+             statements: nil
            )],
-          nil
-        )],
-       nil,
-       (0...4),
-       (23...26)
-     )]
-  )
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (23...26)
+       )]
+   )
 )

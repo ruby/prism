@@ -1,22 +1,38 @@
 ProgramNode(0...17)(
-  [:a],
-  StatementsNode(0...17)(
-    [LocalVariableWriteNode(0...17)(
-       :a,
-       0,
-       IfNode(2...17)(
-         nil,
-         CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "b"),
-         StatementsNode(6...10)([TrueNode(6...10)()]),
-         ElseNode(10...17)(
-           (10...11),
-           StatementsNode(12...17)([FalseNode(12...17)()]),
-           nil
-         ),
-         nil
-       ),
-       (0...1),
-       (1...2)
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [LocalVariableWriteNode(0...17)(
+         name: :a,
+         depth: 0,
+         value:
+          IfNode(2...17)(
+            if_keyword_loc: nil,
+            predicate:
+             CallNode(2...3)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (2...3),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "b"
+             ),
+            statements: StatementsNode(6...10)(body: [TrueNode(6...10)()]),
+            consequent:
+             ElseNode(10...17)(
+               else_keyword_loc: (10...11),
+               statements:
+                StatementsNode(12...17)(body: [FalseNode(12...17)()]),
+               end_keyword_loc: nil
+             ),
+            end_keyword_loc: nil
+          ),
+         name_loc: (0...1),
+         operator_loc: (1...2)
+       )]
+   )
 )

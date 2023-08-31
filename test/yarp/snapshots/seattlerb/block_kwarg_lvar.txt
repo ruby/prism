@@ -1,38 +1,53 @@
 ProgramNode(0...20)(
-  [],
-  StatementsNode(0...20)(
-    [CallNode(0...20)(
-       nil,
-       nil,
-       (0...2),
-       nil,
-       nil,
-       nil,
-       BlockNode(3...20)(
-         [:kw],
-         BlockParametersNode(5...15)(
-           ParametersNode(6...14)(
-             [],
-             [],
-             [],
-             nil,
-             [KeywordParameterNode(6...14)(
-                (6...9),
-                SymbolNode(10...14)((10...11), (11...14), nil, "val")
-              )],
-             nil,
-             nil
-           ),
-           [],
-           (5...6),
-           (14...15)
-         ),
-         StatementsNode(16...18)([LocalVariableReadNode(16...18)(:kw, 0)]),
-         (3...4),
-         (19...20)
-       ),
-       0,
-       "bl"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...20)(
+     body:
+      [CallNode(0...20)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...2),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(3...20)(
+            locals: [:kw],
+            parameters:
+             BlockParametersNode(5...15)(
+               parameters:
+                ParametersNode(6...14)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords:
+                   [KeywordParameterNode(6...14)(
+                      name_loc: (6...9),
+                      value:
+                       SymbolNode(10...14)(
+                         opening_loc: (10...11),
+                         value_loc: (11...14),
+                         closing_loc: nil,
+                         unescaped: "val"
+                       )
+                    )],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (5...6),
+               closing_loc: (14...15)
+             ),
+            body:
+             StatementsNode(16...18)(
+               body: [LocalVariableReadNode(16...18)(name: :kw, depth: 0)]
+             ),
+            opening_loc: (3...4),
+            closing_loc: (19...20)
+          ),
+         flags: 0,
+         name: "bl"
+       )]
+   )
 )

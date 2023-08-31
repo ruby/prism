@@ -1,10 +1,12 @@
 ProgramNode(0...6)(
-  [],
-  StatementsNode(0...6)(
-    [ArrayNode(0...6)(
-       [IntegerNode(1...2)(), IntegerNode(4...5)()],
-       (0...1),
-       (5...6)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...6)(
+     body:
+      [ArrayNode(0...6)(
+         elements: [IntegerNode(1...2)(), IntegerNode(4...5)()],
+         opening_loc: (0...1),
+         closing_loc: (5...6)
+       )]
+   )
 )

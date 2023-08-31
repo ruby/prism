@@ -1,40 +1,52 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [CallNode(0...28)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...28)(
-         [:a, :b, :c, :d, :e],
-         BlockParametersNode(4...26)(
-           ParametersNode(5...25)(
-             [RequiredParameterNode(5...6)(:a)],
-             [OptionalParameterNode(8...14)(
-                :b,
-                (8...9),
-                (10...11),
-                IntegerNode(12...14)()
-              )],
-             [RequiredParameterNode(20...21)(:d)],
-             RestParameterNode(16...18)((16...17), (17...18)),
-             [],
-             nil,
-             BlockParameterNode(23...25)((24...25), (23...24))
-           ),
-           [],
-           (4...5),
-           (25...26)
-         ),
-         nil,
-         (2...3),
-         (27...28)
-       ),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [CallNode(0...28)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...28)(
+            locals: [:a, :b, :c, :d, :e],
+            parameters:
+             BlockParametersNode(4...26)(
+               parameters:
+                ParametersNode(5...25)(
+                  requireds: [RequiredParameterNode(5...6)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(8...14)(
+                      name: :b,
+                      name_loc: (8...9),
+                      operator_loc: (10...11),
+                      value: IntegerNode(12...14)()
+                    )],
+                  posts: [RequiredParameterNode(20...21)(name: :d)],
+                  rest:
+                   RestParameterNode(16...18)(
+                     operator_loc: (16...17), name_loc: (17...18)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(23...25)(
+                     name_loc: (24...25), operator_loc: (23...24)
+                   )
+                ),
+               locals: [],
+               opening_loc: (4...5),
+               closing_loc: (25...26)
+             ),
+            body: nil,
+            opening_loc: (2...3),
+            closing_loc: (27...28)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

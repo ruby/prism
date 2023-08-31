@@ -1,38 +1,50 @@
 ProgramNode(0...23)(
-  [],
-  StatementsNode(0...23)(
-    [DefNode(0...23)(
-       (4...7),
-       nil,
-       ParametersNode(8...9)(
-         [],
-         [],
-         [],
-         RestParameterNode(8...9)((8...9), nil),
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(12...18)(
-         [CallNode(12...18)(
-            nil,
-            nil,
-            (12...15),
-            (15...16),
-            ArgumentsNode(16...17)([SplatNode(16...17)((16...17), nil)]),
-            (17...18),
-            nil,
-            0,
-            "bar"
-          )]
-       ),
-       [:*],
-       (0...3),
-       nil,
-       (7...8),
-       (9...10),
-       nil,
-       (20...23)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...23)(
+     body:
+      [DefNode(0...23)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters:
+          ParametersNode(8...9)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest:
+             RestParameterNode(8...9)(operator_loc: (8...9), name_loc: nil),
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(12...18)(
+            body:
+             [CallNode(12...18)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (12...15),
+                opening_loc: (15...16),
+                arguments:
+                 ArgumentsNode(16...17)(
+                   arguments:
+                    [SplatNode(16...17)(
+                       operator_loc: (16...17), expression: nil
+                     )]
+                 ),
+                closing_loc: (17...18),
+                block: nil,
+                flags: 0,
+                name: "bar"
+              )]
+          ),
+         locals: [:*],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (7...8),
+         rparen_loc: (9...10),
+         equal_loc: nil,
+         end_keyword_loc: (20...23)
+       )]
+   )
 )

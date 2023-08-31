@@ -1,63 +1,69 @@
 ProgramNode(0...44)(
-  [],
-  StatementsNode(0...44)(
-    [DefNode(0...18)(
-       (4...5),
-       nil,
-       ParametersNode(6...13)(
-         [],
-         [OptionalParameterNode(6...13)(
-            :foo,
-            (6...9),
-            (10...11),
-            IntegerNode(12...13)()
-          )],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       nil,
-       [:foo],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       nil,
-       (15...18)
-     ),
-     DefNode(20...44)(
-       (24...25),
-       nil,
-       ParametersNode(26...38)(
-         [],
-         [OptionalParameterNode(26...31)(
-            :foo,
-            (26...29),
-            (29...30),
-            IntegerNode(30...31)()
+  locals: [],
+  statements:
+   StatementsNode(0...44)(
+     body:
+      [DefNode(0...18)(
+         name_loc: (4...5),
+         receiver: nil,
+         parameters:
+          ParametersNode(6...13)(
+            requireds: [],
+            optionals:
+             [OptionalParameterNode(6...13)(
+                name: :foo,
+                name_loc: (6...9),
+                operator_loc: (10...11),
+                value: IntegerNode(12...13)()
+              )],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
           ),
-          OptionalParameterNode(33...38)(
-            :bar,
-            (33...36),
-            (36...37),
-            IntegerNode(37...38)()
-          )],
-         [],
-         nil,
-         [],
-         nil,
-         nil
+         body: nil,
+         locals: [:foo],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (15...18)
        ),
-       nil,
-       [:foo, :bar],
-       (20...23),
-       nil,
-       (25...26),
-       (38...39),
-       nil,
-       (41...44)
-     )]
-  )
+       DefNode(20...44)(
+         name_loc: (24...25),
+         receiver: nil,
+         parameters:
+          ParametersNode(26...38)(
+            requireds: [],
+            optionals:
+             [OptionalParameterNode(26...31)(
+                name: :foo,
+                name_loc: (26...29),
+                operator_loc: (29...30),
+                value: IntegerNode(30...31)()
+              ),
+              OptionalParameterNode(33...38)(
+                name: :bar,
+                name_loc: (33...36),
+                operator_loc: (36...37),
+                value: IntegerNode(37...38)()
+              )],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body: nil,
+         locals: [:foo, :bar],
+         def_keyword_loc: (20...23),
+         operator_loc: nil,
+         lparen_loc: (25...26),
+         rparen_loc: (38...39),
+         equal_loc: nil,
+         end_keyword_loc: (41...44)
+       )]
+   )
 )

@@ -1,33 +1,50 @@
 ProgramNode(0...24)(
-  [],
-  StatementsNode(0...24)(
-    [UntilNode(0...24)(
-       (15...20),
-       nil,
-       CallNode(21...24)(nil, nil, (21...24), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(0...14)(
-         [BeginNode(0...14)(
-            (0...5),
-            StatementsNode(6...10)(
-              [CallNode(6...10)(
-                 nil,
-                 nil,
-                 (6...10),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "meth"
-               )]
-            ),
-            nil,
-            nil,
-            nil,
-            (11...14)
-          )]
-       ),
-       1
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...24)(
+     body:
+      [UntilNode(0...24)(
+         keyword_loc: (15...20),
+         closing_loc: nil,
+         predicate:
+          CallNode(21...24)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (21...24),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(0...14)(
+            body:
+             [BeginNode(0...14)(
+                begin_keyword_loc: (0...5),
+                statements:
+                 StatementsNode(6...10)(
+                   body:
+                    [CallNode(6...10)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (6...10),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "meth"
+                     )]
+                 ),
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (11...14)
+              )]
+          ),
+         flags: 1
+       )]
+   )
 )

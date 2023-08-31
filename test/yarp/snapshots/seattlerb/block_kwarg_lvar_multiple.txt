@@ -1,42 +1,63 @@
 ProgramNode(0...33)(
-  [],
-  StatementsNode(0...33)(
-    [CallNode(0...33)(
-       nil,
-       nil,
-       (0...2),
-       nil,
-       nil,
-       nil,
-       BlockNode(3...33)(
-         [:kw, :kw2],
-         BlockParametersNode(5...28)(
-           ParametersNode(6...26)(
-             [],
-             [],
-             [],
-             nil,
-             [KeywordParameterNode(6...14)(
-                (6...9),
-                SymbolNode(10...14)((10...11), (11...14), nil, "val")
-              ),
-              KeywordParameterNode(16...26)(
-                (16...20),
-                SymbolNode(21...26)((21...22), (22...26), nil, "val2")
-              )],
-             nil,
-             nil
-           ),
-           [],
-           (5...6),
-           (27...28)
-         ),
-         StatementsNode(29...31)([LocalVariableReadNode(29...31)(:kw, 0)]),
-         (3...4),
-         (32...33)
-       ),
-       0,
-       "bl"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...33)(
+     body:
+      [CallNode(0...33)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...2),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(3...33)(
+            locals: [:kw, :kw2],
+            parameters:
+             BlockParametersNode(5...28)(
+               parameters:
+                ParametersNode(6...26)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords:
+                   [KeywordParameterNode(6...14)(
+                      name_loc: (6...9),
+                      value:
+                       SymbolNode(10...14)(
+                         opening_loc: (10...11),
+                         value_loc: (11...14),
+                         closing_loc: nil,
+                         unescaped: "val"
+                       )
+                    ),
+                    KeywordParameterNode(16...26)(
+                      name_loc: (16...20),
+                      value:
+                       SymbolNode(21...26)(
+                         opening_loc: (21...22),
+                         value_loc: (22...26),
+                         closing_loc: nil,
+                         unescaped: "val2"
+                       )
+                    )],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (5...6),
+               closing_loc: (27...28)
+             ),
+            body:
+             StatementsNode(29...31)(
+               body: [LocalVariableReadNode(29...31)(name: :kw, depth: 0)]
+             ),
+            opening_loc: (3...4),
+            closing_loc: (32...33)
+          ),
+         flags: 0,
+         name: "bl"
+       )]
+   )
 )

@@ -1,50 +1,126 @@
 ProgramNode(0...116)(
-  [],
-  StatementsNode(0...116)(
-    [UndefNode(0...7)([SymbolNode(6...7)(nil, (6...7), nil, "a")], (0...5)),
-     UndefNode(9...19)(
-       [SymbolNode(15...16)(nil, (15...16), nil, "a"),
-        SymbolNode(18...19)(nil, (18...19), nil, "b")],
-       (9...14)
-     ),
-     UndefNode(21...29)(
-       [SymbolNode(27...29)(nil, (27...29), nil, "if")],
-       (21...26)
-     ),
-     UndefNode(31...40)(
-       [SymbolNode(37...40)(nil, (37...40), nil, "<=>")],
-       (31...36)
-     ),
-     UndefNode(42...50)(
-       [SymbolNode(48...50)((48...49), (49...50), nil, "a")],
-       (42...47)
-     ),
-     UndefNode(52...68)(
-       [SymbolNode(58...60)((58...59), (59...60), nil, "a"),
-        SymbolNode(62...64)((62...63), (63...64), nil, "b"),
-        SymbolNode(66...68)((66...67), (67...68), nil, "c")],
-       (52...57)
-     ),
-     UndefNode(70...82)(
-       [SymbolNode(76...82)((76...78), (78...81), (81...82), "abc")],
-       (70...75)
-     ),
-     UndefNode(84...100)(
-       [InterpolatedSymbolNode(90...100)(
-          (90...92),
-          [StringNode(92...95)(nil, (92...95), nil, "abc"),
-           EmbeddedStatementsNode(95...99)(
-             (95...97),
-             StatementsNode(97...98)([IntegerNode(97...98)()]),
-             (98...99)
+  locals: [],
+  statements:
+   StatementsNode(0...116)(
+     body:
+      [UndefNode(0...7)(
+         names:
+          [SymbolNode(6...7)(
+             opening_loc: nil,
+             value_loc: (6...7),
+             closing_loc: nil,
+             unescaped: "a"
            )],
-          (99...100)
-        )],
-       (84...89)
-     ),
-     UndefNode(102...116)(
-       [SymbolNode(108...116)(nil, (108...116), nil, "Constant")],
-       (102...107)
-     )]
-  )
+         keyword_loc: (0...5)
+       ),
+       UndefNode(9...19)(
+         names:
+          [SymbolNode(15...16)(
+             opening_loc: nil,
+             value_loc: (15...16),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           SymbolNode(18...19)(
+             opening_loc: nil,
+             value_loc: (18...19),
+             closing_loc: nil,
+             unescaped: "b"
+           )],
+         keyword_loc: (9...14)
+       ),
+       UndefNode(21...29)(
+         names:
+          [SymbolNode(27...29)(
+             opening_loc: nil,
+             value_loc: (27...29),
+             closing_loc: nil,
+             unescaped: "if"
+           )],
+         keyword_loc: (21...26)
+       ),
+       UndefNode(31...40)(
+         names:
+          [SymbolNode(37...40)(
+             opening_loc: nil,
+             value_loc: (37...40),
+             closing_loc: nil,
+             unescaped: "<=>"
+           )],
+         keyword_loc: (31...36)
+       ),
+       UndefNode(42...50)(
+         names:
+          [SymbolNode(48...50)(
+             opening_loc: (48...49),
+             value_loc: (49...50),
+             closing_loc: nil,
+             unescaped: "a"
+           )],
+         keyword_loc: (42...47)
+       ),
+       UndefNode(52...68)(
+         names:
+          [SymbolNode(58...60)(
+             opening_loc: (58...59),
+             value_loc: (59...60),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           SymbolNode(62...64)(
+             opening_loc: (62...63),
+             value_loc: (63...64),
+             closing_loc: nil,
+             unescaped: "b"
+           ),
+           SymbolNode(66...68)(
+             opening_loc: (66...67),
+             value_loc: (67...68),
+             closing_loc: nil,
+             unescaped: "c"
+           )],
+         keyword_loc: (52...57)
+       ),
+       UndefNode(70...82)(
+         names:
+          [SymbolNode(76...82)(
+             opening_loc: (76...78),
+             value_loc: (78...81),
+             closing_loc: (81...82),
+             unescaped: "abc"
+           )],
+         keyword_loc: (70...75)
+       ),
+       UndefNode(84...100)(
+         names:
+          [InterpolatedSymbolNode(90...100)(
+             opening_loc: (90...92),
+             parts:
+              [StringNode(92...95)(
+                 opening_loc: nil,
+                 content_loc: (92...95),
+                 closing_loc: nil,
+                 unescaped: "abc"
+               ),
+               EmbeddedStatementsNode(95...99)(
+                 opening_loc: (95...97),
+                 statements:
+                  StatementsNode(97...98)(body: [IntegerNode(97...98)()]),
+                 closing_loc: (98...99)
+               )],
+             closing_loc: (99...100)
+           )],
+         keyword_loc: (84...89)
+       ),
+       UndefNode(102...116)(
+         names:
+          [SymbolNode(108...116)(
+             opening_loc: nil,
+             value_loc: (108...116),
+             closing_loc: nil,
+             unescaped: "Constant"
+           )],
+         keyword_loc: (102...107)
+       )]
+   )
 )

@@ -1,55 +1,109 @@
 ProgramNode(0...58)(
-  [],
-  StatementsNode(0...58)(
-    [IfNode(0...30)(
-       (0...2),
-       CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(12...15)(
-         [CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 2, "bar")]
+  locals: [],
+  statements:
+   StatementsNode(0...58)(
+     body:
+      [IfNode(0...30)(
+         if_keyword_loc: (0...2),
+         predicate:
+          CallNode(3...6)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (3...6),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(12...15)(
+            body:
+             [CallNode(12...15)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (12...15),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent:
+          ElseNode(17...30)(
+            else_keyword_loc: (17...21),
+            statements:
+             StatementsNode(22...25)(
+               body:
+                [CallNode(22...25)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (22...25),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "baz"
+                 )]
+             ),
+            end_keyword_loc: (27...30)
+          ),
+         end_keyword_loc: (27...30)
        ),
-       ElseNode(17...30)(
-         (17...21),
-         StatementsNode(22...25)(
-           [CallNode(22...25)(
-              nil,
-              nil,
-              (22...25),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "baz"
-            )]
-         ),
-         (27...30)
-       ),
-       (27...30)
-     ),
-     IfNode(32...58)(
-       (32...34),
-       CallNode(35...38)(nil, nil, (35...38), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(40...43)(
-         [CallNode(40...43)(nil, nil, (40...43), nil, nil, nil, nil, 2, "bar")]
-       ),
-       ElseNode(45...58)(
-         (45...49),
-         StatementsNode(50...53)(
-           [CallNode(50...53)(
-              nil,
-              nil,
-              (50...53),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "baz"
-            )]
-         ),
-         (55...58)
-       ),
-       (55...58)
-     )]
-  )
+       IfNode(32...58)(
+         if_keyword_loc: (32...34),
+         predicate:
+          CallNode(35...38)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (35...38),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(40...43)(
+            body:
+             [CallNode(40...43)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (40...43),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent:
+          ElseNode(45...58)(
+            else_keyword_loc: (45...49),
+            statements:
+             StatementsNode(50...53)(
+               body:
+                [CallNode(50...53)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (50...53),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "baz"
+                 )]
+             ),
+            end_keyword_loc: (55...58)
+          ),
+         end_keyword_loc: (55...58)
+       )]
+   )
 )

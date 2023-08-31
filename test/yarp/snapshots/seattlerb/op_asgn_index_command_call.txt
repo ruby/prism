@@ -1,32 +1,57 @@
 ProgramNode(0...16)(
-  [],
-  StatementsNode(0...16)(
-    [CallOperatorOrWriteNode(0...16)(
-       CallNode(0...5)(
-         CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-         nil,
-         (1...5),
-         (1...2),
-         ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
-         (4...5),
-         nil,
-         0,
-         "[]="
-       ),
-       CallNode(10...16)(
-         nil,
-         nil,
-         (10...11),
-         nil,
-         ArgumentsNode(12...16)(
-           [IntegerNode(12...13)(), IntegerNode(15...16)()]
-         ),
-         nil,
-         nil,
-         0,
-         "c"
-       ),
-       (6...9)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...16)(
+     body:
+      [CallOperatorOrWriteNode(0...16)(
+         target:
+          CallNode(0...5)(
+            receiver:
+             CallNode(0...1)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...1),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "a"
+             ),
+            operator_loc: nil,
+            message_loc: (1...5),
+            opening_loc: (1...2),
+            arguments:
+             ArgumentsNode(2...4)(
+               arguments:
+                [SymbolNode(2...4)(
+                   opening_loc: (2...3),
+                   value_loc: (3...4),
+                   closing_loc: nil,
+                   unescaped: "b"
+                 )]
+             ),
+            closing_loc: (4...5),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         value:
+          CallNode(10...16)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (10...11),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(12...16)(
+               arguments: [IntegerNode(12...13)(), IntegerNode(15...16)()]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "c"
+          ),
+         operator_loc: (6...9)
+       )]
+   )
 )

@@ -1,21 +1,29 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [MultiWriteNode(0...15)(
-       [ConstantPathTargetNode(0...3)(nil, ConstantReadNode(2...3)(), (0...2)),
-        ConstantPathTargetNode(5...8)(
-          nil,
-          ConstantReadNode(7...8)(),
-          (5...7)
-        )],
-       (9...10),
-       ArrayNode(11...15)(
-         [IntegerNode(11...12)(), IntegerNode(14...15)()],
-         nil,
-         nil
-       ),
-       nil,
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [MultiWriteNode(0...15)(
+         targets:
+          [ConstantPathTargetNode(0...3)(
+             parent: nil,
+             child: ConstantReadNode(2...3)(),
+             delimiter_loc: (0...2)
+           ),
+           ConstantPathTargetNode(5...8)(
+             parent: nil,
+             child: ConstantReadNode(7...8)(),
+             delimiter_loc: (5...7)
+           )],
+         operator_loc: (9...10),
+         value:
+          ArrayNode(11...15)(
+            elements: [IntegerNode(11...12)(), IntegerNode(14...15)()],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         lparen_loc: nil,
+         rparen_loc: nil
+       )]
+   )
 )

@@ -1,76 +1,94 @@
 ProgramNode(0...67)(
-  [],
-  StatementsNode(0...67)(
-    [CallNode(0...67)(
-       nil,
-       nil,
-       (0...5),
-       nil,
-       ArgumentsNode(6...67)(
-         [CallNode(6...48)(
-            ParenthesesNode(6...44)(
-              StatementsNode(7...43)(
-                [CallNode(7...43)(
-                   ConstantReadNode(7...12)(),
-                   (12...13),
-                   (13...16),
-                   nil,
-                   nil,
-                   nil,
-                   BlockNode(17...43)(
-                     [],
-                     nil,
-                     StatementsNode(20...38)(
-                       [DefNode(20...38)(
-                          (24...34),
-                          nil,
-                          nil,
-                          nil,
-                          [],
-                          (20...23),
-                          nil,
-                          nil,
-                          nil,
-                          nil,
-                          (35...38)
+  locals: [],
+  statements:
+   StatementsNode(0...67)(
+     body:
+      [CallNode(0...67)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...5),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(6...67)(
+            arguments:
+             [CallNode(6...48)(
+                receiver:
+                 ParenthesesNode(6...44)(
+                   body:
+                    StatementsNode(7...43)(
+                      body:
+                       [CallNode(7...43)(
+                          receiver: ConstantReadNode(7...12)(),
+                          operator_loc: (12...13),
+                          message_loc: (13...16),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block:
+                           BlockNode(17...43)(
+                             locals: [],
+                             parameters: nil,
+                             body:
+                              StatementsNode(20...38)(
+                                body:
+                                 [DefNode(20...38)(
+                                    name_loc: (24...34),
+                                    receiver: nil,
+                                    parameters: nil,
+                                    body: nil,
+                                    locals: [],
+                                    def_keyword_loc: (20...23),
+                                    operator_loc: nil,
+                                    lparen_loc: nil,
+                                    rparen_loc: nil,
+                                    equal_loc: nil,
+                                    end_keyword_loc: (35...38)
+                                  )]
+                              ),
+                             opening_loc: (17...19),
+                             closing_loc: (40...43)
+                           ),
+                          flags: 0,
+                          name: "new"
                         )]
-                     ),
-                     (17...19),
-                     (40...43)
-                   ),
-                   0,
-                   "new"
-                 )]
+                    ),
+                   opening_loc: (6...7),
+                   closing_loc: (43...44)
+                 ),
+                operator_loc: (44...45),
+                message_loc: (45...48),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "new"
               ),
-              (6...7),
-              (43...44)
-            ),
-            (44...45),
-            (45...48),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "new"
+              KeywordHashNode(50...67)(
+                elements:
+                 [AssocNode(50...67)(
+                    key:
+                     SymbolNode(50...53)(
+                       opening_loc: (50...51),
+                       value_loc: (51...53),
+                       closing_loc: nil,
+                       unescaped: "at"
+                     ),
+                    value:
+                     StringNode(57...67)(
+                       opening_loc: (57...58),
+                       content_loc: (58...66),
+                       closing_loc: (66...67),
+                       unescaped: "endpoint"
+                     ),
+                    operator_loc: (54...56)
+                  )]
+              )]
           ),
-          KeywordHashNode(50...67)(
-            [AssocNode(50...67)(
-               SymbolNode(50...53)((50...51), (51...53), nil, "at"),
-               StringNode(57...67)(
-                 (57...58),
-                 (58...66),
-                 (66...67),
-                 "endpoint"
-               ),
-               (54...56)
-             )]
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "mount"
-     )]
-  )
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "mount"
+       )]
+   )
 )

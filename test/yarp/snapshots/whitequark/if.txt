@@ -1,23 +1,71 @@
 ProgramNode(0...38)(
-  [],
-  StatementsNode(0...38)(
-    [IfNode(0...20)(
-       (0...2),
-       CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(12...15)(
-         [CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 2, "bar")]
+  locals: [],
+  statements:
+   StatementsNode(0...38)(
+     body:
+      [IfNode(0...20)(
+         if_keyword_loc: (0...2),
+         predicate:
+          CallNode(3...6)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (3...6),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(12...15)(
+            body:
+             [CallNode(12...15)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (12...15),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (17...20)
        ),
-       nil,
-       (17...20)
-     ),
-     IfNode(22...38)(
-       (22...24),
-       CallNode(25...28)(nil, nil, (25...28), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(30...33)(
-         [CallNode(30...33)(nil, nil, (30...33), nil, nil, nil, nil, 2, "bar")]
-       ),
-       nil,
-       (35...38)
-     )]
-  )
+       IfNode(22...38)(
+         if_keyword_loc: (22...24),
+         predicate:
+          CallNode(25...28)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (25...28),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(30...33)(
+            body:
+             [CallNode(30...33)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (30...33),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (35...38)
+       )]
+   )
 )

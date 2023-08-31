@@ -1,13 +1,19 @@
 ProgramNode(0...22)(
-  [:测试],
-  StatementsNode(0...22)(
-    [GlobalVariableWriteNode(0...11)((0...7), (8...9), IntegerNode(10...11)()),
-     LocalVariableWriteNode(12...22)(
-       :测试,
-       0,
-       IntegerNode(21...22)(),
-       (12...18),
-       (19...20)
-     )]
-  )
+  locals: [:测试],
+  statements:
+   StatementsNode(0...22)(
+     body:
+      [GlobalVariableWriteNode(0...11)(
+         name_loc: (0...7),
+         operator_loc: (8...9),
+         value: IntegerNode(10...11)()
+       ),
+       LocalVariableWriteNode(12...22)(
+         name: :测试,
+         depth: 0,
+         value: IntegerNode(21...22)(),
+         name_loc: (12...18),
+         operator_loc: (19...20)
+       )]
+   )
 )

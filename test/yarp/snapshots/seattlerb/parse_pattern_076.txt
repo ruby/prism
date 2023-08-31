@@ -1,36 +1,57 @@
 ProgramNode(0...39)(
-  [],
-  StatementsNode(0...39)(
-    [CaseNode(0...39)(
-       HashNode(5...11)(
-         (5...6),
-         [AssocNode(6...10)(
-            SymbolNode(6...8)(nil, (6...7), (7...8), "a"),
-            IntegerNode(9...10)(),
-            nil
-          )],
-         (10...11)
-       ),
-       [InNode(12...35)(
-          HashPatternNode(15...28)(
-            nil,
-            [AssocNode(16...20)(
-               SymbolNode(16...18)(nil, (16...17), (17...18), "a"),
-               IntegerNode(19...20)(),
-               nil
-             ),
-             NoKeywordsParameterNode(22...27)((22...24), (24...27))],
-            nil,
-            (15...16),
-            (27...28)
+  locals: [],
+  statements:
+   StatementsNode(0...39)(
+     body:
+      [CaseNode(0...39)(
+         predicate:
+          HashNode(5...11)(
+            opening_loc: (5...6),
+            elements:
+             [AssocNode(6...10)(
+                key:
+                 SymbolNode(6...8)(
+                   opening_loc: nil,
+                   value_loc: (6...7),
+                   closing_loc: (7...8),
+                   unescaped: "a"
+                 ),
+                value: IntegerNode(9...10)(),
+                operator_loc: nil
+              )],
+            closing_loc: (10...11)
           ),
-          StatementsNode(31...35)([TrueNode(31...35)()]),
-          (12...14),
-          nil
-        )],
-       nil,
-       (0...4),
-       (36...39)
-     )]
-  )
+         conditions:
+          [InNode(12...35)(
+             pattern:
+              HashPatternNode(15...28)(
+                constant: nil,
+                assocs:
+                 [AssocNode(16...20)(
+                    key:
+                     SymbolNode(16...18)(
+                       opening_loc: nil,
+                       value_loc: (16...17),
+                       closing_loc: (17...18),
+                       unescaped: "a"
+                     ),
+                    value: IntegerNode(19...20)(),
+                    operator_loc: nil
+                  ),
+                  NoKeywordsParameterNode(22...27)(
+                    operator_loc: (22...24), keyword_loc: (24...27)
+                  )],
+                kwrest: nil,
+                opening_loc: (15...16),
+                closing_loc: (27...28)
+              ),
+             statements: StatementsNode(31...35)(body: [TrueNode(31...35)()]),
+             in_loc: (12...14),
+             then_loc: nil
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (36...39)
+       )]
+   )
 )

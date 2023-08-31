@@ -1,75 +1,95 @@
 ProgramNode(0...51)(
-  [],
-  StatementsNode(0...51)(
-    [DefNode(0...23)(
-       (4...7),
-       nil,
-       ParametersNode(8...9)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         BlockParameterNode(8...9)(nil, (8...9))
+  locals: [],
+  statements:
+   StatementsNode(0...51)(
+     body:
+      [DefNode(0...23)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters:
+          ParametersNode(8...9)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block:
+             BlockParameterNode(8...9)(name_loc: nil, operator_loc: (8...9))
+          ),
+         body:
+          StatementsNode(13...19)(
+            body:
+             [CallNode(13...19)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (13...16),
+                opening_loc: (16...17),
+                arguments:
+                 ArgumentsNode(17...18)(
+                   arguments:
+                    [BlockArgumentNode(17...18)(
+                       expression: nil, operator_loc: (17...18)
+                     )]
+                 ),
+                closing_loc: (18...19),
+                block: nil,
+                flags: 0,
+                name: "bar"
+              )]
+          ),
+         locals: [:&],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (7...8),
+         rparen_loc: (9...10),
+         equal_loc: nil,
+         end_keyword_loc: (20...23)
        ),
-       StatementsNode(13...19)(
-         [CallNode(13...19)(
-            nil,
-            nil,
-            (13...16),
-            (16...17),
-            ArgumentsNode(17...18)(
-              [BlockArgumentNode(17...18)(nil, (17...18))]
-            ),
-            (18...19),
-            nil,
-            0,
-            "bar"
-          )]
-       ),
-       [:&],
-       (0...3),
-       nil,
-       (7...8),
-       (9...10),
-       nil,
-       (20...23)
-     ),
-     DefNode(25...51)(
-       (29...32),
-       nil,
-       ParametersNode(33...37)(
-         [RequiredParameterNode(33...34)(:a)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         BlockParameterNode(36...37)(nil, (36...37))
-       ),
-       StatementsNode(41...47)(
-         [CallNode(41...47)(
-            nil,
-            nil,
-            (41...44),
-            (44...45),
-            ArgumentsNode(45...46)(
-              [BlockArgumentNode(45...46)(nil, (45...46))]
-            ),
-            (46...47),
-            nil,
-            0,
-            "bar"
-          )]
-       ),
-       [:a, :&],
-       (25...28),
-       nil,
-       (32...33),
-       (37...38),
-       nil,
-       (48...51)
-     )]
-  )
+       DefNode(25...51)(
+         name_loc: (29...32),
+         receiver: nil,
+         parameters:
+          ParametersNode(33...37)(
+            requireds: [RequiredParameterNode(33...34)(name: :a)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block:
+             BlockParameterNode(36...37)(
+               name_loc: nil, operator_loc: (36...37)
+             )
+          ),
+         body:
+          StatementsNode(41...47)(
+            body:
+             [CallNode(41...47)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (41...44),
+                opening_loc: (44...45),
+                arguments:
+                 ArgumentsNode(45...46)(
+                   arguments:
+                    [BlockArgumentNode(45...46)(
+                       expression: nil, operator_loc: (45...46)
+                     )]
+                 ),
+                closing_loc: (46...47),
+                block: nil,
+                flags: 0,
+                name: "bar"
+              )]
+          ),
+         locals: [:a, :&],
+         def_keyword_loc: (25...28),
+         operator_loc: nil,
+         lparen_loc: (32...33),
+         rparen_loc: (37...38),
+         equal_loc: nil,
+         end_keyword_loc: (48...51)
+       )]
+   )
 )

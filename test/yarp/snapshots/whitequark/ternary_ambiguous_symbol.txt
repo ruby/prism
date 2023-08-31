@@ -1,29 +1,49 @@
 ProgramNode(0...13)(
-  [:t],
-  StatementsNode(0...13)(
-    [LocalVariableWriteNode(0...3)(
-       :t,
-       0,
-       IntegerNode(2...3)(),
-       (0...1),
-       (1...2)
-     ),
-     IfNode(4...13)(
-       nil,
-       ParenthesesNode(4...9)(
-         StatementsNode(5...8)(
-           [CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "foo")]
-         ),
-         (4...5),
-         (8...9)
+  locals: [:t],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [LocalVariableWriteNode(0...3)(
+         name: :t,
+         depth: 0,
+         value: IntegerNode(2...3)(),
+         name_loc: (0...1),
+         operator_loc: (1...2)
        ),
-       StatementsNode(10...11)([LocalVariableReadNode(10...11)(:t, 0)]),
-       ElseNode(11...13)(
-         (11...12),
-         StatementsNode(12...13)([ConstantReadNode(12...13)()]),
-         nil
-       ),
-       nil
-     )]
-  )
+       IfNode(4...13)(
+         if_keyword_loc: nil,
+         predicate:
+          ParenthesesNode(4...9)(
+            body:
+             StatementsNode(5...8)(
+               body:
+                [CallNode(5...8)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (5...8),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            opening_loc: (4...5),
+            closing_loc: (8...9)
+          ),
+         statements:
+          StatementsNode(10...11)(
+            body: [LocalVariableReadNode(10...11)(name: :t, depth: 0)]
+          ),
+         consequent:
+          ElseNode(11...13)(
+            else_keyword_loc: (11...12),
+            statements:
+             StatementsNode(12...13)(body: [ConstantReadNode(12...13)()]),
+            end_keyword_loc: nil
+          ),
+         end_keyword_loc: nil
+       )]
+   )
 )

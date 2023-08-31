@@ -1,14 +1,23 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [HashNode(0...10)(
-       (0...1),
-       [AssocNode(2...8)(
-          SymbolNode(2...6)(nil, (2...5), (5...6), "foo"),
-          IntegerNode(7...8)(),
-          nil
-        )],
-       (9...10)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [HashNode(0...10)(
+         opening_loc: (0...1),
+         elements:
+          [AssocNode(2...8)(
+             key:
+              SymbolNode(2...6)(
+                opening_loc: nil,
+                value_loc: (2...5),
+                closing_loc: (5...6),
+                unescaped: "foo"
+              ),
+             value: IntegerNode(7...8)(),
+             operator_loc: nil
+           )],
+         closing_loc: (9...10)
+       )]
+   )
 )

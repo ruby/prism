@@ -1,11 +1,33 @@
 ProgramNode(0...24)(
-  [],
-  StatementsNode(0...24)(
-    [UndefNode(0...9)([SymbolNode(6...9)(nil, (6...9), nil, "foo")], (0...5)),
-     UndefNode(10...24)(
-       [SymbolNode(16...19)(nil, (16...19), nil, "foo"),
-        SymbolNode(21...24)(nil, (21...24), nil, "bar")],
-       (10...15)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...24)(
+     body:
+      [UndefNode(0...9)(
+         names:
+          [SymbolNode(6...9)(
+             opening_loc: nil,
+             value_loc: (6...9),
+             closing_loc: nil,
+             unescaped: "foo"
+           )],
+         keyword_loc: (0...5)
+       ),
+       UndefNode(10...24)(
+         names:
+          [SymbolNode(16...19)(
+             opening_loc: nil,
+             value_loc: (16...19),
+             closing_loc: nil,
+             unescaped: "foo"
+           ),
+           SymbolNode(21...24)(
+             opening_loc: nil,
+             value_loc: (21...24),
+             closing_loc: nil,
+             unescaped: "bar"
+           )],
+         keyword_loc: (10...15)
+       )]
+   )
 )

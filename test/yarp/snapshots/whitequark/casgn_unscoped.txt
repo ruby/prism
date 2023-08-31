@@ -1,6 +1,10 @@
 ProgramNode(0...8)(
-  [],
-  StatementsNode(0...8)(
-    [ConstantWriteNode(0...8)((0...3), IntegerNode(6...8)(), (4...5))]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...8)(
+     body:
+      [ConstantWriteNode(0...8)(
+         name_loc: (0...3), value: IntegerNode(6...8)(), operator_loc: (4...5)
+       )]
+   )
 )

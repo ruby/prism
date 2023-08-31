@@ -1,13 +1,15 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [ModuleNode(0...15)(
-       [],
-       (0...6),
-       ConstantReadNode(7...10)(),
-       nil,
-       (12...15),
-       "Foo"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [ModuleNode(0...15)(
+         locals: [],
+         module_keyword_loc: (0...6),
+         constant_path: ConstantReadNode(7...10)(),
+         body: nil,
+         end_keyword_loc: (12...15),
+         name: "Foo"
+       )]
+   )
 )

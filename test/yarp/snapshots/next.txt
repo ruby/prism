@@ -1,88 +1,110 @@
 ProgramNode(0...118)(
-  [],
-  StatementsNode(0...118)(
-    [NextNode(0...4)(nil, (0...4)),
-     NextNode(6...24)(
-       ArgumentsNode(11...24)(
-         [ParenthesesNode(11...14)(
-            StatementsNode(12...13)([IntegerNode(12...13)()]),
-            (11...12),
-            (13...14)
+  locals: [],
+  statements:
+   StatementsNode(0...118)(
+     body:
+      [NextNode(0...4)(arguments: nil, keyword_loc: (0...4)),
+       NextNode(6...24)(
+         arguments:
+          ArgumentsNode(11...24)(
+            arguments:
+             [ParenthesesNode(11...14)(
+                body: StatementsNode(12...13)(body: [IntegerNode(12...13)()]),
+                opening_loc: (11...12),
+                closing_loc: (13...14)
+              ),
+              ParenthesesNode(16...19)(
+                body: StatementsNode(17...18)(body: [IntegerNode(17...18)()]),
+                opening_loc: (16...17),
+                closing_loc: (18...19)
+              ),
+              ParenthesesNode(21...24)(
+                body: StatementsNode(22...23)(body: [IntegerNode(22...23)()]),
+                opening_loc: (21...22),
+                closing_loc: (23...24)
+              )]
           ),
-          ParenthesesNode(16...19)(
-            StatementsNode(17...18)([IntegerNode(17...18)()]),
-            (16...17),
-            (18...19)
+         keyword_loc: (6...10)
+       ),
+       NextNode(26...32)(
+         arguments:
+          ArgumentsNode(31...32)(arguments: [IntegerNode(31...32)()]),
+         keyword_loc: (26...30)
+       ),
+       NextNode(34...46)(
+         arguments:
+          ArgumentsNode(39...46)(
+            arguments:
+             [IntegerNode(39...40)(),
+              IntegerNode(42...43)(),
+              IntegerNode(45...46)()]
           ),
-          ParenthesesNode(21...24)(
-            StatementsNode(22...23)([IntegerNode(22...23)()]),
-            (21...22),
-            (23...24)
-          )]
+         keyword_loc: (34...38)
        ),
-       (6...10)
-     ),
-     NextNode(26...32)(
-       ArgumentsNode(31...32)([IntegerNode(31...32)()]),
-       (26...30)
-     ),
-     NextNode(34...46)(
-       ArgumentsNode(39...46)(
-         [IntegerNode(39...40)(),
-          IntegerNode(42...43)(),
-          IntegerNode(45...46)()]
+       NextNode(48...60)(
+         arguments:
+          ArgumentsNode(53...60)(
+            arguments:
+             [IntegerNode(53...54)(),
+              IntegerNode(56...57)(),
+              IntegerNode(59...60)()]
+          ),
+         keyword_loc: (48...52)
        ),
-       (34...38)
-     ),
-     NextNode(48...60)(
-       ArgumentsNode(53...60)(
-         [IntegerNode(53...54)(),
-          IntegerNode(56...57)(),
-          IntegerNode(59...60)()]
+       NextNode(62...76)(
+         arguments:
+          ArgumentsNode(67...76)(
+            arguments:
+             [ArrayNode(67...76)(
+                elements:
+                 [IntegerNode(68...69)(),
+                  IntegerNode(71...72)(),
+                  IntegerNode(74...75)()],
+                opening_loc: (67...68),
+                closing_loc: (75...76)
+              )]
+          ),
+         keyword_loc: (62...66)
        ),
-       (48...52)
-     ),
-     NextNode(62...76)(
-       ArgumentsNode(67...76)(
-         [ArrayNode(67...76)(
-            [IntegerNode(68...69)(),
-             IntegerNode(71...72)(),
-             IntegerNode(74...75)()],
-            (67...68),
-            (75...76)
-          )]
+       NextNode(78...93)(
+         arguments:
+          ArgumentsNode(82...93)(
+            arguments:
+             [ParenthesesNode(82...93)(
+                body:
+                 StatementsNode(86...91)(
+                   body: [IntegerNode(86...87)(), IntegerNode(90...91)()]
+                 ),
+                opening_loc: (82...83),
+                closing_loc: (92...93)
+              )]
+          ),
+         keyword_loc: (78...82)
        ),
-       (62...66)
-     ),
-     NextNode(78...93)(
-       ArgumentsNode(82...93)(
-         [ParenthesesNode(82...93)(
-            StatementsNode(86...91)(
-              [IntegerNode(86...87)(), IntegerNode(90...91)()]
-            ),
-            (82...83),
-            (92...93)
-          )]
+       NextNode(95...99)(arguments: nil, keyword_loc: (95...99)),
+       IntegerNode(100...101)(),
+       NextNode(103...109)(
+         arguments:
+          ArgumentsNode(107...109)(
+            arguments:
+             [ParenthesesNode(107...109)(
+                body: nil, opening_loc: (107...108), closing_loc: (108...109)
+              )]
+          ),
+         keyword_loc: (103...107)
        ),
-       (78...82)
-     ),
-     NextNode(95...99)(nil, (95...99)),
-     IntegerNode(100...101)(),
-     NextNode(103...109)(
-       ArgumentsNode(107...109)(
-         [ParenthesesNode(107...109)(nil, (107...108), (108...109))]
-       ),
-       (103...107)
-     ),
-     NextNode(111...118)(
-       ArgumentsNode(115...118)(
-         [ParenthesesNode(115...118)(
-            StatementsNode(116...117)([IntegerNode(116...117)()]),
-            (115...116),
-            (117...118)
-          )]
-       ),
-       (111...115)
-     )]
-  )
+       NextNode(111...118)(
+         arguments:
+          ArgumentsNode(115...118)(
+            arguments:
+             [ParenthesesNode(115...118)(
+                body:
+                 StatementsNode(116...117)(body: [IntegerNode(116...117)()]),
+                opening_loc: (115...116),
+                closing_loc: (117...118)
+              )]
+          ),
+         keyword_loc: (111...115)
+       )]
+   )
 )

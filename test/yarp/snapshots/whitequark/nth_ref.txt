@@ -1,4 +1,5 @@
 ProgramNode(0...3)(
-  [],
-  StatementsNode(0...3)([NumberedReferenceReadNode(0...3)(10)])
+  locals: [],
+  statements:
+   StatementsNode(0...3)(body: [NumberedReferenceReadNode(0...3)(number: 10)])
 )

@@ -1,64 +1,161 @@
 ProgramNode(0...118)(
-  [],
-  StatementsNode(0...118)(
-    [CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-     CallNode(13...14)(nil, nil, (13...14), nil, nil, nil, nil, 2, "b"),
-     CallNode(16...17)(nil, nil, (16...17), nil, nil, nil, nil, 2, "c"),
-     CallNode(28...29)(nil, nil, (28...29), nil, nil, nil, nil, 2, "d"),
-     CallNode(31...47)(
-       CallNode(31...32)(nil, nil, (31...32), nil, nil, nil, nil, 2, "e"),
-       (45...46),
-       (46...47),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "f"
-     ),
-     CallNode(49...64)(
-       CallNode(49...50)(nil, nil, (49...50), nil, nil, nil, nil, 2, "g"),
-       (62...63),
-       (63...64),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "h"
-     ),
-     CallNode(66...80)(
-       CallNode(66...67)(nil, nil, (66...67), nil, nil, nil, nil, 2, "i"),
-       (78...79),
-       (79...80),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "j"
-     ),
-     CallNode(82...98)(
-       CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 2, "k"),
-       (96...97),
-       (97...98),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "l"
-     ),
-     CallNode(100...118)(
-       CallNode(100...101)(nil, nil, (100...101), nil, nil, nil, nil, 2, "m"),
-       (115...117),
-       (117...118),
-       nil,
-       nil,
-       nil,
-       nil,
-       1,
-       "n"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...118)(
+     body:
+      [CallNode(0...1)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "a"
+       ),
+       CallNode(13...14)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (13...14),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "b"
+       ),
+       CallNode(16...17)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (16...17),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "c"
+       ),
+       CallNode(28...29)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (28...29),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "d"
+       ),
+       CallNode(31...47)(
+         receiver:
+          CallNode(31...32)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (31...32),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "e"
+          ),
+         operator_loc: (45...46),
+         message_loc: (46...47),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "f"
+       ),
+       CallNode(49...64)(
+         receiver:
+          CallNode(49...50)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (49...50),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "g"
+          ),
+         operator_loc: (62...63),
+         message_loc: (63...64),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "h"
+       ),
+       CallNode(66...80)(
+         receiver:
+          CallNode(66...67)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (66...67),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "i"
+          ),
+         operator_loc: (78...79),
+         message_loc: (79...80),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "j"
+       ),
+       CallNode(82...98)(
+         receiver:
+          CallNode(82...83)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (82...83),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "k"
+          ),
+         operator_loc: (96...97),
+         message_loc: (97...98),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "l"
+       ),
+       CallNode(100...118)(
+         receiver:
+          CallNode(100...101)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (100...101),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "m"
+          ),
+         operator_loc: (115...117),
+         message_loc: (117...118),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 1,
+         name: "n"
+       )]
+   )
 )

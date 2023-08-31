@@ -1,12 +1,14 @@
 ProgramNode(0...7)(
-  [:a],
-  StatementsNode(0...7)(
-    [LocalVariableOrWriteNode(0...7)(
-       (0...1),
-       (2...5),
-       IntegerNode(6...7)(),
-       :a,
-       0
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [LocalVariableOrWriteNode(0...7)(
+         name_loc: (0...1),
+         operator_loc: (2...5),
+         value: IntegerNode(6...7)(),
+         name: :a,
+         depth: 0
+       )]
+   )
 )

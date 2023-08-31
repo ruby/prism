@@ -1,28 +1,47 @@
 ProgramNode(0...29)(
-  [:rest],
-  StatementsNode(0...29)(
-    [CaseNode(0...29)(
-       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
-       [InNode(8...25)(
-          HashPatternNode(11...17)(
-            nil,
-            [AssocSplatNode(11...17)(
-               LocalVariableTargetNode(13...17)(:rest, 0),
-               (11...13)
-             )],
-            nil,
-            nil,
-            nil
+  locals: [:rest],
+  statements:
+   StatementsNode(0...29)(
+     body:
+      [CaseNode(0...29)(
+         predicate:
+          SymbolNode(5...7)(
+            opening_loc: (5...6),
+            value_loc: (6...7),
+            closing_loc: nil,
+            unescaped: "a"
           ),
-          StatementsNode(23...25)(
-            [SymbolNode(23...25)((23...24), (24...25), nil, "d")]
-          ),
-          (8...10),
-          (18...22)
-        )],
-       nil,
-       (0...4),
-       (26...29)
-     )]
-  )
+         conditions:
+          [InNode(8...25)(
+             pattern:
+              HashPatternNode(11...17)(
+                constant: nil,
+                assocs:
+                 [AssocSplatNode(11...17)(
+                    value:
+                     LocalVariableTargetNode(13...17)(name: :rest, depth: 0),
+                    operator_loc: (11...13)
+                  )],
+                kwrest: nil,
+                opening_loc: nil,
+                closing_loc: nil
+              ),
+             statements:
+              StatementsNode(23...25)(
+                body:
+                 [SymbolNode(23...25)(
+                    opening_loc: (23...24),
+                    value_loc: (24...25),
+                    closing_loc: nil,
+                    unescaped: "d"
+                  )]
+              ),
+             in_loc: (8...10),
+             then_loc: (18...22)
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (26...29)
+       )]
+   )
 )

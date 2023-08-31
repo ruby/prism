@@ -1,37 +1,42 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [ClassNode(0...28)(
-       [],
-       (0...5),
-       ConstantReadNode(6...7)(),
-       nil,
-       nil,
-       StatementsNode(10...24)(
-         [DefNode(10...24)(
-            (14...16),
-            nil,
-            ParametersNode(17...18)(
-              [RequiredParameterNode(17...18)(:o)],
-              [],
-              [],
-              nil,
-              [],
-              nil,
-              nil
-            ),
-            StatementsNode(22...24)([IntegerNode(22...24)()]),
-            [:o],
-            (10...13),
-            nil,
-            (16...17),
-            (18...19),
-            (20...21),
-            nil
-          )]
-       ),
-       (25...28),
-       "X"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [ClassNode(0...28)(
+         locals: [],
+         class_keyword_loc: (0...5),
+         constant_path: ConstantReadNode(6...7)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(10...24)(
+            body:
+             [DefNode(10...24)(
+                name_loc: (14...16),
+                receiver: nil,
+                parameters:
+                 ParametersNode(17...18)(
+                   requireds: [RequiredParameterNode(17...18)(name: :o)],
+                   optionals: [],
+                   posts: [],
+                   rest: nil,
+                   keywords: [],
+                   keyword_rest: nil,
+                   block: nil
+                 ),
+                body: StatementsNode(22...24)(body: [IntegerNode(22...24)()]),
+                locals: [:o],
+                def_keyword_loc: (10...13),
+                operator_loc: nil,
+                lparen_loc: (16...17),
+                rparen_loc: (18...19),
+                equal_loc: (20...21),
+                end_keyword_loc: nil
+              )]
+          ),
+         end_keyword_loc: (25...28),
+         name: "X"
+       )]
+   )
 )

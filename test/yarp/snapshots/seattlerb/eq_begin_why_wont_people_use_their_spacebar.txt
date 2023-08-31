@@ -1,26 +1,52 @@
 ProgramNode(0...29)(
-  [],
-  StatementsNode(0...29)(
-    [CallNode(0...29)(
-       CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "h"),
-       nil,
-       (1...4),
-       (1...2),
-       ArgumentsNode(2...29)(
-         [CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "k"),
-          BeginNode(5...29)(
-            (5...10),
-            StatementsNode(18...20)([IntegerNode(18...20)()]),
-            nil,
-            nil,
-            nil,
-            (26...29)
-          )]
-       ),
-       (3...4),
-       nil,
-       0,
-       "[]="
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...29)(
+     body:
+      [CallNode(0...29)(
+         receiver:
+          CallNode(0...1)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...1),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "h"
+          ),
+         operator_loc: nil,
+         message_loc: (1...4),
+         opening_loc: (1...2),
+         arguments:
+          ArgumentsNode(2...29)(
+            arguments:
+             [CallNode(2...3)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (2...3),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "k"
+              ),
+              BeginNode(5...29)(
+                begin_keyword_loc: (5...10),
+                statements:
+                 StatementsNode(18...20)(body: [IntegerNode(18...20)()]),
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (26...29)
+              )]
+          ),
+         closing_loc: (3...4),
+         block: nil,
+         flags: 0,
+         name: "[]="
+       )]
+   )
 )

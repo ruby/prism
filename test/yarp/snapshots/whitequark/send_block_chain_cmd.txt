@@ -1,194 +1,321 @@
 ProgramNode(0...173)(
-  [],
-  StatementsNode(0...173)(
-    [CallNode(0...21)(
-       CallNode(0...13)(
-         nil,
-         nil,
-         (0...4),
-         nil,
-         ArgumentsNode(5...6)([IntegerNode(5...6)()]),
-         nil,
-         BlockNode(7...13)([], nil, nil, (7...9), (10...13)),
-         0,
-         "meth"
+  locals: [],
+  statements:
+   StatementsNode(0...173)(
+     body:
+      [CallNode(0...21)(
+         receiver:
+          CallNode(0...13)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...4),
+            opening_loc: nil,
+            arguments: ArgumentsNode(5...6)(arguments: [IntegerNode(5...6)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(7...13)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (7...9),
+               closing_loc: (10...13)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (13...14),
+         message_loc: (14...17),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(18...21)(
+            arguments:
+             [CallNode(18...21)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (18...21),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "fun"
        ),
-       (13...14),
-       (14...17),
-       nil,
-       ArgumentsNode(18...21)(
-         [CallNode(18...21)(nil, nil, (18...21), nil, nil, nil, nil, 2, "bar")]
+       CallNode(23...51)(
+         receiver:
+          CallNode(23...36)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (23...27),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(28...29)(arguments: [IntegerNode(28...29)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(30...36)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (30...32),
+               closing_loc: (33...36)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (36...37),
+         message_loc: (37...40),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(41...44)(
+            arguments:
+             [CallNode(41...44)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (41...44),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(45...51)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (45...47),
+            closing_loc: (48...51)
+          ),
+         flags: 0,
+         name: "fun"
        ),
-       nil,
-       nil,
-       0,
-       "fun"
-     ),
-     CallNode(23...51)(
-       CallNode(23...36)(
-         nil,
-         nil,
-         (23...27),
-         nil,
-         ArgumentsNode(28...29)([IntegerNode(28...29)()]),
-         nil,
-         BlockNode(30...36)([], nil, nil, (30...32), (33...36)),
-         0,
-         "meth"
+       CallNode(53...73)(
+         receiver:
+          CallNode(53...66)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (53...57),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(58...59)(arguments: [IntegerNode(58...59)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(60...66)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (60...62),
+               closing_loc: (63...66)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (66...67),
+         message_loc: (67...70),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(71...73)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (71...72),
+            closing_loc: (72...73)
+          ),
+         flags: 0,
+         name: "fun"
        ),
-       (36...37),
-       (37...40),
-       nil,
-       ArgumentsNode(41...44)(
-         [CallNode(41...44)(nil, nil, (41...44), nil, nil, nil, nil, 2, "bar")]
+       CallNode(75...97)(
+         receiver:
+          CallNode(75...88)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (75...79),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(80...81)(arguments: [IntegerNode(80...81)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(82...88)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (82...84),
+               closing_loc: (85...88)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (88...89),
+         message_loc: (89...92),
+         opening_loc: (92...93),
+         arguments:
+          ArgumentsNode(93...96)(
+            arguments:
+             [CallNode(93...96)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (93...96),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: (96...97),
+         block: nil,
+         flags: 0,
+         name: "fun"
        ),
-       nil,
-       BlockNode(45...51)([], nil, nil, (45...47), (48...51)),
-       0,
-       "fun"
-     ),
-     CallNode(53...73)(
-       CallNode(53...66)(
-         nil,
-         nil,
-         (53...57),
-         nil,
-         ArgumentsNode(58...59)([IntegerNode(58...59)()]),
-         nil,
-         BlockNode(60...66)([], nil, nil, (60...62), (63...66)),
-         0,
-         "meth"
+       CallNode(99...124)(
+         receiver:
+          CallNode(99...112)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (99...103),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(104...105)(arguments: [IntegerNode(104...105)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(106...112)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (106...108),
+               closing_loc: (109...112)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (112...113),
+         message_loc: (113...116),
+         opening_loc: (116...117),
+         arguments:
+          ArgumentsNode(117...120)(
+            arguments:
+             [CallNode(117...120)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (117...120),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: (120...121),
+         block:
+          BlockNode(122...124)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (122...123),
+            closing_loc: (123...124)
+          ),
+         flags: 0,
+         name: "fun"
        ),
-       (66...67),
-       (67...70),
-       nil,
-       nil,
-       nil,
-       BlockNode(71...73)([], nil, nil, (71...72), (72...73)),
-       0,
-       "fun"
-     ),
-     CallNode(75...97)(
-       CallNode(75...88)(
-         nil,
-         nil,
-         (75...79),
-         nil,
-         ArgumentsNode(80...81)([IntegerNode(80...81)()]),
-         nil,
-         BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
-         0,
-         "meth"
+       CallNode(126...148)(
+         receiver:
+          CallNode(126...139)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (126...130),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(131...132)(arguments: [IntegerNode(131...132)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(133...139)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (133...135),
+               closing_loc: (136...139)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (139...141),
+         message_loc: (141...144),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(145...148)(
+            arguments:
+             [CallNode(145...148)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (145...148),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "fun"
        ),
-       (88...89),
-       (89...92),
-       (92...93),
-       ArgumentsNode(93...96)(
-         [CallNode(93...96)(nil, nil, (93...96), nil, nil, nil, nil, 2, "bar")]
-       ),
-       (96...97),
-       nil,
-       0,
-       "fun"
-     ),
-     CallNode(99...124)(
-       CallNode(99...112)(
-         nil,
-         nil,
-         (99...103),
-         nil,
-         ArgumentsNode(104...105)([IntegerNode(104...105)()]),
-         nil,
-         BlockNode(106...112)([], nil, nil, (106...108), (109...112)),
-         0,
-         "meth"
-       ),
-       (112...113),
-       (113...116),
-       (116...117),
-       ArgumentsNode(117...120)(
-         [CallNode(117...120)(
-            nil,
-            nil,
-            (117...120),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
-       ),
-       (120...121),
-       BlockNode(122...124)([], nil, nil, (122...123), (123...124)),
-       0,
-       "fun"
-     ),
-     CallNode(126...148)(
-       CallNode(126...139)(
-         nil,
-         nil,
-         (126...130),
-         nil,
-         ArgumentsNode(131...132)([IntegerNode(131...132)()]),
-         nil,
-         BlockNode(133...139)([], nil, nil, (133...135), (136...139)),
-         0,
-         "meth"
-       ),
-       (139...141),
-       (141...144),
-       nil,
-       ArgumentsNode(145...148)(
-         [CallNode(145...148)(
-            nil,
-            nil,
-            (145...148),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "fun"
-     ),
-     CallNode(150...173)(
-       CallNode(150...163)(
-         nil,
-         nil,
-         (150...154),
-         nil,
-         ArgumentsNode(155...156)([IntegerNode(155...156)()]),
-         nil,
-         BlockNode(157...163)([], nil, nil, (157...159), (160...163)),
-         0,
-         "meth"
-       ),
-       (163...165),
-       (165...168),
-       (168...169),
-       ArgumentsNode(169...172)(
-         [CallNode(169...172)(
-            nil,
-            nil,
-            (169...172),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
-       ),
-       (172...173),
-       nil,
-       0,
-       "fun"
-     )]
-  )
+       CallNode(150...173)(
+         receiver:
+          CallNode(150...163)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (150...154),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(155...156)(arguments: [IntegerNode(155...156)()]),
+            closing_loc: nil,
+            block:
+             BlockNode(157...163)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (157...159),
+               closing_loc: (160...163)
+             ),
+            flags: 0,
+            name: "meth"
+          ),
+         operator_loc: (163...165),
+         message_loc: (165...168),
+         opening_loc: (168...169),
+         arguments:
+          ArgumentsNode(169...172)(
+            arguments:
+             [CallNode(169...172)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (169...172),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: (172...173),
+         block: nil,
+         flags: 0,
+         name: "fun"
+       )]
+   )
 )

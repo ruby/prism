@@ -1,22 +1,58 @@
 ProgramNode(0...33)(
-  [],
-  StatementsNode(0...33)(
-    [PreExecutionNode(0...15)(
-       StatementsNode(10...13)(
-         [CallNode(10...13)(nil, nil, (10...13), nil, nil, nil, nil, 2, "foo")]
+  locals: [],
+  statements:
+   StatementsNode(0...33)(
+     body:
+      [PreExecutionNode(0...15)(
+         statements:
+          StatementsNode(10...13)(
+            body:
+             [CallNode(10...13)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (10...13),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "foo"
+              )]
+          ),
+         keyword_loc: (0...5),
+         opening_loc: (6...7),
+         closing_loc: (14...15)
        ),
-       (0...5),
-       (6...7),
-       (14...15)
-     ),
-     CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 2, "bar"),
-     PostExecutionNode(20...33)(
-       StatementsNode(28...31)(
-         [CallNode(28...31)(nil, nil, (28...31), nil, nil, nil, nil, 2, "baz")]
+       CallNode(16...19)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (16...19),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "bar"
        ),
-       (20...23),
-       (24...25),
-       (32...33)
-     )]
-  )
+       PostExecutionNode(20...33)(
+         statements:
+          StatementsNode(28...31)(
+            body:
+             [CallNode(28...31)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (28...31),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         keyword_loc: (20...23),
+         opening_loc: (24...25),
+         closing_loc: (32...33)
+       )]
+   )
 )

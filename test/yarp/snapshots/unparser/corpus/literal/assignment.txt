@@ -1,716 +1,898 @@
 ProgramNode(0...704)(
-  [:a, :b, :foo, :c, :x],
-  StatementsNode(0...704)(
-    [GlobalVariableWriteNode(0...6)((0...2), (3...4), IntegerNode(5...6)()),
-     MultiWriteNode(7...24)(
-       [GlobalVariableTargetNode(8...10)(),
-        GlobalVariableTargetNode(12...14)()],
-       (16...17),
-       ArrayNode(18...24)(
-         [IntegerNode(19...20)(), IntegerNode(22...23)()],
-         (18...19),
-         (23...24)
+  locals: [:a, :b, :foo, :c, :x],
+  statements:
+   StatementsNode(0...704)(
+     body:
+      [GlobalVariableWriteNode(0...6)(
+         name_loc: (0...2), operator_loc: (3...4), value: IntegerNode(5...6)()
        ),
-       (7...8),
-       (14...15)
-     ),
-     MultiWriteNode(25...38)(
-       [MultiWriteNode(26...30)(
-          [LocalVariableTargetNode(27...28)(:a, 0),
-           SplatNode(28...29)((28...29), nil)],
-          nil,
-          nil,
-          (26...27),
-          (29...30)
-        ),
-        LocalVariableTargetNode(32...33)(:b, 0)],
-       (35...36),
-       IntegerNode(37...38)(),
-       (25...26),
-       (33...34)
-     ),
-     MultiWriteNode(39...48)(
-       [SplatNode(40...42)(
-          (40...41),
-          LocalVariableTargetNode(41...42)(:a, 0)
-        )],
-       (44...45),
-       ArrayNode(46...48)([], (46...47), (47...48)),
-       (39...40),
-       (42...43)
-     ),
-     MultiWriteNode(49...64)(
-       [SplatNode(50...54)(
-          (50...51),
-          LocalVariableTargetNode(51...54)(:foo, 0)
-        )],
-       (56...57),
-       ArrayNode(58...64)(
-         [IntegerNode(59...60)(), IntegerNode(62...63)()],
-         (58...59),
-         (63...64)
-       ),
-       (49...50),
-       (54...55)
-     ),
-     MultiWriteNode(65...84)(
-       [ClassVariableTargetNode(66...69)(:@@a),
-        ClassVariableTargetNode(71...74)(:@@b)],
-       (76...77),
-       ArrayNode(78...84)(
-         [IntegerNode(79...80)(), IntegerNode(82...83)()],
-         (78...79),
-         (83...84)
-       ),
-       (65...66),
-       (74...75)
-     ),
-     MultiWriteNode(85...102)(
-       [InstanceVariableTargetNode(86...88)(:@a),
-        InstanceVariableTargetNode(90...92)(:@b)],
-       (94...95),
-       ArrayNode(96...102)(
-         [IntegerNode(97...98)(), IntegerNode(100...101)()],
-         (96...97),
-         (101...102)
-       ),
-       (85...86),
-       (92...93)
-     ),
-     MultiWriteNode(103...128)(
-       [LocalVariableTargetNode(104...105)(:a, 0),
-        MultiWriteNode(107...113)(
-          [LocalVariableTargetNode(108...109)(:b, 0),
-           LocalVariableTargetNode(111...112)(:c, 0)],
-          nil,
-          nil,
-          (107...108),
-          (112...113)
-        )],
-       (115...116),
-       ArrayNode(117...128)(
-         [IntegerNode(118...119)(),
-          ArrayNode(121...127)(
-            [IntegerNode(122...123)(), IntegerNode(125...126)()],
-            (121...122),
-            (126...127)
-          )],
-         (117...118),
-         (127...128)
-       ),
-       (103...104),
-       (113...114)
-     ),
-     MultiWriteNode(129...144)(
-       [LocalVariableTargetNode(130...131)(:a, 0),
-        SplatNode(133...134)((133...134), nil)],
-       (136...137),
-       ArrayNode(138...144)(
-         [IntegerNode(139...140)(), IntegerNode(142...143)()],
-         (138...139),
-         (143...144)
-       ),
-       (129...130),
-       (134...135)
-     ),
-     MultiWriteNode(145...163)(
-       [LocalVariableTargetNode(146...147)(:a, 0),
-        SplatNode(149...153)(
-          (149...150),
-          LocalVariableTargetNode(150...153)(:foo, 0)
-        )],
-       (155...156),
-       ArrayNode(157...163)(
-         [IntegerNode(158...159)(), IntegerNode(161...162)()],
-         (157...158),
-         (162...163)
-       ),
-       (145...146),
-       (153...154)
-     ),
-     MultiWriteNode(164...179)(
-       [LocalVariableTargetNode(165...166)(:a, 0),
-        LocalVariableTargetNode(168...169)(:b, 0)],
-       (171...172),
-       ArrayNode(173...179)(
-         [IntegerNode(174...175)(), IntegerNode(177...178)()],
-         (173...174),
-         (178...179)
-       ),
-       (164...165),
-       (169...170)
-     ),
-     MultiWriteNode(180...192)(
-       [LocalVariableTargetNode(181...182)(:a, 0),
-        LocalVariableTargetNode(184...185)(:b, 0)],
-       (187...188),
-       LocalVariableReadNode(189...192)(:foo, 0),
-       (180...181),
-       (185...186)
-     ),
-     MultiWriteNode(193...203)(
-       [LocalVariableTargetNode(194...195)(:a, 0),
-        SplatNode(195...196)((195...196), nil)],
-       (198...199),
-       LocalVariableReadNode(200...203)(:foo, 0),
-       (193...194),
-       (196...197)
-     ),
-     MultiWriteNode(204...227)(
-       [CallNode(205...210)(
-          LocalVariableReadNode(205...206)(:a, 0),
-          (206...207),
-          (207...210),
-          nil,
-          nil,
-          nil,
-          nil,
-          0,
-          "foo="
-        ),
-        CallNode(212...217)(
-          LocalVariableReadNode(212...213)(:a, 0),
-          (213...214),
-          (214...217),
-          nil,
-          nil,
-          nil,
-          nil,
-          0,
-          "bar="
-        )],
-       (219...220),
-       ArrayNode(221...227)(
-         [IntegerNode(222...223)(), IntegerNode(225...226)()],
-         (221...222),
-         (226...227)
-       ),
-       (204...205),
-       (217...218)
-     ),
-     MultiWriteNode(228...252)(
-       [CallNode(229...236)(
-          LocalVariableReadNode(229...230)(:a, 0),
-          nil,
-          (230...236),
-          (230...231),
-          ArgumentsNode(231...235)(
-            [SplatNode(231...235)(
-               (231...232),
-               LocalVariableReadNode(232...235)(:foo, 0)
-             )]
+       MultiWriteNode(7...24)(
+         targets:
+          [GlobalVariableTargetNode(8...10)(),
+           GlobalVariableTargetNode(12...14)()],
+         operator_loc: (16...17),
+         value:
+          ArrayNode(18...24)(
+            elements: [IntegerNode(19...20)(), IntegerNode(22...23)()],
+            opening_loc: (18...19),
+            closing_loc: (23...24)
           ),
-          (235...236),
-          nil,
-          0,
-          "[]="
-        ),
-        CallNode(238...242)(
-          LocalVariableReadNode(238...239)(:a, 0),
-          nil,
-          (239...242),
-          (239...240),
-          ArgumentsNode(240...241)([IntegerNode(240...241)()]),
-          (241...242),
-          nil,
-          0,
-          "[]="
-        )],
-       (244...245),
-       ArrayNode(246...252)(
-         [IntegerNode(247...248)(), IntegerNode(250...251)()],
-         (246...247),
-         (251...252)
+         lparen_loc: (7...8),
+         rparen_loc: (14...15)
        ),
-       (228...229),
-       (242...243)
-     ),
-     MultiWriteNode(253...274)(
-       [CallNode(254...258)(
-          LocalVariableReadNode(254...255)(:a, 0),
-          nil,
-          (255...258),
-          (255...256),
-          ArgumentsNode(256...257)([IntegerNode(256...257)()]),
-          (257...258),
-          nil,
-          0,
-          "[]="
-        ),
-        CallNode(260...264)(
-          LocalVariableReadNode(260...261)(:a, 0),
-          nil,
-          (261...264),
-          (261...262),
-          ArgumentsNode(262...263)([IntegerNode(262...263)()]),
-          (263...264),
-          nil,
-          0,
-          "[]="
-        )],
-       (266...267),
-       ArrayNode(268...274)(
-         [IntegerNode(269...270)(), IntegerNode(272...273)()],
-         (268...269),
-         (273...274)
+       MultiWriteNode(25...38)(
+         targets:
+          [MultiWriteNode(26...30)(
+             targets:
+              [LocalVariableTargetNode(27...28)(name: :a, depth: 0),
+               SplatNode(28...29)(operator_loc: (28...29), expression: nil)],
+             operator_loc: nil,
+             value: nil,
+             lparen_loc: (26...27),
+             rparen_loc: (29...30)
+           ),
+           LocalVariableTargetNode(32...33)(name: :b, depth: 0)],
+         operator_loc: (35...36),
+         value: IntegerNode(37...38)(),
+         lparen_loc: (25...26),
+         rparen_loc: (33...34)
        ),
-       (253...254),
-       (264...265)
-     ),
-     MultiWriteNode(275...287)(
-       [SplatNode(276...282)(
-          (276...277),
-          CallNode(277...282)(
-            LocalVariableReadNode(277...278)(:c, 0),
-            (278...279),
-            (279...282),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "foo="
+       MultiWriteNode(39...48)(
+         targets:
+          [SplatNode(40...42)(
+             operator_loc: (40...41),
+             expression: LocalVariableTargetNode(41...42)(name: :a, depth: 0)
+           )],
+         operator_loc: (44...45),
+         value:
+          ArrayNode(46...48)(
+            elements: [], opening_loc: (46...47), closing_loc: (47...48)
+          ),
+         lparen_loc: (39...40),
+         rparen_loc: (42...43)
+       ),
+       MultiWriteNode(49...64)(
+         targets:
+          [SplatNode(50...54)(
+             operator_loc: (50...51),
+             expression: LocalVariableTargetNode(51...54)(name: :foo, depth: 0)
+           )],
+         operator_loc: (56...57),
+         value:
+          ArrayNode(58...64)(
+            elements: [IntegerNode(59...60)(), IntegerNode(62...63)()],
+            opening_loc: (58...59),
+            closing_loc: (63...64)
+          ),
+         lparen_loc: (49...50),
+         rparen_loc: (54...55)
+       ),
+       MultiWriteNode(65...84)(
+         targets:
+          [ClassVariableTargetNode(66...69)(name: :@@a),
+           ClassVariableTargetNode(71...74)(name: :@@b)],
+         operator_loc: (76...77),
+         value:
+          ArrayNode(78...84)(
+            elements: [IntegerNode(79...80)(), IntegerNode(82...83)()],
+            opening_loc: (78...79),
+            closing_loc: (83...84)
+          ),
+         lparen_loc: (65...66),
+         rparen_loc: (74...75)
+       ),
+       MultiWriteNode(85...102)(
+         targets:
+          [InstanceVariableTargetNode(86...88)(name: :@a),
+           InstanceVariableTargetNode(90...92)(name: :@b)],
+         operator_loc: (94...95),
+         value:
+          ArrayNode(96...102)(
+            elements: [IntegerNode(97...98)(), IntegerNode(100...101)()],
+            opening_loc: (96...97),
+            closing_loc: (101...102)
+          ),
+         lparen_loc: (85...86),
+         rparen_loc: (92...93)
+       ),
+       MultiWriteNode(103...128)(
+         targets:
+          [LocalVariableTargetNode(104...105)(name: :a, depth: 0),
+           MultiWriteNode(107...113)(
+             targets:
+              [LocalVariableTargetNode(108...109)(name: :b, depth: 0),
+               LocalVariableTargetNode(111...112)(name: :c, depth: 0)],
+             operator_loc: nil,
+             value: nil,
+             lparen_loc: (107...108),
+             rparen_loc: (112...113)
+           )],
+         operator_loc: (115...116),
+         value:
+          ArrayNode(117...128)(
+            elements:
+             [IntegerNode(118...119)(),
+              ArrayNode(121...127)(
+                elements: [IntegerNode(122...123)(), IntegerNode(125...126)()],
+                opening_loc: (121...122),
+                closing_loc: (126...127)
+              )],
+            opening_loc: (117...118),
+            closing_loc: (127...128)
+          ),
+         lparen_loc: (103...104),
+         rparen_loc: (113...114)
+       ),
+       MultiWriteNode(129...144)(
+         targets:
+          [LocalVariableTargetNode(130...131)(name: :a, depth: 0),
+           SplatNode(133...134)(operator_loc: (133...134), expression: nil)],
+         operator_loc: (136...137),
+         value:
+          ArrayNode(138...144)(
+            elements: [IntegerNode(139...140)(), IntegerNode(142...143)()],
+            opening_loc: (138...139),
+            closing_loc: (143...144)
+          ),
+         lparen_loc: (129...130),
+         rparen_loc: (134...135)
+       ),
+       MultiWriteNode(145...163)(
+         targets:
+          [LocalVariableTargetNode(146...147)(name: :a, depth: 0),
+           SplatNode(149...153)(
+             operator_loc: (149...150),
+             expression:
+              LocalVariableTargetNode(150...153)(name: :foo, depth: 0)
+           )],
+         operator_loc: (155...156),
+         value:
+          ArrayNode(157...163)(
+            elements: [IntegerNode(158...159)(), IntegerNode(161...162)()],
+            opening_loc: (157...158),
+            closing_loc: (162...163)
+          ),
+         lparen_loc: (145...146),
+         rparen_loc: (153...154)
+       ),
+       MultiWriteNode(164...179)(
+         targets:
+          [LocalVariableTargetNode(165...166)(name: :a, depth: 0),
+           LocalVariableTargetNode(168...169)(name: :b, depth: 0)],
+         operator_loc: (171...172),
+         value:
+          ArrayNode(173...179)(
+            elements: [IntegerNode(174...175)(), IntegerNode(177...178)()],
+            opening_loc: (173...174),
+            closing_loc: (178...179)
+          ),
+         lparen_loc: (164...165),
+         rparen_loc: (169...170)
+       ),
+       MultiWriteNode(180...192)(
+         targets:
+          [LocalVariableTargetNode(181...182)(name: :a, depth: 0),
+           LocalVariableTargetNode(184...185)(name: :b, depth: 0)],
+         operator_loc: (187...188),
+         value: LocalVariableReadNode(189...192)(name: :foo, depth: 0),
+         lparen_loc: (180...181),
+         rparen_loc: (185...186)
+       ),
+       MultiWriteNode(193...203)(
+         targets:
+          [LocalVariableTargetNode(194...195)(name: :a, depth: 0),
+           SplatNode(195...196)(operator_loc: (195...196), expression: nil)],
+         operator_loc: (198...199),
+         value: LocalVariableReadNode(200...203)(name: :foo, depth: 0),
+         lparen_loc: (193...194),
+         rparen_loc: (196...197)
+       ),
+       MultiWriteNode(204...227)(
+         targets:
+          [CallNode(205...210)(
+             receiver: LocalVariableReadNode(205...206)(name: :a, depth: 0),
+             operator_loc: (206...207),
+             message_loc: (207...210),
+             opening_loc: nil,
+             arguments: nil,
+             closing_loc: nil,
+             block: nil,
+             flags: 0,
+             name: "foo="
+           ),
+           CallNode(212...217)(
+             receiver: LocalVariableReadNode(212...213)(name: :a, depth: 0),
+             operator_loc: (213...214),
+             message_loc: (214...217),
+             opening_loc: nil,
+             arguments: nil,
+             closing_loc: nil,
+             block: nil,
+             flags: 0,
+             name: "bar="
+           )],
+         operator_loc: (219...220),
+         value:
+          ArrayNode(221...227)(
+            elements: [IntegerNode(222...223)(), IntegerNode(225...226)()],
+            opening_loc: (221...222),
+            closing_loc: (226...227)
+          ),
+         lparen_loc: (204...205),
+         rparen_loc: (217...218)
+       ),
+       MultiWriteNode(228...252)(
+         targets:
+          [CallNode(229...236)(
+             receiver: LocalVariableReadNode(229...230)(name: :a, depth: 0),
+             operator_loc: nil,
+             message_loc: (230...236),
+             opening_loc: (230...231),
+             arguments:
+              ArgumentsNode(231...235)(
+                arguments:
+                 [SplatNode(231...235)(
+                    operator_loc: (231...232),
+                    expression:
+                     LocalVariableReadNode(232...235)(name: :foo, depth: 0)
+                  )]
+              ),
+             closing_loc: (235...236),
+             block: nil,
+             flags: 0,
+             name: "[]="
+           ),
+           CallNode(238...242)(
+             receiver: LocalVariableReadNode(238...239)(name: :a, depth: 0),
+             operator_loc: nil,
+             message_loc: (239...242),
+             opening_loc: (239...240),
+             arguments:
+              ArgumentsNode(240...241)(arguments: [IntegerNode(240...241)()]),
+             closing_loc: (241...242),
+             block: nil,
+             flags: 0,
+             name: "[]="
+           )],
+         operator_loc: (244...245),
+         value:
+          ArrayNode(246...252)(
+            elements: [IntegerNode(247...248)(), IntegerNode(250...251)()],
+            opening_loc: (246...247),
+            closing_loc: (251...252)
+          ),
+         lparen_loc: (228...229),
+         rparen_loc: (242...243)
+       ),
+       MultiWriteNode(253...274)(
+         targets:
+          [CallNode(254...258)(
+             receiver: LocalVariableReadNode(254...255)(name: :a, depth: 0),
+             operator_loc: nil,
+             message_loc: (255...258),
+             opening_loc: (255...256),
+             arguments:
+              ArgumentsNode(256...257)(arguments: [IntegerNode(256...257)()]),
+             closing_loc: (257...258),
+             block: nil,
+             flags: 0,
+             name: "[]="
+           ),
+           CallNode(260...264)(
+             receiver: LocalVariableReadNode(260...261)(name: :a, depth: 0),
+             operator_loc: nil,
+             message_loc: (261...264),
+             opening_loc: (261...262),
+             arguments:
+              ArgumentsNode(262...263)(arguments: [IntegerNode(262...263)()]),
+             closing_loc: (263...264),
+             block: nil,
+             flags: 0,
+             name: "[]="
+           )],
+         operator_loc: (266...267),
+         value:
+          ArrayNode(268...274)(
+            elements: [IntegerNode(269...270)(), IntegerNode(272...273)()],
+            opening_loc: (268...269),
+            closing_loc: (273...274)
+          ),
+         lparen_loc: (253...254),
+         rparen_loc: (264...265)
+       ),
+       MultiWriteNode(275...287)(
+         targets:
+          [SplatNode(276...282)(
+             operator_loc: (276...277),
+             expression:
+              CallNode(277...282)(
+                receiver: LocalVariableReadNode(277...278)(name: :c, depth: 0),
+                operator_loc: (278...279),
+                message_loc: (279...282),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "foo="
+              )
+           )],
+         operator_loc: (284...285),
+         value: IntegerNode(286...287)(),
+         lparen_loc: (275...276),
+         rparen_loc: (282...283)
+       ),
+       ConstantPathWriteNode(288...301)(
+         target:
+          ConstantPathNode(288...293)(
+            parent: nil,
+            child: ConstantReadNode(290...293)(),
+            delimiter_loc: (288...290)
+          ),
+         operator_loc: (294...295),
+         value:
+          ConstantPathNode(296...301)(
+            parent: nil,
+            child: ConstantReadNode(298...301)(),
+            delimiter_loc: (296...298)
           )
-        )],
-       (284...285),
-       IntegerNode(286...287)(),
-       (275...276),
-       (282...283)
-     ),
-     ConstantPathWriteNode(288...301)(
-       ConstantPathNode(288...293)(
-         nil,
-         ConstantReadNode(290...293)(),
-         (288...290)
        ),
-       (294...295),
-       ConstantPathNode(296...301)(
-         nil,
-         ConstantReadNode(298...301)(),
-         (296...298)
-       )
-     ),
-     ClassVariableWriteNode(302...309)(
-       :@@a,
-       (302...305),
-       IntegerNode(308...309)(),
-       (306...307)
-     ),
-     InstanceVariableWriteNode(310...316)(
-       :@a,
-       (310...312),
-       IntegerNode(315...316)(),
-       (313...314)
-     ),
-     ConstantWriteNode(317...326)(
-       (317...322),
-       IntegerNode(325...326)(),
-       (323...324)
-     ),
-     ConstantPathWriteNode(327...350)(
-       ConstantPathNode(327...346)(
-         ConstantPathNode(327...339)(
-           ConstantReadNode(327...331)(),
-           ConstantReadNode(333...339)(),
-           (331...333)
-         ),
-         ConstantReadNode(341...346)(),
-         (339...341)
+       ClassVariableWriteNode(302...309)(
+         name: :@@a,
+         name_loc: (302...305),
+         value: IntegerNode(308...309)(),
+         operator_loc: (306...307)
        ),
-       (347...348),
-       IntegerNode(349...350)()
-     ),
-     LocalVariableWriteNode(351...367)(
-       :a,
-       0,
-       ParenthesesNode(355...367)(
-         StatementsNode(356...366)(
-           [MultiWriteNode(356...366)(
-              [LocalVariableTargetNode(357...358)(:b, 0),
-               LocalVariableTargetNode(360...361)(:c, 0)],
-              (363...364),
-              IntegerNode(365...366)(),
-              (356...357),
-              (361...362)
-            )]
-         ),
-         (355...356),
-         (366...367)
+       InstanceVariableWriteNode(310...316)(
+         name: :@a,
+         name_loc: (310...312),
+         value: IntegerNode(315...316)(),
+         operator_loc: (313...314)
        ),
-       (351...352),
-       (353...354)
-     ),
-     LocalVariableWriteNode(368...373)(
-       :a,
-       0,
-       IntegerNode(372...373)(),
-       (368...369),
-       (370...371)
-     ),
-     LocalVariableWriteNode(374...385)(
-       :foo,
-       0,
-       CallNode(380...385)(
-         nil,
-         nil,
-         (380...383),
-         (383...384),
-         nil,
-         (384...385),
-         nil,
-         0,
-         "foo"
+       ConstantWriteNode(317...326)(
+         name_loc: (317...322),
+         value: IntegerNode(325...326)(),
+         operator_loc: (323...324)
        ),
-       (374...377),
-       (378...379)
-     ),
-     CallNode(386...395)(
-       LocalVariableReadNode(386...389)(:foo, 0),
-       (389...390),
-       (390...393),
-       (393...394),
-       nil,
-       (394...395),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(396...409)(
-       LocalVariableReadNode(396...399)(:foo, 0),
-       (399...400),
-       (400...403),
-       (403...404),
-       ArgumentsNode(404...408)(
-         [IntegerNode(404...405)(), IntegerNode(407...408)()]
-       ),
-       (408...409),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(410...421)(
-       LocalVariableReadNode(410...413)(:foo, 0),
-       (413...414),
-       (414...417),
-       nil,
-       ArgumentsNode(417...421)([TrueNode(417...421)()]),
-       nil,
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(422...441)(
-       LocalVariableReadNode(422...425)(:foo, 0),
-       nil,
-       (425...433),
-       (425...426),
-       ArgumentsNode(426...441)(
-         [SplatNode(426...432)(
-            (426...427),
-            CallNode(427...432)(
-              nil,
-              nil,
-              (427...432),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "index"
-            )
+       ConstantPathWriteNode(327...350)(
+         target:
+          ConstantPathNode(327...346)(
+            parent:
+             ConstantPathNode(327...339)(
+               parent: ConstantReadNode(327...331)(),
+               child: ConstantReadNode(333...339)(),
+               delimiter_loc: (331...333)
+             ),
+            child: ConstantReadNode(341...346)(),
+            delimiter_loc: (339...341)
           ),
-          CallNode(436...441)(
-            nil,
-            nil,
-            (436...441),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "value"
-          )]
+         operator_loc: (347...348),
+         value: IntegerNode(349...350)()
        ),
-       (432...433),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(442...459)(
-       LocalVariableReadNode(442...445)(:foo, 0),
-       nil,
-       (445...451),
-       (445...446),
-       ArgumentsNode(446...459)(
-         [RangeNode(446...450)(
-            IntegerNode(446...447)(),
-            IntegerNode(449...450)(),
-            (447...449),
-            0
+       LocalVariableWriteNode(351...367)(
+         name: :a,
+         depth: 0,
+         value:
+          ParenthesesNode(355...367)(
+            body:
+             StatementsNode(356...366)(
+               body:
+                [MultiWriteNode(356...366)(
+                   targets:
+                    [LocalVariableTargetNode(357...358)(name: :b, depth: 0),
+                     LocalVariableTargetNode(360...361)(name: :c, depth: 0)],
+                   operator_loc: (363...364),
+                   value: IntegerNode(365...366)(),
+                   lparen_loc: (356...357),
+                   rparen_loc: (361...362)
+                 )]
+             ),
+            opening_loc: (355...356),
+            closing_loc: (366...367)
           ),
-          CallNode(454...459)(
-            nil,
-            nil,
-            (454...459),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "value"
-          )]
+         name_loc: (351...352),
+         operator_loc: (353...354)
        ),
-       (450...451),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(460...469)(
-       LocalVariableReadNode(460...463)(:foo, 0),
-       nil,
-       (463...465),
-       (463...464),
-       ArgumentsNode(468...469)([IntegerNode(468...469)()]),
-       (464...465),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(470...487)(
-       LocalVariableReadNode(470...473)(:foo, 0),
-       nil,
-       (473...479),
-       (473...474),
-       ArgumentsNode(474...487)(
-         [LocalVariableReadNode(474...475)(:a, 0),
-          LocalVariableReadNode(477...478)(:b, 0),
-          CallNode(482...487)(
-            nil,
-            nil,
-            (482...487),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "value"
-          )]
+       LocalVariableWriteNode(368...373)(
+         name: :a,
+         depth: 0,
+         value: IntegerNode(372...373)(),
+         name_loc: (368...369),
+         operator_loc: (370...371)
        ),
-       (478...479),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(488...506)(
-       LocalVariableReadNode(488...491)(:foo, 0),
-       nil,
-       (491...498),
-       (491...492),
-       ArgumentsNode(492...506)(
-         [CallNode(492...497)(
-            nil,
-            nil,
-            (492...497),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "index"
+       LocalVariableWriteNode(374...385)(
+         name: :foo,
+         depth: 0,
+         value:
+          CallNode(380...385)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (380...383),
+            opening_loc: (383...384),
+            arguments: nil,
+            closing_loc: (384...385),
+            block: nil,
+            flags: 0,
+            name: "foo"
           ),
-          CallNode(501...506)(
-            nil,
-            nil,
-            (501...506),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "value"
-          )]
+         name_loc: (374...377),
+         operator_loc: (378...379)
        ),
-       (497...498),
-       nil,
-       0,
-       "[]="
-     ),
-     LocalVariableWriteNode(507...514)(
-       :x,
-       0,
-       StringNode(511...514)((511...513), (513...513), (513...514), ""),
-       (507...508),
-       (509...510)
-     ),
-     CallNode(515...522)(
-       LocalVariableReadNode(515...516)(:x, 0),
-       (516...517),
-       (517...518),
-       nil,
-       ArgumentsNode(519...522)(
-         [StringNode(519...522)((519...521), (521...521), (521...522), "")]
+       CallNode(386...395)(
+         receiver: LocalVariableReadNode(386...389)(name: :foo, depth: 0),
+         operator_loc: (389...390),
+         message_loc: (390...393),
+         opening_loc: (393...394),
+         arguments: nil,
+         closing_loc: (394...395),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       nil,
-       nil,
-       0,
-       "x="
-     ),
-     CallNode(523...535)(
-       LocalVariableReadNode(523...524)(:x, 0),
-       nil,
-       (524...529),
-       (524...525),
-       ArgumentsNode(525...535)(
-         [StringNode(525...528)((525...527), (527...527), (527...528), ""),
-          CallNode(532...535)(
-            nil,
-            nil,
-            (532...535),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
+       CallNode(396...409)(
+         receiver: LocalVariableReadNode(396...399)(name: :foo, depth: 0),
+         operator_loc: (399...400),
+         message_loc: (400...403),
+         opening_loc: (403...404),
+         arguments:
+          ArgumentsNode(404...408)(
+            arguments: [IntegerNode(404...405)(), IntegerNode(407...408)()]
+          ),
+         closing_loc: (408...409),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (528...529),
-       nil,
-       0,
-       "[]="
-     ),
-     CallOperatorOrWriteNode(536...550)(
-       CallNode(536...542)(
-         LocalVariableReadNode(536...537)(:a, 0),
-         nil,
-         (537...542),
-         (537...538),
-         ArgumentsNode(538...541)(
-           [StringNode(538...541)((538...540), (540...540), (540...541), "")]
-         ),
-         (541...542),
-         nil,
-         0,
-         "[]="
+       CallNode(410...421)(
+         receiver: LocalVariableReadNode(410...413)(name: :foo, depth: 0),
+         operator_loc: (413...414),
+         message_loc: (414...417),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(417...421)(arguments: [TrueNode(417...421)()]),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       CallNode(547...550)(
-         nil,
-         nil,
-         (547...550),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "bar"
+       CallNode(422...441)(
+         receiver: LocalVariableReadNode(422...425)(name: :foo, depth: 0),
+         operator_loc: nil,
+         message_loc: (425...433),
+         opening_loc: (425...426),
+         arguments:
+          ArgumentsNode(426...441)(
+            arguments:
+             [SplatNode(426...432)(
+                operator_loc: (426...427),
+                expression:
+                 CallNode(427...432)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (427...432),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "index"
+                 )
+              ),
+              CallNode(436...441)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (436...441),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "value"
+              )]
+          ),
+         closing_loc: (432...433),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (543...546)
-     ),
-     InstanceVariableOrWriteNode(551...561)(
-       :@a,
-       (551...553),
-       (554...557),
-       StringNode(558...561)((558...560), (560...560), (560...561), "")
-     ),
-     LocalVariableWriteNode(562...576)(
-       :x,
-       0,
-       InterpolatedStringNode(566...576)(
-         (566...576),
-         [StringNode(577...579)(nil, (577...579), nil, "  "),
-          EmbeddedStatementsNode(579...582)((579...581), nil, (581...582)),
-          StringNode(582...583)(nil, (582...583), nil, "\n")],
-         (583...591)
+       CallNode(442...459)(
+         receiver: LocalVariableReadNode(442...445)(name: :foo, depth: 0),
+         operator_loc: nil,
+         message_loc: (445...451),
+         opening_loc: (445...446),
+         arguments:
+          ArgumentsNode(446...459)(
+            arguments:
+             [RangeNode(446...450)(
+                left: IntegerNode(446...447)(),
+                right: IntegerNode(449...450)(),
+                operator_loc: (447...449),
+                flags: 0
+              ),
+              CallNode(454...459)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (454...459),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "value"
+              )]
+          ),
+         closing_loc: (450...451),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (562...563),
-       (564...565)
-     ),
-     CallNode(591...605)(
-       LocalVariableReadNode(591...592)(:x, 0),
-       (592...593),
-       (593...594),
-       nil,
-       ArgumentsNode(595...605)(
-         [InterpolatedStringNode(595...605)(
-            (595...605),
-            [StringNode(606...608)(nil, (606...608), nil, "  "),
-             EmbeddedStatementsNode(608...611)((608...610), nil, (610...611)),
-             StringNode(611...612)(nil, (611...612), nil, "\n")],
-            (612...620)
-          )]
+       CallNode(460...469)(
+         receiver: LocalVariableReadNode(460...463)(name: :foo, depth: 0),
+         operator_loc: nil,
+         message_loc: (463...465),
+         opening_loc: (463...464),
+         arguments:
+          ArgumentsNode(468...469)(arguments: [IntegerNode(468...469)()]),
+         closing_loc: (464...465),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       nil,
-       nil,
-       0,
-       "x="
-     ),
-     CallNode(620...636)(
-       LocalVariableReadNode(620...621)(:x, 0),
-       nil,
-       (621...623),
-       (621...622),
-       ArgumentsNode(626...636)(
-         [InterpolatedStringNode(626...636)(
-            (626...636),
-            [StringNode(637...639)(nil, (637...639), nil, "  "),
-             EmbeddedStatementsNode(639...642)((639...641), nil, (641...642)),
-             StringNode(642...643)(nil, (642...643), nil, "\n")],
-            (643...651)
-          )]
+       CallNode(470...487)(
+         receiver: LocalVariableReadNode(470...473)(name: :foo, depth: 0),
+         operator_loc: nil,
+         message_loc: (473...479),
+         opening_loc: (473...474),
+         arguments:
+          ArgumentsNode(474...487)(
+            arguments:
+             [LocalVariableReadNode(474...475)(name: :a, depth: 0),
+              LocalVariableReadNode(477...478)(name: :b, depth: 0),
+              CallNode(482...487)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (482...487),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "value"
+              )]
+          ),
+         closing_loc: (478...479),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (622...623),
-       nil,
-       0,
-       "[]="
-     ),
-     CallOperatorOrWriteNode(651...672)(
-       CallNode(651...664)(
-         LocalVariableReadNode(651...652)(:a, 0),
-         nil,
-         (652...664),
-         (652...653),
-         ArgumentsNode(653...663)(
-           [InterpolatedStringNode(653...663)(
-              (653...663),
-              [StringNode(673...675)(nil, (673...675), nil, "  "),
-               EmbeddedStatementsNode(675...678)(
-                 (675...677),
-                 nil,
-                 (677...678)
-               ),
-               StringNode(678...679)(nil, (678...679), nil, "\n")],
-              (679...687)
-            )]
-         ),
-         (663...664),
-         nil,
-         0,
-         "[]="
+       CallNode(488...506)(
+         receiver: LocalVariableReadNode(488...491)(name: :foo, depth: 0),
+         operator_loc: nil,
+         message_loc: (491...498),
+         opening_loc: (491...492),
+         arguments:
+          ArgumentsNode(492...506)(
+            arguments:
+             [CallNode(492...497)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (492...497),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "index"
+              ),
+              CallNode(501...506)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (501...506),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "value"
+              )]
+          ),
+         closing_loc: (497...498),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       CallNode(669...672)(
-         nil,
-         nil,
-         (669...672),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "bar"
+       LocalVariableWriteNode(507...514)(
+         name: :x,
+         depth: 0,
+         value:
+          StringNode(511...514)(
+            opening_loc: (511...513),
+            content_loc: (513...513),
+            closing_loc: (513...514),
+            unescaped: ""
+          ),
+         name_loc: (507...508),
+         operator_loc: (509...510)
        ),
-       (665...668)
-     ),
-     InstanceVariableOrWriteNode(687...704)(
-       :@a,
-       (687...689),
-       (690...693),
-       InterpolatedStringNode(694...704)(
-         (694...704),
-         [StringNode(705...707)(nil, (705...707), nil, "  "),
-          EmbeddedStatementsNode(707...710)((707...709), nil, (709...710)),
-          StringNode(710...711)(nil, (710...711), nil, "\n")],
-         (711...719)
-       )
-     )]
-  )
+       CallNode(515...522)(
+         receiver: LocalVariableReadNode(515...516)(name: :x, depth: 0),
+         operator_loc: (516...517),
+         message_loc: (517...518),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(519...522)(
+            arguments:
+             [StringNode(519...522)(
+                opening_loc: (519...521),
+                content_loc: (521...521),
+                closing_loc: (521...522),
+                unescaped: ""
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x="
+       ),
+       CallNode(523...535)(
+         receiver: LocalVariableReadNode(523...524)(name: :x, depth: 0),
+         operator_loc: nil,
+         message_loc: (524...529),
+         opening_loc: (524...525),
+         arguments:
+          ArgumentsNode(525...535)(
+            arguments:
+             [StringNode(525...528)(
+                opening_loc: (525...527),
+                content_loc: (527...527),
+                closing_loc: (527...528),
+                unescaped: ""
+              ),
+              CallNode(532...535)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (532...535),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: (528...529),
+         block: nil,
+         flags: 0,
+         name: "[]="
+       ),
+       CallOperatorOrWriteNode(536...550)(
+         target:
+          CallNode(536...542)(
+            receiver: LocalVariableReadNode(536...537)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (537...542),
+            opening_loc: (537...538),
+            arguments:
+             ArgumentsNode(538...541)(
+               arguments:
+                [StringNode(538...541)(
+                   opening_loc: (538...540),
+                   content_loc: (540...540),
+                   closing_loc: (540...541),
+                   unescaped: ""
+                 )]
+             ),
+            closing_loc: (541...542),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         value:
+          CallNode(547...550)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (547...550),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         operator_loc: (543...546)
+       ),
+       InstanceVariableOrWriteNode(551...561)(
+         name: :@a,
+         name_loc: (551...553),
+         operator_loc: (554...557),
+         value:
+          StringNode(558...561)(
+            opening_loc: (558...560),
+            content_loc: (560...560),
+            closing_loc: (560...561),
+            unescaped: ""
+          )
+       ),
+       LocalVariableWriteNode(562...576)(
+         name: :x,
+         depth: 0,
+         value:
+          InterpolatedStringNode(566...576)(
+            opening_loc: (566...576),
+            parts:
+             [StringNode(577...579)(
+                opening_loc: nil,
+                content_loc: (577...579),
+                closing_loc: nil,
+                unescaped: "  "
+              ),
+              EmbeddedStatementsNode(579...582)(
+                opening_loc: (579...581),
+                statements: nil,
+                closing_loc: (581...582)
+              ),
+              StringNode(582...583)(
+                opening_loc: nil,
+                content_loc: (582...583),
+                closing_loc: nil,
+                unescaped: "\n"
+              )],
+            closing_loc: (583...591)
+          ),
+         name_loc: (562...563),
+         operator_loc: (564...565)
+       ),
+       CallNode(591...605)(
+         receiver: LocalVariableReadNode(591...592)(name: :x, depth: 0),
+         operator_loc: (592...593),
+         message_loc: (593...594),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(595...605)(
+            arguments:
+             [InterpolatedStringNode(595...605)(
+                opening_loc: (595...605),
+                parts:
+                 [StringNode(606...608)(
+                    opening_loc: nil,
+                    content_loc: (606...608),
+                    closing_loc: nil,
+                    unescaped: "  "
+                  ),
+                  EmbeddedStatementsNode(608...611)(
+                    opening_loc: (608...610),
+                    statements: nil,
+                    closing_loc: (610...611)
+                  ),
+                  StringNode(611...612)(
+                    opening_loc: nil,
+                    content_loc: (611...612),
+                    closing_loc: nil,
+                    unescaped: "\n"
+                  )],
+                closing_loc: (612...620)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x="
+       ),
+       CallNode(620...636)(
+         receiver: LocalVariableReadNode(620...621)(name: :x, depth: 0),
+         operator_loc: nil,
+         message_loc: (621...623),
+         opening_loc: (621...622),
+         arguments:
+          ArgumentsNode(626...636)(
+            arguments:
+             [InterpolatedStringNode(626...636)(
+                opening_loc: (626...636),
+                parts:
+                 [StringNode(637...639)(
+                    opening_loc: nil,
+                    content_loc: (637...639),
+                    closing_loc: nil,
+                    unescaped: "  "
+                  ),
+                  EmbeddedStatementsNode(639...642)(
+                    opening_loc: (639...641),
+                    statements: nil,
+                    closing_loc: (641...642)
+                  ),
+                  StringNode(642...643)(
+                    opening_loc: nil,
+                    content_loc: (642...643),
+                    closing_loc: nil,
+                    unescaped: "\n"
+                  )],
+                closing_loc: (643...651)
+              )]
+          ),
+         closing_loc: (622...623),
+         block: nil,
+         flags: 0,
+         name: "[]="
+       ),
+       CallOperatorOrWriteNode(651...672)(
+         target:
+          CallNode(651...664)(
+            receiver: LocalVariableReadNode(651...652)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (652...664),
+            opening_loc: (652...653),
+            arguments:
+             ArgumentsNode(653...663)(
+               arguments:
+                [InterpolatedStringNode(653...663)(
+                   opening_loc: (653...663),
+                   parts:
+                    [StringNode(673...675)(
+                       opening_loc: nil,
+                       content_loc: (673...675),
+                       closing_loc: nil,
+                       unescaped: "  "
+                     ),
+                     EmbeddedStatementsNode(675...678)(
+                       opening_loc: (675...677),
+                       statements: nil,
+                       closing_loc: (677...678)
+                     ),
+                     StringNode(678...679)(
+                       opening_loc: nil,
+                       content_loc: (678...679),
+                       closing_loc: nil,
+                       unescaped: "\n"
+                     )],
+                   closing_loc: (679...687)
+                 )]
+             ),
+            closing_loc: (663...664),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         value:
+          CallNode(669...672)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (669...672),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         operator_loc: (665...668)
+       ),
+       InstanceVariableOrWriteNode(687...704)(
+         name: :@a,
+         name_loc: (687...689),
+         operator_loc: (690...693),
+         value:
+          InterpolatedStringNode(694...704)(
+            opening_loc: (694...704),
+            parts:
+             [StringNode(705...707)(
+                opening_loc: nil,
+                content_loc: (705...707),
+                closing_loc: nil,
+                unescaped: "  "
+              ),
+              EmbeddedStatementsNode(707...710)(
+                opening_loc: (707...709),
+                statements: nil,
+                closing_loc: (709...710)
+              ),
+              StringNode(710...711)(
+                opening_loc: nil,
+                content_loc: (710...711),
+                closing_loc: nil,
+                unescaped: "\n"
+              )],
+            closing_loc: (711...719)
+          )
+       )]
+   )
 )

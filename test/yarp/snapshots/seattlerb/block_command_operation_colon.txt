@@ -1,28 +1,54 @@
 ProgramNode(0...17)(
-  [],
-  StatementsNode(0...17)(
-    [CallNode(0...17)(
-       CallNode(0...11)(
-         nil,
-         nil,
-         (0...1),
-         nil,
-         ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
-         nil,
-         BlockNode(5...11)([], nil, nil, (5...7), (8...11)),
-         0,
-         "a"
-       ),
-       (11...13),
-       (13...14),
-       nil,
-       ArgumentsNode(15...17)(
-         [SymbolNode(15...17)((15...16), (16...17), nil, "d")]
-       ),
-       nil,
-       nil,
-       0,
-       "c"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [CallNode(0...17)(
+         receiver:
+          CallNode(0...11)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...1),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(2...4)(
+               arguments:
+                [SymbolNode(2...4)(
+                   opening_loc: (2...3),
+                   value_loc: (3...4),
+                   closing_loc: nil,
+                   unescaped: "b"
+                 )]
+             ),
+            closing_loc: nil,
+            block:
+             BlockNode(5...11)(
+               locals: [],
+               parameters: nil,
+               body: nil,
+               opening_loc: (5...7),
+               closing_loc: (8...11)
+             ),
+            flags: 0,
+            name: "a"
+          ),
+         operator_loc: (11...13),
+         message_loc: (13...14),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(15...17)(
+            arguments:
+             [SymbolNode(15...17)(
+                opening_loc: (15...16),
+                value_loc: (16...17),
+                closing_loc: nil,
+                unescaped: "d"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "c"
+       )]
+   )
 )

@@ -1,120 +1,150 @@
 ProgramNode(0...80)(
-  [],
-  StatementsNode(0...80)(
-    [CallNode(0...10)(
-       nil,
-       nil,
-       (0...6),
-       nil,
-       nil,
-       nil,
-       BlockNode(7...10)([], nil, nil, (7...8), (9...10)),
-       0,
-       "lambda"
-     ),
-     CallNode(11...32)(
-       nil,
-       nil,
-       (11...17),
-       nil,
-       nil,
-       nil,
-       BlockNode(18...32)(
-         [:a, :b],
-         BlockParametersNode(20...26)(
-           ParametersNode(21...25)(
-             [RequiredParameterNode(21...22)(:a),
-              RequiredParameterNode(24...25)(:b)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (20...21),
-           (25...26)
-         ),
-         StatementsNode(29...30)([LocalVariableReadNode(29...30)(:a, 0)]),
-         (18...19),
-         (31...32)
+  locals: [],
+  statements:
+   StatementsNode(0...80)(
+     body:
+      [CallNode(0...10)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...6),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(7...10)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (7...8),
+            closing_loc: (9...10)
+          ),
+         flags: 0,
+         name: "lambda"
        ),
-       0,
-       "lambda"
-     ),
-     LambdaNode(33...41)(
-       [],
-       (33...35),
-       (38...39),
-       (40...41),
-       BlockParametersNode(35...37)(nil, [], (35...36), (36...37)),
-       nil
-     ),
-     LambdaNode(42...51)(
-       [:a],
-       (42...44),
-       (48...49),
-       (50...51),
-       BlockParametersNode(44...47)(
-         ParametersNode(45...46)(
-           [RequiredParameterNode(45...46)(:a)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [],
-         (44...45),
-         (46...47)
+       CallNode(11...32)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (11...17),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(18...32)(
+            locals: [:a, :b],
+            parameters:
+             BlockParametersNode(20...26)(
+               parameters:
+                ParametersNode(21...25)(
+                  requireds:
+                   [RequiredParameterNode(21...22)(name: :a),
+                    RequiredParameterNode(24...25)(name: :b)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (20...21),
+               closing_loc: (25...26)
+             ),
+            body:
+             StatementsNode(29...30)(
+               body: [LocalVariableReadNode(29...30)(name: :a, depth: 0)]
+             ),
+            opening_loc: (18...19),
+            closing_loc: (31...32)
+          ),
+         flags: 0,
+         name: "lambda"
        ),
-       nil
-     ),
-     LambdaNode(52...64)(
-       [:a, :b],
-       (52...54),
-       (61...62),
-       (63...64),
-       BlockParametersNode(54...60)(
-         ParametersNode(55...59)(
-           [RequiredParameterNode(55...56)(:a),
-            RequiredParameterNode(58...59)(:b)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [],
-         (54...55),
-         (59...60)
+       LambdaNode(33...41)(
+         locals: [],
+         operator_loc: (33...35),
+         opening_loc: (38...39),
+         closing_loc: (40...41),
+         parameters:
+          BlockParametersNode(35...37)(
+            parameters: nil,
+            locals: [],
+            opening_loc: (35...36),
+            closing_loc: (36...37)
+          ),
+         body: nil
        ),
-       nil
-     ),
-     LambdaNode(65...80)(
-       [:a, :b, :c],
-       (65...67),
-       (77...78),
-       (79...80),
-       BlockParametersNode(67...76)(
-         ParametersNode(68...72)(
-           [RequiredParameterNode(68...69)(:a),
-            RequiredParameterNode(71...72)(:b)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [(74...75)],
-         (67...68),
-         (75...76)
+       LambdaNode(42...51)(
+         locals: [:a],
+         operator_loc: (42...44),
+         opening_loc: (48...49),
+         closing_loc: (50...51),
+         parameters:
+          BlockParametersNode(44...47)(
+            parameters:
+             ParametersNode(45...46)(
+               requireds: [RequiredParameterNode(45...46)(name: :a)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (44...45),
+            closing_loc: (46...47)
+          ),
+         body: nil
        ),
-       nil
-     )]
-  )
+       LambdaNode(52...64)(
+         locals: [:a, :b],
+         operator_loc: (52...54),
+         opening_loc: (61...62),
+         closing_loc: (63...64),
+         parameters:
+          BlockParametersNode(54...60)(
+            parameters:
+             ParametersNode(55...59)(
+               requireds:
+                [RequiredParameterNode(55...56)(name: :a),
+                 RequiredParameterNode(58...59)(name: :b)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (54...55),
+            closing_loc: (59...60)
+          ),
+         body: nil
+       ),
+       LambdaNode(65...80)(
+         locals: [:a, :b, :c],
+         operator_loc: (65...67),
+         opening_loc: (77...78),
+         closing_loc: (79...80),
+         parameters:
+          BlockParametersNode(67...76)(
+            parameters:
+             ParametersNode(68...72)(
+               requireds:
+                [RequiredParameterNode(68...69)(name: :a),
+                 RequiredParameterNode(71...72)(name: :b)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [(74...75)],
+            opening_loc: (67...68),
+            closing_loc: (75...76)
+          ),
+         body: nil
+       )]
+   )
 )

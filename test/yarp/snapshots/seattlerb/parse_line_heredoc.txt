@@ -1,42 +1,51 @@
 ProgramNode(6...88)(
-  [:string],
-  StatementsNode(6...88)(
-    [LocalVariableWriteNode(6...31)(
-       :string,
-       0,
-       CallNode(15...31)(
-         InterpolatedStringNode(15...25)(
-           (15...25),
-           [StringNode(32...57)(
-              nil,
-              (32...57),
-              nil,
-              "        very long string\n"
-            )],
-           (57...71)
-         ),
-         (25...26),
-         (26...31),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "strip"
+  locals: [:string],
+  statements:
+   StatementsNode(6...88)(
+     body:
+      [LocalVariableWriteNode(6...31)(
+         name: :string,
+         depth: 0,
+         value:
+          CallNode(15...31)(
+            receiver:
+             InterpolatedStringNode(15...25)(
+               opening_loc: (15...25),
+               parts:
+                [StringNode(32...57)(
+                   opening_loc: nil,
+                   content_loc: (32...57),
+                   closing_loc: nil,
+                   unescaped: "        very long string\n"
+                 )],
+               closing_loc: (57...71)
+             ),
+            operator_loc: (25...26),
+            message_loc: (26...31),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "strip"
+          ),
+         name_loc: (6...12),
+         operator_loc: (13...14)
        ),
-       (6...12),
-       (13...14)
-     ),
-     CallNode(77...88)(
-       nil,
-       nil,
-       (77...81),
-       nil,
-       ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(:string, 0)]),
-       nil,
-       nil,
-       0,
-       "puts"
-     )]
-  )
+       CallNode(77...88)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (77...81),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(82...88)(
+            arguments:
+             [LocalVariableReadNode(82...88)(name: :string, depth: 0)]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "puts"
+       )]
+   )
 )

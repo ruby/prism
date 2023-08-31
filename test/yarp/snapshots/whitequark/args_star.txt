@@ -1,61 +1,80 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [CallNode(0...9)(
-       nil,
-       nil,
-       (0...3),
-       (3...4),
-       ArgumentsNode(4...8)(
-         [SplatNode(4...8)(
-            (4...5),
-            CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "bar")
-          )]
-       ),
-       (8...9),
-       nil,
-       0,
-       "fun"
-     ),
-     CallNode(11...26)(
-       nil,
-       nil,
-       (11...14),
-       (14...15),
-       ArgumentsNode(15...25)(
-         [SplatNode(15...19)(
-            (15...16),
-            CallNode(16...19)(
-              nil,
-              nil,
-              (16...19),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [CallNode(0...9)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: (3...4),
+         arguments:
+          ArgumentsNode(4...8)(
+            arguments:
+             [SplatNode(4...8)(
+                operator_loc: (4...5),
+                expression:
+                 CallNode(5...8)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (5...8),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )
+              )]
           ),
-          BlockArgumentNode(21...25)(
-            CallNode(22...25)(
-              nil,
-              nil,
-              (22...25),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "baz"
-            ),
-            (21...22)
-          )]
+         closing_loc: (8...9),
+         block: nil,
+         flags: 0,
+         name: "fun"
        ),
-       (25...26),
-       nil,
-       0,
-       "fun"
-     )]
-  )
+       CallNode(11...26)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (11...14),
+         opening_loc: (14...15),
+         arguments:
+          ArgumentsNode(15...25)(
+            arguments:
+             [SplatNode(15...19)(
+                operator_loc: (15...16),
+                expression:
+                 CallNode(16...19)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (16...19),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )
+              ),
+              BlockArgumentNode(21...25)(
+                expression:
+                 CallNode(22...25)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (22...25),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "baz"
+                 ),
+                operator_loc: (21...22)
+              )]
+          ),
+         closing_loc: (25...26),
+         block: nil,
+         flags: 0,
+         name: "fun"
+       )]
+   )
 )

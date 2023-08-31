@@ -1,4 +1,13 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)([StringNode(0...7)((0...1), (1...7), nil, " ")])
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [StringNode(0...7)(
+         opening_loc: (0...1),
+         content_loc: (1...7),
+         closing_loc: nil,
+         unescaped: " "
+       )]
+   )
 )

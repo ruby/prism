@@ -1,110 +1,292 @@
 ProgramNode(0...120)(
-  [],
-  StatementsNode(0...120)(
-    [HashNode(0...2)((0...1), [], (1...2)),
-     HashNode(4...7)((4...5), [], (6...7)),
-     HashNode(9...27)(
-       (9...10),
-       [AssocNode(11...17)(
-          CallNode(11...12)(nil, nil, (11...12), nil, nil, nil, nil, 2, "a"),
-          CallNode(16...17)(nil, nil, (16...17), nil, nil, nil, nil, 2, "b"),
-          (13...15)
-        ),
-        AssocNode(19...25)(
-          CallNode(19...20)(nil, nil, (19...20), nil, nil, nil, nil, 2, "c"),
-          CallNode(24...25)(nil, nil, (24...25), nil, nil, nil, nil, 2, "d"),
-          (21...23)
-        )],
-       (26...27)
-     ),
-     HashNode(29...44)(
-       (29...30),
-       [AssocNode(31...37)(
-          CallNode(31...32)(nil, nil, (31...32), nil, nil, nil, nil, 2, "a"),
-          CallNode(36...37)(nil, nil, (36...37), nil, nil, nil, nil, 2, "b"),
-          (33...35)
-        ),
-        AssocSplatNode(39...42)(
-          CallNode(41...42)(nil, nil, (41...42), nil, nil, nil, nil, 2, "c"),
-          (39...41)
-        )],
-       (43...44)
-     ),
-     HashNode(46...79)(
-       (46...47),
-       [AssocNode(54...58)(
-          SymbolNode(54...56)(nil, (54...55), (55...56), "a"),
-          CallNode(57...58)(nil, nil, (57...58), nil, nil, nil, nil, 2, "b"),
-          nil
-        ),
-        AssocNode(66...70)(
-          SymbolNode(66...68)(nil, (66...67), (67...68), "c"),
-          CallNode(69...70)(nil, nil, (69...70), nil, nil, nil, nil, 2, "d"),
-          nil
-        )],
-       (78...79)
-     ),
-     HashNode(81...106)(
-       (81...82),
-       [AssocNode(83...87)(
-          SymbolNode(83...85)(nil, (83...84), (84...85), "a"),
-          CallNode(86...87)(nil, nil, (86...87), nil, nil, nil, nil, 2, "b"),
-          nil
-        ),
-        AssocNode(89...93)(
-          SymbolNode(89...91)(nil, (89...90), (90...91), "c"),
-          CallNode(92...93)(nil, nil, (92...93), nil, nil, nil, nil, 2, "d"),
-          nil
-        ),
-        AssocSplatNode(95...98)(
-          CallNode(97...98)(nil, nil, (97...98), nil, nil, nil, nil, 2, "e"),
-          (95...97)
-        ),
-        AssocNode(100...104)(
-          SymbolNode(100...102)(nil, (100...101), (101...102), "f"),
-          CallNode(103...104)(
-            nil,
-            nil,
-            (103...104),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "g"
-          ),
-          nil
-        )],
-       (105...106)
-     ),
-     HashNode(108...120)(
-       (108...109),
-       [AssocNode(110...118)(
-          SymbolNode(110...114)((110...111), (111...112), (112...114), "a"),
-          CallNode(115...118)(
-            CallNode(116...118)(
-              nil,
-              nil,
-              (116...118),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "b?"
-            ),
-            nil,
-            (115...116),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "!"
-          ),
-          nil
-        )],
-       (119...120)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...120)(
+     body:
+      [HashNode(0...2)(
+         opening_loc: (0...1), elements: [], closing_loc: (1...2)
+       ),
+       HashNode(4...7)(
+         opening_loc: (4...5), elements: [], closing_loc: (6...7)
+       ),
+       HashNode(9...27)(
+         opening_loc: (9...10),
+         elements:
+          [AssocNode(11...17)(
+             key:
+              CallNode(11...12)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (11...12),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              ),
+             value:
+              CallNode(16...17)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (16...17),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             operator_loc: (13...15)
+           ),
+           AssocNode(19...25)(
+             key:
+              CallNode(19...20)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (19...20),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "c"
+              ),
+             value:
+              CallNode(24...25)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (24...25),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "d"
+              ),
+             operator_loc: (21...23)
+           )],
+         closing_loc: (26...27)
+       ),
+       HashNode(29...44)(
+         opening_loc: (29...30),
+         elements:
+          [AssocNode(31...37)(
+             key:
+              CallNode(31...32)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (31...32),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              ),
+             value:
+              CallNode(36...37)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (36...37),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             operator_loc: (33...35)
+           ),
+           AssocSplatNode(39...42)(
+             value:
+              CallNode(41...42)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (41...42),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "c"
+              ),
+             operator_loc: (39...41)
+           )],
+         closing_loc: (43...44)
+       ),
+       HashNode(46...79)(
+         opening_loc: (46...47),
+         elements:
+          [AssocNode(54...58)(
+             key:
+              SymbolNode(54...56)(
+                opening_loc: nil,
+                value_loc: (54...55),
+                closing_loc: (55...56),
+                unescaped: "a"
+              ),
+             value:
+              CallNode(57...58)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (57...58),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             operator_loc: nil
+           ),
+           AssocNode(66...70)(
+             key:
+              SymbolNode(66...68)(
+                opening_loc: nil,
+                value_loc: (66...67),
+                closing_loc: (67...68),
+                unescaped: "c"
+              ),
+             value:
+              CallNode(69...70)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (69...70),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "d"
+              ),
+             operator_loc: nil
+           )],
+         closing_loc: (78...79)
+       ),
+       HashNode(81...106)(
+         opening_loc: (81...82),
+         elements:
+          [AssocNode(83...87)(
+             key:
+              SymbolNode(83...85)(
+                opening_loc: nil,
+                value_loc: (83...84),
+                closing_loc: (84...85),
+                unescaped: "a"
+              ),
+             value:
+              CallNode(86...87)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (86...87),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             operator_loc: nil
+           ),
+           AssocNode(89...93)(
+             key:
+              SymbolNode(89...91)(
+                opening_loc: nil,
+                value_loc: (89...90),
+                closing_loc: (90...91),
+                unescaped: "c"
+              ),
+             value:
+              CallNode(92...93)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (92...93),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "d"
+              ),
+             operator_loc: nil
+           ),
+           AssocSplatNode(95...98)(
+             value:
+              CallNode(97...98)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (97...98),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "e"
+              ),
+             operator_loc: (95...97)
+           ),
+           AssocNode(100...104)(
+             key:
+              SymbolNode(100...102)(
+                opening_loc: nil,
+                value_loc: (100...101),
+                closing_loc: (101...102),
+                unescaped: "f"
+              ),
+             value:
+              CallNode(103...104)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (103...104),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "g"
+              ),
+             operator_loc: nil
+           )],
+         closing_loc: (105...106)
+       ),
+       HashNode(108...120)(
+         opening_loc: (108...109),
+         elements:
+          [AssocNode(110...118)(
+             key:
+              SymbolNode(110...114)(
+                opening_loc: (110...111),
+                value_loc: (111...112),
+                closing_loc: (112...114),
+                unescaped: "a"
+              ),
+             value:
+              CallNode(115...118)(
+                receiver:
+                 CallNode(116...118)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (116...118),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "b?"
+                 ),
+                operator_loc: nil,
+                message_loc: (115...116),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "!"
+              ),
+             operator_loc: nil
+           )],
+         closing_loc: (119...120)
+       )]
+   )
 )

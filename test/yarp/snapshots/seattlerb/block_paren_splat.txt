@@ -1,43 +1,50 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [CallNode(0...15)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...15)(
-         [:b, :c],
-         BlockParametersNode(4...13)(
-           ParametersNode(5...12)(
-             [RequiredDestructuredParameterNode(5...12)(
-                [RequiredParameterNode(6...7)(:b),
-                 SplatNode(9...11)(
-                   (9...10),
-                   RequiredParameterNode(10...11)(:c)
-                 )],
-                (5...6),
-                (11...12)
-              )],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (4...5),
-           (12...13)
-         ),
-         nil,
-         (2...3),
-         (14...15)
-       ),
-       0,
-       "a"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [CallNode(0...15)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...15)(
+            locals: [:b, :c],
+            parameters:
+             BlockParametersNode(4...13)(
+               parameters:
+                ParametersNode(5...12)(
+                  requireds:
+                   [RequiredDestructuredParameterNode(5...12)(
+                      parameters:
+                       [RequiredParameterNode(6...7)(name: :b),
+                        SplatNode(9...11)(
+                          operator_loc: (9...10),
+                          expression: RequiredParameterNode(10...11)(name: :c)
+                        )],
+                      opening_loc: (5...6),
+                      closing_loc: (11...12)
+                    )],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (4...5),
+               closing_loc: (12...13)
+             ),
+            body: nil,
+            opening_loc: (2...3),
+            closing_loc: (14...15)
+          ),
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

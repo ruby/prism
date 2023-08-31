@@ -1,53 +1,124 @@
 ProgramNode(0...83)(
-  [],
-  StatementsNode(0...83)(
-    [CallNode(0...2)(nil, nil, (0...2), nil, nil, nil, nil, 2, "_1"),
-     SingletonClassNode(4...25)(
-       [],
-       (4...9),
-       (10...12),
-       CallNode(13...16)(nil, nil, (13...16), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(18...20)(
-         [CallNode(18...20)(nil, nil, (18...20), nil, nil, nil, nil, 2, "_1")]
+  locals: [],
+  statements:
+   StatementsNode(0...83)(
+     body:
+      [CallNode(0...2)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...2),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "_1"
        ),
-       (22...25)
-     ),
-     ClassNode(27...43)(
-       [],
-       (27...32),
-       ConstantReadNode(33...34)(),
-       nil,
-       nil,
-       StatementsNode(36...38)(
-         [CallNode(36...38)(nil, nil, (36...38), nil, nil, nil, nil, 2, "_1")]
+       SingletonClassNode(4...25)(
+         locals: [],
+         class_keyword_loc: (4...9),
+         operator_loc: (10...12),
+         expression:
+          CallNode(13...16)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (13...16),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         body:
+          StatementsNode(18...20)(
+            body:
+             [CallNode(18...20)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (18...20),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "_1"
+              )]
+          ),
+         end_keyword_loc: (22...25)
        ),
-       (40...43),
-       "A"
-     ),
-     DefNode(45...64)(
-       (54...55),
-       SelfNode(49...53)(),
-       nil,
-       StatementsNode(57...59)(
-         [CallNode(57...59)(nil, nil, (57...59), nil, nil, nil, nil, 2, "_1")]
+       ClassNode(27...43)(
+         locals: [],
+         class_keyword_loc: (27...32),
+         constant_path: ConstantReadNode(33...34)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(36...38)(
+            body:
+             [CallNode(36...38)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (36...38),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "_1"
+              )]
+          ),
+         end_keyword_loc: (40...43),
+         name: "A"
        ),
-       [],
-       (45...48),
-       (53...54),
-       nil,
-       nil,
-       nil,
-       (61...64)
-     ),
-     ModuleNode(66...83)(
-       [],
-       (66...72),
-       ConstantReadNode(73...74)(),
-       StatementsNode(76...78)(
-         [CallNode(76...78)(nil, nil, (76...78), nil, nil, nil, nil, 2, "_1")]
+       DefNode(45...64)(
+         name_loc: (54...55),
+         receiver: SelfNode(49...53)(),
+         parameters: nil,
+         body:
+          StatementsNode(57...59)(
+            body:
+             [CallNode(57...59)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (57...59),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "_1"
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (45...48),
+         operator_loc: (53...54),
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (61...64)
        ),
-       (80...83),
-       "A"
-     )]
-  )
+       ModuleNode(66...83)(
+         locals: [],
+         module_keyword_loc: (66...72),
+         constant_path: ConstantReadNode(73...74)(),
+         body:
+          StatementsNode(76...78)(
+            body:
+             [CallNode(76...78)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (76...78),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "_1"
+              )]
+          ),
+         end_keyword_loc: (80...83),
+         name: "A"
+       )]
+   )
 )

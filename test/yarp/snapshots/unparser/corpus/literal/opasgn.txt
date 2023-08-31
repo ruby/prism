@@ -1,438 +1,536 @@
 ProgramNode(0...233)(
-  [:a, :h],
-  StatementsNode(0...233)(
-    [LocalVariableOperatorWriteNode(0...6)(
-       (0...1),
-       (2...4),
-       IntegerNode(5...6)(),
-       :a,
-       :+,
-       0
-     ),
-     LocalVariableOperatorWriteNode(7...13)(
-       (7...8),
-       (9...11),
-       IntegerNode(12...13)(),
-       :a,
-       :-,
-       0
-     ),
-     LocalVariableOperatorWriteNode(14...21)(
-       (14...15),
-       (16...19),
-       IntegerNode(20...21)(),
-       :a,
-       :**,
-       0
-     ),
-     LocalVariableOperatorWriteNode(22...28)(
-       (22...23),
-       (24...26),
-       IntegerNode(27...28)(),
-       :a,
-       :*,
-       0
-     ),
-     LocalVariableOperatorWriteNode(29...35)(
-       (29...30),
-       (31...33),
-       IntegerNode(34...35)(),
-       :a,
-       :/,
-       0
-     ),
-     LocalVariableAndWriteNode(36...43)(
-       (36...37),
-       (38...41),
-       CallNode(42...43)(nil, nil, (42...43), nil, nil, nil, nil, 2, "b"),
-       :a,
-       0
-     ),
-     LocalVariableOrWriteNode(44...51)(
-       (44...45),
-       (46...49),
-       IntegerNode(50...51)(),
-       :a,
-       0
-     ),
-     CallNode(52...65)(
-       ParenthesesNode(52...61)(
-         StatementsNode(53...60)(
-           [LocalVariableOrWriteNode(53...60)(
-              (53...54),
-              (55...58),
-              IntegerNode(59...60)(),
-              :a,
-              0
-            )]
-         ),
-         (52...53),
-         (60...61)
+  locals: [:a, :h],
+  statements:
+   StatementsNode(0...233)(
+     body:
+      [LocalVariableOperatorWriteNode(0...6)(
+         name_loc: (0...1),
+         operator_loc: (2...4),
+         value: IntegerNode(5...6)(),
+         name: :a,
+         operator: :+,
+         depth: 0
        ),
-       (61...62),
-       (62...65),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "bar"
-     ),
-     CallNode(66...83)(
-       ParenthesesNode(66...76)(
-         StatementsNode(67...75)(
-           [LocalVariableOrWriteNode(67...75)(
-              (67...68),
-              (69...72),
-              HashNode(73...75)((73...74), [], (74...75)),
-              :h,
-              0
-            )]
-         ),
-         (66...67),
-         (75...76)
+       LocalVariableOperatorWriteNode(7...13)(
+         name_loc: (7...8),
+         operator_loc: (9...11),
+         value: IntegerNode(12...13)(),
+         name: :a,
+         operator: :-,
+         depth: 0
        ),
-       nil,
-       (76...79),
-       (76...77),
-       ArgumentsNode(77...83)(
-         [CallNode(77...78)(nil, nil, (77...78), nil, nil, nil, nil, 2, "k"),
-          CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 2, "v")]
+       LocalVariableOperatorWriteNode(14...21)(
+         name_loc: (14...15),
+         operator_loc: (16...19),
+         value: IntegerNode(20...21)(),
+         name: :a,
+         operator: :**,
+         depth: 0
        ),
-       (78...79),
-       nil,
-       0,
-       "[]="
-     ),
-     CallOperatorWriteNode(84...92)(
-       CallNode(84...87)(
-         LocalVariableReadNode(84...85)(:a, 0),
-         (85...86),
-         (86...87),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       LocalVariableOperatorWriteNode(22...28)(
+         name_loc: (22...23),
+         operator_loc: (24...26),
+         value: IntegerNode(27...28)(),
+         name: :a,
+         operator: :*,
+         depth: 0
        ),
-       (88...90),
-       IntegerNode(91...92)(),
-       :+
-     ),
-     CallOperatorWriteNode(93...101)(
-       CallNode(93...96)(
-         LocalVariableReadNode(93...94)(:a, 0),
-         (94...95),
-         (95...96),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       LocalVariableOperatorWriteNode(29...35)(
+         name_loc: (29...30),
+         operator_loc: (31...33),
+         value: IntegerNode(34...35)(),
+         name: :a,
+         operator: :/,
+         depth: 0
        ),
-       (97...99),
-       IntegerNode(100...101)(),
-       :-
-     ),
-     CallOperatorWriteNode(102...111)(
-       CallNode(102...105)(
-         LocalVariableReadNode(102...103)(:a, 0),
-         (103...104),
-         (104...105),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       LocalVariableAndWriteNode(36...43)(
+         name_loc: (36...37),
+         operator_loc: (38...41),
+         value:
+          CallNode(42...43)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (42...43),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "b"
+          ),
+         name: :a,
+         depth: 0
        ),
-       (106...109),
-       IntegerNode(110...111)(),
-       :**
-     ),
-     CallOperatorWriteNode(112...120)(
-       CallNode(112...115)(
-         LocalVariableReadNode(112...113)(:a, 0),
-         (113...114),
-         (114...115),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       LocalVariableOrWriteNode(44...51)(
+         name_loc: (44...45),
+         operator_loc: (46...49),
+         value: IntegerNode(50...51)(),
+         name: :a,
+         depth: 0
        ),
-       (116...118),
-       IntegerNode(119...120)(),
-       :*
-     ),
-     CallOperatorWriteNode(121...129)(
-       CallNode(121...124)(
-         LocalVariableReadNode(121...122)(:a, 0),
-         (122...123),
-         (123...124),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       CallNode(52...65)(
+         receiver:
+          ParenthesesNode(52...61)(
+            body:
+             StatementsNode(53...60)(
+               body:
+                [LocalVariableOrWriteNode(53...60)(
+                   name_loc: (53...54),
+                   operator_loc: (55...58),
+                   value: IntegerNode(59...60)(),
+                   name: :a,
+                   depth: 0
+                 )]
+             ),
+            opening_loc: (52...53),
+            closing_loc: (60...61)
+          ),
+         operator_loc: (61...62),
+         message_loc: (62...65),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "bar"
        ),
-       (125...127),
-       IntegerNode(128...129)(),
-       :/
-     ),
-     CallOperatorAndWriteNode(130...139)(
-       CallNode(130...133)(
-         LocalVariableReadNode(130...131)(:a, 0),
-         (131...132),
-         (132...133),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       CallNode(66...83)(
+         receiver:
+          ParenthesesNode(66...76)(
+            body:
+             StatementsNode(67...75)(
+               body:
+                [LocalVariableOrWriteNode(67...75)(
+                   name_loc: (67...68),
+                   operator_loc: (69...72),
+                   value:
+                    HashNode(73...75)(
+                      opening_loc: (73...74),
+                      elements: [],
+                      closing_loc: (74...75)
+                    ),
+                   name: :h,
+                   depth: 0
+                 )]
+             ),
+            opening_loc: (66...67),
+            closing_loc: (75...76)
+          ),
+         operator_loc: nil,
+         message_loc: (76...79),
+         opening_loc: (76...77),
+         arguments:
+          ArgumentsNode(77...83)(
+            arguments:
+             [CallNode(77...78)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (77...78),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "k"
+              ),
+              CallNode(82...83)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (82...83),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "v"
+              )]
+          ),
+         closing_loc: (78...79),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (134...137),
-       CallNode(138...139)(nil, nil, (138...139), nil, nil, nil, nil, 2, "b")
-     ),
-     CallOperatorOrWriteNode(140...149)(
-       CallNode(140...143)(
-         LocalVariableReadNode(140...141)(:a, 0),
-         (141...142),
-         (142...143),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "b="
+       CallOperatorWriteNode(84...92)(
+         target:
+          CallNode(84...87)(
+            receiver: LocalVariableReadNode(84...85)(name: :a, depth: 0),
+            operator_loc: (85...86),
+            message_loc: (86...87),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (88...90),
+         value: IntegerNode(91...92)(),
+         operator: :+
        ),
-       IntegerNode(148...149)(),
-       (144...147)
-     ),
-     CallOperatorWriteNode(150...159)(
-       CallNode(150...154)(
-         LocalVariableReadNode(150...151)(:a, 0),
-         nil,
-         (151...154),
-         (151...152),
-         ArgumentsNode(152...153)(
-           [CallNode(152...153)(
-              nil,
-              nil,
-              (152...153),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (153...154),
-         nil,
-         0,
-         "[]="
+       CallOperatorWriteNode(93...101)(
+         target:
+          CallNode(93...96)(
+            receiver: LocalVariableReadNode(93...94)(name: :a, depth: 0),
+            operator_loc: (94...95),
+            message_loc: (95...96),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (97...99),
+         value: IntegerNode(100...101)(),
+         operator: :-
        ),
-       (155...157),
-       IntegerNode(158...159)(),
-       :+
-     ),
-     CallOperatorWriteNode(160...169)(
-       CallNode(160...164)(
-         LocalVariableReadNode(160...161)(:a, 0),
-         nil,
-         (161...164),
-         (161...162),
-         ArgumentsNode(162...163)(
-           [CallNode(162...163)(
-              nil,
-              nil,
-              (162...163),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (163...164),
-         nil,
-         0,
-         "[]="
+       CallOperatorWriteNode(102...111)(
+         target:
+          CallNode(102...105)(
+            receiver: LocalVariableReadNode(102...103)(name: :a, depth: 0),
+            operator_loc: (103...104),
+            message_loc: (104...105),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (106...109),
+         value: IntegerNode(110...111)(),
+         operator: :**
        ),
-       (165...167),
-       IntegerNode(168...169)(),
-       :-
-     ),
-     CallOperatorWriteNode(170...180)(
-       CallNode(170...174)(
-         LocalVariableReadNode(170...171)(:a, 0),
-         nil,
-         (171...174),
-         (171...172),
-         ArgumentsNode(172...173)(
-           [CallNode(172...173)(
-              nil,
-              nil,
-              (172...173),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (173...174),
-         nil,
-         0,
-         "[]="
+       CallOperatorWriteNode(112...120)(
+         target:
+          CallNode(112...115)(
+            receiver: LocalVariableReadNode(112...113)(name: :a, depth: 0),
+            operator_loc: (113...114),
+            message_loc: (114...115),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (116...118),
+         value: IntegerNode(119...120)(),
+         operator: :*
        ),
-       (175...178),
-       IntegerNode(179...180)(),
-       :**
-     ),
-     CallOperatorWriteNode(181...190)(
-       CallNode(181...185)(
-         LocalVariableReadNode(181...182)(:a, 0),
-         nil,
-         (182...185),
-         (182...183),
-         ArgumentsNode(183...184)(
-           [CallNode(183...184)(
-              nil,
-              nil,
-              (183...184),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (184...185),
-         nil,
-         0,
-         "[]="
+       CallOperatorWriteNode(121...129)(
+         target:
+          CallNode(121...124)(
+            receiver: LocalVariableReadNode(121...122)(name: :a, depth: 0),
+            operator_loc: (122...123),
+            message_loc: (123...124),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (125...127),
+         value: IntegerNode(128...129)(),
+         operator: :/
        ),
-       (186...188),
-       IntegerNode(189...190)(),
-       :*
-     ),
-     CallOperatorWriteNode(191...200)(
-       CallNode(191...195)(
-         LocalVariableReadNode(191...192)(:a, 0),
-         nil,
-         (192...195),
-         (192...193),
-         ArgumentsNode(193...194)(
-           [CallNode(193...194)(
-              nil,
-              nil,
-              (193...194),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (194...195),
-         nil,
-         0,
-         "[]="
+       CallOperatorAndWriteNode(130...139)(
+         target:
+          CallNode(130...133)(
+            receiver: LocalVariableReadNode(130...131)(name: :a, depth: 0),
+            operator_loc: (131...132),
+            message_loc: (132...133),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         operator_loc: (134...137),
+         value:
+          CallNode(138...139)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (138...139),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "b"
+          )
        ),
-       (196...198),
-       IntegerNode(199...200)(),
-       :/
-     ),
-     CallOperatorAndWriteNode(201...211)(
-       CallNode(201...205)(
-         LocalVariableReadNode(201...202)(:a, 0),
-         nil,
-         (202...205),
-         (202...203),
-         ArgumentsNode(203...204)(
-           [CallNode(203...204)(
-              nil,
-              nil,
-              (203...204),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (204...205),
-         nil,
-         0,
-         "[]="
+       CallOperatorOrWriteNode(140...149)(
+         target:
+          CallNode(140...143)(
+            receiver: LocalVariableReadNode(140...141)(name: :a, depth: 0),
+            operator_loc: (141...142),
+            message_loc: (142...143),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "b="
+          ),
+         value: IntegerNode(148...149)(),
+         operator_loc: (144...147)
        ),
-       (206...209),
-       CallNode(210...211)(nil, nil, (210...211), nil, nil, nil, nil, 2, "b")
-     ),
-     CallOperatorOrWriteNode(212...222)(
-       CallNode(212...216)(
-         LocalVariableReadNode(212...213)(:a, 0),
-         nil,
-         (213...216),
-         (213...214),
-         ArgumentsNode(214...215)(
-           [CallNode(214...215)(
-              nil,
-              nil,
-              (214...215),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )]
-         ),
-         (215...216),
-         nil,
-         0,
-         "[]="
+       CallOperatorWriteNode(150...159)(
+         target:
+          CallNode(150...154)(
+            receiver: LocalVariableReadNode(150...151)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (151...154),
+            opening_loc: (151...152),
+            arguments:
+             ArgumentsNode(152...153)(
+               arguments:
+                [CallNode(152...153)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (152...153),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (153...154),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (155...157),
+         value: IntegerNode(158...159)(),
+         operator: :+
        ),
-       IntegerNode(221...222)(),
-       (217...220)
-     ),
-     CallOperatorWriteNode(223...233)(
-       CallNode(223...228)(
-         CallNode(223...226)(
-           nil,
-           nil,
-           (223...226),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         (226...227),
-         (227...228),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "A="
+       CallOperatorWriteNode(160...169)(
+         target:
+          CallNode(160...164)(
+            receiver: LocalVariableReadNode(160...161)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (161...164),
+            opening_loc: (161...162),
+            arguments:
+             ArgumentsNode(162...163)(
+               arguments:
+                [CallNode(162...163)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (162...163),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (163...164),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (165...167),
+         value: IntegerNode(168...169)(),
+         operator: :-
        ),
-       (229...231),
-       IntegerNode(232...233)(),
-       :+
-     )]
-  )
+       CallOperatorWriteNode(170...180)(
+         target:
+          CallNode(170...174)(
+            receiver: LocalVariableReadNode(170...171)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (171...174),
+            opening_loc: (171...172),
+            arguments:
+             ArgumentsNode(172...173)(
+               arguments:
+                [CallNode(172...173)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (172...173),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (173...174),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (175...178),
+         value: IntegerNode(179...180)(),
+         operator: :**
+       ),
+       CallOperatorWriteNode(181...190)(
+         target:
+          CallNode(181...185)(
+            receiver: LocalVariableReadNode(181...182)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (182...185),
+            opening_loc: (182...183),
+            arguments:
+             ArgumentsNode(183...184)(
+               arguments:
+                [CallNode(183...184)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (183...184),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (184...185),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (186...188),
+         value: IntegerNode(189...190)(),
+         operator: :*
+       ),
+       CallOperatorWriteNode(191...200)(
+         target:
+          CallNode(191...195)(
+            receiver: LocalVariableReadNode(191...192)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (192...195),
+            opening_loc: (192...193),
+            arguments:
+             ArgumentsNode(193...194)(
+               arguments:
+                [CallNode(193...194)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (193...194),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (194...195),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (196...198),
+         value: IntegerNode(199...200)(),
+         operator: :/
+       ),
+       CallOperatorAndWriteNode(201...211)(
+         target:
+          CallNode(201...205)(
+            receiver: LocalVariableReadNode(201...202)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (202...205),
+            opening_loc: (202...203),
+            arguments:
+             ArgumentsNode(203...204)(
+               arguments:
+                [CallNode(203...204)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (203...204),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (204...205),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (206...209),
+         value:
+          CallNode(210...211)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (210...211),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "b"
+          )
+       ),
+       CallOperatorOrWriteNode(212...222)(
+         target:
+          CallNode(212...216)(
+            receiver: LocalVariableReadNode(212...213)(name: :a, depth: 0),
+            operator_loc: nil,
+            message_loc: (213...216),
+            opening_loc: (213...214),
+            arguments:
+             ArgumentsNode(214...215)(
+               arguments:
+                [CallNode(214...215)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (214...215),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            closing_loc: (215...216),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         value: IntegerNode(221...222)(),
+         operator_loc: (217...220)
+       ),
+       CallOperatorWriteNode(223...233)(
+         target:
+          CallNode(223...228)(
+            receiver:
+             CallNode(223...226)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (223...226),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (226...227),
+            message_loc: (227...228),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "A="
+          ),
+         operator_loc: (229...231),
+         value: IntegerNode(232...233)(),
+         operator: :+
+       )]
+   )
 )

@@ -1,20 +1,29 @@
 ProgramNode(0...22)(
-  [],
-  StatementsNode(0...22)(
-    [CallNode(0...22)(
-       InterpolatedStringNode(0...5)(
-         (0...5),
-         [StringNode(7...12)(nil, (7...12), nil, "blah\n")],
-         (12...16)
-       ),
-       (16...17),
-       (17...22),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "strip"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...22)(
+     body:
+      [CallNode(0...22)(
+         receiver:
+          InterpolatedStringNode(0...5)(
+            opening_loc: (0...5),
+            parts:
+             [StringNode(7...12)(
+                opening_loc: nil,
+                content_loc: (7...12),
+                closing_loc: nil,
+                unescaped: "blah\n"
+              )],
+            closing_loc: (12...16)
+          ),
+         operator_loc: (16...17),
+         message_loc: (17...22),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "strip"
+       )]
+   )
 )

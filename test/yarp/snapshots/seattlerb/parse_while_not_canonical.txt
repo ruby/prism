@@ -1,44 +1,56 @@
 ProgramNode(0...30)(
-  [],
-  StatementsNode(0...30)(
-    [WhileNode(0...30)(
-       (0...5),
-       (27...30),
-       CallNode(6...18)(
-         CallNode(10...18)(
-           CallNode(10...13)(
-             nil,
-             nil,
-             (10...13),
-             nil,
-             nil,
-             nil,
-             nil,
-             2,
-             "var"
-           ),
-           (13...14),
-           (14...18),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "nil?"
-         ),
-         nil,
-         (6...9),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "!"
-       ),
-       StatementsNode(21...26)(
-         [StringNode(21...26)((21...22), (22...25), (25...26), "foo")]
-       ),
-       0
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...30)(
+     body:
+      [WhileNode(0...30)(
+         keyword_loc: (0...5),
+         closing_loc: (27...30),
+         predicate:
+          CallNode(6...18)(
+            receiver:
+             CallNode(10...18)(
+               receiver:
+                CallNode(10...13)(
+                  receiver: nil,
+                  operator_loc: nil,
+                  message_loc: (10...13),
+                  opening_loc: nil,
+                  arguments: nil,
+                  closing_loc: nil,
+                  block: nil,
+                  flags: 2,
+                  name: "var"
+                ),
+               operator_loc: (13...14),
+               message_loc: (14...18),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 0,
+               name: "nil?"
+             ),
+            operator_loc: nil,
+            message_loc: (6...9),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "!"
+          ),
+         statements:
+          StatementsNode(21...26)(
+            body:
+             [StringNode(21...26)(
+                opening_loc: (21...22),
+                content_loc: (22...25),
+                closing_loc: (25...26),
+                unescaped: "foo"
+              )]
+          ),
+         flags: 0
+       )]
+   )
 )

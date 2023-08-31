@@ -1,10 +1,18 @@
 ProgramNode(0...5)(
-  [],
-  StatementsNode(0...5)(
-    [InterpolatedStringNode(0...5)(
-       (0...5),
-       [StringNode(6...19)(nil, (6...19), nil, "foo\rbar\r\n" + "baz\n")],
-       (19...23)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...5)(
+     body:
+      [InterpolatedStringNode(0...5)(
+         opening_loc: (0...5),
+         parts:
+          [StringNode(6...19)(
+             opening_loc: nil,
+             content_loc: (6...19),
+             closing_loc: nil,
+             unescaped: "foo\rbar\r\n" + "baz\n"
+           )],
+         closing_loc: (19...23)
+       )]
+   )
 )

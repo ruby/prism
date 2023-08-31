@@ -1,7 +1,19 @@
 ProgramNode(0...13)(
-  [],
-  StatementsNode(0...13)(
-    [RangeNode(0...6)(nil, IntegerNode(3...6)(), (0...3), 1),
-     RangeNode(8...13)(nil, IntegerNode(10...13)(), (8...10), 0)]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [RangeNode(0...6)(
+         left: nil,
+         right: IntegerNode(3...6)(),
+         operator_loc: (0...3),
+         flags: 1
+       ),
+       RangeNode(8...13)(
+         left: nil,
+         right: IntegerNode(10...13)(),
+         operator_loc: (8...10),
+         flags: 0
+       )]
+   )
 )

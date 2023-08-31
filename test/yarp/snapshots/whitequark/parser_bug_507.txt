@@ -1,32 +1,40 @@
 ProgramNode(0...19)(
-  [:m],
-  StatementsNode(0...19)(
-    [LocalVariableWriteNode(0...19)(
-       :m,
-       0,
-       LambdaNode(4...19)(
-         [:args],
-         (4...6),
-         (13...15),
-         (16...19),
-         BlockParametersNode(7...12)(
-           ParametersNode(7...12)(
-             [],
-             [],
-             [],
-             RestParameterNode(7...12)((7...8), (8...12)),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           nil,
-           nil
-         ),
-         nil
-       ),
-       (0...1),
-       (2...3)
-     )]
-  )
+  locals: [:m],
+  statements:
+   StatementsNode(0...19)(
+     body:
+      [LocalVariableWriteNode(0...19)(
+         name: :m,
+         depth: 0,
+         value:
+          LambdaNode(4...19)(
+            locals: [:args],
+            operator_loc: (4...6),
+            opening_loc: (13...15),
+            closing_loc: (16...19),
+            parameters:
+             BlockParametersNode(7...12)(
+               parameters:
+                ParametersNode(7...12)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(7...12)(
+                     operator_loc: (7...8), name_loc: (8...12)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: nil,
+               closing_loc: nil
+             ),
+            body: nil
+          ),
+         name_loc: (0...1),
+         operator_loc: (2...3)
+       )]
+   )
 )

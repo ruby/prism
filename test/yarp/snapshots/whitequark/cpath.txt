@@ -1,25 +1,33 @@
 ProgramNode(0...39)(
-  [],
-  StatementsNode(0...39)(
-    [ModuleNode(0...17)(
-       [],
-       (0...6),
-       ConstantPathNode(7...12)(nil, ConstantReadNode(9...12)(), (7...9)),
-       nil,
-       (14...17),
-       "Foo"
-     ),
-     ModuleNode(19...39)(
-       [],
-       (19...25),
-       ConstantPathNode(26...34)(
-         ConstantReadNode(26...29)(),
-         ConstantReadNode(31...34)(),
-         (29...31)
+  locals: [],
+  statements:
+   StatementsNode(0...39)(
+     body:
+      [ModuleNode(0...17)(
+         locals: [],
+         module_keyword_loc: (0...6),
+         constant_path:
+          ConstantPathNode(7...12)(
+            parent: nil,
+            child: ConstantReadNode(9...12)(),
+            delimiter_loc: (7...9)
+          ),
+         body: nil,
+         end_keyword_loc: (14...17),
+         name: "Foo"
        ),
-       nil,
-       (36...39),
-       "Foo"
-     )]
-  )
+       ModuleNode(19...39)(
+         locals: [],
+         module_keyword_loc: (19...25),
+         constant_path:
+          ConstantPathNode(26...34)(
+            parent: ConstantReadNode(26...29)(),
+            child: ConstantReadNode(31...34)(),
+            delimiter_loc: (29...31)
+          ),
+         body: nil,
+         end_keyword_loc: (36...39),
+         name: "Foo"
+       )]
+   )
 )

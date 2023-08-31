@@ -1,23 +1,28 @@
 ProgramNode(0...204)(
-  [],
-  StatementsNode(0...204)(
-    [CallNode(0...204)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...204)(
-         [StringNode(2...204)(
-            (2...3),
-            (3...203),
-            (203...204),
-            "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "x"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...204)(
+     body:
+      [CallNode(0...204)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...204)(
+            arguments:
+             [StringNode(2...204)(
+                opening_loc: (2...3),
+                content_loc: (3...203),
+                closing_loc: (203...204),
+                unescaped:
+                 "\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "x"
+       )]
+   )
 )

@@ -1,30 +1,58 @@
 ProgramNode(0...11)(
-  [],
-  StatementsNode(0...11)(
-    [CallNode(0...11)(
-       CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-       (1...2),
-       (2...3),
-       nil,
-       ArgumentsNode(4...7)(
-         [ParenthesesNode(4...7)(
-            StatementsNode(5...6)([IntegerNode(5...6)()]),
-            (4...5),
-            (6...7)
-          )]
-       ),
-       nil,
-       BlockNode(8...11)(
-         [],
-         nil,
-         StatementsNode(9...10)(
-           [CallNode(9...10)(nil, nil, (9...10), nil, nil, nil, nil, 2, "c")]
-         ),
-         (8...9),
-         (10...11)
-       ),
-       0,
-       "b"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...11)(
+     body:
+      [CallNode(0...11)(
+         receiver:
+          CallNode(0...1)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...1),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "a"
+          ),
+         operator_loc: (1...2),
+         message_loc: (2...3),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(4...7)(
+            arguments:
+             [ParenthesesNode(4...7)(
+                body: StatementsNode(5...6)(body: [IntegerNode(5...6)()]),
+                opening_loc: (4...5),
+                closing_loc: (6...7)
+              )]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(8...11)(
+            locals: [],
+            parameters: nil,
+            body:
+             StatementsNode(9...10)(
+               body:
+                [CallNode(9...10)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (9...10),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "c"
+                 )]
+             ),
+            opening_loc: (8...9),
+            closing_loc: (10...11)
+          ),
+         flags: 0,
+         name: "b"
+       )]
+   )
 )

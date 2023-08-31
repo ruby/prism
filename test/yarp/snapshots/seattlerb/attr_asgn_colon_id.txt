@@ -1,16 +1,18 @@
 ProgramNode(0...8)(
-  [],
-  StatementsNode(0...8)(
-    [CallNode(0...8)(
-       ConstantReadNode(0...1)(),
-       (1...3),
-       (3...4),
-       nil,
-       ArgumentsNode(7...8)([IntegerNode(7...8)()]),
-       nil,
-       nil,
-       0,
-       "b="
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...8)(
+     body:
+      [CallNode(0...8)(
+         receiver: ConstantReadNode(0...1)(),
+         operator_loc: (1...3),
+         message_loc: (3...4),
+         opening_loc: nil,
+         arguments: ArgumentsNode(7...8)(arguments: [IntegerNode(7...8)()]),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "b="
+       )]
+   )
 )

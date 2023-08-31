@@ -1,26 +1,32 @@
 ProgramNode(0...14)(
-  [],
-  StatementsNode(0...14)(
-    [DefNode(0...14)(
-       (4...5),
-       nil,
-       ParametersNode(6...8)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         KeywordRestParameterNode(6...8)((6...8), nil),
-         nil
-       ),
-       nil,
-       [:**],
-       (0...3),
-       nil,
-       (5...6),
-       (8...9),
-       nil,
-       (11...14)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...14)(
+     body:
+      [DefNode(0...14)(
+         name_loc: (4...5),
+         receiver: nil,
+         parameters:
+          ParametersNode(6...8)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest:
+             KeywordRestParameterNode(6...8)(
+               operator_loc: (6...8), name_loc: nil
+             ),
+            block: nil
+          ),
+         body: nil,
+         locals: [:**],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (5...6),
+         rparen_loc: (8...9),
+         equal_loc: nil,
+         end_keyword_loc: (11...14)
+       )]
+   )
 )

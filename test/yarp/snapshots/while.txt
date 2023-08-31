@@ -1,206 +1,291 @@
 ProgramNode(0...314)(
-  [],
-  StatementsNode(0...314)(
-    [WhileNode(0...18)(
-       (0...5),
-       (15...18),
-       TrueNode(6...10)(),
-       StatementsNode(12...13)([IntegerNode(12...13)()]),
-       0
-     ),
-     WhileNode(20...32)(
-       (22...27),
-       nil,
-       TrueNode(28...32)(),
-       StatementsNode(20...21)([IntegerNode(20...21)()]),
-       0
-     ),
-     WhileNode(34...50)(
-       (40...45),
-       nil,
-       TrueNode(46...50)(),
-       StatementsNode(34...39)([BreakNode(34...39)(nil, (34...39))]),
-       0
-     ),
-     WhileNode(52...67)(
-       (57...62),
-       nil,
-       TrueNode(63...67)(),
-       StatementsNode(52...56)([NextNode(52...56)(nil, (52...56))]),
-       0
-     ),
-     WhileNode(69...86)(
-       (76...81),
-       nil,
-       TrueNode(82...86)(),
-       StatementsNode(69...75)([ReturnNode(69...75)((69...75), nil)]),
-       0
-     ),
-     WhileNode(88...109)(
-       (99...104),
-       nil,
-       CallNode(105...109)(
-         nil,
-         nil,
-         (105...109),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "bar?"
+  locals: [],
+  statements:
+   StatementsNode(0...314)(
+     body:
+      [WhileNode(0...18)(
+         keyword_loc: (0...5),
+         closing_loc: (15...18),
+         predicate: TrueNode(6...10)(),
+         statements: StatementsNode(12...13)(body: [IntegerNode(12...13)()]),
+         flags: 0
        ),
-       StatementsNode(88...98)(
-         [CallNode(88...98)(
-            nil,
-            nil,
-            (88...91),
-            nil,
-            ArgumentsNode(92...98)(
-              [SymbolNode(92...94)((92...93), (93...94), nil, "a"),
-               SymbolNode(96...98)((96...97), (97...98), nil, "b")]
-            ),
-            nil,
-            nil,
-            0,
-            "foo"
-          )]
+       WhileNode(20...32)(
+         keyword_loc: (22...27),
+         closing_loc: nil,
+         predicate: TrueNode(28...32)(),
+         statements: StatementsNode(20...21)(body: [IntegerNode(20...21)()]),
+         flags: 0
        ),
-       0
-     ),
-     WhileNode(111...161)(
-       (111...116),
-       (158...161),
-       DefNode(117...149)(
-         (126...129),
-         SelfNode(121...125)(),
-         ParametersNode(130...144)(
-           [],
-           [OptionalParameterNode(130...144)(
-              :a,
-              (130...131),
-              (132...133),
-              CallNode(134...144)(
-                nil,
-                nil,
-                (134...137),
-                nil,
-                nil,
-                nil,
-                BlockNode(138...144)([], nil, nil, (138...140), (141...144)),
-                0,
-                "tap"
-              )
-            )],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         nil,
-         [:a],
-         (117...120),
-         (125...126),
-         nil,
-         nil,
-         nil,
-         (146...149)
+       WhileNode(34...50)(
+         keyword_loc: (40...45),
+         closing_loc: nil,
+         predicate: TrueNode(46...50)(),
+         statements:
+          StatementsNode(34...39)(
+            body: [BreakNode(34...39)(arguments: nil, keyword_loc: (34...39))]
+          ),
+         flags: 0
        ),
-       StatementsNode(151...156)([BreakNode(151...156)(nil, (151...156))]),
-       0
-     ),
-     WhileNode(163...210)(
-       (163...168),
-       (207...210),
-       ClassNode(169...198)(
-         [:a],
-         (169...174),
-         ConstantReadNode(175...178)(),
-         nil,
-         nil,
-         StatementsNode(179...193)(
-           [LocalVariableWriteNode(179...193)(
-              :a,
-              0,
-              CallNode(183...193)(
-                nil,
-                nil,
-                (183...186),
-                nil,
-                nil,
-                nil,
-                BlockNode(187...193)([], nil, nil, (187...189), (190...193)),
-                0,
-                "tap"
-              ),
-              (179...180),
-              (181...182)
-            )]
-         ),
-         (195...198),
-         "Foo"
+       WhileNode(52...67)(
+         keyword_loc: (57...62),
+         closing_loc: nil,
+         predicate: TrueNode(63...67)(),
+         statements:
+          StatementsNode(52...56)(
+            body: [NextNode(52...56)(arguments: nil, keyword_loc: (52...56))]
+          ),
+         flags: 0
        ),
-       StatementsNode(200...205)([BreakNode(200...205)(nil, (200...205))]),
-       0
-     ),
-     WhileNode(212...260)(
-       (212...217),
-       (257...260),
-       SingletonClassNode(218...248)(
-         [],
-         (218...223),
-         (224...226),
-         SelfNode(227...231)(),
-         StatementsNode(233...243)(
-           [CallNode(233...243)(
-              nil,
-              nil,
-              (233...236),
-              nil,
-              nil,
-              nil,
-              BlockNode(237...243)([], nil, nil, (237...239), (240...243)),
-              0,
-              "tap"
-            )]
-         ),
-         (245...248)
+       WhileNode(69...86)(
+         keyword_loc: (76...81),
+         closing_loc: nil,
+         predicate: TrueNode(82...86)(),
+         statements:
+          StatementsNode(69...75)(
+            body: [ReturnNode(69...75)(keyword_loc: (69...75), arguments: nil)]
+          ),
+         flags: 0
        ),
-       StatementsNode(250...255)([BreakNode(250...255)(nil, (250...255))]),
-       0
-     ),
-     WhileNode(262...314)(
-       (262...267),
-       (311...314),
-       SingletonClassNode(268...302)(
-         [:a],
-         (268...273),
-         (274...276),
-         SelfNode(277...281)(),
-         StatementsNode(283...297)(
-           [LocalVariableWriteNode(283...297)(
-              :a,
-              0,
-              CallNode(287...297)(
-                nil,
-                nil,
-                (287...290),
-                nil,
-                nil,
-                nil,
-                BlockNode(291...297)([], nil, nil, (291...293), (294...297)),
-                0,
-                "tap"
-              ),
-              (283...284),
-              (285...286)
-            )]
-         ),
-         (299...302)
+       WhileNode(88...109)(
+         keyword_loc: (99...104),
+         closing_loc: nil,
+         predicate:
+          CallNode(105...109)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (105...109),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "bar?"
+          ),
+         statements:
+          StatementsNode(88...98)(
+            body:
+             [CallNode(88...98)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (88...91),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(92...98)(
+                   arguments:
+                    [SymbolNode(92...94)(
+                       opening_loc: (92...93),
+                       value_loc: (93...94),
+                       closing_loc: nil,
+                       unescaped: "a"
+                     ),
+                     SymbolNode(96...98)(
+                       opening_loc: (96...97),
+                       value_loc: (97...98),
+                       closing_loc: nil,
+                       unescaped: "b"
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "foo"
+              )]
+          ),
+         flags: 0
        ),
-       StatementsNode(304...309)([BreakNode(304...309)(nil, (304...309))]),
-       0
-     )]
-  )
+       WhileNode(111...161)(
+         keyword_loc: (111...116),
+         closing_loc: (158...161),
+         predicate:
+          DefNode(117...149)(
+            name_loc: (126...129),
+            receiver: SelfNode(121...125)(),
+            parameters:
+             ParametersNode(130...144)(
+               requireds: [],
+               optionals:
+                [OptionalParameterNode(130...144)(
+                   name: :a,
+                   name_loc: (130...131),
+                   operator_loc: (132...133),
+                   value:
+                    CallNode(134...144)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (134...137),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block:
+                       BlockNode(138...144)(
+                         locals: [],
+                         parameters: nil,
+                         body: nil,
+                         opening_loc: (138...140),
+                         closing_loc: (141...144)
+                       ),
+                      flags: 0,
+                      name: "tap"
+                    )
+                 )],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            body: nil,
+            locals: [:a],
+            def_keyword_loc: (117...120),
+            operator_loc: (125...126),
+            lparen_loc: nil,
+            rparen_loc: nil,
+            equal_loc: nil,
+            end_keyword_loc: (146...149)
+          ),
+         statements:
+          StatementsNode(151...156)(
+            body:
+             [BreakNode(151...156)(arguments: nil, keyword_loc: (151...156))]
+          ),
+         flags: 0
+       ),
+       WhileNode(163...210)(
+         keyword_loc: (163...168),
+         closing_loc: (207...210),
+         predicate:
+          ClassNode(169...198)(
+            locals: [:a],
+            class_keyword_loc: (169...174),
+            constant_path: ConstantReadNode(175...178)(),
+            inheritance_operator_loc: nil,
+            superclass: nil,
+            body:
+             StatementsNode(179...193)(
+               body:
+                [LocalVariableWriteNode(179...193)(
+                   name: :a,
+                   depth: 0,
+                   value:
+                    CallNode(183...193)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (183...186),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block:
+                       BlockNode(187...193)(
+                         locals: [],
+                         parameters: nil,
+                         body: nil,
+                         opening_loc: (187...189),
+                         closing_loc: (190...193)
+                       ),
+                      flags: 0,
+                      name: "tap"
+                    ),
+                   name_loc: (179...180),
+                   operator_loc: (181...182)
+                 )]
+             ),
+            end_keyword_loc: (195...198),
+            name: "Foo"
+          ),
+         statements:
+          StatementsNode(200...205)(
+            body:
+             [BreakNode(200...205)(arguments: nil, keyword_loc: (200...205))]
+          ),
+         flags: 0
+       ),
+       WhileNode(212...260)(
+         keyword_loc: (212...217),
+         closing_loc: (257...260),
+         predicate:
+          SingletonClassNode(218...248)(
+            locals: [],
+            class_keyword_loc: (218...223),
+            operator_loc: (224...226),
+            expression: SelfNode(227...231)(),
+            body:
+             StatementsNode(233...243)(
+               body:
+                [CallNode(233...243)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (233...236),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block:
+                    BlockNode(237...243)(
+                      locals: [],
+                      parameters: nil,
+                      body: nil,
+                      opening_loc: (237...239),
+                      closing_loc: (240...243)
+                    ),
+                   flags: 0,
+                   name: "tap"
+                 )]
+             ),
+            end_keyword_loc: (245...248)
+          ),
+         statements:
+          StatementsNode(250...255)(
+            body:
+             [BreakNode(250...255)(arguments: nil, keyword_loc: (250...255))]
+          ),
+         flags: 0
+       ),
+       WhileNode(262...314)(
+         keyword_loc: (262...267),
+         closing_loc: (311...314),
+         predicate:
+          SingletonClassNode(268...302)(
+            locals: [:a],
+            class_keyword_loc: (268...273),
+            operator_loc: (274...276),
+            expression: SelfNode(277...281)(),
+            body:
+             StatementsNode(283...297)(
+               body:
+                [LocalVariableWriteNode(283...297)(
+                   name: :a,
+                   depth: 0,
+                   value:
+                    CallNode(287...297)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (287...290),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block:
+                       BlockNode(291...297)(
+                         locals: [],
+                         parameters: nil,
+                         body: nil,
+                         opening_loc: (291...293),
+                         closing_loc: (294...297)
+                       ),
+                      flags: 0,
+                      name: "tap"
+                    ),
+                   name_loc: (283...284),
+                   operator_loc: (285...286)
+                 )]
+             ),
+            end_keyword_loc: (299...302)
+          ),
+         statements:
+          StatementsNode(304...309)(
+            body:
+             [BreakNode(304...309)(arguments: nil, keyword_loc: (304...309))]
+          ),
+         flags: 0
+       )]
+   )
 )

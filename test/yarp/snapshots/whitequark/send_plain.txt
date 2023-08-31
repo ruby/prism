@@ -1,38 +1,73 @@
 ProgramNode(0...29)(
-  [],
-  StatementsNode(0...29)(
-    [CallNode(0...7)(
-       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-       (3...4),
-       (4...7),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "fun"
-     ),
-     CallNode(9...19)(
-       CallNode(9...12)(nil, nil, (9...12), nil, nil, nil, nil, 2, "foo"),
-       (12...14),
-       (14...17),
-       (17...18),
-       nil,
-       (18...19),
-       nil,
-       0,
-       "Fun"
-     ),
-     CallNode(21...29)(
-       CallNode(21...24)(nil, nil, (21...24), nil, nil, nil, nil, 2, "foo"),
-       (24...26),
-       (26...29),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "fun"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...29)(
+     body:
+      [CallNode(0...7)(
+         receiver:
+          CallNode(0...3)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...3),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: (3...4),
+         message_loc: (4...7),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "fun"
+       ),
+       CallNode(9...19)(
+         receiver:
+          CallNode(9...12)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (9...12),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: (12...14),
+         message_loc: (14...17),
+         opening_loc: (17...18),
+         arguments: nil,
+         closing_loc: (18...19),
+         block: nil,
+         flags: 0,
+         name: "Fun"
+       ),
+       CallNode(21...29)(
+         receiver:
+          CallNode(21...24)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (21...24),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: (24...26),
+         message_loc: (26...29),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "fun"
+       )]
+   )
 )

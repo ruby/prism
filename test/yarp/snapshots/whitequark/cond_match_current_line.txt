@@ -1,29 +1,39 @@
 ProgramNode(0...21)(
-  [],
-  StatementsNode(0...21)(
-    [CallNode(0...6)(
-       RegularExpressionNode(1...6)((1...2), (2...5), (5...6), "wat", 0),
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "!"
-     ),
-     IfNode(8...21)(
-       (8...10),
-       RegularExpressionNode(11...16)(
-         (11...12),
-         (12...15),
-         (15...16),
-         "wat",
-         0
+  locals: [],
+  statements:
+   StatementsNode(0...21)(
+     body:
+      [CallNode(0...6)(
+         receiver:
+          RegularExpressionNode(1...6)(
+            opening_loc: (1...2),
+            content_loc: (2...5),
+            closing_loc: (5...6),
+            unescaped: "wat",
+            flags: 0
+          ),
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "!"
        ),
-       nil,
-       nil,
-       (18...21)
-     )]
-  )
+       IfNode(8...21)(
+         if_keyword_loc: (8...10),
+         predicate:
+          RegularExpressionNode(11...16)(
+            opening_loc: (11...12),
+            content_loc: (12...15),
+            closing_loc: (15...16),
+            unescaped: "wat",
+            flags: 0
+          ),
+         statements: nil,
+         consequent: nil,
+         end_keyword_loc: (18...21)
+       )]
+   )
 )

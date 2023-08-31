@@ -1,18 +1,31 @@
 ProgramNode(0...23)(
-  [],
-  StatementsNode(0...23)(
-    [CallNode(0...23)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...10)(
-         [InterpolatedStringNode(2...10)((2...10), [], (14...20))]
-       ),
-       nil,
-       BlockNode(11...23)([], nil, nil, (11...13), (20...23)),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...23)(
+     body:
+      [CallNode(0...23)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...10)(
+            arguments:
+             [InterpolatedStringNode(2...10)(
+                opening_loc: (2...10), parts: [], closing_loc: (14...20)
+              )]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(11...23)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (11...13),
+            closing_loc: (20...23)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

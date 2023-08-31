@@ -1,10 +1,12 @@
 ProgramNode(0...8)(
-  [],
-  StatementsNode(0...8)(
-    [ConstantPathNode(0...8)(
-       ConstantReadNode(0...3)(),
-       ConstantReadNode(5...8)(),
-       (3...5)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...8)(
+     body:
+      [ConstantPathNode(0...8)(
+         parent: ConstantReadNode(0...3)(),
+         child: ConstantReadNode(5...8)(),
+         delimiter_loc: (3...5)
+       )]
+   )
 )

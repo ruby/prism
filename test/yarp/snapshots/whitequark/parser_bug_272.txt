@@ -1,35 +1,43 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [CallNode(0...15)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...4)([InstanceVariableReadNode(2...4)(:@b)]),
-       nil,
-       BlockNode(5...15)(
-         [:c],
-         BlockParametersNode(8...11)(
-           ParametersNode(9...10)(
-             [RequiredParameterNode(9...10)(:c)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (8...9),
-           (10...11)
-         ),
-         nil,
-         (5...7),
-         (12...15)
-       ),
-       0,
-       "a"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [CallNode(0...15)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...4)(
+            arguments: [InstanceVariableReadNode(2...4)(name: :@b)]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(5...15)(
+            locals: [:c],
+            parameters:
+             BlockParametersNode(8...11)(
+               parameters:
+                ParametersNode(9...10)(
+                  requireds: [RequiredParameterNode(9...10)(name: :c)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (8...9),
+               closing_loc: (10...11)
+             ),
+            body: nil,
+            opening_loc: (5...7),
+            closing_loc: (12...15)
+          ),
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

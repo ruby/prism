@@ -1,41 +1,53 @@
 ProgramNode(0...43)(
-  [],
-  StatementsNode(0...43)(
-    [DefNode(0...43)(
-       (4...7),
-       nil,
-       ParametersNode(8...19)(
-         [RequiredParameterNode(8...16)(:argument)],
-         [],
-         [],
-         RestParameterNode(18...19)((18...19), nil),
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(22...38)(
-         [CallNode(22...38)(
-            nil,
-            nil,
-            (22...25),
-            (25...26),
-            ArgumentsNode(26...37)(
-              [LocalVariableReadNode(26...34)(:argument, 0),
-               SplatNode(36...37)((36...37), nil)]
-            ),
-            (37...38),
-            nil,
-            0,
-            "bar"
-          )]
-       ),
-       [:argument, :*],
-       (0...3),
-       nil,
-       (7...8),
-       (19...20),
-       nil,
-       (40...43)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...43)(
+     body:
+      [DefNode(0...43)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters:
+          ParametersNode(8...19)(
+            requireds: [RequiredParameterNode(8...16)(name: :argument)],
+            optionals: [],
+            posts: [],
+            rest:
+             RestParameterNode(18...19)(
+               operator_loc: (18...19), name_loc: nil
+             ),
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(22...38)(
+            body:
+             [CallNode(22...38)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (22...25),
+                opening_loc: (25...26),
+                arguments:
+                 ArgumentsNode(26...37)(
+                   arguments:
+                    [LocalVariableReadNode(26...34)(name: :argument, depth: 0),
+                     SplatNode(36...37)(
+                       operator_loc: (36...37), expression: nil
+                     )]
+                 ),
+                closing_loc: (37...38),
+                block: nil,
+                flags: 0,
+                name: "bar"
+              )]
+          ),
+         locals: [:argument, :*],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (7...8),
+         rparen_loc: (19...20),
+         equal_loc: nil,
+         end_keyword_loc: (40...43)
+       )]
+   )
 )

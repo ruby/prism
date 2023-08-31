@@ -1,11 +1,24 @@
 ProgramNode(0...4)(
-  [],
-  StatementsNode(0...4)(
-    [RangeNode(0...4)(
-       CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-       nil,
-       (1...4),
-       1
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...4)(
+     body:
+      [RangeNode(0...4)(
+         left:
+          CallNode(0...1)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...1),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "a"
+          ),
+         right: nil,
+         operator_loc: (1...4),
+         flags: 1
+       )]
+   )
 )

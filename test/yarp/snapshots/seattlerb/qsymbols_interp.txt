@@ -1,33 +1,57 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [ArrayNode(0...15)(
-       [SymbolNode(3...4)(nil, (3...4), nil, "a"),
-        InterpolatedSymbolNode(5...12)(
-          nil,
-          [StringNode(5...6)(nil, (5...6), nil, "b"),
-           EmbeddedStatementsNode(6...12)(
-             (6...8),
-             StatementsNode(8...11)(
-               [CallNode(8...11)(
-                  IntegerNode(8...9)(),
-                  nil,
-                  (9...10),
-                  nil,
-                  ArgumentsNode(10...11)([IntegerNode(10...11)()]),
-                  nil,
-                  nil,
-                  0,
-                  "+"
-                )]
-             ),
-             (11...12)
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [ArrayNode(0...15)(
+         elements:
+          [SymbolNode(3...4)(
+             opening_loc: nil,
+             value_loc: (3...4),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           InterpolatedSymbolNode(5...12)(
+             opening_loc: nil,
+             parts:
+              [StringNode(5...6)(
+                 opening_loc: nil,
+                 content_loc: (5...6),
+                 closing_loc: nil,
+                 unescaped: "b"
+               ),
+               EmbeddedStatementsNode(6...12)(
+                 opening_loc: (6...8),
+                 statements:
+                  StatementsNode(8...11)(
+                    body:
+                     [CallNode(8...11)(
+                        receiver: IntegerNode(8...9)(),
+                        operator_loc: nil,
+                        message_loc: (9...10),
+                        opening_loc: nil,
+                        arguments:
+                         ArgumentsNode(10...11)(
+                           arguments: [IntegerNode(10...11)()]
+                         ),
+                        closing_loc: nil,
+                        block: nil,
+                        flags: 0,
+                        name: "+"
+                      )]
+                  ),
+                 closing_loc: (11...12)
+               )],
+             closing_loc: nil
+           ),
+           SymbolNode(13...14)(
+             opening_loc: nil,
+             value_loc: (13...14),
+             closing_loc: nil,
+             unescaped: "c"
            )],
-          nil
-        ),
-        SymbolNode(13...14)(nil, (13...14), nil, "c")],
-       (0...3),
-       (14...15)
-     )]
-  )
+         opening_loc: (0...3),
+         closing_loc: (14...15)
+       )]
+   )
 )

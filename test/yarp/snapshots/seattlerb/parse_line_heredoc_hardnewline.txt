@@ -1,25 +1,38 @@
 ProgramNode(0...48)(
-  [],
-  StatementsNode(0...48)(
-    [InterpolatedStringNode(0...8)(
-       (0...8),
-       [StringNode(9...28)(
-          nil,
-          (9...28),
-          nil,
-          "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
-        )],
-       (28...34)
-     ),
-     ClassNode(35...48)(
-       [],
-       (35...40),
-       ConstantReadNode(41...44)(),
-       nil,
-       nil,
-       nil,
-       (45...48),
-       "Foo"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...48)(
+     body:
+      [InterpolatedStringNode(0...8)(
+         opening_loc: (0...8),
+         parts:
+          [StringNode(9...28)(
+             opening_loc: nil,
+             content_loc: (9...28),
+             closing_loc: nil,
+             unescaped:
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n" +
+              "\n"
+           )],
+         closing_loc: (28...34)
+       ),
+       ClassNode(35...48)(
+         locals: [],
+         class_keyword_loc: (35...40),
+         constant_path: ConstantReadNode(41...44)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body: nil,
+         end_keyword_loc: (45...48),
+         name: "Foo"
+       )]
+   )
 )

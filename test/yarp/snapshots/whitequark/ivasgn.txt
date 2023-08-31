@@ -1,11 +1,13 @@
 ProgramNode(0...9)(
-  [],
-  StatementsNode(0...9)(
-    [InstanceVariableWriteNode(0...9)(
-       :@var,
-       (0...4),
-       IntegerNode(7...9)(),
-       (5...6)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...9)(
+     body:
+      [InstanceVariableWriteNode(0...9)(
+         name: :@var,
+         name_loc: (0...4),
+         value: IntegerNode(7...9)(),
+         operator_loc: (5...6)
+       )]
+   )
 )

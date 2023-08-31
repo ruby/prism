@@ -1,20 +1,31 @@
 ProgramNode(0...17)(
-  [],
-  StatementsNode(0...17)(
-    [LambdaNode(0...17)(
-       [],
-       (0...2),
-       (3...5),
-       (14...17),
-       nil,
-       BeginNode(6...17)(
-         nil,
-         nil,
-         RescueNode(6...12)((6...12), [], nil, nil, nil, nil),
-         nil,
-         nil,
-         (14...17)
-       )
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [LambdaNode(0...17)(
+         locals: [],
+         operator_loc: (0...2),
+         opening_loc: (3...5),
+         closing_loc: (14...17),
+         parameters: nil,
+         body:
+          BeginNode(6...17)(
+            begin_keyword_loc: nil,
+            statements: nil,
+            rescue_clause:
+             RescueNode(6...12)(
+               keyword_loc: (6...12),
+               exceptions: [],
+               operator_loc: nil,
+               reference: nil,
+               statements: nil,
+               consequent: nil
+             ),
+            else_clause: nil,
+            ensure_clause: nil,
+            end_keyword_loc: (14...17)
+          )
+       )]
+   )
 )

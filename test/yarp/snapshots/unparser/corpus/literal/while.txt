@@ -1,647 +1,775 @@
 ProgramNode(0...620)(
-  [:x],
-  StatementsNode(0...620)(
-    [ModuleNode(0...68)(
-       [],
-       (0...6),
-       ConstantReadNode(7...8)(),
-       StatementsNode(11...64)(
-         [CallNode(11...64)(
-            nil,
-            nil,
-            (11...14),
-            nil,
-            nil,
-            nil,
-            BlockNode(15...64)(
-              [:bar, :foo],
-              BlockParametersNode(17...22)(
-                ParametersNode(18...21)(
-                  [RequiredParameterNode(18...21)(:bar)],
-                  [],
-                  [],
-                  nil,
-                  [],
-                  nil,
-                  nil
-                ),
-                [],
-                (17...18),
-                (21...22)
-              ),
-              StatementsNode(27...60)(
-                [WhileNode(27...60)(
-                   (27...32),
-                   (57...60),
-                   CallNode(33...36)(
-                     nil,
-                     nil,
-                     (33...36),
-                     nil,
-                     nil,
-                     nil,
-                     nil,
-                     2,
-                     "foo"
-                   ),
-                   StatementsNode(43...52)(
-                     [LocalVariableWriteNode(43...52)(
-                        :foo,
-                        0,
-                        LocalVariableReadNode(49...52)(:bar, 0),
-                        (43...46),
-                        (47...48)
-                      )]
-                   ),
-                   0
-                 )]
-              ),
-              (15...16),
-              (63...64)
-            ),
-            0,
-            "foo"
-          )]
-       ),
-       (65...68),
-       "A"
-     ),
-     DefNode(70...110)(
-       (74...77),
-       nil,
-       nil,
-       StatementsNode(80...106)(
-         [WhileNode(80...106)(
-            (90...95),
-            nil,
-            CallNode(96...106)(
-              LocalVariableReadNode(96...99)(:foo, 0),
-              nil,
-              (100...102),
-              nil,
-              ArgumentsNode(103...106)(
-                [CallNode(103...106)(
-                   nil,
-                   nil,
-                   (103...106),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "baz"
-                 )]
-              ),
-              nil,
-              nil,
-              0,
-              "!="
-            ),
-            StatementsNode(80...89)(
-              [LocalVariableWriteNode(80...89)(
-                 :foo,
-                 0,
-                 CallNode(86...89)(
-                   nil,
-                   nil,
-                   (86...89),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "bar"
+  locals: [:x],
+  statements:
+   StatementsNode(0...620)(
+     body:
+      [ModuleNode(0...68)(
+         locals: [],
+         module_keyword_loc: (0...6),
+         constant_path: ConstantReadNode(7...8)(),
+         body:
+          StatementsNode(11...64)(
+            body:
+             [CallNode(11...64)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (11...14),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(15...64)(
+                   locals: [:bar, :foo],
+                   parameters:
+                    BlockParametersNode(17...22)(
+                      parameters:
+                       ParametersNode(18...21)(
+                         requireds:
+                          [RequiredParameterNode(18...21)(name: :bar)],
+                         optionals: [],
+                         posts: [],
+                         rest: nil,
+                         keywords: [],
+                         keyword_rest: nil,
+                         block: nil
+                       ),
+                      locals: [],
+                      opening_loc: (17...18),
+                      closing_loc: (21...22)
+                    ),
+                   body:
+                    StatementsNode(27...60)(
+                      body:
+                       [WhileNode(27...60)(
+                          keyword_loc: (27...32),
+                          closing_loc: (57...60),
+                          predicate:
+                           CallNode(33...36)(
+                             receiver: nil,
+                             operator_loc: nil,
+                             message_loc: (33...36),
+                             opening_loc: nil,
+                             arguments: nil,
+                             closing_loc: nil,
+                             block: nil,
+                             flags: 2,
+                             name: "foo"
+                           ),
+                          statements:
+                           StatementsNode(43...52)(
+                             body:
+                              [LocalVariableWriteNode(43...52)(
+                                 name: :foo,
+                                 depth: 0,
+                                 value:
+                                  LocalVariableReadNode(49...52)(
+                                    name: :bar, depth: 0
+                                  ),
+                                 name_loc: (43...46),
+                                 operator_loc: (47...48)
+                               )]
+                           ),
+                          flags: 0
+                        )]
+                    ),
+                   opening_loc: (15...16),
+                   closing_loc: (63...64)
                  ),
-                 (80...83),
-                 (84...85)
-               )]
-            ),
-            0
-          )]
+                flags: 0,
+                name: "foo"
+              )]
+          ),
+         end_keyword_loc: (65...68),
+         name: "A"
        ),
-       [:foo],
-       (70...73),
-       nil,
-       nil,
-       nil,
-       nil,
-       (107...110)
-     ),
-     ModuleNode(112...146)(
-       [:foo],
-       (112...118),
-       ConstantReadNode(119...120)(),
-       StatementsNode(123...142)(
-         [WhileNode(123...142)(
-            (133...138),
-            nil,
-            LocalVariableReadNode(139...142)(:foo, 0),
-            StatementsNode(123...132)(
-              [LocalVariableWriteNode(123...132)(
-                 :foo,
-                 0,
-                 CallNode(129...132)(
-                   nil,
-                   nil,
-                   (129...132),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "bar"
+       DefNode(70...110)(
+         name_loc: (74...77),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(80...106)(
+            body:
+             [WhileNode(80...106)(
+                keyword_loc: (90...95),
+                closing_loc: nil,
+                predicate:
+                 CallNode(96...106)(
+                   receiver:
+                    LocalVariableReadNode(96...99)(name: :foo, depth: 0),
+                   operator_loc: nil,
+                   message_loc: (100...102),
+                   opening_loc: nil,
+                   arguments:
+                    ArgumentsNode(103...106)(
+                      arguments:
+                       [CallNode(103...106)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (103...106),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "baz"
+                        )]
+                    ),
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "!="
                  ),
-                 (123...126),
-                 (127...128)
-               )]
-            ),
-            0
-          )]
-       ),
-       (143...146),
-       "A"
-     ),
-     ModuleNode(148...182)(
-       [:foo],
-       (148...154),
-       ConstantReadNode(155...156)(),
-       StatementsNode(159...178)(
-         [UntilNode(159...178)(
-            (169...174),
-            nil,
-            LocalVariableReadNode(175...178)(:foo, 0),
-            StatementsNode(159...168)(
-              [LocalVariableWriteNode(159...168)(
-                 :foo,
-                 0,
-                 CallNode(165...168)(
-                   nil,
-                   nil,
-                   (165...168),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "bar"
-                 ),
-                 (159...162),
-                 (163...164)
-               )]
-            ),
-            0
-          )]
-       ),
-       (179...182),
-       "A"
-     ),
-     ModuleNode(184...228)(
-       [:foo],
-       (184...190),
-       ConstantReadNode(191...192)(),
-       StatementsNode(195...224)(
-         [WhileNode(195...224)(
-            (195...200),
-            (221...224),
-            CallNode(201...204)(
-              nil,
-              nil,
-              (201...204),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            ),
-            StatementsNode(209...218)(
-              [LocalVariableWriteNode(209...218)(
-                 :foo,
-                 0,
-                 CallNode(215...218)(
-                   nil,
-                   nil,
-                   (215...218),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "bar"
-                 ),
-                 (209...212),
-                 (213...214)
-               )]
-            ),
-            0
-          )]
-       ),
-       (225...228),
-       "A"
-     ),
-     ModuleNode(230...299)(
-       [],
-       (230...236),
-       ConstantReadNode(237...238)(),
-       StatementsNode(241...295)(
-         [CallNode(241...295)(
-            nil,
-            nil,
-            (241...245),
-            nil,
-            nil,
-            nil,
-            BlockNode(246...295)(
-              [:baz, :foo],
-              BlockParametersNode(248...253)(
-                ParametersNode(249...252)(
-                  [RequiredParameterNode(249...252)(:baz)],
-                  [],
-                  [],
-                  nil,
-                  [],
-                  nil,
-                  nil
-                ),
-                [],
-                (248...249),
-                (252...253)
-              ),
-              StatementsNode(258...291)(
-                [WhileNode(258...291)(
-                   (258...263),
-                   (288...291),
-                   CallNode(264...267)(
-                     nil,
-                     nil,
-                     (264...267),
-                     nil,
-                     nil,
-                     nil,
-                     nil,
-                     2,
-                     "foo"
-                   ),
-                   StatementsNode(274...283)(
-                     [LocalVariableWriteNode(274...283)(
-                        :foo,
-                        0,
-                        CallNode(280...283)(
-                          nil,
-                          nil,
-                          (280...283),
-                          nil,
-                          nil,
-                          nil,
-                          nil,
-                          2,
-                          "bar"
+                statements:
+                 StatementsNode(80...89)(
+                   body:
+                    [LocalVariableWriteNode(80...89)(
+                       name: :foo,
+                       depth: 0,
+                       value:
+                        CallNode(86...89)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (86...89),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "bar"
                         ),
-                        (274...277),
-                        (278...279)
-                      )]
-                   ),
-                   0
-                 )]
-              ),
-              (246...247),
-              (294...295)
-            ),
-            0,
-            "each"
-          )]
+                       name_loc: (80...83),
+                       operator_loc: (84...85)
+                     )]
+                 ),
+                flags: 0
+              )]
+          ),
+         locals: [:foo],
+         def_keyword_loc: (70...73),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (107...110)
        ),
-       (296...299),
-       "A"
-     ),
-     ModuleNode(301...370)(
-       [],
-       (301...307),
-       ConstantReadNode(308...309)(),
-       StatementsNode(312...366)(
-         [CallNode(312...366)(
-            nil,
-            nil,
-            (312...316),
-            nil,
-            nil,
-            nil,
-            BlockNode(317...366)(
-              [:foo],
-              BlockParametersNode(319...324)(
-                ParametersNode(320...323)(
-                  [RequiredParameterNode(320...323)(:foo)],
-                  [],
-                  [],
-                  nil,
-                  [],
-                  nil,
-                  nil
-                ),
-                [],
-                (319...320),
-                (323...324)
-              ),
-              StatementsNode(329...362)(
-                [WhileNode(329...362)(
-                   (329...334),
-                   (359...362),
-                   LocalVariableReadNode(335...338)(:foo, 0),
-                   StatementsNode(345...354)(
-                     [LocalVariableWriteNode(345...354)(
-                        :foo,
-                        0,
-                        CallNode(351...354)(
-                          nil,
-                          nil,
-                          (351...354),
-                          nil,
-                          nil,
-                          nil,
-                          nil,
-                          2,
-                          "bar"
+       ModuleNode(112...146)(
+         locals: [:foo],
+         module_keyword_loc: (112...118),
+         constant_path: ConstantReadNode(119...120)(),
+         body:
+          StatementsNode(123...142)(
+            body:
+             [WhileNode(123...142)(
+                keyword_loc: (133...138),
+                closing_loc: nil,
+                predicate:
+                 LocalVariableReadNode(139...142)(name: :foo, depth: 0),
+                statements:
+                 StatementsNode(123...132)(
+                   body:
+                    [LocalVariableWriteNode(123...132)(
+                       name: :foo,
+                       depth: 0,
+                       value:
+                        CallNode(129...132)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (129...132),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "bar"
                         ),
-                        (345...348),
-                        (349...350)
-                      )]
-                   ),
-                   0
+                       name_loc: (123...126),
+                       operator_loc: (127...128)
+                     )]
+                 ),
+                flags: 0
+              )]
+          ),
+         end_keyword_loc: (143...146),
+         name: "A"
+       ),
+       ModuleNode(148...182)(
+         locals: [:foo],
+         module_keyword_loc: (148...154),
+         constant_path: ConstantReadNode(155...156)(),
+         body:
+          StatementsNode(159...178)(
+            body:
+             [UntilNode(159...178)(
+                keyword_loc: (169...174),
+                closing_loc: nil,
+                predicate:
+                 LocalVariableReadNode(175...178)(name: :foo, depth: 0),
+                statements:
+                 StatementsNode(159...168)(
+                   body:
+                    [LocalVariableWriteNode(159...168)(
+                       name: :foo,
+                       depth: 0,
+                       value:
+                        CallNode(165...168)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (165...168),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "bar"
+                        ),
+                       name_loc: (159...162),
+                       operator_loc: (163...164)
+                     )]
+                 ),
+                flags: 0
+              )]
+          ),
+         end_keyword_loc: (179...182),
+         name: "A"
+       ),
+       ModuleNode(184...228)(
+         locals: [:foo],
+         module_keyword_loc: (184...190),
+         constant_path: ConstantReadNode(191...192)(),
+         body:
+          StatementsNode(195...224)(
+            body:
+             [WhileNode(195...224)(
+                keyword_loc: (195...200),
+                closing_loc: (221...224),
+                predicate:
+                 CallNode(201...204)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (201...204),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 ),
+                statements:
+                 StatementsNode(209...218)(
+                   body:
+                    [LocalVariableWriteNode(209...218)(
+                       name: :foo,
+                       depth: 0,
+                       value:
+                        CallNode(215...218)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (215...218),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "bar"
+                        ),
+                       name_loc: (209...212),
+                       operator_loc: (213...214)
+                     )]
+                 ),
+                flags: 0
+              )]
+          ),
+         end_keyword_loc: (225...228),
+         name: "A"
+       ),
+       ModuleNode(230...299)(
+         locals: [],
+         module_keyword_loc: (230...236),
+         constant_path: ConstantReadNode(237...238)(),
+         body:
+          StatementsNode(241...295)(
+            body:
+             [CallNode(241...295)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (241...245),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(246...295)(
+                   locals: [:baz, :foo],
+                   parameters:
+                    BlockParametersNode(248...253)(
+                      parameters:
+                       ParametersNode(249...252)(
+                         requireds:
+                          [RequiredParameterNode(249...252)(name: :baz)],
+                         optionals: [],
+                         posts: [],
+                         rest: nil,
+                         keywords: [],
+                         keyword_rest: nil,
+                         block: nil
+                       ),
+                      locals: [],
+                      opening_loc: (248...249),
+                      closing_loc: (252...253)
+                    ),
+                   body:
+                    StatementsNode(258...291)(
+                      body:
+                       [WhileNode(258...291)(
+                          keyword_loc: (258...263),
+                          closing_loc: (288...291),
+                          predicate:
+                           CallNode(264...267)(
+                             receiver: nil,
+                             operator_loc: nil,
+                             message_loc: (264...267),
+                             opening_loc: nil,
+                             arguments: nil,
+                             closing_loc: nil,
+                             block: nil,
+                             flags: 2,
+                             name: "foo"
+                           ),
+                          statements:
+                           StatementsNode(274...283)(
+                             body:
+                              [LocalVariableWriteNode(274...283)(
+                                 name: :foo,
+                                 depth: 0,
+                                 value:
+                                  CallNode(280...283)(
+                                    receiver: nil,
+                                    operator_loc: nil,
+                                    message_loc: (280...283),
+                                    opening_loc: nil,
+                                    arguments: nil,
+                                    closing_loc: nil,
+                                    block: nil,
+                                    flags: 2,
+                                    name: "bar"
+                                  ),
+                                 name_loc: (274...277),
+                                 operator_loc: (278...279)
+                               )]
+                           ),
+                          flags: 0
+                        )]
+                    ),
+                   opening_loc: (246...247),
+                   closing_loc: (294...295)
+                 ),
+                flags: 0,
+                name: "each"
+              )]
+          ),
+         end_keyword_loc: (296...299),
+         name: "A"
+       ),
+       ModuleNode(301...370)(
+         locals: [],
+         module_keyword_loc: (301...307),
+         constant_path: ConstantReadNode(308...309)(),
+         body:
+          StatementsNode(312...366)(
+            body:
+             [CallNode(312...366)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (312...316),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(317...366)(
+                   locals: [:foo],
+                   parameters:
+                    BlockParametersNode(319...324)(
+                      parameters:
+                       ParametersNode(320...323)(
+                         requireds:
+                          [RequiredParameterNode(320...323)(name: :foo)],
+                         optionals: [],
+                         posts: [],
+                         rest: nil,
+                         keywords: [],
+                         keyword_rest: nil,
+                         block: nil
+                       ),
+                      locals: [],
+                      opening_loc: (319...320),
+                      closing_loc: (323...324)
+                    ),
+                   body:
+                    StatementsNode(329...362)(
+                      body:
+                       [WhileNode(329...362)(
+                          keyword_loc: (329...334),
+                          closing_loc: (359...362),
+                          predicate:
+                           LocalVariableReadNode(335...338)(
+                             name: :foo, depth: 0
+                           ),
+                          statements:
+                           StatementsNode(345...354)(
+                             body:
+                              [LocalVariableWriteNode(345...354)(
+                                 name: :foo,
+                                 depth: 0,
+                                 value:
+                                  CallNode(351...354)(
+                                    receiver: nil,
+                                    operator_loc: nil,
+                                    message_loc: (351...354),
+                                    opening_loc: nil,
+                                    arguments: nil,
+                                    closing_loc: nil,
+                                    block: nil,
+                                    flags: 2,
+                                    name: "bar"
+                                  ),
+                                 name_loc: (345...348),
+                                 operator_loc: (349...350)
+                               )]
+                           ),
+                          flags: 0
+                        )]
+                    ),
+                   opening_loc: (317...318),
+                   closing_loc: (365...366)
+                 ),
+                flags: 0,
+                name: "each"
+              )]
+          ),
+         end_keyword_loc: (367...370),
+         name: "A"
+       ),
+       LocalVariableWriteNode(371...402)(
+         name: :x,
+         depth: 0,
+         value:
+          ParenthesesNode(375...402)(
+            body:
+             StatementsNode(376...401)(
+               body:
+                [WhileNode(376...401)(
+                   keyword_loc: (392...397),
+                   closing_loc: nil,
+                   predicate:
+                    CallNode(398...401)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (398...401),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block: nil,
+                      flags: 2,
+                      name: "baz"
+                    ),
+                   statements:
+                    StatementsNode(376...391)(
+                      body:
+                       [BeginNode(376...391)(
+                          begin_keyword_loc: (376...381),
+                          statements:
+                           StatementsNode(384...387)(
+                             body:
+                              [CallNode(384...387)(
+                                 receiver: nil,
+                                 operator_loc: nil,
+                                 message_loc: (384...387),
+                                 opening_loc: nil,
+                                 arguments: nil,
+                                 closing_loc: nil,
+                                 block: nil,
+                                 flags: 2,
+                                 name: "foo"
+                               )]
+                           ),
+                          rescue_clause: nil,
+                          else_clause: nil,
+                          ensure_clause: nil,
+                          end_keyword_loc: (388...391)
+                        )]
+                    ),
+                   flags: 1
                  )]
-              ),
-              (317...318),
-              (365...366)
-            ),
-            0,
-            "each"
-          )]
+             ),
+            opening_loc: (375...376),
+            closing_loc: (401...402)
+          ),
+         name_loc: (371...372),
+         operator_loc: (373...374)
        ),
-       (367...370),
-       "A"
-     ),
-     LocalVariableWriteNode(371...402)(
-       :x,
-       0,
-       ParenthesesNode(375...402)(
-         StatementsNode(376...401)(
-           [WhileNode(376...401)(
-              (392...397),
-              nil,
-              CallNode(398...401)(
-                nil,
-                nil,
-                (398...401),
-                nil,
-                nil,
-                nil,
-                nil,
-                2,
-                "baz"
-              ),
-              StatementsNode(376...391)(
-                [BeginNode(376...391)(
-                   (376...381),
-                   StatementsNode(384...387)(
-                     [CallNode(384...387)(
-                        nil,
-                        nil,
-                        (384...387),
-                        nil,
-                        nil,
-                        nil,
-                        nil,
-                        2,
-                        "foo"
-                      )]
-                   ),
-                   nil,
-                   nil,
-                   nil,
-                   (388...391)
+       WhileNode(403...428)(
+         keyword_loc: (419...424),
+         closing_loc: nil,
+         predicate:
+          CallNode(425...428)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (425...428),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "baz"
+          ),
+         statements:
+          StatementsNode(403...418)(
+            body:
+             [BeginNode(403...418)(
+                begin_keyword_loc: (403...408),
+                statements:
+                 StatementsNode(411...414)(
+                   body:
+                    [CallNode(411...414)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (411...414),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     )]
+                 ),
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (415...418)
+              )]
+          ),
+         flags: 1
+       ),
+       UntilNode(429...460)(
+         keyword_loc: (451...456),
+         closing_loc: nil,
+         predicate:
+          CallNode(457...460)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (457...460),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "baz"
+          ),
+         statements:
+          StatementsNode(429...450)(
+            body:
+             [BeginNode(429...450)(
+                begin_keyword_loc: (429...434),
+                statements:
+                 StatementsNode(437...446)(
+                   body:
+                    [CallNode(437...440)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (437...440),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     ),
+                     CallNode(443...446)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (443...446),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "bar"
+                     )]
+                 ),
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (447...450)
+              )]
+          ),
+         flags: 1
+       ),
+       WhileNode(461...492)(
+         keyword_loc: (483...488),
+         closing_loc: nil,
+         predicate:
+          CallNode(489...492)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (489...492),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "baz"
+          ),
+         statements:
+          StatementsNode(461...482)(
+            body:
+             [BeginNode(461...482)(
+                begin_keyword_loc: (461...466),
+                statements:
+                 StatementsNode(469...478)(
+                   body:
+                    [CallNode(469...472)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (469...472),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     ),
+                     CallNode(475...478)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (475...478),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "bar"
+                     )]
+                 ),
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (479...482)
+              )]
+          ),
+         flags: 1
+       ),
+       WhileNode(493...508)(
+         keyword_loc: (493...498),
+         closing_loc: (505...508),
+         predicate: FalseNode(499...504)(),
+         statements: nil,
+         flags: 0
+       ),
+       WhileNode(509...528)(
+         keyword_loc: (509...514),
+         closing_loc: (525...528),
+         predicate: FalseNode(515...520)(),
+         statements:
+          StatementsNode(523...524)(body: [IntegerNode(523...524)()]),
+         flags: 0
+       ),
+       WhileNode(529...556)(
+         keyword_loc: (529...534),
+         closing_loc: (553...556),
+         predicate:
+          ParenthesesNode(535...544)(
+            body:
+             StatementsNode(536...543)(
+               body:
+                [CallNode(536...543)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (536...539),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block:
+                    BlockNode(540...543)(
+                      locals: [],
+                      parameters: nil,
+                      body: nil,
+                      opening_loc: (540...541),
+                      closing_loc: (542...543)
+                    ),
+                   flags: 0,
+                   name: "foo"
                  )]
-              ),
-              1
-            )]
-         ),
-         (375...376),
-         (401...402)
+             ),
+            opening_loc: (535...536),
+            closing_loc: (543...544)
+          ),
+         statements:
+          StatementsNode(547...552)(
+            body:
+             [SymbolNode(547...552)(
+                opening_loc: (547...548),
+                value_loc: (548...552),
+                closing_loc: nil,
+                unescaped: "body"
+              )]
+          ),
+         flags: 0
        ),
-       (371...372),
-       (373...374)
-     ),
-     WhileNode(403...428)(
-       (419...424),
-       nil,
-       CallNode(425...428)(
-         nil,
-         nil,
-         (425...428),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "baz"
+       UntilNode(557...572)(
+         keyword_loc: (557...562),
+         closing_loc: (569...572),
+         predicate: FalseNode(563...568)(),
+         statements: nil,
+         flags: 0
        ),
-       StatementsNode(403...418)(
-         [BeginNode(403...418)(
-            (403...408),
-            StatementsNode(411...414)(
-              [CallNode(411...414)(
-                 nil,
-                 nil,
-                 (411...414),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               )]
-            ),
-            nil,
-            nil,
-            nil,
-            (415...418)
-          )]
+       UntilNode(573...592)(
+         keyword_loc: (573...578),
+         closing_loc: (589...592),
+         predicate: FalseNode(579...584)(),
+         statements:
+          StatementsNode(587...588)(body: [IntegerNode(587...588)()]),
+         flags: 0
        ),
-       1
-     ),
-     UntilNode(429...460)(
-       (451...456),
-       nil,
-       CallNode(457...460)(
-         nil,
-         nil,
-         (457...460),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "baz"
-       ),
-       StatementsNode(429...450)(
-         [BeginNode(429...450)(
-            (429...434),
-            StatementsNode(437...446)(
-              [CallNode(437...440)(
-                 nil,
-                 nil,
-                 (437...440),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               ),
-               CallNode(443...446)(
-                 nil,
-                 nil,
-                 (443...446),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "bar"
-               )]
-            ),
-            nil,
-            nil,
-            nil,
-            (447...450)
-          )]
-       ),
-       1
-     ),
-     WhileNode(461...492)(
-       (483...488),
-       nil,
-       CallNode(489...492)(
-         nil,
-         nil,
-         (489...492),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "baz"
-       ),
-       StatementsNode(461...482)(
-         [BeginNode(461...482)(
-            (461...466),
-            StatementsNode(469...478)(
-              [CallNode(469...472)(
-                 nil,
-                 nil,
-                 (469...472),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               ),
-               CallNode(475...478)(
-                 nil,
-                 nil,
-                 (475...478),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "bar"
-               )]
-            ),
-            nil,
-            nil,
-            nil,
-            (479...482)
-          )]
-       ),
-       1
-     ),
-     WhileNode(493...508)(
-       (493...498),
-       (505...508),
-       FalseNode(499...504)(),
-       nil,
-       0
-     ),
-     WhileNode(509...528)(
-       (509...514),
-       (525...528),
-       FalseNode(515...520)(),
-       StatementsNode(523...524)([IntegerNode(523...524)()]),
-       0
-     ),
-     WhileNode(529...556)(
-       (529...534),
-       (553...556),
-       ParenthesesNode(535...544)(
-         StatementsNode(536...543)(
-           [CallNode(536...543)(
-              nil,
-              nil,
-              (536...539),
-              nil,
-              nil,
-              nil,
-              BlockNode(540...543)([], nil, nil, (540...541), (542...543)),
-              0,
-              "foo"
-            )]
-         ),
-         (535...536),
-         (543...544)
-       ),
-       StatementsNode(547...552)(
-         [SymbolNode(547...552)((547...548), (548...552), nil, "body")]
-       ),
-       0
-     ),
-     UntilNode(557...572)(
-       (557...562),
-       (569...572),
-       FalseNode(563...568)(),
-       nil,
-       0
-     ),
-     UntilNode(573...592)(
-       (573...578),
-       (589...592),
-       FalseNode(579...584)(),
-       StatementsNode(587...588)([IntegerNode(587...588)()]),
-       0
-     ),
-     UntilNode(593...620)(
-       (593...598),
-       (617...620),
-       ParenthesesNode(599...608)(
-         StatementsNode(600...607)(
-           [CallNode(600...607)(
-              nil,
-              nil,
-              (600...603),
-              nil,
-              nil,
-              nil,
-              BlockNode(604...607)([], nil, nil, (604...605), (606...607)),
-              0,
-              "foo"
-            )]
-         ),
-         (599...600),
-         (607...608)
-       ),
-       StatementsNode(611...616)(
-         [SymbolNode(611...616)((611...612), (612...616), nil, "body")]
-       ),
-       0
-     )]
-  )
+       UntilNode(593...620)(
+         keyword_loc: (593...598),
+         closing_loc: (617...620),
+         predicate:
+          ParenthesesNode(599...608)(
+            body:
+             StatementsNode(600...607)(
+               body:
+                [CallNode(600...607)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (600...603),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block:
+                    BlockNode(604...607)(
+                      locals: [],
+                      parameters: nil,
+                      body: nil,
+                      opening_loc: (604...605),
+                      closing_loc: (606...607)
+                    ),
+                   flags: 0,
+                   name: "foo"
+                 )]
+             ),
+            opening_loc: (599...600),
+            closing_loc: (607...608)
+          ),
+         statements:
+          StatementsNode(611...616)(
+            body:
+             [SymbolNode(611...616)(
+                opening_loc: (611...612),
+                value_loc: (612...616),
+                closing_loc: nil,
+                unescaped: "body"
+              )]
+          ),
+         flags: 0
+       )]
+   )
 )

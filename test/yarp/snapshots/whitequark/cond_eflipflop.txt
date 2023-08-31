@@ -1,49 +1,89 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)(
-    [CallNode(0...12)(
-       ParenthesesNode(1...12)(
-         StatementsNode(2...11)(
-           [FlipFlopNode(2...11)(
-              CallNode(2...5)(nil, nil, (2...5), nil, nil, nil, nil, 2, "foo"),
-              CallNode(8...11)(
-                nil,
-                nil,
-                (8...11),
-                nil,
-                nil,
-                nil,
-                nil,
-                2,
-                "bar"
-              ),
-              (5...8),
-              1
-            )]
-         ),
-         (1...2),
-         (11...12)
+  locals: [],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [CallNode(0...12)(
+         receiver:
+          ParenthesesNode(1...12)(
+            body:
+             StatementsNode(2...11)(
+               body:
+                [FlipFlopNode(2...11)(
+                   left:
+                    CallNode(2...5)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (2...5),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block: nil,
+                      flags: 2,
+                      name: "foo"
+                    ),
+                   right:
+                    CallNode(8...11)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (8...11),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block: nil,
+                      flags: 2,
+                      name: "bar"
+                    ),
+                   operator_loc: (5...8),
+                   flags: 1
+                 )]
+             ),
+            opening_loc: (1...2),
+            closing_loc: (11...12)
+          ),
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "!"
        ),
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "!"
-     ),
-     IfNode(14...31)(
-       (14...16),
-       FlipFlopNode(17...26)(
-         CallNode(17...20)(nil, nil, (17...20), nil, nil, nil, nil, 2, "foo"),
-         CallNode(23...26)(nil, nil, (23...26), nil, nil, nil, nil, 2, "bar"),
-         (20...23),
-         1
-       ),
-       nil,
-       nil,
-       (28...31)
-     )]
-  )
+       IfNode(14...31)(
+         if_keyword_loc: (14...16),
+         predicate:
+          FlipFlopNode(17...26)(
+            left:
+             CallNode(17...20)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (17...20),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            right:
+             CallNode(23...26)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (23...26),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "bar"
+             ),
+            operator_loc: (20...23),
+            flags: 1
+          ),
+         statements: nil,
+         consequent: nil,
+         end_keyword_loc: (28...31)
+       )]
+   )
 )

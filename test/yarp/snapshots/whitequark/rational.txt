@@ -1,7 +1,9 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [RationalNode(0...5)(FloatNode(0...4)()),
-     RationalNode(7...10)(IntegerNode(7...9)())]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [RationalNode(0...5)(numeric: FloatNode(0...4)()),
+       RationalNode(7...10)(numeric: IntegerNode(7...9)())]
+   )
 )

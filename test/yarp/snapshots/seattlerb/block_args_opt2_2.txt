@@ -1,54 +1,63 @@
 ProgramNode(0...35)(
-  [],
-  StatementsNode(0...35)(
-    [CallNode(0...35)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...35)(
-         [:a, :b, :c],
-         BlockParametersNode(4...23)(
-           ParametersNode(5...22)(
-             [RequiredParameterNode(5...6)(:a)],
-             [OptionalParameterNode(8...14)(
-                :b,
-                (8...9),
-                (10...11),
-                IntegerNode(12...14)()
-              ),
-              OptionalParameterNode(16...22)(
-                :c,
-                (16...17),
-                (18...19),
-                IntegerNode(20...22)()
-              )],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (4...5),
-           (22...23)
-         ),
-         StatementsNode(24...33)(
-           [ArrayNode(24...33)(
-              [LocalVariableReadNode(25...26)(:a, 0),
-               LocalVariableReadNode(28...29)(:b, 0),
-               LocalVariableReadNode(31...32)(:c, 0)],
-              (24...25),
-              (32...33)
-            )]
-         ),
-         (2...3),
-         (34...35)
-       ),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...35)(
+     body:
+      [CallNode(0...35)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...35)(
+            locals: [:a, :b, :c],
+            parameters:
+             BlockParametersNode(4...23)(
+               parameters:
+                ParametersNode(5...22)(
+                  requireds: [RequiredParameterNode(5...6)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(8...14)(
+                      name: :b,
+                      name_loc: (8...9),
+                      operator_loc: (10...11),
+                      value: IntegerNode(12...14)()
+                    ),
+                    OptionalParameterNode(16...22)(
+                      name: :c,
+                      name_loc: (16...17),
+                      operator_loc: (18...19),
+                      value: IntegerNode(20...22)()
+                    )],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (4...5),
+               closing_loc: (22...23)
+             ),
+            body:
+             StatementsNode(24...33)(
+               body:
+                [ArrayNode(24...33)(
+                   elements:
+                    [LocalVariableReadNode(25...26)(name: :a, depth: 0),
+                     LocalVariableReadNode(28...29)(name: :b, depth: 0),
+                     LocalVariableReadNode(31...32)(name: :c, depth: 0)],
+                   opening_loc: (24...25),
+                   closing_loc: (32...33)
+                 )]
+             ),
+            opening_loc: (2...3),
+            closing_loc: (34...35)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

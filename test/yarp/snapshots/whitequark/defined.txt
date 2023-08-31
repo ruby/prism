@@ -1,23 +1,47 @@
 ProgramNode(0...42)(
-  [],
-  StatementsNode(0...42)(
-    [DefinedNode(0...13)(
-       nil,
-       InstanceVariableReadNode(9...13)(:@foo),
-       nil,
-       (0...8)
-     ),
-     DefinedNode(15...27)(
-       nil,
-       CallNode(24...27)(nil, nil, (24...27), nil, nil, nil, nil, 2, "foo"),
-       nil,
-       (15...23)
-     ),
-     DefinedNode(29...42)(
-       (37...38),
-       CallNode(38...41)(nil, nil, (38...41), nil, nil, nil, nil, 2, "foo"),
-       (41...42),
-       (29...37)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...42)(
+     body:
+      [DefinedNode(0...13)(
+         lparen_loc: nil,
+         value: InstanceVariableReadNode(9...13)(name: :@foo),
+         rparen_loc: nil,
+         keyword_loc: (0...8)
+       ),
+       DefinedNode(15...27)(
+         lparen_loc: nil,
+         value:
+          CallNode(24...27)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (24...27),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         rparen_loc: nil,
+         keyword_loc: (15...23)
+       ),
+       DefinedNode(29...42)(
+         lparen_loc: (37...38),
+         value:
+          CallNode(38...41)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (38...41),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         rparen_loc: (41...42),
+         keyword_loc: (29...37)
+       )]
+   )
 )

@@ -1,10 +1,18 @@
 ProgramNode(0...16)(
-  [],
-  StatementsNode(0...16)(
-    [MatchPredicateNode(0...16)(
-       StringNode(0...6)((0...1), (1...5), (5...6), "woot"),
-       ConstantReadNode(10...16)(),
-       (7...9)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...16)(
+     body:
+      [MatchPredicateNode(0...16)(
+         value:
+          StringNode(0...6)(
+            opening_loc: (0...1),
+            content_loc: (1...5),
+            closing_loc: (5...6),
+            unescaped: "woot"
+          ),
+         pattern: ConstantReadNode(10...16)(),
+         operator_loc: (7...9)
+       )]
+   )
 )

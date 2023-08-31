@@ -1,151 +1,213 @@
 ProgramNode(0...64)(
-  [],
-  StatementsNode(0...64)(
-    [CallOperatorWriteNode(0...14)(
-       CallNode(0...5)(
-         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-         (3...4),
-         (4...5),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "A="
+  locals: [],
+  statements:
+   StatementsNode(0...64)(
+     body:
+      [CallOperatorWriteNode(0...14)(
+         target:
+          CallNode(0...5)(
+            receiver:
+             CallNode(0...3)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...3),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (3...4),
+            message_loc: (4...5),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "A="
+          ),
+         operator_loc: (6...8),
+         value:
+          CallNode(9...14)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (9...10),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(11...14)(
+               arguments:
+                [CallNode(11...14)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (11...14),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         operator: :+
        ),
-       (6...8),
-       CallNode(9...14)(
-         nil,
-         nil,
-         (9...10),
-         nil,
-         ArgumentsNode(11...14)(
-           [CallNode(11...14)(
-              nil,
-              nil,
-              (11...14),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "m"
+       CallOperatorWriteNode(16...30)(
+         target:
+          CallNode(16...21)(
+            receiver:
+             CallNode(16...19)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (16...19),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (19...20),
+            message_loc: (20...21),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "a="
+          ),
+         operator_loc: (22...24),
+         value:
+          CallNode(25...30)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (25...26),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(27...30)(
+               arguments:
+                [CallNode(27...30)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (27...30),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         operator: :+
        ),
-       :+
-     ),
-     CallOperatorWriteNode(16...30)(
-       CallNode(16...21)(
-         CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 2, "foo"),
-         (19...20),
-         (20...21),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a="
+       ConstantPathOperatorWriteNode(32...47)(
+         target:
+          ConstantPathNode(32...38)(
+            parent:
+             CallNode(32...35)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (32...35),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            child: ConstantReadNode(37...38)(),
+            delimiter_loc: (35...37)
+          ),
+         operator_loc: (39...41),
+         value:
+          CallNode(42...47)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (42...43),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(44...47)(
+               arguments:
+                [CallNode(44...47)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (44...47),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         operator: :+
        ),
-       (22...24),
-       CallNode(25...30)(
-         nil,
-         nil,
-         (25...26),
-         nil,
-         ArgumentsNode(27...30)(
-           [CallNode(27...30)(
-              nil,
-              nil,
-              (27...30),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "m"
-       ),
-       :+
-     ),
-     ConstantPathOperatorWriteNode(32...47)(
-       ConstantPathNode(32...38)(
-         CallNode(32...35)(nil, nil, (32...35), nil, nil, nil, nil, 2, "foo"),
-         ConstantReadNode(37...38)(),
-         (35...37)
-       ),
-       (39...41),
-       CallNode(42...47)(
-         nil,
-         nil,
-         (42...43),
-         nil,
-         ArgumentsNode(44...47)(
-           [CallNode(44...47)(
-              nil,
-              nil,
-              (44...47),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "m"
-       ),
-       :+
-     ),
-     CallOperatorWriteNode(49...64)(
-       CallNode(49...55)(
-         CallNode(49...52)(nil, nil, (49...52), nil, nil, nil, nil, 2, "foo"),
-         (52...54),
-         (54...55),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a="
-       ),
-       (56...58),
-       CallNode(59...64)(
-         nil,
-         nil,
-         (59...60),
-         nil,
-         ArgumentsNode(61...64)(
-           [CallNode(61...64)(
-              nil,
-              nil,
-              (61...64),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "m"
-       ),
-       :+
-     )]
-  )
+       CallOperatorWriteNode(49...64)(
+         target:
+          CallNode(49...55)(
+            receiver:
+             CallNode(49...52)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (49...52),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (52...54),
+            message_loc: (54...55),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "a="
+          ),
+         operator_loc: (56...58),
+         value:
+          CallNode(59...64)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (59...60),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(61...64)(
+               arguments:
+                [CallNode(61...64)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (61...64),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         operator: :+
+       )]
+   )
 )

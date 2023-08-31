@@ -1,72 +1,98 @@
 ProgramNode(0...109)(
-  [],
-  StatementsNode(0...109)(
-    [UntilNode(0...18)(
-       (0...5),
-       (15...18),
-       TrueNode(6...10)(),
-       StatementsNode(12...13)([IntegerNode(12...13)()]),
-       0
-     ),
-     UntilNode(20...32)(
-       (22...27),
-       nil,
-       TrueNode(28...32)(),
-       StatementsNode(20...21)([IntegerNode(20...21)()]),
-       0
-     ),
-     UntilNode(34...50)(
-       (40...45),
-       nil,
-       TrueNode(46...50)(),
-       StatementsNode(34...39)([BreakNode(34...39)(nil, (34...39))]),
-       0
-     ),
-     UntilNode(52...67)(
-       (57...62),
-       nil,
-       TrueNode(63...67)(),
-       StatementsNode(52...56)([NextNode(52...56)(nil, (52...56))]),
-       0
-     ),
-     UntilNode(69...86)(
-       (76...81),
-       nil,
-       TrueNode(82...86)(),
-       StatementsNode(69...75)([ReturnNode(69...75)((69...75), nil)]),
-       0
-     ),
-     UntilNode(88...109)(
-       (99...104),
-       nil,
-       CallNode(105...109)(
-         nil,
-         nil,
-         (105...109),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "bar?"
+  locals: [],
+  statements:
+   StatementsNode(0...109)(
+     body:
+      [UntilNode(0...18)(
+         keyword_loc: (0...5),
+         closing_loc: (15...18),
+         predicate: TrueNode(6...10)(),
+         statements: StatementsNode(12...13)(body: [IntegerNode(12...13)()]),
+         flags: 0
        ),
-       StatementsNode(88...98)(
-         [CallNode(88...98)(
-            nil,
-            nil,
-            (88...91),
-            nil,
-            ArgumentsNode(92...98)(
-              [SymbolNode(92...94)((92...93), (93...94), nil, "a"),
-               SymbolNode(96...98)((96...97), (97...98), nil, "b")]
-            ),
-            nil,
-            nil,
-            0,
-            "foo"
-          )]
+       UntilNode(20...32)(
+         keyword_loc: (22...27),
+         closing_loc: nil,
+         predicate: TrueNode(28...32)(),
+         statements: StatementsNode(20...21)(body: [IntegerNode(20...21)()]),
+         flags: 0
        ),
-       0
-     )]
-  )
+       UntilNode(34...50)(
+         keyword_loc: (40...45),
+         closing_loc: nil,
+         predicate: TrueNode(46...50)(),
+         statements:
+          StatementsNode(34...39)(
+            body: [BreakNode(34...39)(arguments: nil, keyword_loc: (34...39))]
+          ),
+         flags: 0
+       ),
+       UntilNode(52...67)(
+         keyword_loc: (57...62),
+         closing_loc: nil,
+         predicate: TrueNode(63...67)(),
+         statements:
+          StatementsNode(52...56)(
+            body: [NextNode(52...56)(arguments: nil, keyword_loc: (52...56))]
+          ),
+         flags: 0
+       ),
+       UntilNode(69...86)(
+         keyword_loc: (76...81),
+         closing_loc: nil,
+         predicate: TrueNode(82...86)(),
+         statements:
+          StatementsNode(69...75)(
+            body: [ReturnNode(69...75)(keyword_loc: (69...75), arguments: nil)]
+          ),
+         flags: 0
+       ),
+       UntilNode(88...109)(
+         keyword_loc: (99...104),
+         closing_loc: nil,
+         predicate:
+          CallNode(105...109)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (105...109),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "bar?"
+          ),
+         statements:
+          StatementsNode(88...98)(
+            body:
+             [CallNode(88...98)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (88...91),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(92...98)(
+                   arguments:
+                    [SymbolNode(92...94)(
+                       opening_loc: (92...93),
+                       value_loc: (93...94),
+                       closing_loc: nil,
+                       unescaped: "a"
+                     ),
+                     SymbolNode(96...98)(
+                       opening_loc: (96...97),
+                       value_loc: (97...98),
+                       closing_loc: nil,
+                       unescaped: "b"
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "foo"
+              )]
+          ),
+         flags: 0
+       )]
+   )
 )

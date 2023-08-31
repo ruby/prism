@@ -1,28 +1,47 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [LambdaNode(0...8)(
-       [:*],
-       (0...2),
-       (5...6),
-       (7...8),
-       BlockParametersNode(3...4)(
-         ParametersNode(3...4)(
-           [],
-           [],
-           [],
-           RestParameterNode(3...4)((3...4), nil),
-           [],
-           nil,
-           nil
-         ),
-         [],
-         nil,
-         nil
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [LambdaNode(0...8)(
+         locals: [:*],
+         operator_loc: (0...2),
+         opening_loc: (5...6),
+         closing_loc: (7...8),
+         parameters:
+          BlockParametersNode(3...4)(
+            parameters:
+             ParametersNode(3...4)(
+               requireds: [],
+               optionals: [],
+               posts: [],
+               rest:
+                RestParameterNode(3...4)(operator_loc: (3...4), name_loc: nil),
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         body: nil
        ),
-       nil
-     ),
-     LambdaNode(10...19)([], (10...12), (13...15), (16...19), nil, nil),
-     LambdaNode(21...26)([], (21...23), (23...24), (25...26), nil, nil)]
-  )
+       LambdaNode(10...19)(
+         locals: [],
+         operator_loc: (10...12),
+         opening_loc: (13...15),
+         closing_loc: (16...19),
+         parameters: nil,
+         body: nil
+       ),
+       LambdaNode(21...26)(
+         locals: [],
+         operator_loc: (21...23),
+         opening_loc: (23...24),
+         closing_loc: (25...26),
+         parameters: nil,
+         body: nil
+       )]
+   )
 )

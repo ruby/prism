@@ -1,23 +1,29 @@
 ProgramNode(0...23)(
-  [],
-  StatementsNode(0...23)(
-    [InterpolatedStringNode(0...7)((0...7), [], (9...14)),
-     InterpolatedStringNode(15...23)(
-       (15...23),
-       [StringNode(25...100)(
-          nil,
-          (25...100),
-          nil,
-          "way over\n" +
-          "<<HERE\n" +
-          "  not here\n" +
-          "HERE\n" +
-          "\n" +
-          "<<~BUT  but\n" +
-          "BUT\n" +
-          "  there\n"
-        )],
-       (100...106)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...23)(
+     body:
+      [InterpolatedStringNode(0...7)(
+         opening_loc: (0...7), parts: [], closing_loc: (9...14)
+       ),
+       InterpolatedStringNode(15...23)(
+         opening_loc: (15...23),
+         parts:
+          [StringNode(25...100)(
+             opening_loc: nil,
+             content_loc: (25...100),
+             closing_loc: nil,
+             unescaped:
+              "way over\n" +
+              "<<HERE\n" +
+              "  not here\n" +
+              "HERE\n" +
+              "\n" +
+              "<<~BUT  but\n" +
+              "BUT\n" +
+              "  there\n"
+           )],
+         closing_loc: (100...106)
+       )]
+   )
 )

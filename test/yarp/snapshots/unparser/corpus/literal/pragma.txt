@@ -1,9 +1,21 @@
 ProgramNode(0...38)(
-  [],
-  StatementsNode(0...38)(
-    [SourceEncodingNode(0...12)(),
-     SourceFileNode(13...21)("unparser/corpus/literal/pragma.txt"),
-     SourceLineNode(22...30)(),
-     CallNode(31...38)(nil, nil, (31...38), nil, nil, nil, nil, 2, "__dir__")]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...38)(
+     body:
+      [SourceEncodingNode(0...12)(),
+       SourceFileNode(13...21)(filepath: "unparser/corpus/literal/pragma.txt"),
+       SourceLineNode(22...30)(),
+       CallNode(31...38)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (31...38),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "__dir__"
+       )]
+   )
 )

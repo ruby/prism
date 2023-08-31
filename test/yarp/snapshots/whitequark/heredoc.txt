@@ -1,20 +1,40 @@
 ProgramNode(0...52)(
-  [],
-  StatementsNode(0...52)(
-    [InterpolatedStringNode(0...8)(
-       (0...8),
-       [StringNode(9...17)(nil, (9...17), nil, "foo\n" + "bar\n")],
-       (17...22)
-     ),
-     InterpolatedStringNode(23...29)(
-       (23...29),
-       [StringNode(30...38)(nil, (30...38), nil, "foo\n" + "bar\n")],
-       (38...43)
-     ),
-     InterpolatedXStringNode(44...52)(
-       (44...52),
-       [StringNode(53...61)(nil, (53...61), nil, "foo\n" + "bar\n")],
-       (61...66)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...52)(
+     body:
+      [InterpolatedStringNode(0...8)(
+         opening_loc: (0...8),
+         parts:
+          [StringNode(9...17)(
+             opening_loc: nil,
+             content_loc: (9...17),
+             closing_loc: nil,
+             unescaped: "foo\n" + "bar\n"
+           )],
+         closing_loc: (17...22)
+       ),
+       InterpolatedStringNode(23...29)(
+         opening_loc: (23...29),
+         parts:
+          [StringNode(30...38)(
+             opening_loc: nil,
+             content_loc: (30...38),
+             closing_loc: nil,
+             unescaped: "foo\n" + "bar\n"
+           )],
+         closing_loc: (38...43)
+       ),
+       InterpolatedXStringNode(44...52)(
+         opening_loc: (44...52),
+         parts:
+          [StringNode(53...61)(
+             opening_loc: nil,
+             content_loc: (53...61),
+             closing_loc: nil,
+             unescaped: "foo\n" + "bar\n"
+           )],
+         closing_loc: (61...66)
+       )]
+   )
 )

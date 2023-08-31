@@ -1,6 +1,14 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [RegularExpressionNode(0...10)((0...1), (1...7), (7...10), "source", 3)]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [RegularExpressionNode(0...10)(
+         opening_loc: (0...1),
+         content_loc: (1...7),
+         closing_loc: (7...10),
+         unescaped: "source",
+         flags: 3
+       )]
+   )
 )

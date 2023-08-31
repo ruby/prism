@@ -1,16 +1,18 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)(
-    [CallNode(0...7)(
-       SelfNode(0...4)(),
-       nil,
-       (4...7),
-       (4...5),
-       ArgumentsNode(5...6)([IntegerNode(5...6)()]),
-       (6...7),
-       nil,
-       0,
-       "[]"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [CallNode(0...7)(
+         receiver: SelfNode(0...4)(),
+         operator_loc: nil,
+         message_loc: (4...7),
+         opening_loc: (4...5),
+         arguments: ArgumentsNode(5...6)(arguments: [IntegerNode(5...6)()]),
+         closing_loc: (6...7),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       )]
+   )
 )

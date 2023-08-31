@@ -1,24 +1,28 @@
 ProgramNode(0...27)(
-  [],
-  StatementsNode(0...27)(
-    [AndNode(0...27)(
-       AndNode(0...18)(
-         TrueNode(0...4)(),
-         CallNode(9...18)(
-           FalseNode(13...18)(),
-           nil,
-           (9...12),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "!"
-         ),
-         (5...8)
-       ),
-       TrueNode(23...27)(),
-       (19...22)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...27)(
+     body:
+      [AndNode(0...27)(
+         left:
+          AndNode(0...18)(
+            left: TrueNode(0...4)(),
+            right:
+             CallNode(9...18)(
+               receiver: FalseNode(13...18)(),
+               operator_loc: nil,
+               message_loc: (9...12),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 0,
+               name: "!"
+             ),
+            operator_loc: (5...8)
+          ),
+         right: TrueNode(23...27)(),
+         operator_loc: (19...22)
+       )]
+   )
 )

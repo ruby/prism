@@ -1,59 +1,97 @@
 ProgramNode(0...48)(
-  [:a],
-  StatementsNode(0...48)(
-    [ForNode(0...24)(
-       MultiWriteNode(4...5)(
-         [LocalVariableTargetNode(4...5)(:a, 0)],
-         nil,
-         nil,
-         nil,
-         nil
+  locals: [:a],
+  statements:
+   StatementsNode(0...48)(
+     body:
+      [ForNode(0...24)(
+         index:
+          MultiWriteNode(4...5)(
+            targets: [LocalVariableTargetNode(4...5)(name: :a, depth: 0)],
+            operator_loc: nil,
+            value: nil,
+            lparen_loc: nil,
+            rparen_loc: nil
+          ),
+         collection:
+          CallNode(9...12)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (9...12),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(16...19)(
+            body:
+             [CallNode(16...19)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (16...17),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(18...19)(
+                   arguments:
+                    [LocalVariableReadNode(18...19)(name: :a, depth: 0)]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "p"
+              )]
+          ),
+         for_keyword_loc: (0...3),
+         in_keyword_loc: (6...8),
+         do_keyword_loc: (13...15),
+         end_keyword_loc: (21...24)
        ),
-       CallNode(9...12)(nil, nil, (9...12), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(16...19)(
-         [CallNode(16...19)(
-            nil,
-            nil,
-            (16...17),
-            nil,
-            ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)]),
-            nil,
-            nil,
-            0,
-            "p"
-          )]
-       ),
-       (0...3),
-       (6...8),
-       (13...15),
-       (21...24)
-     ),
-     ForNode(26...48)(
-       MultiWriteNode(30...31)(
-         [LocalVariableTargetNode(30...31)(:a, 0)],
-         nil,
-         nil,
-         nil,
-         nil
-       ),
-       CallNode(35...38)(nil, nil, (35...38), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(40...43)(
-         [CallNode(40...43)(
-            nil,
-            nil,
-            (40...41),
-            nil,
-            ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(:a, 0)]),
-            nil,
-            nil,
-            0,
-            "p"
-          )]
-       ),
-       (26...29),
-       (32...34),
-       nil,
-       (45...48)
-     )]
-  )
+       ForNode(26...48)(
+         index:
+          MultiWriteNode(30...31)(
+            targets: [LocalVariableTargetNode(30...31)(name: :a, depth: 0)],
+            operator_loc: nil,
+            value: nil,
+            lparen_loc: nil,
+            rparen_loc: nil
+          ),
+         collection:
+          CallNode(35...38)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (35...38),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(40...43)(
+            body:
+             [CallNode(40...43)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (40...41),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(42...43)(
+                   arguments:
+                    [LocalVariableReadNode(42...43)(name: :a, depth: 0)]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "p"
+              )]
+          ),
+         for_keyword_loc: (26...29),
+         in_keyword_loc: (32...34),
+         do_keyword_loc: nil,
+         end_keyword_loc: (45...48)
+       )]
+   )
 )

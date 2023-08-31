@@ -1,83 +1,85 @@
 ProgramNode(0...93)(
-  [],
-  StatementsNode(0...93)(
-    [DefNode(0...14)(
-       (4...9),
-       nil,
-       nil,
-       nil,
-       [],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       nil,
-       (11...14)
-     ),
-     DefNode(16...28)(
-       (20...23),
-       nil,
-       nil,
-       nil,
-       [],
-       (16...19),
-       nil,
-       nil,
-       nil,
-       nil,
-       (25...28)
-     ),
-     DefNode(30...45)(
-       (34...40),
-       nil,
-       nil,
-       nil,
-       [],
-       (30...33),
-       nil,
-       nil,
-       nil,
-       nil,
-       (42...45)
-     ),
-     DefNode(47...63)(
-       (51...58),
-       nil,
-       nil,
-       nil,
-       [],
-       (47...50),
-       nil,
-       nil,
-       nil,
-       nil,
-       (60...63)
-     ),
-     DefNode(65...77)(
-       (69...72),
-       nil,
-       nil,
-       nil,
-       [],
-       (65...68),
-       nil,
-       nil,
-       nil,
-       nil,
-       (74...77)
-     ),
-     DefNode(79...93)(
-       (83...88),
-       nil,
-       nil,
-       nil,
-       [],
-       (79...82),
-       nil,
-       nil,
-       nil,
-       nil,
-       (90...93)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...93)(
+     body:
+      [DefNode(0...14)(
+         name_loc: (4...9),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (11...14)
+       ),
+       DefNode(16...28)(
+         name_loc: (20...23),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (16...19),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (25...28)
+       ),
+       DefNode(30...45)(
+         name_loc: (34...40),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (30...33),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (42...45)
+       ),
+       DefNode(47...63)(
+         name_loc: (51...58),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (47...50),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (60...63)
+       ),
+       DefNode(65...77)(
+         name_loc: (69...72),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (65...68),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (74...77)
+       ),
+       DefNode(79...93)(
+         name_loc: (83...88),
+         receiver: nil,
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (79...82),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (90...93)
+       )]
+   )
 )

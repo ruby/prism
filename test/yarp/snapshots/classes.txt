@@ -1,287 +1,365 @@
 ProgramNode(0...370)(
-  [],
-  StatementsNode(0...370)(
-    [ClassNode(0...17)(
-       [:a],
-       (0...5),
-       ConstantReadNode(6...7)(),
-       nil,
-       nil,
-       StatementsNode(8...13)(
-         [LocalVariableWriteNode(8...13)(
-            :a,
-            0,
-            IntegerNode(12...13)(),
-            (8...9),
-            (10...11)
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...370)(
+     body:
+      [ClassNode(0...17)(
+         locals: [:a],
+         class_keyword_loc: (0...5),
+         constant_path: ConstantReadNode(6...7)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(8...13)(
+            body:
+             [LocalVariableWriteNode(8...13)(
+                name: :a,
+                depth: 0,
+                value: IntegerNode(12...13)(),
+                name_loc: (8...9),
+                operator_loc: (10...11)
+              )]
+          ),
+         end_keyword_loc: (14...17),
+         name: "A"
        ),
-       (14...17),
-       "A"
-     ),
-     ClassNode(19...39)(
-       [],
-       (19...24),
-       ConstantReadNode(25...26)(),
-       nil,
-       nil,
-       BeginNode(28...39)(
-         nil,
-         nil,
-         nil,
-         nil,
-         EnsureNode(28...39)((28...34), nil, (36...39)),
-         (36...39)
+       ClassNode(19...39)(
+         locals: [],
+         class_keyword_loc: (19...24),
+         constant_path: ConstantReadNode(25...26)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          BeginNode(28...39)(
+            begin_keyword_loc: nil,
+            statements: nil,
+            rescue_clause: nil,
+            else_clause: nil,
+            ensure_clause:
+             EnsureNode(28...39)(
+               ensure_keyword_loc: (28...34),
+               statements: nil,
+               end_keyword_loc: (36...39)
+             ),
+            end_keyword_loc: (36...39)
+          ),
+         end_keyword_loc: (36...39),
+         name: "A"
        ),
-       (36...39),
-       "A"
-     ),
-     ClassNode(41...75)(
-       [],
-       (41...46),
-       ConstantReadNode(47...48)(),
-       nil,
-       nil,
-       BeginNode(50...75)(
-         nil,
-         nil,
-         RescueNode(50...56)((50...56), [], nil, nil, nil, nil),
-         ElseNode(58...70)((58...62), nil, (64...70)),
-         EnsureNode(64...75)((64...70), nil, (72...75)),
-         (72...75)
+       ClassNode(41...75)(
+         locals: [],
+         class_keyword_loc: (41...46),
+         constant_path: ConstantReadNode(47...48)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          BeginNode(50...75)(
+            begin_keyword_loc: nil,
+            statements: nil,
+            rescue_clause:
+             RescueNode(50...56)(
+               keyword_loc: (50...56),
+               exceptions: [],
+               operator_loc: nil,
+               reference: nil,
+               statements: nil,
+               consequent: nil
+             ),
+            else_clause:
+             ElseNode(58...70)(
+               else_keyword_loc: (58...62),
+               statements: nil,
+               end_keyword_loc: (64...70)
+             ),
+            ensure_clause:
+             EnsureNode(64...75)(
+               ensure_keyword_loc: (64...70),
+               statements: nil,
+               end_keyword_loc: (72...75)
+             ),
+            end_keyword_loc: (72...75)
+          ),
+         end_keyword_loc: (72...75),
+         name: "A"
        ),
-       (72...75),
-       "A"
-     ),
-     ClassNode(77...98)(
-       [:a],
-       (77...82),
-       ConstantReadNode(83...84)(),
-       (85...86),
-       ConstantReadNode(87...88)(),
-       StatementsNode(89...94)(
-         [LocalVariableWriteNode(89...94)(
-            :a,
-            0,
-            IntegerNode(93...94)(),
-            (89...90),
-            (91...92)
-          )]
+       ClassNode(77...98)(
+         locals: [:a],
+         class_keyword_loc: (77...82),
+         constant_path: ConstantReadNode(83...84)(),
+         inheritance_operator_loc: (85...86),
+         superclass: ConstantReadNode(87...88)(),
+         body:
+          StatementsNode(89...94)(
+            body:
+             [LocalVariableWriteNode(89...94)(
+                name: :a,
+                depth: 0,
+                value: IntegerNode(93...94)(),
+                name_loc: (89...90),
+                operator_loc: (91...92)
+              )]
+          ),
+         end_keyword_loc: (95...98),
+         name: "A"
        ),
-       (95...98),
-       "A"
-     ),
-     SingletonClassNode(100...120)(
-       [],
-       (100...105),
-       (106...108),
-       CallNode(109...116)(
-         CallNode(113...116)(
-           nil,
-           nil,
-           (113...116),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         nil,
-         (109...112),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "!"
+       SingletonClassNode(100...120)(
+         locals: [],
+         class_keyword_loc: (100...105),
+         operator_loc: (106...108),
+         expression:
+          CallNode(109...116)(
+            receiver:
+             CallNode(113...116)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (113...116),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: nil,
+            message_loc: (109...112),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "!"
+          ),
+         body: nil,
+         end_keyword_loc: (117...120)
        ),
-       nil,
-       (117...120)
-     ),
-     ClassNode(122...162)(
-       [],
-       (122...127),
-       ConstantReadNode(128...129)(),
-       nil,
-       nil,
-       StatementsNode(131...157)(
-         [SingletonClassNode(131...157)(
-            [],
-            (131...136),
-            (137...139),
-            SelfNode(140...144)(),
-            BeginNode(146...157)(
-              nil,
-              nil,
-              nil,
-              nil,
-              EnsureNode(146...157)((146...152), nil, (154...157)),
-              (154...157)
-            ),
-            (154...157)
-          )]
+       ClassNode(122...162)(
+         locals: [],
+         class_keyword_loc: (122...127),
+         constant_path: ConstantReadNode(128...129)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(131...157)(
+            body:
+             [SingletonClassNode(131...157)(
+                locals: [],
+                class_keyword_loc: (131...136),
+                operator_loc: (137...139),
+                expression: SelfNode(140...144)(),
+                body:
+                 BeginNode(146...157)(
+                   begin_keyword_loc: nil,
+                   statements: nil,
+                   rescue_clause: nil,
+                   else_clause: nil,
+                   ensure_clause:
+                    EnsureNode(146...157)(
+                      ensure_keyword_loc: (146...152),
+                      statements: nil,
+                      end_keyword_loc: (154...157)
+                    ),
+                   end_keyword_loc: (154...157)
+                 ),
+                end_keyword_loc: (154...157)
+              )]
+          ),
+         end_keyword_loc: (159...162),
+         name: "A"
        ),
-       (159...162),
-       "A"
-     ),
-     ClassNode(164...218)(
-       [],
-       (164...169),
-       ConstantReadNode(170...171)(),
-       nil,
-       nil,
-       StatementsNode(173...213)(
-         [SingletonClassNode(173...213)(
-            [],
-            (173...178),
-            (179...181),
-            SelfNode(182...186)(),
-            BeginNode(188...213)(
-              nil,
-              nil,
-              RescueNode(188...194)((188...194), [], nil, nil, nil, nil),
-              ElseNode(196...208)((196...200), nil, (202...208)),
-              EnsureNode(202...213)((202...208), nil, (210...213)),
-              (210...213)
-            ),
-            (210...213)
-          )]
+       ClassNode(164...218)(
+         locals: [],
+         class_keyword_loc: (164...169),
+         constant_path: ConstantReadNode(170...171)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body:
+          StatementsNode(173...213)(
+            body:
+             [SingletonClassNode(173...213)(
+                locals: [],
+                class_keyword_loc: (173...178),
+                operator_loc: (179...181),
+                expression: SelfNode(182...186)(),
+                body:
+                 BeginNode(188...213)(
+                   begin_keyword_loc: nil,
+                   statements: nil,
+                   rescue_clause:
+                    RescueNode(188...194)(
+                      keyword_loc: (188...194),
+                      exceptions: [],
+                      operator_loc: nil,
+                      reference: nil,
+                      statements: nil,
+                      consequent: nil
+                    ),
+                   else_clause:
+                    ElseNode(196...208)(
+                      else_keyword_loc: (196...200),
+                      statements: nil,
+                      end_keyword_loc: (202...208)
+                    ),
+                   ensure_clause:
+                    EnsureNode(202...213)(
+                      ensure_keyword_loc: (202...208),
+                      statements: nil,
+                      end_keyword_loc: (210...213)
+                    ),
+                   end_keyword_loc: (210...213)
+                 ),
+                end_keyword_loc: (210...213)
+              )]
+          ),
+         end_keyword_loc: (215...218),
+         name: "A"
        ),
-       (215...218),
-       "A"
-     ),
-     SingletonClassNode(220...240)(
-       [],
-       (220...225),
-       (226...228),
-       CallNode(229...236)(
-         CallNode(229...232)(
-           nil,
-           nil,
-           (229...232),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         (232...233),
-         (233...236),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "bar"
+       SingletonClassNode(220...240)(
+         locals: [],
+         class_keyword_loc: (220...225),
+         operator_loc: (226...228),
+         expression:
+          CallNode(229...236)(
+            receiver:
+             CallNode(229...232)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (229...232),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (232...233),
+            message_loc: (233...236),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "bar"
+          ),
+         body: nil,
+         end_keyword_loc: (237...240)
        ),
-       nil,
-       (237...240)
-     ),
-     SingletonClassNode(242...262)(
-       [],
-       (242...247),
-       (248...250),
-       CallNode(251...258)(
-         CallNode(251...254)(
-           nil,
-           nil,
-           (251...254),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         (254...255),
-         (255...258),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "bar"
+       SingletonClassNode(242...262)(
+         locals: [],
+         class_keyword_loc: (242...247),
+         operator_loc: (248...250),
+         expression:
+          CallNode(251...258)(
+            receiver:
+             CallNode(251...254)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (251...254),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: (254...255),
+            message_loc: (255...258),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "bar"
+          ),
+         body: nil,
+         end_keyword_loc: (259...262)
        ),
-       nil,
-       (259...262)
-     ),
-     SingletonClassNode(264...281)(
-       [],
-       (264...269),
-       (270...272),
-       SelfNode(273...277)(),
-       nil,
-       (278...281)
-     ),
-     SingletonClassNode(283...300)(
-       [],
-       (283...288),
-       (289...291),
-       SelfNode(292...296)(),
-       nil,
-       (297...300)
-     ),
-     SingletonClassNode(302...325)(
-       [],
-       (302...307),
-       (308...310),
-       SelfNode(311...315)(),
-       StatementsNode(316...321)(
-         [CallNode(316...321)(
-            IntegerNode(316...317)(),
-            nil,
-            (318...319),
-            nil,
-            ArgumentsNode(320...321)([IntegerNode(320...321)()]),
-            nil,
-            nil,
-            0,
-            "+"
-          )]
+       SingletonClassNode(264...281)(
+         locals: [],
+         class_keyword_loc: (264...269),
+         operator_loc: (270...272),
+         expression: SelfNode(273...277)(),
+         body: nil,
+         end_keyword_loc: (278...281)
        ),
-       (322...325)
-     ),
-     SingletonClassNode(327...350)(
-       [],
-       (327...332),
-       (333...335),
-       SelfNode(336...340)(),
-       StatementsNode(341...346)(
-         [CallNode(341...346)(
-            IntegerNode(341...342)(),
-            nil,
-            (343...344),
-            nil,
-            ArgumentsNode(345...346)([IntegerNode(345...346)()]),
-            nil,
-            nil,
-            0,
-            "+"
-          )]
+       SingletonClassNode(283...300)(
+         locals: [],
+         class_keyword_loc: (283...288),
+         operator_loc: (289...291),
+         expression: SelfNode(292...296)(),
+         body: nil,
+         end_keyword_loc: (297...300)
        ),
-       (347...350)
-     ),
-     ClassNode(352...370)(
-       [],
-       (352...357),
-       ConstantReadNode(358...359)(),
-       (360...361),
-       CallNode(362...366)(
-         ConstantReadNode(362...363)(),
-         nil,
-         (363...366),
-         (363...364),
-         ArgumentsNode(364...365)([IntegerNode(364...365)()]),
-         (365...366),
-         nil,
-         0,
-         "[]"
+       SingletonClassNode(302...325)(
+         locals: [],
+         class_keyword_loc: (302...307),
+         operator_loc: (308...310),
+         expression: SelfNode(311...315)(),
+         body:
+          StatementsNode(316...321)(
+            body:
+             [CallNode(316...321)(
+                receiver: IntegerNode(316...317)(),
+                operator_loc: nil,
+                message_loc: (318...319),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(320...321)(
+                   arguments: [IntegerNode(320...321)()]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "+"
+              )]
+          ),
+         end_keyword_loc: (322...325)
        ),
-       nil,
-       (367...370),
-       "A"
-     )]
-  )
+       SingletonClassNode(327...350)(
+         locals: [],
+         class_keyword_loc: (327...332),
+         operator_loc: (333...335),
+         expression: SelfNode(336...340)(),
+         body:
+          StatementsNode(341...346)(
+            body:
+             [CallNode(341...346)(
+                receiver: IntegerNode(341...342)(),
+                operator_loc: nil,
+                message_loc: (343...344),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(345...346)(
+                   arguments: [IntegerNode(345...346)()]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "+"
+              )]
+          ),
+         end_keyword_loc: (347...350)
+       ),
+       ClassNode(352...370)(
+         locals: [],
+         class_keyword_loc: (352...357),
+         constant_path: ConstantReadNode(358...359)(),
+         inheritance_operator_loc: (360...361),
+         superclass:
+          CallNode(362...366)(
+            receiver: ConstantReadNode(362...363)(),
+            operator_loc: nil,
+            message_loc: (363...366),
+            opening_loc: (363...364),
+            arguments:
+             ArgumentsNode(364...365)(arguments: [IntegerNode(364...365)()]),
+            closing_loc: (365...366),
+            block: nil,
+            flags: 0,
+            name: "[]"
+          ),
+         body: nil,
+         end_keyword_loc: (367...370),
+         name: "A"
+       )]
+   )
 )

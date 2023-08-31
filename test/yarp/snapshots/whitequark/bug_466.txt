@@ -1,54 +1,74 @@
 ProgramNode(0...27)(
-  [],
-  StatementsNode(0...27)(
-    [CallNode(0...27)(
-       nil,
-       nil,
-       (0...3),
-       nil,
-       ArgumentsNode(4...19)(
-         [InterpolatedStringNode(4...19)(
-            (4...5),
-            [EmbeddedStatementsNode(5...18)(
-               (5...7),
-               StatementsNode(7...17)(
-                 [CallNode(7...17)(
-                    ParenthesesNode(7...12)(
-                      StatementsNode(8...11)(
-                        [CallNode(8...11)(
-                           IntegerNode(8...9)(),
-                           nil,
-                           (9...10),
-                           nil,
-                           ArgumentsNode(10...11)([IntegerNode(10...11)()]),
-                           nil,
-                           nil,
-                           0,
-                           "+"
+  locals: [],
+  statements:
+   StatementsNode(0...27)(
+     body:
+      [CallNode(0...27)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(4...19)(
+            arguments:
+             [InterpolatedStringNode(4...19)(
+                opening_loc: (4...5),
+                parts:
+                 [EmbeddedStatementsNode(5...18)(
+                    opening_loc: (5...7),
+                    statements:
+                     StatementsNode(7...17)(
+                       body:
+                        [CallNode(7...17)(
+                           receiver:
+                            ParenthesesNode(7...12)(
+                              body:
+                               StatementsNode(8...11)(
+                                 body:
+                                  [CallNode(8...11)(
+                                     receiver: IntegerNode(8...9)(),
+                                     operator_loc: nil,
+                                     message_loc: (9...10),
+                                     opening_loc: nil,
+                                     arguments:
+                                      ArgumentsNode(10...11)(
+                                        arguments: [IntegerNode(10...11)()]
+                                      ),
+                                     closing_loc: nil,
+                                     block: nil,
+                                     flags: 0,
+                                     name: "+"
+                                   )]
+                               ),
+                              opening_loc: (7...8),
+                              closing_loc: (11...12)
+                            ),
+                           operator_loc: (12...13),
+                           message_loc: (13...17),
+                           opening_loc: nil,
+                           arguments: nil,
+                           closing_loc: nil,
+                           block: nil,
+                           flags: 0,
+                           name: "to_i"
                          )]
-                      ),
-                      (7...8),
-                      (11...12)
-                    ),
-                    (12...13),
-                    (13...17),
-                    nil,
-                    nil,
-                    nil,
-                    nil,
-                    0,
-                    "to_i"
-                  )]
-               ),
-               (17...18)
-             )],
-            (18...19)
-          )]
-       ),
-       nil,
-       BlockNode(20...27)([], nil, nil, (20...22), (24...27)),
-       0,
-       "foo"
-     )]
-  )
+                     ),
+                    closing_loc: (17...18)
+                  )],
+                closing_loc: (18...19)
+              )]
+          ),
+         closing_loc: nil,
+         block:
+          BlockNode(20...27)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (20...22),
+            closing_loc: (24...27)
+          ),
+         flags: 0,
+         name: "foo"
+       )]
+   )
 )

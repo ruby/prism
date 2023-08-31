@@ -1,27 +1,33 @@
 ProgramNode(0...16)(
-  [],
-  StatementsNode(0...16)(
-    [InterpolatedStringNode(0...6)(
-       (0...1),
-       [EmbeddedStatementsNode(1...5)(
-          (1...3),
-          StatementsNode(3...4)([IntegerNode(3...4)()]),
-          (4...5)
-        )],
-       (5...6)
-     ),
-     ArrayNode(8...16)(
-       [InterpolatedStringNode(11...15)(
-          nil,
-          [EmbeddedStatementsNode(11...15)(
-             (11...13),
-             StatementsNode(13...14)([IntegerNode(13...14)()]),
-             (14...15)
+  locals: [],
+  statements:
+   StatementsNode(0...16)(
+     body:
+      [InterpolatedStringNode(0...6)(
+         opening_loc: (0...1),
+         parts:
+          [EmbeddedStatementsNode(1...5)(
+             opening_loc: (1...3),
+             statements: StatementsNode(3...4)(body: [IntegerNode(3...4)()]),
+             closing_loc: (4...5)
            )],
-          nil
-        )],
-       (8...11),
-       (15...16)
-     )]
-  )
+         closing_loc: (5...6)
+       ),
+       ArrayNode(8...16)(
+         elements:
+          [InterpolatedStringNode(11...15)(
+             opening_loc: nil,
+             parts:
+              [EmbeddedStatementsNode(11...15)(
+                 opening_loc: (11...13),
+                 statements:
+                  StatementsNode(13...14)(body: [IntegerNode(13...14)()]),
+                 closing_loc: (14...15)
+               )],
+             closing_loc: nil
+           )],
+         opening_loc: (8...11),
+         closing_loc: (15...16)
+       )]
+   )
 )

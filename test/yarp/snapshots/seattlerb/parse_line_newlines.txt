@@ -1,1 +1,3 @@
-ProgramNode(0...4)([], StatementsNode(0...4)([TrueNode(0...4)()]))
+ProgramNode(0...4)(
+  locals: [], statements: StatementsNode(0...4)(body: [TrueNode(0...4)()])
+)

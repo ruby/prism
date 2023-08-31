@@ -1,34 +1,47 @@
 ProgramNode(0...17)(
-  [],
-  StatementsNode(0...17)(
-    [CallNode(0...17)(
-       nil,
-       nil,
-       (0...3),
-       nil,
-       ArgumentsNode(4...17)(
-         [ParenthesesNode(4...17)(
-            StatementsNode(5...16)(
-              [CallNode(5...16)(
-                 nil,
-                 nil,
-                 (5...9),
-                 nil,
-                 nil,
-                 nil,
-                 BlockNode(10...16)([], nil, nil, (10...12), (13...16)),
-                 0,
-                 "proc"
-               )]
-            ),
-            (4...5),
-            (16...17)
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "tap"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [CallNode(0...17)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(4...17)(
+            arguments:
+             [ParenthesesNode(4...17)(
+                body:
+                 StatementsNode(5...16)(
+                   body:
+                    [CallNode(5...16)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (5...9),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block:
+                        BlockNode(10...16)(
+                          locals: [],
+                          parameters: nil,
+                          body: nil,
+                          opening_loc: (10...12),
+                          closing_loc: (13...16)
+                        ),
+                       flags: 0,
+                       name: "proc"
+                     )]
+                 ),
+                opening_loc: (4...5),
+                closing_loc: (16...17)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "tap"
+       )]
+   )
 )

@@ -1,73 +1,87 @@
 ProgramNode(0...77)(
-  [],
-  StatementsNode(0...77)(
-    [ConstantPathOperatorWriteNode(0...8)(
-       ConstantPathNode(0...3)(nil, ConstantReadNode(2...3)(), (0...2)),
-       (4...6),
-       IntegerNode(7...8)(),
-       :+
-     ),
-     ConstantOperatorWriteNode(10...16)(
-       (10...11),
-       (12...14),
-       IntegerNode(15...16)(),
-       :+
-     ),
-     ConstantPathOperatorWriteNode(18...27)(
-       ConstantPathNode(18...22)(
-         ConstantReadNode(18...19)(),
-         ConstantReadNode(21...22)(),
-         (19...21)
+  locals: [],
+  statements:
+   StatementsNode(0...77)(
+     body:
+      [ConstantPathOperatorWriteNode(0...8)(
+         target:
+          ConstantPathNode(0...3)(
+            parent: nil,
+            child: ConstantReadNode(2...3)(),
+            delimiter_loc: (0...2)
+          ),
+         operator_loc: (4...6),
+         value: IntegerNode(7...8)(),
+         operator: :+
        ),
-       (23...25),
-       IntegerNode(26...27)(),
-       :+
-     ),
-     DefNode(29...50)(
-       (33...34),
-       nil,
-       nil,
-       StatementsNode(36...45)(
-         [ConstantPathOrWriteNode(36...45)(
-            ConstantPathNode(36...39)(
-              nil,
-              ConstantReadNode(38...39)(),
-              (36...38)
-            ),
-            (40...43),
-            IntegerNode(44...45)()
-          )]
+       ConstantOperatorWriteNode(10...16)(
+         name_loc: (10...11),
+         operator_loc: (12...14),
+         value: IntegerNode(15...16)(),
+         operator: :+
        ),
-       [],
-       (29...32),
-       nil,
-       nil,
-       nil,
-       nil,
-       (47...50)
-     ),
-     DefNode(52...77)(
-       (56...57),
-       nil,
-       nil,
-       StatementsNode(59...72)(
-         [ConstantPathOrWriteNode(59...72)(
-            ConstantPathNode(59...66)(
-              SelfNode(59...63)(),
-              ConstantReadNode(65...66)(),
-              (63...65)
-            ),
-            (67...70),
-            IntegerNode(71...72)()
-          )]
+       ConstantPathOperatorWriteNode(18...27)(
+         target:
+          ConstantPathNode(18...22)(
+            parent: ConstantReadNode(18...19)(),
+            child: ConstantReadNode(21...22)(),
+            delimiter_loc: (19...21)
+          ),
+         operator_loc: (23...25),
+         value: IntegerNode(26...27)(),
+         operator: :+
        ),
-       [],
-       (52...55),
-       nil,
-       nil,
-       nil,
-       nil,
-       (74...77)
-     )]
-  )
+       DefNode(29...50)(
+         name_loc: (33...34),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(36...45)(
+            body:
+             [ConstantPathOrWriteNode(36...45)(
+                target:
+                 ConstantPathNode(36...39)(
+                   parent: nil,
+                   child: ConstantReadNode(38...39)(),
+                   delimiter_loc: (36...38)
+                 ),
+                operator_loc: (40...43),
+                value: IntegerNode(44...45)()
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (29...32),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (47...50)
+       ),
+       DefNode(52...77)(
+         name_loc: (56...57),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(59...72)(
+            body:
+             [ConstantPathOrWriteNode(59...72)(
+                target:
+                 ConstantPathNode(59...66)(
+                   parent: SelfNode(59...63)(),
+                   child: ConstantReadNode(65...66)(),
+                   delimiter_loc: (63...65)
+                 ),
+                operator_loc: (67...70),
+                value: IntegerNode(71...72)()
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (52...55),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (74...77)
+       )]
+   )
 )

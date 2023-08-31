@@ -1,1052 +1,1292 @@
 ProgramNode(0...550)(
-  [],
-  StatementsNode(0...550)(
-    [CallNode(0...5)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(1...5)([], nil, nil, (1...2), (4...5)),
-       0,
-       "f"
-     ),
-     CallNode(7...15)(
-       nil,
-       nil,
-       (7...8),
-       nil,
-       nil,
-       nil,
-       BlockNode(8...15)(
-         [],
-         BlockParametersNode(10...13)(nil, [], (10...11), (12...13)),
-         nil,
-         (8...9),
-         (14...15)
+  locals: [],
+  statements:
+   StatementsNode(0...550)(
+     body:
+      [CallNode(0...5)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(1...5)(
+            locals: [],
+            parameters: nil,
+            body: nil,
+            opening_loc: (1...2),
+            closing_loc: (4...5)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(17...26)(
-       nil,
-       nil,
-       (17...18),
-       nil,
-       nil,
-       nil,
-       BlockNode(18...26)(
-         [:b],
-         BlockParametersNode(20...24)(
-           ParametersNode(21...23)(
-             [],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(21...23)((22...23), (21...22))
-           ),
-           [],
-           (20...21),
-           (23...24)
-         ),
-         nil,
-         (18...19),
-         (25...26)
+       CallNode(7...15)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (7...8),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(8...15)(
+            locals: [],
+            parameters:
+             BlockParametersNode(10...13)(
+               parameters: nil,
+               locals: [],
+               opening_loc: (10...11),
+               closing_loc: (12...13)
+             ),
+            body: nil,
+            opening_loc: (8...9),
+            closing_loc: (14...15)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(28...44)(
-       nil,
-       nil,
-       (28...29),
-       nil,
-       nil,
-       nil,
-       BlockNode(29...44)(
-         [:baz, :b],
-         BlockParametersNode(31...42)(
-           ParametersNode(32...41)(
-             [],
-             [],
-             [],
-             nil,
-             [],
-             KeywordRestParameterNode(32...37)((32...34), (34...37)),
-             BlockParameterNode(39...41)((40...41), (39...40))
-           ),
-           [],
-           (31...32),
-           (41...42)
-         ),
-         nil,
-         (29...30),
-         (43...44)
+       CallNode(17...26)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (17...18),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(18...26)(
+            locals: [:b],
+            parameters:
+             BlockParametersNode(20...24)(
+               parameters:
+                ParametersNode(21...23)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(21...23)(
+                     name_loc: (22...23), operator_loc: (21...22)
+                   )
+                ),
+               locals: [],
+               opening_loc: (20...21),
+               closing_loc: (23...24)
+             ),
+            body: nil,
+            opening_loc: (18...19),
+            closing_loc: (25...26)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(46...58)(
-       nil,
-       nil,
-       (46...47),
-       nil,
-       nil,
-       nil,
-       BlockNode(47...58)(
-         [:*, :b],
-         BlockParametersNode(49...56)(
-           ParametersNode(50...55)(
-             [],
-             [],
-             [],
-             RestParameterNode(50...51)((50...51), nil),
-             [],
-             nil,
-             BlockParameterNode(53...55)((54...55), (53...54))
-           ),
-           [],
-           (49...50),
-           (55...56)
-         ),
-         nil,
-         (47...48),
-         (57...58)
+       CallNode(28...44)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (28...29),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(29...44)(
+            locals: [:baz, :b],
+            parameters:
+             BlockParametersNode(31...42)(
+               parameters:
+                ParametersNode(32...41)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest:
+                   KeywordRestParameterNode(32...37)(
+                     operator_loc: (32...34), name_loc: (34...37)
+                   ),
+                  block:
+                   BlockParameterNode(39...41)(
+                     name_loc: (40...41), operator_loc: (39...40)
+                   )
+                ),
+               locals: [],
+               opening_loc: (31...32),
+               closing_loc: (41...42)
+             ),
+            body: nil,
+            opening_loc: (29...30),
+            closing_loc: (43...44)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(60...76)(
-       nil,
-       nil,
-       (60...61),
-       nil,
-       nil,
-       nil,
-       BlockNode(61...76)(
-         [:r, :p, :b],
-         BlockParametersNode(63...74)(
-           ParametersNode(64...73)(
-             [],
-             [],
-             [RequiredParameterNode(68...69)(:p)],
-             RestParameterNode(64...66)((64...65), (65...66)),
-             [],
-             nil,
-             BlockParameterNode(71...73)((72...73), (71...72))
-           ),
-           [],
-           (63...64),
-           (73...74)
-         ),
-         nil,
-         (61...62),
-         (75...76)
+       CallNode(46...58)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (46...47),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(47...58)(
+            locals: [:*, :b],
+            parameters:
+             BlockParametersNode(49...56)(
+               parameters:
+                ParametersNode(50...55)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(50...51)(
+                     operator_loc: (50...51), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(53...55)(
+                     name_loc: (54...55), operator_loc: (53...54)
+                   )
+                ),
+               locals: [],
+               opening_loc: (49...50),
+               closing_loc: (55...56)
+             ),
+            body: nil,
+            opening_loc: (47...48),
+            closing_loc: (57...58)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(78...91)(
-       nil,
-       nil,
-       (78...79),
-       nil,
-       nil,
-       nil,
-       BlockNode(79...91)(
-         [:s, :b],
-         BlockParametersNode(81...89)(
-           ParametersNode(82...88)(
-             [],
-             [],
-             [],
-             RestParameterNode(82...84)((82...83), (83...84)),
-             [],
-             nil,
-             BlockParameterNode(86...88)((87...88), (86...87))
-           ),
-           [],
-           (81...82),
-           (88...89)
-         ),
-         nil,
-         (79...80),
-         (90...91)
+       CallNode(60...76)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (60...61),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(61...76)(
+            locals: [:r, :p, :b],
+            parameters:
+             BlockParametersNode(63...74)(
+               parameters:
+                ParametersNode(64...73)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [RequiredParameterNode(68...69)(name: :p)],
+                  rest:
+                   RestParameterNode(64...66)(
+                     operator_loc: (64...65), name_loc: (65...66)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(71...73)(
+                     name_loc: (72...73), operator_loc: (71...72)
+                   )
+                ),
+               locals: [],
+               opening_loc: (63...64),
+               closing_loc: (73...74)
+             ),
+            body: nil,
+            opening_loc: (61...62),
+            closing_loc: (75...76)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(93...102)(
-       nil,
-       nil,
-       (93...94),
-       nil,
-       nil,
-       nil,
-       BlockNode(94...102)(
-         [:s],
-         BlockParametersNode(96...100)(
-           ParametersNode(97...99)(
-             [],
-             [],
-             [],
-             RestParameterNode(97...99)((97...98), (98...99)),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (96...97),
-           (99...100)
-         ),
-         nil,
-         (94...95),
-         (101...102)
+       CallNode(78...91)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (78...79),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(79...91)(
+            locals: [:s, :b],
+            parameters:
+             BlockParametersNode(81...89)(
+               parameters:
+                ParametersNode(82...88)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(82...84)(
+                     operator_loc: (82...83), name_loc: (83...84)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(86...88)(
+                     name_loc: (87...88), operator_loc: (86...87)
+                   )
+                ),
+               locals: [],
+               opening_loc: (81...82),
+               closing_loc: (88...89)
+             ),
+            body: nil,
+            opening_loc: (79...80),
+            closing_loc: (90...91)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(104...112)(
-       nil,
-       nil,
-       (104...105),
-       nil,
-       nil,
-       nil,
-       BlockNode(105...112)(
-         [:*],
-         BlockParametersNode(107...110)(
-           ParametersNode(108...109)(
-             [],
-             [],
-             [],
-             RestParameterNode(108...109)((108...109), nil),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (107...108),
-           (109...110)
-         ),
-         nil,
-         (105...106),
-         (111...112)
+       CallNode(93...102)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (93...94),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(94...102)(
+            locals: [:s],
+            parameters:
+             BlockParametersNode(96...100)(
+               parameters:
+                ParametersNode(97...99)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(97...99)(
+                     operator_loc: (97...98), name_loc: (98...99)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (96...97),
+               closing_loc: (99...100)
+             ),
+            body: nil,
+            opening_loc: (94...95),
+            closing_loc: (101...102)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(114...125)(
-       nil,
-       nil,
-       (114...115),
-       nil,
-       nil,
-       nil,
-       BlockNode(115...125)(
-         [:a],
-         BlockParametersNode(117...123)(
-           nil,
-           [(120...121)],
-           (117...118),
-           (122...123)
-         ),
-         nil,
-         (115...116),
-         (124...125)
+       CallNode(104...112)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (104...105),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(105...112)(
+            locals: [:*],
+            parameters:
+             BlockParametersNode(107...110)(
+               parameters:
+                ParametersNode(108...109)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(108...109)(
+                     operator_loc: (108...109), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (107...108),
+               closing_loc: (109...110)
+             ),
+            body: nil,
+            opening_loc: (105...106),
+            closing_loc: (111...112)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(127...136)(
-       nil,
-       nil,
-       (127...128),
-       nil,
-       nil,
-       nil,
-       BlockNode(128...136)(
-         [:a],
-         BlockParametersNode(130...134)(
-           nil,
-           [(132...133)],
-           (130...131),
-           (133...134)
-         ),
-         nil,
-         (128...129),
-         (135...136)
+       CallNode(114...125)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (114...115),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(115...125)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(117...123)(
+               parameters: nil,
+               locals: [(120...121)],
+               opening_loc: (117...118),
+               closing_loc: (122...123)
+             ),
+            body: nil,
+            opening_loc: (115...116),
+            closing_loc: (124...125)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(138...150)(
-       nil,
-       nil,
-       (138...139),
-       nil,
-       nil,
-       nil,
-       BlockNode(139...150)(
-         [:a, :b],
-         BlockParametersNode(141...148)(
-           ParametersNode(142...147)(
-             [RequiredParameterNode(142...143)(:a)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(145...147)((146...147), (145...146))
-           ),
-           [],
-           (141...142),
-           (147...148)
-         ),
-         nil,
-         (139...140),
-         (149...150)
+       CallNode(127...136)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (127...128),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(128...136)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(130...134)(
+               parameters: nil,
+               locals: [(132...133)],
+               opening_loc: (130...131),
+               closing_loc: (133...134)
+             ),
+            body: nil,
+            opening_loc: (128...129),
+            closing_loc: (135...136)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(152...167)(
-       nil,
-       nil,
-       (152...153),
-       nil,
-       nil,
-       nil,
-       BlockNode(153...167)(
-         [:a, :*, :b],
-         BlockParametersNode(155...165)(
-           ParametersNode(156...164)(
-             [RequiredParameterNode(156...157)(:a)],
-             [],
-             [],
-             RestParameterNode(159...160)((159...160), nil),
-             [],
-             nil,
-             BlockParameterNode(162...164)((163...164), (162...163))
-           ),
-           [],
-           (155...156),
-           (164...165)
-         ),
-         nil,
-         (153...154),
-         (166...167)
+       CallNode(138...150)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (138...139),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(139...150)(
+            locals: [:a, :b],
+            parameters:
+             BlockParametersNode(141...148)(
+               parameters:
+                ParametersNode(142...147)(
+                  requireds: [RequiredParameterNode(142...143)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(145...147)(
+                     name_loc: (146...147), operator_loc: (145...146)
+                   )
+                ),
+               locals: [],
+               opening_loc: (141...142),
+               closing_loc: (147...148)
+             ),
+            body: nil,
+            opening_loc: (139...140),
+            closing_loc: (149...150)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(169...188)(
-       nil,
-       nil,
-       (169...170),
-       nil,
-       nil,
-       nil,
-       BlockNode(170...188)(
-         [:a, :r, :p, :b],
-         BlockParametersNode(172...186)(
-           ParametersNode(173...185)(
-             [RequiredParameterNode(173...174)(:a)],
-             [],
-             [RequiredParameterNode(180...181)(:p)],
-             RestParameterNode(176...178)((176...177), (177...178)),
-             [],
-             nil,
-             BlockParameterNode(183...185)((184...185), (183...184))
-           ),
-           [],
-           (172...173),
-           (185...186)
-         ),
-         nil,
-         (170...171),
-         (187...188)
+       CallNode(152...167)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (152...153),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(153...167)(
+            locals: [:a, :*, :b],
+            parameters:
+             BlockParametersNode(155...165)(
+               parameters:
+                ParametersNode(156...164)(
+                  requireds: [RequiredParameterNode(156...157)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(159...160)(
+                     operator_loc: (159...160), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(162...164)(
+                     name_loc: (163...164), operator_loc: (162...163)
+                   )
+                ),
+               locals: [],
+               opening_loc: (155...156),
+               closing_loc: (164...165)
+             ),
+            body: nil,
+            opening_loc: (153...154),
+            closing_loc: (166...167)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(190...206)(
-       nil,
-       nil,
-       (190...191),
-       nil,
-       nil,
-       nil,
-       BlockNode(191...206)(
-         [:a, :s, :b],
-         BlockParametersNode(193...204)(
-           ParametersNode(194...203)(
-             [RequiredParameterNode(194...195)(:a)],
-             [],
-             [],
-             RestParameterNode(197...199)((197...198), (198...199)),
-             [],
-             nil,
-             BlockParameterNode(201...203)((202...203), (201...202))
-           ),
-           [],
-           (193...194),
-           (203...204)
-         ),
-         nil,
-         (191...192),
-         (205...206)
+       CallNode(169...188)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (169...170),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(170...188)(
+            locals: [:a, :r, :p, :b],
+            parameters:
+             BlockParametersNode(172...186)(
+               parameters:
+                ParametersNode(173...185)(
+                  requireds: [RequiredParameterNode(173...174)(name: :a)],
+                  optionals: [],
+                  posts: [RequiredParameterNode(180...181)(name: :p)],
+                  rest:
+                   RestParameterNode(176...178)(
+                     operator_loc: (176...177), name_loc: (177...178)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(183...185)(
+                     name_loc: (184...185), operator_loc: (183...184)
+                   )
+                ),
+               locals: [],
+               opening_loc: (172...173),
+               closing_loc: (185...186)
+             ),
+            body: nil,
+            opening_loc: (170...171),
+            closing_loc: (187...188)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(208...220)(
-       nil,
-       nil,
-       (208...209),
-       nil,
-       nil,
-       nil,
-       BlockNode(209...220)(
-         [:a, :s],
-         BlockParametersNode(211...218)(
-           ParametersNode(212...217)(
-             [RequiredParameterNode(212...213)(:a)],
-             [],
-             [],
-             RestParameterNode(215...217)((215...216), (216...217)),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (211...212),
-           (217...218)
-         ),
-         nil,
-         (209...210),
-         (219...220)
+       CallNode(190...206)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (190...191),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(191...206)(
+            locals: [:a, :s, :b],
+            parameters:
+             BlockParametersNode(193...204)(
+               parameters:
+                ParametersNode(194...203)(
+                  requireds: [RequiredParameterNode(194...195)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(197...199)(
+                     operator_loc: (197...198), name_loc: (198...199)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(201...203)(
+                     name_loc: (202...203), operator_loc: (201...202)
+                   )
+                ),
+               locals: [],
+               opening_loc: (193...194),
+               closing_loc: (203...204)
+             ),
+            body: nil,
+            opening_loc: (191...192),
+            closing_loc: (205...206)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(222...233)(
-       nil,
-       nil,
-       (222...223),
-       nil,
-       nil,
-       nil,
-       BlockNode(223...233)(
-         [:a, :*],
-         BlockParametersNode(225...231)(
-           ParametersNode(226...230)(
-             [RequiredParameterNode(226...227)(:a)],
-             [],
-             [],
-             RestParameterNode(229...230)((229...230), nil),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (225...226),
-           (230...231)
-         ),
-         nil,
-         (223...224),
-         (232...233)
+       CallNode(208...220)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (208...209),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(209...220)(
+            locals: [:a, :s],
+            parameters:
+             BlockParametersNode(211...218)(
+               parameters:
+                ParametersNode(212...217)(
+                  requireds: [RequiredParameterNode(212...213)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(215...217)(
+                     operator_loc: (215...216), name_loc: (216...217)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (211...212),
+               closing_loc: (217...218)
+             ),
+            body: nil,
+            opening_loc: (209...210),
+            closing_loc: (219...220)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(235...247)(
-       nil,
-       nil,
-       (235...236),
-       nil,
-       nil,
-       nil,
-       BlockNode(236...247)(
-         [:a, :b],
-         BlockParametersNode(238...245)(
-           ParametersNode(239...244)(
-             [RequiredParameterNode(239...240)(:a),
-              RequiredParameterNode(242...243)(:b)],
-             [],
-             [],
-             RestParameterNode(243...244)((243...244), nil),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (238...239),
-           (244...245)
-         ),
-         nil,
-         (236...237),
-         (246...247)
+       CallNode(222...233)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (222...223),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(223...233)(
+            locals: [:a, :*],
+            parameters:
+             BlockParametersNode(225...231)(
+               parameters:
+                ParametersNode(226...230)(
+                  requireds: [RequiredParameterNode(226...227)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(229...230)(
+                     operator_loc: (229...230), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (225...226),
+               closing_loc: (230...231)
+             ),
+            body: nil,
+            opening_loc: (223...224),
+            closing_loc: (232...233)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(249...260)(
-       nil,
-       nil,
-       (249...250),
-       nil,
-       nil,
-       nil,
-       BlockNode(250...260)(
-         [:a, :c],
-         BlockParametersNode(252...258)(
-           ParametersNode(253...257)(
-             [RequiredParameterNode(253...254)(:a),
-              RequiredParameterNode(256...257)(:c)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (252...253),
-           (257...258)
-         ),
-         nil,
-         (250...251),
-         (259...260)
+       CallNode(235...247)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (235...236),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(236...247)(
+            locals: [:a, :b],
+            parameters:
+             BlockParametersNode(238...245)(
+               parameters:
+                ParametersNode(239...244)(
+                  requireds:
+                   [RequiredParameterNode(239...240)(name: :a),
+                    RequiredParameterNode(242...243)(name: :b)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(243...244)(
+                     operator_loc: (243...244), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (238...239),
+               closing_loc: (244...245)
+             ),
+            body: nil,
+            opening_loc: (236...237),
+            closing_loc: (246...247)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(262...279)(
-       nil,
-       nil,
-       (262...263),
-       nil,
-       nil,
-       nil,
-       BlockNode(263...279)(
-         [:a, :o, :b],
-         BlockParametersNode(265...277)(
-           ParametersNode(266...276)(
-             [RequiredParameterNode(266...267)(:a)],
-             [OptionalParameterNode(269...272)(
-                :o,
-                (269...270),
-                (270...271),
-                IntegerNode(271...272)()
-              )],
-             [],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(274...276)((275...276), (274...275))
-           ),
-           [],
-           (265...266),
-           (276...277)
-         ),
-         nil,
-         (263...264),
-         (278...279)
+       CallNode(249...260)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (249...250),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(250...260)(
+            locals: [:a, :c],
+            parameters:
+             BlockParametersNode(252...258)(
+               parameters:
+                ParametersNode(253...257)(
+                  requireds:
+                   [RequiredParameterNode(253...254)(name: :a),
+                    RequiredParameterNode(256...257)(name: :c)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (252...253),
+               closing_loc: (257...258)
+             ),
+            body: nil,
+            opening_loc: (250...251),
+            closing_loc: (259...260)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(281...305)(
-       nil,
-       nil,
-       (281...282),
-       nil,
-       nil,
-       nil,
-       BlockNode(282...305)(
-         [:a, :o, :r, :p, :b],
-         BlockParametersNode(284...303)(
-           ParametersNode(285...302)(
-             [RequiredParameterNode(285...286)(:a)],
-             [OptionalParameterNode(288...291)(
-                :o,
-                (288...289),
-                (289...290),
-                IntegerNode(290...291)()
-              )],
-             [RequiredParameterNode(297...298)(:p)],
-             RestParameterNode(293...295)((293...294), (294...295)),
-             [],
-             nil,
-             BlockParameterNode(300...302)((301...302), (300...301))
-           ),
-           [],
-           (284...285),
-           (302...303)
-         ),
-         nil,
-         (282...283),
-         (304...305)
+       CallNode(262...279)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (262...263),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(263...279)(
+            locals: [:a, :o, :b],
+            parameters:
+             BlockParametersNode(265...277)(
+               parameters:
+                ParametersNode(266...276)(
+                  requireds: [RequiredParameterNode(266...267)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(269...272)(
+                      name: :o,
+                      name_loc: (269...270),
+                      operator_loc: (270...271),
+                      value: IntegerNode(271...272)()
+                    )],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(274...276)(
+                     name_loc: (275...276), operator_loc: (274...275)
+                   )
+                ),
+               locals: [],
+               opening_loc: (265...266),
+               closing_loc: (276...277)
+             ),
+            body: nil,
+            opening_loc: (263...264),
+            closing_loc: (278...279)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(307...334)(
-       nil,
-       nil,
-       (307...308),
-       nil,
-       nil,
-       nil,
-       BlockNode(308...334)(
-         [:a, :o, :o1, :r, :b],
-         BlockParametersNode(310...332)(
-           ParametersNode(311...331)(
-             [RequiredParameterNode(311...312)(:a)],
-             [OptionalParameterNode(314...317)(
-                :o,
-                (314...315),
-                (315...316),
-                IntegerNode(316...317)()
-              ),
-              OptionalParameterNode(319...323)(
-                :o1,
-                (319...321),
-                (321...322),
-                IntegerNode(322...323)()
-              )],
-             [],
-             RestParameterNode(325...327)((325...326), (326...327)),
-             [],
-             nil,
-             BlockParameterNode(329...331)((330...331), (329...330))
-           ),
-           [],
-           (310...311),
-           (331...332)
-         ),
-         nil,
-         (308...309),
-         (333...334)
+       CallNode(281...305)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (281...282),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(282...305)(
+            locals: [:a, :o, :r, :p, :b],
+            parameters:
+             BlockParametersNode(284...303)(
+               parameters:
+                ParametersNode(285...302)(
+                  requireds: [RequiredParameterNode(285...286)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(288...291)(
+                      name: :o,
+                      name_loc: (288...289),
+                      operator_loc: (289...290),
+                      value: IntegerNode(290...291)()
+                    )],
+                  posts: [RequiredParameterNode(297...298)(name: :p)],
+                  rest:
+                   RestParameterNode(293...295)(
+                     operator_loc: (293...294), name_loc: (294...295)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(300...302)(
+                     name_loc: (301...302), operator_loc: (300...301)
+                   )
+                ),
+               locals: [],
+               opening_loc: (284...285),
+               closing_loc: (302...303)
+             ),
+            body: nil,
+            opening_loc: (282...283),
+            closing_loc: (304...305)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(336...356)(
-       nil,
-       nil,
-       (336...337),
-       nil,
-       nil,
-       nil,
-       BlockNode(337...356)(
-         [:a, :o, :p, :b],
-         BlockParametersNode(339...354)(
-           ParametersNode(340...353)(
-             [RequiredParameterNode(340...341)(:a)],
-             [OptionalParameterNode(343...346)(
-                :o,
-                (343...344),
-                (344...345),
-                IntegerNode(345...346)()
-              )],
-             [RequiredParameterNode(348...349)(:p)],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(351...353)((352...353), (351...352))
-           ),
-           [],
-           (339...340),
-           (353...354)
-         ),
-         nil,
-         (337...338),
-         (355...356)
+       CallNode(307...334)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (307...308),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(308...334)(
+            locals: [:a, :o, :o1, :r, :b],
+            parameters:
+             BlockParametersNode(310...332)(
+               parameters:
+                ParametersNode(311...331)(
+                  requireds: [RequiredParameterNode(311...312)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(314...317)(
+                      name: :o,
+                      name_loc: (314...315),
+                      operator_loc: (315...316),
+                      value: IntegerNode(316...317)()
+                    ),
+                    OptionalParameterNode(319...323)(
+                      name: :o1,
+                      name_loc: (319...321),
+                      operator_loc: (321...322),
+                      value: IntegerNode(322...323)()
+                    )],
+                  posts: [],
+                  rest:
+                   RestParameterNode(325...327)(
+                     operator_loc: (325...326), name_loc: (326...327)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(329...331)(
+                     name_loc: (330...331), operator_loc: (329...330)
+                   )
+                ),
+               locals: [],
+               opening_loc: (310...311),
+               closing_loc: (331...332)
+             ),
+            body: nil,
+            opening_loc: (308...309),
+            closing_loc: (333...334)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(358...367)(
-       nil,
-       nil,
-       (358...359),
-       nil,
-       nil,
-       nil,
-       BlockNode(359...367)(
-         [:a],
-         BlockParametersNode(361...365)(
-           ParametersNode(362...364)(
-             [RequiredParameterNode(362...363)(:a)],
-             [],
-             [],
-             RestParameterNode(363...364)((363...364), nil),
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (361...362),
-           (364...365)
-         ),
-         nil,
-         (359...360),
-         (366...367)
+       CallNode(336...356)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (336...337),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(337...356)(
+            locals: [:a, :o, :p, :b],
+            parameters:
+             BlockParametersNode(339...354)(
+               parameters:
+                ParametersNode(340...353)(
+                  requireds: [RequiredParameterNode(340...341)(name: :a)],
+                  optionals:
+                   [OptionalParameterNode(343...346)(
+                      name: :o,
+                      name_loc: (343...344),
+                      operator_loc: (344...345),
+                      value: IntegerNode(345...346)()
+                    )],
+                  posts: [RequiredParameterNode(348...349)(name: :p)],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(351...353)(
+                     name_loc: (352...353), operator_loc: (351...352)
+                   )
+                ),
+               locals: [],
+               opening_loc: (339...340),
+               closing_loc: (353...354)
+             ),
+            body: nil,
+            opening_loc: (337...338),
+            closing_loc: (355...356)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(369...377)(
-       nil,
-       nil,
-       (369...370),
-       nil,
-       nil,
-       nil,
-       BlockNode(370...377)(
-         [:a],
-         BlockParametersNode(372...375)(
-           ParametersNode(373...374)(
-             [RequiredParameterNode(373...374)(:a)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (372...373),
-           (374...375)
-         ),
-         nil,
-         (370...371),
-         (376...377)
+       CallNode(358...367)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (358...359),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(359...367)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(361...365)(
+               parameters:
+                ParametersNode(362...364)(
+                  requireds: [RequiredParameterNode(362...363)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest:
+                   RestParameterNode(363...364)(
+                     operator_loc: (363...364), name_loc: nil
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (361...362),
+               closing_loc: (364...365)
+             ),
+            body: nil,
+            opening_loc: (359...360),
+            closing_loc: (366...367)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(379...387)(
-       nil,
-       nil,
-       (379...380),
-       nil,
-       nil,
-       nil,
-       BlockNode(380...387)(
-         [:a],
-         BlockParametersNode(382...385)(
-           ParametersNode(383...384)(
-             [RequiredParameterNode(383...384)(:a)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (382...383),
-           (384...385)
-         ),
-         nil,
-         (380...381),
-         (386...387)
+       CallNode(369...377)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (369...370),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(370...377)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(372...375)(
+               parameters:
+                ParametersNode(373...374)(
+                  requireds: [RequiredParameterNode(373...374)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (372...373),
+               closing_loc: (374...375)
+             ),
+            body: nil,
+            opening_loc: (370...371),
+            closing_loc: (376...377)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(389...397)(
-       nil,
-       nil,
-       (389...390),
-       nil,
-       nil,
-       nil,
-       BlockNode(390...397)(
-         [:a],
-         BlockParametersNode(392...395)(
-           ParametersNode(393...394)(
-             [RequiredParameterNode(393...394)(:a)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (392...393),
-           (394...395)
-         ),
-         nil,
-         (390...391),
-         (396...397)
+       CallNode(379...387)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (379...380),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(380...387)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(382...385)(
+               parameters:
+                ParametersNode(383...384)(
+                  requireds: [RequiredParameterNode(383...384)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (382...383),
+               closing_loc: (384...385)
+             ),
+            body: nil,
+            opening_loc: (380...381),
+            closing_loc: (386...387)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(399...416)(
-       nil,
-       nil,
-       (399...400),
-       nil,
-       nil,
-       nil,
-       BlockNode(400...416)(
-         [:foo, :b],
-         BlockParametersNode(402...414)(
-           ParametersNode(403...413)(
-             [],
-             [],
-             [],
-             nil,
-             [KeywordParameterNode(403...409)(
-                (403...407),
-                IntegerNode(408...409)()
-              )],
-             nil,
-             BlockParameterNode(411...413)((412...413), (411...412))
-           ),
-           [],
-           (402...403),
-           (413...414)
-         ),
-         nil,
-         (400...401),
-         (415...416)
+       CallNode(389...397)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (389...390),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(390...397)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(392...395)(
+               parameters:
+                ParametersNode(393...394)(
+                  requireds: [RequiredParameterNode(393...394)(name: :a)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (392...393),
+               closing_loc: (394...395)
+             ),
+            body: nil,
+            opening_loc: (390...391),
+            closing_loc: (396...397)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(418...450)(
-       nil,
-       nil,
-       (418...419),
-       nil,
-       nil,
-       nil,
-       BlockNode(419...450)(
-         [:foo, :bar, :baz, :b],
-         BlockParametersNode(421...448)(
-           ParametersNode(422...447)(
-             [],
-             [],
-             [],
-             nil,
-             [KeywordParameterNode(422...428)(
-                (422...426),
-                IntegerNode(427...428)()
-              ),
-              KeywordParameterNode(430...436)(
-                (430...434),
-                IntegerNode(435...436)()
-              )],
-             KeywordRestParameterNode(438...443)((438...440), (440...443)),
-             BlockParameterNode(445...447)((446...447), (445...446))
-           ),
-           [],
-           (421...422),
-           (447...448)
-         ),
-         nil,
-         (419...420),
-         (449...450)
+       CallNode(399...416)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (399...400),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(400...416)(
+            locals: [:foo, :b],
+            parameters:
+             BlockParametersNode(402...414)(
+               parameters:
+                ParametersNode(403...413)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords:
+                   [KeywordParameterNode(403...409)(
+                      name_loc: (403...407), value: IntegerNode(408...409)()
+                    )],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(411...413)(
+                     name_loc: (412...413), operator_loc: (411...412)
+                   )
+                ),
+               locals: [],
+               opening_loc: (402...403),
+               closing_loc: (413...414)
+             ),
+            body: nil,
+            opening_loc: (400...401),
+            closing_loc: (415...416)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(452...463)(
-       nil,
-       nil,
-       (452...453),
-       nil,
-       nil,
-       nil,
-       BlockNode(453...463)(
-         [:foo],
-         BlockParametersNode(455...461)(
-           ParametersNode(456...460)(
-             [],
-             [],
-             [],
-             nil,
-             [KeywordParameterNode(456...460)((456...460), nil)],
-             nil,
-             nil
-           ),
-           [],
-           (455...456),
-           (460...461)
-         ),
-         nil,
-         (453...454),
-         (462...463)
+       CallNode(418...450)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (418...419),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(419...450)(
+            locals: [:foo, :bar, :baz, :b],
+            parameters:
+             BlockParametersNode(421...448)(
+               parameters:
+                ParametersNode(422...447)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords:
+                   [KeywordParameterNode(422...428)(
+                      name_loc: (422...426), value: IntegerNode(427...428)()
+                    ),
+                    KeywordParameterNode(430...436)(
+                      name_loc: (430...434), value: IntegerNode(435...436)()
+                    )],
+                  keyword_rest:
+                   KeywordRestParameterNode(438...443)(
+                     operator_loc: (438...440), name_loc: (440...443)
+                   ),
+                  block:
+                   BlockParameterNode(445...447)(
+                     name_loc: (446...447), operator_loc: (445...446)
+                   )
+                ),
+               locals: [],
+               opening_loc: (421...422),
+               closing_loc: (447...448)
+             ),
+            body: nil,
+            opening_loc: (419...420),
+            closing_loc: (449...450)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(465...479)(
-       nil,
-       nil,
-       (465...466),
-       nil,
-       nil,
-       nil,
-       BlockNode(466...479)(
-         [:o, :b],
-         BlockParametersNode(468...477)(
-           ParametersNode(469...476)(
-             [],
-             [OptionalParameterNode(469...472)(
-                :o,
-                (469...470),
-                (470...471),
-                IntegerNode(471...472)()
-              )],
-             [],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(474...476)((475...476), (474...475))
-           ),
-           [],
-           (468...469),
-           (476...477)
-         ),
-         nil,
-         (466...467),
-         (478...479)
+       CallNode(452...463)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (452...453),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(453...463)(
+            locals: [:foo],
+            parameters:
+             BlockParametersNode(455...461)(
+               parameters:
+                ParametersNode(456...460)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords:
+                   [KeywordParameterNode(456...460)(
+                      name_loc: (456...460), value: nil
+                    )],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (455...456),
+               closing_loc: (460...461)
+             ),
+            body: nil,
+            opening_loc: (453...454),
+            closing_loc: (462...463)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(481...499)(
-       nil,
-       nil,
-       (481...482),
-       nil,
-       nil,
-       nil,
-       BlockNode(482...499)(
-         [:o, :r, :b],
-         BlockParametersNode(484...497)(
-           ParametersNode(485...496)(
-             [],
-             [OptionalParameterNode(485...488)(
-                :o,
-                (485...486),
-                (486...487),
-                IntegerNode(487...488)()
-              )],
-             [],
-             RestParameterNode(490...492)((490...491), (491...492)),
-             [],
-             nil,
-             BlockParameterNode(494...496)((495...496), (494...495))
-           ),
-           [],
-           (484...485),
-           (496...497)
-         ),
-         nil,
-         (482...483),
-         (498...499)
+       CallNode(465...479)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (465...466),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(466...479)(
+            locals: [:o, :b],
+            parameters:
+             BlockParametersNode(468...477)(
+               parameters:
+                ParametersNode(469...476)(
+                  requireds: [],
+                  optionals:
+                   [OptionalParameterNode(469...472)(
+                      name: :o,
+                      name_loc: (469...470),
+                      operator_loc: (470...471),
+                      value: IntegerNode(471...472)()
+                    )],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(474...476)(
+                     name_loc: (475...476), operator_loc: (474...475)
+                   )
+                ),
+               locals: [],
+               opening_loc: (468...469),
+               closing_loc: (476...477)
+             ),
+            body: nil,
+            opening_loc: (466...467),
+            closing_loc: (478...479)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(501...522)(
-       nil,
-       nil,
-       (501...502),
-       nil,
-       nil,
-       nil,
-       BlockNode(502...522)(
-         [:o, :r, :p, :b],
-         BlockParametersNode(504...520)(
-           ParametersNode(505...519)(
-             [],
-             [OptionalParameterNode(505...508)(
-                :o,
-                (505...506),
-                (506...507),
-                IntegerNode(507...508)()
-              )],
-             [RequiredParameterNode(514...515)(:p)],
-             RestParameterNode(510...512)((510...511), (511...512)),
-             [],
-             nil,
-             BlockParameterNode(517...519)((518...519), (517...518))
-           ),
-           [],
-           (504...505),
-           (519...520)
-         ),
-         nil,
-         (502...503),
-         (521...522)
+       CallNode(481...499)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (481...482),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(482...499)(
+            locals: [:o, :r, :b],
+            parameters:
+             BlockParametersNode(484...497)(
+               parameters:
+                ParametersNode(485...496)(
+                  requireds: [],
+                  optionals:
+                   [OptionalParameterNode(485...488)(
+                      name: :o,
+                      name_loc: (485...486),
+                      operator_loc: (486...487),
+                      value: IntegerNode(487...488)()
+                    )],
+                  posts: [],
+                  rest:
+                   RestParameterNode(490...492)(
+                     operator_loc: (490...491), name_loc: (491...492)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(494...496)(
+                     name_loc: (495...496), operator_loc: (494...495)
+                   )
+                ),
+               locals: [],
+               opening_loc: (484...485),
+               closing_loc: (496...497)
+             ),
+            body: nil,
+            opening_loc: (482...483),
+            closing_loc: (498...499)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(524...541)(
-       nil,
-       nil,
-       (524...525),
-       nil,
-       nil,
-       nil,
-       BlockNode(525...541)(
-         [:o, :p, :b],
-         BlockParametersNode(527...539)(
-           ParametersNode(528...538)(
-             [],
-             [OptionalParameterNode(528...531)(
-                :o,
-                (528...529),
-                (529...530),
-                IntegerNode(530...531)()
-              )],
-             [RequiredParameterNode(533...534)(:p)],
-             nil,
-             [],
-             nil,
-             BlockParameterNode(536...538)((537...538), (536...537))
-           ),
-           [],
-           (527...528),
-           (538...539)
-         ),
-         nil,
-         (525...526),
-         (540...541)
+       CallNode(501...522)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (501...502),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(502...522)(
+            locals: [:o, :r, :p, :b],
+            parameters:
+             BlockParametersNode(504...520)(
+               parameters:
+                ParametersNode(505...519)(
+                  requireds: [],
+                  optionals:
+                   [OptionalParameterNode(505...508)(
+                      name: :o,
+                      name_loc: (505...506),
+                      operator_loc: (506...507),
+                      value: IntegerNode(507...508)()
+                    )],
+                  posts: [RequiredParameterNode(514...515)(name: :p)],
+                  rest:
+                   RestParameterNode(510...512)(
+                     operator_loc: (510...511), name_loc: (511...512)
+                   ),
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(517...519)(
+                     name_loc: (518...519), operator_loc: (517...518)
+                   )
+                ),
+               locals: [],
+               opening_loc: (504...505),
+               closing_loc: (519...520)
+             ),
+            body: nil,
+            opening_loc: (502...503),
+            closing_loc: (521...522)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     ),
-     CallNode(543...550)(
-       nil,
-       nil,
-       (543...544),
-       nil,
-       nil,
-       nil,
-       BlockNode(544...550)(
-         [],
-         BlockParametersNode(546...548)(nil, [], (546...547), (547...548)),
-         nil,
-         (544...545),
-         (549...550)
+       CallNode(524...541)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (524...525),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(525...541)(
+            locals: [:o, :p, :b],
+            parameters:
+             BlockParametersNode(527...539)(
+               parameters:
+                ParametersNode(528...538)(
+                  requireds: [],
+                  optionals:
+                   [OptionalParameterNode(528...531)(
+                      name: :o,
+                      name_loc: (528...529),
+                      operator_loc: (529...530),
+                      value: IntegerNode(530...531)()
+                    )],
+                  posts: [RequiredParameterNode(533...534)(name: :p)],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block:
+                   BlockParameterNode(536...538)(
+                     name_loc: (537...538), operator_loc: (536...537)
+                   )
+                ),
+               locals: [],
+               opening_loc: (527...528),
+               closing_loc: (538...539)
+             ),
+            body: nil,
+            opening_loc: (525...526),
+            closing_loc: (540...541)
+          ),
+         flags: 0,
+         name: "f"
        ),
-       0,
-       "f"
-     )]
-  )
+       CallNode(543...550)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (543...544),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(544...550)(
+            locals: [],
+            parameters:
+             BlockParametersNode(546...548)(
+               parameters: nil,
+               locals: [],
+               opening_loc: (546...547),
+               closing_loc: (547...548)
+             ),
+            body: nil,
+            opening_loc: (544...545),
+            closing_loc: (549...550)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

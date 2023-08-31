@@ -1,21 +1,36 @@
 ProgramNode(0...14)(
-  [:a],
-  StatementsNode(0...14)(
-    [MultiWriteNode(0...14)(
-       [LocalVariableTargetNode(0...1)(:a, 0),
-        ConstantPathTargetNode(3...7)(
-          CallNode(3...4)(nil, nil, (3...4), nil, nil, nil, nil, 2, "b"),
-          ConstantReadNode(6...7)(),
-          (4...6)
-        )],
-       (8...9),
-       ArrayNode(10...14)(
-         [IntegerNode(10...11)(), IntegerNode(13...14)()],
-         nil,
-         nil
-       ),
-       nil,
-       nil
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...14)(
+     body:
+      [MultiWriteNode(0...14)(
+         targets:
+          [LocalVariableTargetNode(0...1)(name: :a, depth: 0),
+           ConstantPathTargetNode(3...7)(
+             parent:
+              CallNode(3...4)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (3...4),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              ),
+             child: ConstantReadNode(6...7)(),
+             delimiter_loc: (4...6)
+           )],
+         operator_loc: (8...9),
+         value:
+          ArrayNode(10...14)(
+            elements: [IntegerNode(10...11)(), IntegerNode(13...14)()],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         lparen_loc: nil,
+         rparen_loc: nil
+       )]
+   )
 )

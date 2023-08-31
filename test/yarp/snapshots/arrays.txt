@@ -1,701 +1,981 @@
 ProgramNode(0...511)(
-  [],
-  StatementsNode(0...511)(
-    [ArrayNode(0...4)(
-       [SplatNode(1...3)(
-          (1...2),
-          CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "a")
-        )],
-       (0...1),
-       (3...4)
-     ),
-     CallNode(6...29)(
-       CallNode(6...9)(nil, nil, (6...9), nil, nil, nil, nil, 2, "foo"),
-       nil,
-       (9...19),
-       (9...10),
-       ArgumentsNode(10...29)(
-         [CallNode(10...13)(nil, nil, (10...13), nil, nil, nil, nil, 2, "bar"),
-          CallNode(15...18)(nil, nil, (15...18), nil, nil, nil, nil, 2, "baz"),
-          ArrayNode(22...29)(
-            [IntegerNode(22...23)(),
-             IntegerNode(25...26)(),
-             IntegerNode(28...29)()],
-            nil,
-            nil
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...511)(
+     body:
+      [ArrayNode(0...4)(
+         elements:
+          [SplatNode(1...3)(
+             operator_loc: (1...2),
+             expression:
+              CallNode(2...3)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (2...3),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )
+           )],
+         opening_loc: (0...1),
+         closing_loc: (3...4)
        ),
-       (18...19),
-       nil,
-       0,
-       "[]="
-     ),
-     ArrayNode(31...44)(
-       [KeywordHashNode(32...43)(
-          [AssocNode(32...43)(
-             SymbolNode(32...34)(nil, (32...33), (33...34), "a"),
-             ArrayNode(35...43)(
-               [SymbolNode(36...38)((36...37), (37...38), nil, "b"),
-                SymbolNode(40...42)((40...41), (41...42), nil, "c")],
-               (35...36),
-               (42...43)
-             ),
-             nil
-           )]
-        )],
-       (31...32),
-       (43...44)
-     ),
-     ArrayNode(48...71)(
-       [SymbolNode(49...51)((49...50), (50...51), nil, "a"),
-        SymbolNode(53...55)((53...54), (54...55), nil, "b"),
-        SymbolNode(57...59)((57...58), (58...59), nil, "c"),
-        IntegerNode(60...61)(),
-        SymbolNode(66...68)((66...67), (67...68), nil, "d")],
-       (48...49),
-       (70...71)
-     ),
-     ArrayNode(74...98)(
-       [SymbolNode(75...77)((75...76), (76...77), nil, "a"),
-        SymbolNode(79...81)((79...80), (80...81), nil, "b"),
-        SymbolNode(83...85)((83...84), (84...85), nil, "c"),
-        IntegerNode(86...87)(),
-        SymbolNode(92...94)((92...93), (93...94), nil, "d")],
-       (74...75),
-       (97...98)
-     ),
-     ArrayNode(100...112)(
-       [KeywordHashNode(101...111)(
-          [AssocNode(101...111)(
-             CallNode(101...104)(
-               nil,
-               nil,
-               (101...104),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "foo"
-             ),
-             CallNode(108...111)(
-               nil,
-               nil,
-               (108...111),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "bar"
-             ),
-             (105...107)
-           )]
-        )],
-       (100...101),
-       (111...112)
-     ),
-     CallNode(114...133)(
-       CallNode(114...122)(
-         CallNode(114...117)(
-           nil,
-           nil,
-           (114...117),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         nil,
-         (117...122),
-         (117...118),
-         ArgumentsNode(118...121)(
-           [CallNode(118...121)(
-              nil,
-              nil,
-              (118...121),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )]
-         ),
-         (121...122),
-         nil,
-         0,
-         "[]"
-       ),
-       nil,
-       (122...127),
-       (122...123),
-       ArgumentsNode(123...133)(
-         [CallNode(123...126)(
-            nil,
-            nil,
-            (123...126),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
+       CallNode(6...29)(
+         receiver:
+          CallNode(6...9)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (6...9),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
           ),
-          CallNode(130...133)(
-            nil,
-            nil,
-            (130...133),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "qux"
-          )]
-       ),
-       (126...127),
-       nil,
-       0,
-       "[]="
-     ),
-     CallNode(135...148)(
-       CallNode(135...143)(
-         CallNode(135...138)(
-           nil,
-           nil,
-           (135...138),
-           nil,
-           nil,
-           nil,
-           nil,
-           2,
-           "foo"
-         ),
-         nil,
-         (138...143),
-         (138...139),
-         ArgumentsNode(139...142)(
-           [CallNode(139...142)(
-              nil,
-              nil,
-              (139...142),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )]
-         ),
-         (142...143),
-         nil,
-         0,
-         "[]"
-       ),
-       nil,
-       (143...148),
-       (143...144),
-       ArgumentsNode(144...147)(
-         [CallNode(144...147)(
-            nil,
-            nil,
-            (144...147),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
-          )]
-       ),
-       (147...148),
-       nil,
-       0,
-       "[]"
-     ),
-     ArrayNode(150...153)([], (150...151), (152...153)),
-     CallNode(155...168)(
-       CallNode(155...158)(
-         nil,
-         nil,
-         (155...158),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
-       ),
-       nil,
-       (158...168),
-       (158...159),
-       ArgumentsNode(159...167)(
-         [CallNode(159...162)(
-            nil,
-            nil,
-            (159...162),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
+         operator_loc: nil,
+         message_loc: (9...19),
+         opening_loc: (9...10),
+         arguments:
+          ArgumentsNode(10...29)(
+            arguments:
+             [CallNode(10...13)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (10...13),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+              CallNode(15...18)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (15...18),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              ),
+              ArrayNode(22...29)(
+                elements:
+                 [IntegerNode(22...23)(),
+                  IntegerNode(25...26)(),
+                  IntegerNode(28...29)()],
+                opening_loc: nil,
+                closing_loc: nil
+              )]
           ),
-          CallNode(164...167)(
-            nil,
-            nil,
-            (164...167),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
-          )]
+         closing_loc: (18...19),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (167...168),
-       nil,
-       0,
-       "[]"
-     ),
-     CallNode(170...189)(
-       CallNode(170...173)(
-         nil,
-         nil,
-         (170...173),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
-       ),
-       nil,
-       (173...183),
-       (173...174),
-       ArgumentsNode(174...189)(
-         [CallNode(174...177)(
-            nil,
-            nil,
-            (174...177),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          ),
-          CallNode(179...182)(
-            nil,
-            nil,
-            (179...182),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
-          ),
-          CallNode(186...189)(
-            nil,
-            nil,
-            (186...189),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "qux"
-          )]
-       ),
-       (182...183),
-       nil,
-       0,
-       "[]="
-     ),
-     MultiWriteNode(191...212)(
-       [CallNode(191...197)(
-          CallNode(191...194)(
-            nil,
-            nil,
-            (191...194),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "foo"
-          ),
-          nil,
-          (194...197),
-          (194...195),
-          ArgumentsNode(195...196)([IntegerNode(195...196)()]),
-          (196...197),
-          nil,
-          0,
-          "[]="
-        ),
-        CallNode(199...205)(
-          CallNode(199...202)(
-            nil,
-            nil,
-            (199...202),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          ),
-          nil,
-          (202...205),
-          (202...203),
-          ArgumentsNode(203...204)([IntegerNode(203...204)()]),
-          (204...205),
-          nil,
-          0,
-          "[]="
-        )],
-       (206...207),
-       ArrayNode(208...212)(
-         [IntegerNode(208...209)(), IntegerNode(211...212)()],
-         nil,
-         nil
-       ),
-       nil,
-       nil
-     ),
-     CallNode(214...233)(
-       CallNode(214...217)(
-         nil,
-         nil,
-         (214...217),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
-       ),
-       nil,
-       (217...233),
-       (217...218),
-       ArgumentsNode(218...232)(
-         [CallNode(218...232)(
-            CallNode(218...221)(
-              nil,
-              nil,
-              (218...221),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            ),
-            nil,
-            (221...226),
-            (221...222),
-            ArgumentsNode(222...232)(
-              [CallNode(222...225)(
-                 nil,
-                 nil,
-                 (222...225),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "baz"
-               ),
-               CallNode(229...232)(
-                 nil,
-                 nil,
-                 (229...232),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "qux"
+       ArrayNode(31...44)(
+         elements:
+          [KeywordHashNode(32...43)(
+             elements:
+              [AssocNode(32...43)(
+                 key:
+                  SymbolNode(32...34)(
+                    opening_loc: nil,
+                    value_loc: (32...33),
+                    closing_loc: (33...34),
+                    unescaped: "a"
+                  ),
+                 value:
+                  ArrayNode(35...43)(
+                    elements:
+                     [SymbolNode(36...38)(
+                        opening_loc: (36...37),
+                        value_loc: (37...38),
+                        closing_loc: nil,
+                        unescaped: "b"
+                      ),
+                      SymbolNode(40...42)(
+                        opening_loc: (40...41),
+                        value_loc: (41...42),
+                        closing_loc: nil,
+                        unescaped: "c"
+                      )],
+                    opening_loc: (35...36),
+                    closing_loc: (42...43)
+                  ),
+                 operator_loc: nil
                )]
-            ),
-            (225...226),
-            nil,
-            0,
-            "[]="
-          )]
+           )],
+         opening_loc: (31...32),
+         closing_loc: (43...44)
        ),
-       (232...233),
-       nil,
-       0,
-       "[]"
-     ),
-     CallNode(235...243)(
-       CallNode(235...238)(
-         nil,
-         nil,
-         (235...238),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
+       ArrayNode(48...71)(
+         elements:
+          [SymbolNode(49...51)(
+             opening_loc: (49...50),
+             value_loc: (50...51),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           SymbolNode(53...55)(
+             opening_loc: (53...54),
+             value_loc: (54...55),
+             closing_loc: nil,
+             unescaped: "b"
+           ),
+           SymbolNode(57...59)(
+             opening_loc: (57...58),
+             value_loc: (58...59),
+             closing_loc: nil,
+             unescaped: "c"
+           ),
+           IntegerNode(60...61)(),
+           SymbolNode(66...68)(
+             opening_loc: (66...67),
+             value_loc: (67...68),
+             closing_loc: nil,
+             unescaped: "d"
+           )],
+         opening_loc: (48...49),
+         closing_loc: (70...71)
        ),
-       nil,
-       (238...243),
-       (238...239),
-       ArgumentsNode(239...242)(
-         [CallNode(239...242)(
-            nil,
-            nil,
-            (239...242),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
+       ArrayNode(74...98)(
+         elements:
+          [SymbolNode(75...77)(
+             opening_loc: (75...76),
+             value_loc: (76...77),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           SymbolNode(79...81)(
+             opening_loc: (79...80),
+             value_loc: (80...81),
+             closing_loc: nil,
+             unescaped: "b"
+           ),
+           SymbolNode(83...85)(
+             opening_loc: (83...84),
+             value_loc: (84...85),
+             closing_loc: nil,
+             unescaped: "c"
+           ),
+           IntegerNode(86...87)(),
+           SymbolNode(92...94)(
+             opening_loc: (92...93),
+             value_loc: (93...94),
+             closing_loc: nil,
+             unescaped: "d"
+           )],
+         opening_loc: (74...75),
+         closing_loc: (97...98)
        ),
-       (242...243),
-       nil,
-       0,
-       "[]"
-     ),
-     CallNode(245...259)(
-       CallNode(245...248)(
-         nil,
-         nil,
-         (245...248),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
+       ArrayNode(100...112)(
+         elements:
+          [KeywordHashNode(101...111)(
+             elements:
+              [AssocNode(101...111)(
+                 key:
+                  CallNode(101...104)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (101...104),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "foo"
+                  ),
+                 value:
+                  CallNode(108...111)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (108...111),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "bar"
+                  ),
+                 operator_loc: (105...107)
+               )]
+           )],
+         opening_loc: (100...101),
+         closing_loc: (111...112)
        ),
-       nil,
-       (248...253),
-       (248...249),
-       ArgumentsNode(249...259)(
-         [CallNode(249...252)(
-            nil,
-            nil,
-            (249...252),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
+       CallNode(114...133)(
+         receiver:
+          CallNode(114...122)(
+            receiver:
+             CallNode(114...117)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (114...117),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: nil,
+            message_loc: (117...122),
+            opening_loc: (117...118),
+            arguments:
+             ArgumentsNode(118...121)(
+               arguments:
+                [CallNode(118...121)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (118...121),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )]
+             ),
+            closing_loc: (121...122),
+            block: nil,
+            flags: 0,
+            name: "[]"
           ),
-          CallNode(256...259)(
-            nil,
-            nil,
-            (256...259),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
-          )]
+         operator_loc: nil,
+         message_loc: (122...127),
+         opening_loc: (122...123),
+         arguments:
+          ArgumentsNode(123...133)(
+            arguments:
+             [CallNode(123...126)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (123...126),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              ),
+              CallNode(130...133)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (130...133),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "qux"
+              )]
+          ),
+         closing_loc: (126...127),
+         block: nil,
+         flags: 0,
+         name: "[]="
        ),
-       (252...253),
-       nil,
-       0,
-       "[]="
-     ),
-     ArrayNode(261...267)(
-       [KeywordHashNode(262...266)(
-          [AssocSplatNode(262...266)(
-             HashNode(264...266)((264...265), [], (265...266)),
-             (262...264)
-           )]
-        )],
-       (261...262),
-       (266...267)
-     ),
-     ArrayNode(269...275)(
-       [KeywordHashNode(270...274)(
-          [AssocSplatNode(270...274)(
-             CallNode(272...274)(
-               nil,
-               nil,
-               (272...274),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "kw"
+       CallNode(135...148)(
+         receiver:
+          CallNode(135...143)(
+            receiver:
+             CallNode(135...138)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (135...138),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
              ),
-             (270...272)
-           )]
-        )],
-       (269...270),
-       (274...275)
-     ),
-     ArrayNode(277...286)(
-       [IntegerNode(278...279)(),
-        KeywordHashNode(281...285)(
-          [AssocSplatNode(281...285)(
-             CallNode(283...285)(
-               nil,
-               nil,
-               (283...285),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "kw"
+            operator_loc: nil,
+            message_loc: (138...143),
+            opening_loc: (138...139),
+            arguments:
+             ArgumentsNode(139...142)(
+               arguments:
+                [CallNode(139...142)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (139...142),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )]
              ),
-             (281...283)
-           )]
-        )],
-       (277...278),
-       (285...286)
-     ),
-     ArrayNode(288...309)(
-       [IntegerNode(289...290)(),
-        KeywordHashNode(292...308)(
-          [AssocSplatNode(292...296)(
-             CallNode(294...296)(
-               nil,
-               nil,
-               (294...296),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "kw"
-             ),
-             (292...294)
+            closing_loc: (142...143),
+            block: nil,
+            flags: 0,
+            name: "[]"
+          ),
+         operator_loc: nil,
+         message_loc: (143...148),
+         opening_loc: (143...144),
+         arguments:
+          ArgumentsNode(144...147)(
+            arguments:
+             [CallNode(144...147)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (144...147),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         closing_loc: (147...148),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       ),
+       ArrayNode(150...153)(
+         elements: [], opening_loc: (150...151), closing_loc: (152...153)
+       ),
+       CallNode(155...168)(
+         receiver:
+          CallNode(155...158)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (155...158),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (158...168),
+         opening_loc: (158...159),
+         arguments:
+          ArgumentsNode(159...167)(
+            arguments:
+             [CallNode(159...162)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (159...162),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+              CallNode(164...167)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (164...167),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         closing_loc: (167...168),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       ),
+       CallNode(170...189)(
+         receiver:
+          CallNode(170...173)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (170...173),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (173...183),
+         opening_loc: (173...174),
+         arguments:
+          ArgumentsNode(174...189)(
+            arguments:
+             [CallNode(174...177)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (174...177),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+              CallNode(179...182)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (179...182),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              ),
+              CallNode(186...189)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (186...189),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "qux"
+              )]
+          ),
+         closing_loc: (182...183),
+         block: nil,
+         flags: 0,
+         name: "[]="
+       ),
+       MultiWriteNode(191...212)(
+         targets:
+          [CallNode(191...197)(
+             receiver:
+              CallNode(191...194)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (191...194),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "foo"
+              ),
+             operator_loc: nil,
+             message_loc: (194...197),
+             opening_loc: (194...195),
+             arguments:
+              ArgumentsNode(195...196)(arguments: [IntegerNode(195...196)()]),
+             closing_loc: (196...197),
+             block: nil,
+             flags: 0,
+             name: "[]="
            ),
-           AssocSplatNode(298...302)(
-             HashNode(300...302)((300...301), [], (301...302)),
-             (298...300)
+           CallNode(199...205)(
+             receiver:
+              CallNode(199...202)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (199...202),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+             operator_loc: nil,
+             message_loc: (202...205),
+             opening_loc: (202...203),
+             arguments:
+              ArgumentsNode(203...204)(arguments: [IntegerNode(203...204)()]),
+             closing_loc: (204...205),
+             block: nil,
+             flags: 0,
+             name: "[]="
+           )],
+         operator_loc: (206...207),
+         value:
+          ArrayNode(208...212)(
+            elements: [IntegerNode(208...209)(), IntegerNode(211...212)()],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         lparen_loc: nil,
+         rparen_loc: nil
+       ),
+       CallNode(214...233)(
+         receiver:
+          CallNode(214...217)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (214...217),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (217...233),
+         opening_loc: (217...218),
+         arguments:
+          ArgumentsNode(218...232)(
+            arguments:
+             [CallNode(218...232)(
+                receiver:
+                 CallNode(218...221)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (218...221),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 ),
+                operator_loc: nil,
+                message_loc: (221...226),
+                opening_loc: (221...222),
+                arguments:
+                 ArgumentsNode(222...232)(
+                   arguments:
+                    [CallNode(222...225)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (222...225),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "baz"
+                     ),
+                     CallNode(229...232)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (229...232),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "qux"
+                     )]
+                 ),
+                closing_loc: (225...226),
+                block: nil,
+                flags: 0,
+                name: "[]="
+              )]
+          ),
+         closing_loc: (232...233),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       ),
+       CallNode(235...243)(
+         receiver:
+          CallNode(235...238)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (235...238),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (238...243),
+         opening_loc: (238...239),
+         arguments:
+          ArgumentsNode(239...242)(
+            arguments:
+             [CallNode(239...242)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (239...242),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         closing_loc: (242...243),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       ),
+       CallNode(245...259)(
+         receiver:
+          CallNode(245...248)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (245...248),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (248...253),
+         opening_loc: (248...249),
+         arguments:
+          ArgumentsNode(249...259)(
+            arguments:
+             [CallNode(249...252)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (249...252),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+              CallNode(256...259)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (256...259),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         closing_loc: (252...253),
+         block: nil,
+         flags: 0,
+         name: "[]="
+       ),
+       ArrayNode(261...267)(
+         elements:
+          [KeywordHashNode(262...266)(
+             elements:
+              [AssocSplatNode(262...266)(
+                 value:
+                  HashNode(264...266)(
+                    opening_loc: (264...265),
+                    elements: [],
+                    closing_loc: (265...266)
+                  ),
+                 operator_loc: (262...264)
+               )]
+           )],
+         opening_loc: (261...262),
+         closing_loc: (266...267)
+       ),
+       ArrayNode(269...275)(
+         elements:
+          [KeywordHashNode(270...274)(
+             elements:
+              [AssocSplatNode(270...274)(
+                 value:
+                  CallNode(272...274)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (272...274),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "kw"
+                  ),
+                 operator_loc: (270...272)
+               )]
+           )],
+         opening_loc: (269...270),
+         closing_loc: (274...275)
+       ),
+       ArrayNode(277...286)(
+         elements:
+          [IntegerNode(278...279)(),
+           KeywordHashNode(281...285)(
+             elements:
+              [AssocSplatNode(281...285)(
+                 value:
+                  CallNode(283...285)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (283...285),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "kw"
+                  ),
+                 operator_loc: (281...283)
+               )]
+           )],
+         opening_loc: (277...278),
+         closing_loc: (285...286)
+       ),
+       ArrayNode(288...309)(
+         elements:
+          [IntegerNode(289...290)(),
+           KeywordHashNode(292...308)(
+             elements:
+              [AssocSplatNode(292...296)(
+                 value:
+                  CallNode(294...296)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (294...296),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "kw"
+                  ),
+                 operator_loc: (292...294)
+               ),
+               AssocSplatNode(298...302)(
+                 value:
+                  HashNode(300...302)(
+                    opening_loc: (300...301),
+                    elements: [],
+                    closing_loc: (301...302)
+                  ),
+                 operator_loc: (298...300)
+               ),
+               AssocSplatNode(304...308)(
+                 value:
+                  CallNode(306...308)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (306...308),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "kw"
+                  ),
+                 operator_loc: (304...306)
+               )]
+           )],
+         opening_loc: (288...289),
+         closing_loc: (308...309)
+       ),
+       ArrayNode(311...328)(
+         elements:
+          [KeywordHashNode(315...325)(
+             elements:
+              [AssocNode(315...325)(
+                 key:
+                  CallNode(315...318)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (315...318),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "foo"
+                  ),
+                 value:
+                  CallNode(322...325)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (322...325),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "bar"
+                  ),
+                 operator_loc: (319...321)
+               )]
+           )],
+         opening_loc: (311...312),
+         closing_loc: (327...328)
+       ),
+       ArrayNode(331...348)(
+         elements:
+          [SymbolNode(334...337)(
+             opening_loc: nil,
+             value_loc: (334...337),
+             closing_loc: nil,
+             unescaped: "one"
            ),
-           AssocSplatNode(304...308)(
-             CallNode(306...308)(
-               nil,
-               nil,
-               (306...308),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "kw"
-             ),
-             (304...306)
-           )]
-        )],
-       (288...289),
-       (308...309)
-     ),
-     ArrayNode(311...328)(
-       [KeywordHashNode(315...325)(
-          [AssocNode(315...325)(
-             CallNode(315...318)(
-               nil,
-               nil,
-               (315...318),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "foo"
-             ),
-             CallNode(322...325)(
-               nil,
-               nil,
-               (322...325),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "bar"
-             ),
-             (319...321)
-           )]
-        )],
-       (311...312),
-       (327...328)
-     ),
-     ArrayNode(331...348)(
-       [SymbolNode(334...337)(nil, (334...337), nil, "one"),
-        SymbolNode(338...341)(nil, (338...341), nil, "two"),
-        SymbolNode(342...347)(nil, (342...347), nil, "three")],
-       (331...334),
-       (347...348)
-     ),
-     ArrayNode(350...367)(
-       [StringNode(353...356)(nil, (353...356), nil, "one"),
-        StringNode(357...360)(nil, (357...360), nil, "two"),
-        StringNode(361...366)(nil, (361...366), nil, "three")],
-       (350...353),
-       (366...367)
-     ),
-     XStringNode(369...386)(
-       (369...372),
-       (372...385),
-       (385...386),
-       "one two three"
-     ),
-     ArrayNode(389...406)(
-       [SymbolNode(392...395)(nil, (392...395), nil, "one"),
-        SymbolNode(396...399)(nil, (396...399), nil, "two"),
-        SymbolNode(400...405)(nil, (400...405), nil, "three")],
-       (389...392),
-       (405...406)
-     ),
-     ArrayNode(408...425)(
-       [StringNode(411...414)(nil, (411...414), nil, "one"),
-        StringNode(415...418)(nil, (415...418), nil, "two"),
-        StringNode(419...424)(nil, (419...424), nil, "three")],
-       (408...411),
-       (424...425)
-     ),
-     XStringNode(427...444)(
-       (427...430),
-       (430...443),
-       (443...444),
-       "one two three"
-     ),
-     ArrayNode(447...464)(
-       [SymbolNode(450...453)(nil, (450...453), nil, "one"),
-        SymbolNode(454...457)(nil, (454...457), nil, "two"),
-        SymbolNode(458...463)(nil, (458...463), nil, "three")],
-       (447...450),
-       (463...464)
-     ),
-     ArrayNode(466...483)(
-       [StringNode(469...472)(nil, (469...472), nil, "one"),
-        StringNode(473...476)(nil, (473...476), nil, "two"),
-        StringNode(477...482)(nil, (477...482), nil, "three")],
-       (466...469),
-       (482...483)
-     ),
-     XStringNode(485...502)(
-       (485...488),
-       (488...501),
-       (501...502),
-       "one two three"
-     ),
-     ArrayNode(504...511)(
-       [StringNode(507...510)(nil, (507...510), nil, "\\C:")],
-       (504...507),
-       (510...511)
-     )]
-  )
+           SymbolNode(338...341)(
+             opening_loc: nil,
+             value_loc: (338...341),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           SymbolNode(342...347)(
+             opening_loc: nil,
+             value_loc: (342...347),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (331...334),
+         closing_loc: (347...348)
+       ),
+       ArrayNode(350...367)(
+         elements:
+          [StringNode(353...356)(
+             opening_loc: nil,
+             content_loc: (353...356),
+             closing_loc: nil,
+             unescaped: "one"
+           ),
+           StringNode(357...360)(
+             opening_loc: nil,
+             content_loc: (357...360),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           StringNode(361...366)(
+             opening_loc: nil,
+             content_loc: (361...366),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (350...353),
+         closing_loc: (366...367)
+       ),
+       XStringNode(369...386)(
+         opening_loc: (369...372),
+         content_loc: (372...385),
+         closing_loc: (385...386),
+         unescaped: "one two three"
+       ),
+       ArrayNode(389...406)(
+         elements:
+          [SymbolNode(392...395)(
+             opening_loc: nil,
+             value_loc: (392...395),
+             closing_loc: nil,
+             unescaped: "one"
+           ),
+           SymbolNode(396...399)(
+             opening_loc: nil,
+             value_loc: (396...399),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           SymbolNode(400...405)(
+             opening_loc: nil,
+             value_loc: (400...405),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (389...392),
+         closing_loc: (405...406)
+       ),
+       ArrayNode(408...425)(
+         elements:
+          [StringNode(411...414)(
+             opening_loc: nil,
+             content_loc: (411...414),
+             closing_loc: nil,
+             unescaped: "one"
+           ),
+           StringNode(415...418)(
+             opening_loc: nil,
+             content_loc: (415...418),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           StringNode(419...424)(
+             opening_loc: nil,
+             content_loc: (419...424),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (408...411),
+         closing_loc: (424...425)
+       ),
+       XStringNode(427...444)(
+         opening_loc: (427...430),
+         content_loc: (430...443),
+         closing_loc: (443...444),
+         unescaped: "one two three"
+       ),
+       ArrayNode(447...464)(
+         elements:
+          [SymbolNode(450...453)(
+             opening_loc: nil,
+             value_loc: (450...453),
+             closing_loc: nil,
+             unescaped: "one"
+           ),
+           SymbolNode(454...457)(
+             opening_loc: nil,
+             value_loc: (454...457),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           SymbolNode(458...463)(
+             opening_loc: nil,
+             value_loc: (458...463),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (447...450),
+         closing_loc: (463...464)
+       ),
+       ArrayNode(466...483)(
+         elements:
+          [StringNode(469...472)(
+             opening_loc: nil,
+             content_loc: (469...472),
+             closing_loc: nil,
+             unescaped: "one"
+           ),
+           StringNode(473...476)(
+             opening_loc: nil,
+             content_loc: (473...476),
+             closing_loc: nil,
+             unescaped: "two"
+           ),
+           StringNode(477...482)(
+             opening_loc: nil,
+             content_loc: (477...482),
+             closing_loc: nil,
+             unescaped: "three"
+           )],
+         opening_loc: (466...469),
+         closing_loc: (482...483)
+       ),
+       XStringNode(485...502)(
+         opening_loc: (485...488),
+         content_loc: (488...501),
+         closing_loc: (501...502),
+         unescaped: "one two three"
+       ),
+       ArrayNode(504...511)(
+         elements:
+          [StringNode(507...510)(
+             opening_loc: nil,
+             content_loc: (507...510),
+             closing_loc: nil,
+             unescaped: "\\C:"
+           )],
+         opening_loc: (504...507),
+         closing_loc: (510...511)
+       )]
+   )
 )

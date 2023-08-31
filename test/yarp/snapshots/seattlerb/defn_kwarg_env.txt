@@ -1,45 +1,59 @@
 ProgramNode(0...45)(
-  [],
-  StatementsNode(0...45)(
-    [DefNode(0...45)(
-       (4...8),
-       nil,
-       ParametersNode(9...18)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         KeywordRestParameterNode(9...18)((9...11), (11...18)),
-         nil
-       ),
-       StatementsNode(20...41)(
-         [CallNode(20...41)(
-            nil,
-            nil,
-            (20...30),
-            (30...31),
-            ArgumentsNode(31...40)(
-              [KeywordHashNode(31...40)(
-                 [AssocSplatNode(31...40)(
-                    LocalVariableReadNode(33...40)(:testing, 0),
-                    (31...33)
-                  )]
-               )]
-            ),
-            (40...41),
-            nil,
-            0,
-            "test_splat"
-          )]
-       ),
-       [:testing],
-       (0...3),
-       nil,
-       (8...9),
-       (18...19),
-       nil,
-       (42...45)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...45)(
+     body:
+      [DefNode(0...45)(
+         name_loc: (4...8),
+         receiver: nil,
+         parameters:
+          ParametersNode(9...18)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest:
+             KeywordRestParameterNode(9...18)(
+               operator_loc: (9...11), name_loc: (11...18)
+             ),
+            block: nil
+          ),
+         body:
+          StatementsNode(20...41)(
+            body:
+             [CallNode(20...41)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (20...30),
+                opening_loc: (30...31),
+                arguments:
+                 ArgumentsNode(31...40)(
+                   arguments:
+                    [KeywordHashNode(31...40)(
+                       elements:
+                        [AssocSplatNode(31...40)(
+                           value:
+                            LocalVariableReadNode(33...40)(
+                              name: :testing, depth: 0
+                            ),
+                           operator_loc: (31...33)
+                         )]
+                     )]
+                 ),
+                closing_loc: (40...41),
+                block: nil,
+                flags: 0,
+                name: "test_splat"
+              )]
+          ),
+         locals: [:testing],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (8...9),
+         rparen_loc: (18...19),
+         equal_loc: nil,
+         end_keyword_loc: (42...45)
+       )]
+   )
 )

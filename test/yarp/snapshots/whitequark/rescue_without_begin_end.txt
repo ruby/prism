@@ -1,60 +1,69 @@
 ProgramNode(0...30)(
-  [],
-  StatementsNode(0...30)(
-    [CallNode(0...30)(
-       nil,
-       nil,
-       (0...4),
-       nil,
-       nil,
-       nil,
-       BlockNode(5...30)(
-         [],
-         nil,
-         BeginNode(9...30)(
-           nil,
-           StatementsNode(9...12)(
-             [CallNode(9...12)(
-                nil,
-                nil,
-                (9...12),
-                nil,
-                nil,
-                nil,
-                nil,
-                2,
-                "foo"
-              )]
-           ),
-           RescueNode(14...25)(
-             (14...20),
-             [],
-             nil,
-             nil,
-             StatementsNode(22...25)(
-               [CallNode(22...25)(
-                  nil,
-                  nil,
-                  (22...25),
-                  nil,
-                  nil,
-                  nil,
-                  nil,
-                  2,
-                  "bar"
-                )]
+  locals: [],
+  statements:
+   StatementsNode(0...30)(
+     body:
+      [CallNode(0...30)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...4),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(5...30)(
+            locals: [],
+            parameters: nil,
+            body:
+             BeginNode(9...30)(
+               begin_keyword_loc: nil,
+               statements:
+                StatementsNode(9...12)(
+                  body:
+                   [CallNode(9...12)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (9...12),
+                      opening_loc: nil,
+                      arguments: nil,
+                      closing_loc: nil,
+                      block: nil,
+                      flags: 2,
+                      name: "foo"
+                    )]
+                ),
+               rescue_clause:
+                RescueNode(14...25)(
+                  keyword_loc: (14...20),
+                  exceptions: [],
+                  operator_loc: nil,
+                  reference: nil,
+                  statements:
+                   StatementsNode(22...25)(
+                     body:
+                      [CallNode(22...25)(
+                         receiver: nil,
+                         operator_loc: nil,
+                         message_loc: (22...25),
+                         opening_loc: nil,
+                         arguments: nil,
+                         closing_loc: nil,
+                         block: nil,
+                         flags: 2,
+                         name: "bar"
+                       )]
+                   ),
+                  consequent: nil
+                ),
+               else_clause: nil,
+               ensure_clause: nil,
+               end_keyword_loc: (27...30)
              ),
-             nil
-           ),
-           nil,
-           nil,
-           (27...30)
-         ),
-         (5...7),
-         (27...30)
-       ),
-       0,
-       "meth"
-     )]
-  )
+            opening_loc: (5...7),
+            closing_loc: (27...30)
+          ),
+         flags: 0,
+         name: "meth"
+       )]
+   )
 )

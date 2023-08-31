@@ -1,88 +1,104 @@
 ProgramNode(0...106)(
-  [],
-  StatementsNode(0...106)(
-    [ModuleNode(0...12)(
-       [],
-       (0...6),
-       ConstantReadNode(7...8)(),
-       nil,
-       (9...12),
-       "A"
-     ),
-     ModuleNode(14...29)(
-       [],
-       (14...20),
-       ConstantPathNode(21...25)(
-         ConstantReadNode(21...22)(),
-         ConstantReadNode(24...25)(),
-         (22...24)
+  locals: [],
+  statements:
+   StatementsNode(0...106)(
+     body:
+      [ModuleNode(0...12)(
+         locals: [],
+         module_keyword_loc: (0...6),
+         constant_path: ConstantReadNode(7...8)(),
+         body: nil,
+         end_keyword_loc: (9...12),
+         name: "A"
        ),
-       nil,
-       (26...29),
-       "B"
-     ),
-     ModuleNode(31...49)(
-       [],
-       (31...37),
-       ConstantPathNode(38...45)(
-         ConstantPathNode(38...42)(
-           ConstantReadNode(38...39)(),
-           ConstantReadNode(41...42)(),
-           (39...41)
-         ),
-         ConstantReadNode(44...45)(),
-         (42...44)
-       ),
-       nil,
-       (46...49),
-       "C"
-     ),
-     ModuleNode(51...106)(
-       [],
-       (51...57),
-       ConstantReadNode(58...59)(),
-       StatementsNode(62...102)(
-         [CallNode(62...76)(
-            nil,
-            nil,
-            (62...69),
-            (69...70),
-            ArgumentsNode(70...75)(
-              [CallNode(70...75)(
-                 ConstantReadNode(70...71)(),
-                 (71...72),
-                 (72...75),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 0,
-                 "new"
-               )]
-            ),
-            (75...76),
-            nil,
-            0,
-            "include"
+       ModuleNode(14...29)(
+         locals: [],
+         module_keyword_loc: (14...20),
+         constant_path:
+          ConstantPathNode(21...25)(
+            parent: ConstantReadNode(21...22)(),
+            child: ConstantReadNode(24...25)(),
+            delimiter_loc: (22...24)
           ),
-          DefNode(80...102)(
-            (84...87),
-            nil,
-            nil,
-            StatementsNode(92...96)(
-              [SymbolNode(92...96)((92...93), (93...96), nil, "bar")]
-            ),
-            [],
-            (80...83),
-            nil,
-            nil,
-            nil,
-            nil,
-            (99...102)
-          )]
+         body: nil,
+         end_keyword_loc: (26...29),
+         name: "B"
        ),
-       (103...106),
-       "A"
-     )]
-  )
+       ModuleNode(31...49)(
+         locals: [],
+         module_keyword_loc: (31...37),
+         constant_path:
+          ConstantPathNode(38...45)(
+            parent:
+             ConstantPathNode(38...42)(
+               parent: ConstantReadNode(38...39)(),
+               child: ConstantReadNode(41...42)(),
+               delimiter_loc: (39...41)
+             ),
+            child: ConstantReadNode(44...45)(),
+            delimiter_loc: (42...44)
+          ),
+         body: nil,
+         end_keyword_loc: (46...49),
+         name: "C"
+       ),
+       ModuleNode(51...106)(
+         locals: [],
+         module_keyword_loc: (51...57),
+         constant_path: ConstantReadNode(58...59)(),
+         body:
+          StatementsNode(62...102)(
+            body:
+             [CallNode(62...76)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (62...69),
+                opening_loc: (69...70),
+                arguments:
+                 ArgumentsNode(70...75)(
+                   arguments:
+                    [CallNode(70...75)(
+                       receiver: ConstantReadNode(70...71)(),
+                       operator_loc: (71...72),
+                       message_loc: (72...75),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 0,
+                       name: "new"
+                     )]
+                 ),
+                closing_loc: (75...76),
+                block: nil,
+                flags: 0,
+                name: "include"
+              ),
+              DefNode(80...102)(
+                name_loc: (84...87),
+                receiver: nil,
+                parameters: nil,
+                body:
+                 StatementsNode(92...96)(
+                   body:
+                    [SymbolNode(92...96)(
+                       opening_loc: (92...93),
+                       value_loc: (93...96),
+                       closing_loc: nil,
+                       unescaped: "bar"
+                     )]
+                 ),
+                locals: [],
+                def_keyword_loc: (80...83),
+                operator_loc: nil,
+                lparen_loc: nil,
+                rparen_loc: nil,
+                equal_loc: nil,
+                end_keyword_loc: (99...102)
+              )]
+          ),
+         end_keyword_loc: (103...106),
+         name: "A"
+       )]
+   )
 )

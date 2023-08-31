@@ -1,56 +1,96 @@
 ProgramNode(0...41)(
-  [:foo],
-  StatementsNode(0...41)(
-    [LocalVariableWriteNode(0...10)(
-       :foo,
-       0,
-       ArrayNode(6...10)(
-         [SplatNode(6...10)(
-            (6...7),
-            CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 2, "bar")
-          )],
-         nil,
-         nil
+  locals: [:foo],
+  statements:
+   StatementsNode(0...41)(
+     body:
+      [LocalVariableWriteNode(0...10)(
+         name: :foo,
+         depth: 0,
+         value:
+          ArrayNode(6...10)(
+            elements:
+             [SplatNode(6...10)(
+                operator_loc: (6...7),
+                expression:
+                 CallNode(7...10)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (7...10),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )
+              )],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         name_loc: (0...3),
+         operator_loc: (4...5)
        ),
-       (0...3),
-       (4...5)
-     ),
-     LocalVariableWriteNode(12...24)(
-       :foo,
-       0,
-       ArrayNode(18...24)(
-         [CallNode(18...21)(nil, nil, (18...21), nil, nil, nil, nil, 2, "bar"),
-          IntegerNode(23...24)()],
-         nil,
-         nil
+       LocalVariableWriteNode(12...24)(
+         name: :foo,
+         depth: 0,
+         value:
+          ArrayNode(18...24)(
+            elements:
+             [CallNode(18...21)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (18...21),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              ),
+              IntegerNode(23...24)()],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         name_loc: (12...15),
+         operator_loc: (16...17)
        ),
-       (12...15),
-       (16...17)
-     ),
-     LocalVariableWriteNode(26...41)(
-       :foo,
-       0,
-       ArrayNode(32...41)(
-         [CallNode(32...35)(nil, nil, (32...35), nil, nil, nil, nil, 2, "baz"),
-          SplatNode(37...41)(
-            (37...38),
-            CallNode(38...41)(
-              nil,
-              nil,
-              (38...41),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            )
-          )],
-         nil,
-         nil
-       ),
-       (26...29),
-       (30...31)
-     )]
-  )
+       LocalVariableWriteNode(26...41)(
+         name: :foo,
+         depth: 0,
+         value:
+          ArrayNode(32...41)(
+            elements:
+             [CallNode(32...35)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (32...35),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              ),
+              SplatNode(37...41)(
+                operator_loc: (37...38),
+                expression:
+                 CallNode(38...41)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (38...41),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 )
+              )],
+            opening_loc: nil,
+            closing_loc: nil
+          ),
+         name_loc: (26...29),
+         operator_loc: (30...31)
+       )]
+   )
 )

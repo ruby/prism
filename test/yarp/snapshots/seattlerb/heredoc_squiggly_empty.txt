@@ -1,4 +1,10 @@
 ProgramNode(0...4)(
-  [],
-  StatementsNode(0...4)([InterpolatedStringNode(0...4)((0...4), [], (5...7))])
+  locals: [],
+  statements:
+   StatementsNode(0...4)(
+     body:
+      [InterpolatedStringNode(0...4)(
+         opening_loc: (0...4), parts: [], closing_loc: (5...7)
+       )]
+   )
 )

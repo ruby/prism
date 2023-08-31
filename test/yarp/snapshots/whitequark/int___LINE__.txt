@@ -1,1 +1,4 @@
-ProgramNode(0...8)([], StatementsNode(0...8)([SourceLineNode(0...8)()]))
+ProgramNode(0...8)(
+  locals: [],
+  statements: StatementsNode(0...8)(body: [SourceLineNode(0...8)()])
+)

@@ -1,4 +1,5 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)([IntegerNode(0...1)(), IntegerNode(30...31)()])
+  locals: [],
+  statements:
+   StatementsNode(0...31)(body: [IntegerNode(0...1)(), IntegerNode(30...31)()])
 )

@@ -1,52 +1,62 @@
 ProgramNode(0...25)(
-  [],
-  StatementsNode(0...25)(
-    [NextNode(0...25)(
-       ArgumentsNode(5...25)(
-         [CallNode(5...25)(
-            nil,
-            nil,
-            (5...8),
-            nil,
-            ArgumentsNode(9...12)(
-              [CallNode(9...12)(
-                 nil,
-                 nil,
-                 (9...12),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "arg"
-               )]
-            ),
-            nil,
-            BlockNode(13...25)(
-              [:bar],
-              BlockParametersNode(16...21)(
-                ParametersNode(17...20)(
-                  [RequiredParameterNode(17...20)(:bar)],
-                  [],
-                  [],
-                  nil,
-                  [],
-                  nil,
-                  nil
-                ),
-                [],
-                (16...17),
-                (20...21)
-              ),
-              nil,
-              (13...15),
-              (22...25)
-            ),
-            0,
-            "foo"
-          )]
-       ),
-       (0...4)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...25)(
+     body:
+      [NextNode(0...25)(
+         arguments:
+          ArgumentsNode(5...25)(
+            arguments:
+             [CallNode(5...25)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (5...8),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(9...12)(
+                   arguments:
+                    [CallNode(9...12)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (9...12),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "arg"
+                     )]
+                 ),
+                closing_loc: nil,
+                block:
+                 BlockNode(13...25)(
+                   locals: [:bar],
+                   parameters:
+                    BlockParametersNode(16...21)(
+                      parameters:
+                       ParametersNode(17...20)(
+                         requireds:
+                          [RequiredParameterNode(17...20)(name: :bar)],
+                         optionals: [],
+                         posts: [],
+                         rest: nil,
+                         keywords: [],
+                         keyword_rest: nil,
+                         block: nil
+                       ),
+                      locals: [],
+                      opening_loc: (16...17),
+                      closing_loc: (20...21)
+                    ),
+                   body: nil,
+                   opening_loc: (13...15),
+                   closing_loc: (22...25)
+                 ),
+                flags: 0,
+                name: "foo"
+              )]
+          ),
+         keyword_loc: (0...4)
+       )]
+   )
 )

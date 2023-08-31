@@ -1,19 +1,29 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [CaseNode(0...28)(
-       ConstantReadNode(5...10)(),
-       [InNode(11...24)(
-          ConstantReadNode(14...19)(),
-          StatementsNode(22...24)(
-            [SymbolNode(22...24)((22...23), (23...24), nil, "b")]
-          ),
-          (11...13),
-          nil
-        )],
-       nil,
-       (0...4),
-       (25...28)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [CaseNode(0...28)(
+         predicate: ConstantReadNode(5...10)(),
+         conditions:
+          [InNode(11...24)(
+             pattern: ConstantReadNode(14...19)(),
+             statements:
+              StatementsNode(22...24)(
+                body:
+                 [SymbolNode(22...24)(
+                    opening_loc: (22...23),
+                    value_loc: (23...24),
+                    closing_loc: nil,
+                    unescaped: "b"
+                  )]
+              ),
+             in_loc: (11...13),
+             then_loc: nil
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (25...28)
+       )]
+   )
 )

@@ -1,12 +1,30 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [ArrayNode(0...15)(
-       [SymbolNode(3...4)(nil, (3...4), nil, "a"),
-        SymbolNode(5...12)(nil, (5...12), nil, "b\#{1+1}"),
-        SymbolNode(13...14)(nil, (13...14), nil, "c")],
-       (0...3),
-       (14...15)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [ArrayNode(0...15)(
+         elements:
+          [SymbolNode(3...4)(
+             opening_loc: nil,
+             value_loc: (3...4),
+             closing_loc: nil,
+             unescaped: "a"
+           ),
+           SymbolNode(5...12)(
+             opening_loc: nil,
+             value_loc: (5...12),
+             closing_loc: nil,
+             unescaped: "b\#{1+1}"
+           ),
+           SymbolNode(13...14)(
+             opening_loc: nil,
+             value_loc: (13...14),
+             closing_loc: nil,
+             unescaped: "c"
+           )],
+         opening_loc: (0...3),
+         closing_loc: (14...15)
+       )]
+   )
 )

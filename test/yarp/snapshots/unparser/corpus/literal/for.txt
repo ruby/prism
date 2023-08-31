@@ -1,130 +1,194 @@
 ProgramNode(0...119)(
-  [:a, :b],
-  StatementsNode(0...119)(
-    [CallNode(0...30)(
-       nil,
-       nil,
-       (0...3),
-       (3...4),
-       ArgumentsNode(4...29)(
-         [ForNode(4...29)(
-            MultiWriteNode(8...9)(
-              [LocalVariableTargetNode(8...9)(:a, 0)],
-              nil,
-              nil,
-              nil,
-              nil
-            ),
-            CallNode(13...16)(
-              nil,
-              nil,
-              (13...16),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "bar"
-            ),
-            StatementsNode(22...25)(
-              [CallNode(22...25)(
-                 nil,
-                 nil,
-                 (22...25),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "baz"
-               )]
-            ),
-            (4...7),
-            (10...12),
-            (17...19),
-            (26...29)
-          )]
+  locals: [:a, :b],
+  statements:
+   StatementsNode(0...119)(
+     body:
+      [CallNode(0...30)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: (3...4),
+         arguments:
+          ArgumentsNode(4...29)(
+            arguments:
+             [ForNode(4...29)(
+                index:
+                 MultiWriteNode(8...9)(
+                   targets:
+                    [LocalVariableTargetNode(8...9)(name: :a, depth: 0)],
+                   operator_loc: nil,
+                   value: nil,
+                   lparen_loc: nil,
+                   rparen_loc: nil
+                 ),
+                collection:
+                 CallNode(13...16)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (13...16),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "bar"
+                 ),
+                statements:
+                 StatementsNode(22...25)(
+                   body:
+                    [CallNode(22...25)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (22...25),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "baz"
+                     )]
+                 ),
+                for_keyword_loc: (4...7),
+                in_keyword_loc: (10...12),
+                do_keyword_loc: (17...19),
+                end_keyword_loc: (26...29)
+              )]
+          ),
+         closing_loc: (29...30),
+         block: nil,
+         flags: 0,
+         name: "bar"
        ),
-       (29...30),
-       nil,
-       0,
-       "bar"
-     ),
-     ForNode(31...56)(
-       MultiWriteNode(35...36)(
-         [LocalVariableTargetNode(35...36)(:a, 0)],
-         nil,
-         nil,
-         nil,
-         nil
+       ForNode(31...56)(
+         index:
+          MultiWriteNode(35...36)(
+            targets: [LocalVariableTargetNode(35...36)(name: :a, depth: 0)],
+            operator_loc: nil,
+            value: nil,
+            lparen_loc: nil,
+            rparen_loc: nil
+          ),
+         collection:
+          CallNode(40...43)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (40...43),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         statements:
+          StatementsNode(49...52)(
+            body:
+             [CallNode(49...52)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (49...52),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         for_keyword_loc: (31...34),
+         in_keyword_loc: (37...39),
+         do_keyword_loc: (44...46),
+         end_keyword_loc: (53...56)
        ),
-       CallNode(40...43)(nil, nil, (40...43), nil, nil, nil, nil, 2, "bar"),
-       StatementsNode(49...52)(
-         [CallNode(49...52)(nil, nil, (49...52), nil, nil, nil, nil, 2, "baz")]
+       ForNode(57...88)(
+         index:
+          MultiWriteNode(61...68)(
+            targets:
+             [LocalVariableTargetNode(62...63)(name: :a, depth: 0),
+              SplatNode(65...67)(
+                operator_loc: (65...66),
+                expression:
+                 LocalVariableTargetNode(66...67)(name: :b, depth: 0)
+              )],
+            operator_loc: nil,
+            value: nil,
+            lparen_loc: (61...62),
+            rparen_loc: (67...68)
+          ),
+         collection:
+          CallNode(72...75)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (72...75),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         statements:
+          StatementsNode(81...84)(
+            body:
+             [CallNode(81...84)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (81...84),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         for_keyword_loc: (57...60),
+         in_keyword_loc: (69...71),
+         do_keyword_loc: (76...78),
+         end_keyword_loc: (85...88)
        ),
-       (31...34),
-       (37...39),
-       (44...46),
-       (53...56)
-     ),
-     ForNode(57...88)(
-       MultiWriteNode(61...68)(
-         [LocalVariableTargetNode(62...63)(:a, 0),
-          SplatNode(65...67)(
-            (65...66),
-            LocalVariableTargetNode(66...67)(:b, 0)
-          )],
-         nil,
-         nil,
-         (61...62),
-         (67...68)
-       ),
-       CallNode(72...75)(nil, nil, (72...75), nil, nil, nil, nil, 2, "bar"),
-       StatementsNode(81...84)(
-         [CallNode(81...84)(nil, nil, (81...84), nil, nil, nil, nil, 2, "baz")]
-       ),
-       (57...60),
-       (69...71),
-       (76...78),
-       (85...88)
-     ),
-     ForNode(89...119)(
-       MultiWriteNode(93...99)(
-         [LocalVariableTargetNode(94...95)(:a, 0),
-          LocalVariableTargetNode(97...98)(:b, 0)],
-         nil,
-         nil,
-         (93...94),
-         (98...99)
-       ),
-       CallNode(103...106)(
-         nil,
-         nil,
-         (103...106),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "bar"
-       ),
-       StatementsNode(112...115)(
-         [CallNode(112...115)(
-            nil,
-            nil,
-            (112...115),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "baz"
-          )]
-       ),
-       (89...92),
-       (100...102),
-       (107...109),
-       (116...119)
-     )]
-  )
+       ForNode(89...119)(
+         index:
+          MultiWriteNode(93...99)(
+            targets:
+             [LocalVariableTargetNode(94...95)(name: :a, depth: 0),
+              LocalVariableTargetNode(97...98)(name: :b, depth: 0)],
+            operator_loc: nil,
+            value: nil,
+            lparen_loc: (93...94),
+            rparen_loc: (98...99)
+          ),
+         collection:
+          CallNode(103...106)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (103...106),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          ),
+         statements:
+          StatementsNode(112...115)(
+            body:
+             [CallNode(112...115)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (112...115),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "baz"
+              )]
+          ),
+         for_keyword_loc: (89...92),
+         in_keyword_loc: (100...102),
+         do_keyword_loc: (107...109),
+         end_keyword_loc: (116...119)
+       )]
+   )
 )

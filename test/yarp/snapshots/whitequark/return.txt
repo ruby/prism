@@ -1,40 +1,62 @@
 ProgramNode(0...41)(
-  [],
-  StatementsNode(0...41)(
-    [ReturnNode(0...6)((0...6), nil),
-     ReturnNode(8...18)(
-       (8...14),
-       ArgumentsNode(15...18)(
-         [CallNode(15...18)(nil, nil, (15...18), nil, nil, nil, nil, 2, "foo")]
-       )
-     ),
-     ReturnNode(20...28)(
-       (20...26),
-       ArgumentsNode(26...28)(
-         [ParenthesesNode(26...28)(nil, (26...27), (27...28))]
-       )
-     ),
-     ReturnNode(30...41)(
-       (30...36),
-       ArgumentsNode(36...41)(
-         [ParenthesesNode(36...41)(
-            StatementsNode(37...40)(
-              [CallNode(37...40)(
-                 nil,
-                 nil,
-                 (37...40),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               )]
-            ),
-            (36...37),
-            (40...41)
-          )]
-       )
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...41)(
+     body:
+      [ReturnNode(0...6)(keyword_loc: (0...6), arguments: nil),
+       ReturnNode(8...18)(
+         keyword_loc: (8...14),
+         arguments:
+          ArgumentsNode(15...18)(
+            arguments:
+             [CallNode(15...18)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (15...18),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "foo"
+              )]
+          )
+       ),
+       ReturnNode(20...28)(
+         keyword_loc: (20...26),
+         arguments:
+          ArgumentsNode(26...28)(
+            arguments:
+             [ParenthesesNode(26...28)(
+                body: nil, opening_loc: (26...27), closing_loc: (27...28)
+              )]
+          )
+       ),
+       ReturnNode(30...41)(
+         keyword_loc: (30...36),
+         arguments:
+          ArgumentsNode(36...41)(
+            arguments:
+             [ParenthesesNode(36...41)(
+                body:
+                 StatementsNode(37...40)(
+                   body:
+                    [CallNode(37...40)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (37...40),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     )]
+                 ),
+                opening_loc: (36...37),
+                closing_loc: (40...41)
+              )]
+          )
+       )]
+   )
 )

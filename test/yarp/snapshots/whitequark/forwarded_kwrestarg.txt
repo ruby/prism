@@ -1,42 +1,55 @@
 ProgramNode(0...25)(
-  [],
-  StatementsNode(0...25)(
-    [DefNode(0...25)(
-       (4...7),
-       nil,
-       ParametersNode(8...10)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         KeywordRestParameterNode(8...10)((8...10), nil),
-         nil
-       ),
-       StatementsNode(13...20)(
-         [CallNode(13...20)(
-            nil,
-            nil,
-            (13...16),
-            (16...17),
-            ArgumentsNode(17...19)(
-              [KeywordHashNode(17...19)(
-                 [AssocSplatNode(17...19)(nil, (17...19))]
-               )]
-            ),
-            (19...20),
-            nil,
-            0,
-            "bar"
-          )]
-       ),
-       [:**],
-       (0...3),
-       nil,
-       (7...8),
-       (10...11),
-       nil,
-       (22...25)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...25)(
+     body:
+      [DefNode(0...25)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters:
+          ParametersNode(8...10)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest:
+             KeywordRestParameterNode(8...10)(
+               operator_loc: (8...10), name_loc: nil
+             ),
+            block: nil
+          ),
+         body:
+          StatementsNode(13...20)(
+            body:
+             [CallNode(13...20)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (13...16),
+                opening_loc: (16...17),
+                arguments:
+                 ArgumentsNode(17...19)(
+                   arguments:
+                    [KeywordHashNode(17...19)(
+                       elements:
+                        [AssocSplatNode(17...19)(
+                           value: nil, operator_loc: (17...19)
+                         )]
+                     )]
+                 ),
+                closing_loc: (19...20),
+                block: nil,
+                flags: 0,
+                name: "bar"
+              )]
+          ),
+         locals: [:**],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (7...8),
+         rparen_loc: (10...11),
+         equal_loc: nil,
+         end_keyword_loc: (22...25)
+       )]
+   )
 )

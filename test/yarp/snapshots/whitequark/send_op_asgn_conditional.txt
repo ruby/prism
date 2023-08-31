@@ -1,20 +1,34 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [CallOperatorAndWriteNode(0...10)(
-       CallNode(0...4)(
-         CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-         (1...3),
-         (3...4),
-         nil,
-         nil,
-         nil,
-         nil,
-         1,
-         "b="
-       ),
-       (5...8),
-       IntegerNode(9...10)()
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [CallOperatorAndWriteNode(0...10)(
+         target:
+          CallNode(0...4)(
+            receiver:
+             CallNode(0...1)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...1),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "a"
+             ),
+            operator_loc: (1...3),
+            message_loc: (3...4),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 1,
+            name: "b="
+          ),
+         operator_loc: (5...8),
+         value: IntegerNode(9...10)()
+       )]
+   )
 )

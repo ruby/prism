@@ -1,24 +1,40 @@
 ProgramNode(0...12)(
-  [],
-  StatementsNode(0...12)(
-    [CallNode(0...12)(
-       nil,
-       nil,
-       (0...4),
-       nil,
-       ArgumentsNode(5...12)(
-         [KeywordHashNode(5...12)(
-            [AssocNode(5...12)(
-               SymbolNode(5...9)((5...6), (6...7), (7...9), "a"),
-               HashNode(10...12)((10...11), [], (11...12)),
-               nil
-             )]
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "puts"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [CallNode(0...12)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...4),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(5...12)(
+            arguments:
+             [KeywordHashNode(5...12)(
+                elements:
+                 [AssocNode(5...12)(
+                    key:
+                     SymbolNode(5...9)(
+                       opening_loc: (5...6),
+                       value_loc: (6...7),
+                       closing_loc: (7...9),
+                       unescaped: "a"
+                     ),
+                    value:
+                     HashNode(10...12)(
+                       opening_loc: (10...11),
+                       elements: [],
+                       closing_loc: (11...12)
+                     ),
+                    operator_loc: nil
+                  )]
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "puts"
+       )]
+   )
 )

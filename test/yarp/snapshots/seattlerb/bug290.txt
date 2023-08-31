@@ -1,15 +1,29 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [BeginNode(0...15)(
-       (0...5),
-       StatementsNode(8...11)(
-         [CallNode(8...11)(nil, nil, (8...11), nil, nil, nil, nil, 2, "foo")]
-       ),
-       nil,
-       nil,
-       nil,
-       (12...15)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [BeginNode(0...15)(
+         begin_keyword_loc: (0...5),
+         statements:
+          StatementsNode(8...11)(
+            body:
+             [CallNode(8...11)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (8...11),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "foo"
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (12...15)
+       )]
+   )
 )

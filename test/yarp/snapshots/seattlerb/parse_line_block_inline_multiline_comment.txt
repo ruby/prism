@@ -1,8 +1,40 @@
 ProgramNode(0...33)(
-  [],
-  StatementsNode(0...33)(
-    [CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 2, "a"),
-     CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "b"),
-     CallNode(32...33)(nil, nil, (32...33), nil, nil, nil, nil, 2, "c")]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...33)(
+     body:
+      [CallNode(0...1)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "a"
+       ),
+       CallNode(2...3)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (2...3),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "b"
+       ),
+       CallNode(32...33)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (32...33),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "c"
+       )]
+   )
 )

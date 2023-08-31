@@ -1,23 +1,50 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [InterpolatedStringNode(0...10)(
-       (0...1),
-       [EmbeddedStatementsNode(1...5)(
-          (1...3),
-          StatementsNode(3...4)(
-            [CallNode(3...4)(nil, nil, (3...4), nil, nil, nil, nil, 2, "a")]
-          ),
-          (4...5)
-        ),
-        EmbeddedStatementsNode(5...9)(
-          (5...7),
-          StatementsNode(7...8)(
-            [CallNode(7...8)(nil, nil, (7...8), nil, nil, nil, nil, 2, "b")]
-          ),
-          (8...9)
-        )],
-       (9...10)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [InterpolatedStringNode(0...10)(
+         opening_loc: (0...1),
+         parts:
+          [EmbeddedStatementsNode(1...5)(
+             opening_loc: (1...3),
+             statements:
+              StatementsNode(3...4)(
+                body:
+                 [CallNode(3...4)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (3...4),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "a"
+                  )]
+              ),
+             closing_loc: (4...5)
+           ),
+           EmbeddedStatementsNode(5...9)(
+             opening_loc: (5...7),
+             statements:
+              StatementsNode(7...8)(
+                body:
+                 [CallNode(7...8)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (7...8),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "b"
+                  )]
+              ),
+             closing_loc: (8...9)
+           )],
+         closing_loc: (9...10)
+       )]
+   )
 )

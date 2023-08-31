@@ -1,44 +1,68 @@
 ProgramNode(0...22)(
-  [],
-  StatementsNode(0...22)(
-    [LambdaNode(0...16)(
-       [],
-       (0...2),
-       (3...4),
-       (15...16),
-       nil,
-       StatementsNode(7...14)(
-         [CallNode(7...14)(
-            CallNode(7...9)(nil, nil, (7...9), nil, nil, nil, nil, 2, "_1"),
-            nil,
-            (10...11),
-            nil,
-            ArgumentsNode(12...14)(
-              [CallNode(12...14)(
-                 nil,
-                 nil,
-                 (12...14),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "_2"
-               )]
-            ),
-            nil,
-            nil,
-            0,
-            "+"
-          )]
-       )
-     ),
-     ParenthesesNode(17...22)(
-       StatementsNode(18...21)(
-         [RangeNode(18...21)(nil, IntegerNode(20...21)(), (18...20), 0)]
+  locals: [],
+  statements:
+   StatementsNode(0...22)(
+     body:
+      [LambdaNode(0...16)(
+         locals: [],
+         operator_loc: (0...2),
+         opening_loc: (3...4),
+         closing_loc: (15...16),
+         parameters: nil,
+         body:
+          StatementsNode(7...14)(
+            body:
+             [CallNode(7...14)(
+                receiver:
+                 CallNode(7...9)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (7...9),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "_1"
+                 ),
+                operator_loc: nil,
+                message_loc: (10...11),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(12...14)(
+                   arguments:
+                    [CallNode(12...14)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (12...14),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "_2"
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "+"
+              )]
+          )
        ),
-       (17...18),
-       (21...22)
-     )]
-  )
+       ParenthesesNode(17...22)(
+         body:
+          StatementsNode(18...21)(
+            body:
+             [RangeNode(18...21)(
+                left: nil,
+                right: IntegerNode(20...21)(),
+                operator_loc: (18...20),
+                flags: 0
+              )]
+          ),
+         opening_loc: (17...18),
+         closing_loc: (21...22)
+       )]
+   )
 )

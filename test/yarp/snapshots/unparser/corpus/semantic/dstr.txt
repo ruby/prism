@@ -1,256 +1,617 @@
 ProgramNode(0...608)(
-  [],
-  StatementsNode(0...608)(
-    [InterpolatedStringNode(0...5)((0...5), [], (6...10)),
-     InterpolatedStringNode(11...18)((11...18), [], (19...23)),
-     InterpolatedStringNode(24...30)((24...30), [], (31...35)),
-     InterpolatedStringNode(36...44)((36...44), [], (45...49)),
-     InterpolatedStringNode(50...55)(
-       (50...55),
-       [StringNode(56...60)(nil, (56...60), nil, "  a\n")],
-       (60...64)
-     ),
-     InterpolatedStringNode(65...72)(
-       (65...72),
-       [StringNode(73...77)(nil, (73...77), nil, "  a\n")],
-       (77...81)
-     ),
-     InterpolatedStringNode(82...87)(
-       (82...87),
-       [StringNode(88...94)(nil, (88...94), nil, "  a\n" + "  "),
-        EmbeddedStatementsNode(94...97)((94...96), nil, (96...97)),
-        StringNode(97...98)(nil, (97...98), nil, "\n")],
-       (98...102)
-     ),
-     InterpolatedStringNode(103...109)(
-       (103...109),
-       [StringNode(110...116)(nil, (110...116), nil, "a\n"),
-        EmbeddedStatementsNode(116...119)((116...118), nil, (118...119)),
-        StringNode(119...120)(nil, (119...120), nil, "\n")],
-       (120...124)
-     ),
-     InterpolatedStringNode(125...131)(
-       (125...131),
-       [StringNode(132...138)(nil, (132...138), nil, "a\n"),
-        EmbeddedStatementsNode(138...141)((138...140), nil, (140...141)),
-        StringNode(141...146)(nil, (141...146), nil, "\n" + "b\n")],
-       (146...150)
-     ),
-     InterpolatedStringNode(151...157)(
-       (151...157),
-       [StringNode(158...168)(nil, (158...168), nil, "a\n" + "  b\n")],
-       (168...172)
-     ),
-     InterpolatedStringNode(173...180)(
-       (173...180),
-       [StringNode(181...186)(nil, (181...186), nil, "a\n" + "\n" + "b\n")],
-       (186...190)
-     ),
-     InterpolatedStringNode(191...198)(
-       (191...198),
-       [StringNode(199...206)(nil, (199...206), nil, " a\n" + "\n" + " b\n")],
-       (206...210)
-     ),
-     InterpolatedStringNode(211...218)(
-       (211...218),
-       [StringNode(219...225)(nil, (219...225), nil, " a\\nb\n")],
-       (225...229)
-     ),
-     InterpolatedStringNode(230...235)(
-       (230...235),
-       [EmbeddedStatementsNode(236...239)((236...238), nil, (238...239)),
-        StringNode(239...242)(nil, (239...242), nil, "a\n" + " "),
-        EmbeddedStatementsNode(242...245)((242...244), nil, (244...245)),
-        StringNode(245...247)(nil, (245...247), nil, "a\n")],
-       (247...251)
-     ),
-     InterpolatedStringNode(252...257)(
-       (252...257),
-       [StringNode(258...260)(nil, (258...260), nil, "  "),
-        EmbeddedStatementsNode(260...263)((260...262), nil, (262...263)),
-        StringNode(263...271)(nil, (263...271), nil, "\n" + "  \#{}\n")],
-       (271...275)
-     ),
-     InterpolatedStringNode(276...281)(
-       (276...281),
-       [StringNode(282...284)(nil, (282...284), nil, " a"),
-        EmbeddedStatementsNode(284...287)((284...286), nil, (286...287)),
-        StringNode(287...292)(nil, (287...292), nil, "b\n" + " c\n")],
-       (292...296)
-     ),
-     InterpolatedStringNode(297...303)(
-       (297...303),
-       [EmbeddedStatementsNode(306...309)((306...308), nil, (308...309)),
-        StringNode(309...310)(nil, (309...310), nil, "\n")],
-       (310...314)
-     ),
-     IfNode(315...349)(
-       (315...317),
-       TrueNode(318...322)(),
-       StatementsNode(325...331)(
-         [InterpolatedStringNode(325...331)(
-            (325...331),
-            [EmbeddedStatementsNode(336...339)((336...338), nil, (338...339)),
-             StringNode(339...340)(nil, (339...340), nil, "\n")],
-            (340...346)
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...608)(
+     body:
+      [InterpolatedStringNode(0...5)(
+         opening_loc: (0...5), parts: [], closing_loc: (6...10)
        ),
-       nil,
-       (346...349)
-     ),
-     IfNode(351...386)(
-       (351...353),
-       TrueNode(354...358)(),
-       StatementsNode(361...367)(
-         [InterpolatedStringNode(361...367)(
-            (361...367),
-            [StringNode(368...373)(nil, (368...373), nil, "b"),
-             EmbeddedStatementsNode(373...376)((373...375), nil, (375...376)),
-             StringNode(376...377)(nil, (376...377), nil, "\n")],
-            (377...383)
-          )]
+       InterpolatedStringNode(11...18)(
+         opening_loc: (11...18), parts: [], closing_loc: (19...23)
        ),
-       nil,
-       (383...386)
-     ),
-     IfNode(388...423)(
-       (388...390),
-       TrueNode(391...395)(),
-       StatementsNode(398...404)(
-         [InterpolatedStringNode(398...404)(
-            (398...404),
-            [EmbeddedStatementsNode(409...412)((409...411), nil, (411...412)),
-             StringNode(412...414)(nil, (412...414), nil, "a\n")],
-            (414...420)
-          )]
+       InterpolatedStringNode(24...30)(
+         opening_loc: (24...30), parts: [], closing_loc: (31...35)
        ),
-       nil,
-       (420...423)
-     ),
-     IfNode(425...464)(
-       (425...427),
-       TrueNode(428...432)(),
-       StatementsNode(435...443)(
-         [InterpolatedStringNode(435...443)(
-            (435...443),
-            [StringNode(444...455)(
-               nil,
-               (444...455),
-               nil,
-               "   a\n" + "\n" + "   b\n"
-             )],
-            (455...461)
-          )]
+       InterpolatedStringNode(36...44)(
+         opening_loc: (36...44), parts: [], closing_loc: (45...49)
        ),
-       nil,
-       (461...464)
-     ),
-     InterpolatedStringNode(466...472)(
-       (466...467),
-       [EmbeddedStatementsNode(467...470)((467...469), nil, (469...470)),
-        StringNode(470...471)(nil, (470...471), nil, "a")],
-       (471...472)
-     ),
-     InterpolatedStringNode(474...486)(
-       (474...476),
-       [StringNode(476...479)(nil, (476...479), nil, "\n" + "\""),
-        EmbeddedStatementsNode(479...482)((479...481), nil, (481...482)),
-        StringNode(482...485)(nil, (482...485), nil, "\"\n")],
-       (485...486)
-     ),
-     InterpolatedStringNode(488...502)(
-       (488...491),
-       [StringNode(491...495)(nil, (491...495), nil, "-\n" + "\""),
-        EmbeddedStatementsNode(495...498)((495...497), nil, (497...498)),
-        StringNode(498...501)(nil, (498...501), nil, "\"\n")],
-       (501...502)
-     ),
-     InterpolatedStringNode(504...513)(
-       (504...505),
-       [StringNode(505...507)(nil, (505...507), nil, "a\n"),
-        EmbeddedStatementsNode(507...510)((507...509), nil, (509...510)),
-        StringNode(510...512)(nil, (510...512), nil, "\n" + "b")],
-       (512...513)
-     ),
-     InterpolatedStringNode(515...525)(
-       (515...516),
-       [StringNode(516...519)(nil, (516...519), nil, "a\n"),
-        EmbeddedStatementsNode(519...522)((519...521), nil, (521...522)),
-        StringNode(522...524)(nil, (522...524), nil, "\n" + "b")],
-       (524...525)
-     ),
-     InterpolatedStringNode(527...537)(
-       (527...528),
-       [StringNode(528...530)(nil, (528...530), nil, "a\n"),
-        EmbeddedStatementsNode(530...533)((530...532), nil, (532...533)),
-        StringNode(533...536)(nil, (533...536), nil, "\n" + "b")],
-       (536...537)
-     ),
-     StringConcatNode(539...550)(
-       StringNode(539...542)((539...540), (540...541), (541...542), "a"),
-       InterpolatedStringNode(545...550)(
-         (545...546),
-         [EmbeddedStatementsNode(546...549)((546...548), nil, (548...549))],
-         (549...550)
-       )
-     ),
-     StringConcatNode(552...560)(
-       StringConcatNode(552...557)(
-         StringNode(552...554)((552...553), (553...553), (553...554), ""),
-         StringNode(555...557)((555...556), (556...556), (556...557), "")
+       InterpolatedStringNode(50...55)(
+         opening_loc: (50...55),
+         parts:
+          [StringNode(56...60)(
+             opening_loc: nil,
+             content_loc: (56...60),
+             closing_loc: nil,
+             unescaped: "  a\n"
+           )],
+         closing_loc: (60...64)
        ),
-       StringNode(558...560)((558...559), (559...559), (559...560), "")
-     ),
-     StringConcatNode(562...574)(
-       InterpolatedStringNode(562...570)(
-         (562...563),
-         [StringNode(563...564)(nil, (563...564), nil, "a"),
-          EmbeddedStatementsNode(564...569)(
-            (564...566),
-            StatementsNode(566...568)(
-              [InstanceVariableReadNode(566...568)(:@a)]
-            ),
-            (568...569)
-          )],
-         (569...570)
+       InterpolatedStringNode(65...72)(
+         opening_loc: (65...72),
+         parts:
+          [StringNode(73...77)(
+             opening_loc: nil,
+             content_loc: (73...77),
+             closing_loc: nil,
+             unescaped: "  a\n"
+           )],
+         closing_loc: (77...81)
        ),
-       StringNode(571...574)((571...572), (572...573), (573...574), "b")
-     ),
-     StringConcatNode(575...585)(
-       InterpolatedStringNode(575...581)(
-         (575...576),
-         [StringNode(576...577)(nil, (576...577), nil, "a"),
-          EmbeddedVariableNode(577...580)(
-            (577...578),
-            InstanceVariableReadNode(578...580)(:@a)
-          )],
-         (580...581)
+       InterpolatedStringNode(82...87)(
+         opening_loc: (82...87),
+         parts:
+          [StringNode(88...94)(
+             opening_loc: nil,
+             content_loc: (88...94),
+             closing_loc: nil,
+             unescaped: "  a\n" + "  "
+           ),
+           EmbeddedStatementsNode(94...97)(
+             opening_loc: (94...96), statements: nil, closing_loc: (96...97)
+           ),
+           StringNode(97...98)(
+             opening_loc: nil,
+             content_loc: (97...98),
+             closing_loc: nil,
+             unescaped: "\n"
+           )],
+         closing_loc: (98...102)
        ),
-       StringNode(582...585)((582...583), (583...584), (584...585), "b")
-     ),
-     StringConcatNode(586...596)(
-       InterpolatedStringNode(586...592)(
-         (586...587),
-         [StringNode(587...588)(nil, (587...588), nil, "a"),
-          EmbeddedVariableNode(588...591)(
-            (588...589),
-            GlobalVariableReadNode(589...591)()
-          )],
-         (591...592)
+       InterpolatedStringNode(103...109)(
+         opening_loc: (103...109),
+         parts:
+          [StringNode(110...116)(
+             opening_loc: nil,
+             content_loc: (110...116),
+             closing_loc: nil,
+             unescaped: "a\n"
+           ),
+           EmbeddedStatementsNode(116...119)(
+             opening_loc: (116...118),
+             statements: nil,
+             closing_loc: (118...119)
+           ),
+           StringNode(119...120)(
+             opening_loc: nil,
+             content_loc: (119...120),
+             closing_loc: nil,
+             unescaped: "\n"
+           )],
+         closing_loc: (120...124)
        ),
-       StringNode(593...596)((593...594), (594...595), (595...596), "b")
-     ),
-     StringConcatNode(597...608)(
-       InterpolatedStringNode(597...604)(
-         (597...598),
-         [StringNode(598...599)(nil, (598...599), nil, "a"),
-          EmbeddedVariableNode(599...603)(
-            (599...600),
-            ClassVariableReadNode(600...603)(:@@a)
-          )],
-         (603...604)
+       InterpolatedStringNode(125...131)(
+         opening_loc: (125...131),
+         parts:
+          [StringNode(132...138)(
+             opening_loc: nil,
+             content_loc: (132...138),
+             closing_loc: nil,
+             unescaped: "a\n"
+           ),
+           EmbeddedStatementsNode(138...141)(
+             opening_loc: (138...140),
+             statements: nil,
+             closing_loc: (140...141)
+           ),
+           StringNode(141...146)(
+             opening_loc: nil,
+             content_loc: (141...146),
+             closing_loc: nil,
+             unescaped: "\n" + "b\n"
+           )],
+         closing_loc: (146...150)
        ),
-       StringNode(605...608)((605...606), (606...607), (607...608), "b")
-     )]
-  )
+       InterpolatedStringNode(151...157)(
+         opening_loc: (151...157),
+         parts:
+          [StringNode(158...168)(
+             opening_loc: nil,
+             content_loc: (158...168),
+             closing_loc: nil,
+             unescaped: "a\n" + "  b\n"
+           )],
+         closing_loc: (168...172)
+       ),
+       InterpolatedStringNode(173...180)(
+         opening_loc: (173...180),
+         parts:
+          [StringNode(181...186)(
+             opening_loc: nil,
+             content_loc: (181...186),
+             closing_loc: nil,
+             unescaped: "a\n" + "\n" + "b\n"
+           )],
+         closing_loc: (186...190)
+       ),
+       InterpolatedStringNode(191...198)(
+         opening_loc: (191...198),
+         parts:
+          [StringNode(199...206)(
+             opening_loc: nil,
+             content_loc: (199...206),
+             closing_loc: nil,
+             unescaped: " a\n" + "\n" + " b\n"
+           )],
+         closing_loc: (206...210)
+       ),
+       InterpolatedStringNode(211...218)(
+         opening_loc: (211...218),
+         parts:
+          [StringNode(219...225)(
+             opening_loc: nil,
+             content_loc: (219...225),
+             closing_loc: nil,
+             unescaped: " a\\nb\n"
+           )],
+         closing_loc: (225...229)
+       ),
+       InterpolatedStringNode(230...235)(
+         opening_loc: (230...235),
+         parts:
+          [EmbeddedStatementsNode(236...239)(
+             opening_loc: (236...238),
+             statements: nil,
+             closing_loc: (238...239)
+           ),
+           StringNode(239...242)(
+             opening_loc: nil,
+             content_loc: (239...242),
+             closing_loc: nil,
+             unescaped: "a\n" + " "
+           ),
+           EmbeddedStatementsNode(242...245)(
+             opening_loc: (242...244),
+             statements: nil,
+             closing_loc: (244...245)
+           ),
+           StringNode(245...247)(
+             opening_loc: nil,
+             content_loc: (245...247),
+             closing_loc: nil,
+             unescaped: "a\n"
+           )],
+         closing_loc: (247...251)
+       ),
+       InterpolatedStringNode(252...257)(
+         opening_loc: (252...257),
+         parts:
+          [StringNode(258...260)(
+             opening_loc: nil,
+             content_loc: (258...260),
+             closing_loc: nil,
+             unescaped: "  "
+           ),
+           EmbeddedStatementsNode(260...263)(
+             opening_loc: (260...262),
+             statements: nil,
+             closing_loc: (262...263)
+           ),
+           StringNode(263...271)(
+             opening_loc: nil,
+             content_loc: (263...271),
+             closing_loc: nil,
+             unescaped: "\n" + "  \#{}\n"
+           )],
+         closing_loc: (271...275)
+       ),
+       InterpolatedStringNode(276...281)(
+         opening_loc: (276...281),
+         parts:
+          [StringNode(282...284)(
+             opening_loc: nil,
+             content_loc: (282...284),
+             closing_loc: nil,
+             unescaped: " a"
+           ),
+           EmbeddedStatementsNode(284...287)(
+             opening_loc: (284...286),
+             statements: nil,
+             closing_loc: (286...287)
+           ),
+           StringNode(287...292)(
+             opening_loc: nil,
+             content_loc: (287...292),
+             closing_loc: nil,
+             unescaped: "b\n" + " c\n"
+           )],
+         closing_loc: (292...296)
+       ),
+       InterpolatedStringNode(297...303)(
+         opening_loc: (297...303),
+         parts:
+          [EmbeddedStatementsNode(306...309)(
+             opening_loc: (306...308),
+             statements: nil,
+             closing_loc: (308...309)
+           ),
+           StringNode(309...310)(
+             opening_loc: nil,
+             content_loc: (309...310),
+             closing_loc: nil,
+             unescaped: "\n"
+           )],
+         closing_loc: (310...314)
+       ),
+       IfNode(315...349)(
+         if_keyword_loc: (315...317),
+         predicate: TrueNode(318...322)(),
+         statements:
+          StatementsNode(325...331)(
+            body:
+             [InterpolatedStringNode(325...331)(
+                opening_loc: (325...331),
+                parts:
+                 [EmbeddedStatementsNode(336...339)(
+                    opening_loc: (336...338),
+                    statements: nil,
+                    closing_loc: (338...339)
+                  ),
+                  StringNode(339...340)(
+                    opening_loc: nil,
+                    content_loc: (339...340),
+                    closing_loc: nil,
+                    unescaped: "\n"
+                  )],
+                closing_loc: (340...346)
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (346...349)
+       ),
+       IfNode(351...386)(
+         if_keyword_loc: (351...353),
+         predicate: TrueNode(354...358)(),
+         statements:
+          StatementsNode(361...367)(
+            body:
+             [InterpolatedStringNode(361...367)(
+                opening_loc: (361...367),
+                parts:
+                 [StringNode(368...373)(
+                    opening_loc: nil,
+                    content_loc: (368...373),
+                    closing_loc: nil,
+                    unescaped: "b"
+                  ),
+                  EmbeddedStatementsNode(373...376)(
+                    opening_loc: (373...375),
+                    statements: nil,
+                    closing_loc: (375...376)
+                  ),
+                  StringNode(376...377)(
+                    opening_loc: nil,
+                    content_loc: (376...377),
+                    closing_loc: nil,
+                    unescaped: "\n"
+                  )],
+                closing_loc: (377...383)
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (383...386)
+       ),
+       IfNode(388...423)(
+         if_keyword_loc: (388...390),
+         predicate: TrueNode(391...395)(),
+         statements:
+          StatementsNode(398...404)(
+            body:
+             [InterpolatedStringNode(398...404)(
+                opening_loc: (398...404),
+                parts:
+                 [EmbeddedStatementsNode(409...412)(
+                    opening_loc: (409...411),
+                    statements: nil,
+                    closing_loc: (411...412)
+                  ),
+                  StringNode(412...414)(
+                    opening_loc: nil,
+                    content_loc: (412...414),
+                    closing_loc: nil,
+                    unescaped: "a\n"
+                  )],
+                closing_loc: (414...420)
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (420...423)
+       ),
+       IfNode(425...464)(
+         if_keyword_loc: (425...427),
+         predicate: TrueNode(428...432)(),
+         statements:
+          StatementsNode(435...443)(
+            body:
+             [InterpolatedStringNode(435...443)(
+                opening_loc: (435...443),
+                parts:
+                 [StringNode(444...455)(
+                    opening_loc: nil,
+                    content_loc: (444...455),
+                    closing_loc: nil,
+                    unescaped: "   a\n" + "\n" + "   b\n"
+                  )],
+                closing_loc: (455...461)
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (461...464)
+       ),
+       InterpolatedStringNode(466...472)(
+         opening_loc: (466...467),
+         parts:
+          [EmbeddedStatementsNode(467...470)(
+             opening_loc: (467...469),
+             statements: nil,
+             closing_loc: (469...470)
+           ),
+           StringNode(470...471)(
+             opening_loc: nil,
+             content_loc: (470...471),
+             closing_loc: nil,
+             unescaped: "a"
+           )],
+         closing_loc: (471...472)
+       ),
+       InterpolatedStringNode(474...486)(
+         opening_loc: (474...476),
+         parts:
+          [StringNode(476...479)(
+             opening_loc: nil,
+             content_loc: (476...479),
+             closing_loc: nil,
+             unescaped: "\n" + "\""
+           ),
+           EmbeddedStatementsNode(479...482)(
+             opening_loc: (479...481),
+             statements: nil,
+             closing_loc: (481...482)
+           ),
+           StringNode(482...485)(
+             opening_loc: nil,
+             content_loc: (482...485),
+             closing_loc: nil,
+             unescaped: "\"\n"
+           )],
+         closing_loc: (485...486)
+       ),
+       InterpolatedStringNode(488...502)(
+         opening_loc: (488...491),
+         parts:
+          [StringNode(491...495)(
+             opening_loc: nil,
+             content_loc: (491...495),
+             closing_loc: nil,
+             unescaped: "-\n" + "\""
+           ),
+           EmbeddedStatementsNode(495...498)(
+             opening_loc: (495...497),
+             statements: nil,
+             closing_loc: (497...498)
+           ),
+           StringNode(498...501)(
+             opening_loc: nil,
+             content_loc: (498...501),
+             closing_loc: nil,
+             unescaped: "\"\n"
+           )],
+         closing_loc: (501...502)
+       ),
+       InterpolatedStringNode(504...513)(
+         opening_loc: (504...505),
+         parts:
+          [StringNode(505...507)(
+             opening_loc: nil,
+             content_loc: (505...507),
+             closing_loc: nil,
+             unescaped: "a\n"
+           ),
+           EmbeddedStatementsNode(507...510)(
+             opening_loc: (507...509),
+             statements: nil,
+             closing_loc: (509...510)
+           ),
+           StringNode(510...512)(
+             opening_loc: nil,
+             content_loc: (510...512),
+             closing_loc: nil,
+             unescaped: "\n" + "b"
+           )],
+         closing_loc: (512...513)
+       ),
+       InterpolatedStringNode(515...525)(
+         opening_loc: (515...516),
+         parts:
+          [StringNode(516...519)(
+             opening_loc: nil,
+             content_loc: (516...519),
+             closing_loc: nil,
+             unescaped: "a\n"
+           ),
+           EmbeddedStatementsNode(519...522)(
+             opening_loc: (519...521),
+             statements: nil,
+             closing_loc: (521...522)
+           ),
+           StringNode(522...524)(
+             opening_loc: nil,
+             content_loc: (522...524),
+             closing_loc: nil,
+             unescaped: "\n" + "b"
+           )],
+         closing_loc: (524...525)
+       ),
+       InterpolatedStringNode(527...537)(
+         opening_loc: (527...528),
+         parts:
+          [StringNode(528...530)(
+             opening_loc: nil,
+             content_loc: (528...530),
+             closing_loc: nil,
+             unescaped: "a\n"
+           ),
+           EmbeddedStatementsNode(530...533)(
+             opening_loc: (530...532),
+             statements: nil,
+             closing_loc: (532...533)
+           ),
+           StringNode(533...536)(
+             opening_loc: nil,
+             content_loc: (533...536),
+             closing_loc: nil,
+             unescaped: "\n" + "b"
+           )],
+         closing_loc: (536...537)
+       ),
+       StringConcatNode(539...550)(
+         left:
+          StringNode(539...542)(
+            opening_loc: (539...540),
+            content_loc: (540...541),
+            closing_loc: (541...542),
+            unescaped: "a"
+          ),
+         right:
+          InterpolatedStringNode(545...550)(
+            opening_loc: (545...546),
+            parts:
+             [EmbeddedStatementsNode(546...549)(
+                opening_loc: (546...548),
+                statements: nil,
+                closing_loc: (548...549)
+              )],
+            closing_loc: (549...550)
+          )
+       ),
+       StringConcatNode(552...560)(
+         left:
+          StringConcatNode(552...557)(
+            left:
+             StringNode(552...554)(
+               opening_loc: (552...553),
+               content_loc: (553...553),
+               closing_loc: (553...554),
+               unescaped: ""
+             ),
+            right:
+             StringNode(555...557)(
+               opening_loc: (555...556),
+               content_loc: (556...556),
+               closing_loc: (556...557),
+               unescaped: ""
+             )
+          ),
+         right:
+          StringNode(558...560)(
+            opening_loc: (558...559),
+            content_loc: (559...559),
+            closing_loc: (559...560),
+            unescaped: ""
+          )
+       ),
+       StringConcatNode(562...574)(
+         left:
+          InterpolatedStringNode(562...570)(
+            opening_loc: (562...563),
+            parts:
+             [StringNode(563...564)(
+                opening_loc: nil,
+                content_loc: (563...564),
+                closing_loc: nil,
+                unescaped: "a"
+              ),
+              EmbeddedStatementsNode(564...569)(
+                opening_loc: (564...566),
+                statements:
+                 StatementsNode(566...568)(
+                   body: [InstanceVariableReadNode(566...568)(name: :@a)]
+                 ),
+                closing_loc: (568...569)
+              )],
+            closing_loc: (569...570)
+          ),
+         right:
+          StringNode(571...574)(
+            opening_loc: (571...572),
+            content_loc: (572...573),
+            closing_loc: (573...574),
+            unescaped: "b"
+          )
+       ),
+       StringConcatNode(575...585)(
+         left:
+          InterpolatedStringNode(575...581)(
+            opening_loc: (575...576),
+            parts:
+             [StringNode(576...577)(
+                opening_loc: nil,
+                content_loc: (576...577),
+                closing_loc: nil,
+                unescaped: "a"
+              ),
+              EmbeddedVariableNode(577...580)(
+                operator_loc: (577...578),
+                variable: InstanceVariableReadNode(578...580)(name: :@a)
+              )],
+            closing_loc: (580...581)
+          ),
+         right:
+          StringNode(582...585)(
+            opening_loc: (582...583),
+            content_loc: (583...584),
+            closing_loc: (584...585),
+            unescaped: "b"
+          )
+       ),
+       StringConcatNode(586...596)(
+         left:
+          InterpolatedStringNode(586...592)(
+            opening_loc: (586...587),
+            parts:
+             [StringNode(587...588)(
+                opening_loc: nil,
+                content_loc: (587...588),
+                closing_loc: nil,
+                unescaped: "a"
+              ),
+              EmbeddedVariableNode(588...591)(
+                operator_loc: (588...589),
+                variable: GlobalVariableReadNode(589...591)()
+              )],
+            closing_loc: (591...592)
+          ),
+         right:
+          StringNode(593...596)(
+            opening_loc: (593...594),
+            content_loc: (594...595),
+            closing_loc: (595...596),
+            unescaped: "b"
+          )
+       ),
+       StringConcatNode(597...608)(
+         left:
+          InterpolatedStringNode(597...604)(
+            opening_loc: (597...598),
+            parts:
+             [StringNode(598...599)(
+                opening_loc: nil,
+                content_loc: (598...599),
+                closing_loc: nil,
+                unescaped: "a"
+              ),
+              EmbeddedVariableNode(599...603)(
+                operator_loc: (599...600),
+                variable: ClassVariableReadNode(600...603)(name: :@@a)
+              )],
+            closing_loc: (603...604)
+          ),
+         right:
+          StringNode(605...608)(
+            opening_loc: (605...606),
+            content_loc: (606...607),
+            closing_loc: (607...608),
+            unescaped: "b"
+          )
+       )]
+   )
 )

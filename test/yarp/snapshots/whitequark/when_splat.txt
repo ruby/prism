@@ -1,60 +1,80 @@
 ProgramNode(0...43)(
-  [],
-  StatementsNode(0...43)(
-    [CaseNode(0...43)(
-       CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "foo"),
-       [WhenNode(10...27)(
-          (10...14),
-          [IntegerNode(15...16)(),
-           SplatNode(18...22)(
-             (18...19),
-             CallNode(19...22)(
-               nil,
-               nil,
-               (19...22),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "baz"
-             )
+  locals: [],
+  statements:
+   StatementsNode(0...43)(
+     body:
+      [CaseNode(0...43)(
+         predicate:
+          CallNode(5...8)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (5...8),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         conditions:
+          [WhenNode(10...27)(
+             keyword_loc: (10...14),
+             conditions:
+              [IntegerNode(15...16)(),
+               SplatNode(18...22)(
+                 operator_loc: (18...19),
+                 expression:
+                  CallNode(19...22)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (19...22),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "baz"
+                  )
+               )],
+             statements:
+              StatementsNode(24...27)(
+                body:
+                 [CallNode(24...27)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (24...27),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "bar"
+                  )]
+              )
+           ),
+           WhenNode(29...38)(
+             keyword_loc: (29...33),
+             conditions:
+              [SplatNode(34...38)(
+                 operator_loc: (34...35),
+                 expression:
+                  CallNode(35...38)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (35...38),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "foo"
+                  )
+               )],
+             statements: nil
            )],
-          StatementsNode(24...27)(
-            [CallNode(24...27)(
-               nil,
-               nil,
-               (24...27),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "bar"
-             )]
-          )
-        ),
-        WhenNode(29...38)(
-          (29...33),
-          [SplatNode(34...38)(
-             (34...35),
-             CallNode(35...38)(
-               nil,
-               nil,
-               (35...38),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "foo"
-             )
-           )],
-          nil
-        )],
-       nil,
-       (0...4),
-       (40...43)
-     )]
-  )
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (40...43)
+       )]
+   )
 )

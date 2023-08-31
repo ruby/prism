@@ -1,7 +1,18 @@
 ProgramNode(0...13)(
-  [],
-  StatementsNode(0...13)(
-    [ParenthesesNode(0...2)(nil, (0...1), (1...2)),
-     BeginNode(4...13)((4...9), nil, nil, nil, nil, (10...13))]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [ParenthesesNode(0...2)(
+         body: nil, opening_loc: (0...1), closing_loc: (1...2)
+       ),
+       BeginNode(4...13)(
+         begin_keyword_loc: (4...9),
+         statements: nil,
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (10...13)
+       )]
+   )
 )

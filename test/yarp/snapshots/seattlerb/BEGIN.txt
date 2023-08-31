@@ -1,11 +1,13 @@
 ProgramNode(0...12)(
-  [],
-  StatementsNode(0...12)(
-    [PreExecutionNode(0...12)(
-       StatementsNode(8...10)([IntegerNode(8...10)()]),
-       (0...5),
-       (6...7),
-       (11...12)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [PreExecutionNode(0...12)(
+         statements: StatementsNode(8...10)(body: [IntegerNode(8...10)()]),
+         keyword_loc: (0...5),
+         opening_loc: (6...7),
+         closing_loc: (11...12)
+       )]
+   )
 )

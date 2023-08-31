@@ -1,158 +1,199 @@
 ProgramNode(0...168)(
-  [],
-  StatementsNode(0...168)(
-    [BreakNode(0...5)(nil, (0...5)),
-     BreakNode(7...26)(
-       ArgumentsNode(13...26)(
-         [ParenthesesNode(13...16)(
-            StatementsNode(14...15)([IntegerNode(14...15)()]),
-            (13...14),
-            (15...16)
-          ),
-          ParenthesesNode(18...21)(
-            StatementsNode(19...20)([IntegerNode(19...20)()]),
-            (18...19),
-            (20...21)
-          ),
-          ParenthesesNode(23...26)(
-            StatementsNode(24...25)([IntegerNode(24...25)()]),
-            (23...24),
-            (25...26)
-          )]
-       ),
-       (7...12)
-     ),
-     BreakNode(28...35)(
-       ArgumentsNode(34...35)([IntegerNode(34...35)()]),
-       (28...33)
-     ),
-     BreakNode(37...50)(
-       ArgumentsNode(43...50)(
-         [IntegerNode(43...44)(),
-          IntegerNode(46...47)(),
-          IntegerNode(49...50)()]
-       ),
-       (37...42)
-     ),
-     BreakNode(52...65)(
-       ArgumentsNode(58...65)(
-         [IntegerNode(58...59)(),
-          IntegerNode(61...62)(),
-          IntegerNode(64...65)()]
-       ),
-       (52...57)
-     ),
-     BreakNode(67...82)(
-       ArgumentsNode(73...82)(
-         [ArrayNode(73...82)(
-            [IntegerNode(74...75)(),
-             IntegerNode(77...78)(),
-             IntegerNode(80...81)()],
-            (73...74),
-            (81...82)
-          )]
-       ),
-       (67...72)
-     ),
-     BreakNode(84...100)(
-       ArgumentsNode(89...100)(
-         [ParenthesesNode(89...100)(
-            StatementsNode(93...98)(
-              [IntegerNode(93...94)(), IntegerNode(97...98)()]
-            ),
-            (89...90),
-            (99...100)
-          )]
-       ),
-       (84...89)
-     ),
-     BreakNode(102...109)(
-       ArgumentsNode(107...109)(
-         [ParenthesesNode(107...109)(nil, (107...108), (108...109))]
-       ),
-       (102...107)
-     ),
-     BreakNode(111...119)(
-       ArgumentsNode(116...119)(
-         [ParenthesesNode(116...119)(
-            StatementsNode(117...118)([IntegerNode(117...118)()]),
-            (116...117),
-            (118...119)
-          )]
-       ),
-       (111...116)
-     ),
-     CallNode(121...143)(
-       CallNode(121...137)(
-         nil,
-         nil,
-         (121...124),
-         nil,
-         nil,
-         nil,
-         BlockNode(125...137)(
-           [],
-           nil,
-           StatementsNode(127...135)(
-             [BreakNode(127...135)(
-                ArgumentsNode(133...135)([IntegerNode(133...135)()]),
-                (127...132)
+  locals: [],
+  statements:
+   StatementsNode(0...168)(
+     body:
+      [BreakNode(0...5)(arguments: nil, keyword_loc: (0...5)),
+       BreakNode(7...26)(
+         arguments:
+          ArgumentsNode(13...26)(
+            arguments:
+             [ParenthesesNode(13...16)(
+                body: StatementsNode(14...15)(body: [IntegerNode(14...15)()]),
+                opening_loc: (13...14),
+                closing_loc: (15...16)
+              ),
+              ParenthesesNode(18...21)(
+                body: StatementsNode(19...20)(body: [IntegerNode(19...20)()]),
+                opening_loc: (18...19),
+                closing_loc: (20...21)
+              ),
+              ParenthesesNode(23...26)(
+                body: StatementsNode(24...25)(body: [IntegerNode(24...25)()]),
+                opening_loc: (23...24),
+                closing_loc: (25...26)
               )]
-           ),
-           (125...126),
-           (136...137)
-         ),
-         0,
-         "foo"
+          ),
+         keyword_loc: (7...12)
        ),
-       nil,
-       (138...140),
-       nil,
-       ArgumentsNode(141...143)([IntegerNode(141...143)()]),
-       nil,
-       nil,
-       0,
-       "=="
-     ),
-     CallNode(145...168)(
-       CallNode(145...162)(
-         nil,
-         nil,
-         (145...148),
-         nil,
-         nil,
-         nil,
-         BlockNode(149...162)(
-           [:a],
-           BlockParametersNode(151...154)(
-             ParametersNode(152...153)(
-               [RequiredParameterNode(152...153)(:a)],
-               [],
-               [],
-               nil,
-               [],
-               nil,
-               nil
+       BreakNode(28...35)(
+         arguments:
+          ArgumentsNode(34...35)(arguments: [IntegerNode(34...35)()]),
+         keyword_loc: (28...33)
+       ),
+       BreakNode(37...50)(
+         arguments:
+          ArgumentsNode(43...50)(
+            arguments:
+             [IntegerNode(43...44)(),
+              IntegerNode(46...47)(),
+              IntegerNode(49...50)()]
+          ),
+         keyword_loc: (37...42)
+       ),
+       BreakNode(52...65)(
+         arguments:
+          ArgumentsNode(58...65)(
+            arguments:
+             [IntegerNode(58...59)(),
+              IntegerNode(61...62)(),
+              IntegerNode(64...65)()]
+          ),
+         keyword_loc: (52...57)
+       ),
+       BreakNode(67...82)(
+         arguments:
+          ArgumentsNode(73...82)(
+            arguments:
+             [ArrayNode(73...82)(
+                elements:
+                 [IntegerNode(74...75)(),
+                  IntegerNode(77...78)(),
+                  IntegerNode(80...81)()],
+                opening_loc: (73...74),
+                closing_loc: (81...82)
+              )]
+          ),
+         keyword_loc: (67...72)
+       ),
+       BreakNode(84...100)(
+         arguments:
+          ArgumentsNode(89...100)(
+            arguments:
+             [ParenthesesNode(89...100)(
+                body:
+                 StatementsNode(93...98)(
+                   body: [IntegerNode(93...94)(), IntegerNode(97...98)()]
+                 ),
+                opening_loc: (89...90),
+                closing_loc: (99...100)
+              )]
+          ),
+         keyword_loc: (84...89)
+       ),
+       BreakNode(102...109)(
+         arguments:
+          ArgumentsNode(107...109)(
+            arguments:
+             [ParenthesesNode(107...109)(
+                body: nil, opening_loc: (107...108), closing_loc: (108...109)
+              )]
+          ),
+         keyword_loc: (102...107)
+       ),
+       BreakNode(111...119)(
+         arguments:
+          ArgumentsNode(116...119)(
+            arguments:
+             [ParenthesesNode(116...119)(
+                body:
+                 StatementsNode(117...118)(body: [IntegerNode(117...118)()]),
+                opening_loc: (116...117),
+                closing_loc: (118...119)
+              )]
+          ),
+         keyword_loc: (111...116)
+       ),
+       CallNode(121...143)(
+         receiver:
+          CallNode(121...137)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (121...124),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block:
+             BlockNode(125...137)(
+               locals: [],
+               parameters: nil,
+               body:
+                StatementsNode(127...135)(
+                  body:
+                   [BreakNode(127...135)(
+                      arguments:
+                       ArgumentsNode(133...135)(
+                         arguments: [IntegerNode(133...135)()]
+                       ),
+                      keyword_loc: (127...132)
+                    )]
+                ),
+               opening_loc: (125...126),
+               closing_loc: (136...137)
              ),
-             [],
-             (151...152),
-             (153...154)
-           ),
-           StatementsNode(155...160)([BreakNode(155...160)(nil, (155...160))]),
-           (149...150),
-           (161...162)
-         ),
-         0,
-         "foo"
+            flags: 0,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (138...140),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(141...143)(arguments: [IntegerNode(141...143)()]),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "=="
        ),
-       nil,
-       (163...165),
-       nil,
-       ArgumentsNode(166...168)([IntegerNode(166...168)()]),
-       nil,
-       nil,
-       0,
-       "=="
-     )]
-  )
+       CallNode(145...168)(
+         receiver:
+          CallNode(145...162)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (145...148),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block:
+             BlockNode(149...162)(
+               locals: [:a],
+               parameters:
+                BlockParametersNode(151...154)(
+                  parameters:
+                   ParametersNode(152...153)(
+                     requireds: [RequiredParameterNode(152...153)(name: :a)],
+                     optionals: [],
+                     posts: [],
+                     rest: nil,
+                     keywords: [],
+                     keyword_rest: nil,
+                     block: nil
+                   ),
+                  locals: [],
+                  opening_loc: (151...152),
+                  closing_loc: (153...154)
+                ),
+               body:
+                StatementsNode(155...160)(
+                  body:
+                   [BreakNode(155...160)(
+                      arguments: nil, keyword_loc: (155...160)
+                    )]
+                ),
+               opening_loc: (149...150),
+               closing_loc: (161...162)
+             ),
+            flags: 0,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (163...165),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(166...168)(arguments: [IntegerNode(166...168)()]),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "=="
+       )]
+   )
 )

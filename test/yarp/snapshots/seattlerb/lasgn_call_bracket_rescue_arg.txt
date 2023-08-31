@@ -1,26 +1,31 @@
 ProgramNode(0...17)(
-  [:a],
-  StatementsNode(0...17)(
-    [LocalVariableWriteNode(0...17)(
-       :a,
-       0,
-       RescueModifierNode(4...17)(
-         CallNode(4...8)(
-           nil,
-           nil,
-           (4...5),
-           (5...6),
-           ArgumentsNode(6...7)([IntegerNode(6...7)()]),
-           (7...8),
-           nil,
-           0,
-           "b"
-         ),
-         (9...15),
-         IntegerNode(16...17)()
-       ),
-       (0...1),
-       (2...3)
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [LocalVariableWriteNode(0...17)(
+         name: :a,
+         depth: 0,
+         value:
+          RescueModifierNode(4...17)(
+            expression:
+             CallNode(4...8)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (4...5),
+               opening_loc: (5...6),
+               arguments:
+                ArgumentsNode(6...7)(arguments: [IntegerNode(6...7)()]),
+               closing_loc: (7...8),
+               block: nil,
+               flags: 0,
+               name: "b"
+             ),
+            keyword_loc: (9...15),
+            rescue_expression: IntegerNode(16...17)()
+          ),
+         name_loc: (0...1),
+         operator_loc: (2...3)
+       )]
+   )
 )

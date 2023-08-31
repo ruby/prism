@@ -1,36 +1,63 @@
 ProgramNode(0...40)(
-  [],
-  StatementsNode(0...40)(
-    [CallNode(0...33)(
-       nil,
-       nil,
-       (0...4),
-       nil,
-       ArgumentsNode(5...33)(
-         [StringNode(5...33)(
-            (5...6),
-            (6...32),
-            (32...33),
-            "hello my dear friend"
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...40)(
+     body:
+      [CallNode(0...33)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...4),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(5...33)(
+            arguments:
+             [StringNode(5...33)(
+                opening_loc: (5...6),
+                content_loc: (6...32),
+                closing_loc: (32...33),
+                unescaped: "hello my dear friend"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "puts"
        ),
-       nil,
-       nil,
-       0,
-       "puts"
-     ),
-     CallNode(35...40)(
-       CallNode(35...36)(nil, nil, (35...36), nil, nil, nil, nil, 2, "a"),
-       nil,
-       (37...38),
-       nil,
-       ArgumentsNode(39...40)(
-         [CallNode(39...40)(nil, nil, (39...40), nil, nil, nil, nil, 2, "b")]
-       ),
-       nil,
-       nil,
-       0,
-       "+"
-     )]
-  )
+       CallNode(35...40)(
+         receiver:
+          CallNode(35...36)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (35...36),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "a"
+          ),
+         operator_loc: nil,
+         message_loc: (37...38),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(39...40)(
+            arguments:
+             [CallNode(39...40)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (39...40),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "b"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "+"
+       )]
+   )
 )

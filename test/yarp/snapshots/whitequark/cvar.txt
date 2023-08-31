@@ -1,4 +1,5 @@
 ProgramNode(0...5)(
-  [],
-  StatementsNode(0...5)([ClassVariableReadNode(0...5)(:@@foo)])
+  locals: [],
+  statements:
+   StatementsNode(0...5)(body: [ClassVariableReadNode(0...5)(name: :@@foo)])
 )

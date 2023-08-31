@@ -1,24 +1,44 @@
 ProgramNode(0...37)(
-  [],
-  StatementsNode(0...37)(
-    [HashNode(0...10)(
-       (0...1),
-       [AssocNode(2...8)(IntegerNode(2...3)(), IntegerNode(7...8)(), (4...6))],
-       (9...10)
-     ),
-     HashNode(12...37)(
-       (12...13),
-       [AssocNode(14...20)(
-          IntegerNode(14...15)(),
-          IntegerNode(19...20)(),
-          (16...18)
-        ),
-        AssocNode(22...35)(
-          SymbolNode(22...26)((22...23), (23...26), nil, "foo"),
-          StringNode(30...35)((30...31), (31...34), (34...35), "bar"),
-          (27...29)
-        )],
-       (36...37)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...37)(
+     body:
+      [HashNode(0...10)(
+         opening_loc: (0...1),
+         elements:
+          [AssocNode(2...8)(
+             key: IntegerNode(2...3)(),
+             value: IntegerNode(7...8)(),
+             operator_loc: (4...6)
+           )],
+         closing_loc: (9...10)
+       ),
+       HashNode(12...37)(
+         opening_loc: (12...13),
+         elements:
+          [AssocNode(14...20)(
+             key: IntegerNode(14...15)(),
+             value: IntegerNode(19...20)(),
+             operator_loc: (16...18)
+           ),
+           AssocNode(22...35)(
+             key:
+              SymbolNode(22...26)(
+                opening_loc: (22...23),
+                value_loc: (23...26),
+                closing_loc: nil,
+                unescaped: "foo"
+              ),
+             value:
+              StringNode(30...35)(
+                opening_loc: (30...31),
+                content_loc: (31...34),
+                closing_loc: (34...35),
+                unescaped: "bar"
+              ),
+             operator_loc: (27...29)
+           )],
+         closing_loc: (36...37)
+       )]
+   )
 )

@@ -1,34 +1,76 @@
 ProgramNode(0...43)(
-  [],
-  StatementsNode(0...43)(
-    [CaseNode(0...43)(
-       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
-       [InNode(8...39)(
-          HashPatternNode(11...29)(
-            nil,
-            [AssocNode(13...19)(
-               SymbolNode(13...15)(nil, (13...14), (14...15), "b"),
-               StringNode(16...19)((16...17), (17...18), (18...19), "c"),
-               nil
-             ),
-             AssocNode(21...27)(
-               SymbolNode(21...23)(nil, (21...22), (22...23), "d"),
-               StringNode(24...27)((24...25), (25...26), (26...27), "e"),
-               nil
-             )],
-            nil,
-            (11...12),
-            (28...29)
+  locals: [],
+  statements:
+   StatementsNode(0...43)(
+     body:
+      [CaseNode(0...43)(
+         predicate:
+          SymbolNode(5...7)(
+            opening_loc: (5...6),
+            value_loc: (6...7),
+            closing_loc: nil,
+            unescaped: "a"
           ),
-          StatementsNode(37...39)(
-            [SymbolNode(37...39)((37...38), (38...39), nil, "f")]
-          ),
-          (8...10),
-          (30...34)
-        )],
-       nil,
-       (0...4),
-       (40...43)
-     )]
-  )
+         conditions:
+          [InNode(8...39)(
+             pattern:
+              HashPatternNode(11...29)(
+                constant: nil,
+                assocs:
+                 [AssocNode(13...19)(
+                    key:
+                     SymbolNode(13...15)(
+                       opening_loc: nil,
+                       value_loc: (13...14),
+                       closing_loc: (14...15),
+                       unescaped: "b"
+                     ),
+                    value:
+                     StringNode(16...19)(
+                       opening_loc: (16...17),
+                       content_loc: (17...18),
+                       closing_loc: (18...19),
+                       unescaped: "c"
+                     ),
+                    operator_loc: nil
+                  ),
+                  AssocNode(21...27)(
+                    key:
+                     SymbolNode(21...23)(
+                       opening_loc: nil,
+                       value_loc: (21...22),
+                       closing_loc: (22...23),
+                       unescaped: "d"
+                     ),
+                    value:
+                     StringNode(24...27)(
+                       opening_loc: (24...25),
+                       content_loc: (25...26),
+                       closing_loc: (26...27),
+                       unescaped: "e"
+                     ),
+                    operator_loc: nil
+                  )],
+                kwrest: nil,
+                opening_loc: (11...12),
+                closing_loc: (28...29)
+              ),
+             statements:
+              StatementsNode(37...39)(
+                body:
+                 [SymbolNode(37...39)(
+                    opening_loc: (37...38),
+                    value_loc: (38...39),
+                    closing_loc: nil,
+                    unescaped: "f"
+                  )]
+              ),
+             in_loc: (8...10),
+             then_loc: (30...34)
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (40...43)
+       )]
+   )
 )

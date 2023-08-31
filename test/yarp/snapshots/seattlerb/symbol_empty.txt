@@ -1,4 +1,13 @@
 ProgramNode(0...3)(
-  [],
-  StatementsNode(0...3)([SymbolNode(0...3)((0...2), (2...2), (2...3), "")])
+  locals: [],
+  statements:
+   StatementsNode(0...3)(
+     body:
+      [SymbolNode(0...3)(
+         opening_loc: (0...2),
+         value_loc: (2...2),
+         closing_loc: (2...3),
+         unescaped: ""
+       )]
+   )
 )

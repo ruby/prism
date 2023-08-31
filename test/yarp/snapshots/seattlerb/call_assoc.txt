@@ -1,24 +1,29 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)(
-    [CallNode(0...7)(
-       nil,
-       nil,
-       (0...1),
-       (1...2),
-       ArgumentsNode(2...6)(
-         [KeywordHashNode(2...6)(
-            [AssocNode(2...6)(
-               IntegerNode(2...3)(),
-               IntegerNode(5...6)(),
-               (3...5)
-             )]
-          )]
-       ),
-       (6...7),
-       nil,
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [CallNode(0...7)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: (1...2),
+         arguments:
+          ArgumentsNode(2...6)(
+            arguments:
+             [KeywordHashNode(2...6)(
+                elements:
+                 [AssocNode(2...6)(
+                    key: IntegerNode(2...3)(),
+                    value: IntegerNode(5...6)(),
+                    operator_loc: (3...5)
+                  )]
+              )]
+          ),
+         closing_loc: (6...7),
+         block: nil,
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

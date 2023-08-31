@@ -1,10 +1,34 @@
 ProgramNode(0...15)(
-  [],
-  StatementsNode(0...15)(
-    [RescueModifierNode(0...15)(
-       CallNode(0...4)(nil, nil, (0...4), nil, nil, nil, nil, 2, "meth"),
-       (5...11),
-       CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 2, "bar")
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...15)(
+     body:
+      [RescueModifierNode(0...15)(
+         expression:
+          CallNode(0...4)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...4),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "meth"
+          ),
+         keyword_loc: (5...11),
+         rescue_expression:
+          CallNode(12...15)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (12...15),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "bar"
+          )
+       )]
+   )
 )

@@ -1,12 +1,14 @@
 ProgramNode(0...13)(
-  [],
-  StatementsNode(0...13)(
-    [StringNode(0...11)(
-       (0...1),
-       (1...10),
-       (10...11),
-       "\n" + "\n" + "\n" + "\n" + "#"
-     ),
-     IntegerNode(12...13)()]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [StringNode(0...11)(
+         opening_loc: (0...1),
+         content_loc: (1...10),
+         closing_loc: (10...11),
+         unescaped: "\n" + "\n" + "\n" + "\n" + "#"
+       ),
+       IntegerNode(12...13)()]
+   )
 )

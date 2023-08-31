@@ -1,9 +1,17 @@
 ProgramNode(0...13)(
-  [],
-  StatementsNode(0...13)(
-    [UndefNode(0...13)(
-       [SymbolNode(6...13)((6...9), (9...12), (12...13), "foo")],
-       (0...5)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...13)(
+     body:
+      [UndefNode(0...13)(
+         names:
+          [SymbolNode(6...13)(
+             opening_loc: (6...9),
+             value_loc: (9...12),
+             closing_loc: (12...13),
+             unescaped: "foo"
+           )],
+         keyword_loc: (0...5)
+       )]
+   )
 )

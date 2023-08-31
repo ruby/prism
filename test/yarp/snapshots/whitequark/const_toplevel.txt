@@ -1,6 +1,10 @@
 ProgramNode(0...5)(
-  [],
-  StatementsNode(0...5)(
-    [ConstantPathNode(0...5)(nil, ConstantReadNode(2...5)(), (0...2))]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...5)(
+     body:
+      [ConstantPathNode(0...5)(
+         parent: nil, child: ConstantReadNode(2...5)(), delimiter_loc: (0...2)
+       )]
+   )
 )

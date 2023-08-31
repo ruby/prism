@@ -1,45 +1,53 @@
 ProgramNode(0...19)(
-  [],
-  StatementsNode(0...19)(
-    [CallNode(0...19)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...19)(
-         [:k, :v, :i],
-         BlockParametersNode(4...17)(
-           ParametersNode(5...16)(
-             [RequiredDestructuredParameterNode(5...16)(
-                [RequiredDestructuredParameterNode(6...12)(
-                   [RequiredParameterNode(7...8)(:k),
-                    RequiredParameterNode(10...11)(:v)],
-                   (6...7),
-                   (11...12)
-                 ),
-                 RequiredParameterNode(14...15)(:i)],
-                (5...6),
-                (15...16)
-              )],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (4...5),
-           (16...17)
-         ),
-         nil,
-         (2...3),
-         (18...19)
-       ),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...19)(
+     body:
+      [CallNode(0...19)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...19)(
+            locals: [:k, :v, :i],
+            parameters:
+             BlockParametersNode(4...17)(
+               parameters:
+                ParametersNode(5...16)(
+                  requireds:
+                   [RequiredDestructuredParameterNode(5...16)(
+                      parameters:
+                       [RequiredDestructuredParameterNode(6...12)(
+                          parameters:
+                           [RequiredParameterNode(7...8)(name: :k),
+                            RequiredParameterNode(10...11)(name: :v)],
+                          opening_loc: (6...7),
+                          closing_loc: (11...12)
+                        ),
+                        RequiredParameterNode(14...15)(name: :i)],
+                      opening_loc: (5...6),
+                      closing_loc: (15...16)
+                    )],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (4...5),
+               closing_loc: (16...17)
+             ),
+            body: nil,
+            opening_loc: (2...3),
+            closing_loc: (18...19)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

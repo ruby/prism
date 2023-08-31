@@ -1,18 +1,38 @@
 ProgramNode(0...12)(
-  [],
-  StatementsNode(0...12)(
-    [CallNode(0...12)(
-       CallNode(0...4)(nil, nil, (0...4), nil, nil, nil, nil, 2, "_buf"),
-       nil,
-       (5...7),
-       nil,
-       ArgumentsNode(8...12)(
-         [StringNode(8...12)((8...9), (9...11), (11...12), ":\n")]
-       ),
-       nil,
-       nil,
-       0,
-       "<<"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [CallNode(0...12)(
+         receiver:
+          CallNode(0...4)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...4),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "_buf"
+          ),
+         operator_loc: nil,
+         message_loc: (5...7),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(8...12)(
+            arguments:
+             [StringNode(8...12)(
+                opening_loc: (8...9),
+                content_loc: (9...11),
+                closing_loc: (11...12),
+                unescaped: ":\n"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "<<"
+       )]
+   )
 )

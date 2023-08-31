@@ -1,10 +1,12 @@
 ProgramNode(0...7)(
-  [:n],
-  StatementsNode(0...7)(
-    [MatchRequiredNode(0...7)(
-       IntegerNode(0...2)(),
-       LocalVariableTargetNode(6...7)(:n, 0),
-       (3...5)
-     )]
-  )
+  locals: [:n],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [MatchRequiredNode(0...7)(
+         value: IntegerNode(0...2)(),
+         pattern: LocalVariableTargetNode(6...7)(name: :n, depth: 0),
+         operator_loc: (3...5)
+       )]
+   )
 )

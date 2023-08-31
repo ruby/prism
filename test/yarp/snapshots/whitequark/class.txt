@@ -1,25 +1,27 @@
 ProgramNode(0...29)(
-  [],
-  StatementsNode(0...29)(
-    [ClassNode(0...13)(
-       [],
-       (0...5),
-       ConstantReadNode(6...9)(),
-       nil,
-       nil,
-       nil,
-       (10...13),
-       "Foo"
-     ),
-     ClassNode(15...29)(
-       [],
-       (15...20),
-       ConstantReadNode(21...24)(),
-       nil,
-       nil,
-       nil,
-       (26...29),
-       "Foo"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...29)(
+     body:
+      [ClassNode(0...13)(
+         locals: [],
+         class_keyword_loc: (0...5),
+         constant_path: ConstantReadNode(6...9)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body: nil,
+         end_keyword_loc: (10...13),
+         name: "Foo"
+       ),
+       ClassNode(15...29)(
+         locals: [],
+         class_keyword_loc: (15...20),
+         constant_path: ConstantReadNode(21...24)(),
+         inheritance_operator_loc: nil,
+         superclass: nil,
+         body: nil,
+         end_keyword_loc: (26...29),
+         name: "Foo"
+       )]
+   )
 )

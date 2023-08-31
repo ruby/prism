@@ -1,16 +1,54 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [ArrayNode(0...28)(
-       [StringNode(3...7)(nil, (3...7), nil, "a\n" + "b"),
-        StringNode(8...9)(nil, (8...9), nil, "c"),
-        StringNode(10...11)(nil, (10...11), nil, "d"),
-        StringNode(12...16)(nil, (12...16), nil, "ef"),
-        StringNode(17...19)(nil, (17...19), nil, "gy"),
-        StringNode(20...23)(nil, (20...23), nil, "hy"),
-        StringNode(24...27)(nil, (24...27), nil, "iy")],
-       (0...3),
-       (27...28)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [ArrayNode(0...28)(
+         elements:
+          [StringNode(3...7)(
+             opening_loc: nil,
+             content_loc: (3...7),
+             closing_loc: nil,
+             unescaped: "a\n" + "b"
+           ),
+           StringNode(8...9)(
+             opening_loc: nil,
+             content_loc: (8...9),
+             closing_loc: nil,
+             unescaped: "c"
+           ),
+           StringNode(10...11)(
+             opening_loc: nil,
+             content_loc: (10...11),
+             closing_loc: nil,
+             unescaped: "d"
+           ),
+           StringNode(12...16)(
+             opening_loc: nil,
+             content_loc: (12...16),
+             closing_loc: nil,
+             unescaped: "ef"
+           ),
+           StringNode(17...19)(
+             opening_loc: nil,
+             content_loc: (17...19),
+             closing_loc: nil,
+             unescaped: "gy"
+           ),
+           StringNode(20...23)(
+             opening_loc: nil,
+             content_loc: (20...23),
+             closing_loc: nil,
+             unescaped: "hy"
+           ),
+           StringNode(24...27)(
+             opening_loc: nil,
+             content_loc: (24...27),
+             closing_loc: nil,
+             unescaped: "iy"
+           )],
+         opening_loc: (0...3),
+         closing_loc: (27...28)
+       )]
+   )
 )

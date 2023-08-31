@@ -1,28 +1,43 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [InterpolatedStringNode(0...26)(
-       (0...3),
-       [StringNode(3...11)(nil, (3...11), nil, "before ["),
-        EmbeddedStatementsNode(11...18)(
-          (11...13),
-          StatementsNode(13...17)(
-            [CallNode(13...17)(
-               nil,
-               nil,
-               (13...17),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "nest"
-             )]
-          ),
-          (17...18)
-        ),
-        StringNode(18...25)(nil, (18...25), nil, "] after")],
-       (25...26)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [InterpolatedStringNode(0...26)(
+         opening_loc: (0...3),
+         parts:
+          [StringNode(3...11)(
+             opening_loc: nil,
+             content_loc: (3...11),
+             closing_loc: nil,
+             unescaped: "before ["
+           ),
+           EmbeddedStatementsNode(11...18)(
+             opening_loc: (11...13),
+             statements:
+              StatementsNode(13...17)(
+                body:
+                 [CallNode(13...17)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (13...17),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "nest"
+                  )]
+              ),
+             closing_loc: (17...18)
+           ),
+           StringNode(18...25)(
+             opening_loc: nil,
+             content_loc: (18...25),
+             closing_loc: nil,
+             unescaped: "] after"
+           )],
+         closing_loc: (25...26)
+       )]
+   )
 )

@@ -1,59 +1,67 @@
 ProgramNode(0...31)(
-  [],
-  StatementsNode(0...31)(
-    [CallNode(0...14)(
-       nil,
-       nil,
-       (0...3),
-       nil,
-       ArgumentsNode(4...14)(
-         [CallNode(4...14)(
-            ParenthesesNode(4...10)(
-              StatementsNode(5...9)([FloatNode(5...9)()]),
-              (4...5),
-              (9...10)
-            ),
-            (10...11),
-            (11...14),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "abs"
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [CallNode(0...14)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(4...14)(
+            arguments:
+             [CallNode(4...14)(
+                receiver:
+                 ParenthesesNode(4...10)(
+                   body: StatementsNode(5...9)(body: [FloatNode(5...9)()]),
+                   opening_loc: (4...5),
+                   closing_loc: (9...10)
+                 ),
+                operator_loc: (10...11),
+                message_loc: (11...14),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "abs"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "foo"
        ),
-       nil,
-       nil,
-       0,
-       "foo"
-     ),
-     CallNode(16...31)(
-       nil,
-       nil,
-       (16...20),
-       nil,
-       ArgumentsNode(21...31)(
-         [CallNode(21...31)(
-            ParenthesesNode(21...27)(
-              StatementsNode(22...26)([FloatNode(22...26)()]),
-              (21...22),
-              (26...27)
-            ),
-            (27...28),
-            (28...31),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "abs"
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "meth"
-     )]
-  )
+       CallNode(16...31)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (16...20),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(21...31)(
+            arguments:
+             [CallNode(21...31)(
+                receiver:
+                 ParenthesesNode(21...27)(
+                   body: StatementsNode(22...26)(body: [FloatNode(22...26)()]),
+                   opening_loc: (21...22),
+                   closing_loc: (26...27)
+                 ),
+                operator_loc: (27...28),
+                message_loc: (28...31),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "abs"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "meth"
+       )]
+   )
 )

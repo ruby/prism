@@ -1,27 +1,39 @@
 ProgramNode(0...32)(
-  [:list],
-  StatementsNode(0...32)(
-    [CaseNode(0...32)(
-       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
-       [InNode(8...28)(
-          ArrayPatternNode(11...19)(
-            ConstantReadNode(11...12)(),
-            [],
-            SplatNode(13...18)(
-              (13...14),
-              LocalVariableTargetNode(14...18)(:list, 0)
-            ),
-            [],
-            (12...13),
-            (18...19)
+  locals: [:list],
+  statements:
+   StatementsNode(0...32)(
+     body:
+      [CaseNode(0...32)(
+         predicate:
+          SymbolNode(5...7)(
+            opening_loc: (5...6),
+            value_loc: (6...7),
+            closing_loc: nil,
+            unescaped: "a"
           ),
-          StatementsNode(25...28)([NilNode(25...28)()]),
-          (8...10),
-          (20...24)
-        )],
-       nil,
-       (0...4),
-       (29...32)
-     )]
-  )
+         conditions:
+          [InNode(8...28)(
+             pattern:
+              ArrayPatternNode(11...19)(
+                constant: ConstantReadNode(11...12)(),
+                requireds: [],
+                rest:
+                 SplatNode(13...18)(
+                   operator_loc: (13...14),
+                   expression:
+                    LocalVariableTargetNode(14...18)(name: :list, depth: 0)
+                 ),
+                posts: [],
+                opening_loc: (12...13),
+                closing_loc: (18...19)
+              ),
+             statements: StatementsNode(25...28)(body: [NilNode(25...28)()]),
+             in_loc: (8...10),
+             then_loc: (20...24)
+           )],
+         consequent: nil,
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (29...32)
+       )]
+   )
 )

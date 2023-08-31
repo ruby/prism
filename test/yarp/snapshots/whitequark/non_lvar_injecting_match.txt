@@ -1,28 +1,45 @@
 ProgramNode(0...28)(
-  [],
-  StatementsNode(0...28)(
-    [CallNode(0...28)(
-       InterpolatedRegularExpressionNode(0...19)(
-         (0...1),
-         [EmbeddedStatementsNode(1...5)(
-            (1...3),
-            StatementsNode(3...4)([IntegerNode(3...4)()]),
-            (4...5)
+  locals: [],
+  statements:
+   StatementsNode(0...28)(
+     body:
+      [CallNode(0...28)(
+         receiver:
+          InterpolatedRegularExpressionNode(0...19)(
+            opening_loc: (0...1),
+            parts:
+             [EmbeddedStatementsNode(1...5)(
+                opening_loc: (1...3),
+                statements:
+                 StatementsNode(3...4)(body: [IntegerNode(3...4)()]),
+                closing_loc: (4...5)
+              ),
+              StringNode(5...18)(
+                opening_loc: nil,
+                content_loc: (5...18),
+                closing_loc: nil,
+                unescaped: "(?<match>bar)"
+              )],
+            closing_loc: (18...19),
+            flags: 0
           ),
-          StringNode(5...18)(nil, (5...18), nil, "(?<match>bar)")],
-         (18...19),
-         0
-       ),
-       nil,
-       (20...22),
-       nil,
-       ArgumentsNode(23...28)(
-         [StringNode(23...28)((23...24), (24...27), (27...28), "bar")]
-       ),
-       nil,
-       nil,
-       0,
-       "=~"
-     )]
-  )
+         operator_loc: nil,
+         message_loc: (20...22),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(23...28)(
+            arguments:
+             [StringNode(23...28)(
+                opening_loc: (23...24),
+                content_loc: (24...27),
+                closing_loc: (27...28),
+                unescaped: "bar"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "=~"
+       )]
+   )
 )

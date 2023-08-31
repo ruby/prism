@@ -1,36 +1,42 @@
 ProgramNode(0...43)(
-  [],
-  StatementsNode(0...43)(
-    [DefNode(0...43)(
-       (4...15),
-       nil,
-       nil,
-       StatementsNode(18...43)(
-         [CallNode(18...43)(
-            nil,
-            nil,
-            (18...30),
-            nil,
-            ArgumentsNode(31...43)(
-              [RescueModifierNode(31...43)(
-                 IntegerNode(31...33)(),
-                 (34...40),
-                 IntegerNode(41...43)()
-               )]
-            ),
-            nil,
-            nil,
-            0,
-            "other_method"
-          )]
-       ),
-       [],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       (16...17),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...43)(
+     body:
+      [DefNode(0...43)(
+         name_loc: (4...15),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(18...43)(
+            body:
+             [CallNode(18...43)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (18...30),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(31...43)(
+                   arguments:
+                    [RescueModifierNode(31...43)(
+                       expression: IntegerNode(31...33)(),
+                       keyword_loc: (34...40),
+                       rescue_expression: IntegerNode(41...43)()
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "other_method"
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (16...17),
+         end_keyword_loc: nil
+       )]
+   )
 )

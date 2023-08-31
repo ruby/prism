@@ -1,47 +1,67 @@
 ProgramNode(0...76)(
-  [],
-  StatementsNode(0...76)(
-    [CallNode(0...76)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...76)(
-         [:v],
-         nil,
-         StatementsNode(7...72)(
-           [LocalVariableWriteNode(7...14)(
-              :v,
-              0,
-              NilNode(11...14)(),
-              (7...8),
-              (9...10)
-            ),
-            BeginNode(17...72)(
-              (17...22),
-              StatementsNode(27...32)(
-                [YieldNode(27...32)((27...32), nil, nil, nil)]
-              ),
-              RescueNode(35...66)(
-                (35...41),
-                [ConstantReadNode(42...51)()],
-                (52...54),
-                LocalVariableTargetNode(55...56)(:v, 0),
-                StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
-                nil
-              ),
-              nil,
-              nil,
-              (69...72)
-            )]
-         ),
-         (2...4),
-         (73...76)
-       ),
-       0,
-       "a"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...76)(
+     body:
+      [CallNode(0...76)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...76)(
+            locals: [:v],
+            parameters: nil,
+            body:
+             StatementsNode(7...72)(
+               body:
+                [LocalVariableWriteNode(7...14)(
+                   name: :v,
+                   depth: 0,
+                   value: NilNode(11...14)(),
+                   name_loc: (7...8),
+                   operator_loc: (9...10)
+                 ),
+                 BeginNode(17...72)(
+                   begin_keyword_loc: (17...22),
+                   statements:
+                    StatementsNode(27...32)(
+                      body:
+                       [YieldNode(27...32)(
+                          keyword_loc: (27...32),
+                          lparen_loc: nil,
+                          arguments: nil,
+                          rparen_loc: nil
+                        )]
+                    ),
+                   rescue_clause:
+                    RescueNode(35...66)(
+                      keyword_loc: (35...41),
+                      exceptions: [ConstantReadNode(42...51)()],
+                      operator_loc: (52...54),
+                      reference:
+                       LocalVariableTargetNode(55...56)(name: :v, depth: 0),
+                      statements:
+                       StatementsNode(61...66)(
+                         body:
+                          [BreakNode(61...66)(
+                             arguments: nil, keyword_loc: (61...66)
+                           )]
+                       ),
+                      consequent: nil
+                    ),
+                   else_clause: nil,
+                   ensure_clause: nil,
+                   end_keyword_loc: (69...72)
+                 )]
+             ),
+            opening_loc: (2...4),
+            closing_loc: (73...76)
+          ),
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

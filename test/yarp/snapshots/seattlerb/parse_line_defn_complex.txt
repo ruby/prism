@@ -1,50 +1,63 @@
 ProgramNode(0...40)(
-  [],
-  StatementsNode(0...40)(
-    [DefNode(0...40)(
-       (4...5),
-       nil,
-       ParametersNode(6...7)(
-         [RequiredParameterNode(6...7)(:y)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(11...35)(
-         [CallNode(11...15)(
-            nil,
-            nil,
-            (11...12),
-            (12...13),
-            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(:y, 0)]),
-            (14...15),
-            nil,
-            0,
-            "p"
+  locals: [],
+  statements:
+   StatementsNode(0...40)(
+     body:
+      [DefNode(0...40)(
+         name_loc: (4...5),
+         receiver: nil,
+         parameters:
+          ParametersNode(6...7)(
+            requireds: [RequiredParameterNode(6...7)(name: :y)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
           ),
-          LocalVariableOperatorWriteNode(18...24)(
-            (18...19),
-            (20...22),
-            IntegerNode(23...24)(),
-            :y,
-            :*,
-            0
+         body:
+          StatementsNode(11...35)(
+            body:
+             [CallNode(11...15)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (11...12),
+                opening_loc: (12...13),
+                arguments:
+                 ArgumentsNode(13...14)(
+                   arguments:
+                    [LocalVariableReadNode(13...14)(name: :y, depth: 0)]
+                 ),
+                closing_loc: (14...15),
+                block: nil,
+                flags: 0,
+                name: "p"
+              ),
+              LocalVariableOperatorWriteNode(18...24)(
+                name_loc: (18...19),
+                operator_loc: (20...22),
+                value: IntegerNode(23...24)(),
+                name: :y,
+                operator: :*,
+                depth: 0
+              ),
+              ReturnNode(27...35)(
+                keyword_loc: (27...33),
+                arguments:
+                 ArgumentsNode(34...35)(
+                   arguments:
+                    [LocalVariableReadNode(34...35)(name: :y, depth: 0)]
+                 )
+              )]
           ),
-          ReturnNode(27...35)(
-            (27...33),
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:y, 0)])
-          )]
-       ),
-       [:y],
-       (0...3),
-       nil,
-       (5...6),
-       (7...8),
-       nil,
-       (37...40)
-     )]
-  )
+         locals: [:y],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (5...6),
+         rparen_loc: (7...8),
+         equal_loc: nil,
+         end_keyword_loc: (37...40)
+       )]
+   )
 )

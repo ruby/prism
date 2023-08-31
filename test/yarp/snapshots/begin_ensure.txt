@@ -1,162 +1,303 @@
 ProgramNode(0...211)(
-  [],
-  StatementsNode(0...211)(
-    [BeginNode(0...20)(
-       (0...5),
-       StatementsNode(6...7)(
-         [CallNode(6...7)(nil, nil, (6...7), nil, nil, nil, nil, 2, "a")]
+  locals: [],
+  statements:
+   StatementsNode(0...211)(
+     body:
+      [BeginNode(0...20)(
+         begin_keyword_loc: (0...5),
+         statements:
+          StatementsNode(6...7)(
+            body:
+             [CallNode(6...7)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (6...7),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause:
+          EnsureNode(8...20)(
+            ensure_keyword_loc: (8...14),
+            statements:
+             StatementsNode(15...16)(
+               body:
+                [CallNode(15...16)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (15...16),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            end_keyword_loc: (17...20)
+          ),
+         end_keyword_loc: (17...20)
        ),
-       nil,
-       nil,
-       EnsureNode(8...20)(
-         (8...14),
-         StatementsNode(15...16)(
-           [CallNode(15...16)(nil, nil, (15...16), nil, nil, nil, nil, 2, "b")]
-         ),
-         (17...20)
+       BeginNode(22...46)(
+         begin_keyword_loc: (22...27),
+         statements:
+          StatementsNode(29...30)(
+            body:
+             [CallNode(29...30)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (29...30),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause:
+          EnsureNode(32...46)(
+            ensure_keyword_loc: (32...38),
+            statements:
+             StatementsNode(40...41)(
+               body:
+                [CallNode(40...41)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (40...41),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            end_keyword_loc: (43...46)
+          ),
+         end_keyword_loc: (43...46)
        ),
-       (17...20)
-     ),
-     BeginNode(22...46)(
-       (22...27),
-       StatementsNode(29...30)(
-         [CallNode(29...30)(nil, nil, (29...30), nil, nil, nil, nil, 2, "a")]
+       BeginNode(48...70)(
+         begin_keyword_loc: (48...53),
+         statements:
+          StatementsNode(54...55)(
+            body:
+             [CallNode(54...55)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (54...55),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause:
+          EnsureNode(57...70)(
+            ensure_keyword_loc: (57...63),
+            statements:
+             StatementsNode(64...65)(
+               body:
+                [CallNode(64...65)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (64...65),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            end_keyword_loc: (67...70)
+          ),
+         end_keyword_loc: (67...70)
        ),
-       nil,
-       nil,
-       EnsureNode(32...46)(
-         (32...38),
-         StatementsNode(40...41)(
-           [CallNode(40...41)(nil, nil, (40...41), nil, nil, nil, nil, 2, "b")]
-         ),
-         (43...46)
+       BeginNode(72...94)(
+         begin_keyword_loc: (72...77),
+         statements:
+          StatementsNode(78...79)(
+            body:
+             [CallNode(78...79)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (78...79),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause:
+          EnsureNode(81...94)(
+            ensure_keyword_loc: (81...87),
+            statements:
+             StatementsNode(88...89)(
+               body:
+                [CallNode(88...89)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (88...89),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )]
+             ),
+            end_keyword_loc: (91...94)
+          ),
+         end_keyword_loc: (91...94)
        ),
-       (43...46)
-     ),
-     BeginNode(48...70)(
-       (48...53),
-       StatementsNode(54...55)(
-         [CallNode(54...55)(nil, nil, (54...55), nil, nil, nil, nil, 2, "a")]
-       ),
-       nil,
-       nil,
-       EnsureNode(57...70)(
-         (57...63),
-         StatementsNode(64...65)(
-           [CallNode(64...65)(nil, nil, (64...65), nil, nil, nil, nil, 2, "b")]
-         ),
-         (67...70)
-       ),
-       (67...70)
-     ),
-     BeginNode(72...94)(
-       (72...77),
-       StatementsNode(78...79)(
-         [CallNode(78...79)(nil, nil, (78...79), nil, nil, nil, nil, 2, "a")]
-       ),
-       nil,
-       nil,
-       EnsureNode(81...94)(
-         (81...87),
-         StatementsNode(88...89)(
-           [CallNode(88...89)(nil, nil, (88...89), nil, nil, nil, nil, 2, "b")]
-         ),
-         (91...94)
-       ),
-       (91...94)
-     ),
-     BeginNode(96...211)(
-       (96...101),
-       StatementsNode(102...207)(
-         [BeginNode(102...207)(
-            (102...107),
-            StatementsNode(107...203)(
-              [CallNode(107...203)(
-                 SymbolNode(107...109)((107...108), (108...109), nil, "s"),
-                 (109...110),
-                 (110...111),
-                 nil,
-                 ArgumentsNode(112...203)(
-                   [BeginNode(112...203)(
-                      (112...117),
-                      nil,
-                      nil,
-                      nil,
-                      EnsureNode(118...203)(
-                        (118...124),
-                        StatementsNode(125...199)(
-                          [CallNode(125...199)(
-                             ConstantReadNode(125...131)(),
-                             (131...132),
-                             (132...135),
-                             nil,
-                             nil,
-                             nil,
-                             BlockNode(136...199)(
-                               [],
-                               nil,
-                               StatementsNode(141...195)(
-                                 [BeginNode(141...195)(
-                                    (141...146),
-                                    StatementsNode(151...156)(
-                                      [BreakNode(151...156)(nil, (151...156))]
-                                    ),
-                                    nil,
-                                    nil,
-                                    EnsureNode(161...195)(
-                                      (161...167),
-                                      StatementsNode(168...189)(
-                                        [CallNode(168...189)(
-                                           ConstantReadNode(168...174)(),
-                                           (174...175),
-                                           (175...178),
-                                           nil,
-                                           nil,
-                                           nil,
-                                           BlockNode(179...189)(
-                                             [],
-                                             nil,
-                                             nil,
-                                             (179...181),
-                                             (186...189)
-                                           ),
-                                           0,
-                                           "new"
-                                         )]
-                                      ),
-                                      (192...195)
-                                    ),
-                                    (192...195)
-                                  )]
-                               ),
-                               (136...138),
-                               (196...199)
-                             ),
-                             0,
-                             "new"
-                           )]
+       BeginNode(96...211)(
+         begin_keyword_loc: (96...101),
+         statements:
+          StatementsNode(102...207)(
+            body:
+             [BeginNode(102...207)(
+                begin_keyword_loc: (102...107),
+                statements:
+                 StatementsNode(107...203)(
+                   body:
+                    [CallNode(107...203)(
+                       receiver:
+                        SymbolNode(107...109)(
+                          opening_loc: (107...108),
+                          value_loc: (108...109),
+                          closing_loc: nil,
+                          unescaped: "s"
                         ),
-                        (200...203)
-                      ),
-                      (200...203)
-                    )]
+                       operator_loc: (109...110),
+                       message_loc: (110...111),
+                       opening_loc: nil,
+                       arguments:
+                        ArgumentsNode(112...203)(
+                          arguments:
+                           [BeginNode(112...203)(
+                              begin_keyword_loc: (112...117),
+                              statements: nil,
+                              rescue_clause: nil,
+                              else_clause: nil,
+                              ensure_clause:
+                               EnsureNode(118...203)(
+                                 ensure_keyword_loc: (118...124),
+                                 statements:
+                                  StatementsNode(125...199)(
+                                    body:
+                                     [CallNode(125...199)(
+                                        receiver:
+                                         ConstantReadNode(125...131)(),
+                                        operator_loc: (131...132),
+                                        message_loc: (132...135),
+                                        opening_loc: nil,
+                                        arguments: nil,
+                                        closing_loc: nil,
+                                        block:
+                                         BlockNode(136...199)(
+                                           locals: [],
+                                           parameters: nil,
+                                           body:
+                                            StatementsNode(141...195)(
+                                              body:
+                                               [BeginNode(141...195)(
+                                                  begin_keyword_loc:
+                                                   (141...146),
+                                                  statements:
+                                                   StatementsNode(151...156)(
+                                                     body:
+                                                      [BreakNode(151...156)(
+                                                         arguments: nil,
+                                                         keyword_loc:
+                                                          (151...156)
+                                                       )]
+                                                   ),
+                                                  rescue_clause: nil,
+                                                  else_clause: nil,
+                                                  ensure_clause:
+                                                   EnsureNode(161...195)(
+                                                     ensure_keyword_loc:
+                                                      (161...167),
+                                                     statements:
+                                                      StatementsNode(168...189)(
+                                                        body:
+                                                         [CallNode(168...189)(
+                                                            receiver:
+                                                             ConstantReadNode(168...174)(
+                                                               
+                                                             ),
+                                                            operator_loc:
+                                                             (174...175),
+                                                            message_loc:
+                                                             (175...178),
+                                                            opening_loc: nil,
+                                                            arguments: nil,
+                                                            closing_loc: nil,
+                                                            block:
+                                                             BlockNode(179...189)(
+                                                               locals: [],
+                                                               parameters: nil,
+                                                               body: nil,
+                                                               opening_loc:
+                                                                (179...181),
+                                                               closing_loc:
+                                                                (186...189)
+                                                             ),
+                                                            flags: 0,
+                                                            name: "new"
+                                                          )]
+                                                      ),
+                                                     end_keyword_loc:
+                                                      (192...195)
+                                                   ),
+                                                  end_keyword_loc: (192...195)
+                                                )]
+                                            ),
+                                           opening_loc: (136...138),
+                                           closing_loc: (196...199)
+                                         ),
+                                        flags: 0,
+                                        name: "new"
+                                      )]
+                                  ),
+                                 end_keyword_loc: (200...203)
+                               ),
+                              end_keyword_loc: (200...203)
+                            )]
+                        ),
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 0,
+                       name: "l"
+                     )]
                  ),
-                 nil,
-                 nil,
-                 0,
-                 "l"
-               )]
-            ),
-            nil,
-            nil,
-            nil,
-            (204...207)
-          )]
-       ),
-       nil,
-       nil,
-       nil,
-       (208...211)
-     )]
-  )
+                rescue_clause: nil,
+                else_clause: nil,
+                ensure_clause: nil,
+                end_keyword_loc: (204...207)
+              )]
+          ),
+         rescue_clause: nil,
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (208...211)
+       )]
+   )
 )

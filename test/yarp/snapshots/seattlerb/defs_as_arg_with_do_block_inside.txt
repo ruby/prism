@@ -1,52 +1,66 @@
 ProgramNode(0...30)(
-  [],
-  StatementsNode(0...30)(
-    [CallNode(0...30)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...30)(
-         [DefNode(2...30)(
-            (11...12),
-            SelfNode(6...10)(),
-            nil,
-            StatementsNode(14...25)(
-              [CallNode(14...25)(
-                 CallNode(14...15)(
-                   nil,
-                   nil,
-                   (14...15),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "x"
+  locals: [],
+  statements:
+   StatementsNode(0...30)(
+     body:
+      [CallNode(0...30)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...30)(
+            arguments:
+             [DefNode(2...30)(
+                name_loc: (11...12),
+                receiver: SelfNode(6...10)(),
+                parameters: nil,
+                body:
+                 StatementsNode(14...25)(
+                   body:
+                    [CallNode(14...25)(
+                       receiver:
+                        CallNode(14...15)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (14...15),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "x"
+                        ),
+                       operator_loc: (15...16),
+                       message_loc: (16...17),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block:
+                        BlockNode(18...25)(
+                          locals: [],
+                          parameters: nil,
+                          body: nil,
+                          opening_loc: (18...20),
+                          closing_loc: (22...25)
+                        ),
+                       flags: 0,
+                       name: "y"
+                     )]
                  ),
-                 (15...16),
-                 (16...17),
-                 nil,
-                 nil,
-                 nil,
-                 BlockNode(18...25)([], nil, nil, (18...20), (22...25)),
-                 0,
-                 "y"
-               )]
-            ),
-            [],
-            (2...5),
-            (10...11),
-            nil,
-            nil,
-            nil,
-            (27...30)
-          )]
-       ),
-       nil,
-       nil,
-       0,
-       "p"
-     )]
-  )
+                locals: [],
+                def_keyword_loc: (2...5),
+                operator_loc: (10...11),
+                lparen_loc: nil,
+                rparen_loc: nil,
+                equal_loc: nil,
+                end_keyword_loc: (27...30)
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "p"
+       )]
+   )
 )

@@ -1,4 +1,10 @@
 ProgramNode(0...4)(
-  [],
-  StatementsNode(0...4)([ArrayNode(0...4)([], (0...3), (3...4))])
+  locals: [],
+  statements:
+   StatementsNode(0...4)(
+     body:
+      [ArrayNode(0...4)(
+         elements: [], opening_loc: (0...3), closing_loc: (3...4)
+       )]
+   )
 )

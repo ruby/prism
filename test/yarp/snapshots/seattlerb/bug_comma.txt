@@ -1,35 +1,45 @@
 ProgramNode(0...24)(
-  [],
-  StatementsNode(0...24)(
-    [IfNode(0...24)(
-       (0...2),
-       CallNode(3...15)(
-         nil,
-         nil,
-         (3...7),
-         nil,
-         ArgumentsNode(8...15)(
-           [StringNode(8...10)((8...9), (9...10), nil, "d"),
-            CallNode(12...15)(
-              nil,
-              nil,
-              (12...15),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "dir"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "test"
-       ),
-       nil,
-       nil,
-       (21...24)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...24)(
+     body:
+      [IfNode(0...24)(
+         if_keyword_loc: (0...2),
+         predicate:
+          CallNode(3...15)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (3...7),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(8...15)(
+               arguments:
+                [StringNode(8...10)(
+                   opening_loc: (8...9),
+                   content_loc: (9...10),
+                   closing_loc: nil,
+                   unescaped: "d"
+                 ),
+                 CallNode(12...15)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (12...15),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "dir"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "test"
+          ),
+         statements: nil,
+         consequent: nil,
+         end_keyword_loc: (21...24)
+       )]
+   )
 )

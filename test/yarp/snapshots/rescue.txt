@@ -1,306 +1,391 @@
 ProgramNode(0...316)(
-  [:a],
-  StatementsNode(0...316)(
-    [RescueModifierNode(0...14)(
-       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-       (4...10),
-       NilNode(11...14)()
-     ),
-     RescueModifierNode(16...30)(
-       CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 2, "foo"),
-       (20...26),
-       NilNode(27...30)()
-     ),
-     RescueModifierNode(32...48)(
-       BreakNode(32...37)(nil, (32...37)),
-       (38...44),
-       NilNode(45...48)()
-     ),
-     RescueModifierNode(50...65)(
-       NextNode(50...54)(nil, (50...54)),
-       (55...61),
-       NilNode(62...65)()
-     ),
-     RescueModifierNode(67...84)(
-       ReturnNode(67...73)((67...73), nil),
-       (74...80),
-       NilNode(81...84)()
-     ),
-     RescueModifierNode(86...105)(
-       CallNode(86...89)(nil, nil, (86...89), nil, nil, nil, nil, 2, "foo"),
-       (90...96),
-       OrNode(97...105)(
-         NilNode(97...100)(),
-         IntegerNode(104...105)(),
-         (101...103)
-       )
-     ),
-     RescueModifierNode(107...129)(
-       CallNode(107...110)(
-         nil,
-         nil,
-         (107...110),
-         nil,
-         nil,
-         nil,
-         nil,
-         2,
-         "foo"
+  locals: [:a],
+  statements:
+   StatementsNode(0...316)(
+     body:
+      [RescueModifierNode(0...14)(
+         expression:
+          CallNode(0...3)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...3),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         keyword_loc: (4...10),
+         rescue_expression: NilNode(11...14)()
        ),
-       (111...117),
-       IfNode(118...129)(
-         nil,
-         NilNode(118...121)(),
-         StatementsNode(124...125)([IntegerNode(124...125)()]),
-         ElseNode(126...129)(
-           (126...127),
-           StatementsNode(128...129)([IntegerNode(128...129)()]),
-           nil
-         ),
-         nil
-       )
-     ),
-     BeginNode(131...155)(
-       (131...136),
-       StatementsNode(138...139)(
-         [CallNode(138...139)(
-            nil,
-            nil,
-            (138...139),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "a"
-          )]
+       RescueModifierNode(16...30)(
+         expression:
+          CallNode(16...19)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (16...19),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         keyword_loc: (20...26),
+         rescue_expression: NilNode(27...30)()
        ),
-       RescueNode(141...150)(
-         (141...147),
-         [SplatNode(148...150)(
-            (148...149),
-            CallNode(149...150)(
-              nil,
-              nil,
-              (149...150),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "b"
-            )
-          )],
-         nil,
-         nil,
-         nil,
-         nil
+       RescueModifierNode(32...48)(
+         expression:
+          BreakNode(32...37)(arguments: nil, keyword_loc: (32...37)),
+         keyword_loc: (38...44),
+         rescue_expression: NilNode(45...48)()
        ),
-       nil,
-       nil,
-       (152...155)
-     ),
-     CallNode(157...212)(
-       nil,
-       nil,
-       (157...160),
-       nil,
-       nil,
-       nil,
-       BlockNode(161...212)(
-         [:x],
-         BlockParametersNode(164...167)(
-           ParametersNode(165...166)(
-             [RequiredParameterNode(165...166)(:x)],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (164...165),
-           (166...167)
-         ),
-         StatementsNode(170...208)(
-           [RescueModifierNode(170...208)(
-              CallNode(170...176)(
-                nil,
-                nil,
-                (170...173),
-                (173...174),
-                ArgumentsNode(174...175)(
-                  [CallNode(174...175)(
-                     nil,
-                     nil,
-                     (174...175),
-                     nil,
-                     nil,
-                     nil,
-                     nil,
-                     2,
-                     "y"
-                   )]
+       RescueModifierNode(50...65)(
+         expression: NextNode(50...54)(arguments: nil, keyword_loc: (50...54)),
+         keyword_loc: (55...61),
+         rescue_expression: NilNode(62...65)()
+       ),
+       RescueModifierNode(67...84)(
+         expression:
+          ReturnNode(67...73)(keyword_loc: (67...73), arguments: nil),
+         keyword_loc: (74...80),
+         rescue_expression: NilNode(81...84)()
+       ),
+       RescueModifierNode(86...105)(
+         expression:
+          CallNode(86...89)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (86...89),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         keyword_loc: (90...96),
+         rescue_expression:
+          OrNode(97...105)(
+            left: NilNode(97...100)(),
+            right: IntegerNode(104...105)(),
+            operator_loc: (101...103)
+          )
+       ),
+       RescueModifierNode(107...129)(
+         expression:
+          CallNode(107...110)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (107...110),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         keyword_loc: (111...117),
+         rescue_expression:
+          IfNode(118...129)(
+            if_keyword_loc: nil,
+            predicate: NilNode(118...121)(),
+            statements:
+             StatementsNode(124...125)(body: [IntegerNode(124...125)()]),
+            consequent:
+             ElseNode(126...129)(
+               else_keyword_loc: (126...127),
+               statements:
+                StatementsNode(128...129)(body: [IntegerNode(128...129)()]),
+               end_keyword_loc: nil
+             ),
+            end_keyword_loc: nil
+          )
+       ),
+       BeginNode(131...155)(
+         begin_keyword_loc: (131...136),
+         statements:
+          StatementsNode(138...139)(
+            body:
+             [CallNode(138...139)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (138...139),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "a"
+              )]
+          ),
+         rescue_clause:
+          RescueNode(141...150)(
+            keyword_loc: (141...147),
+            exceptions:
+             [SplatNode(148...150)(
+                operator_loc: (148...149),
+                expression:
+                 CallNode(149...150)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (149...150),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "b"
+                 )
+              )],
+            operator_loc: nil,
+            reference: nil,
+            statements: nil,
+            consequent: nil
+          ),
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (152...155)
+       ),
+       CallNode(157...212)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (157...160),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(161...212)(
+            locals: [:x],
+            parameters:
+             BlockParametersNode(164...167)(
+               parameters:
+                ParametersNode(165...166)(
+                  requireds: [RequiredParameterNode(165...166)(name: :x)],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
                 ),
-                (175...176),
-                nil,
-                0,
-                "bar"
-              ),
-              (177...183),
-              CallNode(184...208)(
-                nil,
-                nil,
-                (184...197),
-                nil,
-                ArgumentsNode(198...208)(
-                  [CallNode(198...208)(
-                     nil,
-                     nil,
-                     (198...202),
-                     nil,
-                     ArgumentsNode(203...208)(
-                       [StringNode(203...208)(
-                          (203...204),
-                          (204...207),
-                          (207...208),
-                          "baz"
-                        )]
-                     ),
-                     nil,
-                     nil,
-                     0,
-                     "fail"
-                   )]
-                ),
-                nil,
-                nil,
-                0,
-                "ArgumentError"
-              )
-            )]
-         ),
-         (161...163),
-         (209...212)
-       ),
-       0,
-       "foo"
-     ),
-     IfNode(214...245)(
-       (214...216),
-       LocalVariableWriteNode(217...235)(
-         :a,
-         0,
-         RescueModifierNode(221...235)(
-           CallNode(221...224)(
-             nil,
-             nil,
-             (221...224),
-             nil,
-             nil,
-             nil,
-             nil,
-             2,
-             "foo"
-           ),
-           (225...231),
-           NilNode(232...235)()
-         ),
-         (217...218),
-         (219...220)
-       ),
-       StatementsNode(238...241)(
-         [CallNode(238...241)(
-            nil,
-            nil,
-            (238...241),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "bar"
-          )]
-       ),
-       nil,
-       (242...245)
-     ),
-     DefNode(247...291)(
-       (251...262),
-       nil,
-       nil,
-       StatementsNode(265...291)(
-         [CallNode(265...291)(
-            nil,
-            nil,
-            (265...277),
-            nil,
-            ArgumentsNode(278...291)(
-              [RescueModifierNode(278...291)(
-                 IntegerNode(278...280)(),
-                 (281...287),
-                 NilNode(288...291)()
-               )]
-            ),
-            nil,
-            nil,
-            0,
-            "other_method"
-          )]
-       ),
-       [],
-       (247...250),
-       nil,
-       nil,
-       nil,
-       (263...264),
-       nil
-     ),
-     DefNode(293...316)(
-       (297...298),
-       nil,
-       nil,
-       BeginNode(301...316)(
-         nil,
-         StatementsNode(301...305)(
-           [CallNode(301...305)(
-              nil,
-              nil,
-              (301...302),
-              nil,
-              ArgumentsNode(303...305)(
-                [KeywordHashNode(303...305)(
-                   [AssocNode(303...305)(
-                      SymbolNode(303...305)(
-                        nil,
-                        (303...304),
-                        (304...305),
-                        "b"
-                      ),
-                      nil,
-                      nil
-                    )]
+               locals: [],
+               opening_loc: (164...165),
+               closing_loc: (166...167)
+             ),
+            body:
+             StatementsNode(170...208)(
+               body:
+                [RescueModifierNode(170...208)(
+                   expression:
+                    CallNode(170...176)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (170...173),
+                      opening_loc: (173...174),
+                      arguments:
+                       ArgumentsNode(174...175)(
+                         arguments:
+                          [CallNode(174...175)(
+                             receiver: nil,
+                             operator_loc: nil,
+                             message_loc: (174...175),
+                             opening_loc: nil,
+                             arguments: nil,
+                             closing_loc: nil,
+                             block: nil,
+                             flags: 2,
+                             name: "y"
+                           )]
+                       ),
+                      closing_loc: (175...176),
+                      block: nil,
+                      flags: 0,
+                      name: "bar"
+                    ),
+                   keyword_loc: (177...183),
+                   rescue_expression:
+                    CallNode(184...208)(
+                      receiver: nil,
+                      operator_loc: nil,
+                      message_loc: (184...197),
+                      opening_loc: nil,
+                      arguments:
+                       ArgumentsNode(198...208)(
+                         arguments:
+                          [CallNode(198...208)(
+                             receiver: nil,
+                             operator_loc: nil,
+                             message_loc: (198...202),
+                             opening_loc: nil,
+                             arguments:
+                              ArgumentsNode(203...208)(
+                                arguments:
+                                 [StringNode(203...208)(
+                                    opening_loc: (203...204),
+                                    content_loc: (204...207),
+                                    closing_loc: (207...208),
+                                    unescaped: "baz"
+                                  )]
+                              ),
+                             closing_loc: nil,
+                             block: nil,
+                             flags: 0,
+                             name: "fail"
+                           )]
+                       ),
+                      closing_loc: nil,
+                      block: nil,
+                      flags: 0,
+                      name: "ArgumentError"
+                    )
                  )]
-              ),
-              nil,
-              nil,
-              0,
-              "a"
-            )]
-         ),
-         RescueNode(306...312)((306...312), [], nil, nil, nil, nil),
-         nil,
-         nil,
-         (313...316)
+             ),
+            opening_loc: (161...163),
+            closing_loc: (209...212)
+          ),
+         flags: 0,
+         name: "foo"
        ),
-       [],
-       (293...296),
-       nil,
-       nil,
-       nil,
-       nil,
-       (313...316)
-     )]
-  )
+       IfNode(214...245)(
+         if_keyword_loc: (214...216),
+         predicate:
+          LocalVariableWriteNode(217...235)(
+            name: :a,
+            depth: 0,
+            value:
+             RescueModifierNode(221...235)(
+               expression:
+                CallNode(221...224)(
+                  receiver: nil,
+                  operator_loc: nil,
+                  message_loc: (221...224),
+                  opening_loc: nil,
+                  arguments: nil,
+                  closing_loc: nil,
+                  block: nil,
+                  flags: 2,
+                  name: "foo"
+                ),
+               keyword_loc: (225...231),
+               rescue_expression: NilNode(232...235)()
+             ),
+            name_loc: (217...218),
+            operator_loc: (219...220)
+          ),
+         statements:
+          StatementsNode(238...241)(
+            body:
+             [CallNode(238...241)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (238...241),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: (242...245)
+       ),
+       DefNode(247...291)(
+         name_loc: (251...262),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(265...291)(
+            body:
+             [CallNode(265...291)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (265...277),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(278...291)(
+                   arguments:
+                    [RescueModifierNode(278...291)(
+                       expression: IntegerNode(278...280)(),
+                       keyword_loc: (281...287),
+                       rescue_expression: NilNode(288...291)()
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "other_method"
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (247...250),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (263...264),
+         end_keyword_loc: nil
+       ),
+       DefNode(293...316)(
+         name_loc: (297...298),
+         receiver: nil,
+         parameters: nil,
+         body:
+          BeginNode(301...316)(
+            begin_keyword_loc: nil,
+            statements:
+             StatementsNode(301...305)(
+               body:
+                [CallNode(301...305)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (301...302),
+                   opening_loc: nil,
+                   arguments:
+                    ArgumentsNode(303...305)(
+                      arguments:
+                       [KeywordHashNode(303...305)(
+                          elements:
+                           [AssocNode(303...305)(
+                              key:
+                               SymbolNode(303...305)(
+                                 opening_loc: nil,
+                                 value_loc: (303...304),
+                                 closing_loc: (304...305),
+                                 unescaped: "b"
+                               ),
+                              value: nil,
+                              operator_loc: nil
+                            )]
+                        )]
+                    ),
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "a"
+                 )]
+             ),
+            rescue_clause:
+             RescueNode(306...312)(
+               keyword_loc: (306...312),
+               exceptions: [],
+               operator_loc: nil,
+               reference: nil,
+               statements: nil,
+               consequent: nil
+             ),
+            else_clause: nil,
+            ensure_clause: nil,
+            end_keyword_loc: (313...316)
+          ),
+         locals: [],
+         def_keyword_loc: (293...296),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (313...316)
+       )]
+   )
 )

@@ -1,33 +1,46 @@
 ProgramNode(0...20)(
-  [],
-  StatementsNode(0...20)(
-    [BreakNode(0...20)(
-       ArgumentsNode(6...20)(
-         [CallNode(6...20)(
-            nil,
-            nil,
-            (6...9),
-            nil,
-            ArgumentsNode(10...13)(
-              [CallNode(10...13)(
-                 nil,
-                 nil,
-                 (10...13),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "foo"
-               )]
-            ),
-            nil,
-            BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
-            0,
-            "fun"
-          )]
-       ),
-       (0...5)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...20)(
+     body:
+      [BreakNode(0...20)(
+         arguments:
+          ArgumentsNode(6...20)(
+            arguments:
+             [CallNode(6...20)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (6...9),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(10...13)(
+                   arguments:
+                    [CallNode(10...13)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (10...13),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "foo"
+                     )]
+                 ),
+                closing_loc: nil,
+                block:
+                 BlockNode(14...20)(
+                   locals: [],
+                   parameters: nil,
+                   body: nil,
+                   opening_loc: (14...16),
+                   closing_loc: (17...20)
+                 ),
+                flags: 0,
+                name: "fun"
+              )]
+          ),
+         keyword_loc: (0...5)
+       )]
+   )
 )

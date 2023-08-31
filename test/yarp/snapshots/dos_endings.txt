@@ -1,81 +1,115 @@
 ProgramNode(0...108)(
-  [:x, :a],
-  StatementsNode(0...108)(
-    [CallNode(0...24)(
-       nil,
-       nil,
-       (0...4),
-       nil,
-       ArgumentsNode(5...24)(
-         [StringConcatNode(5...24)(
-            StringNode(5...9)((5...6), (6...8), (8...9), "hi"),
-            StringNode(17...24)((17...18), (18...23), (23...24), "there")
-          )]
+  locals: [:x, :a],
+  statements:
+   StatementsNode(0...108)(
+     body:
+      [CallNode(0...24)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...4),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(5...24)(
+            arguments:
+             [StringConcatNode(5...24)(
+                left:
+                 StringNode(5...9)(
+                   opening_loc: (5...6),
+                   content_loc: (6...8),
+                   closing_loc: (8...9),
+                   unescaped: "hi"
+                 ),
+                right:
+                 StringNode(17...24)(
+                   opening_loc: (17...18),
+                   content_loc: (18...23),
+                   closing_loc: (23...24),
+                   unescaped: "there"
+                 )
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "puts"
        ),
-       nil,
-       nil,
-       0,
-       "puts"
-     ),
-     ArrayNode(28...37)(
-       [SymbolNode(31...36)(nil, (31...36), nil, "ab")],
-       (28...31),
-       (36...37)
-     ),
-     InterpolatedStringNode(41...45)(
-       (41...45),
-       [StringNode(47...70)(
-          nil,
-          (47...70),
-          nil,
-          "    1     2\r\n" + "    3\r\n"
-        )],
-       (70...73)
-     ),
-     LocalVariableWriteNode(75...84)(
-       :x,
-       0,
-       StringNode(79...84)((79...82), (82...82), (82...84), ""),
-       (75...76),
-       (77...78)
-     ),
-     LocalVariableWriteNode(88...108)(
-       :a,
-       0,
-       CallNode(92...108)(
-         nil,
-         nil,
-         (92...95),
-         (95...96),
-         ArgumentsNode(96...107)(
-           [CallNode(96...107)(
-              InterpolatedStringNode(96...102)(
-                (96...102),
-                [StringNode(110...121)(
-                   nil,
-                   (110...121),
-                   nil,
-                   "\n" + "baz\r\n"
-                 )],
-                (121...128)
-              ),
-              (102...103),
-              (103...107),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "chop"
-            )]
-         ),
-         (107...108),
-         nil,
-         0,
-         "foo"
+       ArrayNode(28...37)(
+         elements:
+          [SymbolNode(31...36)(
+             opening_loc: nil,
+             value_loc: (31...36),
+             closing_loc: nil,
+             unescaped: "ab"
+           )],
+         opening_loc: (28...31),
+         closing_loc: (36...37)
        ),
-       (88...89),
-       (90...91)
-     )]
-  )
+       InterpolatedStringNode(41...45)(
+         opening_loc: (41...45),
+         parts:
+          [StringNode(47...70)(
+             opening_loc: nil,
+             content_loc: (47...70),
+             closing_loc: nil,
+             unescaped: "    1     2\r\n" + "    3\r\n"
+           )],
+         closing_loc: (70...73)
+       ),
+       LocalVariableWriteNode(75...84)(
+         name: :x,
+         depth: 0,
+         value:
+          StringNode(79...84)(
+            opening_loc: (79...82),
+            content_loc: (82...82),
+            closing_loc: (82...84),
+            unescaped: ""
+          ),
+         name_loc: (75...76),
+         operator_loc: (77...78)
+       ),
+       LocalVariableWriteNode(88...108)(
+         name: :a,
+         depth: 0,
+         value:
+          CallNode(92...108)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (92...95),
+            opening_loc: (95...96),
+            arguments:
+             ArgumentsNode(96...107)(
+               arguments:
+                [CallNode(96...107)(
+                   receiver:
+                    InterpolatedStringNode(96...102)(
+                      opening_loc: (96...102),
+                      parts:
+                       [StringNode(110...121)(
+                          opening_loc: nil,
+                          content_loc: (110...121),
+                          closing_loc: nil,
+                          unescaped: "\n" + "baz\r\n"
+                        )],
+                      closing_loc: (121...128)
+                    ),
+                   operator_loc: (102...103),
+                   message_loc: (103...107),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "chop"
+                 )]
+             ),
+            closing_loc: (107...108),
+            block: nil,
+            flags: 0,
+            name: "foo"
+          ),
+         name_loc: (88...89),
+         operator_loc: (90...91)
+       )]
+   )
 )

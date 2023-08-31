@@ -1,34 +1,53 @@
 ProgramNode(0...38)(
-  [],
-  StatementsNode(0...38)(
-    [CaseNode(0...38)(
-       nil,
-       [WhenNode(6...21)(
-          (6...10),
-          [CallNode(11...14)(
-             nil,
-             nil,
-             (11...14),
-             nil,
-             nil,
-             nil,
-             nil,
-             2,
-             "foo"
+  locals: [],
+  statements:
+   StatementsNode(0...38)(
+     body:
+      [CaseNode(0...38)(
+         predicate: nil,
+         conditions:
+          [WhenNode(6...21)(
+             keyword_loc: (6...10),
+             conditions:
+              [CallNode(11...14)(
+                 receiver: nil,
+                 operator_loc: nil,
+                 message_loc: (11...14),
+                 opening_loc: nil,
+                 arguments: nil,
+                 closing_loc: nil,
+                 block: nil,
+                 flags: 2,
+                 name: "foo"
+               )],
+             statements:
+              StatementsNode(16...21)(
+                body:
+                 [StringNode(16...21)(
+                    opening_loc: (16...17),
+                    content_loc: (17...20),
+                    closing_loc: (20...21),
+                    unescaped: "foo"
+                  )]
+              )
            )],
-          StatementsNode(16...21)(
-            [StringNode(16...21)((16...17), (17...20), (20...21), "foo")]
-          )
-        )],
-       ElseNode(23...38)(
-         (23...27),
-         StatementsNode(28...33)(
-           [StringNode(28...33)((28...29), (29...32), (32...33), "bar")]
-         ),
-         (35...38)
-       ),
-       (0...4),
-       (35...38)
-     )]
-  )
+         consequent:
+          ElseNode(23...38)(
+            else_keyword_loc: (23...27),
+            statements:
+             StatementsNode(28...33)(
+               body:
+                [StringNode(28...33)(
+                   opening_loc: (28...29),
+                   content_loc: (29...32),
+                   closing_loc: (32...33),
+                   unescaped: "bar"
+                 )]
+             ),
+            end_keyword_loc: (35...38)
+          ),
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (35...38)
+       )]
+   )
 )

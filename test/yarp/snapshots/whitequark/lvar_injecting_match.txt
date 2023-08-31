@@ -1,25 +1,35 @@
 ProgramNode(0...31)(
-  [:match],
-  StatementsNode(0...31)(
-    [CallNode(0...24)(
-       RegularExpressionNode(0...15)(
-         (0...1),
-         (1...14),
-         (14...15),
-         "(?<match>bar)",
-         0
+  locals: [:match],
+  statements:
+   StatementsNode(0...31)(
+     body:
+      [CallNode(0...24)(
+         receiver:
+          RegularExpressionNode(0...15)(
+            opening_loc: (0...1),
+            content_loc: (1...14),
+            closing_loc: (14...15),
+            unescaped: "(?<match>bar)",
+            flags: 0
+          ),
+         operator_loc: nil,
+         message_loc: (16...18),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(19...24)(
+            arguments:
+             [StringNode(19...24)(
+                opening_loc: (19...20),
+                content_loc: (20...23),
+                closing_loc: (23...24),
+                unescaped: "bar"
+              )]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "=~"
        ),
-       nil,
-       (16...18),
-       nil,
-       ArgumentsNode(19...24)(
-         [StringNode(19...24)((19...20), (20...23), (23...24), "bar")]
-       ),
-       nil,
-       nil,
-       0,
-       "=~"
-     ),
-     LocalVariableReadNode(26...31)(:match, 0)]
-  )
+       LocalVariableReadNode(26...31)(name: :match, depth: 0)]
+   )
 )

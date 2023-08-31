@@ -1,53 +1,100 @@
 ProgramNode(0...50)(
-  [],
-  StatementsNode(0...50)(
-    [CallNode(0...12)(
-       nil,
-       nil,
-       (0...1),
-       (1...2),
-       ArgumentsNode(2...11)(
-         [IfNode(2...11)(
-            nil,
-            CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "a"),
-            StatementsNode(6...9)(
-              [StringNode(6...9)((6...7), (7...8), (8...9), "a")]
-            ),
-            ElseNode(9...11)(
-              (9...10),
-              StatementsNode(10...11)([IntegerNode(10...11)()]),
-              nil
-            ),
-            nil
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...50)(
+     body:
+      [CallNode(0...12)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: (1...2),
+         arguments:
+          ArgumentsNode(2...11)(
+            arguments:
+             [IfNode(2...11)(
+                if_keyword_loc: nil,
+                predicate:
+                 CallNode(2...3)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (2...3),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "a"
+                 ),
+                statements:
+                 StatementsNode(6...9)(
+                   body:
+                    [StringNode(6...9)(
+                       opening_loc: (6...7),
+                       content_loc: (7...8),
+                       closing_loc: (8...9),
+                       unescaped: "a"
+                     )]
+                 ),
+                consequent:
+                 ElseNode(9...11)(
+                   else_keyword_loc: (9...10),
+                   statements:
+                    StatementsNode(10...11)(body: [IntegerNode(10...11)()]),
+                   end_keyword_loc: nil
+                 ),
+                end_keyword_loc: nil
+              )]
+          ),
+         closing_loc: (11...12),
+         block: nil,
+         flags: 0,
+         name: "f"
        ),
-       (11...12),
-       nil,
-       0,
-       "f"
-     ),
-     HashNode(14...26)(
-       (14...15),
-       [AssocNode(16...24)(
-          SymbolNode(16...22)((16...17), (17...20), (20...22), "foo"),
-          IntegerNode(23...24)(),
-          nil
-        )],
-       (25...26)
-     ),
-     HashNode(28...50)(
-       (28...29),
-       [AssocNode(30...38)(
-          SymbolNode(30...36)((30...31), (31...34), (34...36), "foo"),
-          IntegerNode(37...38)(),
-          nil
-        ),
-        AssocNode(40...49)(
-          SymbolNode(40...46)((40...41), (41...44), (44...46), "bar"),
-          HashNode(47...49)((47...48), [], (48...49)),
-          nil
-        )],
-       (49...50)
-     )]
-  )
+       HashNode(14...26)(
+         opening_loc: (14...15),
+         elements:
+          [AssocNode(16...24)(
+             key:
+              SymbolNode(16...22)(
+                opening_loc: (16...17),
+                value_loc: (17...20),
+                closing_loc: (20...22),
+                unescaped: "foo"
+              ),
+             value: IntegerNode(23...24)(),
+             operator_loc: nil
+           )],
+         closing_loc: (25...26)
+       ),
+       HashNode(28...50)(
+         opening_loc: (28...29),
+         elements:
+          [AssocNode(30...38)(
+             key:
+              SymbolNode(30...36)(
+                opening_loc: (30...31),
+                value_loc: (31...34),
+                closing_loc: (34...36),
+                unescaped: "foo"
+              ),
+             value: IntegerNode(37...38)(),
+             operator_loc: nil
+           ),
+           AssocNode(40...49)(
+             key:
+              SymbolNode(40...46)(
+                opening_loc: (40...41),
+                value_loc: (41...44),
+                closing_loc: (44...46),
+                unescaped: "bar"
+              ),
+             value:
+              HashNode(47...49)(
+                opening_loc: (47...48), elements: [], closing_loc: (48...49)
+              ),
+             operator_loc: nil
+           )],
+         closing_loc: (49...50)
+       )]
+   )
 )

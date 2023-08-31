@@ -1,4 +1,13 @@
 ProgramNode(0...7)(
-  [],
-  StatementsNode(0...7)([YieldNode(0...7)((0...5), (5...6), nil, (6...7))])
+  locals: [],
+  statements:
+   StatementsNode(0...7)(
+     body:
+      [YieldNode(0...7)(
+         keyword_loc: (0...5),
+         lparen_loc: (5...6),
+         arguments: nil,
+         rparen_loc: (6...7)
+       )]
+   )
 )

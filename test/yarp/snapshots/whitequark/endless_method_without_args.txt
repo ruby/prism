@@ -1,69 +1,75 @@
 ProgramNode(0...86)(
-  [],
-  StatementsNode(0...86)(
-    [DefNode(0...12)(
-       (4...7),
-       nil,
-       nil,
-       StatementsNode(10...12)([IntegerNode(10...12)()]),
-       [],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       (8...9),
-       nil
-     ),
-     DefNode(14...37)(
-       (18...21),
-       nil,
-       nil,
-       StatementsNode(24...37)(
-         [RescueModifierNode(24...37)(
-            IntegerNode(24...26)(),
-            (27...33),
-            NilNode(34...37)()
-          )]
+  locals: [],
+  statements:
+   StatementsNode(0...86)(
+     body:
+      [DefNode(0...12)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters: nil,
+         body: StatementsNode(10...12)(body: [IntegerNode(10...12)()]),
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (8...9),
+         end_keyword_loc: nil
        ),
-       [],
-       (14...17),
-       nil,
-       nil,
-       nil,
-       (22...23),
-       nil
-     ),
-     DefNode(39...56)(
-       (48...51),
-       SelfNode(43...47)(),
-       nil,
-       StatementsNode(54...56)([IntegerNode(54...56)()]),
-       [],
-       (39...42),
-       (47...48),
-       nil,
-       nil,
-       (52...53),
-       nil
-     ),
-     DefNode(58...86)(
-       (67...70),
-       SelfNode(62...66)(),
-       nil,
-       StatementsNode(73...86)(
-         [RescueModifierNode(73...86)(
-            IntegerNode(73...75)(),
-            (76...82),
-            NilNode(83...86)()
-          )]
+       DefNode(14...37)(
+         name_loc: (18...21),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(24...37)(
+            body:
+             [RescueModifierNode(24...37)(
+                expression: IntegerNode(24...26)(),
+                keyword_loc: (27...33),
+                rescue_expression: NilNode(34...37)()
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (14...17),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (22...23),
+         end_keyword_loc: nil
        ),
-       [],
-       (58...61),
-       (66...67),
-       nil,
-       nil,
-       (71...72),
-       nil
-     )]
-  )
+       DefNode(39...56)(
+         name_loc: (48...51),
+         receiver: SelfNode(43...47)(),
+         parameters: nil,
+         body: StatementsNode(54...56)(body: [IntegerNode(54...56)()]),
+         locals: [],
+         def_keyword_loc: (39...42),
+         operator_loc: (47...48),
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (52...53),
+         end_keyword_loc: nil
+       ),
+       DefNode(58...86)(
+         name_loc: (67...70),
+         receiver: SelfNode(62...66)(),
+         parameters: nil,
+         body:
+          StatementsNode(73...86)(
+            body:
+             [RescueModifierNode(73...86)(
+                expression: IntegerNode(73...75)(),
+                keyword_loc: (76...82),
+                rescue_expression: NilNode(83...86)()
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (58...61),
+         operator_loc: (66...67),
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: (71...72),
+         end_keyword_loc: nil
+       )]
+   )
 )

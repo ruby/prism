@@ -1,14 +1,39 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [IfNode(0...10)(
-       (4...6),
-       CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 2, "foo"),
-       StatementsNode(0...3)(
-         [CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "bar")]
-       ),
-       nil,
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [IfNode(0...10)(
+         if_keyword_loc: (4...6),
+         predicate:
+          CallNode(7...10)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (7...10),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         statements:
+          StatementsNode(0...3)(
+            body:
+             [CallNode(0...3)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (0...3),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "bar"
+              )]
+          ),
+         consequent: nil,
+         end_keyword_loc: nil
+       )]
+   )
 )

@@ -1,48 +1,55 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [CallNode(0...26)(
-       nil,
-       nil,
-       (0...4),
-       nil,
-       nil,
-       nil,
-       BlockNode(5...26)(
-         [],
-         nil,
-         BeginNode(8...26)(
-           nil,
-           nil,
-           RescueNode(8...22)(
-             (8...14),
-             [],
-             nil,
-             nil,
-             StatementsNode(17...22)(
-               [CallNode(17...22)(
-                  nil,
-                  nil,
-                  (17...22),
-                  nil,
-                  nil,
-                  nil,
-                  nil,
-                  2,
-                  "stuff"
-                )]
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [CallNode(0...26)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...4),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(5...26)(
+            locals: [],
+            parameters: nil,
+            body:
+             BeginNode(8...26)(
+               begin_keyword_loc: nil,
+               statements: nil,
+               rescue_clause:
+                RescueNode(8...22)(
+                  keyword_loc: (8...14),
+                  exceptions: [],
+                  operator_loc: nil,
+                  reference: nil,
+                  statements:
+                   StatementsNode(17...22)(
+                     body:
+                      [CallNode(17...22)(
+                         receiver: nil,
+                         operator_loc: nil,
+                         message_loc: (17...22),
+                         opening_loc: nil,
+                         arguments: nil,
+                         closing_loc: nil,
+                         block: nil,
+                         flags: 2,
+                         name: "stuff"
+                       )]
+                   ),
+                  consequent: nil
+                ),
+               else_clause: nil,
+               ensure_clause: nil,
+               end_keyword_loc: (23...26)
              ),
-             nil
-           ),
-           nil,
-           nil,
-           (23...26)
-         ),
-         (5...7),
-         (23...26)
-       ),
-       0,
-       "blah"
-     )]
-  )
+            opening_loc: (5...7),
+            closing_loc: (23...26)
+          ),
+         flags: 0,
+         name: "blah"
+       )]
+   )
 )

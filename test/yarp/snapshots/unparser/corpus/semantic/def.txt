@@ -1,77 +1,99 @@
 ProgramNode(0...55)(
-  [],
-  StatementsNode(0...55)(
-    [DefNode(0...21)(
-       (4...7),
-       nil,
-       nil,
-       StatementsNode(10...17)(
-         [ParenthesesNode(10...17)(
-            StatementsNode(11...16)(
-              [CallNode(11...16)(
-                 CallNode(11...12)(
-                   nil,
-                   nil,
-                   (11...12),
-                   nil,
-                   nil,
-                   nil,
-                   nil,
-                   2,
-                   "a"
+  locals: [],
+  statements:
+   StatementsNode(0...55)(
+     body:
+      [DefNode(0...21)(
+         name_loc: (4...7),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(10...17)(
+            body:
+             [ParenthesesNode(10...17)(
+                body:
+                 StatementsNode(11...16)(
+                   body:
+                    [CallNode(11...16)(
+                       receiver:
+                        CallNode(11...12)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (11...12),
+                          opening_loc: nil,
+                          arguments: nil,
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 2,
+                          name: "a"
+                        ),
+                       operator_loc: nil,
+                       message_loc: (13...14),
+                       opening_loc: nil,
+                       arguments:
+                        ArgumentsNode(15...16)(
+                          arguments:
+                           [CallNode(15...16)(
+                              receiver: nil,
+                              operator_loc: nil,
+                              message_loc: (15...16),
+                              opening_loc: nil,
+                              arguments: nil,
+                              closing_loc: nil,
+                              block: nil,
+                              flags: 2,
+                              name: "b"
+                            )]
+                        ),
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 0,
+                       name: "-"
+                     )]
                  ),
-                 nil,
-                 (13...14),
-                 nil,
-                 ArgumentsNode(15...16)(
-                   [CallNode(15...16)(
-                      nil,
-                      nil,
-                      (15...16),
-                      nil,
-                      nil,
-                      nil,
-                      nil,
-                      2,
-                      "b"
-                    )]
+                opening_loc: (10...11),
+                closing_loc: (16...17)
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (18...21)
+       ),
+       DefNode(23...55)(
+         name_loc: (27...30),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(33...51)(
+            body:
+             [RescueModifierNode(33...51)(
+                expression:
+                 CallNode(33...34)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (33...34),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "a"
                  ),
-                 nil,
-                 nil,
-                 0,
-                 "-"
-               )]
-            ),
-            (10...11),
-            (16...17)
-          )]
-       ),
-       [],
-       (0...3),
-       nil,
-       nil,
-       nil,
-       nil,
-       (18...21)
-     ),
-     DefNode(23...55)(
-       (27...30),
-       nil,
-       nil,
-       StatementsNode(33...51)(
-         [RescueModifierNode(33...51)(
-            CallNode(33...34)(nil, nil, (33...34), nil, nil, nil, nil, 2, "a"),
-            (35...41),
-            ConstantReadNode(42...51)()
-          )]
-       ),
-       [],
-       (23...26),
-       nil,
-       nil,
-       nil,
-       nil,
-       (52...55)
-     )]
-  )
+                keyword_loc: (35...41),
+                rescue_expression: ConstantReadNode(42...51)()
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (23...26),
+         operator_loc: nil,
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (52...55)
+       )]
+   )
 )

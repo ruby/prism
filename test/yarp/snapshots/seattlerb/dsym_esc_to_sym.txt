@@ -1,6 +1,13 @@
 ProgramNode(0...17)(
-  [],
-  StatementsNode(0...17)(
-    [SymbolNode(0...17)((0...2), (2...16), (16...17), "Varietà")]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...17)(
+     body:
+      [SymbolNode(0...17)(
+         opening_loc: (0...2),
+         value_loc: (2...16),
+         closing_loc: (16...17),
+         unescaped: "Varietà"
+       )]
+   )
 )

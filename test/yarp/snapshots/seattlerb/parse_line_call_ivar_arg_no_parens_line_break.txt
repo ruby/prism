@@ -1,16 +1,21 @@
 ProgramNode(0...4)(
-  [],
-  StatementsNode(0...4)(
-    [CallNode(0...4)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       ArgumentsNode(2...4)([InstanceVariableReadNode(2...4)(:@b)]),
-       nil,
-       nil,
-       0,
-       "a"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...4)(
+     body:
+      [CallNode(0...4)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments:
+          ArgumentsNode(2...4)(
+            arguments: [InstanceVariableReadNode(2...4)(name: :@b)]
+          ),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "a"
+       )]
+   )
 )

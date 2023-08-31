@@ -1,18 +1,20 @@
 ProgramNode(0...20)(
-  [],
-  StatementsNode(0...20)(
-    [DefNode(0...20)(
-       (9...15),
-       SelfNode(4...8)(),
-       nil,
-       nil,
-       [],
-       (0...3),
-       (8...9),
-       nil,
-       nil,
-       nil,
-       (17...20)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...20)(
+     body:
+      [DefNode(0...20)(
+         name_loc: (9...15),
+         receiver: SelfNode(4...8)(),
+         parameters: nil,
+         body: nil,
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: (8...9),
+         lparen_loc: nil,
+         rparen_loc: nil,
+         equal_loc: nil,
+         end_keyword_loc: (17...20)
+       )]
+   )
 )

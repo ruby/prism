@@ -1,16 +1,18 @@
 ProgramNode(0...6)(
-  [],
-  StatementsNode(0...6)(
-    [CallNode(0...6)(
-       IntegerNode(4...6)(),
-       nil,
-       (0...3),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "!"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...6)(
+     body:
+      [CallNode(0...6)(
+         receiver: IntegerNode(4...6)(),
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "!"
+       )]
+   )
 )

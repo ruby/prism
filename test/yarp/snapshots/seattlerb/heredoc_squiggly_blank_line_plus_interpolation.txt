@@ -1,56 +1,75 @@
 ProgramNode(0...20)(
-  [:a],
-  StatementsNode(0...20)(
-    [LocalVariableWriteNode(0...20)(
-       :a,
-       0,
-       CallNode(4...20)(
-         nil,
-         nil,
-         (4...7),
-         (7...8),
-         ArgumentsNode(8...19)(
-           [CallNode(8...19)(
-              InterpolatedStringNode(8...14)(
-                (8...14),
-                [StringNode(21...26)(nil, (21...26), nil, "\n"),
-                 EmbeddedStatementsNode(26...32)(
-                   (26...28),
-                   StatementsNode(28...31)(
-                     [CallNode(28...31)(
-                        nil,
-                        nil,
-                        (28...31),
-                        nil,
-                        nil,
-                        nil,
-                        nil,
-                        2,
-                        "bar"
-                      )]
-                   ),
-                   (31...32)
-                 ),
-                 StringNode(32...36)(nil, (32...36), nil, "baz\n")],
-                (36...42)
-              ),
-              (14...15),
-              (15...19),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "chop"
-            )]
-         ),
-         (19...20),
-         nil,
-         0,
-         "foo"
-       ),
-       (0...1),
-       (2...3)
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...20)(
+     body:
+      [LocalVariableWriteNode(0...20)(
+         name: :a,
+         depth: 0,
+         value:
+          CallNode(4...20)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (4...7),
+            opening_loc: (7...8),
+            arguments:
+             ArgumentsNode(8...19)(
+               arguments:
+                [CallNode(8...19)(
+                   receiver:
+                    InterpolatedStringNode(8...14)(
+                      opening_loc: (8...14),
+                      parts:
+                       [StringNode(21...26)(
+                          opening_loc: nil,
+                          content_loc: (21...26),
+                          closing_loc: nil,
+                          unescaped: "\n"
+                        ),
+                        EmbeddedStatementsNode(26...32)(
+                          opening_loc: (26...28),
+                          statements:
+                           StatementsNode(28...31)(
+                             body:
+                              [CallNode(28...31)(
+                                 receiver: nil,
+                                 operator_loc: nil,
+                                 message_loc: (28...31),
+                                 opening_loc: nil,
+                                 arguments: nil,
+                                 closing_loc: nil,
+                                 block: nil,
+                                 flags: 2,
+                                 name: "bar"
+                               )]
+                           ),
+                          closing_loc: (31...32)
+                        ),
+                        StringNode(32...36)(
+                          opening_loc: nil,
+                          content_loc: (32...36),
+                          closing_loc: nil,
+                          unescaped: "baz\n"
+                        )],
+                      closing_loc: (36...42)
+                    ),
+                   operator_loc: (14...15),
+                   message_loc: (15...19),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 0,
+                   name: "chop"
+                 )]
+             ),
+            closing_loc: (19...20),
+            block: nil,
+            flags: 0,
+            name: "foo"
+          ),
+         name_loc: (0...1),
+         operator_loc: (2...3)
+       )]
+   )
 )

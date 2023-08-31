@@ -1,77 +1,94 @@
 ProgramNode(0...46)(
-  [],
-  StatementsNode(0...46)(
-    [LambdaNode(0...12)(
-       [],
-       (0...2),
-       (10...11),
-       (11...12),
-       BlockParametersNode(2...9)(
-         ParametersNode(3...8)(
-           [],
-           [],
-           [],
-           nil,
-           [],
-           NoKeywordsParameterNode(3...8)((3...5), (5...8)),
-           nil
-         ),
-         [],
-         (2...3),
-         (8...9)
+  locals: [],
+  statements:
+   StatementsNode(0...46)(
+     body:
+      [LambdaNode(0...12)(
+         locals: [],
+         operator_loc: (0...2),
+         opening_loc: (10...11),
+         closing_loc: (11...12),
+         parameters:
+          BlockParametersNode(2...9)(
+            parameters:
+             ParametersNode(3...8)(
+               requireds: [],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest:
+                NoKeywordsParameterNode(3...8)(
+                  operator_loc: (3...5), keyword_loc: (5...8)
+                ),
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (2...3),
+            closing_loc: (8...9)
+          ),
+         body: nil
        ),
-       nil
-     ),
-     DefNode(14...31)(
-       (18...19),
-       nil,
-       ParametersNode(20...25)(
-         [],
-         [],
-         [],
-         nil,
-         [],
-         NoKeywordsParameterNode(20...25)((20...22), (22...25)),
-         nil
+       DefNode(14...31)(
+         name_loc: (18...19),
+         receiver: nil,
+         parameters:
+          ParametersNode(20...25)(
+            requireds: [],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest:
+             NoKeywordsParameterNode(20...25)(
+               operator_loc: (20...22), keyword_loc: (22...25)
+             ),
+            block: nil
+          ),
+         body: nil,
+         locals: [],
+         def_keyword_loc: (14...17),
+         operator_loc: nil,
+         lparen_loc: (19...20),
+         rparen_loc: (25...26),
+         equal_loc: nil,
+         end_keyword_loc: (28...31)
        ),
-       nil,
-       [],
-       (14...17),
-       nil,
-       (19...20),
-       (25...26),
-       nil,
-       (28...31)
-     ),
-     CallNode(33...46)(
-       nil,
-       nil,
-       (33...34),
-       nil,
-       nil,
-       nil,
-       BlockNode(35...46)(
-         [],
-         BlockParametersNode(37...44)(
-           ParametersNode(38...43)(
-             [],
-             [],
-             [],
-             nil,
-             [],
-             NoKeywordsParameterNode(38...43)((38...40), (40...43)),
-             nil
-           ),
-           [],
-           (37...38),
-           (43...44)
-         ),
-         nil,
-         (35...36),
-         (45...46)
-       ),
-       0,
-       "m"
-     )]
-  )
+       CallNode(33...46)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (33...34),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(35...46)(
+            locals: [],
+            parameters:
+             BlockParametersNode(37...44)(
+               parameters:
+                ParametersNode(38...43)(
+                  requireds: [],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest:
+                   NoKeywordsParameterNode(38...43)(
+                     operator_loc: (38...40), keyword_loc: (40...43)
+                   ),
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (37...38),
+               closing_loc: (43...44)
+             ),
+            body: nil,
+            opening_loc: (35...36),
+            closing_loc: (45...46)
+          ),
+         flags: 0,
+         name: "m"
+       )]
+   )
 )

@@ -1,11 +1,13 @@
 ProgramNode(0...8)(
-  [],
-  StatementsNode(0...8)(
-    [YieldNode(0...8)(
-       (0...5),
-       nil,
-       ArgumentsNode(6...8)([IntegerNode(6...8)()]),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...8)(
+     body:
+      [YieldNode(0...8)(
+         keyword_loc: (0...5),
+         lparen_loc: nil,
+         arguments: ArgumentsNode(6...8)(arguments: [IntegerNode(6...8)()]),
+         rparen_loc: nil
+       )]
+   )
 )

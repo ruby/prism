@@ -1,30 +1,34 @@
 ProgramNode(0...19)(
-  [],
-  StatementsNode(0...19)(
-    [DefNode(0...19)(
-       (4...8),
-       nil,
-       nil,
-       StatementsNode(13...19)(
-         [CallNode(13...19)(
-            nil,
-            nil,
-            (13...19),
-            nil,
-            nil,
-            nil,
-            nil,
-            2,
-            "system"
-          )]
-       ),
-       [],
-       (0...3),
-       nil,
-       (8...9),
-       (9...10),
-       (11...12),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...19)(
+     body:
+      [DefNode(0...19)(
+         name_loc: (4...8),
+         receiver: nil,
+         parameters: nil,
+         body:
+          StatementsNode(13...19)(
+            body:
+             [CallNode(13...19)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (13...19),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "system"
+              )]
+          ),
+         locals: [],
+         def_keyword_loc: (0...3),
+         operator_loc: nil,
+         lparen_loc: (8...9),
+         rparen_loc: (9...10),
+         equal_loc: (11...12),
+         end_keyword_loc: nil
+       )]
+   )
 )

@@ -1,39 +1,49 @@
 ProgramNode(0...12)(
-  [],
-  StatementsNode(0...12)(
-    [CallNode(0...12)(
-       nil,
-       nil,
-       (0...1),
-       nil,
-       nil,
-       nil,
-       BlockNode(2...12)(
-         [:a],
-         BlockParametersNode(4...10)(
-           ParametersNode(5...9)(
-             [RequiredDestructuredParameterNode(5...9)(
-                [SplatNode(6...8)((6...7), RequiredParameterNode(7...8)(:a))],
-                (5...6),
-                (8...9)
-              )],
-             [],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           [],
-           (4...5),
-           (9...10)
-         ),
-         nil,
-         (2...3),
-         (11...12)
-       ),
-       0,
-       "f"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [CallNode(0...12)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...1),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(2...12)(
+            locals: [:a],
+            parameters:
+             BlockParametersNode(4...10)(
+               parameters:
+                ParametersNode(5...9)(
+                  requireds:
+                   [RequiredDestructuredParameterNode(5...9)(
+                      parameters:
+                       [SplatNode(6...8)(
+                          operator_loc: (6...7),
+                          expression: RequiredParameterNode(7...8)(name: :a)
+                        )],
+                      opening_loc: (5...6),
+                      closing_loc: (8...9)
+                    )],
+                  optionals: [],
+                  posts: [],
+                  rest: nil,
+                  keywords: [],
+                  keyword_rest: nil,
+                  block: nil
+                ),
+               locals: [],
+               opening_loc: (4...5),
+               closing_loc: (9...10)
+             ),
+            body: nil,
+            opening_loc: (2...3),
+            closing_loc: (11...12)
+          ),
+         flags: 0,
+         name: "f"
+       )]
+   )
 )

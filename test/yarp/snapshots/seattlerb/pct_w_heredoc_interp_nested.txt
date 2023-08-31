@@ -1,28 +1,60 @@
 ProgramNode(0...30)(
-  [],
-  StatementsNode(0...30)(
-    [ArrayNode(0...30)(
-       [StringNode(4...5)(nil, (4...5), nil, "1"),
-        InterpolatedStringNode(6...12)(
-          nil,
-          [EmbeddedStatementsNode(6...12)(
-             (6...8),
-             StatementsNode(8...11)(
-               [InterpolatedStringNode(8...11)(
-                  (8...11),
-                  [StringNode(15...17)(nil, (15...17), nil, "2\n")],
-                  (17...19)
-                )]
-             ),
-             (11...12)
+  locals: [],
+  statements:
+   StatementsNode(0...30)(
+     body:
+      [ArrayNode(0...30)(
+         elements:
+          [StringNode(4...5)(
+             opening_loc: nil,
+             content_loc: (4...5),
+             closing_loc: nil,
+             unescaped: "1"
+           ),
+           InterpolatedStringNode(6...12)(
+             opening_loc: nil,
+             parts:
+              [EmbeddedStatementsNode(6...12)(
+                 opening_loc: (6...8),
+                 statements:
+                  StatementsNode(8...11)(
+                    body:
+                     [InterpolatedStringNode(8...11)(
+                        opening_loc: (8...11),
+                        parts:
+                         [StringNode(15...17)(
+                            opening_loc: nil,
+                            content_loc: (15...17),
+                            closing_loc: nil,
+                            unescaped: "2\n"
+                          )],
+                        closing_loc: (17...19)
+                      )]
+                  ),
+                 closing_loc: (11...12)
+               )],
+             closing_loc: nil
+           ),
+           StringNode(13...14)(
+             opening_loc: nil,
+             content_loc: (13...14),
+             closing_loc: nil,
+             unescaped: "3"
+           ),
+           StringNode(25...26)(
+             opening_loc: nil,
+             content_loc: (25...26),
+             closing_loc: nil,
+             unescaped: "4"
+           ),
+           StringNode(27...28)(
+             opening_loc: nil,
+             content_loc: (27...28),
+             closing_loc: nil,
+             unescaped: "5"
            )],
-          nil
-        ),
-        StringNode(13...14)(nil, (13...14), nil, "3"),
-        StringNode(25...26)(nil, (25...26), nil, "4"),
-        StringNode(27...28)(nil, (27...28), nil, "5")],
-       (0...3),
-       (29...30)
-     )]
-  )
+         opening_loc: (0...3),
+         closing_loc: (29...30)
+       )]
+   )
 )

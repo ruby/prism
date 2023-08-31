@@ -1,12 +1,14 @@
 ProgramNode(0...12)(
-  [],
-  StatementsNode(0...12)(
-    [IfNode(0...12)(
-       (5...7),
-       TrueNode(8...12)(),
-       StatementsNode(0...5)([IntegerNode(0...5)()]),
-       nil,
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...12)(
+     body:
+      [IfNode(0...12)(
+         if_keyword_loc: (5...7),
+         predicate: TrueNode(8...12)(),
+         statements: StatementsNode(0...5)(body: [IntegerNode(0...5)()]),
+         consequent: nil,
+         end_keyword_loc: nil
+       )]
+   )
 )

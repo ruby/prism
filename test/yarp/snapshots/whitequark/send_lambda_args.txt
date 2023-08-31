@@ -1,47 +1,53 @@
 ProgramNode(0...21)(
-  [],
-  StatementsNode(0...21)(
-    [LambdaNode(0...10)(
-       [:a],
-       (0...2),
-       (7...8),
-       (9...10),
-       BlockParametersNode(3...6)(
-         ParametersNode(4...5)(
-           [RequiredParameterNode(4...5)(:a)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [],
-         (3...4),
-         (5...6)
+  locals: [],
+  statements:
+   StatementsNode(0...21)(
+     body:
+      [LambdaNode(0...10)(
+         locals: [:a],
+         operator_loc: (0...2),
+         opening_loc: (7...8),
+         closing_loc: (9...10),
+         parameters:
+          BlockParametersNode(3...6)(
+            parameters:
+             ParametersNode(4...5)(
+               requireds: [RequiredParameterNode(4...5)(name: :a)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (3...4),
+            closing_loc: (5...6)
+          ),
+         body: nil
        ),
-       nil
-     ),
-     LambdaNode(12...21)(
-       [:a],
-       (12...14),
-       (18...19),
-       (20...21),
-       BlockParametersNode(14...17)(
-         ParametersNode(15...16)(
-           [RequiredParameterNode(15...16)(:a)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [],
-         (14...15),
-         (16...17)
-       ),
-       nil
-     )]
-  )
+       LambdaNode(12...21)(
+         locals: [:a],
+         operator_loc: (12...14),
+         opening_loc: (18...19),
+         closing_loc: (20...21),
+         parameters:
+          BlockParametersNode(14...17)(
+            parameters:
+             ParametersNode(15...16)(
+               requireds: [RequiredParameterNode(15...16)(name: :a)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (14...15),
+            closing_loc: (16...17)
+          ),
+         body: nil
+       )]
+   )
 )

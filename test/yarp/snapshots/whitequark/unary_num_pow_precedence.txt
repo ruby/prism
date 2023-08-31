@@ -1,58 +1,64 @@
 ProgramNode(0...32)(
-  [],
-  StatementsNode(0...32)(
-    [CallNode(0...10)(
-       FloatNode(0...4)(),
-       nil,
-       (5...7),
-       nil,
-       ArgumentsNode(8...10)([IntegerNode(8...10)()]),
-       nil,
-       nil,
-       0,
-       "**"
-     ),
-     CallNode(12...20)(
-       CallNode(13...20)(
-         IntegerNode(13...14)(),
-         nil,
-         (15...17),
-         nil,
-         ArgumentsNode(18...20)([IntegerNode(18...20)()]),
-         nil,
-         nil,
-         0,
-         "**"
+  locals: [],
+  statements:
+   StatementsNode(0...32)(
+     body:
+      [CallNode(0...10)(
+         receiver: FloatNode(0...4)(),
+         operator_loc: nil,
+         message_loc: (5...7),
+         opening_loc: nil,
+         arguments: ArgumentsNode(8...10)(arguments: [IntegerNode(8...10)()]),
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "**"
        ),
-       nil,
-       (12...13),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "-@"
-     ),
-     CallNode(22...32)(
-       CallNode(23...32)(
-         FloatNode(23...26)(),
-         nil,
-         (27...29),
-         nil,
-         ArgumentsNode(30...32)([IntegerNode(30...32)()]),
-         nil,
-         nil,
-         0,
-         "**"
+       CallNode(12...20)(
+         receiver:
+          CallNode(13...20)(
+            receiver: IntegerNode(13...14)(),
+            operator_loc: nil,
+            message_loc: (15...17),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(18...20)(arguments: [IntegerNode(18...20)()]),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "**"
+          ),
+         operator_loc: nil,
+         message_loc: (12...13),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "-@"
        ),
-       nil,
-       (22...23),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "-@"
-     )]
-  )
+       CallNode(22...32)(
+         receiver:
+          CallNode(23...32)(
+            receiver: FloatNode(23...26)(),
+            operator_loc: nil,
+            message_loc: (27...29),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(30...32)(arguments: [IntegerNode(30...32)()]),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "**"
+          ),
+         operator_loc: nil,
+         message_loc: (22...23),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 0,
+         name: "-@"
+       )]
+   )
 )

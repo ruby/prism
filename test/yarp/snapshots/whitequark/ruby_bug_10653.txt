@@ -1,131 +1,184 @@
 ProgramNode(0...93)(
-  [],
-  StatementsNode(0...93)(
-    [IfNode(0...33)(
-       nil,
-       FalseNode(0...5)(),
-       StatementsNode(8...20)(
-         [CallNode(8...20)(
-            nil,
-            nil,
-            (8...13),
-            nil,
-            nil,
-            nil,
-            BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
-            0,
-            "raise"
-          )]
-       ),
-       ElseNode(21...33)(
-         (21...22),
-         StatementsNode(23...33)(
-           [CallNode(23...33)(
-              nil,
-              nil,
-              (23...26),
-              nil,
-              nil,
-              nil,
-              BlockNode(27...33)([], nil, nil, (27...29), (30...33)),
-              0,
-              "tap"
-            )]
-         ),
-         nil
-       ),
-       nil
-     ),
-     IfNode(35...60)(
-       nil,
-       FalseNode(35...40)(),
-       StatementsNode(43...51)(
-         [CallNode(43...51)(
-            nil,
-            nil,
-            (43...48),
-            nil,
-            nil,
-            nil,
-            BlockNode(49...51)([], nil, nil, (49...50), (50...51)),
-            0,
-            "raise"
-          )]
-       ),
-       ElseNode(52...60)(
-         (52...53),
-         StatementsNode(54...60)(
-           [CallNode(54...60)(
-              nil,
-              nil,
-              (54...57),
-              nil,
-              nil,
-              nil,
-              BlockNode(58...60)([], nil, nil, (58...59), (59...60)),
-              0,
-              "tap"
-            )]
-         ),
-         nil
-       ),
-       nil
-     ),
-     IfNode(62...93)(
-       nil,
-       TrueNode(62...66)(),
-       StatementsNode(69...89)(
-         [CallNode(69...89)(
-            IntegerNode(69...70)(),
-            (70...71),
-            (71...74),
-            nil,
-            nil,
-            nil,
-            BlockNode(75...89)(
-              [:n],
-              BlockParametersNode(78...81)(
-                ParametersNode(79...80)(
-                  [RequiredParameterNode(79...80)(:n)],
-                  [],
-                  [],
-                  nil,
-                  [],
-                  nil,
-                  nil
-                ),
-                [],
-                (78...79),
-                (80...81)
-              ),
-              StatementsNode(82...85)(
-                [CallNode(82...85)(
-                   nil,
-                   nil,
-                   (82...83),
-                   nil,
-                   ArgumentsNode(84...85)(
-                     [LocalVariableReadNode(84...85)(:n, 0)]
-                   ),
-                   nil,
-                   nil,
-                   0,
-                   "p"
+  locals: [],
+  statements:
+   StatementsNode(0...93)(
+     body:
+      [IfNode(0...33)(
+         if_keyword_loc: nil,
+         predicate: FalseNode(0...5)(),
+         statements:
+          StatementsNode(8...20)(
+            body:
+             [CallNode(8...20)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (8...13),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(14...20)(
+                   locals: [],
+                   parameters: nil,
+                   body: nil,
+                   opening_loc: (14...16),
+                   closing_loc: (17...20)
+                 ),
+                flags: 0,
+                name: "raise"
+              )]
+          ),
+         consequent:
+          ElseNode(21...33)(
+            else_keyword_loc: (21...22),
+            statements:
+             StatementsNode(23...33)(
+               body:
+                [CallNode(23...33)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (23...26),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block:
+                    BlockNode(27...33)(
+                      locals: [],
+                      parameters: nil,
+                      body: nil,
+                      opening_loc: (27...29),
+                      closing_loc: (30...33)
+                    ),
+                   flags: 0,
+                   name: "tap"
                  )]
-              ),
-              (75...77),
-              (86...89)
-            ),
-            0,
-            "tap"
-          )]
+             ),
+            end_keyword_loc: nil
+          ),
+         end_keyword_loc: nil
        ),
-       ElseNode(90...93)(
-         (90...91),
-         StatementsNode(92...93)([IntegerNode(92...93)()]),
-         nil
+       IfNode(35...60)(
+         if_keyword_loc: nil,
+         predicate: FalseNode(35...40)(),
+         statements:
+          StatementsNode(43...51)(
+            body:
+             [CallNode(43...51)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (43...48),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(49...51)(
+                   locals: [],
+                   parameters: nil,
+                   body: nil,
+                   opening_loc: (49...50),
+                   closing_loc: (50...51)
+                 ),
+                flags: 0,
+                name: "raise"
+              )]
+          ),
+         consequent:
+          ElseNode(52...60)(
+            else_keyword_loc: (52...53),
+            statements:
+             StatementsNode(54...60)(
+               body:
+                [CallNode(54...60)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (54...57),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block:
+                    BlockNode(58...60)(
+                      locals: [],
+                      parameters: nil,
+                      body: nil,
+                      opening_loc: (58...59),
+                      closing_loc: (59...60)
+                    ),
+                   flags: 0,
+                   name: "tap"
+                 )]
+             ),
+            end_keyword_loc: nil
+          ),
+         end_keyword_loc: nil
        ),
-       nil
-     )]
-  )
+       IfNode(62...93)(
+         if_keyword_loc: nil,
+         predicate: TrueNode(62...66)(),
+         statements:
+          StatementsNode(69...89)(
+            body:
+             [CallNode(69...89)(
+                receiver: IntegerNode(69...70)(),
+                operator_loc: (70...71),
+                message_loc: (71...74),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block:
+                 BlockNode(75...89)(
+                   locals: [:n],
+                   parameters:
+                    BlockParametersNode(78...81)(
+                      parameters:
+                       ParametersNode(79...80)(
+                         requireds: [RequiredParameterNode(79...80)(name: :n)],
+                         optionals: [],
+                         posts: [],
+                         rest: nil,
+                         keywords: [],
+                         keyword_rest: nil,
+                         block: nil
+                       ),
+                      locals: [],
+                      opening_loc: (78...79),
+                      closing_loc: (80...81)
+                    ),
+                   body:
+                    StatementsNode(82...85)(
+                      body:
+                       [CallNode(82...85)(
+                          receiver: nil,
+                          operator_loc: nil,
+                          message_loc: (82...83),
+                          opening_loc: nil,
+                          arguments:
+                           ArgumentsNode(84...85)(
+                             arguments:
+                              [LocalVariableReadNode(84...85)(
+                                 name: :n, depth: 0
+                               )]
+                           ),
+                          closing_loc: nil,
+                          block: nil,
+                          flags: 0,
+                          name: "p"
+                        )]
+                    ),
+                   opening_loc: (75...77),
+                   closing_loc: (86...89)
+                 ),
+                flags: 0,
+                name: "tap"
+              )]
+          ),
+         consequent:
+          ElseNode(90...93)(
+            else_keyword_loc: (90...91),
+            statements:
+             StatementsNode(92...93)(body: [IntegerNode(92...93)()]),
+            end_keyword_loc: nil
+          ),
+         end_keyword_loc: nil
+       )]
+   )
 )

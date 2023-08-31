@@ -1,17 +1,26 @@
 ProgramNode(0...26)(
-  [],
-  StatementsNode(0...26)(
-    [CaseNode(0...26)(
-       IntegerNode(5...6)(),
-       [InNode(8...15)(
-          IntegerNode(11...12)(),
-          StatementsNode(14...15)([IntegerNode(14...15)()]),
-          (8...10),
-          nil
-        )],
-       ElseNode(17...26)((17...21), nil, (23...26)),
-       (0...4),
-       (23...26)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...26)(
+     body:
+      [CaseNode(0...26)(
+         predicate: IntegerNode(5...6)(),
+         conditions:
+          [InNode(8...15)(
+             pattern: IntegerNode(11...12)(),
+             statements:
+              StatementsNode(14...15)(body: [IntegerNode(14...15)()]),
+             in_loc: (8...10),
+             then_loc: nil
+           )],
+         consequent:
+          ElseNode(17...26)(
+            else_keyword_loc: (17...21),
+            statements: nil,
+            end_keyword_loc: (23...26)
+          ),
+         case_keyword_loc: (0...4),
+         end_keyword_loc: (23...26)
+       )]
+   )
 )

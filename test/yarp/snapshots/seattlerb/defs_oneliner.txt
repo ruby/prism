@@ -1,38 +1,47 @@
 ProgramNode(0...32)(
-  [],
-  StatementsNode(0...32)(
-    [DefNode(0...32)(
-       (9...13),
-       SelfNode(4...8)(),
-       ParametersNode(14...17)(
-         [RequiredParameterNode(14...17)(:cmd)],
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(21...32)(
-         [CallNode(21...32)(
-            nil,
-            nil,
-            (21...27),
-            (27...28),
-            ArgumentsNode(28...31)([LocalVariableReadNode(28...31)(:cmd, 0)]),
-            (31...32),
-            nil,
-            0,
-            "system"
-          )]
-       ),
-       [:cmd],
-       (0...3),
-       (8...9),
-       (13...14),
-       (17...18),
-       (19...20),
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...32)(
+     body:
+      [DefNode(0...32)(
+         name_loc: (9...13),
+         receiver: SelfNode(4...8)(),
+         parameters:
+          ParametersNode(14...17)(
+            requireds: [RequiredParameterNode(14...17)(name: :cmd)],
+            optionals: [],
+            posts: [],
+            rest: nil,
+            keywords: [],
+            keyword_rest: nil,
+            block: nil
+          ),
+         body:
+          StatementsNode(21...32)(
+            body:
+             [CallNode(21...32)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (21...27),
+                opening_loc: (27...28),
+                arguments:
+                 ArgumentsNode(28...31)(
+                   arguments:
+                    [LocalVariableReadNode(28...31)(name: :cmd, depth: 0)]
+                 ),
+                closing_loc: (31...32),
+                block: nil,
+                flags: 0,
+                name: "system"
+              )]
+          ),
+         locals: [:cmd],
+         def_keyword_loc: (0...3),
+         operator_loc: (8...9),
+         lparen_loc: (13...14),
+         rparen_loc: (17...18),
+         equal_loc: (19...20),
+         end_keyword_loc: nil
+       )]
+   )
 )

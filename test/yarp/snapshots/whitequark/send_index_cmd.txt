@@ -1,40 +1,57 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [CallNode(0...10)(
-       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-       nil,
-       (3...10),
-       (3...4),
-       ArgumentsNode(4...9)(
-         [CallNode(4...9)(
-            nil,
-            nil,
-            (4...5),
-            nil,
-            ArgumentsNode(6...9)(
-              [CallNode(6...9)(
-                 nil,
-                 nil,
-                 (6...9),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "bar"
-               )]
-            ),
-            nil,
-            nil,
-            0,
-            "m"
-          )]
-       ),
-       (9...10),
-       nil,
-       0,
-       "[]"
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [CallNode(0...10)(
+         receiver:
+          CallNode(0...3)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (0...3),
+            opening_loc: nil,
+            arguments: nil,
+            closing_loc: nil,
+            block: nil,
+            flags: 2,
+            name: "foo"
+          ),
+         operator_loc: nil,
+         message_loc: (3...10),
+         opening_loc: (3...4),
+         arguments:
+          ArgumentsNode(4...9)(
+            arguments:
+             [CallNode(4...9)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (4...5),
+                opening_loc: nil,
+                arguments:
+                 ArgumentsNode(6...9)(
+                   arguments:
+                    [CallNode(6...9)(
+                       receiver: nil,
+                       operator_loc: nil,
+                       message_loc: (6...9),
+                       opening_loc: nil,
+                       arguments: nil,
+                       closing_loc: nil,
+                       block: nil,
+                       flags: 2,
+                       name: "bar"
+                     )]
+                 ),
+                closing_loc: nil,
+                block: nil,
+                flags: 0,
+                name: "m"
+              )]
+          ),
+         closing_loc: (9...10),
+         block: nil,
+         flags: 0,
+         name: "[]"
+       )]
+   )
 )

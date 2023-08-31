@@ -1,16 +1,25 @@
 ProgramNode(0...10)(
-  [:a],
-  StatementsNode(0...10)(
-    [LocalVariableWriteNode(0...10)(
-       :a,
-       0,
-       InterpolatedStringNode(4...10)(
-         (4...10),
-         [StringNode(11...21)(nil, (11...21), nil, "x\n" + "\n" + "z\n")],
-         (21...25)
-       ),
-       (0...1),
-       (2...3)
-     )]
-  )
+  locals: [:a],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [LocalVariableWriteNode(0...10)(
+         name: :a,
+         depth: 0,
+         value:
+          InterpolatedStringNode(4...10)(
+            opening_loc: (4...10),
+            parts:
+             [StringNode(11...21)(
+                opening_loc: nil,
+                content_loc: (11...21),
+                closing_loc: nil,
+                unescaped: "x\n" + "\n" + "z\n"
+              )],
+            closing_loc: (21...25)
+          ),
+         name_loc: (0...1),
+         operator_loc: (2...3)
+       )]
+   )
 )

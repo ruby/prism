@@ -1,34 +1,51 @@
 ProgramNode(0...29)(
-  [],
-  StatementsNode(0...29)(
-    [BeginNode(0...29)(
-       (0...5),
-       StatementsNode(7...11)(
-         [CallNode(7...11)(nil, nil, (7...11), nil, nil, nil, nil, 2, "meth")]
-       ),
-       RescueNode(13...24)(
-         (13...19),
-         [],
-         nil,
-         nil,
-         StatementsNode(21...24)(
-           [CallNode(21...24)(
-              nil,
-              nil,
-              (21...24),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil
-       ),
-       nil,
-       nil,
-       (26...29)
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...29)(
+     body:
+      [BeginNode(0...29)(
+         begin_keyword_loc: (0...5),
+         statements:
+          StatementsNode(7...11)(
+            body:
+             [CallNode(7...11)(
+                receiver: nil,
+                operator_loc: nil,
+                message_loc: (7...11),
+                opening_loc: nil,
+                arguments: nil,
+                closing_loc: nil,
+                block: nil,
+                flags: 2,
+                name: "meth"
+              )]
+          ),
+         rescue_clause:
+          RescueNode(13...24)(
+            keyword_loc: (13...19),
+            exceptions: [],
+            operator_loc: nil,
+            reference: nil,
+            statements:
+             StatementsNode(21...24)(
+               body:
+                [CallNode(21...24)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (21...24),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            consequent: nil
+          ),
+         else_clause: nil,
+         ensure_clause: nil,
+         end_keyword_loc: (26...29)
+       )]
+   )
 )

@@ -1,12 +1,14 @@
 ProgramNode(0...10)(
-  [],
-  StatementsNode(0...10)(
-    [IfNode(0...10)(
-       (3...5),
-       TrueNode(6...10)(),
-       StatementsNode(0...3)([FloatNode(0...3)()]),
-       nil,
-       nil
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...10)(
+     body:
+      [IfNode(0...10)(
+         if_keyword_loc: (3...5),
+         predicate: TrueNode(6...10)(),
+         statements: StatementsNode(0...3)(body: [FloatNode(0...3)()]),
+         consequent: nil,
+         end_keyword_loc: nil
+       )]
+   )
 )

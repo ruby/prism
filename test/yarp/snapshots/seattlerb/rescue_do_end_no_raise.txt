@@ -1,52 +1,87 @@
 ProgramNode(0...66)(
-  [],
-  StatementsNode(0...66)(
-    [CallNode(0...66)(
-       nil,
-       nil,
-       (0...3),
-       nil,
-       nil,
-       nil,
-       BlockNode(4...66)(
-         [],
-         nil,
-         BeginNode(9...66)(
-           nil,
-           StatementsNode(9...15)(
-             [SymbolNode(9...15)((9...10), (10...15), nil, "begin")]
-           ),
-           RescueNode(16...32)(
-             (16...22),
-             [],
-             nil,
-             nil,
-             StatementsNode(25...32)(
-               [SymbolNode(25...32)((25...26), (26...32), nil, "rescue")]
+  locals: [],
+  statements:
+   StatementsNode(0...66)(
+     body:
+      [CallNode(0...66)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (0...3),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block:
+          BlockNode(4...66)(
+            locals: [],
+            parameters: nil,
+            body:
+             BeginNode(9...66)(
+               begin_keyword_loc: nil,
+               statements:
+                StatementsNode(9...15)(
+                  body:
+                   [SymbolNode(9...15)(
+                      opening_loc: (9...10),
+                      value_loc: (10...15),
+                      closing_loc: nil,
+                      unescaped: "begin"
+                    )]
+                ),
+               rescue_clause:
+                RescueNode(16...32)(
+                  keyword_loc: (16...22),
+                  exceptions: [],
+                  operator_loc: nil,
+                  reference: nil,
+                  statements:
+                   StatementsNode(25...32)(
+                     body:
+                      [SymbolNode(25...32)(
+                         opening_loc: (25...26),
+                         value_loc: (26...32),
+                         closing_loc: nil,
+                         unescaped: "rescue"
+                       )]
+                   ),
+                  consequent: nil
+                ),
+               else_clause:
+                ElseNode(33...52)(
+                  else_keyword_loc: (33...37),
+                  statements:
+                   StatementsNode(40...45)(
+                     body:
+                      [SymbolNode(40...45)(
+                         opening_loc: (40...41),
+                         value_loc: (41...45),
+                         closing_loc: nil,
+                         unescaped: "else"
+                       )]
+                   ),
+                  end_keyword_loc: (46...52)
+                ),
+               ensure_clause:
+                EnsureNode(46...66)(
+                  ensure_keyword_loc: (46...52),
+                  statements:
+                   StatementsNode(55...62)(
+                     body:
+                      [SymbolNode(55...62)(
+                         opening_loc: (55...56),
+                         value_loc: (56...62),
+                         closing_loc: nil,
+                         unescaped: "ensure"
+                       )]
+                   ),
+                  end_keyword_loc: (63...66)
+                ),
+               end_keyword_loc: (63...66)
              ),
-             nil
-           ),
-           ElseNode(33...52)(
-             (33...37),
-             StatementsNode(40...45)(
-               [SymbolNode(40...45)((40...41), (41...45), nil, "else")]
-             ),
-             (46...52)
-           ),
-           EnsureNode(46...66)(
-             (46...52),
-             StatementsNode(55...62)(
-               [SymbolNode(55...62)((55...56), (56...62), nil, "ensure")]
-             ),
-             (63...66)
-           ),
-           (63...66)
-         ),
-         (4...6),
-         (63...66)
-       ),
-       0,
-       "tap"
-     )]
-  )
+            opening_loc: (4...6),
+            closing_loc: (63...66)
+          ),
+         flags: 0,
+         name: "tap"
+       )]
+   )
 )

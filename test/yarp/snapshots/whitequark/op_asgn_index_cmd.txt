@@ -1,43 +1,63 @@
 ProgramNode(0...18)(
-  [],
-  StatementsNode(0...18)(
-    [CallOperatorWriteNode(0...18)(
-       CallNode(0...9)(
-         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 2, "foo"),
-         nil,
-         (3...9),
-         (3...4),
-         ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
-         (8...9),
-         nil,
-         0,
-         "[]="
-       ),
-       (10...12),
-       CallNode(13...18)(
-         nil,
-         nil,
-         (13...14),
-         nil,
-         ArgumentsNode(15...18)(
-           [CallNode(15...18)(
-              nil,
-              nil,
-              (15...18),
-              nil,
-              nil,
-              nil,
-              nil,
-              2,
-              "foo"
-            )]
-         ),
-         nil,
-         nil,
-         0,
-         "m"
-       ),
-       :+
-     )]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...18)(
+     body:
+      [CallOperatorWriteNode(0...18)(
+         target:
+          CallNode(0...9)(
+            receiver:
+             CallNode(0...3)(
+               receiver: nil,
+               operator_loc: nil,
+               message_loc: (0...3),
+               opening_loc: nil,
+               arguments: nil,
+               closing_loc: nil,
+               block: nil,
+               flags: 2,
+               name: "foo"
+             ),
+            operator_loc: nil,
+            message_loc: (3...9),
+            opening_loc: (3...4),
+            arguments:
+             ArgumentsNode(4...8)(
+               arguments: [IntegerNode(4...5)(), IntegerNode(7...8)()]
+             ),
+            closing_loc: (8...9),
+            block: nil,
+            flags: 0,
+            name: "[]="
+          ),
+         operator_loc: (10...12),
+         value:
+          CallNode(13...18)(
+            receiver: nil,
+            operator_loc: nil,
+            message_loc: (13...14),
+            opening_loc: nil,
+            arguments:
+             ArgumentsNode(15...18)(
+               arguments:
+                [CallNode(15...18)(
+                   receiver: nil,
+                   operator_loc: nil,
+                   message_loc: (15...18),
+                   opening_loc: nil,
+                   arguments: nil,
+                   closing_loc: nil,
+                   block: nil,
+                   flags: 2,
+                   name: "foo"
+                 )]
+             ),
+            closing_loc: nil,
+            block: nil,
+            flags: 0,
+            name: "m"
+          ),
+         operator: :+
+       )]
+   )
 )

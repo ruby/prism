@@ -1,27 +1,41 @@
 ProgramNode(0...19)(
-  [],
-  StatementsNode(0...19)(
-    [LambdaNode(0...12)(
-       [:scope],
-       (0...2),
-       (10...11),
-       (11...12),
-       BlockParametersNode(2...9)(
-         ParametersNode(3...8)(
-           [RequiredParameterNode(3...8)(:scope)],
-           [],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         [],
-         (2...3),
-         (8...9)
+  locals: [],
+  statements:
+   StatementsNode(0...19)(
+     body:
+      [LambdaNode(0...12)(
+         locals: [:scope],
+         operator_loc: (0...2),
+         opening_loc: (10...11),
+         closing_loc: (11...12),
+         parameters:
+          BlockParametersNode(2...9)(
+            parameters:
+             ParametersNode(3...8)(
+               requireds: [RequiredParameterNode(3...8)(name: :scope)],
+               optionals: [],
+               posts: [],
+               rest: nil,
+               keywords: [],
+               keyword_rest: nil,
+               block: nil
+             ),
+            locals: [],
+            opening_loc: (2...3),
+            closing_loc: (8...9)
+          ),
+         body: nil
        ),
-       nil
-     ),
-     CallNode(14...19)(nil, nil, (14...19), nil, nil, nil, nil, 2, "scope")]
-  )
+       CallNode(14...19)(
+         receiver: nil,
+         operator_loc: nil,
+         message_loc: (14...19),
+         opening_loc: nil,
+         arguments: nil,
+         closing_loc: nil,
+         block: nil,
+         flags: 2,
+         name: "scope"
+       )]
+   )
 )

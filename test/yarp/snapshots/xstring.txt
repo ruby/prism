@@ -1,31 +1,61 @@
 ProgramNode(0...40)(
-  [],
-  StatementsNode(0...40)(
-    [XStringNode(0...7)((0...3), (3...6), (6...7), "foo"),
-     InterpolatedXStringNode(9...25)(
-       (9...10),
-       [StringNode(10...14)(nil, (10...14), nil, "foo "),
-        EmbeddedStatementsNode(14...20)(
-          (14...16),
-          StatementsNode(16...19)(
-            [CallNode(16...19)(
-               nil,
-               nil,
-               (16...19),
-               nil,
-               nil,
-               nil,
-               nil,
-               2,
-               "bar"
-             )]
-          ),
-          (19...20)
-        ),
-        StringNode(20...24)(nil, (20...24), nil, " baz")],
-       (24...25)
-     ),
-     XStringNode(27...33)((27...28), (28...32), (32...33), "foo"),
-     XStringNode(35...40)((35...36), (36...39), (39...40), "foo")]
-  )
+  locals: [],
+  statements:
+   StatementsNode(0...40)(
+     body:
+      [XStringNode(0...7)(
+         opening_loc: (0...3),
+         content_loc: (3...6),
+         closing_loc: (6...7),
+         unescaped: "foo"
+       ),
+       InterpolatedXStringNode(9...25)(
+         opening_loc: (9...10),
+         parts:
+          [StringNode(10...14)(
+             opening_loc: nil,
+             content_loc: (10...14),
+             closing_loc: nil,
+             unescaped: "foo "
+           ),
+           EmbeddedStatementsNode(14...20)(
+             opening_loc: (14...16),
+             statements:
+              StatementsNode(16...19)(
+                body:
+                 [CallNode(16...19)(
+                    receiver: nil,
+                    operator_loc: nil,
+                    message_loc: (16...19),
+                    opening_loc: nil,
+                    arguments: nil,
+                    closing_loc: nil,
+                    block: nil,
+                    flags: 2,
+                    name: "bar"
+                  )]
+              ),
+             closing_loc: (19...20)
+           ),
+           StringNode(20...24)(
+             opening_loc: nil,
+             content_loc: (20...24),
+             closing_loc: nil,
+             unescaped: " baz"
+           )],
+         closing_loc: (24...25)
+       ),
+       XStringNode(27...33)(
+         opening_loc: (27...28),
+         content_loc: (28...32),
+         closing_loc: (32...33),
+         unescaped: "foo"
+       ),
+       XStringNode(35...40)(
+         opening_loc: (35...36),
+         content_loc: (36...39),
+         closing_loc: (39...40),
+         unescaped: "foo"
+       )]
+   )
 )
