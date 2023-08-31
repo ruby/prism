@@ -325,7 +325,19 @@ module YARP
           deconstructed.delete(:location)
 
           q.breakable("")
-          q.seplist(deconstructed, lambda { q.comma_breakable }, :each_value) { |value| q.pp(value) }
+          # Similar logic to #pp_hash and #pp_object
+          q.group {
+            q.seplist(deconstructed, nil, :each_pair) { |field, value|
+              q.group {
+                q.text field.to_s
+                q.text ':'
+                q.group(1) {
+                  q.breakable
+                  q.pp value
+                }
+              }
+            }
+          }
         end
         q.breakable("")
         q.text(")")
