@@ -8,6 +8,7 @@
 #include "yarp/util/yp_list.h"
 #include "yarp/util/yp_newline_list.h"
 #include "yarp/util/yp_state_stack.h"
+#include "yarp/util/yp_alloc.h"
 
 #include <stdbool.h>
 
@@ -315,6 +316,8 @@ struct yp_parser {
         yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
         size_t index;                           // the current index into the lexer mode stack
     } lex_modes;
+
+    yp_allocator_t allocator;
 
     const uint8_t *start;   // the pointer to the start of the source
     const uint8_t *end;     // the pointer to the end of the source
