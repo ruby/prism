@@ -75,7 +75,7 @@ yp_strspn_whitespace(const uint8_t *string, ptrdiff_t length) {
 // whitespace while also tracking the location of each newline. Disallows
 // searching past the given maximum number of characters.
 size_t
-yp_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, yp_newline_list_t *newline_list, bool stop_at_newline) {
+yp_strspn_whitespace_newlines(yp_allocator_t *allocator, const uint8_t *string, ptrdiff_t length, yp_newline_list_t *newline_list, bool stop_at_newline) {
     if (length <= 0) return 0;
 
     size_t size = 0;
@@ -87,7 +87,7 @@ yp_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, yp_newlin
                 return size + 1;
             }
             else {
-                yp_newline_list_append(newline_list, string + size);
+                yp_newline_list_append(allocator, newline_list, string + size);
             }
         }
 

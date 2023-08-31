@@ -72,13 +72,12 @@ void
 yp_free(yp_allocator_t *allocator, void *ptr) {
     if (USE_ARENA) {
         // NO OP
-#ifdef YARP_DEBUG_MODE_BUILD
         bool found = false;
         yp_memory_pool_t *pool = allocator->pool;
 
         while (pool != NULL) {
             yp_memory_pool_t *prev = pool->prev;
-            if (found == false && (char *)ptr >= pool->memory && (char *)ptr < pool->memory + pool->size) {
+            if (found == false && (char *)ptr >= pool->memory && (char *)ptr <= pool->memory + pool->size) {
                 found = true;
             }
             pool = prev;
@@ -88,15 +87,12 @@ yp_free(yp_allocator_t *allocator, void *ptr) {
 
         while (pool != NULL) {
             yp_memory_pool_t *prev = pool->prev;
-            if (found == false && (char *)ptr >= pool->memory && (char *)ptr < pool->memory + pool->size) {
+            if (found == false && (char *)ptr >= pool->memory && (char *)ptr <= pool->memory + pool->size) {
                 found = true;
             }
             pool = prev;
         }
         assert(found);
-#else
-    (void)allocator;
-#endif // YARP_DEBUG_MODE_BUILD
     } else {
         free(ptr);
     }

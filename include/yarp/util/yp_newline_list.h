@@ -10,6 +10,7 @@
 #define YP_NEWLINE_LIST_H
 
 #include "yarp/defines.h"
+#include "yarp/util/yp_alloc.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -41,14 +42,14 @@ typedef struct {
 
 // Initialize a new newline list with the given capacity. Returns true if the
 // allocation of the offsets succeeds, otherwise returns false.
-bool yp_newline_list_init(yp_newline_list_t *list, const uint8_t *start, size_t capacity);
+bool yp_newline_list_init(yp_allocator_t * allocator, yp_newline_list_t *list, const uint8_t *start, size_t capacity);
 
 // Append a new offset to the newline list. Returns true if the reallocation of
 // the offsets succeeds (if one was necessary), otherwise returns false.
-bool yp_newline_list_append(yp_newline_list_t *list, const uint8_t *cursor);
+bool yp_newline_list_append(yp_allocator_t * allocator, yp_newline_list_t *list, const uint8_t *cursor);
 
 // Conditionally append a new offset to the newline list, if the value passed in is a newline.
-bool yp_newline_list_check_append(yp_newline_list_t *list, const uint8_t *cursor);
+bool yp_newline_list_check_append(yp_allocator_t * allocator, yp_newline_list_t *list, const uint8_t *cursor);
 
 // Returns the line and column of the given offset. If the offset is not in the
 // list, the line and column of the closest offset less than the given offset
@@ -56,6 +57,6 @@ bool yp_newline_list_check_append(yp_newline_list_t *list, const uint8_t *cursor
 yp_line_column_t yp_newline_list_line_column(yp_newline_list_t *list, const uint8_t *cursor);
 
 // Free the internal memory allocated for the newline list.
-void yp_newline_list_free(yp_newline_list_t *list);
+void yp_newline_list_free(yp_allocator_t * allocator, yp_newline_list_t *list);
 
 #endif

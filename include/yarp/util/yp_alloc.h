@@ -12,8 +12,6 @@ typedef struct yp_memory_pool {
 } yp_memory_pool_t;
 
 typedef struct yp_allocator {
-    size_t capacity;
-    size_t size;
     size_t pool_count;
     yp_memory_pool_t *pool;
 

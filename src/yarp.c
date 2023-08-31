@@ -5785,7 +5785,7 @@ lex_embdoc(yp_parser_t *parser) {
     if (newline == NULL) {
         parser->current.end = parser->end;
     } else {
-        yp_newline_list_append(&parser->newline_list, newline);
+        yp_newline_list_append(&parser->allocator, &parser->newline_list, newline);
         parser->current.end = newline + 1;
     }
 
@@ -5810,7 +5810,7 @@ lex_embdoc(yp_parser_t *parser) {
             if (newline == NULL) {
                 parser->current.end = parser->end;
             } else {
-                yp_newline_list_append(&parser->newline_list, newline);
+                yp_newline_list_append(&parser->allocator, &parser->newline_list, newline);
                 parser->current.end = newline + 1;
             }
 
@@ -5830,7 +5830,7 @@ lex_embdoc(yp_parser_t *parser) {
         if (newline == NULL) {
             parser->current.end = parser->end;
         } else {
-            yp_newline_list_append(&parser->newline_list, newline);
+            yp_newline_list_append(&parser->allocator, &parser->newline_list, newline);
             parser->current.end = newline + 1;
         }
 
@@ -5939,7 +5939,7 @@ parser_lex(yp_parser_t *parser) {
                                 parser->heredoc_end = NULL;
                             } else {
                                 parser->current.end += eol_length + 1;
-                                yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                                yp_newline_list_append(&parser->allocator, &parser->newline_list, parser->current.end - 1);
                                 space_seen = true;
                             }
                         } else if (yp_char_is_inline_whitespace(*parser->current.end)) {
@@ -6012,7 +6012,7 @@ parser_lex(yp_parser_t *parser) {
                         }
 
                         if (parser->heredoc_end == NULL) {
-                            yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                            yp_newline_list_append(&parser->allocator, &parser->newline_list, parser->current.end - 1);
                         }
                     }
 
@@ -6417,7 +6417,7 @@ parser_lex(yp_parser_t *parser) {
                                     } else {
                                         // Otherwise, we want to indicate that the body of the
                                         // heredoc starts on the character after the next newline.
-                                        yp_newline_list_append(&parser->newline_list, body_start);
+                                        yp_newline_list_append(&parser->allocator, &parser->newline_list, body_start);
                                         body_start++;
                                     }
 
@@ -6814,7 +6814,7 @@ parser_lex(yp_parser_t *parser) {
                             size_t eol_length = match_eol(parser);
                             if (eol_length) {
                                 parser->current.end += eol_length;
-                                yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                                yp_newline_list_append(&parser->allocator, &parser->newline_list, parser->current.end - 1);
                             } else {
                                 parser->current.end++;
                             }
@@ -6848,7 +6848,7 @@ parser_lex(yp_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_regexp(parser, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                    yp_newline_list_check_append(&parser->newline_list, parser->current.end);
+                                    yp_newline_list_check_append(&parser->allocator, &parser->newline_list, parser->current.end);
                                     parser->current.end++;
                                 }
 
@@ -6859,7 +6859,7 @@ parser_lex(yp_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                    yp_newline_list_check_append(&parser->newline_list, parser->current.end);
+                                    yp_newline_list_check_append(&parser->allocator, &parser->newline_list, parser->current.end);
                                     parser->current.end++;
                                 }
 
@@ -6870,7 +6870,7 @@ parser_lex(yp_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                    yp_newline_list_check_append(&parser->newline_list, parser->current.end);
+                                    yp_newline_list_check_append(&parser->allocator, &parser->newline_list, parser->current.end);
                                     parser->current.end++;
                                 }
 
@@ -7029,7 +7029,7 @@ parser_lex(yp_parser_t *parser) {
 
             bool should_stop = parser->heredoc_end;
 
-            if ((whitespace = yp_strspn_whitespace_newlines(parser->current.end, parser->end - parser->current.end, &parser->newline_list, should_stop)) > 0) {
+            if ((whitespace = yp_strspn_whitespace_newlines(&parser->allocator, parser->current.end, parser->end - parser->current.end, &parser->newline_list, should_stop)) > 0) {
                 parser->current.end += whitespace;
                 if (peek_offset(parser, -1) == '\n') {
                     // mutates next_start
@@ -7112,7 +7112,7 @@ parser_lex(yp_parser_t *parser) {
                             LEX(YP_TOKEN_STRING_CONTENT);
                         } else {
                             // ... else track the newline.
-                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                            yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint + difference - 1);
                         }
                     }
 
@@ -7190,7 +7190,7 @@ parser_lex(yp_parser_t *parser) {
                         !(lex_mode->as.regexp.terminator == '\n' && parser->current.type != YP_TOKEN_REGEXP_BEGIN)
                         && parser->heredoc_end == NULL
                     ) {
-                        yp_newline_list_append(&parser->newline_list, breakpoint);
+                        yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint);
                     }
 
                     if (lex_mode->as.regexp.terminator != '\n') {
@@ -7249,7 +7249,7 @@ parser_lex(yp_parser_t *parser) {
                             LEX(YP_TOKEN_STRING_CONTENT);
                         } else {
                             // ... else track the newline.
-                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                            yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint + difference - 1);
                         }
                     }
 
@@ -7341,7 +7341,7 @@ parser_lex(yp_parser_t *parser) {
                     size_t eol_length = match_eol_at(parser, breakpoint);
                     if (eol_length) {
                         parser->current.end = breakpoint + eol_length;
-                        yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                        yp_newline_list_append(&parser->allocator, &parser->newline_list, parser->current.end - 1);
                     } else {
                         parser->current.end = breakpoint + 1;
                     }
@@ -7367,7 +7367,7 @@ parser_lex(yp_parser_t *parser) {
                 // terminator is a newline character.
                 if (*breakpoint == '\n') {
                     if (parser->heredoc_end == NULL) {
-                        yp_newline_list_append(&parser->newline_list, breakpoint);
+                        yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint);
                         breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         continue;
                     } else {
@@ -7404,7 +7404,7 @@ parser_lex(yp_parser_t *parser) {
                                 LEX(YP_TOKEN_STRING_CONTENT);
                             } else {
                                 // ... else track the newline.
-                                yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                                yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint + difference - 1);
                             }
                         }
 
@@ -7471,7 +7471,7 @@ parser_lex(yp_parser_t *parser) {
                     size_t eol_length = match_eol_at(parser, start + ident_length);
                     if (eol_length) {
                         parser->current.end = start + ident_length + eol_length;
-                        yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                        yp_newline_list_append(&parser->allocator, &parser->newline_list, parser->current.end - 1);
                     } else if (parser->end == (start + ident_length)) {
                         parser->current.end = start + ident_length;
                         at_end = true;
@@ -7521,7 +7521,7 @@ parser_lex(yp_parser_t *parser) {
                             LEX(YP_TOKEN_STRING_CONTENT);
                         }
 
-                        yp_newline_list_append(&parser->newline_list, breakpoint);
+                        yp_newline_list_append(&parser->allocator, &parser->newline_list, breakpoint);
 
                         const uint8_t *start = breakpoint + 1;
                         if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
@@ -7570,7 +7570,7 @@ parser_lex(yp_parser_t *parser) {
                                 break;
                             }
 
-                            yp_newline_list_check_append(&parser->newline_list, breakpoint + difference - 1);
+                            yp_newline_list_check_append(&parser->allocator, &parser->newline_list, breakpoint + difference - 1);
 
                             breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         }
@@ -13821,7 +13821,7 @@ yp_parser_init(yp_parser_t *parser, const uint8_t *source, size_t size, const ch
     // guess at the number of newlines that we'll need based on the size of the
     // input.
     size_t newline_size = size / 22;
-    yp_newline_list_init(&parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
+    yp_newline_list_init(&parser->allocator, &parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
 
     // Skip past the UTF-8 BOM if it exists.
     if (size >= 3 && source[0] == 0xef && source[1] == 0xbb && source[2] == 0xbf) {
@@ -13877,7 +13877,7 @@ yp_parser_free(yp_parser_t *parser) {
     yp_diagnostic_list_free(&parser->warning_list);
     yp_comment_list_free(&parser->allocator, &parser->comment_list);
     yp_constant_pool_free(&parser->constant_pool);
-    yp_newline_list_free(&parser->newline_list);
+    yp_newline_list_free(&parser->allocator, &parser->newline_list);
     yp_allocator_free(&parser->allocator);
 
     while (parser->lex_modes.index >= YP_LEX_STACK_SIZE) {
