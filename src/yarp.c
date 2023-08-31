@@ -211,7 +211,7 @@ lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
     parser->lex_modes.index++;
 
     if (parser->lex_modes.index > YP_LEX_STACK_SIZE - 1) {
-        parser->lex_modes.current = (yp_lex_mode_t *) malloc(sizeof(yp_lex_mode_t));
+        parser->lex_modes.current = (yp_lex_mode_t *) yp_malloc(&parser->allocator, sizeof(yp_lex_mode_t));
         if (parser->lex_modes.current == NULL) return false;
 
         *parser->lex_modes.current = lex_mode;
@@ -342,7 +342,7 @@ lex_mode_pop(yp_parser_t *parser) {
     } else {
         parser->lex_modes.index--;
         yp_lex_mode_t *prev = parser->lex_modes.current->prev;
-        free(parser->lex_modes.current);
+        yp_free(&parser->allocator, parser->lex_modes.current);
         parser->lex_modes.current = prev;
     }
 }
@@ -622,7 +622,7 @@ parse_decimal_number(yp_parser_t *parser, const uint8_t *start, const uint8_t *e
     assert(diff > 0 && ((unsigned long) diff < SIZE_MAX));
     size_t length = (size_t) diff;
 
-    char *digits = calloc(length + 1, sizeof(char));
+    char *digits = yp_calloc(&parser->allocator, length + 1, sizeof(char));
     memcpy(digits, start, length);
     digits[length] = '\0';
 
@@ -635,7 +635,7 @@ parse_decimal_number(yp_parser_t *parser, const uint8_t *start, const uint8_t *e
         value = UINT32_MAX;
     }
 
-    free(digits);
+    yp_free(&parser->allocator, digits);
 
     if (value > UINT32_MAX) {
         yp_diagnostic_list_append(&parser->error_list, start, end, "invalid decimal number");
@@ -681,7 +681,7 @@ yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement)
 // implement our own arena allocation.
 static inline void *
 yp_alloc_node(YP_ATTRIBUTE_UNUSED yp_parser_t *parser, size_t size) {
-    void *memory = calloc(1, size);
+    void *memory = yp_calloc(&parser->allocator, 1, size);
     if (memory == NULL) {
         fprintf(stderr, "Failed to allocate %zu bytes\n", size);
         abort();
@@ -1495,7 +1495,7 @@ yp_call_and_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `yp_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    free(target);
+    yp_free(&parser->allocator, target);
 
     return node;
 }
@@ -1533,7 +1533,7 @@ yp_call_operator_write_node_create(yp_parser_t *parser, yp_call_node_t *target, 
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `yp_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    free(target);
+    yp_free(&parser->allocator, target);
 
     return node;
 }
@@ -1571,7 +1571,7 @@ yp_call_or_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const 
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `yp_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    free(target);
+    yp_free(&parser->allocator, target);
 
     return node;
 }
@@ -4232,7 +4232,7 @@ yp_string_node_to_symbol_node(yp_parser_t *parser, yp_string_node_t *node, const
     // We are explicitly _not_ using yp_node_destroy here because we don't want
     // to trash the unescaped string. We could instead copy the string if we
     // know that it is owned, but we're taking the fast path for now.
-    free(node);
+    yp_free(&parser->allocator, node);
 
     return new_node;
 }
@@ -4256,7 +4256,7 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
     // We are explicitly _not_ using yp_node_destroy here because we don't want
     // to trash the unescaped string. We could instead copy the string if we
     // know that it is owned, but we're taking the fast path for now.
-    free(node);
+    yp_free(&parser->allocator, node);
 
     return new_node;
 }
@@ -4563,7 +4563,7 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
 // Allocate and initialize a new scope. Push it onto the scope stack.
 static bool
 yp_parser_scope_push(yp_parser_t *parser, bool closed) {
-    yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
+    yp_scope_t *scope = (yp_scope_t *) yp_malloc(&parser->allocator, sizeof(yp_scope_t));
     if (scope == NULL) return false;
 
     *scope = (yp_scope_t) { .closed = closed, .previous = parser->current_scope };
@@ -4630,7 +4630,7 @@ static void
 yp_parser_scope_pop(yp_parser_t *parser) {
     yp_scope_t *scope = parser->current_scope;
     parser->current_scope = scope->previous;
-    free(scope);
+    yp_free(&parser->allocator, scope);
 }
 
 /******************************************************************************/
@@ -5036,7 +5036,7 @@ context_recoverable(yp_parser_t *parser, yp_token_t *token) {
 
 static bool
 context_push(yp_parser_t *parser, yp_context_t context) {
-    yp_context_node_t *context_node = (yp_context_node_t *) malloc(sizeof(yp_context_node_t));
+    yp_context_node_t *context_node = (yp_context_node_t *) yp_malloc(&parser->allocator, sizeof(yp_context_node_t));
     if (context_node == NULL) return false;
 
     *context_node = (yp_context_node_t) { .context = context, .prev = NULL };
@@ -5054,7 +5054,7 @@ context_push(yp_parser_t *parser, yp_context_t context) {
 static void
 context_pop(yp_parser_t *parser) {
     yp_context_node_t *prev = parser->current_context->prev;
-    free(parser->current_context);
+    yp_free(&parser->allocator, parser->current_context);
     parser->current_context = prev;
 }
 
@@ -5762,7 +5762,7 @@ parser_lex_callback(yp_parser_t *parser) {
 // Return a new comment node of the specified type.
 static inline yp_comment_t *
 parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
-    yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
+    yp_comment_t *comment = (yp_comment_t *) yp_malloc(&parser->allocator, sizeof(yp_comment_t));
     if (comment == NULL) return NULL;
 
     *comment = (yp_comment_t) {
@@ -13796,6 +13796,8 @@ yp_parser_init(yp_parser_t *parser, const uint8_t *source, size_t size, const ch
         .newline_list = YP_NEWLINE_LIST_EMPTY
     };
 
+    yp_allocator_init(&parser->allocator, 0);
+
     yp_accepts_block_stack_push(parser, true);
 
     // Initialize the constant pool. We're going to completely guess as to the
@@ -13856,14 +13858,14 @@ yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_dec
 
 // Free all of the memory associated with the comment list.
 static inline void
-yp_comment_list_free(yp_list_t *list) {
+yp_comment_list_free(yp_allocator_t *allocator, yp_list_t *list) {
     yp_list_node_t *node, *next;
 
     for (node = list->head; node != NULL; node = next) {
         next = node->next;
 
         yp_comment_t *comment = (yp_comment_t *) node;
-        free(comment);
+        yp_free(allocator, comment);
     }
 }
 
@@ -13873,9 +13875,10 @@ yp_parser_free(yp_parser_t *parser) {
     yp_string_free(&parser->filepath_string);
     yp_diagnostic_list_free(&parser->error_list);
     yp_diagnostic_list_free(&parser->warning_list);
-    yp_comment_list_free(&parser->comment_list);
+    yp_comment_list_free(&parser->allocator, &parser->comment_list);
     yp_constant_pool_free(&parser->constant_pool);
     yp_newline_list_free(&parser->newline_list);
+    yp_allocator_free(&parser->allocator);
 
     while (parser->lex_modes.index >= YP_LEX_STACK_SIZE) {
         lex_mode_pop(parser);

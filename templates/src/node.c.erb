@@ -85,7 +85,7 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
             assert(false && "unreachable");
             break;
     }
-    free(node);
+    yp_free(&parser->allocator, node);
 }
 
 static void
