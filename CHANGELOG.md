@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.10.0] - 2023-09-01
+
+### Added
+
+- `InstanceVariable*Node` and `ClassVariable*Node` objects now have their `name` returning a Symbol. This is because they are now part of the constant pool.
+- `NumberedReferenceReadNode` now has a `number` field, which returns an Integer.
+
+### Changed
+
+- **BREAKING**: Various `operator_id` and `constant_id` fields have been renamed to `operator` and `name`, respectively. See [09d0a144](https://github.com/ruby/yarp/commit/09d0a144dfd519c5b5f96f0b6ee95d256e2cb1a6) for details.
+- `%w`, `%W`, `%i`, `%I`, `%q`, and `%Q` literals can now span around the contents of a heredoc.
+- **BREAKING**: All of the public C APIs that accept the source string now accept `const uint8_t *` as opposed to `const char *`.
+
 ## [0.9.0] - 2023-08-25
 
 ### Added
@@ -81,7 +94,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/yarp/compare/v0.9.0...HEAD
+[unreleased]: https://github.com/ruby/yarp/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/ruby/yarp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/ruby/yarp/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/ruby/yarp/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/ruby/yarp/compare/v0.6.0...v0.7.0
