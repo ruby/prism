@@ -15,6 +15,23 @@ else
   result = YARP.parse_file(ARGV[0] || "test.rb")
 end
 
-result.mark_newlines if ENV['MARK_NEWLINES']
-result = result.value.accept(YARP::DesugarVisitor.new) if ENV['DESUGAR']
-pp result
+result.mark_newlines if ENV["MARK_NEWLINES"]
+
+value = result.value
+value = value.accept(YARP::DesugarVisitor.new) if ENV["DESUGAR"]
+
+parts = {}
+parts["Comments"] = result.comments if result.comments.any?
+parts["Warnings"] = result.warnings if result.warnings.any?
+parts["Errors"] = result.errors if result.errors.any?
+
+if parts.empty?
+  puts value.inspect
+else
+  parts["AST"] = value
+  parts.each_with_index do |(key, value), index|
+    puts if index > 0
+    puts "#{key}:"
+    puts value.inspect
+  end
+end
