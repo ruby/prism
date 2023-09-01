@@ -603,12 +603,17 @@ module YARP
       ]
     end
 
+    def test_invalid_hex_escape
+      assert_errors expression('"\\xx"'), '"\\xx"', [
+        ["Invalid hex escape.", 1..3],
+      ]
+    end
+
     def test_do_not_allow_more_than_6_hexadecimal_digits_in_u_Unicode_character_notation
       expected = StringNode(Location(), Location(), Location(), "\u0001")
 
       assert_errors expected, '"\u{0000001}"', [
         ["invalid Unicode escape.", 4..11],
-        ["invalid Unicode escape.", 4..11]
       ]
     end
 
@@ -617,13 +622,11 @@ module YARP
 
       assert_errors expected, '"\u{000z}"', [
         ["unterminated Unicode escape", 7..7],
-        ["unterminated Unicode escape", 7..7]
       ]
     end
 
     def test_unterminated_unicode_brackets_should_be_a_syntax_error
       assert_errors expression('?\\u{3'), '?\\u{3', [
-        ["invalid Unicode escape.", 1..5],
         ["invalid Unicode escape.", 1..5],
       ]
     end
