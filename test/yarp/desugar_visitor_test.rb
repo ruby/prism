@@ -6,7 +6,7 @@ module YARP
   class DesugarVisitorTest < TestCase
     def test_and_write
       assert_desugars("(AndNode (ClassVariableReadNode) (ClassVariableWriteNode (CallNode)))", "@@foo &&= bar")
-      assert_desugars("(AndNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode)) (ConstantPathWriteNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode)) (CallNode)))", "Foo::Bar &&= baz")
+      assert_not_desugared("Foo::Bar &&= baz", "Desugaring would execute Foo twice or need temporary variables")
       assert_desugars("(AndNode (ConstantReadNode) (ConstantWriteNode (CallNode)))", "Foo &&= bar")
       assert_desugars("(AndNode (GlobalVariableReadNode) (GlobalVariableWriteNode (CallNode)))", "$foo &&= bar")
       assert_desugars("(AndNode (InstanceVariableReadNode) (InstanceVariableWriteNode (CallNode)))", "@foo &&= bar")
@@ -16,7 +16,7 @@ module YARP
 
     def test_or_write
       assert_desugars("(IfNode (DefinedNode (ClassVariableReadNode)) (StatementsNode (ClassVariableReadNode)) (ElseNode (StatementsNode (ClassVariableWriteNode (CallNode)))))", "@@foo ||= bar")
-      assert_desugars("(IfNode (DefinedNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode))) (StatementsNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode))) (ElseNode (StatementsNode (ConstantPathWriteNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode)) (CallNode)))))", "Foo::Bar ||= baz")
+      assert_not_desugared("Foo::Bar ||= baz", "Desugaring would execute Foo twice or need temporary variables")
       assert_desugars("(IfNode (DefinedNode (ConstantReadNode)) (StatementsNode (ConstantReadNode)) (ElseNode (StatementsNode (ConstantWriteNode (CallNode)))))", "Foo ||= bar")
       assert_desugars("(IfNode (DefinedNode (GlobalVariableReadNode)) (StatementsNode (GlobalVariableReadNode)) (ElseNode (StatementsNode (GlobalVariableWriteNode (CallNode)))))", "$foo ||= bar")
       assert_desugars("(OrNode (InstanceVariableReadNode) (InstanceVariableWriteNode (CallNode)))", "@foo ||= bar")
@@ -26,7 +26,7 @@ module YARP
 
     def test_operator_write
       assert_desugars("(ClassVariableWriteNode (CallNode (ClassVariableReadNode) (ArgumentsNode (CallNode))))", "@@foo += bar")
-      assert_desugars("(ConstantPathWriteNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode)) (CallNode (ConstantPathNode (ConstantReadNode) (ConstantReadNode)) (ArgumentsNode (CallNode))))", "Foo::Bar += baz")
+      assert_not_desugared("Foo::Bar += baz", "Desugaring would execute Foo twice or need temporary variables")
       assert_desugars("(ConstantWriteNode (CallNode (ConstantReadNode) (ArgumentsNode (CallNode))))", "Foo += bar")
       assert_desugars("(GlobalVariableWriteNode (CallNode (GlobalVariableReadNode) (ArgumentsNode (CallNode))))", "$foo += bar")
       assert_desugars("(InstanceVariableWriteNode (CallNode (InstanceVariableReadNode) (ArgumentsNode (CallNode))))", "@foo += bar")
@@ -51,9 +51,36 @@ module YARP
       "(#{parts.join(" ")})"
     end
 
+    # Ensure every node is only present once in the AST.
+    # If the same node is present twice it would most likely indicate it is executed twice, which is invalid semantically.
+    # This also acts as a sanity check that Node#child_nodes returns only nodes or nil (which caught a couple bugs).
+    class EnsureEveryNodeOnceInAST < Visitor
+      def initialize
+        @all_nodes = {}.compare_by_identity
+      end
+
+      def visit(node)
+        if node
+          if @all_nodes.include?(node)
+            raise "#{node.inspect} is present multiple times in the desugared AST and likely executed multiple times"
+          else
+            @all_nodes[node] = true
+          end
+        end
+        super(node)
+      end
+    end
+
     def assert_desugars(expected, source)
       ast = YARP.parse(source).value.accept(DesugarVisitor.new)
       assert_equal expected, ast_inspect(ast.statements.body.last)
+
+      ast.accept(EnsureEveryNodeOnceInAST.new)
+    end
+
+    def assert_not_desugared(source, reason)
+      ast = YARP.parse(source).value
+      assert_equal_nodes(ast, ast.accept(DesugarVisitor.new))
     end
   end
 end

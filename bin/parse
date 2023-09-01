@@ -16,4 +16,5 @@ else
 end
 
 result.mark_newlines if ENV['MARK_NEWLINES']
+result = result.value.accept(YARP::DesugarVisitor.new) if ENV['DESUGAR']
 pp result

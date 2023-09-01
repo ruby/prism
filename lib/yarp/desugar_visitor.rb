@@ -42,7 +42,7 @@ module YARP
     #
     # becomes
     #
-    # Foo || Foo = bar
+    # defined?(Foo) ? Foo : Foo = bar
     def visit_constant_or_write_node(node)
       desugar_or_write_defined_node(node, ConstantReadNode, ConstantWriteNode)
     end
@@ -54,69 +54,6 @@ module YARP
     # Foo = Foo + bar
     def visit_constant_operator_write_node(node)
       desugar_operator_write_node(node, ConstantReadNode, ConstantWriteNode)
-    end
-
-    # Foo::Bar &&= baz
-    #
-    # becomes
-    #
-    # Foo::Bar && Foo::Bar = baz
-    def visit_constant_path_and_write_node(node)
-      AndNode.new(
-        node.target,
-        ConstantPathWriteNode.new(node.target, node.value, node.operator_loc, node.location),
-        node.operator_loc,
-        node.location
-      )
-    end
-
-    # Foo::Bar ||= baz
-    #
-    # becomes
-    #
-    # Foo::Bar || Foo::Bar = baz
-    def visit_constant_path_or_write_node(node)
-      IfNode.new(
-        node.operator_loc,
-        DefinedNode.new(nil, node.target, nil, node.operator_loc, node.target.location),
-        StatementsNode.new([node.target], node.location),
-        ElseNode.new(
-          node.operator_loc,
-          StatementsNode.new(
-            [ConstantPathWriteNode.new(node.target, node.value, node.operator_loc, node.location)],
-            node.location
-          ),
-          node.operator_loc,
-          node.location
-        ),
-        node.operator_loc,
-        node.location
-      )
-    end
-
-    # Foo::Bar += baz
-    #
-    # becomes
-    #
-    # Foo::Bar = Foo::Bar + baz
-    def visit_constant_path_operator_write_node(node)
-      ConstantPathWriteNode.new(
-        node.target,
-        CallNode.new(
-          node.target,
-          nil,
-          node.operator_loc.copy(length: node.operator_loc.length - 1),
-          nil,
-          ArgumentsNode.new([node.value], node.value.location),
-          nil,
-          nil,
-          0,
-          node.operator_loc.slice.chomp("="),
-          node.location
-        ),
-        node.operator_loc.copy(start_offset: node.operator_loc.end_offset - 1, length: 1),
-        node.location
-      )
     end
 
     # $foo &&= bar
@@ -132,7 +69,7 @@ module YARP
     #
     # becomes
     #
-    # $foo || $foo = bar
+    # defined?($foo) ? $foo : $foo = bar
     def visit_global_variable_or_write_node(node)
       desugar_or_write_defined_node(node, GlobalVariableReadNode, GlobalVariableWriteNode)
     end
@@ -244,7 +181,7 @@ module YARP
       )
     end
 
-    # Don't desugar `x ||= y` to `defined?(x) ? x : x = y`
+    # Desugar `x ||= y` to `defined?(x) ? x : x = y`
     def desugar_or_write_defined_node(node, read_class, write_class, arguments: [])
       IfNode.new(
         node.operator_loc,
