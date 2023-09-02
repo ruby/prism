@@ -14,6 +14,9 @@ Rake::TestTask.new(:test, &config)
 # memcheck or debug tests.
 return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 
+# Don't bother trying to configure memcheck on old versions of Ruby.
+return if RUBY_VERSION < "3.0"
+
 require "ruby_memcheck"
 
 namespace :test do

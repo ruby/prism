@@ -195,7 +195,7 @@ public abstract class Nodes {
 
         <%-
           params = node.needs_serialized_length? ? ["int serializedLength"] : []
-          params.concat node.fields.map { "#{_1.java_type} #{_1.name}" }
+          params.concat node.fields.map { |field| "#{field.java_type} #{field.name}" }
           params.concat ["int startOffset", "int length"]
         -%>
         public <%=node.name -%>(<%= params.join(", ") %>) {
@@ -210,7 +210,7 @@ public abstract class Nodes {
         <%# methods for flags -%>
         <%- node.fields.each do |field| -%>
         <%- if field.is_a?(YARP::FlagsField) -%>
-        <%- flags.find { |flag| flag.name == field.kind }.tap { raise "Expected to find #{field.kind}" unless _1 }.values.each do |value| -%>
+        <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
             return <%= field.kind %>.is<%= value.camelcase %>(this.<%= field.name %>);
@@ -266,7 +266,7 @@ public abstract class Nodes {
           <%- elsif node.fields.one?(YARP::NodeListField) and node.fields.none?(YARP::NodeKindField) -%>
             return this.<%= node.fields.grep(YARP::NodeListField).first.name %>;
           <%- elsif node.fields.none?(YARP::NodeListField) -%>
-            return new Node[] { <%= node.fields.grep(YARP::NodeKindField).map { "this.#{_1.name}" }.join(', ') %> };
+            return new Node[] { <%= node.fields.grep(YARP::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
           <%- else -%>
             ArrayList<Node> childNodes = new ArrayList<>();
             <%- node.fields.each do |field| -%>

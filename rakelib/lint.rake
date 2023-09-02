@@ -5,7 +5,7 @@ task :lint do
   require "yaml"
   config = YAML.safe_load_file(File.expand_path("../config.yml", __dir__))
 
-  tokens = config.fetch("tokens")[4..].map { |token| token.fetch("name") }
+  tokens = config.fetch("tokens")[4..-1].map { |token| token.fetch("name") }
   if tokens.sort != tokens
     warn("Tokens are not sorted alphabetically")
 
@@ -30,7 +30,7 @@ task :lint do
   # Check for trailing spaces
   trailing_spaces_found = false
   Dir.glob("**/*.{c,h,erb,rb,yml}")
-    .reject { _1.start_with?("tmp") || _1.start_with?("vendor/") }
+    .reject { |filepath| filepath.start_with?("tmp") || filepath.start_with?("vendor/") }
     .each do |path|
       File.readlines(path).each_with_index do |line, index|
         if line.match(/[ \t]+$/)
