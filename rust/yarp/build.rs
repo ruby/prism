@@ -68,7 +68,7 @@ struct Config {
 
 /// The main function for the build script. This will be run by Cargo when
 /// building the library.
-/// 
+///
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = config_path();
     let file = std::fs::File::open(&path)?;
@@ -89,7 +89,7 @@ fn config_path() -> PathBuf {
 }
 
 /// Gets the path to the root directory at `[root]`.
-/// 
+///
 fn cargo_manifest_path() -> PathBuf {
     PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
@@ -111,7 +111,7 @@ fn struct_name(name: &str) -> String {
 /// Returns the name of the C type from the given node name.
 fn type_name(name: &str) -> String {
     let mut result = String::with_capacity(8 + name.len());
-    result.push_str("YP_NODE");
+    result.push_str("YP");
 
     for char in name.chars() {
         if char.is_uppercase() {
