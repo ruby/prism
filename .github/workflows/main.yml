@@ -23,6 +23,21 @@ jobs:
     - name: Lint
       run: bundle exec rake lint
 
+  template:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "2.5"
+    - name: Install necessary gems
+      run: gem install rake rake-compiler
+    - name: Generate templates
+      run: rake templates
+      env:
+        LANG: "C"
+
   build:
     strategy:
       fail-fast: false

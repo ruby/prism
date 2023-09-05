@@ -97,7 +97,7 @@ TARGETS = {
 # into tmp/targets/TARGET at the specified SHA.
 TARGETS.each do |name, target|
   repo = target.fetch(:repo)
-  dirpath = File.join("tmp", "targets", name.name)
+  dirpath = File.join("tmp", "targets", name.to_s)
 
   desc "Clone #{repo} into #{dirpath}"
   file dirpath do
