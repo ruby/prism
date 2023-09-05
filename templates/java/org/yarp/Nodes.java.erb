@@ -190,7 +190,10 @@ public abstract class Nodes {
         public final int serializedLength;
         <%- end -%>
         <%- node.fields.each do |field| -%>
-        public final <%= field.java_type %> <%= field.name %>;<%= ' // optional' if field.class.name.start_with?('Optional') %>
+        <%- if field.class.name.include?('Optional') -%>
+        /** optional (can be null) */
+        <%- end -%>
+        public final <%= field.java_type %> <%= field.name %>;
         <%- end -%>
 
         <%-
