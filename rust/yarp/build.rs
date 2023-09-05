@@ -34,9 +34,6 @@ enum NodeFieldType {
     #[serde(rename = "location?")]
     OptionalLocation,
 
-    #[serde(rename = "location[]")]
-    LocationList,
-
     #[serde(rename = "uint32")]
     UInt32,
 
@@ -254,12 +251,6 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeFieldType::LocationList => {
-                writeln!(file, "    pub fn {}(&self) -> LocationList<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        LocationList {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
-                writeln!(file, "    }}")?;
-            },
             NodeFieldType::UInt32 => {
                 writeln!(file, "    pub fn {}(&self) -> u32 {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
@@ -451,51 +442,6 @@ impl std::fmt::Debug for Location<'_> {{
 
         visible.push('"');
         write!(f, "{{visible}}")
-    }}
-}}
-
-/// An iterator over the ranges in a list.
-pub struct LocationListIter<'pr> {{
-    pointer: NonNull<yp_location_list_t>,
-    index: usize,
-    marker: PhantomData<&'pr mut yp_location_list_t>
-}}
-
-impl<'pr> Iterator for LocationListIter<'pr> {{
-    type Item = Location<'pr>;
-
-    fn next(&mut self) -> Option<Self::Item> {{
-        if self.index >= unsafe {{ self.pointer.as_ref().size }} {{
-            None
-        }} else {{
-            let pointer: *mut yp_location_t = unsafe {{ self.pointer.as_ref().locations.add(self.index) }};
-            self.index += 1;
-            Some(Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }})
-        }}
-    }}
-}}
-
-/// A list of ranges in the source file.
-pub struct LocationList<'pr> {{
-    pointer: NonNull<yp_location_list_t>,
-    marker: PhantomData<&'pr mut yp_location_list_t>
-}}
-
-impl<'pr> LocationList<'pr> {{
-    /// Returns an iterator over the locations.
-    #[must_use]
-    pub fn iter(&self) -> LocationListIter<'pr> {{
-        LocationListIter {{
-            pointer: self.pointer,
-            index: 0,
-            marker: PhantomData
-        }}
-    }}
-}}
-
-impl std::fmt::Debug for LocationList<'_> {{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
-        write!(f, "{{:?}}", self.iter().collect::<Vec<_>>())
     }}
 }}
 
