@@ -11,6 +11,18 @@ yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *
     return true;
 }
 
+// Append an error to the error diagnostic list.
+bool
+yp_diagnostic_error_list_append(yp_parser_t *parser, const uint8_t *start, const uint8_t *end, const char *message) {
+    return yp_diagnostic_list_append(&parser->error_list, start, end, message);
+}
+
+// Append a warning to the warning diagnostic list.
+bool
+yp_diagnostic_warning_list_append(yp_parser_t *parser, const uint8_t *start, const uint8_t *end, const char *message) {
+    return yp_diagnostic_list_append(&parser->warning_list, start, end, message);
+}
+
 // Deallocate the internal state of the given diagnostic list.
 void
 yp_diagnostic_list_free(yp_list_t *list) {
