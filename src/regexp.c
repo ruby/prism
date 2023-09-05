@@ -5,6 +5,7 @@ typedef struct {
     const uint8_t *start;
     const uint8_t *cursor;
     const uint8_t *end;
+    yp_allocator_t *allocator;
     yp_string_list_t *named_captures;
     bool encoding_changed;
     yp_encoding_t *encoding;
@@ -12,12 +13,13 @@ typedef struct {
 
 // This initializes a new parser with the given source.
 static void
-yp_regexp_parser_init(yp_regexp_parser_t *parser, const uint8_t *start, const uint8_t *end, yp_string_list_t *named_captures, bool encoding_changed, yp_encoding_t *encoding) {
+yp_regexp_parser_init(yp_regexp_parser_t *parser, yp_allocator_t *allocator, const uint8_t *start, const uint8_t *end, yp_string_list_t *named_captures, bool encoding_changed, yp_encoding_t *encoding) {
     *parser = (yp_regexp_parser_t) {
         .start = start,
         .cursor = start,
         .end = end,
         .named_captures = named_captures,
+        .allocator = allocator,
         .encoding_changed = encoding_changed,
         .encoding = encoding
     };
@@ -29,7 +31,7 @@ yp_regexp_parser_named_capture(yp_regexp_parser_t *parser, const uint8_t *start,
     yp_string_t string;
     yp_string_shared_init(&string, start, end);
     yp_string_list_append(parser->named_captures, &string);
-    yp_string_free(&string);
+    yp_arena_string_free(parser->allocator, &string);
 }
 
 // Returns true if the next character is the end of the source.
@@ -573,8 +575,8 @@ yp_regexp_parse_pattern(yp_regexp_parser_t *parser) {
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
 YP_EXPORTED_FUNCTION bool
-yp_regexp_named_capture_group_names(const uint8_t *source, size_t size, yp_string_list_t *named_captures, bool encoding_changed, yp_encoding_t *encoding) {
+yp_regexp_named_capture_group_names(yp_allocator_t *allocator, const uint8_t *source, size_t size, yp_string_list_t *named_captures, bool encoding_changed, yp_encoding_t *encoding) {
     yp_regexp_parser_t parser;
-    yp_regexp_parser_init(&parser, source, source + size, named_captures, encoding_changed, encoding);
+    yp_regexp_parser_init(&parser, allocator, source, source + size, named_captures, encoding_changed, encoding);
     return yp_regexp_parse_pattern(&parser);
 }

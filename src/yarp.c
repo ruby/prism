@@ -8122,7 +8122,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target) {
                 name[length] = '=';
 
                 // Now switch the name to the new string.
-                yp_string_free(&call->name);
+                yp_arena_string_free(&parser->allocator, &call->name);
                 yp_string_owned_init(&call->name, name, length + 1);
 
                 return target;
@@ -8138,7 +8138,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target) {
                 (call->block == NULL)
             ) {
                 // Free the previous name and replace it with "[]=".
-                yp_string_free(&call->name);
+                yp_arena_string_free(&parser->allocator, &call->name);
                 yp_string_constant_init(&call->name, "[]=", 3);
                 return target;
             }
@@ -8278,7 +8278,7 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
                 name[length] = '=';
 
                 // Now switch the name to the new string.
-                yp_string_free(&call->name);
+                yp_arena_string_free(&parser->allocator, &call->name);
                 yp_string_owned_init(&call->name, name, length + 1);
 
                 return target;
@@ -8301,7 +8301,7 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
                 target->location.end = value->location.end;
 
                 // Free the previous name and replace it with "[]=".
-                yp_string_free(&call->name);
+                yp_arena_string_free(&parser->allocator, &call->name);
                 yp_string_constant_init(&call->name, "[]=", 3);
                 return target;
             }
@@ -13316,7 +13316,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
                 const yp_location_t *content_loc = &((yp_regular_expression_node_t *) node)->content_loc;
 
-                if (yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures, parser->encoding_changed, &parser->encoding)) {
+                if (yp_regexp_named_capture_group_names(&parser->allocator, content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures, parser->encoding_changed, &parser->encoding)) {
                     for (size_t index = 0; index < named_captures.length; index++) {
                         yp_string_t *name = &named_captures.strings[index];
                         assert(name->type == YP_STRING_SHARED);
@@ -13872,7 +13872,7 @@ yp_comment_list_free(yp_allocator_t *allocator, yp_list_t *list) {
 // Free any memory associated with the given parser.
 YP_EXPORTED_FUNCTION void
 yp_parser_free(yp_parser_t *parser) {
-    yp_string_free(&parser->filepath_string);
+    yp_arena_string_free(&parser->allocator, &parser->filepath_string);
     yp_diagnostic_list_free(&parser->error_list);
     yp_diagnostic_list_free(&parser->warning_list);
     yp_comment_list_free(&parser->allocator, &parser->comment_list);

@@ -105,6 +105,22 @@ yp_string_free(yp_string_t *string) {
     }
 }
 
+// Free the associated memory of the given string for internal arena allocated strings
+void
+yp_arena_string_free(yp_allocator_t *allocator, yp_string_t *string) {
+    void *memory = (void *) string->source;
+
+    if (string->type == YP_STRING_OWNED) {
+        yp_free(allocator, memory);
+    } else if (string->type == YP_STRING_MAPPED && string->length) {
+#if defined(_WIN32)
+        UnmapViewOfFile(memory);
+#else
+        munmap(memory, string->length);
+#endif
+    }
+}
+
 bool
 yp_string_mapped_init(yp_string_t *string, const char *filepath) {
 #ifdef _WIN32

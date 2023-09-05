@@ -68,7 +68,7 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
                 yp_node_destroy(parser, (yp_node_t *)cast-><%= field.name %>);
             }
             <%- when YARP::StringField -%>
-            yp_string_free(&cast-><%= field.name %>);
+            yp_arena_string_free(&parser->allocator, &cast-><%= field.name %>);
             <%- when YARP::NodeListField -%>
             yp_node_list_free(parser, &cast-><%= field.name %>);
             <%- when YARP::ConstantListField -%>

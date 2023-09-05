@@ -9,7 +9,7 @@ unescape(const uint8_t *input, size_t size, yp_unescape_type_t type) {
     yp_unescape_manipulate_string(&parser, &string, type);
 
     yp_parser_free(&parser);
-    yp_string_free(&string);
+    yp_arena_string_free(&parser->allocator, &string);
 }
 
 void

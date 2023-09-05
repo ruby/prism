@@ -2,6 +2,7 @@
 #define YARP_STRING_H
 
 #include "yarp/defines.h"
+#include "yarp/util/yp_alloc.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -53,6 +54,10 @@ YP_EXPORTED_FUNCTION const uint8_t * yp_string_source(const yp_string_t *string)
 
 // Free the associated memory of the given string.
 YP_EXPORTED_FUNCTION void yp_string_free(yp_string_t *string);
+
+// For internal strings not exposed to FFI
+void
+yp_arena_string_free(yp_allocator_t *allocator, yp_string_t *string);
 
 // Returns the size of the yp_string_t struct. This is necessary to allocate the
 // correct amount of memory in the FFI backend.

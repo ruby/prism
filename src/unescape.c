@@ -545,7 +545,7 @@ yp_unescape_manipulate_string_or_char_literal(yp_parser_t *parser, yp_string_t *
 
     // If the string was already allocated, then we need to free that memory
     // here. That's because we're about to override it with the escaped string.
-    yp_string_free(string);
+    yp_arena_string_free(&parser->allocator, string);
 
     // We also need to update the length at the end. This is because every escape
     // reduces the length of the final string, and we don't want garbage at the
