@@ -370,8 +370,8 @@ end
         let call = asgn.as_local_variable_write_node().unwrap().value();
         let call = call.as_call_node().unwrap();
 
-        let operator_loc = call.operator_loc();
-        assert!(operator_loc.is_none());
+        let call_operator_loc = call.call_operator_loc();
+        assert!(call_operator_loc.is_none());
         let closing_loc = call.closing_loc();
         assert!(closing_loc.is_some());
 
@@ -379,8 +379,8 @@ end
         let call = asgn.as_local_variable_write_node().unwrap().value();
         let call = call.as_call_node().unwrap();
 
-        let operator_loc = call.operator_loc();
-        assert!(operator_loc.is_some());
+        let call_operator_loc = call.call_operator_loc();
+        assert!(call_operator_loc.is_some());
         let closing_loc = call.closing_loc();
         assert!(closing_loc.is_none());
     }

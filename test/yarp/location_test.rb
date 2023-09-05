@@ -166,9 +166,9 @@ module YARP
       assert_location(CallNode, "foo bar('baz')")
     end
 
-    def test_CallOperatorAndWriteNode
-      assert_location(CallOperatorAndWriteNode, "foo.foo &&= bar")
-      assert_location(CallOperatorAndWriteNode, "foo[foo] &&= bar")
+    def test_CallAndWriteNode
+      assert_location(CallAndWriteNode, "foo.foo &&= bar")
+      assert_location(CallAndWriteNode, "foo[foo] &&= bar")
     end
 
     def test_CallOperatorWriteNode
@@ -176,9 +176,9 @@ module YARP
       assert_location(CallOperatorWriteNode, "foo[foo] += bar")
     end
 
-    def test_CallOperatorOrWriteNode
-      assert_location(CallOperatorOrWriteNode, "foo.foo ||= bar")
-      assert_location(CallOperatorOrWriteNode, "foo[foo] ||= bar")
+    def test_CallOrWriteNode
+      assert_location(CallOrWriteNode, "foo.foo ||= bar")
+      assert_location(CallOrWriteNode, "foo[foo] ||= bar")
     end
 
     def test_CapturePatternNode
