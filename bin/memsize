@@ -16,7 +16,7 @@ results =
           8
         when "location", "location?"
           16
-        when "node[]", "string", "token", "token?", "location[]", "constant[]"
+        when "node[]", "string", "token", "token?", "constant[]"
           24
         when "flags"
           0

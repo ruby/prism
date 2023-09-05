@@ -263,7 +263,6 @@ public class Loader {
               when YARP::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
               when YARP::StringField then "loadString()"
               when YARP::NodeListField then "loadNodes()"
-              when YARP::LocationListField then "loadLocations()"
               when YARP::ConstantField then "loadConstant()"
               when YARP::ConstantListField then "loadConstants()"
               when YARP::LocationField then "loadLocation()"

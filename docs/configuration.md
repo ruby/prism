@@ -51,7 +51,6 @@ The available values for `type` are:
 * `constant[]` - A child node that is an array of constants. This is a `yp_constant_id_list_t` in C.
 * `location` - A child node that is a location. This is a `yp_location_t` in C.
 * `location?` - A child node that is a location that is optionally present. This is a `yp_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
-* `location[]` - A child node that is an array of locations. This is a `yp_location_list_t` in C.
 * `uint32` - A child node that is a 32-bit unsigned integer. This is a `uint32_t` in C.
 
 If the type is `node` or `node?` then the value also accepts an optional `kind` key (a string). This key is expected to match to the name of another node type within `config.yml`. This changes a couple of places where code is templated out to use the more specific struct name instead of the generic `yp_node_t`. For example, with `kind: StatementsNode` the `yp_node_t *` in C becomes a `yp_statements_node_t *`.

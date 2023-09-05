@@ -263,29 +263,6 @@ mod tests {
     }
 
     #[test]
-    fn location_list_test() {
-        use super::{
-            Visit,
-            visit_block_parameters_node, BlockParametersNode
-        };
-
-        struct BlockLocalsVisitor {}
-
-        impl Visit<'_> for BlockLocalsVisitor {
-            fn visit_block_parameters_node(&mut self, node: &BlockParametersNode<'_>) {
-                println!("{:?}", node.locals());
-                visit_block_parameters_node(self, node);
-            }
-        }
-
-        let source = "-> (; foo, bar) {}";
-        let result = parse(source.as_ref());
-
-        let mut visitor = BlockLocalsVisitor {};
-        visitor.visit(&result.node());
-    }
-
-    #[test]
     fn visitor_test() {
         use super::{
             Visit,
