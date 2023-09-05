@@ -266,7 +266,6 @@ module YARP
       template = File.expand_path("../#{filepath}", __dir__)
 
       erb = read_template(template)
-      erb.filename = template
 
       non_ruby_heading = <<~HEADING
       /******************************************************************************/
@@ -304,21 +303,19 @@ module YARP
     private
 
     def read_template(filepath)
-      previous_verbosity = $VERBOSE
-      previous_default_external = Encoding.default_external
-      $VERBOSE = nil
+      template = File.read(filepath, encoding: Encoding::UTF_8)
+      erb = erb(template)
+      erb.filename = filepath
+      erb
+    end
 
-      begin
-        Encoding.default_external = Encoding::UTF_8
-
-        if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
-          ERB.new(File.read(filepath), trim_mode: "-")
-        else
-          ERB.new(File.read(filepath), nil, "-")
-        end
-      ensure
-        Encoding.default_external = previous_default_external
-        $VERBOSE = previous_verbosity
+    if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
+      def erb(template)
+        ERB.new(template, trim_mode: "-")
+      end
+    else
+      def erb
+        ERB.new(template, nil, "-")
       end
     end
 
