@@ -3,6 +3,7 @@
 
 #include "yarp/defines.h"
 #include "yarp/util/yp_list.h"
+#include "yarp/util/yp_alloc.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -16,9 +17,9 @@ typedef struct {
 } yp_diagnostic_t;
 
 // Append a diagnostic to the given list of diagnostics.
-bool yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *end, const char *message);
+bool yp_diagnostic_list_append(yp_allocator_t *allocator, yp_list_t *list, const uint8_t *start, const uint8_t *end, const char *message);
 
 // Deallocate the internal state of the given diagnostic list.
-void yp_diagnostic_list_free(yp_list_t *list);
+void yp_diagnostic_list_free(yp_allocator_t *allocator, yp_list_t *list);
 
 #endif
