@@ -19,7 +19,7 @@ fn node_test() {
         let parser = parser.assume_init_mut();
         let parsed_node = yp_parse(parser);
 
-        assert_eq!((*parsed_node).type_, yp_node_type::YP_NODE_PROGRAM_NODE as u16);
+        assert_eq!((*parsed_node).type_, yp_node_type::YP_PROGRAM_NODE as u16);
 
         yp_node_destroy(parser, parsed_node);
         yp_parser_free(parser);
