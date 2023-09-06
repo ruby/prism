@@ -187,6 +187,15 @@ public class Loader {
         return constantPool.get(buffer, loadVarInt());
     }
 
+    private byte[] loadOptionalConstant() {
+        if (buffer.get(buffer.position()) != 0) {
+            return loadConstant();
+        } else {
+            buffer.position(buffer.position() + 1); // continue after the 0 byte
+            return null;
+        }
+    }
+
     private byte[][] loadConstants() {
         int length = loadVarInt();
         if (length == 0) {
@@ -264,6 +273,7 @@ public class Loader {
               when YARP::StringField then "loadString()"
               when YARP::NodeListField then "loadNodes()"
               when YARP::ConstantField then "loadConstant()"
+              when YARP::OptionalConstantField then "loadOptionalConstant()"
               when YARP::ConstantListField then "loadConstants()"
               when YARP::LocationField then "loadLocation()"
               when YARP::OptionalLocationField then "loadOptionalLocation()"

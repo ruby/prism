@@ -25,6 +25,9 @@ enum NodeFieldType {
     #[serde(rename = "constant")]
     Constant,
 
+    #[serde(rename = "constant?")]
+    OptionalConstant,
+
     #[serde(rename = "constant[]")]
     ConstantList,
 
@@ -226,6 +229,16 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::Constant => {
                 writeln!(file, "    pub fn {}(&self) -> ConstantId<'pr> {{", field.name)?;
                 writeln!(file, "        ConstantId::new(self.parser, unsafe {{ (*self.pointer).{} }})", field.name)?;
+                writeln!(file, "    }}")?;
+            },
+            NodeFieldType::OptionalConstant => {
+                writeln!(file, "    pub fn {}(&self) -> Option<ConstantId<'pr>> {{", field.name)?;
+                writeln!(file, "        let id = unsafe {{ (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        if id == 0 {{")?;
+                writeln!(file, "            None")?;
+                writeln!(file, "        }} else {{")?;
+                writeln!(file, "            Some(ConstantId::new(self.parser, id))")?;
+                writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::ConstantList => {
