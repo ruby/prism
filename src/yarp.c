@@ -428,7 +428,7 @@ debug_lex_state_set(yp_parser_t *parser, yp_lex_state_t state, char const * call
 // Retrieve the constant pool id for the given location.
 static inline yp_constant_id_t
 yp_parser_constant_id_location(yp_parser_t *parser, const uint8_t *start, const uint8_t *end) {
-    return yp_constant_pool_insert(&parser->constant_pool, start, (size_t) (end - start));
+    return yp_constant_pool_insert(&parser->allocator, &parser->constant_pool, start, (size_t) (end - start));
 }
 
 // Retrieve the constant pool id for the given token.
@@ -4597,7 +4597,7 @@ yp_parser_local_add_location(yp_parser_t *parser, const uint8_t *start, const ui
     yp_constant_id_t constant_id = yp_parser_constant_id_location(parser, start, end);
 
     if (!yp_constant_id_list_includes(&parser->current_scope->locals, constant_id)) {
-        yp_constant_id_list_append(&parser->current_scope->locals, constant_id);
+        yp_constant_id_list_append(&parser->allocator, &parser->current_scope->locals, constant_id);
     }
 
     return constant_id;
@@ -13815,7 +13815,7 @@ yp_parser_init(yp_parser_t *parser, const uint8_t *source, size_t size, const ch
     // This ratio will need to change if we add more constants to the constant
     // pool for another node type.
     size_t constant_size = size / 95;
-    yp_constant_pool_init(&parser->constant_pool, constant_size < 4 ? 4 : constant_size);
+    yp_constant_pool_init(&parser->allocator, &parser->constant_pool, constant_size < 4 ? 4 : constant_size);
 
     // Initialize the newline list. Similar to the constant pool, we're going to
     // guess at the number of newlines that we'll need based on the size of the
@@ -13876,7 +13876,7 @@ yp_parser_free(yp_parser_t *parser) {
     yp_diagnostic_list_free(&parser->error_list);
     yp_diagnostic_list_free(&parser->warning_list);
     yp_comment_list_free(&parser->allocator, &parser->comment_list);
-    yp_constant_pool_free(&parser->constant_pool);
+    yp_constant_pool_free(&parser->allocator, &parser->constant_pool);
     yp_newline_list_free(&parser->newline_list);
     yp_allocator_free(&parser->allocator);
 

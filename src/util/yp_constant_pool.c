@@ -11,10 +11,13 @@ yp_constant_id_list_init(yp_constant_id_list_t *list) {
 // Append a constant id to a list of constant ids. Returns false if any
 // potential reallocations fail.
 bool
-yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id) {
+yp_constant_id_list_append(yp_allocator_t * allocator, yp_constant_id_list_t *list, yp_constant_id_t id) {
     if (list->size >= list->capacity) {
         list->capacity = list->capacity == 0 ? 8 : list->capacity * 2;
-        list->ids = (yp_constant_id_t *) realloc(list->ids, sizeof(yp_constant_id_t) * list->capacity);
+        yp_constant_id_t * original_list = list->ids;
+        list->ids = (yp_constant_id_t *) yp_malloc(allocator, sizeof(yp_constant_id_t) * list->capacity);
+        memcpy(list->ids, original_list, sizeof(yp_constant_id_t) * list->size);
+
         if (list->ids == NULL) return false;
     }
 
@@ -39,9 +42,9 @@ yp_constant_id_list_memsize(yp_constant_id_list_t *list) {
 
 // Free the memory associated with a list of constant ids.
 void
-yp_constant_id_list_free(yp_constant_id_list_t *list) {
+yp_constant_id_list_free(yp_allocator_t * allocator, yp_constant_id_list_t *list) {
     if (list->ids != NULL) {
-        free(list->ids);
+        yp_free(allocator, list->ids);
     }
 }
 
@@ -61,9 +64,9 @@ yp_constant_pool_hash(const uint8_t *start, size_t length) {
 
 // Resize a constant pool to a given capacity.
 static inline bool
-yp_constant_pool_resize(yp_constant_pool_t *pool) {
+yp_constant_pool_resize(yp_allocator_t * allocator, yp_constant_pool_t *pool) {
     size_t next_capacity = pool->capacity * 2;
-    yp_constant_t *next_constants = calloc(next_capacity, sizeof(yp_constant_t));
+    yp_constant_t *next_constants = yp_calloc(allocator, next_capacity, sizeof(yp_constant_t));
     if (next_constants == NULL) return false;
 
     // For each constant in the current constant pool, rehash the content, find
@@ -89,7 +92,7 @@ yp_constant_pool_resize(yp_constant_pool_t *pool) {
         }
     }
 
-    free(pool->constants);
+    yp_free(allocator, pool->constants);
     pool->constants = next_constants;
     pool->capacity = next_capacity;
     return true;
@@ -97,8 +100,8 @@ yp_constant_pool_resize(yp_constant_pool_t *pool) {
 
 // Initialize a new constant pool with a given capacity.
 bool
-yp_constant_pool_init(yp_constant_pool_t *pool, size_t capacity) {
-    pool->constants = calloc(capacity, sizeof(yp_constant_t));
+yp_constant_pool_init(yp_allocator_t * allocator, yp_constant_pool_t *pool, size_t capacity) {
+    pool->constants = yp_calloc(allocator, capacity, sizeof(yp_constant_t));
     if (pool->constants == NULL) return false;
 
     pool->size = 0;
@@ -109,9 +112,9 @@ yp_constant_pool_init(yp_constant_pool_t *pool, size_t capacity) {
 // Insert a constant into a constant pool. Returns the id of the constant, or 0
 // if any potential calls to resize fail.
 yp_constant_id_t
-yp_constant_pool_insert(yp_constant_pool_t *pool, const uint8_t *start, size_t length) {
+yp_constant_pool_insert(yp_allocator_t * allocator, yp_constant_pool_t *pool, const uint8_t *start, size_t length) {
     if (pool->size >= (pool->capacity / 4 * 3)) {
-        if (!yp_constant_pool_resize(pool)) return 0;
+        if (!yp_constant_pool_resize(allocator, pool)) return 0;
     }
 
     size_t hash = yp_constant_pool_hash(start, length);
@@ -142,6 +145,6 @@ yp_constant_pool_insert(yp_constant_pool_t *pool, const uint8_t *start, size_t l
 
 // Free the memory associated with a constant pool.
 void
-yp_constant_pool_free(yp_constant_pool_t *pool) {
-    free(pool->constants);
+yp_constant_pool_free(yp_allocator_t * allocator, yp_constant_pool_t *pool) {
+    yp_free(allocator, pool->constants);
 }
