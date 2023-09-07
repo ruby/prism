@@ -86,7 +86,7 @@ fn diagnostics_test() {
         let message = CStr::from_ptr((*error).message);
         assert_eq!(
             message.to_string_lossy(),
-            "Expected to be able to parse an expression."
+            "Cannot parse the expression"
         );
 
         let location = {
