@@ -4101,6 +4101,7 @@ yp_string_node_from_interpolated_string_node_create(yp_parser_t *parser, yp_inte
         .unescaped = unescaped
     };
 
+    yp_node_destroy(interpolated_node);
     return node;
 }
 
@@ -4120,6 +4121,7 @@ yp_x_string_node_from_interpolated_x_string_node_create(yp_parser_t *parser, yp_
         .unescaped = unescaped
     };
 
+    yp_node_destroy(interpolated_node);
     return node;
 }
 
