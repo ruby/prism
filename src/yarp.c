@@ -10037,6 +10037,53 @@ parse_method_definition_name(yp_parser_t *parser) {
     }
 }
 
+static int
+parse_heredoc_common_whitespace_for_single_node(yp_parser_t *parser, yp_node_t *node, int common_whitespace)
+{
+    const yp_location_t *content_loc = &((yp_string_node_t *) node)->content_loc;
+    int cur_whitespace;
+    const uint8_t *cur_char = content_loc->start;
+
+    while (cur_char && cur_char < content_loc->end) {
+        // Any empty newlines aren't included in the minimum whitespace
+        // calculation.
+        size_t eol_length;
+        while ((eol_length = match_eol_at(parser, cur_char))) {
+            cur_char += eol_length;
+        }
+
+        if (cur_char == content_loc->end) break;
+
+        cur_whitespace = 0;
+
+        while (yp_char_is_inline_whitespace(*cur_char) && cur_char < content_loc->end) {
+            if (cur_char[0] == '\t') {
+                cur_whitespace = (cur_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
+            } else {
+                cur_whitespace++;
+            }
+            cur_char++;
+        }
+
+        // If we hit a newline, then we have encountered a line that
+        // contains only whitespace, and it shouldn't be considered in
+        // the calculation of common leading whitespace.
+        eol_length = match_eol_at(parser, cur_char);
+        if (eol_length) {
+            cur_char += eol_length;
+            continue;
+        }
+
+        if (cur_whitespace < common_whitespace || common_whitespace == -1) {
+            common_whitespace = cur_whitespace;
+        }
+
+        cur_char = next_newline(cur_char + 1, parser->end - (cur_char + 1));
+        if (cur_char) cur_char++;
+    }
+    return common_whitespace;
+}
+
 // Calculate the common leading whitespace for each line in a heredoc.
 static int
 parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
@@ -10044,69 +10091,102 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
 
     for (size_t index = 0; index < nodes->size; index++) {
         yp_node_t *node = nodes->nodes[index];
-
         if (!YP_NODE_TYPE_P(node, YP_STRING_NODE)) continue;
-        const yp_location_t *content_loc = &((yp_string_node_t *) node)->content_loc;
 
         // If the previous node wasn't a string node, we don't want to trim
         // whitespace. This could happen after an interpolated expression or
         // variable.
         if (index == 0 || YP_NODE_TYPE_P(nodes->nodes[index - 1], YP_STRING_NODE)) {
-            int cur_whitespace;
-            const uint8_t *cur_char = content_loc->start;
-
-            while (cur_char && cur_char < content_loc->end) {
-                // Any empty newlines aren't included in the minimum whitespace
-                // calculation.
-                size_t eol_length;
-                while ((eol_length = match_eol_at(parser, cur_char))) {
-                    cur_char += eol_length;
-                }
-
-                if (cur_char == content_loc->end) break;
-
-                cur_whitespace = 0;
-
-                while (yp_char_is_inline_whitespace(*cur_char) && cur_char < content_loc->end) {
-                    if (cur_char[0] == '\t') {
-                        cur_whitespace = (cur_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
-                    } else {
-                        cur_whitespace++;
-                    }
-                    cur_char++;
-                }
-
-                // If we hit a newline, then we have encountered a line that
-                // contains only whitespace, and it shouldn't be considered in
-                // the calculation of common leading whitespace.
-                eol_length = match_eol_at(parser, cur_char);
-                if (eol_length) {
-                    cur_char += eol_length;
-                    continue;
-                }
-
-                if (cur_whitespace < common_whitespace || common_whitespace == -1) {
-                    common_whitespace = cur_whitespace;
-                }
-
-                cur_char = next_newline(cur_char + 1, parser->end - (cur_char + 1));
-                if (cur_char) cur_char++;
-            }
+            common_whitespace = parse_heredoc_common_whitespace_for_single_node(parser, node, common_whitespace);
         }
     }
 
     return common_whitespace;
 }
 
+static yp_string_t *
+parse_heredoc_dedent_single_node(yp_parser_t *parser, yp_string_t *string, bool dedent_node, int common_whitespace, yp_heredoc_quote_t quote)
+{
+    // Get a reference to the string struct that is being held by the string
+    // node. This is the value we're going to actually manipulate.
+    yp_string_ensure_owned(string);
+
+    // Now get the bounds of the existing string. We'll use this as a
+    // destination to move bytes into. We'll also use it for bounds checking
+    // since we don't require that these strings be null terminated.
+    size_t dest_length = yp_string_length(string);
+    uint8_t *source_start = (uint8_t *) string->source;
+
+    const uint8_t *source_cursor = source_start;
+    const uint8_t *source_end = source_cursor + dest_length;
+
+    // We're going to move bytes backward in the string when we get leading
+    // whitespace, so we'll maintain a pointer to the current position in the
+    // string that we're writing to.
+    uint8_t *dest_cursor = source_start;
+
+    while (source_cursor < source_end) {
+        // If we need to dedent the next element within the heredoc or the next
+        // line within the string node, then we'll do it here.
+        if (dedent_node) {
+            int trimmed_whitespace = 0;
+
+            // While we haven't reached the amount of common whitespace that we need
+            // to trim and we haven't reached the end of the string, we'll keep
+            // trimming whitespace. Trimming in this context means skipping over
+            // these bytes such that they aren't copied into the new string.
+            while ((source_cursor < source_end) && yp_char_is_inline_whitespace(*source_cursor) && trimmed_whitespace < common_whitespace) {
+                if (*source_cursor == '\t') {
+                    trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
+                    if (trimmed_whitespace > common_whitespace) break;
+                } else {
+                    trimmed_whitespace++;
+                }
+
+                source_cursor++;
+                dest_length--;
+            }
+        }
+
+        // At this point we have dedented all that we need to, so we need to find
+        // the next newline.
+        const uint8_t *breakpoint = next_newline(source_cursor, source_end - source_cursor);
+
+        if (breakpoint == NULL) {
+            // If there isn't another newline, then we can just move the rest of the
+            // string and break from the loop.
+            memmove(dest_cursor, source_cursor, (size_t) (source_end - source_cursor));
+            break;
+        }
+
+        // Otherwise, we need to move everything including the newline, and
+        // then set the dedent_node flag to true.
+        if (breakpoint < source_end) breakpoint++;
+        memmove(dest_cursor, source_cursor, (size_t) (breakpoint - source_cursor));
+        dest_cursor += (breakpoint - source_cursor);
+        source_cursor = breakpoint;
+        dedent_node = true;
+    }
+
+    // We only want to write this node into the list if it has any content.
+    string->length = dest_length;
+
+    if (dest_length != 0) {
+        yp_unescape_manipulate_string(parser, string, (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL);
+    }
+    return string;
+}
+
 // Take a heredoc node that is indented by a ~ and trim the leading whitespace.
 static void
-parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t quote) {
+parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *heredoc_node, yp_heredoc_quote_t quote)
+{
     yp_node_list_t *nodes;
 
     if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        nodes = &((yp_interpolated_x_string_node_t *) node)->parts;
+        nodes = &((yp_interpolated_x_string_node_t *) heredoc_node)->parts;
     } else {
-        nodes = &((yp_interpolated_string_node_t *) node)->parts;
+        nodes = &((yp_interpolated_string_node_t *) heredoc_node)->parts;
     }
 
     // First, calculate how much common whitespace we need to trim. If there is
@@ -10135,76 +10215,13 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
             continue;
         }
 
-        // Get a reference to the string struct that is being held by the string
-        // node. This is the value we're going to actual manipulate.
-        yp_string_t *string = &(((yp_string_node_t *) node)->unescaped);
-        yp_string_ensure_owned(string);
-
-        // Now get the bounds of the existing string. We'll use this as a
-        // destination to move bytes into. We'll also use it for bounds checking
-        // since we don't require that these strings be null terminated.
-        size_t dest_length = yp_string_length(string);
-        uint8_t *source_start = (uint8_t *) string->source;
-
-        const uint8_t *source_cursor = source_start;
-        const uint8_t *source_end = source_cursor + dest_length;
-
-        // We're going to move bytes backward in the string when we get leading
-        // whitespace, so we'll maintain a pointer to the current position in the
-        // string that we're writing to.
-        uint8_t *dest_cursor = source_start;
-
-        while (source_cursor < source_end) {
-            // If we need to dedent the next element within the heredoc or the next
-            // line within the string node, then we'll do it here.
-            if (dedent_next) {
-                int trimmed_whitespace = 0;
-
-                // While we haven't reached the amount of common whitespace that we need
-                // to trim and we haven't reached the end of the string, we'll keep
-                // trimming whitespace. Trimming in this context means skipping over
-                // these bytes such that they aren't copied into the new string.
-                while ((source_cursor < source_end) && yp_char_is_inline_whitespace(*source_cursor) && trimmed_whitespace < common_whitespace) {
-                    if (*source_cursor == '\t') {
-                        trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
-                        if (trimmed_whitespace > common_whitespace) break;
-                    } else {
-                        trimmed_whitespace++;
-                    }
-
-                    source_cursor++;
-                    dest_length--;
-                }
+            yp_string_node_t *string_node = ((yp_string_node_t *) node);
+            string_node->unescaped = *(parse_heredoc_dedent_single_node(parser, &string_node->unescaped, dedent_next, common_whitespace, quote));
+            if (string_node->unescaped.length == 0) {
+                yp_node_destroy(parser, node);
+            } else {
+                nodes->nodes[write_index++] = node;
             }
-
-            // At this point we have dedented all that we need to, so we need to find
-            // the next newline.
-            const uint8_t *breakpoint = next_newline(source_cursor, source_end - source_cursor);
-
-            if (breakpoint == NULL) {
-                // If there isn't another newline, then we can just move the rest of the
-                // string and break from the loop.
-                memmove(dest_cursor, source_cursor, (size_t) (source_end - source_cursor));
-                break;
-            }
-
-            // Otherwise, we need to move everything including the newline, and
-            // then set the dedent_next flag to true.
-            if (breakpoint < source_end) breakpoint++;
-            memmove(dest_cursor, source_cursor, (size_t) (breakpoint - source_cursor));
-            dest_cursor += (breakpoint - source_cursor);
-            source_cursor = breakpoint;
-            dedent_next = true;
-        }
-
-        // We only want to write this node into the list if it has any content.
-        if (dest_length == 0) {
-            yp_node_destroy(parser, node);
-        } else {
-            string->length = dest_length;
-            yp_unescape_manipulate_string(parser, string, (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL);
-            nodes->nodes[write_index++] = node;
-        }
 
         // We always dedent the next node if it follows a string node.
         dedent_next = true;
@@ -11246,42 +11263,112 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_heredoc_indent_t indent = parser->lex_modes.current->as.heredoc.indent;
 
             yp_node_t *node;
-            if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-                node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &parser->current, &parser->current);
-            } else {
-                node = (yp_node_t *) yp_interpolated_string_node_create(parser, &parser->current, NULL, &parser->current);
-            }
 
             parser_lex(parser);
-            yp_node_t *part;
+
+            if (parser->current.type == YP_TOKEN_HEREDOC_END) {
+                if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+                    yp_x_string_node_t *x_str_node = yp_xstring_node_create(parser, &parser->previous, &parser->previous, &parser->current);
+                    x_str_node->content_loc = (yp_location_t) {
+                        .start = parser->previous.end,
+                        .end = parser->current.start
+                    };
+                    x_str_node->base.location = (yp_location_t) {
+                        .start = parser->previous.start,
+                        .end = parser->previous.end
+                    };
+                    node = (yp_node_t *) x_str_node;
+                } else {
+                    yp_string_node_t *str_node = yp_string_node_create(parser, &parser->previous, &parser->previous, &parser->current);
+                    str_node->content_loc = (yp_location_t) {
+                        .start = parser->previous.end,
+                        .end = parser->current.start
+                    };
+                    str_node->base.location = (yp_location_t) {
+                        .start = parser->previous.start,
+                        .end = parser->previous.end
+                    };
+                    node = (yp_node_t *) str_node;
+                }
+                lex_state_set(parser, YP_LEX_STATE_END);
+                expect(parser, YP_TOKEN_HEREDOC_END, YP_ERR_HEREDOC_TERM);
+                return node;
+            }
+
+            yp_token_t opening_token = parser->previous;
+
+            yp_node_t *part = NULL;
+            yp_node_list_t parts = YP_EMPTY_NODE_LIST;
 
             while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
-                if ((part = parse_string_part(parser)) == NULL) continue;
+                if (part != NULL) {
+                    yp_node_list_append(&parts, part);
+                }
 
+                if ((part = parse_string_part(parser)) == NULL) continue;
+            }
+
+            if (part == NULL) {
+                return (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
+            }
+
+            // We only had one part in this case
+            if (parts.size == 0) {
+                yp_string_node_t *str_part = (yp_string_node_t *)part;
+                (str_part)->opening_loc = (yp_location_t) {
+                    .start = opening_token.start,
+                    .end = opening_token.end
+                };
+                (str_part)->closing_loc = (yp_location_t) {
+                    .start = parser->current.start,
+                    .end = parser->current.end
+                };
+                (str_part)->base.location = (yp_location_t) {
+                    .start = opening_token.start,
+                    .end = opening_token.end,
+                };
                 if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-                    yp_interpolated_xstring_node_append((yp_interpolated_x_string_node_t *) node, part);
-                } else {
-                    yp_interpolated_string_node_append((yp_interpolated_string_node_t *) node, part);
+                    part->type = YP_X_STRING_NODE;
+                }
+                lex_state_set(parser, YP_LEX_STATE_END);
+                expect(parser, YP_TOKEN_HEREDOC_END, YP_ERR_HEREDOC_TERM);
+                node = part;
+                if (indent == YP_HEREDOC_INDENT_TILDE) {
+                    int common_whitespace = parse_heredoc_common_whitespace_for_single_node(parser, node, -1);
+                    yp_string_node_t *str_node = (yp_string_node_t *)node;
+                    parse_heredoc_dedent_single_node(parser, &str_node->unescaped, true, common_whitespace, quote);
                 }
             }
+            else {
+                yp_node_list_append(&parts, part);
 
-            lex_state_set(parser, YP_LEX_STATE_END);
-            expect(parser, YP_TOKEN_HEREDOC_END, YP_ERR_HEREDOC_TERM);
+                if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+                    node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &opening_token, &opening_token);
+                    ((yp_interpolated_x_string_node_t *)node)->parts = parts;
+                } else {
+                    node = (yp_node_t *) yp_interpolated_string_node_create(parser, &opening_token, NULL, &opening_token);
+                    ((yp_interpolated_string_node_t *)node)->parts = parts;
+                }
 
-            if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-                assert(YP_NODE_TYPE_P(node, YP_INTERPOLATED_X_STRING_NODE));
-                yp_interpolated_xstring_node_closing_set(((yp_interpolated_x_string_node_t *) node), &parser->previous);
-                node->location = ((yp_interpolated_x_string_node_t *) node)->opening_loc;
-            } else {
-                assert(YP_NODE_TYPE_P(node, YP_INTERPOLATED_STRING_NODE));
-                yp_interpolated_string_node_closing_set((yp_interpolated_string_node_t *) node, &parser->previous);
-                node->location = ((yp_interpolated_string_node_t *) node)->opening_loc;
-            }
 
-            // If this is a heredoc that is indented with a ~, then we need to dedent
-            // each line by the common leading whitespace.
-            if (indent == YP_HEREDOC_INDENT_TILDE) {
-                parse_heredoc_dedent(parser, node, quote);
+                lex_state_set(parser, YP_LEX_STATE_END);
+                expect(parser, YP_TOKEN_HEREDOC_END, YP_ERR_HEREDOC_TERM);
+
+                if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+                    assert(YP_NODE_TYPE_P(node, YP_INTERPOLATED_X_STRING_NODE));
+                    yp_interpolated_xstring_node_closing_set(((yp_interpolated_x_string_node_t *) node), &parser->previous);
+                    node->location = ((yp_interpolated_x_string_node_t *) node)->opening_loc;
+                } else {
+                    assert(YP_NODE_TYPE_P(node, YP_INTERPOLATED_STRING_NODE));
+                    yp_interpolated_string_node_closing_set((yp_interpolated_string_node_t *) node, &parser->previous);
+                    node->location = ((yp_interpolated_string_node_t *) node)->opening_loc;
+                }
+
+                // If this is a heredoc that is indented with a ~, then we need to dedent
+                // each line by the common leading whitespace.
+                if (indent == YP_HEREDOC_INDENT_TILDE) {
+                    parse_heredoc_dedent(parser, node, quote);
+                }
             }
 
             // If there's a string immediately following this heredoc, then it's a
