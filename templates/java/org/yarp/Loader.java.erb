@@ -30,15 +30,26 @@ public class Loader {
         byte[] get(ByteBuffer buffer, int oneBasedIndex) {
             int index = oneBasedIndex - 1;
             byte[] constant = cache[index];
+
             if (constant == null) {
                 int offset = bufferOffset + index * 8;
                 int start = buffer.getInt(offset);
                 int length = buffer.getInt(offset + 4);
 
                 constant = new byte[length];
-                System.arraycopy(source, start, constant, 0, length);
+
+                if (Integer.compareUnsigned(start, 1 << 31) <= 0) {
+                    System.arraycopy(source, start, constant, 0, length);
+                } else {
+                    int position = buffer.position();
+                    buffer.position(Math.abs(start));
+                    buffer.get(constant, 0, length);
+                    buffer.position(position);
+                }
+
                 cache[index] = constant;
             }
+
             return constant;
         }
 
@@ -169,18 +180,6 @@ public class Loader {
             buffer.position(buffer.position() + 1); // continue after the 0 byte
             return null;
         }
-    }
-
-    private Nodes.Location[] loadLocations() {
-        int length = loadVarInt();
-        if (length == 0) {
-            return Nodes.Location.EMPTY_ARRAY;
-        }
-        Nodes.Location[] locations = new Nodes.Location[length];
-        for (int i = 0; i < length; i++) {
-            locations[i] = loadLocation();
-        }
-        return locations;
     }
 
     private byte[] loadConstant() {

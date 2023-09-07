@@ -19,20 +19,12 @@
     unused_qualifications
 )]
 
-// Allowing because we're not manually defining anything that would cause this, and
-// the bindgen-generated `bindgen_test_layout_yp_parser()` triggers this.
-#[allow(clippy::cognitive_complexity)]
-// Allowing because we're not manually defining anything that would cause this, and
-// the following bindgen-generated functions triggers this:
-// - `bindgen_test_layout_yp_call_node()`
-// - `bindgen_test_layout_yp_def_node()`
-// - `bindgen_test_layout_yp_parser()`
-#[allow(clippy::too_many_lines)]
+#[allow(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
 #[allow(missing_copy_implementations)]
-#[allow(non_upper_case_globals)]
+#[allow(missing_docs)]
 #[allow(non_camel_case_types)]
 #[allow(non_snake_case)]
-#[allow(missing_docs)]
+#[allow(non_upper_case_globals)]
 mod bindings {
     // In `build.rs`, we use `bindgen` to generate bindings based on C headers
     // and `librubyparser`. Here is where we pull in those bindings and make
