@@ -2,6 +2,7 @@ ProgramNode(0...33)(
   [:o],
   StatementsNode(0...33)(
     [DefNode(0...19)(
+       :a,
        (4...5),
        nil,
        ParametersNode(6...8)(
@@ -9,7 +10,7 @@ ProgramNode(0...33)(
          [],
          [],
          nil,
-         [KeywordParameterNode(6...8)((6...8), nil)],
+         [KeywordParameterNode(6...8)(:b, (6...8), nil)],
          nil,
          nil
        ),

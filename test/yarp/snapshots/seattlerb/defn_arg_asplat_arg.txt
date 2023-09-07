@@ -2,13 +2,14 @@ ProgramNode(0...29)(
   [],
   StatementsNode(0...29)(
     [DefNode(0...29)(
+       :call,
        (4...8),
        nil,
        ParametersNode(9...24)(
          [RequiredParameterNode(9...15)(:interp)],
          [],
          [RequiredParameterNode(20...24)(:args)],
-         RestParameterNode(17...18)((17...18), nil),
+         RestParameterNode(17...18)(nil, nil, (17...18)),
          [],
          nil,
          nil
