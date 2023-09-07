@@ -1143,6 +1143,18 @@ module YARP
       ]
     end
 
+    def test_magic_comment_encoding
+      result = YARP.parse(<<~RUBY)
+        # encoding: not-a-real-encoding
+        1
+      RUBY
+
+      assert_equal(
+        [["Unknown or invalid encoding `not-a-real-encoding` in the magic comment", 12..31]],
+        result.errors.map { |e| [e.message, e.location.start_offset..e.location.end_offset] },
+      )
+    end
+
     private
 
     def assert_errors(expected, source, errors)

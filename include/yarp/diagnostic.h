@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 // This struct represents a diagnostic found during parsing.
 typedef struct {
@@ -213,7 +215,7 @@ typedef enum {
 } yp_diagnostic_id_t;
 
 // Append a diagnostic to the given list of diagnostics.
-bool yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *end, yp_diagnostic_id_t diag_id);
+bool yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *end, yp_diagnostic_id_t diag_id, ...);
 
 // Deallocate the internal state of the given diagnostic list.
 void yp_diagnostic_list_free(yp_list_t *list);

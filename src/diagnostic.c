@@ -157,26 +157,26 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_INCOMPLETE_QUESTION_MARK]           = "Incomplete expression at `?`",
     [YP_ERR_INCOMPLETE_VARIABLE_CLASS]          = "Incomplete class variable",
     [YP_ERR_INCOMPLETE_VARIABLE_INSTANCE]       = "Incomplete instance variable",
-    [YP_ERR_INVALID_ENCODING_MAGIC_COMMENT]     = "Unknown or invalid encoding in the magic comment",
+    [YP_ERR_INVALID_ENCODING_MAGIC_COMMENT]     = "Unknown or invalid encoding `%1$.*2$s` in the magic comment",
     [YP_ERR_INVALID_FLOAT_EXPONENT]             = "Invalid exponent",
     [YP_ERR_INVALID_NUMBER_BINARY]              = "Invalid binary number",
     [YP_ERR_INVALID_NUMBER_DECIMAL]             = "Invalid decimal number",
     [YP_ERR_INVALID_NUMBER_HEXADECIMAL]         = "Invalid hexadecimal number",
     [YP_ERR_INVALID_NUMBER_OCTAL]               = "Invalid octal number",
-    [YP_ERR_INVALID_PERCENT]                    = "Invalid `%` token", // TODO WHAT?
-    [YP_ERR_INVALID_TOKEN]                      = "Invalid token", // TODO WHAT?
+    [YP_ERR_INVALID_PERCENT]                    = "Invalid `%%` token",
+    [YP_ERR_INVALID_TOKEN]                      = "Invalid token",
     [YP_ERR_INVALID_VARIABLE_GLOBAL]            = "Invalid global variable",
     [YP_ERR_LAMBDA_OPEN]                        = "Expected a `do` keyword or a `{` to open the lambda block",
     [YP_ERR_LAMBDA_TERM_BRACE]                  = "Expected a lambda block beginning with `{` to end with `}`",
     [YP_ERR_LAMBDA_TERM_END]                    = "Expected a lambda block beginning with `do` to end with `end`",
-    [YP_ERR_LIST_I_LOWER_ELEMENT]               = "Expected a symbol in a `%i` list",
-    [YP_ERR_LIST_I_LOWER_TERM]                  = "Expected a closing delimiter for the `%i` list",
-    [YP_ERR_LIST_I_UPPER_ELEMENT]               = "Expected a symbol in a `%I` list",
-    [YP_ERR_LIST_I_UPPER_TERM]                  = "Expected a closing delimiter for the `%I` list",
-    [YP_ERR_LIST_W_LOWER_ELEMENT]               = "Expected a string in a `%w` list",
-    [YP_ERR_LIST_W_LOWER_TERM]                  = "Expected a closing delimiter for the `%w` list",
-    [YP_ERR_LIST_W_UPPER_ELEMENT]               = "Expected a string in a `%W` list",
-    [YP_ERR_LIST_W_UPPER_TERM]                  = "Expected a closing delimiter for the `%W` list",
+    [YP_ERR_LIST_I_LOWER_ELEMENT]               = "Expected a symbol in a `%%i` list",
+    [YP_ERR_LIST_I_LOWER_TERM]                  = "Expected a closing delimiter for the `%%i` list",
+    [YP_ERR_LIST_I_UPPER_ELEMENT]               = "Expected a symbol in a `%%I` list",
+    [YP_ERR_LIST_I_UPPER_TERM]                  = "Expected a closing delimiter for the `%%I` list",
+    [YP_ERR_LIST_W_LOWER_ELEMENT]               = "Expected a string in a `%%w` list",
+    [YP_ERR_LIST_W_LOWER_TERM]                  = "Expected a closing delimiter for the `%%w` list",
+    [YP_ERR_LIST_W_UPPER_ELEMENT]               = "Expected a string in a `%%W` list",
+    [YP_ERR_LIST_W_UPPER_TERM]                  = "Expected a closing delimiter for the `%%W` list",
     [YP_ERR_MALLOC_FAILED]                      = "Failed to allocate memory",
     [YP_ERR_MODULE_IN_METHOD]                   = "Unexpected module definition in a method body",
     [YP_ERR_MODULE_NAME]                        = "Expected a constant name after `module`",
@@ -205,7 +205,7 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_PATTERN_EXPRESSION_AFTER_PIPE]      = "Expected a pattern expression after the `|` operator",
     [YP_ERR_PATTERN_EXPRESSION_AFTER_RANGE]     = "Expected a pattern expression after the range operator",
     [YP_ERR_PATTERN_HASH_KEY]                   = "Expected a key in the hash pattern",
-    [YP_ERR_PATTERN_HASH_KEY_LABEL]             = "Expected a label as the key in the hash pattern", // TODO // THIS // AND // ABOVE // IS WEIRD
+    [YP_ERR_PATTERN_HASH_KEY_LABEL]             = "Expected a label as the key in the hash pattern",
     [YP_ERR_PATTERN_IDENT_AFTER_HROCKET]        = "Expected an identifier after the `=>` operator",
     [YP_ERR_PATTERN_LABEL_AFTER_COMMA]          = "Expected a label after the `,` in the hash pattern",
     [YP_ERR_PATTERN_REST]                       = "Unexpected rest pattern",
@@ -222,7 +222,7 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_STRING_CONCATENATION]               = "Expected a string for concatenation",
     [YP_ERR_STRING_INTERPOLATED_TERM]           = "Expected a closing delimiter for the interpolated string",
     [YP_ERR_STRING_LITERAL_TERM]                = "Expected a closing delimiter for the string literal",
-    [YP_ERR_SYMBOL_INVALID]                     = "Invalid symbol", // TODO expected symbol? yarp.c ~9719
+    [YP_ERR_SYMBOL_INVALID]                     = "Invalid symbol",
     [YP_ERR_SYMBOL_TERM_DYNAMIC]                = "Expected a closing delimiter for the dynamic symbol",
     [YP_ERR_SYMBOL_TERM_INTERPOLATED]           = "Expected a closing delimiter for the interpolated symbol",
     [YP_ERR_TERNARY_COLON]                      = "Expected a `:` after the true expression of a ternary operator",
@@ -237,29 +237,57 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_WHILE_TERM]                         = "Expected an `end` to close the `while` statement",
     [YP_ERR_WRITE_TARGET_READONLY]              = "Immutable variable as a write target",
     [YP_ERR_WRITE_TARGET_UNEXPECTED]            = "Unexpected write target",
-    [YP_ERR_XSTRING_TERM]                       = "Expected a closing delimiter for the `%x` or backtick string",
+    [YP_ERR_XSTRING_TERM]                       = "Expected a closing delimiter for the `%%x` or backtick string",
     [YP_WARN_AMBIGUOUS_FIRST_ARGUMENT_MINUS]    = "Ambiguous first argument; put parentheses or a space even after `-` operator",
     [YP_WARN_AMBIGUOUS_FIRST_ARGUMENT_PLUS]     = "Ambiguous first argument; put parentheses or a space even after `+` operator",
     [YP_WARN_AMBIGUOUS_PREFIX_STAR]             = "Ambiguous `*` has been interpreted as an argument prefix",
     [YP_WARN_AMBIGUOUS_SLASH]                   = "Ambiguous `/`; wrap regexp in parentheses or add a space after `/` operator",
 };
 
-static const char*
-yp_diagnostic_message(yp_diagnostic_id_t diag_id) {
+static int
+yp_vasprintf(char **strp, const char *fmt, va_list ap) {
+    // make a copy of ap because the state of ap is undefined after vsnprintf, which we call twice
+    va_list ap2;
+    va_copy(ap2, ap);
+
+    // it's common to try to work around an old windows bug in vsnprintf that causes it to do
+    // nothing if the length is zero; we use a length of 1 in order to get a valid length back
+    char tmp[1];
+    int len = vsnprintf(tmp, 1, fmt, ap2) + 1;
+    *strp = (char *)malloc((size_t)len);
+    if (*strp == NULL) {
+        return -1;
+    }
+
+    return vsnprintf(*strp, (size_t)len, fmt, ap);
+}
+
+static char*
+yp_diagnostic_message(yp_diagnostic_id_t diag_id, va_list ap) {
     assert(diag_id < YP_DIAGNOSTIC_ID_LEN);
-    const char *message = diagnostic_messages[diag_id];
-    assert(message);
+
+    const char *fmt = diagnostic_messages[diag_id];
+    assert(fmt);
+
+    char *message;
+    yp_vasprintf(&message, fmt, ap);
     return message;
 }
 
 // Append an error to the given list of diagnostic.
 bool
-yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *end, yp_diagnostic_id_t diag_id) {
+yp_diagnostic_list_append(yp_list_t *list, const uint8_t *start, const uint8_t *end, yp_diagnostic_id_t diag_id, ...) {
     yp_diagnostic_t *diagnostic = (yp_diagnostic_t *) malloc(sizeof(yp_diagnostic_t));
     if (diagnostic == NULL) return false;
 
-    *diagnostic = (yp_diagnostic_t) { .start = start, .end = end, .message = yp_diagnostic_message(diag_id) };
+    va_list ap;
+    va_start(ap, diag_id);
+    const char* message = yp_diagnostic_message(diag_id, ap);
+    va_end(ap);
+
+    *diagnostic = (yp_diagnostic_t) { .start = start, .end = end, .message = message };
     yp_list_append(list, (yp_list_node_t *) diagnostic);
+
     return true;
 }
 
@@ -272,6 +300,7 @@ yp_diagnostic_list_free(yp_list_t *list) {
         next = node->next;
 
         yp_diagnostic_t *diagnostic = (yp_diagnostic_t *) node;
+        free((void *)diagnostic->message);
         free(diagnostic);
     }
 }

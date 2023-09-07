@@ -4980,7 +4980,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     // didn't understand the encoding that the user was trying to use. In this
     // case we'll keep using the default encoding but add an error to the
     // parser to indicate an unsuccessful parse.
-    yp_diagnostic_list_append(&parser->error_list, encoding_start, encoding_end, YP_ERR_INVALID_ENCODING_MAGIC_COMMENT);
+    yp_diagnostic_list_append(&parser->error_list, encoding_start, encoding_end, YP_ERR_INVALID_ENCODING_MAGIC_COMMENT, encoding_start, width);
 }
 
 /******************************************************************************/
