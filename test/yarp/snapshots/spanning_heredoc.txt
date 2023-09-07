@@ -8,10 +8,11 @@ ProgramNode(164...964)(
        nil,
        ArgumentsNode(167...192)(
          [CallNode(167...192)(
-            InterpolatedStringNode(167...171)(
+            StringNode(167...171)(
               (167...171),
-              [StringNode(181...183)(nil, (181...183), nil, "a\n")],
-              (183...185)
+              (181...183),
+              (183...185),
+              "a\n"
             ),
             (171...172),
             (172...176),
@@ -48,11 +49,7 @@ ProgramNode(164...964)(
        (276...278),
        nil,
        ArgumentsNode(279...295)(
-         [InterpolatedStringNode(279...283)(
-            (279...283),
-            [StringNode(289...291)(nil, (289...291), nil, "c\n")],
-            (291...293)
-          ),
+         [StringNode(279...283)((279...283), (289...291), (291...293), "c\n"),
           InterpolatedStringNode(285...295)(
             (285...286),
             [StringNode(286...289)(nil, (286...289), nil, "d"),
@@ -71,11 +68,7 @@ ProgramNode(164...964)(
        (322...324),
        nil,
        ArgumentsNode(325...343)(
-         [InterpolatedStringNode(325...329)(
-            (325...329),
-            [StringNode(337...339)(nil, (337...339), nil, "e\n")],
-            (339...341)
-          ),
+         [StringNode(325...329)((325...329), (337...339), (339...341), "e\n"),
           InterpolatedStringNode(331...343)(
             (331...334),
             [StringNode(334...337)(nil, (334...337), nil, "f\\\n"),
@@ -94,11 +87,7 @@ ProgramNode(164...964)(
        (427...429),
        nil,
        ArgumentsNode(430...448)(
-         [InterpolatedStringNode(430...434)(
-            (430...434),
-            [StringNode(442...444)(nil, (442...444), nil, "g\n")],
-            (444...446)
-          ),
+         [StringNode(430...434)((430...434), (442...444), (444...446), "g\n"),
           InterpolatedStringNode(436...448)(
             (436...439),
             [StringNode(439...442)(nil, (439...442), nil, "h"),
@@ -117,11 +106,7 @@ ProgramNode(164...964)(
        (520...522),
        nil,
        ArgumentsNode(523...541)(
-         [InterpolatedStringNode(523...527)(
-            (523...527),
-            [StringNode(535...537)(nil, (535...537), nil, "i\n")],
-            (537...539)
-          ),
+         [StringNode(523...527)((523...527), (535...537), (537...539), "i\n"),
           ArrayNode(529...541)(
             [StringNode(532...535)(nil, (532...535), nil, "j\\\n"),
              StringNode(539...540)(nil, (539...540), nil, "j")],
@@ -140,11 +125,7 @@ ProgramNode(164...964)(
        (688...690),
        nil,
        ArgumentsNode(691...709)(
-         [InterpolatedStringNode(691...695)(
-            (691...695),
-            [StringNode(703...705)(nil, (703...705), nil, "k\n")],
-            (705...707)
-          ),
+         [StringNode(691...695)((691...695), (703...705), (705...707), "k\n"),
           ArrayNode(697...709)(
             [InterpolatedStringNode(700...708)(
                nil,
@@ -167,11 +148,7 @@ ProgramNode(164...964)(
        (781...783),
        nil,
        ArgumentsNode(784...802)(
-         [InterpolatedStringNode(784...788)(
-            (784...788),
-            [StringNode(796...798)(nil, (796...798), nil, "m\n")],
-            (798...800)
-          ),
+         [StringNode(784...788)((784...788), (796...798), (798...800), "m\n"),
           ArrayNode(790...802)(
             [SymbolNode(793...796)(nil, (793...796), nil, "n\\\n"),
              SymbolNode(800...801)(nil, (800...801), nil, "n")],
@@ -190,11 +167,7 @@ ProgramNode(164...964)(
        (943...945),
        nil,
        ArgumentsNode(946...964)(
-         [InterpolatedStringNode(946...950)(
-            (946...950),
-            [StringNode(958...960)(nil, (958...960), nil, "o\n")],
-            (960...962)
-          ),
+         [StringNode(946...950)((946...950), (958...960), (960...962), "o\n"),
           ArrayNode(952...964)(
             [InterpolatedSymbolNode(955...963)(
                nil,

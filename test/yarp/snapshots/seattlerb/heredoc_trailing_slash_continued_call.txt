@@ -2,11 +2,7 @@ ProgramNode(0...22)(
   [],
   StatementsNode(0...22)(
     [CallNode(0...22)(
-       InterpolatedStringNode(0...5)(
-         (0...5),
-         [StringNode(7...12)(nil, (7...12), nil, "blah\n")],
-         (12...16)
-       ),
+       StringNode(0...5)((0...5), (7...12), (12...16), "blah\n"),
        (16...17),
        (17...22),
        nil,

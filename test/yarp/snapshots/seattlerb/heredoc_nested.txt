@@ -7,11 +7,7 @@ ProgramNode(0...23)(
           [EmbeddedStatementsNode(6...12)(
              (6...8),
              StatementsNode(8...11)(
-               [InterpolatedStringNode(8...11)(
-                  (8...11),
-                  [StringNode(13...15)(nil, (13...15), nil, "b\n")],
-                  (15...17)
-                )]
+               [StringNode(8...11)((8...11), (13...15), (15...17), "b\n")]
              ),
              (11...12)
            ),

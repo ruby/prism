@@ -1,23 +1,19 @@
 ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
-    [InterpolatedStringNode(0...7)((0...7), [], (9...14)),
-     InterpolatedStringNode(15...23)(
+    [StringNode(0...7)((0...7), (7...9), (9...14), ""),
+     StringNode(15...23)(
        (15...23),
-       [StringNode(25...100)(
-          nil,
-          (25...100),
-          nil,
-          "way over\n" +
-          "<<HERE\n" +
-          "  not here\n" +
-          "HERE\n" +
-          "\n" +
-          "<<~BUT  but\n" +
-          "BUT\n" +
-          "  there\n"
-        )],
-       (100...106)
+       (25...100),
+       (100...106),
+       "way over\n" +
+       "<<HERE\n" +
+       "  not here\n" +
+       "HERE\n" +
+       "\n" +
+       "<<~BUT  but\n" +
+       "BUT\n" +
+       "  there\n"
      )]
   )
 )

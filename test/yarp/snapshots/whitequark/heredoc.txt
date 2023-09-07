@@ -1,20 +1,8 @@
 ProgramNode(0...52)(
   [],
   StatementsNode(0...52)(
-    [InterpolatedStringNode(0...8)(
-       (0...8),
-       [StringNode(9...17)(nil, (9...17), nil, "foo\n" + "bar\n")],
-       (17...22)
-     ),
-     InterpolatedStringNode(23...29)(
-       (23...29),
-       [StringNode(30...38)(nil, (30...38), nil, "foo\n" + "bar\n")],
-       (38...43)
-     ),
-     InterpolatedXStringNode(44...52)(
-       (44...52),
-       [StringNode(53...61)(nil, (53...61), nil, "foo\n" + "bar\n")],
-       (61...66)
-     )]
+    [StringNode(0...8)((0...8), (9...17), (17...22), "foo\n" + "bar\n"),
+     StringNode(23...29)((23...29), (30...38), (38...43), "foo\n" + "bar\n"),
+     XStringNode(44...52)((44...52), (53...61), (61...66), "foo\n" + "bar\n")]
   )
 )

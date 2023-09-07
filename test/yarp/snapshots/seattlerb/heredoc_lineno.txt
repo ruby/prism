@@ -5,15 +5,11 @@ ProgramNode(0...41)(
        :c,
        0,
        (0...1),
-       InterpolatedStringNode(4...11)(
+       StringNode(4...11)(
          (4...11),
-         [StringNode(12...30)(
-            nil,
-            (12...30),
-            nil,
-            "line2\n" + "line3\n" + "line4\n"
-          )],
-         (30...34)
+         (12...30),
+         (30...34),
+         "line2\n" + "line3\n" + "line4\n"
        ),
        (2...3)
      ),

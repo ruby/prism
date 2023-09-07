@@ -5,15 +5,11 @@ ProgramNode(0...12)(
        :a,
        0,
        (0...1),
-       InterpolatedStringNode(4...12)(
+       StringNode(4...12)(
          (4...12),
-         [StringNode(13...43)(
-            nil,
-            (13...43),
-            nil,
-            "blah blah\n" + " blah blah\n"
-          )],
-         (43...49)
+         (13...43),
+         (43...49),
+         "blah blah\n" + " blah blah\n"
        ),
        (2...3)
      )]

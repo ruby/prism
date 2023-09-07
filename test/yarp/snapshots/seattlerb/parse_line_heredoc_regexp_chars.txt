@@ -5,15 +5,11 @@ ProgramNode(6...74)(
        :string,
        0,
        (6...12),
-       InterpolatedStringNode(15...22)(
+       StringNode(15...22)(
          (15...22),
-         [StringNode(23...48)(
-            nil,
-            (23...48),
-            nil,
-            "        very long string\n"
-          )],
-         (48...57)
+         (23...48),
+         (48...57),
+         "        very long string\n"
        ),
        (13...14)
      ),

@@ -22,15 +22,11 @@ ProgramNode(0...108)(
        (28...31),
        (36...37)
      ),
-     InterpolatedStringNode(41...45)(
+     StringNode(41...45)(
        (41...45),
-       [StringNode(47...70)(
-          nil,
-          (47...70),
-          nil,
-          "    1     2\r\n" + "    3\r\n"
-        )],
-       (70...73)
+       (47...70),
+       (70...73),
+       "    1     2\r\n" + "    3\r\n"
      ),
      LocalVariableWriteNode(75...84)(
        :x,
@@ -50,15 +46,11 @@ ProgramNode(0...108)(
          (95...96),
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
-              InterpolatedStringNode(96...102)(
+              StringNode(96...102)(
                 (96...102),
-                [StringNode(110...121)(
-                   nil,
-                   (110...121),
-                   nil,
-                   "\n" + "baz\r\n"
-                 )],
-                (121...128)
+                (110...121),
+                (121...128),
+                "\n" + "baz\r\n"
               ),
               (102...103),
               (103...107),

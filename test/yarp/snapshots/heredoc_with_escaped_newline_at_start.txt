@@ -2,7 +2,7 @@ ProgramNode(0...62)(
   [],
   StatementsNode(0...62)(
     [CallNode(0...25)(
-       InterpolatedStringNode(0...9)((0...9), [], (27...34)),
+       StringNode(0...9)((0...9), (9...27), (27...34), ""),
        (9...10),
        (10...14),
        nil,
@@ -22,7 +22,7 @@ ProgramNode(0...62)(
        "gsub"
      ),
      CallNode(37...62)(
-       InterpolatedStringNode(37...46)((37...46), [], (65...73)),
+       StringNode(37...46)((37...46), (46...65), (65...73), ""),
        (46...47),
        (47...51),
        nil,

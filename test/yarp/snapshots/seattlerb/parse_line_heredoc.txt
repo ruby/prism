@@ -6,15 +6,11 @@ ProgramNode(6...88)(
        0,
        (6...12),
        CallNode(15...31)(
-         InterpolatedStringNode(15...25)(
+         StringNode(15...25)(
            (15...25),
-           [StringNode(32...57)(
-              nil,
-              (32...57),
-              nil,
-              "        very long string\n"
-            )],
-           (57...71)
+           (32...57),
+           (57...71),
+           "        very long string\n"
          ),
          (25...26),
          (26...31),

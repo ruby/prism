@@ -4085,6 +4085,45 @@ yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *ri
     return node;
 }
 
+// Allocate a new StringNode node from an InterpolatedStringNode
+static yp_string_node_t *
+yp_string_node_from_interpolated_string_node_create(yp_parser_t *parser, yp_interpolated_string_node_t *interpolated_node, yp_location_t content_loc, yp_string_t unescaped) {
+    yp_string_node_t *node = YP_ALLOC_NODE(parser, yp_string_node_t);
+
+    *node = (yp_string_node_t) {
+        {
+            .type = YP_STRING_NODE,
+            .location = interpolated_node->base.location
+        },
+        .opening_loc = interpolated_node->opening_loc,
+        .content_loc = content_loc,
+        .closing_loc = interpolated_node->closing_loc,
+        .unescaped = unescaped
+    };
+
+    return node;
+}
+
+// Allocate a new StringNode node from an InterpolatedStringNode
+static yp_x_string_node_t *
+yp_x_string_node_from_interpolated_x_string_node_create(yp_parser_t *parser, yp_interpolated_x_string_node_t *interpolated_node, yp_location_t content_loc, yp_string_t unescaped) {
+    yp_x_string_node_t *node = YP_ALLOC_NODE(parser, yp_x_string_node_t);
+
+    *node = (yp_x_string_node_t) {
+        {
+            .type = YP_X_STRING_NODE,
+            .location = interpolated_node->base.location
+        },
+        .opening_loc = interpolated_node->opening_loc,
+        .content_loc = content_loc,
+        .closing_loc = interpolated_node->closing_loc,
+        .unescaped = unescaped
+    };
+
+    return node;
+}
+
+
 // Allocate a new StringNode node.
 static yp_string_node_t *
 yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
@@ -4558,7 +4597,6 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
 }
 
 
-#undef YP_EMPTY_STRING
 #undef YP_ALLOC_NODE
 
 /******************************************************************************/
@@ -11245,6 +11283,42 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             // each line by the common leading whitespace.
             if (indent == YP_HEREDOC_INDENT_TILDE) {
                 parse_heredoc_dedent(parser, node, quote);
+            }
+
+            // InterpolatedStringNodes with zero or one part can be converted to StringNodes
+            if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+                yp_interpolated_x_string_node_t *interpolated_node = (yp_interpolated_x_string_node_t *)node;
+                size_t parts_size = interpolated_node->parts.size;
+                if (parts_size == 0) {
+                    yp_location_t content_loc = (yp_location_t) {
+                        .start = interpolated_node->opening_loc.end,
+                        .end = interpolated_node->closing_loc.start
+                    };
+                    node = (yp_node_t *)yp_x_string_node_from_interpolated_x_string_node_create(parser, interpolated_node, content_loc, YP_EMPTY_STRING);
+                }
+                else if (parts_size == 1) {
+                    yp_x_string_node_t *x_string_node = (yp_x_string_node_t *)interpolated_node->parts.nodes[0];
+                    yp_location_t content_loc = x_string_node->content_loc;
+                    yp_string_t unescaped = x_string_node->unescaped;
+                    node = (yp_node_t *)yp_x_string_node_from_interpolated_x_string_node_create(parser, interpolated_node, content_loc, unescaped);
+                }
+            }
+            else {
+                yp_interpolated_string_node_t *interpolated_node = (yp_interpolated_string_node_t *)node;
+                size_t parts_size = interpolated_node->parts.size;
+                if (parts_size == 0) {
+                    yp_location_t content_loc = (yp_location_t) {
+                        .start = interpolated_node->opening_loc.end,
+                        .end = interpolated_node->closing_loc.start
+                    };
+                    node = (yp_node_t *)yp_string_node_from_interpolated_string_node_create(parser, interpolated_node, content_loc, YP_EMPTY_STRING);
+                }
+                else if (parts_size == 1) {
+                    yp_string_node_t *string_node = (yp_string_node_t *)interpolated_node->parts.nodes[0];
+                    yp_location_t content_loc = string_node->content_loc;
+                    yp_string_t unescaped = string_node->unescaped;
+                    node = (yp_node_t *)yp_string_node_from_interpolated_string_node_create(parser, interpolated_node, content_loc, unescaped);
+                }
             }
 
             // If there's a string immediately following this heredoc, then it's a
