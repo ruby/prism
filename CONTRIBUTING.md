@@ -32,6 +32,13 @@ bundle exec rake compile test
 bundle exec rake compile:yarp test
 ```
 
+To test the rust bindings (with caveats about setting up your Rust environment properly first):
+
+``` sh
+bundle exec rake compile test:rust
+```
+
+
 ## Documentation
 
 We could always use more documentation! If you want to contribute documentation, feel free to open a pull request. These will get merged in as soon as possible. Documenting functions or methods is always useful, but we also need more guides and tutorials. If you have an idea for a guide or tutorial, feel free to open an issue and we can discuss it.

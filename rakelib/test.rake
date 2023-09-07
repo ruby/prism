@@ -50,4 +50,13 @@ namespace :test do
   end
 
   LldbTestTask.new(lldb: :compile, &config)
+
+  desc "Run the tests for the rust bindings"
+  task :rust do
+    ["rust/yarp", "rust/yarp-sys"].each do |dir|
+      Dir.chdir(dir) do
+        sh("cargo test")
+      end
+    end
+  end
 end
