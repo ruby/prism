@@ -15,7 +15,7 @@ else
   result = YARP.parse_file(ARGV[0] || "test.rb")
 end
 
-result.mark_newlines if ENV["MARK_NEWLINES"]
+result.mark_newlines! if ENV["MARK_NEWLINES"]
 
 value = result.value
 value = value.accept(YARP::DesugarVisitor.new) if ENV["DESUGAR"]
