@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.11.0] - 2023-09-08
+
+### Added
+
+- `Node#inspect` is much improved.
+- `YARP::Pattern` is introduced, which can construct procs to match against nodes.
+- `BlockLocalVariableNode` is introduced to take the place of the locations array on `BlockParametersNode`.
+- `ParseResult#attach_comments!` is now provided to attach comments to locations in the tree.
+- `MultiTargetNode` is introduced as the target of multi writes and for loops.
+- `Node#comment_targets` is introduced to return the list of objects that can have attached comments.
+
+### Changed
+
+- **BREAKING**: `GlobalVariable*Node#name` now returns a symbol.
+- **BREAKING**: `Constant*Node#name` now returns a symbol.
+- **BREAKING**: `BlockParameterNode`, `KeywordParameterNode`, `KeywordRestParameterNode`, `RestParameterNode`, `DefNode` all have their `name` methods returning symbols now.
+- **BREAKING**: `ClassNode#name` and `ModuleNode#name` now return symbols.
+- **BREAKING**: `Location#end_column` is now exclusive instead of inclusive.
+- `Location#slice` now returns a properly encoded string.
+- `CallNode#operator_loc` is now `CallNode#call_operator_loc`.
+- `CallOperatorAndWriteNode` is renamed to `CallAndWriteNode` and its structure has changed.
+- `CallOperatorOrWriteNode` is renamed to `CallOrWriteNode` and its structure has changed.
+
 ## [0.10.0] - 2023-09-01
 
 ### Added
@@ -94,7 +117,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/yarp/compare/v0.10.0...HEAD
+[unreleased]: https://github.com/ruby/yarp/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/ruby/yarp/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/ruby/yarp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/ruby/yarp/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/ruby/yarp/compare/v0.7.0...v0.8.0

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    yarp (0.10.0)
+    yarp (0.11.0)
 
 GEM
   remote: https://rubygems.org/
