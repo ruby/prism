@@ -14,10 +14,10 @@ ProgramNode(0...10)(
           0,
           "C="
         )],
-       (7...8),
-       CallNode(9...10)(nil, nil, (9...10), nil, nil, nil, nil, 2, "d"),
        nil,
-       nil
+       nil,
+       (7...8),
+       CallNode(9...10)(nil, nil, (9...10), nil, nil, nil, nil, 2, "d")
      )]
   )
 )

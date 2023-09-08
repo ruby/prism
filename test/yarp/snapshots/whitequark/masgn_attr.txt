@@ -14,10 +14,10 @@ ProgramNode(0...63)(
           "A="
         ),
         LocalVariableTargetNode(8...11)(:foo, 0)],
-       (12...13),
-       LocalVariableReadNode(14...17)(:foo, 0),
        nil,
-       nil
+       nil,
+       (12...13),
+       LocalVariableReadNode(14...17)(:foo, 0)
      ),
      MultiWriteNode(19...43)(
        [CallNode(19...25)(
@@ -44,10 +44,10 @@ ProgramNode(0...63)(
           0,
           "[]="
         )],
-       (38...39),
-       LocalVariableReadNode(40...43)(:foo, 0),
        nil,
-       nil
+       nil,
+       (38...39),
+       LocalVariableReadNode(40...43)(:foo, 0)
      ),
      MultiWriteNode(45...63)(
        [CallNode(45...52)(
@@ -62,10 +62,10 @@ ProgramNode(0...63)(
           "a="
         ),
         LocalVariableTargetNode(54...57)(:foo, 0)],
-       (58...59),
-       LocalVariableReadNode(60...63)(:foo, 0),
        nil,
-       nil
+       nil,
+       (58...59),
+       LocalVariableReadNode(60...63)(:foo, 0)
      )]
   )
 )

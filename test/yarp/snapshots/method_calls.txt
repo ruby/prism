@@ -390,14 +390,14 @@ ProgramNode(0...1237)(
           0,
           "bar="
         )],
+       nil,
+       nil,
        (198...199),
        ArrayNode(200...204)(
          [IntegerNode(200...201)(), IntegerNode(203...204)()],
          nil,
          nil
-       ),
-       nil,
-       nil
+       )
      ),
      CallNode(206...210)(
        CallNode(206...207)(nil, nil, (206...207), nil, nil, nil, nil, 2, "a"),

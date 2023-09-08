@@ -537,6 +537,11 @@ module YARP
       assert_location(ModuleNode, "module Foo end")
     end
 
+    def test_MultiTargetNode
+      assert_location(MultiTargetNode, "for foo, bar in baz do end", 4...12, &:index)
+      assert_location(MultiTargetNode, "foo, (bar, baz) = qux", 5...15) { |node| node.targets.last }
+    end
+
     def test_MultiWriteNode
       assert_location(MultiWriteNode, "foo, bar = baz")
     end

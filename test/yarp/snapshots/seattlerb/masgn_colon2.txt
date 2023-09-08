@@ -8,14 +8,14 @@ ProgramNode(0...14)(
           ConstantReadNode(6...7)(:C),
           (4...6)
         )],
+       nil,
+       nil,
        (8...9),
        ArrayNode(10...14)(
          [IntegerNode(10...11)(), IntegerNode(13...14)()],
          nil,
          nil
-       ),
-       nil,
-       nil
+       )
      )]
   )
 )

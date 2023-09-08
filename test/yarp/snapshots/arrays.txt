@@ -359,14 +359,14 @@ ProgramNode(0...511)(
           0,
           "[]="
         )],
+       nil,
+       nil,
        (206...207),
        ArrayNode(208...212)(
          [IntegerNode(208...209)(), IntegerNode(211...212)()],
          nil,
          nil
-       ),
-       nil,
-       nil
+       )
      ),
      CallNode(214...233)(
        CallNode(214...217)(

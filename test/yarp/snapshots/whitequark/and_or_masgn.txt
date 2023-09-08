@@ -8,6 +8,8 @@ ProgramNode(0...40)(
            [MultiWriteNode(8...18)(
               [LocalVariableTargetNode(8...9)(:a, 0),
                LocalVariableTargetNode(11...12)(:b, 0)],
+              nil,
+              nil,
               (13...14),
               CallNode(15...18)(
                 nil,
@@ -19,9 +21,7 @@ ProgramNode(0...40)(
                 nil,
                 2,
                 "bar"
-              ),
-              nil,
-              nil
+              )
             )]
          ),
          (7...8),
@@ -36,6 +36,8 @@ ProgramNode(0...40)(
            [MultiWriteNode(29...39)(
               [LocalVariableTargetNode(29...30)(:a, 0),
                LocalVariableTargetNode(32...33)(:b, 0)],
+              nil,
+              nil,
               (34...35),
               CallNode(36...39)(
                 nil,
@@ -47,9 +49,7 @@ ProgramNode(0...40)(
                 nil,
                 2,
                 "bar"
-              ),
-              nil,
-              nil
+              )
             )]
          ),
          (28...29),
