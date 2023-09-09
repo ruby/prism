@@ -12,6 +12,7 @@ on:
 jobs:
   # Inspired from https://github.com/oracle/truffleruby/blob/master/.github/workflows/ci.yml
   test-loader:
+    if: github.repository == 'ruby/yarp'
     runs-on: ubuntu-20.04 # to be consistent with that workflow and test on older platform
     steps:
     - name: Clone YARP
