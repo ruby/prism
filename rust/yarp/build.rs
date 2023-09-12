@@ -519,12 +519,21 @@ impl<'pr> ConstantId<'pr> {{
     }}
 
     /// Returns a byte slice for the constant ID.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the constant ID is not found in the constant pool.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {{
         unsafe {{
             let pool = &(*self.parser.as_ptr()).constant_pool;
-            let constant = &(*pool.constants.offset(isize::try_from(self.id).expect("id should be in range")));
-            std::slice::from_raw_parts(constant.start, constant.length)
+            for i in 0..pool.capacity {{
+                let constant = &(*pool.constants.add(i));
+                if constant.id() == self.id {{
+                    return std::slice::from_raw_parts(constant.start, constant.length);
+                }}
+            }}
+            panic!("Unable to locate constant id");
         }}
     }}
 }}
