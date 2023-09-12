@@ -65,14 +65,16 @@ public class Loader {
     }
 
     private ParseResult load() {
-        expect((byte) 'Y');
-        expect((byte) 'A');
-        expect((byte) 'R');
-        expect((byte) 'P');
+        expect((byte) 'Y', "incorrect YARP header");
+        expect((byte) 'A', "incorrect YARP header");
+        expect((byte) 'R', "incorrect YARP header");
+        expect((byte) 'P', "incorrect YARP header");
 
-        expect((byte) 0);
-        expect((byte) 12);
-        expect((byte) 0);
+        expect((byte) 0, "YARP version does not match");
+        expect((byte) 12, "YARP version does not match");
+        expect((byte) 0, "YARP version does not match");
+
+        expect((byte) 1, "Loader.java requires no location fields in the serialized output");
 
         // This loads the name of the encoding. We don't actually do anything
         // with it just yet.
@@ -265,7 +267,7 @@ public class Loader {
             case <%= index + 1 %>:
             <%-
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
-            params.concat node.fields.map { |field|
+            params.concat node.semantic_fields.map { |field|
               case field
               when YARP::NodeField then "#{field.java_cast}loadNode()"
               when YARP::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
@@ -290,10 +292,10 @@ public class Loader {
         }
     }
 
-    private void expect(byte value) {
+    private void expect(byte value, String error) {
         byte b = buffer.get();
         if (b != value) {
-            throw new Error("Expected " + value + " but was " + b + " at position " + buffer.position());
+            throw new Error("Deserialization error: " + error + " (expected " + value + " but was " + b + " at position " + buffer.position() + ")");
         }
     }
 

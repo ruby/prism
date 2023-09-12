@@ -177,7 +177,7 @@ public abstract class Nodes {
         <%- if node.needs_serialized_length? -%>
         public final int serializedLength;
         <%- end -%>
-        <%- node.fields.each do |field| -%>
+        <%- node.semantic_fields.each do |field| -%>
         <%- if field.class.name.include?('Optional') -%>
         /** optional (can be null) */
         <%- end -%>
@@ -186,7 +186,7 @@ public abstract class Nodes {
 
         <%-
           params = node.needs_serialized_length? ? ["int serializedLength"] : []
-          params.concat node.fields.map { |field| "#{field.java_type} #{field.name}" }
+          params.concat node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" }
           params.concat ["int startOffset", "int length"]
         -%>
         public <%=node.name -%>(<%= params.join(", ") %>) {
@@ -194,19 +194,17 @@ public abstract class Nodes {
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
         <%- end -%>
-        <%- node.fields.each do |field| -%>
+        <%- node.semantic_fields.each do |field| -%>
             this.<%= field.name %> = <%= field.name %>;
         <%- end -%>
         }
         <%# methods for flags -%>
-        <%- node.fields.each do |field| -%>
-        <%- if field.is_a?(YARP::FlagsField) -%>
+        <%- node.semantic_fields.grep(YARP::FlagsField).each do |field| -%>
         <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
             return <%= field.kind %>.is<%= value.camelcase %>(this.<%= field.name %>);
         }
-        <%- end -%>
         <%- end -%>
         <%- end -%>
         <%# potential override of setNewLineFlag() -%>
@@ -220,7 +218,7 @@ public abstract class Nodes {
 
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
-          <%- field = node.fields.find { |f| f.name == node.newline } or raise node.newline -%>
+          <%- field = node.semantic_fields.find { |f| f.name == node.newline } or raise node.newline -%>
           <%- case field -%>
           <%- when YARP::NodeField, YARP::OptionalNodeField -%>
             this.<%= field.name %>.setNewLineFlag(source, newlineMarked);
@@ -235,7 +233,7 @@ public abstract class Nodes {
         <%- end -%>
 
         public <T> void visitChildNodes(AbstractNodeVisitor<T> visitor) {
-          <%- node.fields.each do |field| -%>
+          <%- node.semantic_fields.each do |field| -%>
             <%- case field -%>
             <%- when YARP::NodeListField -%>
             for (Nodes.Node child : this.<%= field.name %>) {
@@ -252,15 +250,15 @@ public abstract class Nodes {
         }
 
         public Node[] childNodes() {
-          <%- if node.fields.none?(YARP::NodeListField) and node.fields.none?(YARP::NodeKindField) -%>
+          <%- if node.semantic_fields.none?(YARP::NodeListField) and node.semantic_fields.none?(YARP::NodeKindField) -%>
             return EMPTY_ARRAY;
-          <%- elsif node.fields.one?(YARP::NodeListField) and node.fields.none?(YARP::NodeKindField) -%>
-            return this.<%= node.fields.grep(YARP::NodeListField).first.name %>;
-          <%- elsif node.fields.none?(YARP::NodeListField) -%>
-            return new Node[] { <%= node.fields.grep(YARP::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
+          <%- elsif node.semantic_fields.one?(YARP::NodeListField) and node.semantic_fields.none?(YARP::NodeKindField) -%>
+            return this.<%= node.semantic_fields.grep(YARP::NodeListField).first.name %>;
+          <%- elsif node.semantic_fields.none?(YARP::NodeListField) -%>
+            return new Node[] { <%= node.semantic_fields.grep(YARP::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
           <%- else -%>
             ArrayList<Node> childNodes = new ArrayList<>();
-            <%- node.fields.each do |field| -%>
+            <%- node.semantic_fields.each do |field| -%>
               <%- case field -%>
               <%- when YARP::NodeField, YARP::OptionalNodeField -%>
             childNodes.add(this.<%= field.name %>);

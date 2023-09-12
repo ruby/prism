@@ -116,22 +116,13 @@ jobs:
       JRUBY_OPTS: "--dev"
     steps:
     - uses: actions/checkout@v3
-    - name: Set up CRuby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2
-        bundler-cache: true
-    - name: Serialize fixtures on CRuby
-      run: bundle exec rake compile test:serialize_fixtures
     - name: Set up JRuby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: jruby
         bundler-cache: true
-    - name: Compile generated Java files
-      run: bundle exec rake compile
     - name: Run Java Loader test
-      run: JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
+      run: YARP_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
 
   lex-ruby:
     runs-on: ubuntu-latest
