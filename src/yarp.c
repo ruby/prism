@@ -11281,10 +11281,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                             &((yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->current.start }),
                             &parser->current);
                 }
-                node->location = (yp_location_t) {
-                    .start = parser->previous.start,
-                        .end = parser->previous.end
-                };
+                node->location.end = parser->previous.end;
                 lex_state_set(parser, YP_LEX_STATE_END);
                 expect(parser, YP_TOKEN_HEREDOC_END, YP_ERR_HEREDOC_TERM);
                 return node;
@@ -11302,18 +11299,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             if (YP_NODE_TYPE_P(part, YP_STRING_NODE) && match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
                 // We only have a single string, so we can return it
                 yp_string_node_t *str_part = (yp_string_node_t *)part;
-                (str_part)->opening_loc = (yp_location_t) {
-                    .start = opening_token.start,
-                    .end = opening_token.end
-                };
-                (str_part)->closing_loc = (yp_location_t) {
-                    .start = parser->current.start,
-                    .end = parser->current.end
-                };
-                (str_part)->base.location = (yp_location_t) {
-                    .start = opening_token.start,
-                    .end = opening_token.end,
-                };
+                str_part->opening_loc = YP_LOCATION_TOKEN_VALUE(&opening_token);
+                str_part->closing_loc = YP_LOCATION_TOKEN_VALUE(&parser->current);
+                str_part->base.location = str_part->opening_loc;
                 if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
                     part->type = YP_X_STRING_NODE;
                 }
@@ -11328,16 +11316,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             else {
                 // We have multiple parts, continue parsing them
                 yp_node_list_t parts = YP_EMPTY_NODE_LIST;
+                yp_node_list_append(&parts, part);
 
                 while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
-                    if (part != NULL) {
+                    if ((part = parse_string_part(parser)) != NULL) {
                         yp_node_list_append(&parts, part);
                     }
-
-                    if ((part = parse_string_part(parser)) == NULL) continue;
                 }
-
-                yp_node_list_append(&parts, part);
 
                 if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
                     node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &opening_token, &opening_token);
