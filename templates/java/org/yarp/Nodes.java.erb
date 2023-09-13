@@ -3,6 +3,7 @@ package org.yarp;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.StringBuilder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -117,20 +118,7 @@ public abstract class Nodes {
             return toString("");
         }
 
-        private String toString(String indent) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(indent).append(this.getClass().getSimpleName());
-            if (hasNewLineFlag()) {
-                builder.append("[Li]");
-            }
-            builder.append('\n');
-            for (Node child : childNodes()) {
-                if (child != null) {
-                    builder.append(child.toString(indent + "  "));
-                }
-            }
-            return builder.toString();
-        }
+        protected abstract String toString(String indent);
     }
 <%# FLAGS -%>
     <%- flags.each do |group| -%>
@@ -286,6 +274,52 @@ public abstract class Nodes {
 
         public <T> T accept(AbstractNodeVisitor<T> visitor) {
             return visitor.visit<%= node.name -%>(this);
+        }
+
+        @Override
+        protected String toString(String indent) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(this.getClass().getSimpleName());
+            if (hasNewLineFlag()) {
+                builder.append("[Li]");
+            }
+            builder.append('\n');
+            String nextIndent = indent + "  ";
+            <%- if node.fields.any?(YARP::NodeListField) or node.fields.any?(YARP::ConstantListField) -%>
+            String nextNextIndent = nextIndent + "  ";
+            <%- end -%>
+            <%- node.fields.grep_v(YARP::LocationField).grep_v(YARP::OptionalLocationField).each do |field| -%>
+            builder.append(nextIndent);
+            builder.append("<%= field.name %>: ");
+            <%- case field -%>
+            <%- when YARP::NodeField -%>
+            builder.append(this.<%= field.name %>.toString(nextIndent));
+            <%- when YARP::OptionalNodeField -%>
+            builder.append(this.<%= field.name %> == null ? "null\n" : this.<%= field.name %>.toString(nextIndent));
+            <%- when YARP::NodeListField -%>
+            builder.append('\n');
+            for (Node child : this.<%= field.name %>) {
+                builder.append(nextNextIndent).append(child.toString(nextNextIndent));
+            }
+            <%- when YARP::StringField, YARP::ConstantField -%>
+            builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
+            builder.append('\n');
+            <%- when YARP::OptionalConstantField -%>
+            builder.append(this.<%= field.name %> == null ? "null\n" : '"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
+            builder.append('\n');
+            <%- when YARP::ConstantListField -%>
+            builder.append('\n');
+            for (byte[] constant : this.<%= field.name %>) {
+                builder.append(nextNextIndent).append('"' + new String(constant, StandardCharsets.UTF_8) + '"').append('\n');
+            }
+            <%- when YARP::UInt32Field, YARP::FlagsField -%>
+            builder.append(this.<%= field.name %>);
+            builder.append('\n');
+            <%- else -%>
+            <%- raise field.class.name -%>
+            <%- end -%>
+            <%- end -%>
+            return builder.toString();
         }
     }
     <%- end -%>
