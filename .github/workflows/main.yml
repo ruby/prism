@@ -174,8 +174,14 @@ jobs:
   memcheck:
     runs-on: ubuntu-latest
     steps:
+    - name: Cache valgrind
+      uses: actions/cache@v3
+      with:
+        path: valgrind-3.20.0
+        key: ${{ runner.os }}-valgrind-3.20.0
     - name: Install valgrind from source
       run: |
+        sudo apt-get update
         sudo apt-get install -y libc6-dbg
         wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
         tar xvf valgrind-3.20.0.tar.bz2
