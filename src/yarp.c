@@ -8232,6 +8232,26 @@ parse_starred_expression(yp_parser_t *parser, yp_binding_power_t binding_power, 
     return parse_expression(parser, binding_power, diag_id);
 }
 
+// Convert the name of a method into the corresponding write method name. For
+// exmaple, foo would be turned into foo=.
+static void
+parse_write_name(yp_string_t *string) {
+    // The method name needs to change. If we previously had
+    // foo, we now need foo=. In this case we'll allocate a new
+    // owned string, copy the previous method name in, and
+    // append an =.
+    size_t length = yp_string_length(string);
+    uint8_t *name = calloc(length + 1, sizeof(uint8_t));
+    if (name == NULL) return;
+
+    memcpy(name, yp_string_source(string), length);
+    name[length] = '=';
+
+    // Now switch the name to the new string.
+    yp_string_free(string);
+    yp_string_owned_init(string, name, length + 1);
+}
+
 // Convert the given node into a valid target node.
 static yp_node_t *
 parse_target(yp_parser_t *parser, yp_node_t *target) {
@@ -8286,7 +8306,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target) {
             // If we have no arguments to the call node and we need this to be a
             // target then this is either a method call or a local variable write.
             if (
-                ((call->message_loc.start != NULL) && (call->message_loc.end[-1] != '!') && (call->message_loc.end[-1] != '?')) &&
+                (call->message_loc.start != NULL) &&
+                (call->message_loc.end[-1] != '!') &&
+                (call->message_loc.end[-1] != '?') &&
                 (call->opening_loc.start == NULL) &&
                 (call->arguments == NULL) &&
                 (call->block == NULL)
@@ -8319,22 +8341,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target) {
                     return target;
                 }
 
-                // The method name needs to change. If we previously had foo, we now
-                // need foo=. In this case we'll allocate a new owned string, copy
-                // the previous method name in, and append an =.
-                size_t length = yp_string_length(&call->name);
-
-                uint8_t *name = calloc(length + 1, sizeof(uint8_t));
-                if (name == NULL) return NULL;
-
-                memcpy(name, yp_string_source(&call->name), length);
-                name[length] = '=';
-
-                // Now switch the name to the new string.
-                yp_string_free(&call->name);
-                yp_string_owned_init(&call->name, name, length + 1);
-
-                return target;
+                if (*call->message_loc.start == '_' || parser->encoding.alnum_char(call->message_loc.start, call->message_loc.end - call->message_loc.start)) {
+                    parse_write_name(&call->name);
+                    return (yp_node_t *) call;
+                }
             }
 
             // If there is no call operator and the message is "[]" then this is
@@ -8421,9 +8431,14 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
         }
         case YP_CALL_NODE: {
             yp_call_node_t *call = (yp_call_node_t *) target;
+
             // If we have no arguments to the call node and we need this to be a
-            // target then this is either a method call or a local variable write.
+            // target then this is either a method call or a local variable
+            // write.
             if (
+                (call->message_loc.start != NULL) &&
+                (call->message_loc.end[-1] != '!') &&
+                (call->message_loc.end[-1] != '?') &&
                 (call->opening_loc.start == NULL) &&
                 (call->arguments == NULL) &&
                 (call->block == NULL)
@@ -8453,37 +8468,26 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
                     return target;
                 }
 
-                // When we get here, we have a method call, because it was
-                // previously marked as a method call but now we have an =. This
-                // looks like:
-                //
-                //     foo.bar = 1
-                //
-                // When it was parsed in the prefix position, foo.bar was seen as a
-                // method call with no arguments. Now we have an =, so we know it's
-                // a method call with an argument. In this case we will create the
-                // arguments node, parse the argument, and add it to the list.
-                yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
-                call->arguments = arguments;
-                yp_arguments_node_arguments_append(arguments, value);
-                target->location.end = arguments->base.location.end;
+                if (*call->message_loc.start == '_' || parser->encoding.alnum_char(call->message_loc.start, call->message_loc.end - call->message_loc.start)) {
+                    // When we get here, we have a method call, because it was
+                    // previously marked as a method call but now we have an =. This
+                    // looks like:
+                    //
+                    //     foo.bar = 1
+                    //
+                    // When it was parsed in the prefix position, foo.bar was seen as a
+                    // method call with no arguments. Now we have an =, so we know it's
+                    // a method call with an argument. In this case we will create the
+                    // arguments node, parse the argument, and add it to the list.
+                    yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
+                    call->arguments = arguments;
 
-                // The method name needs to change. If we previously had foo, we now
-                // need foo=. In this case we'll allocate a new owned string, copy
-                // the previous method name in, and append an =.
-                size_t length = yp_string_length(&call->name);
+                    yp_arguments_node_arguments_append(arguments, value);
+                    call->base.location.end = arguments->base.location.end;
 
-                uint8_t *name = calloc(length + 1, sizeof(uint8_t));
-                if (name == NULL) return NULL;
-
-                memcpy(name, yp_string_source(&call->name), length);
-                name[length] = '=';
-
-                // Now switch the name to the new string.
-                yp_string_free(&call->name);
-                yp_string_owned_init(&call->name, name, length + 1);
-
-                return target;
+                    parse_write_name(&call->name);
+                    return (yp_node_t *) call;
+                }
             }
 
             // If there is no call operator and the message is "[]" then this is
@@ -8520,7 +8524,7 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
             // In this case we have a node that we don't know how to convert into a
             // target. We need to treat it as an error. For now, we'll mark it as an
             // error and just skip right past it.
-            yp_diagnostic_list_append(&parser->error_list, operator->start, operator->end, YP_ERR_EXPECT_EXPRESSION_AFTER_EQUAL);
+            yp_diagnostic_list_append(&parser->error_list, operator->start, operator->end, YP_ERR_WRITE_TARGET_UNEXPECTED);
             return target;
     }
 }
