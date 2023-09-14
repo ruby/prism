@@ -2207,7 +2207,13 @@ static yp_false_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_FALSE);
     yp_false_node_t *node = YP_ALLOC_NODE(parser, yp_false_node_t);
-    *node = (yp_false_node_t) {{ .type = YP_FALSE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+
+    *node = (yp_false_node_t) {{
+        .type = YP_FALSE_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -2257,7 +2263,13 @@ static yp_float_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_FLOAT);
     yp_float_node_t *node = YP_ALLOC_NODE(parser, yp_float_node_t);
-    *node = (yp_float_node_t) {{ .type = YP_FLOAT_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+
+    *node = (yp_float_node_t) {{
+        .type = YP_FLOAT_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -2270,6 +2282,7 @@ yp_float_node_imaginary_create(yp_parser_t *parser, const yp_token_t *token) {
     *node = (yp_imaginary_node_t) {
         {
             .type = YP_IMAGINARY_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_float_node_create(parser, &((yp_token_t) {
@@ -2291,6 +2304,7 @@ yp_float_node_rational_create(yp_parser_t *parser, const yp_token_t *token) {
     *node = (yp_rational_node_t) {
         {
             .type = YP_RATIONAL_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_float_node_create(parser, &((yp_token_t) {
@@ -2312,6 +2326,7 @@ yp_float_node_rational_imaginary_create(yp_parser_t *parser, const yp_token_t *t
     *node = (yp_imaginary_node_t) {
         {
             .type = YP_IMAGINARY_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_float_node_rational_create(parser, &((yp_token_t) {
@@ -2725,7 +2740,7 @@ yp_integer_node_create(yp_parser_t *parser, yp_node_flags_t base, const yp_token
 
     *node = (yp_integer_node_t) {{
         .type = YP_INTEGER_NODE,
-        .flags = base,
+        .flags = base | YP_NODE_FLAG_STATIC_LITERAL,
         .location = YP_LOCATION_TOKEN_VALUE(token)
     }};
 
@@ -2741,6 +2756,7 @@ yp_integer_node_imaginary_create(yp_parser_t *parser, yp_node_flags_t base, cons
     *node = (yp_imaginary_node_t) {
         {
             .type = YP_IMAGINARY_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_integer_node_create(parser, base, &((yp_token_t) {
@@ -2762,6 +2778,7 @@ yp_integer_node_rational_create(yp_parser_t *parser, yp_node_flags_t base, const
     *node = (yp_rational_node_t) {
         {
             .type = YP_RATIONAL_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_integer_node_create(parser, base, &((yp_token_t) {
@@ -2783,6 +2800,7 @@ yp_integer_node_rational_imaginary_create(yp_parser_t *parser, yp_node_flags_t b
     *node = (yp_imaginary_node_t) {
         {
             .type = YP_IMAGINARY_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(token)
         },
         .numeric = (yp_node_t *) yp_integer_node_rational_create(parser, base, &((yp_token_t) {
@@ -3458,7 +3476,12 @@ yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_NIL);
     yp_nil_node_t *node = YP_ALLOC_NODE(parser, yp_nil_node_t);
 
-    *node = (yp_nil_node_t) {{ .type = YP_NIL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+    *node = (yp_nil_node_t) {{
+        .type = YP_NIL_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -4005,7 +4028,12 @@ yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_SELF);
     yp_self_node_t *node = YP_ALLOC_NODE(parser, yp_self_node_t);
 
-    *node = (yp_self_node_t) {{ .type = YP_SELF_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+    *node = (yp_self_node_t) {{
+        .type = YP_SELF_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -4039,7 +4067,12 @@ yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD___ENCODING__);
     yp_source_encoding_node_t *node = YP_ALLOC_NODE(parser, yp_source_encoding_node_t);
 
-    *node = (yp_source_encoding_node_t) {{ .type = YP_SOURCE_ENCODING_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+    *node = (yp_source_encoding_node_t) {{
+        .type = YP_SOURCE_ENCODING_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -4052,6 +4085,7 @@ yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *file_keyword) 
     *node = (yp_source_file_node_t) {
         {
             .type = YP_SOURCE_FILE_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = YP_LOCATION_TOKEN_VALUE(file_keyword),
         },
         .filepath = parser->filepath_string,
@@ -4066,7 +4100,12 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD___LINE__);
     yp_source_line_node_t *node = YP_ALLOC_NODE(parser, yp_source_line_node_t);
 
-    *node = (yp_source_line_node_t) {{ .type = YP_SOURCE_LINE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+    *node = (yp_source_line_node_t) {{
+        .type = YP_SOURCE_LINE_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -4158,10 +4197,16 @@ yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *ri
 static yp_string_node_t *
 yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
     yp_string_node_t *node = YP_ALLOC_NODE(parser, yp_string_node_t);
+    yp_node_flags_t flags = 0;
+
+    if (parser->frozen_string_literal) {
+        flags = YP_NODE_FLAG_STATIC_LITERAL | YP_STRING_FLAGS_FROZEN;
+    }
 
     *node = (yp_string_node_t) {
         {
             .type = YP_STRING_NODE,
+            .flags = flags,
             .location = {
                 .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? content->start : opening->start),
                 .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
@@ -4220,6 +4265,7 @@ yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
     *node = (yp_symbol_node_t) {
         {
             .type = YP_SYMBOL_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = {
                 .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? value->start : opening->start),
                 .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? value->end : closing->end)
@@ -4297,6 +4343,7 @@ yp_string_node_to_symbol_node(yp_parser_t *parser, yp_string_node_t *node, const
     *new_node = (yp_symbol_node_t) {
         {
             .type = YP_SYMBOL_NODE,
+            .flags = YP_NODE_FLAG_STATIC_LITERAL,
             .location = {
                 .start = opening->start,
                 .end = closing->end
@@ -4320,10 +4367,16 @@ yp_string_node_to_symbol_node(yp_parser_t *parser, yp_string_node_t *node, const
 static yp_string_node_t *
 yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
     yp_string_node_t *new_node = YP_ALLOC_NODE(parser, yp_string_node_t);
+    yp_node_flags_t flags = 0;
+
+    if (parser->frozen_string_literal) {
+        flags = YP_NODE_FLAG_STATIC_LITERAL | YP_STRING_FLAGS_FROZEN;
+    }
 
     *new_node = (yp_string_node_t) {
         {
             .type = YP_STRING_NODE,
+            .flags = flags,
             .location = node->base.location
         },
         .opening_loc = node->opening_loc,
@@ -4346,7 +4399,12 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_TRUE);
     yp_true_node_t *node = YP_ALLOC_NODE(parser, yp_true_node_t);
 
-    *node = (yp_true_node_t) {{ .type = YP_TRUE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+    *node = (yp_true_node_t) {{
+        .type = YP_TRUE_NODE,
+        .flags = YP_NODE_FLAG_STATIC_LITERAL,
+        .location = YP_LOCATION_TOKEN_VALUE(token)
+    }};
+
     return node;
 }
 
@@ -4951,8 +5009,7 @@ parser_lex_encoding_comment_start(yp_parser_t *parser, const uint8_t *cursor, pt
 static void
 parser_lex_encoding_comment(yp_parser_t *parser) {
     const uint8_t *start = parser->current.start + 1;
-    const uint8_t *end = next_newline(start, parser->end - start);
-    if (end == NULL) end = parser->end;
+    const uint8_t *end = parser->current.end;
 
     // These are the patterns we're going to match to find the encoding comment.
     // This is definitely not complete or even really correct.
@@ -5050,6 +5107,39 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     // case we'll keep using the default encoding but add an error to the
     // parser to indicate an unsuccessful parse.
     yp_diagnostic_list_append(&parser->error_list, encoding_start, encoding_end, YP_ERR_INVALID_ENCODING_MAGIC_COMMENT);
+}
+
+// Check if this is a magic comment that includes the frozen_string_literal
+// pragma. If it does, set that field on the parser.
+static void
+parser_lex_frozen_string_literal_comment(yp_parser_t *parser) {
+    const uint8_t *cursor = parser->current.start + 1;
+    const uint8_t *end = parser->current.end;
+
+    size_t key_length = strlen("frozen_string_literal");
+    if (key_length > (size_t) (end - cursor)) return;
+
+    const uint8_t *cursor_limit = cursor + (end - cursor) - key_length + 1;
+
+    while ((cursor = yp_memchr(cursor, 'f', (size_t) (cursor_limit - cursor), parser->encoding_changed, &parser->encoding)) != NULL) {
+        if (memcmp(cursor, "frozen_string_literal", key_length) == 0) {
+            cursor += key_length;
+            cursor += yp_strspn_inline_whitespace(cursor, end - cursor);
+
+            if (*cursor == ':' || *cursor == '=') {
+                cursor++;
+                cursor += yp_strspn_inline_whitespace(cursor, end - cursor);
+
+                if (cursor + 4 <= end && yp_strncasecmp(cursor, (const uint8_t *) "true", 4) == 0) {
+                    parser->frozen_string_literal = true;
+                }
+
+                return;
+            }
+        }
+
+        cursor++;
+    }
 }
 
 /******************************************************************************/
@@ -5982,6 +6072,11 @@ parser_lex(yp_parser_t *parser) {
     // already seen a comment.
     bool lexed_comment = false;
 
+    // Here we cache the current value of the semantic token seen flag. This is
+    // used to reset it in case we find a token that shouldn't flip this flag.
+    unsigned int semantic_token_seen = parser->semantic_token_seen;
+    parser->semantic_token_seen = true;
+
     switch (parser->lex_modes.current->mode) {
         case YP_LEX_DEFAULT:
         case YP_LEX_EMBEXPR:
@@ -6083,12 +6178,18 @@ parser_lex(yp_parser_t *parser) {
                         parser_lex_encoding_comment(parser);
                     }
 
+                    if (!semantic_token_seen) {
+                        parser_lex_frozen_string_literal_comment(parser);
+                    }
+
                     lexed_comment = true;
                 }
                 /* fallthrough */
                 case '\r':
                 case '\n': {
+                    parser->semantic_token_seen = semantic_token_seen & 0x1;
                     size_t eol_length = match_eol_at(parser, parser->current.end - 1);
+
                     if (eol_length) {
                         // The only way you can have carriage returns in this
                         // particular loop is if you have a carriage return
@@ -13950,7 +14051,6 @@ yp_parser_init(yp_parser_t *parser, const uint8_t *source, size_t size, const ch
 
     *parser = (yp_parser_t) {
         .lex_state = YP_LEX_STATE_BEG,
-        .command_start = true,
         .enclosure_nesting = 0,
         .lambda_enclosure_nesting = -1,
         .brace_nesting = 0,
@@ -13972,19 +14072,22 @@ yp_parser_init(yp_parser_t *parser, const uint8_t *source, size_t size, const ch
         .error_list = YP_LIST_EMPTY,
         .current_scope = NULL,
         .current_context = NULL,
-        .recovering = false,
         .encoding = yp_encoding_utf_8,
-        .encoding_changed = false,
         .encoding_changed_callback = NULL,
         .encoding_decode_callback = NULL,
         .encoding_comment_start = source,
         .lex_callback = NULL,
-        .pattern_matching_newlines = false,
-        .in_keyword_arg = false,
         .filepath_string = filepath_string,
         .constant_pool = YP_CONSTANT_POOL_EMPTY,
         .newline_list = YP_NEWLINE_LIST_EMPTY,
-        .integer_base = 0
+        .integer_base = 0,
+        .command_start = true,
+        .recovering = false,
+        .encoding_changed = false,
+        .pattern_matching_newlines = false,
+        .in_keyword_arg = false,
+        .semantic_token_seen = false,
+        .frozen_string_literal = false
     };
 
     yp_accepts_block_stack_push(parser, true);
