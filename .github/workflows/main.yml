@@ -174,22 +174,28 @@ jobs:
   memcheck:
     runs-on: ubuntu-latest
     steps:
-    - name: Cache valgrind
-      uses: actions/cache@v3
-      with:
-        path: valgrind-3.20.0
-        key: ${{ runner.os }}-valgrind-3.20.0
-    - name: Install valgrind from source
+    - uses: actions/checkout@v3
+    - name: Install libc6-dbg
       run: |
         sudo apt-get update
         sudo apt-get install -y libc6-dbg
+    - name: Cache valgrind
+      uses: actions/cache@v3
+      id: cache-valgrind
+      with:
+        path: valgrind-3.20.0
+        key: ${{ runner.os }}-valgrind-3.20.0
+    - name: Download valgrind
+      if: steps.cache-valgrind.outputs.cache-hit != 'true'
+      run: |
         wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
-        tar xvf valgrind-3.20.0.tar.bz2
+        tar xf valgrind-3.20.0.tar.bz2
+    - name: Install valgrind
+      run: |
         cd valgrind-3.20.0
         ./configure
         make
         sudo make install
-    - uses: actions/checkout@v3
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
