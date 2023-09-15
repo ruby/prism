@@ -38,11 +38,11 @@ public class Loader {
 
                 constant = new byte[length];
 
-                if (Integer.compareUnsigned(start, 1 << 31) <= 0) {
+                if (Integer.compareUnsigned(start, 0x7FFFFFFF) <= 0) {
                     System.arraycopy(source, start, constant, 0, length);
                 } else {
                     int position = buffer.position();
-                    buffer.position(Math.abs(start));
+                    buffer.position(start & 0x7FFFFFFF);
                     buffer.get(constant, 0, length);
                     buffer.position(position);
                 }

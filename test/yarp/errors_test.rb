@@ -1194,11 +1194,30 @@ module YARP
       ]
     end
 
+    def test_writing_numbered_parameter
+      assert_errors expression("-> { _1 = 0 }"), "-> { _1 = 0 }", [
+        ["Token reserved for a numbered parameter", 5..7]
+      ]
+    end
+
+    def test_targeting_numbered_parameter
+      assert_errors expression("-> { _1, = 0 }"), "-> { _1, = 0 }", [
+        ["Token reserved for a numbered parameter", 5..7]
+      ]
+    end
+
+    def test_double_scope_numbered_parameters
+      source = "-> { _1 + -> { _2 } }"
+      errors = [["Numbered parameter is already used in outer scope", 15..17]]
+
+      assert_errors expression(source), source, errors, compare_ripper: false
+    end
+
     private
 
-    def assert_errors(expected, source, errors)
+    def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
       # Ripper behaves differently on JRuby/TruffleRuby, so only check this on CRuby
-      assert_nil Ripper.sexp_raw(source) if RUBY_ENGINE == "ruby"
+      assert_nil Ripper.sexp_raw(source) if compare_ripper
 
       result = YARP.parse(source)
       node = result.value.statements.body.last

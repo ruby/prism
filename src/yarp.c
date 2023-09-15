@@ -4720,10 +4720,16 @@ yp_parser_scope_push(yp_parser_t *parser, bool closed) {
     yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
     if (scope == NULL) return false;
 
-    *scope = (yp_scope_t) { .closed = closed, .previous = parser->current_scope };
-    yp_constant_id_list_init(&scope->locals);
+    *scope = (yp_scope_t) {
+        .previous = parser->current_scope,
+        .closed = closed,
+        .explicit_params = false,
+        .numbered_params = false
+    };
 
+    yp_constant_id_list_init(&scope->locals);
     parser->current_scope = scope;
+
     return true;
 }
 
@@ -8301,8 +8307,13 @@ parse_target(yp_parser_t *parser, yp_node_t *target) {
             target->type = YP_GLOBAL_VARIABLE_TARGET_NODE;
             return target;
         case YP_LOCAL_VARIABLE_READ_NODE:
-            assert(sizeof(yp_local_variable_target_node_t) == sizeof(yp_local_variable_read_node_t));
-            target->type = YP_LOCAL_VARIABLE_TARGET_NODE;
+            if (token_is_numbered_parameter(target->location.start, target->location.end)) {
+                yp_diagnostic_list_append(&parser->error_list, target->location.start, target->location.end, YP_ERR_PARAMETER_NUMBERED_RESERVED);
+            } else {
+                assert(sizeof(yp_local_variable_target_node_t) == sizeof(yp_local_variable_read_node_t));
+                target->type = YP_LOCAL_VARIABLE_TARGET_NODE;
+            }
+
             return target;
         case YP_INSTANCE_VARIABLE_READ_NODE:
             assert(sizeof(yp_instance_variable_target_node_t) == sizeof(yp_instance_variable_read_node_t));
@@ -8422,6 +8433,10 @@ parse_write(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_nod
             return (yp_node_t *) node;
         }
         case YP_LOCAL_VARIABLE_READ_NODE: {
+            if (token_is_numbered_parameter(target->location.start, target->location.end)) {
+                yp_diagnostic_list_append(&parser->error_list, target->location.start, target->location.end, YP_ERR_PARAMETER_NUMBERED_RESERVED);
+            }
+
             yp_local_variable_read_node_t *local_read = (yp_local_variable_read_node_t *) target;
 
             yp_constant_id_t constant_id = local_read->name;
@@ -9532,6 +9547,7 @@ parse_block(yp_parser_t *parser) {
     yp_block_parameters_node_t *parameters = NULL;
 
     if (accept1(parser, YP_TOKEN_PIPE)) {
+        parser->current_scope->explicit_params = true;
         yp_token_t block_parameters_opening = parser->previous;
 
         if (match1(parser, YP_TOKEN_PIPE)) {
@@ -10098,6 +10114,17 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     }
 }
 
+// Return true if any of the visible scopes to the current context are using
+// numbered parameters.
+static bool
+outer_scope_using_numbered_params_p(yp_parser_t *parser) {
+    for (yp_scope_t *scope = parser->current_scope->previous; scope != NULL && !scope->closed; scope = scope->previous) {
+        if (scope->numbered_params) return true;
+    }
+
+    return false;
+}
+
 // Parse an identifier into either a local variable read or a call.
 static yp_node_t *
 parse_variable_call(yp_parser_t *parser) {
@@ -10107,6 +10134,44 @@ parse_variable_call(yp_parser_t *parser) {
         int depth;
         if ((depth = yp_parser_local_depth(parser, &parser->previous)) != -1) {
             return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, (uint32_t) depth);
+        }
+
+        if (!parser->current_scope->closed && token_is_numbered_parameter(parser->previous.start, parser->previous.end)) {
+            // Indicate that this scope is using numbered params so that child
+            // scopes cannot.
+            parser->current_scope->numbered_params = true;
+
+            // Now that we know we have a numbered parameter, we need to check
+            // if it's allowed in this context. If it is, then we will create a
+            // local variable read. If it's not, then we'll create a normal call
+            // node but add an error.
+            if (parser->current_scope->explicit_params) {
+                yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, YP_ERR_NUMBERED_PARAMETER_NOT_ALLOWED);
+            } else if (outer_scope_using_numbered_params_p(parser)) {
+                yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, YP_ERR_NUMBERED_PARAMETER_OUTER_SCOPE);
+            } else {
+                // When you use a numbered parameter, it implies the existence
+                // of all of the locals that exist before it. For example,
+                // referencing _2 means that _1 must exist. Therefore here we
+                // loop through all of the possibilities and add them into the
+                // constant pool.
+                uint8_t number = parser->previous.start[1];
+                uint8_t current = '1';
+                uint8_t *value;
+
+                while (current < number) {
+                    value = malloc(2);
+                    value[0] = '_';
+                    value[1] = current++;
+                    yp_parser_local_add_owned(parser, value, 2);
+                }
+
+                // Now we can add the actual token that is being used. For
+                // this one we can add a shared version since it is directly
+                // referenced in the source.
+                yp_parser_local_add_token(parser, &parser->previous);
+                return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, 0);
+            }
         }
 
         flags |= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
@@ -13082,6 +13147,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             switch (parser->current.type) {
                 case YP_TOKEN_PARENTHESIS_LEFT: {
+                    parser->current_scope->explicit_params = true;
                     yp_token_t opening = parser->current;
                     parser_lex(parser);
 
@@ -13098,6 +13164,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     break;
                 }
                 case YP_CASE_PARAMETER: {
+                    parser->current_scope->explicit_params = true;
                     yp_accepts_block_stack_push(parser, false);
                     yp_token_t opening = not_provided(parser);
                     params = parse_block_parameters(parser, false, &opening, true);
