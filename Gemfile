@@ -7,5 +7,7 @@ gemspec
 gem "rake"
 gem "rake-compiler"
 gem "test-unit"
-gem "ruby_memcheck", platform: %i[mri truffleruby mswin mingw x64_mingw]
 gem "ffi", platform: %i[mri mswin mingw x64_mingw]
+group :memcheck do
+  gem "ruby_memcheck", platform: %i[mri truffleruby mswin mingw x64_mingw]
+end

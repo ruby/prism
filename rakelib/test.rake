@@ -17,20 +17,28 @@ return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 # Don't bother trying to configure memcheck on old versions of Ruby.
 return if RUBY_VERSION < "3.0"
 
-require "ruby_memcheck"
+
+begin
+  require "ruby_memcheck"
+  have_memcheck = true
+rescue LoadError
+  have_memcheck = false
+end
 
 namespace :test do
-  RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
+  if have_memcheck
+    RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
 
-  # Hide test:valgrind_internal from rake -T
-  Rake::Task["test:valgrind_internal"].clear_comments
+    # Hide test:valgrind_internal from rake -T
+    Rake::Task["test:valgrind_internal"].clear_comments
 
-  desc "Run tests under valgrind"
-  task :valgrind do
-    # Recompile with YARP_DEBUG_MODE_BUILD=1
-    ENV["YARP_DEBUG_MODE_BUILD"] = "1"
-    Rake::Task["clobber"].invoke
-    Rake::Task["test:valgrind_internal"].invoke
+    desc "Run tests under valgrind"
+    task :valgrind do
+      # Recompile with YARP_DEBUG_MODE_BUILD=1
+      ENV["YARP_DEBUG_MODE_BUILD"] = "1"
+      Rake::Task["clobber"].invoke
+      Rake::Task["test:valgrind_internal"].invoke
+    end
   end
 
   class GdbTestTask < Rake::TestTask
