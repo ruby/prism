@@ -937,7 +937,7 @@ module YARP
       )
 
       assert_errors expected, "case :a\nend", [
-        ["Unexpected `end` in `case` statement; a `when` or `in` clause must precede `end`", 8..11]
+        ["Unexpected `end` in `case` statement; a `when` clause must precede `end`", 8..11]
       ]
     end
 
