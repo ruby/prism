@@ -11715,6 +11715,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             if (accept1(parser, YP_TOKEN_KEYWORD_END)) {
+                yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, YP_ERR_CASE_MISSING_TERM);
                 return (yp_node_t *) yp_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous);
             }
 
@@ -11763,6 +11764,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                     yp_case_node_condition_append(case_node, (yp_node_t *) when_node);
                 }
+
             } else {
                 // At this point we expect that we're parsing a case-in node. We will
                 // continue to parse the in nodes until we hit the end of the list.

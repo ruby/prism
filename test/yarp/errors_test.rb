@@ -927,6 +927,20 @@ module YARP
       ]
     end
 
+    def test_case_without_when_or_in_errors
+      expected = CaseNode(
+        SymbolNode(Location(), Location(), nil, "a"),
+        [],
+        nil,
+        Location(),
+        Location()
+      )
+
+      assert_errors expected, "case :a\nend", [
+        ["Unexpected `end` in `case` statement; a `when` or `in` clause must precede `end`", 8..11]
+      ]
+    end
+
     def test_setter_method_cannot_be_defined_in_an_endless_method_definition
       expected = DefNode(
         :a=,
