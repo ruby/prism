@@ -140,8 +140,8 @@ impl<'pr> ParseResult<'pr> {
     pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
         let root = self.source.as_ptr();
 
-        let start = usize::try_from(unsafe { location.start().offset_from(root) }).expect("start should point to memory after root");
-        let end = usize::try_from(unsafe { location.end().offset_from(root) }).expect("end should point to memory after root");
+        let start = usize::try_from(unsafe { location.start.offset_from(root) }).expect("start should point to memory after root");
+        let end = usize::try_from(unsafe { location.end.offset_from(root) }).expect("end should point to memory after root");
 
         &self.source[start..end]
     }
@@ -245,12 +245,42 @@ mod tests {
         let node = result.node();
         let node = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
         let node = node.as_call_node().unwrap().receiver().unwrap();
-        let node = node.as_call_node().unwrap().arguments().unwrap().arguments().iter().next().unwrap();
+        let plus = node.as_call_node().unwrap();
+        let node = plus.arguments().unwrap().arguments().iter().next().unwrap();
 
         let location = node.as_integer_node().unwrap().location();
         let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
+        assert_eq!(6, location.start_offset());
+        assert_eq!(9, location.end_offset());
+
+        let recv_loc = plus.receiver().unwrap().location();
+        assert_eq!(recv_loc.as_slice(), b"111");
+        assert_eq!(0, recv_loc.start_offset());
+        assert_eq!(3, recv_loc.end_offset());
+
+        let joined = recv_loc.join(&location).unwrap();
+        assert_eq!(joined.as_slice(), b"111 + 222");
+
+        let not_joined = location.join(&recv_loc);
+        assert!(not_joined.is_none());
+
+        {
+            let result = parse(source.as_ref());
+            let node = result.node();
+            let node = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+            let node = node.as_call_node().unwrap().receiver().unwrap();
+            let plus = node.as_call_node().unwrap();
+            let node = plus.arguments().unwrap().arguments().iter().next().unwrap();
+
+            let location = node.as_integer_node().unwrap().location();
+            let not_joined = recv_loc.join(&location);
+            assert!(not_joined.is_none());
+
+            let not_joined = location.join(&recv_loc);
+            assert!(not_joined.is_none());
+        }
 
         let location = node.location();
         let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
