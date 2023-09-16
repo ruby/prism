@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.12.0] - 2023-09-15
+
+### Added
+
+- `RegularExpressionNode#options` and `InterpolatedRegularExpressionNode#options` are now provided. These return integers that match up to the `Regexp#options` API.
+- Greatly improved `Node#inspect` and `Node#pretty_print` APIs.
+- `MatchLastLineNode` and `InterpolatedMatchLastLineNode` are introduced to represent using a regular expression as the predicate of an `if` or `unless` statement.
+- `IntegerNode` now has a base flag on it.
+- Heredocs that were previously `InterpolatedStringNode` and `InterpolatedXStringNode` nodes without any actual interpolation are now `StringNode` and `XStringNode`, respectively.
+- `StringNode` now has a `frozen?` flag on it, which respects the `frozen_string_literal` magic comment.
+- Numbered parameters are now supported, and are properly represented using `LocalVariableReadNode` nodes.
+- `ImplicitNode` is introduced, which wraps implicit calls, local variable reads, or constant reads in omitted hash values.
+- `YARP::Dispatcher` is introduced, which provides a way for multiple objects to listen for certain events on the AST while it is being walked. This is effectively a way to implement a more efficient visitor pattern when you have many different uses for the AST.
+
+### Changed
+
+- **BREAKING**: Flags fields are now marked as private, to ensure we can change their implementation under the hood. Actually querying should be through the accessor methods.
+- **BREAKING**: `AliasNode` is now split into `AliasMethodNode` and `AliasGlobalVariableNode`.
+- Method definitions on local variables is now correctly handled.
+- Unary minus precedence has been fixed.
+- Concatenating character literals with string literals is now fixed.
+- Many more invalid syntaxes are now properly rejected.
+- **BREAKING**: Comments now no longer include their trailing newline.
+
 ## [0.11.0] - 2023-09-08
 
 ### Added
@@ -117,7 +141,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/yarp/compare/v0.11.0...HEAD
+[unreleased]: https://github.com/ruby/yarp/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/ruby/yarp/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/ruby/yarp/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/ruby/yarp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/ruby/yarp/compare/v0.8.0...v0.9.0
