@@ -161,6 +161,12 @@ jobs:
       run: bundle exec rake lex:topgems
     - name: Parse Top 100 Gems
       run: bundle exec rake parse:topgems
+    - name: Serialized size stats with all fields
+      run: bundle exec rake serialized_size:topgems
+    - name: Recompile with only semantic fields
+      run: YARP_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake clobber compile
+    - name: Serialized size stats with only semantic fields
+      run: bundle exec rake serialized_size:topgems
 
   memcheck:
     runs-on: ubuntu-latest
