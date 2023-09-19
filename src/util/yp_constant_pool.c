@@ -93,34 +93,43 @@ yp_constant_pool_resize(yp_constant_pool_t *pool) {
     if (next_capacity < pool->capacity) return false;
 
     const uint32_t mask = next_capacity - 1;
-    yp_constant_t *next_constants = calloc(next_capacity, sizeof(yp_constant_t));
-    if (next_constants == NULL) return false;
+    const size_t element_size = sizeof(yp_constant_pool_bucket_t) + sizeof(yp_constant_t);
+    void *next = calloc(next_capacity, element_size);
+    if (next == NULL) return false;
+    yp_constant_pool_bucket_t *next_buckets = next;
+    yp_constant_t *next_constants = (void *)(((char *)next) + next_capacity * sizeof(yp_constant_pool_bucket_t));
 
-    // For each constant in the current constant pool, rehash the content, find
-    // the index in the next constant pool, and insert it.
+    // For each bucket in the current constant pool, find the index in the
+    // next constant pool, and insert it.
     for (uint32_t index = 0; index < pool->capacity; index++) {
-        yp_constant_t *constant = &pool->constants[index];
+        yp_constant_pool_bucket_t *bucket = &pool->buckets[index];
 
         // If an id is set on this constant, then we know we have content here.
         // In this case we need to insert it into the next constant pool.
-        if (constant->id != 0) {
-            uint32_t next_index = constant->hash & mask;
+        if (bucket->id != 0) {
+            uint32_t next_index = bucket->hash & mask;
 
             // This implements linear scanning to find the next available slot
             // in case this index is already taken. We don't need to bother
             // comparing the values since we know that the hash is unique.
-            while (next_constants[next_index].id != 0) {
+            while (next_buckets[next_index].id != 0) {
                 next_index = (next_index + 1) & mask;
             }
 
-            // Here we copy over the entire constant, which includes the id so
+            // Here we copy over the entire bucket, which includes the id so
             // that they are consistent between resizes.
-            next_constants[next_index] = *constant;
+            next_buckets[next_index] = *bucket;
         }
     }
 
-    free(pool->constants);
+    // The constants are stable with respect to hash table resizes.
+    memcpy(next_constants, pool->constants, pool->size * sizeof(yp_constant_t));
+
+    // pool->constants and pool->buckets are allocated out of the same chunk
+    // of memory, with the buckets coming first.
+    free(pool->buckets);
     pool->constants = next_constants;
+    pool->buckets = next_buckets;
     pool->capacity = next_capacity;
     return true;
 }
@@ -132,9 +141,12 @@ yp_constant_pool_init(yp_constant_pool_t *pool, uint32_t capacity) {
     if (capacity >= ((maximum / 2) + 1)) return false;
 
     capacity = next_power_of_two(capacity);
-    pool->constants = calloc(capacity, sizeof(yp_constant_t));
-    if (pool->constants == NULL) return false;
+    const size_t element_size = sizeof(yp_constant_pool_bucket_t) + sizeof(yp_constant_t);
+    void *memory = calloc(capacity, element_size);
+    if (memory == NULL) return false;
 
+    pool->buckets = memory;
+    pool->constants = (void *)(((char *)memory) + capacity * sizeof(yp_constant_pool_bucket_t));
     pool->size = 0;
     pool->capacity = capacity;
     return true;
@@ -152,12 +164,14 @@ yp_constant_pool_insert(yp_constant_pool_t *pool, const uint8_t *start, size_t l
 
     uint32_t hash = yp_constant_pool_hash(start, length);
     uint32_t index = hash & mask;
-    yp_constant_t *constant;
+    yp_constant_pool_bucket_t *bucket;
 
-    while (constant = &pool->constants[index], constant->id != 0) {
+    while (bucket = &pool->buckets[index], bucket->id != 0) {
         // If there is a collision, then we need to check if the content is the
         // same as the content we are trying to insert. If it is, then we can
         // return the id of the existing constant.
+        yp_constant_t *constant = &pool->constants[bucket->id - 1];
+
         if ((constant->length == length) && memcmp(constant->start, start, length) == 0) {
             // Since we have found a match, we need to check if this is
             // attempting to insert a shared or an owned constant. We want to
@@ -168,33 +182,37 @@ yp_constant_pool_insert(yp_constant_pool_t *pool, const uint8_t *start, size_t l
                 // memory. Either it's duplicated with the existing constant or
                 // it's not necessary because we have a shared version.
                 free((void *) start);
-            } else if (constant->owned) {
+            } else if (bucket->owned) {
                 // If we're attempting to insert a shared constant and the
                 // existing constant is owned, then we can free the owned
                 // constant and replace it with the shared constant.
                 free((void *) constant->start);
                 constant->start = start;
-                constant->owned = false;
+                bucket->owned = false;
             }
 
-            return constant->id;
+            return bucket->id;
         }
 
         index = (index + 1) & mask;
     }
 
-    pool->size++;
+    // IDs are allocated starting at 1, since the value 0 denotes a non-existant
+    // constant.
+    uint32_t id = ++pool->size;
     assert(pool->size < ((uint32_t) (1 << 31)));
 
-    *constant = (yp_constant_t) {
-        .id = (unsigned int) (pool->size & 0x7FFFFFFF),
+    *bucket = (yp_constant_pool_bucket_t) {
+        .id = (unsigned int) (id & 0x7FFFFFFF),
         .owned = owned,
-        .start = start,
-        .length = length,
         .hash = hash
     };
+    pool->constants[id - 1]  = (yp_constant_t) {
+        .start = start,
+        .length = length,
+    };
 
-    return constant->id;
+    return id;
 }
 
 // Insert a constant into a constant pool. Returns the id of the constant, or 0
@@ -218,13 +236,14 @@ yp_constant_pool_free(yp_constant_pool_t *pool) {
     // For each constant in the current constant pool, free the contents if the
     // contents are owned.
     for (uint32_t index = 0; index < pool->capacity; index++) {
-        yp_constant_t *constant = &pool->constants[index];
+        yp_constant_pool_bucket_t *bucket = &pool->buckets[index];
 
         // If an id is set on this constant, then we know we have content here.
-        if (constant->id != 0 && constant->owned) {
+        if (bucket->id != 0 && bucket->owned) {
+            yp_constant_t *constant = &pool->constants[bucket->id - 1];
             free((void *) constant->start);
         }
     }
 
-    free(pool->constants);
+    free(pool->buckets);
 }

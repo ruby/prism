@@ -43,18 +43,22 @@ typedef struct {
     unsigned int id: 31;
     bool owned: 1;
     uint32_t hash;
+} yp_constant_pool_bucket_t;
+
+typedef struct {
     const uint8_t *start;
     size_t length;
 } yp_constant_t;
 
 typedef struct {
+    yp_constant_pool_bucket_t *buckets;
     yp_constant_t *constants;
     uint32_t size;
     uint32_t capacity;
 } yp_constant_pool_t;
 
 // Define an empty constant pool.
-#define YP_CONSTANT_POOL_EMPTY ((yp_constant_pool_t) { .constants = NULL, .size = 0, .capacity = 0 })
+#define YP_CONSTANT_POOL_EMPTY ((yp_constant_pool_t) { .buckets = NULL, .constants = NULL, .size = 0, .capacity = 0 })
 
 // Initialize a new constant pool with a given capacity.
 bool yp_constant_pool_init(yp_constant_pool_t *pool, uint32_t capacity);
