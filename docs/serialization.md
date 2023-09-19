@@ -62,6 +62,7 @@ The header is structured like the following table:
 | `1` | major version number |
 | `1` | minor version number |
 | `1` | patch version number |
+| `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
 | varint | number of comments |
 | comment* | comments |
