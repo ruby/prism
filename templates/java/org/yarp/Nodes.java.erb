@@ -1,3 +1,4 @@
+<%- string_type = YARP::JAVA_STRING_TYPE -%>
 package org.yarp;
 
 import java.lang.Override;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 public abstract class Nodes {
 
     public static final byte[][] EMPTY_BYTE_ARRAY_ARRAY = {};
+    public static final <%= string_type %>[] EMPTY_STRING_ARRAY = {};
 
     public static final class Location {
 
@@ -299,16 +301,19 @@ public abstract class Nodes {
             for (Node child : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append(child.toString(nextNextIndent));
             }
-            <%- when YARP::StringField, YARP::ConstantField -%>
+            <%- when YARP::StringField -%>
             builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
             builder.append('\n');
+            <%- when YARP::ConstantField -%>
+            builder.append('"').append(this.<%= field.name %>).append('"');
+            builder.append('\n');
             <%- when YARP::OptionalConstantField -%>
-            builder.append(this.<%= field.name %> == null ? "null\n" : '"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
+            builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
             builder.append('\n');
             <%- when YARP::ConstantListField -%>
             builder.append('\n');
-            for (byte[] constant : this.<%= field.name %>) {
-                builder.append(nextNextIndent).append('"' + new String(constant, StandardCharsets.UTF_8) + '"').append('\n');
+            for (<%= string_type %> constant : this.<%= field.name %>) {
+                builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
             <%- when YARP::UInt32Field, YARP::FlagsField -%>
             builder.append(this.<%= field.name %>);
