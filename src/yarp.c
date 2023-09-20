@@ -4814,7 +4814,10 @@ yp_parser_local_add_owned(yp_parser_t *parser, const uint8_t *start, size_t leng
     if (constant_id != 0) yp_parser_local_add(parser, constant_id);
 }
 
-static inline bool token_is_numbered_parameter(const uint8_t *start, const uint8_t *end);
+static inline bool
+token_is_numbered_parameter(const uint8_t *start, const uint8_t *end) {
+    return (end - start == 2) && (start[0] == '_') && (start[1] != '0') && (yp_char_is_decimal_digit(start[1]));
+}
 
 // Add a parameter name to the current scope and check whether the name of the
 // parameter is unique or not.
@@ -4903,11 +4906,6 @@ char_is_global_name_punctuation(const uint8_t b) {
     if (i <= 0x20 || 0x7e < i) return false;
 
     return (yp_global_name_punctuation_hash[(i - 0x20) / 32] >> (i % 32)) & 1;
-}
-
-static inline bool
-token_is_numbered_parameter(const uint8_t *start, const uint8_t *end) {
-    return (end - start == 2) && (start[0] == '_') && (start[1] != '0') && (yp_char_is_decimal_digit(start[1]));
 }
 
 static inline bool
