@@ -4814,8 +4814,6 @@ yp_parser_local_add_owned(yp_parser_t *parser, const uint8_t *start, size_t leng
     if (constant_id != 0) yp_parser_local_add(parser, constant_id);
 }
 
-static inline bool char_is_global_name_punctuation(const uint8_t);
-
 // Add a parameter name to the current scope and check whether the name of the
 // parameter is unique or not.
 static void
