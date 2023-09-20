@@ -12137,7 +12137,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_PREEXE);
 
             expect1(parser, YP_TOKEN_BRACE_RIGHT, YP_ERR_BEGIN_UPCASE_TERM);
-            if ((parser->current_context->context != YP_CONTEXT_MAIN) && (parser->current_context->context != YP_CONTEXT_PREEXE)) {
+            yp_context_t context = parser->current_context->context;
+            if ((context != YP_CONTEXT_MAIN) && (context != YP_CONTEXT_PREEXE)) {
                 yp_diagnostic_list_append(&parser->error_list, keyword.start, keyword.end, YP_ERR_BEGIN_UPCASE_TOPLEVEL);
             }
             return (yp_node_t *) yp_pre_execution_node_create(parser, &keyword, &opening, statements, &parser->previous);
