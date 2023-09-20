@@ -192,6 +192,7 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_OPERATOR_WRITE_BLOCK]               = "Unexpected operator after a call with a block",
     [YP_ERR_PARAMETER_ASSOC_SPLAT_MULTI]        = "Unexpected multiple `**` splat parameters",
     [YP_ERR_PARAMETER_BLOCK_MULTI]              = "Multiple block parameters; only one block is allowed",
+    [YP_ERR_PARAMETER_IDENT]                    = "Unexpected identifier name for a parameter",
     [YP_ERR_PARAMETER_NAME_REPEAT]              = "Repeated parameter name",
     [YP_ERR_PARAMETER_NO_DEFAULT]               = "Expected a default value for the parameter",
     [YP_ERR_PARAMETER_NO_DEFAULT_KW]            = "Expected a default value for the keyword parameter",

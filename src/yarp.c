@@ -4814,10 +4814,17 @@ yp_parser_local_add_owned(yp_parser_t *parser, const uint8_t *start, size_t leng
     if (constant_id != 0) yp_parser_local_add(parser, constant_id);
 }
 
+static inline bool char_is_global_name_punctuation(const uint8_t);
+
 // Add a parameter name to the current scope and check whether the name of the
 // parameter is unique or not.
 static void
 yp_parser_parameter_name_check(yp_parser_t *parser, yp_token_t *name) {
+    // Check whether the parameter name is ending with a '!' or '?'
+    if ((name->end[-1] == '?') || (name->end[-1] == '!')) {
+        yp_diagnostic_list_append(&parser->error_list, name->start, name->end, YP_ERR_PARAMETER_IDENT);
+    }
+
     // We want to ignore any parameter name that starts with an underscore.
     if ((*name->start == '_')) return;
 
