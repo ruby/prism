@@ -1302,6 +1302,13 @@ module YARP
       assert_error_messages "%sXfooX", error_messages
     end
 
+    def test_begin_at_toplevel
+      source = "def foo; BEGIN {}; end"
+      assert_errors expression(source), source, [
+        ["BEGIN is permitted only at toplevel", 9..14],
+      ]
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
