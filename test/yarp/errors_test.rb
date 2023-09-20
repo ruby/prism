@@ -1302,6 +1302,13 @@ module YARP
       assert_error_messages "%sXfooX", error_messages
     end
 
+    def test_numbered_parameters_in_block_arguments
+      source = "foo { |_1| }"
+      assert_errors expression(source), source, [
+        ["Token reserved for a numbered parameter", 7..9],
+      ]
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
