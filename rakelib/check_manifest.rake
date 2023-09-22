@@ -19,6 +19,7 @@ task :check_manifest => [:templates] do
     rust
     templates
     test
+    top-100-gems
     tmp
     vendor
   ]

@@ -356,3 +356,36 @@ task "lex:topgems": ["download:topgems", :compile] do
     exit(1)
   end
 end
+
+task "serialized_size:topgems": ["download:topgems"] do
+  $:.unshift(File.expand_path("../lib", __dir__))
+  require "yarp"
+
+  files = Dir["#{TOP_100_GEMS_DIR}/**/*.rb"]
+  total_source_size = 0
+  total_serialized_size = 0
+  ratios = []
+  files.each do |file|
+    source_size = File.size(file)
+    next if source_size == 0
+    total_source_size += source_size
+
+    serialized = YARP.dump_file(file)
+    serialized_size = serialized.bytesize
+    total_serialized_size += serialized_size
+
+    ratios << Rational(serialized_size, source_size)
+  end
+  f = '%.3f'
+  puts "Total sizes for top 100 gems:"
+  puts "total source size:     #{'%9d' % total_source_size}"
+  puts "total serialized size: #{'%9d' % total_serialized_size}"
+  puts "total serialized/total source: #{f % (total_serialized_size.to_f / total_source_size)}"
+  puts
+  puts "Stats of ratio serialized/source per file:"
+  puts "average: #{f % (ratios.sum / ratios.size)}"
+  puts "median:  #{f % ratios.sort[ratios.size/2]}"
+  puts "1st quartile: #{f % ratios.sort[ratios.size/4]}"
+  puts "3rd quartile: #{f % ratios.sort[ratios.size*3/4]}"
+  puts "min - max: #{"#{f} - #{f}" % ratios.minmax}"
+end
