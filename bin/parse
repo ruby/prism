@@ -18,7 +18,7 @@ end
 result.mark_newlines! if ENV["MARK_NEWLINES"]
 
 value = result.value
-value = value.accept(YARP::DesugarVisitor.new) if ENV["DESUGAR"]
+value = value.accept(YARP::DesugarCompiler.new) if ENV["DESUGAR"]
 
 parts = {}
 parts["Comments"] = result.comments if result.comments.any?

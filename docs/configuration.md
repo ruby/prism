@@ -7,11 +7,13 @@ A lot of code in YARP's repository is templated from a single configuration file
 * `java/org/yarp/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
 * `java/org/yarp/Loader.java` - for defining how to deserialize the nodes in Java
 * `java/org/yarp/Nodes.java` - for defining the nodes in Java
+* `lib/yarp/compiler.rb` - for defining the compiler for the nodes in Ruby
 * `lib/yarp/dispatcher.rb` - for defining the dispatch visitors for the nodes in Ruby
 * `lib/yarp/dsl.rb` - for defining the DSL for the nodes in Ruby
-* `lib/yarp/mutation_visitor.rb` - for defining the mutation visitor for the nodes in Ruby
+* `lib/yarp/mutation_compiler.rb` - for defining the mutation compiler for the nodes in Ruby
 * `lib/yarp/node.rb` - for defining the nodes in Ruby
 * `lib/yarp/serialize.rb` - for defining how to deserialize the nodes in Ruby
+* `lib/yarp/visitor.rb` - for defining the visitor interface for the nodes in Ruby
 * `src/node.c` - for defining how to free the nodes in C and calculate the size in memory in C
 * `src/prettyprint.c` - for defining how to prettyprint the nodes in C
 * `src/serialize.c` - for defining how to serialize the nodes in C
