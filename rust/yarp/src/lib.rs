@@ -134,6 +134,14 @@ impl<'pr> ParseResult<'pr> {
         self.source
     }
 
+    /// Returns whether we found a `frozen_string_literal` magic comment with a true value.
+    #[must_use]
+    pub fn frozen_string_literals(&self) -> bool {
+        unsafe {
+            (*self.parser.as_ptr()).frozen_string_literal
+        }
+    }
+
     /// Returns a slice of the source string that was parsed using the given
     /// location range.
     #[must_use]
@@ -390,5 +398,19 @@ end
         assert!(call_operator_loc.is_some());
         let closing_loc = call.closing_loc();
         assert!(closing_loc.is_none());
+    }
+
+    #[test]
+    fn frozen_strings_test() {
+        let source = r#"
+# frozen_string_literal: true
+"foo"
+"#;
+        let result = parse(source.as_ref());
+        assert!(result.frozen_string_literals());
+
+        let source = "3";
+        let result = parse(source.as_ref());
+        assert!(!result.frozen_string_literals());
     }
 }
