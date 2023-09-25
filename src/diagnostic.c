@@ -202,6 +202,7 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_PARAMETER_ORDER]                    = "Unexpected parameter order",
     [YP_ERR_PARAMETER_SPLAT_MULTI]              = "Unexpected multiple `*` splat parameters",
     [YP_ERR_PARAMETER_STAR]                     = "Unexpected parameter `*`",
+    [YP_ERR_PARAMETER_UNEXPECTED_FWD]           = "Unexpected `...` in parameters",
     [YP_ERR_PARAMETER_WILD_LOOSE_COMMA]         = "Unexpected `,` in parameters",
     [YP_ERR_PATTERN_EXPRESSION_AFTER_BRACKET]   = "Expected a pattern expression after the `[` operator",
     [YP_ERR_PATTERN_EXPRESSION_AFTER_COMMA]     = "Expected a pattern expression after `,`",

@@ -9278,9 +9278,13 @@ parse_parameters(
                     update_parameter_state(parser, &parser->current, &order);
                     parser_lex(parser);
 
-                    yp_parser_local_add_token(parser, &parser->previous);
-                    yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
-                    yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
+                    if (params->keyword_rest == NULL) {
+                        yp_parser_local_add_token(parser, &parser->previous);
+                        yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
+                        yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
+                    } else {
+                        yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, YP_ERR_PARAMETER_UNEXPECTED_FWD);
+                    }
                 } else {
                     update_parameter_state(parser, &parser->current, &order);
                     parser_lex(parser);

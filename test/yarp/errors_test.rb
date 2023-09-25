@@ -1340,6 +1340,13 @@ module YARP
       ]
     end
 
+    def test_forwarding_arg_after_keyword_rest
+      source = "def f(**,...);end"
+      assert_errors expression(source), source, [
+        ["Unexpected `...` in parameters", 9..12],
+      ]
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
