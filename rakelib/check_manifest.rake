@@ -12,6 +12,7 @@ task :check_manifest => [:templates] do
     autom4te.cache
     bin
     build
+    doc
     fuzz
     java
     pkg
