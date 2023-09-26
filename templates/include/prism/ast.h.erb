@@ -14,7 +14,7 @@ typedef enum pm_token_type {
 <%- tokens.each do |token| -%>
     <%= token.declaration %>
 <%- end -%>
-    pm_TOKEN_MAXIMUM, // the maximum token value
+    PM_TOKEN_MAXIMUM, // the maximum token value
 } pm_token_type_t;
 
 // This struct represents a token in the Ruby source. We use it to track both
@@ -111,6 +111,6 @@ typedef enum {
 } pm_<%= flag.human %>_t;
 <%- end -%>
 
-#define PM_SERIALIZE_ONLY_SEMANTICS_FIELDS <%= Prism::SERIALIZE_ONLY_SEMANTICS_FIELDS %>
+#define PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS <%= Prism::SERIALIZE_ONLY_SEMANTICS_FIELDS %>
 
 #endif // PRISM_AST_H

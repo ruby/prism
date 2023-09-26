@@ -71,7 +71,7 @@ module Prism
 
     # Returns a string representation of this location.
     def inspect
-      "#<YARP::Location @start_offset=#{@start_offset} @length=#{@length} start_line=#{start_line}>"
+      "#<Prism::Location @start_offset=#{@start_offset} @length=#{@length} start_line=#{start_line}>"
     end
 
     # The source code that this location represents.
@@ -162,7 +162,7 @@ module Prism
     end
 
     def inspect
-      "#<YARP::Comment @type=#{@type.inspect} @location=#{@location.inspect}>"
+      "#<Prism::Comment @type=#{@type.inspect} @location=#{@location.inspect}>"
     end
   end
 
@@ -180,7 +180,7 @@ module Prism
     end
 
     def inspect
-      "#<YARP::ParseError @message=#{@message.inspect} @location=#{@location.inspect}>"
+      "#<Prism::ParseError @message=#{@message.inspect} @location=#{@location.inspect}>"
     end
   end
 
@@ -198,7 +198,7 @@ module Prism
     end
 
     def inspect
-      "#<YARP::ParseWarning @message=#{@message.inspect} @location=#{@location.inspect}>"
+      "#<Prism::ParseWarning @message=#{@message.inspect} @location=#{@location.inspect}>"
     end
   end
 

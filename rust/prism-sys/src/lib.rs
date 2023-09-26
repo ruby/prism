@@ -1,6 +1,6 @@
-//! # yarp-sys
+//! # prism-sys
 //!
-//! FFI-bindings for `yarp`.
+//! FFI-bindings for `prism`.
 //!
 #![deny(unused_extern_crates)]
 #![warn(

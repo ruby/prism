@@ -43,9 +43,9 @@ typedef struct {
 
 // These bits define the location of each bit of metadata within the various
 // lookup tables that are used to determine the properties of a character.
-#define PM_ENCODING_ALPHABETIC_BIT 1 << 0
-#define PM_ENCODING_ALPHANUMERIC_BIT 1 << 1
-#define PM_ENCODING_UPPERCASE_BIT 1 << 2
+#define PRISM_ENCODING_ALPHABETIC_BIT 1 << 0
+#define PRISM_ENCODING_ALPHANUMERIC_BIT 1 << 1
+#define PRISM_ENCODING_UPPERCASE_BIT 1 << 2
 
 // These functions are reused by some other encodings, so they are defined here
 // so they can be shared.

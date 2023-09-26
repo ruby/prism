@@ -7,18 +7,18 @@ module Prism
   # following snippet:
   #
   #     case node
-  #     in ConstantPathNode[ConstantReadNode[name: :YARP], ConstantReadNode[name: :Pattern]]
+  #     in ConstantPathNode[ConstantReadNode[name: :Prism], ConstantReadNode[name: :Pattern]]
   #     end
   #
   # the pattern is the `ConstantPathNode[...]` expression.
   #
   # The pattern gets compiled into an object that responds to #call by running
-  # the #compile method. This method itself will run back through YARP to
+  # the #compile method. This method itself will run back through Prism to
   # parse the expression into a tree, then walk the tree to generate the
   # necessary callable objects. For example, if you wanted to compile the
   # expression above into a callable, you would:
   #
-  #     callable = YARP::Pattern.new("ConstantPathNode[ConstantReadNode[name: :YARP], ConstantReadNode[name: :Pattern]]").compile
+  #     callable = Prism::Pattern.new("ConstantPathNode[ConstantReadNode[name: :Prism], ConstantReadNode[name: :Pattern]]").compile
   #     callable.call(node)
   #
   # The callable object returned by #compile is guaranteed to respond to #call
@@ -32,7 +32,7 @@ module Prism
   #
   # If the query given to the initializer cannot be compiled into a valid
   # matcher (either because of a syntax error or because it is using syntax we
-  # do not yet support) then a YARP::Pattern::CompilationError will be
+  # do not yet support) then a Prism::Pattern::CompilationError will be
   # raised.
   class Pattern
     # Raised when the query given to a pattern is either invalid Ruby syntax or
@@ -40,13 +40,13 @@ module Prism
     class CompilationError < StandardError
       def initialize(repr)
         super(<<~ERROR)
-          YARP was unable to compile the pattern you provided into a usable
+          prism was unable to compile the pattern you provided into a usable
           expression. It failed on to understand the node represented by:
 
           #{repr}
 
           Note that not all syntax supported by Ruby's pattern matching syntax
-          is also supported by YARP's patterns. If you're using some syntax
+          is also supported by prism's patterns. If you're using some syntax
           that you believe should be supported, please open an issue on
           GitHub at https://github.com/ruby/prism/issues/new.
         ERROR
@@ -61,7 +61,7 @@ module Prism
     end
 
     def compile
-      result = YARP.parse("case nil\nin #{query}\nend")
+      result = Prism.parse("case nil\nin #{query}\nend")
       compile_node(result.value.statements.body.last.conditions.last.pattern)
     end
 
@@ -126,11 +126,11 @@ module Prism
       combine_or(compile_node(node.left), compile_node(node.right))
     end
 
-    # in YARP::ConstantReadNode
+    # in Prism::ConstantReadNode
     def compile_constant_path_node(node)
       parent = node.parent
 
-      if parent.is_a?(ConstantReadNode) && parent.slice == "YARP"
+      if parent.is_a?(ConstantReadNode) && parent.slice == "Prism"
         compile_node(node.child)
       else
         compile_error(node)
@@ -142,8 +142,8 @@ module Prism
     def compile_constant_read_node(node)
       value = node.slice
 
-      if YARP.const_defined?(value, false)
-        clazz = YARP.const_get(value)
+      if Prism.const_defined?(value, false)
+        clazz = Prism.const_get(value)
 
         ->(other) { clazz === other }
       elsif Object.const_defined?(value, false)
