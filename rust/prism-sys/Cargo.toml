@@ -1,10 +1,11 @@
 [package]
-name = "yarp"
+name = "prism-sys"
 version = "0.1.0"
 edition = "2021"
 license-file = "../../LICENSE.md"
-repository = "https://github.com/ruby/yarp"
-description = "Rustified version of Ruby's YARP parsing library"
+repository = "https://github.com/ruby/prism"
+description = "Rust bindings to Ruby's prism parsing library"
+links = "prism"
 authors = [
     "Steve Loveless <steve.loveless@gmail.com>",
     "Ian Ker-Seymer <hello@ianks.com>",
@@ -21,8 +22,4 @@ categories = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
-
-[dependencies]
-yarp-sys = { version = "0.1.0", path = "../yarp-sys" }
+bindgen = "0.66"

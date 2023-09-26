@@ -152,9 +152,9 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
 
     writeln!(file, "pub struct {}<'pr> {{", node.name)?;
     writeln!(file, "    /// The pointer to the parser this node came from.")?;
-    writeln!(file, "    parser: NonNull<yp_parser_t>,")?;
+    writeln!(file, "    parser: NonNull<pm_parser_t>,")?;
     writeln!(file)?;
-    writeln!(file, "    /// The raw pointer to the node allocated by YARP.")?;
+    writeln!(file, "    /// The raw pointer to the node allocated by prism.")?;
     writeln!(file, "    pointer: *mut yp{}_t,", struct_name(&node.name))?;
     writeln!(file)?;
     writeln!(file, "    /// The marker to indicate the lifetime of the pointer.")?;
@@ -171,7 +171,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
-    writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
+    writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
     writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
 
@@ -189,7 +189,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "    }}")?;
                 } else {
                     writeln!(file, "    pub fn {}(&self) -> Node<'pr> {{", field.name)?;
-                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
+                    writeln!(file, "        let node: *mut pm_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        Node::new(self.parser, node)")?;
                     writeln!(file, "    }}")?;
                 }
@@ -206,7 +206,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "    }}")?;
                 } else {
                     writeln!(file, "    pub fn {}(&self) -> Option<Node<'pr>> {{", field.name)?;
-                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
+                    writeln!(file, "        let node: *mut pm_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
@@ -217,7 +217,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             },
             NodeFieldType::NodeList => {
                 writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut yp_node_list = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_node_list = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        NodeList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
@@ -243,19 +243,19 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             },
             NodeFieldType::ConstantList => {
                 writeln!(file, "    pub fn {}(&self) -> ConstantList<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut yp_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        ConstantList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Location => {
                 writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        let start = unsafe {{ (*pointer).start }};")?;
                 writeln!(file, "        if start.is_null() {{")?;
                 writeln!(file, "            None")?;
@@ -270,7 +270,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Flags => {
-                writeln!(file, "    pub fn {}(&self) -> yp_node_flags_t {{", field.name)?;
+                writeln!(file, "    pub fn {}(&self) -> pm_node_flags_t {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
             }
@@ -408,11 +408,11 @@ use std::marker::PhantomData;
 use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
-use yarp_sys::*;
+use prism_sys::*;
 
 /// A range in the source file.
 pub struct Location<'pr> {{
-    parser: NonNull<yp_parser_t>,
+    parser: NonNull<pm_parser_t>,
     pub(crate) start: *const u8,
     pub(crate) end: *const u8,
     marker: PhantomData<&'pr [u8]>
@@ -428,9 +428,9 @@ impl<'pr> Location<'pr> {{
         }}
     }}
 
-    /// Return a Location from the given `yp_location_t`.
+    /// Return a Location from the given `pm_location_t`.
     #[must_use]
-    pub(crate) const fn new(parser: NonNull<yp_parser_t>, loc: &'pr yp_location_t) -> Location<'pr> {{
+    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Location<'pr> {{
         Location {{ parser, start: loc.start, end: loc.end, marker: PhantomData }}
     }}
 
@@ -484,10 +484,10 @@ impl std::fmt::Debug for Location<'_> {{
 
 /// An iterator over the nodes in a list.
 pub struct NodeListIter<'pr> {{
-    parser: NonNull<yp_parser_t>,
-    pointer: NonNull<yp_node_list>,
+    parser: NonNull<pm_parser_t>,
+    pointer: NonNull<pm_node_list>,
     index: usize,
-    marker: PhantomData<&'pr mut yp_node_list>
+    marker: PhantomData<&'pr mut pm_node_list>
 }}
 
 impl<'pr> Iterator for NodeListIter<'pr> {{
@@ -497,7 +497,7 @@ impl<'pr> Iterator for NodeListIter<'pr> {{
         if self.index >= unsafe {{ self.pointer.as_ref().size }} {{
             None
         }} else {{
-            let node: *mut yp_node_t = unsafe {{ *(self.pointer.as_ref().nodes.add(self.index)) }};
+            let node: *mut pm_node_t = unsafe {{ *(self.pointer.as_ref().nodes.add(self.index)) }};
             self.index += 1;
             Some(Node::new(self.parser, node))
         }}
@@ -506,9 +506,9 @@ impl<'pr> Iterator for NodeListIter<'pr> {{
 
 /// A list of nodes.
 pub struct NodeList<'pr> {{
-    parser: NonNull<yp_parser_t>,
-    pointer: NonNull<yp_node_list>,
-    marker: PhantomData<&'pr mut yp_node_list>
+    parser: NonNull<pm_parser_t>,
+    pointer: NonNull<pm_node_list>,
+    marker: PhantomData<&'pr mut pm_node_list>
 }}
 
 impl<'pr> NodeList<'pr> {{
@@ -532,13 +532,13 @@ impl std::fmt::Debug for NodeList<'_> {{
 
 /// A handle for a constant ID.
 pub struct ConstantId<'pr> {{
-    parser: NonNull<yp_parser_t>,
-    id: yp_constant_id_t,
-    marker: PhantomData<&'pr mut yp_constant_id_t>
+    parser: NonNull<pm_parser_t>,
+    id: pm_constant_id_t,
+    marker: PhantomData<&'pr mut pm_constant_id_t>
 }}
 
 impl<'pr> ConstantId<'pr> {{
-    fn new(parser: NonNull<yp_parser_t>, id: yp_constant_id_t) -> Self {{
+    fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {{
         ConstantId {{ parser, id, marker: PhantomData }}
     }}
 
@@ -570,10 +570,10 @@ impl std::fmt::Debug for ConstantId<'_> {{
 
 /// An iterator over the constants in a list.
 pub struct ConstantListIter<'pr> {{
-    parser: NonNull<yp_parser_t>,
-    pointer: NonNull<yp_constant_id_list_t>,
+    parser: NonNull<pm_parser_t>,
+    pointer: NonNull<pm_constant_id_list_t>,
     index: usize,
-    marker: PhantomData<&'pr mut yp_constant_id_list_t>
+    marker: PhantomData<&'pr mut pm_constant_id_list_t>
 }}
 
 impl<'pr> Iterator for ConstantListIter<'pr> {{
@@ -583,7 +583,7 @@ impl<'pr> Iterator for ConstantListIter<'pr> {{
         if self.index >= unsafe {{ self.pointer.as_ref().size }} {{
             None
         }} else {{
-            let constant_id: yp_constant_id_t = unsafe {{ *(self.pointer.as_ref().ids.add(self.index)) }};
+            let constant_id: pm_constant_id_t = unsafe {{ *(self.pointer.as_ref().ids.add(self.index)) }};
             self.index += 1;
             Some(ConstantId::new(self.parser, constant_id))
         }}
@@ -593,13 +593,13 @@ impl<'pr> Iterator for ConstantListIter<'pr> {{
 /// A list of constants.
 pub struct ConstantList<'pr> {{
     /// The raw pointer to the parser where this list came from.
-    parser: NonNull<yp_parser_t>,
+    parser: NonNull<pm_parser_t>,
 
-    /// The raw pointer to the list allocated by YARP.
-    pointer: NonNull<yp_constant_id_list_t>,
+    /// The raw pointer to the list allocated by prism.
+    pointer: NonNull<pm_constant_id_list_t>,
 
     /// The marker to indicate the lifetime of the pointer.
-    marker: PhantomData<&'pr mut yp_constant_id_list_t>
+    marker: PhantomData<&'pr mut pm_constant_id_list_t>
 }}
 
 impl<'pr> ConstantList<'pr> {{
@@ -623,7 +623,7 @@ impl std::fmt::Debug for ConstantList<'_> {{
 "#)?;
 
     for node in &config.nodes {
-        writeln!(file, "const {}: u16 = yp_node_type::{} as u16;", type_name(&node.name), type_name(&node.name))?;
+        writeln!(file, "const {}: u16 = pm_node_type::{} as u16;", type_name(&node.name), type_name(&node.name))?;
     }
     writeln!(file)?;
 
@@ -634,9 +634,9 @@ impl std::fmt::Debug for ConstantList<'_> {{
         writeln!(file, "    /// The {} node", node.name)?;
         writeln!(file, "    {} {{", node.name)?;
         writeln!(file, "        /// The pointer to the associated parser this node came from.")?;
-        writeln!(file, "        parser: NonNull<yp_parser_t>,")?;
+        writeln!(file, "        parser: NonNull<pm_parser_t>,")?;
         writeln!(file)?;
-        writeln!(file, "        /// The raw pointer to the node allocated by YARP.")?;
+        writeln!(file, "        /// The raw pointer to the node allocated by prism.")?;
         writeln!(file, "        pointer: *mut yp{}_t,", struct_name(&node.name))?;
         writeln!(file)?;
         writeln!(file, "        /// The marker to indicate the lifetime of the pointer.")?;
@@ -656,7 +656,7 @@ impl<'pr> Node<'pr> {{
     /// Panics if the node type cannot be read.
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
-    pub(crate) fn new(parser: NonNull<yp_parser_t>, node: *mut yp_node_t) -> Self {{
+    pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{
 "#)?;
 
@@ -674,7 +674,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        match *self {{")?;
     for node in &config.nodes {
-        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Location::new(parser, unsafe {{ &((*pointer.cast::<yp_node_t>()).location) }}),", node.name)?;
+        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Location::new(parser, unsafe {{ &((*pointer.cast::<pm_node_t>()).location) }}),", node.name)?;
     }
     writeln!(file, "        }}")?;
     writeln!(file, "    }}")?;

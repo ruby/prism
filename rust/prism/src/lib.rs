@@ -1,6 +1,6 @@
-//! # yarp
+//! # prism
 //!
-//! Rustified version of Ruby's YARP parser.
+//! Rustified version of Ruby's prism parser.
 //!
 #![warn(
     clippy::all,
@@ -30,14 +30,14 @@ use std::marker::PhantomData;
 use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
-use yarp_sys::{yp_parser_t, yp_parser_init, yp_parse, yp_parser_free, yp_node_destroy, yp_node_t, yp_comment_t, yp_diagnostic_t};
+use prism_sys::{pm_parser_t, pm_parser_init, pm_parse, pm_parser_free, pm_node_destroy, pm_node_t, pm_comment_t, pm_diagnostic_t};
 pub use self::bindings::*;
 
 /// A diagnostic message that came back from the parser.
 #[derive(Debug)]
 pub struct Diagnostic<'pr> {
-    diagnostic: NonNull<yp_diagnostic_t>,
-    marker: PhantomData<&'pr yp_diagnostic_t>
+    diagnostic: NonNull<pm_diagnostic_t>,
+    marker: PhantomData<&'pr pm_diagnostic_t>
 }
 
 impl<'pr> Diagnostic<'pr> {
@@ -51,7 +51,7 @@ impl<'pr> Diagnostic<'pr> {
     pub fn message(&self) -> &str {
         unsafe {
             let message: *mut c_char = self.diagnostic.as_ref().message as *mut c_char;
-            CStr::from_ptr(message).to_str().expect("YARP allows only UTF-8 for diagnostics.")
+            CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
         }
     }
 }
@@ -59,8 +59,8 @@ impl<'pr> Diagnostic<'pr> {
 /// A comment that was found during parsing.
 #[derive(Debug)]
 pub struct Comment<'pr> {
-    comment: NonNull<yp_comment_t>,
-    marker: PhantomData<&'pr yp_comment_t>
+    comment: NonNull<pm_comment_t>,
+    marker: PhantomData<&'pr pm_comment_t>
 }
 
 impl<'pr> Comment<'pr> {
@@ -80,8 +80,8 @@ impl<'pr> Comment<'pr> {
 /// A struct created by the `errors` or `warnings` methods on `ParseResult`. It
 /// can be used to iterate over the diagnostics in the parse result.
 pub struct Diagnostics<'pr> {
-    diagnostic: *mut yp_diagnostic_t,
-    marker: PhantomData<&'pr yp_diagnostic_t>
+    diagnostic: *mut pm_diagnostic_t,
+    marker: PhantomData<&'pr pm_diagnostic_t>
 }
 
 impl<'pr> Iterator for Diagnostics<'pr> {
@@ -90,7 +90,7 @@ impl<'pr> Iterator for Diagnostics<'pr> {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(diagnostic) = NonNull::new(self.diagnostic) {
             let current = Diagnostic { diagnostic, marker: PhantomData };
-            self.diagnostic = unsafe { diagnostic.as_ref().node.next.cast::<yp_diagnostic_t>() };
+            self.diagnostic = unsafe { diagnostic.as_ref().node.next.cast::<pm_diagnostic_t>() };
             Some(current)
         } else {
             None
@@ -101,8 +101,8 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 /// A struct created by the `comments` method on `ParseResult`. It can be used
 /// to iterate over the comments in the parse result.
 pub struct Comments<'pr> {
-    comment: *mut yp_comment_t,
-    marker: PhantomData<&'pr yp_comment_t>
+    comment: *mut pm_comment_t,
+    marker: PhantomData<&'pr pm_comment_t>
 }
 
 impl<'pr> Iterator for Comments<'pr> {
@@ -111,7 +111,7 @@ impl<'pr> Iterator for Comments<'pr> {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(comment) = NonNull::new(self.comment) {
             let current = Comment { comment, marker: PhantomData };
-            self.comment = unsafe { comment.as_ref().node.next.cast::<yp_comment_t>() };
+            self.comment = unsafe { comment.as_ref().node.next.cast::<pm_comment_t>() };
             Some(current)
         } else {
             None
@@ -123,8 +123,8 @@ impl<'pr> Iterator for Comments<'pr> {
 #[derive(Debug)]
 pub struct ParseResult<'pr> {
     source: &'pr [u8],
-    parser: NonNull<yp_parser_t>,
-    node: NonNull<yp_node_t>
+    parser: NonNull<pm_parser_t>,
+    node: NonNull<pm_node_t>
 }
 
 impl<'pr> ParseResult<'pr> {
@@ -160,7 +160,7 @@ impl<'pr> ParseResult<'pr> {
     pub fn errors(&self) -> Diagnostics<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).error_list;
-            Diagnostics { diagnostic: list.head.cast::<yp_diagnostic_t>(), marker: PhantomData }
+            Diagnostics { diagnostic: list.head.cast::<pm_diagnostic_t>(), marker: PhantomData }
         }
     }
 
@@ -170,7 +170,7 @@ impl<'pr> ParseResult<'pr> {
     pub fn warnings(&self) -> Diagnostics<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).warning_list;
-            Diagnostics { diagnostic: list.head.cast::<yp_diagnostic_t>(), marker: PhantomData }
+            Diagnostics { diagnostic: list.head.cast::<pm_diagnostic_t>(), marker: PhantomData }
         }
     }
 
@@ -180,7 +180,7 @@ impl<'pr> ParseResult<'pr> {
     pub fn comments(&self) -> Comments<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).comment_list;
-            Comments { comment: list.head.cast::<yp_comment_t>(), marker: PhantomData }
+            Comments { comment: list.head.cast::<pm_comment_t>(), marker: PhantomData }
         }
     }
 
@@ -194,8 +194,8 @@ impl<'pr> ParseResult<'pr> {
 impl<'pr> Drop for ParseResult<'pr> {
     fn drop(&mut self) {
         unsafe {
-            yp_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
-            yp_parser_free(self.parser.as_ptr());
+            pm_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
+            pm_parser_free(self.parser.as_ptr());
             drop(Box::from_raw(self.parser.as_ptr()));
         }
     }
@@ -210,10 +210,10 @@ impl<'pr> Drop for ParseResult<'pr> {
 #[must_use]
 pub fn parse(source: &[u8]) -> ParseResult<'_> {
     unsafe {
-        let uninit = Box::new(MaybeUninit::<yp_parser_t>::uninit());
+        let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
         let uninit = Box::into_raw(uninit);
 
-        yp_parser_init(
+        pm_parser_init(
             (*uninit).as_mut_ptr(),
             source.as_ptr(),
             source.len(),
@@ -223,7 +223,7 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
         let parser = (*uninit).assume_init_mut();
         let parser = NonNull::new_unchecked(parser);
 
-        let node = yp_parse(parser.as_ptr());
+        let node = pm_parse(parser.as_ptr());
         let node = NonNull::new_unchecked(node);
 
         ParseResult { source, parser, node }
