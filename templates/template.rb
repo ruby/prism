@@ -5,7 +5,7 @@ require "fileutils"
 require "yaml"
 
 module YARP
-  COMMON_FLAGS = 2
+  COMMON_FLAGS = 3
 
   SERIALIZE_ONLY_SEMANTICS_FIELDS = ENV.fetch("YARP_SERIALIZE_ONLY_SEMANTICS_FIELDS", false)
 
@@ -280,7 +280,11 @@ module YARP
     def initialize(config)
       @name = config.fetch("name")
       @human = @name.gsub(/(?<=.)[A-Z]/, "_\\0").downcase
-      @values = config.fetch("values").map { |flag| Flag.new(flag) }
+
+      values = config.fetch("values")
+      raise "Too many flags" if (values.length + COMMON_FLAGS) >= 16
+
+      @values = values.map { |flag| Flag.new(flag) }
     end
   end
 
