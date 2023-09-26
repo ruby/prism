@@ -22,7 +22,7 @@ module Prism
 
       result = Prism.parse_file(filepath)
       assert_empty result.errors
-      actual = yarp_lines(result)
+      actual = prism_lines(result)
 
       source.each_line.with_index(1) do |line, line_number|
         # Lines like `while (foo = bar)` result in two line flags in the
@@ -74,7 +74,7 @@ module Prism
       lines.sort
     end
 
-    def yarp_lines(result)
+    def prism_lines(result)
       result.mark_newlines!
 
       queue = [result.value]

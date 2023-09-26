@@ -114,7 +114,7 @@ fn struct_name(name: &str) -> String {
 /// Returns the name of the C type from the given node name.
 fn type_name(name: &str) -> String {
     let mut result = String::with_capacity(8 + name.len());
-    result.push_str("YP");
+    result.push_str("PM");
 
     for char in name.chars() {
         if char.is_uppercase() {
@@ -155,10 +155,10 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    parser: NonNull<pm_parser_t>,")?;
     writeln!(file)?;
     writeln!(file, "    /// The raw pointer to the node allocated by prism.")?;
-    writeln!(file, "    pointer: *mut yp{}_t,", struct_name(&node.name))?;
+    writeln!(file, "    pointer: *mut pm{}_t,", struct_name(&node.name))?;
     writeln!(file)?;
     writeln!(file, "    /// The marker to indicate the lifetime of the pointer.")?;
-    writeln!(file, "    marker: PhantomData<&'pr mut yp{}_t>", struct_name(&node.name))?;
+    writeln!(file, "    marker: PhantomData<&'pr mut pm{}_t>", struct_name(&node.name))?;
     writeln!(file, "}}")?;
     writeln!(file)?;
     writeln!(file, "impl<'pr> {}<'pr> {{", node.name)?;
@@ -184,7 +184,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::Node => {
                 if let Some(kind) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", field.name, kind)?;
-                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
+                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
                     writeln!(file, "    }}")?;
                 } else {
@@ -197,7 +197,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::OptionalNode => {
                 if let Some(kind) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", field.name, kind)?;
-                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
+                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
@@ -637,10 +637,10 @@ impl std::fmt::Debug for ConstantList<'_> {{
         writeln!(file, "        parser: NonNull<pm_parser_t>,")?;
         writeln!(file)?;
         writeln!(file, "        /// The raw pointer to the node allocated by prism.")?;
-        writeln!(file, "        pointer: *mut yp{}_t,", struct_name(&node.name))?;
+        writeln!(file, "        pointer: *mut pm{}_t,", struct_name(&node.name))?;
         writeln!(file)?;
         writeln!(file, "        /// The marker to indicate the lifetime of the pointer.")?;
-        writeln!(file, "        marker: PhantomData<&'pr mut yp{}_t>", struct_name(&node.name))?;
+        writeln!(file, "        marker: PhantomData<&'pr mut pm{}_t>", struct_name(&node.name))?;
         writeln!(file, "    }},")?;
     }
 
@@ -661,7 +661,7 @@ impl<'pr> Node<'pr> {{
 "#)?;
 
     for node in &config.nodes {
-        writeln!(file, "            {} => Self::{} {{ parser, pointer: node.cast::<yp{}_t>(), marker: PhantomData }},", type_name(&node.name), node.name, struct_name(&node.name))?;
+        writeln!(file, "            {} => Self::{} {{ parser, pointer: node.cast::<pm{}_t>(), marker: PhantomData }},", type_name(&node.name), node.name, struct_name(&node.name))?;
     }
 
     writeln!(file, "            _ => panic!(\"Unknown node type: {{}}\", unsafe {{ (*node).type_ }})")?;

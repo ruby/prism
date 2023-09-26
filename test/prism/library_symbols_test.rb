@@ -68,7 +68,7 @@ module Prism
       omit("librubyparser.a is not built") unless File.exist?(@librubyparser_a)
 
       names(hidden_global_objdump_symbols(@librubyparser_a)).tap do |symbols|
-        assert_includes(symbols, "pm__parse")
+        assert_includes(symbols, "pm_parse")
         assert_includes(symbols, "pm_version")
       end
     end

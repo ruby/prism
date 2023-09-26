@@ -281,33 +281,33 @@ typedef enum {
 
 // These are the options that are configurable on the regular expression (or
 // from within a group).
-#define PM_REGEXP_OPTION_STATE_SLOT_MINIMUM 'a'
-#define PM_REGEXP_OPTION_STATE_SLOT_MAXIMUM 'x'
-#define PM_REGEXP_OPTION_STATE_SLOTS (PM_REGEXP_OPTION_STATE_SLOT_MAXIMUM - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM + 1)
+#define PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM 'a'
+#define PRISM_REGEXP_OPTION_STATE_SLOT_MAXIMUM 'x'
+#define PRISM_REGEXP_OPTION_STATE_SLOTS (PRISM_REGEXP_OPTION_STATE_SLOT_MAXIMUM - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM + 1)
 
 // This is the set of options that are configurable on the regular expression.
 typedef struct {
-    uint8_t values[PM_REGEXP_OPTION_STATE_SLOTS];
+    uint8_t values[PRISM_REGEXP_OPTION_STATE_SLOTS];
 } pm_regexp_options_t;
 
 // Initialize a new set of options to their default values.
 static void
 pm_regexp_options_init(pm_regexp_options_t *options) {
-    memset(options, PM_REGEXP_OPTION_STATE_INVALID, sizeof(uint8_t) * PM_REGEXP_OPTION_STATE_SLOTS);
-    options->values['i' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
-    options->values['m' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
-    options->values['x' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
-    options->values['d' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
-    options->values['a' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
-    options->values['u' - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
+    memset(options, PM_REGEXP_OPTION_STATE_INVALID, sizeof(uint8_t) * PRISM_REGEXP_OPTION_STATE_SLOTS);
+    options->values['i' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
+    options->values['m' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
+    options->values['x' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_TOGGLEABLE;
+    options->values['d' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
+    options->values['a' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
+    options->values['u' - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM] = PM_REGEXP_OPTION_STATE_ADDABLE;
 }
 
 // Attempt to add the given option to the set of options. Returns true if it was
 // added, false if it was already present.
 static bool
 pm_regexp_options_add(pm_regexp_options_t *options, uint8_t key) {
-    if (key >= PM_REGEXP_OPTION_STATE_SLOT_MINIMUM && key <= PM_REGEXP_OPTION_STATE_SLOT_MAXIMUM) {
-        key = (uint8_t) (key - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM);
+    if (key >= PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM && key <= PRISM_REGEXP_OPTION_STATE_SLOT_MAXIMUM) {
+        key = (uint8_t) (key - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM);
 
         switch (options->values[key]) {
             case PM_REGEXP_OPTION_STATE_INVALID:
@@ -329,8 +329,8 @@ pm_regexp_options_add(pm_regexp_options_t *options, uint8_t key) {
 // it was removed, false if it was already absent.
 static bool
 pm_regexp_options_remove(pm_regexp_options_t *options, uint8_t key) {
-    if (key >= PM_REGEXP_OPTION_STATE_SLOT_MINIMUM && key <= PM_REGEXP_OPTION_STATE_SLOT_MAXIMUM) {
-        key = (uint8_t) (key - PM_REGEXP_OPTION_STATE_SLOT_MINIMUM);
+    if (key >= PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM && key <= PRISM_REGEXP_OPTION_STATE_SLOT_MAXIMUM) {
+        key = (uint8_t) (key - PRISM_REGEXP_OPTION_STATE_SLOT_MINIMUM);
 
         switch (options->values[key]) {
             case PM_REGEXP_OPTION_STATE_INVALID:
