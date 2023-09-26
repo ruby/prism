@@ -7,7 +7,7 @@ CRASH_DIR=$1
 	exit 1
 }
 
-executable=/yarp/build/fuzz."$(basename $(dirname $(dirname $CRASH_DIR)))"
+executable=/prism/build/fuzz."$(basename $(dirname $(dirname $CRASH_DIR)))"
 
 for crash in $(find "$CRASH_DIR" -type f ! -name "*.bt" ! -name "*.md")
 do

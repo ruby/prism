@@ -1,20 +1,20 @@
-#include <yarp.h>
+#include <prism.h>
 
 static void
-unescape(const uint8_t *input, size_t size, yp_unescape_type_t type) {
-    yp_parser_t parser;
-    yp_parser_init(&parser, input, size, "unescape.c");
+unescape(const uint8_t *input, size_t size, pm_unescape_type_t type) {
+    pm_parser_t parser;
+    pm_parser_init(&parser, input, size, "unescape.c");
 
-    yp_string_t string = YP_EMPTY_STRING;
-    yp_unescape_manipulate_string(&parser, &string, type);
+    pm_string_t string = PM_EMPTY_STRING;
+    pm_unescape_manipulate_string(&parser, &string, type);
 
-    yp_parser_free(&parser);
-    yp_string_free(&string);
+    pm_parser_free(&parser);
+    pm_string_free(&string);
 }
 
 void
 harness(const uint8_t *input, size_t size) {
-    unescape(input, size, YP_UNESCAPE_ALL);
-    unescape(input, size, YP_UNESCAPE_MINIMAL);
-    unescape(input, size, YP_UNESCAPE_NONE);
+    unescape(input, size, PM_UNESCAPE_ALL);
+    unescape(input, size, PM_UNESCAPE_MINIMAL);
+    unescape(input, size, PM_UNESCAPE_NONE);
 }

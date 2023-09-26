@@ -1,6 +1,6 @@
 FROM aflplusplus/aflplusplus
 
-ARG USERNAME=yarp
+ARG USERNAME=prism
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
@@ -30,6 +30,6 @@ RUN cd Grammar-Mutator && make GRAMMAR_FILE=grammars/ruby.json && \
 RUN apt install -y screen
 
 USER $USERNAME
-WORKDIR /yarp
+WORKDIR /prism
 
 
