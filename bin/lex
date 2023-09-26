@@ -8,7 +8,7 @@
 
 $:.unshift(File.expand_path("../lib", __dir__))
 require "ripper"
-require "yarp"
+require "prism"
 
 if ARGV[0] == "-e"
   source = ARGV[1]
@@ -21,18 +21,18 @@ pattern = "%-70s %-70s"
 
 ripper =
   begin
-    YARP.lex_ripper(source)
+    Prism.lex_ripper(source)
   rescue ArgumentError, SyntaxError
     # If Ripper raises a syntax error, we want to continue as if it didn't
-    # return any tokens at all. YARP won't raise a syntax error, so it's nicer
-    # to still be able to see the tokens that YARP generated.
+    # return any tokens at all. prism won't raise a syntax error, so it's nicer
+    # to still be able to see the tokens that prism generated.
     []
   end
 
-yarp = YARP.lex_compat(source, filepath)
-if yarp.errors.any?
+prism = Prism.lex_compat(source, filepath)
+if prism.errors.any?
   puts "Errors lexing:"
-  yarp.errors.map do |error|
+  prism.errors.map do |error|
     print "- [#{error.location.start_line},#{error.location.start_column}-"
     print "#{error.location.end_line},#{error.location.end_column}] "
     puts "\e[1;31m#{error.message}\e[0m"
@@ -40,14 +40,14 @@ if yarp.errors.any?
   puts "\n"
 end
 
-puts pattern % ["Ripper lex", "YARP lex"]
+puts pattern % ["Ripper lex", "Prism lex"]
 puts pattern % ["-" * 70, "-" * 70]
 
-yarp_value = yarp.value
+prism_value = prism.value
 
-[yarp_value.length, ripper.length].max.times do |index|
+[prism_value.length, ripper.length].max.times do |index|
   left = ripper[index]
-  right = yarp_value[index]
+  right = prism_value[index]
 
   color = left == right ? "38;5;102" : "1;31"
 
