@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YARP
+module Prism
   # A pattern is an object that wraps a Ruby pattern matching expression. The
   # expression would normally be passed to an `in` clause within a `case`
   # expression or a rightward assignment expression. For example, in the
@@ -48,7 +48,7 @@ module YARP
           Note that not all syntax supported by Ruby's pattern matching syntax
           is also supported by YARP's patterns. If you're using some syntax
           that you believe should be supported, please open an issue on
-          GitHub at https://github.com/ruby/yarp/issues/new.
+          GitHub at https://github.com/ruby/prism/issues/new.
         ERROR
       end
     end

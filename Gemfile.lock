@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    yarp (0.12.0)
+    prism (0.12.0)
 
 GEM
   remote: https://rubygems.org/
@@ -28,11 +28,11 @@ PLATFORMS
 
 DEPENDENCIES
   ffi
+  prism!
   rake
   rake-compiler
   ruby_memcheck
   test-unit
-  yarp!
 
 BUNDLED WITH
    2.3.6

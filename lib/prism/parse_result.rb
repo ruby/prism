@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YARP
+module Prism
   # This represents a source of Ruby code that has been parsed. It is used in
   # conjunction with locations to allow them to resolve line numbers and source
   # ranges.

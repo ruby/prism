@@ -2,7 +2,7 @@
 
 require "ripper"
 
-module YARP
+module Prism
   # This class is meant to provide a compatibility layer between YARP and
   # Ripper. It functions by parsing the entire tree first and then walking it
   # and executing each of the Ripper callbacks as it goes.
