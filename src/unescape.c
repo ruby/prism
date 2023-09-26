@@ -563,7 +563,7 @@ yp_unescape_manipulate_string_or_char_literal(yp_parser_t *parser, yp_string_t *
     yp_string_owned_init(string, allocated, dest_length + ((size_t) (end - cursor)));
 }
 
-YP_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 yp_unescape_manipulate_string(yp_parser_t *parser, yp_string_t *string, yp_unescape_type_t unescape_type) {
     yp_unescape_manipulate_string_or_char_literal(parser, string, unescape_type, false);
 }
@@ -622,7 +622,7 @@ yp_unescape_calculate_difference(yp_parser_t *parser, const uint8_t *backslash, 
 // This is one of the main entry points into the extension. It accepts a source
 // string, a type of unescaping, and a pointer to a result string. It returns a
 // boolean indicating whether or not the unescaping was successful.
-YP_EXPORTED_FUNCTION bool
+PRISM_EXPORTED_FUNCTION bool
 yp_unescape_string(const uint8_t *start, size_t length, yp_unescape_type_t unescape_type, yp_string_t *result) {
     yp_parser_t parser;
     yp_parser_init(&parser, start, length, NULL);

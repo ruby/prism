@@ -572,7 +572,7 @@ yp_regexp_parse_pattern(yp_regexp_parser_t *parser) {
 
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
-YP_EXPORTED_FUNCTION bool
+PRISM_EXPORTED_FUNCTION bool
 yp_regexp_named_capture_group_names(const uint8_t *source, size_t size, yp_string_list_t *named_captures, bool encoding_changed, yp_encoding_t *encoding) {
     yp_regexp_parser_t parser;
     yp_regexp_parser_init(&parser, source, source + size, named_captures, encoding_changed, encoding);

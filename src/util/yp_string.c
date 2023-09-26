@@ -78,19 +78,19 @@ yp_string_ensure_owned(yp_string_t *string) {
 }
 
 // Returns the length associated with the string.
-YP_EXPORTED_FUNCTION size_t
+PRISM_EXPORTED_FUNCTION size_t
 yp_string_length(const yp_string_t *string) {
     return string->length;
 }
 
 // Returns the start pointer associated with the string.
-YP_EXPORTED_FUNCTION const uint8_t *
+PRISM_EXPORTED_FUNCTION const uint8_t *
 yp_string_source(const yp_string_t *string) {
     return string->source;
 }
 
 // Free the associated memory of the given string.
-YP_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 yp_string_free(yp_string_t *string) {
     void *memory = (void *) string->source;
 
@@ -194,7 +194,7 @@ yp_string_mapped_init(yp_string_t *string, const char *filepath) {
 
 // Returns the size of the yp_string_t struct. This is necessary to allocate the
 // correct amount of memory in the FFI backend.
-YP_EXPORTED_FUNCTION size_t
+PRISM_EXPORTED_FUNCTION size_t
 yp_string_sizeof(void) {
     return sizeof(yp_string_t);
 }

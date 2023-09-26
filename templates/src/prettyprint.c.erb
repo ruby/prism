@@ -105,7 +105,7 @@ pm_print_node(pm_parser_t *parser, pm_node_t *node) {
 }
 
 // Pretty-prints the AST represented by the given node to the given buffer.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_prettyprint(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     prettyprint_node(buffer, parser, node);
 }

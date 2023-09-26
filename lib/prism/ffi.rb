@@ -35,13 +35,13 @@ module YARP
     def self.load_exported_functions_from(header, *functions)
       File.foreach(File.expand_path("../../include/#{header}", __dir__)) do |line|
         # We only want to attempt to load exported functions.
-        next unless line.start_with?("YP_EXPORTED_FUNCTION ")
+        next unless line.start_with?("PRISM_EXPORTED_FUNCTION ")
 
         # We only want to load the functions that we are interested in.
         next unless functions.any? { |function| line.include?(function) }
 
         # Parse the function declaration.
-        unless /^YP_EXPORTED_FUNCTION (?<return_type>.+) (?<name>\w+)\((?<arg_types>.+)\);$/ =~ line
+        unless /^PRISM_EXPORTED_FUNCTION (?<return_type>.+) (?<name>\w+)\((?<arg_types>.+)\);$/ =~ line
           raise "Could not parse #{line}"
         end
 

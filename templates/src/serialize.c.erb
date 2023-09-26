@@ -250,7 +250,7 @@ serialize_token(void *data, pm_parser_t *parser, pm_token_t *token) {
     pm_buffer_append_u32(buffer, parser->lex_state);
 }
 
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_lex_serialize(const uint8_t *source, size_t size, const char *filepath, pm_buffer_t *buffer) {
     pm_parser_t parser;
     pm_parser_init(&parser, source, size, filepath);
@@ -277,7 +277,7 @@ pm_lex_serialize(const uint8_t *source, size_t size, const char *filepath, pm_bu
 
 // Parse and serialize both the AST and the tokens represented by the given
 // source to the given buffer.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_parse_lex_serialize(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata) {
     pm_parser_t parser;
     pm_parser_init(&parser, source, size, NULL);

@@ -97,7 +97,7 @@ typedef pm_encoding_t *(*pm_encoding_decode_callback_t)(pm_parser_t *parser, con
 // return NULL if it also doesn't understand the encoding or it should return a
 // pointer to a pm_encoding_t struct that contains the functions necessary to
 // parse identifiers.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_parser_register_encoding_decode_callback(pm_parser_t *parser, pm_encoding_decode_callback_t callback);
 ```
 
@@ -112,6 +112,6 @@ typedef void (*pm_encoding_changed_callback_t)(pm_parser_t *parser);
 
 // Register a callback that will be called whenever prism changes the encoding
 // it is using to parse based on the magic comment.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_parser_register_encoding_changed_callback(pm_parser_t *parser, pm_encoding_changed_callback_t callback);
 ```

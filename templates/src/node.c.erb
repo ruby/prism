@@ -31,7 +31,7 @@ pm_node_list_append(pm_node_list_t *list, pm_node_t *node) {
     list->nodes[list->size++] = node;
 }
 
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_node_destroy(pm_parser_t *parser, pm_node_t *node);
 
 // Deallocate the inner memory of a list of nodes. The parser argument is not
@@ -49,7 +49,7 @@ pm_node_list_free(pm_parser_t *parser, pm_node_list_t *list) {
 // Deallocate the space for a pm_node_t. Similarly to pm_node_alloc, we're not
 // using the parser argument, but it's there to allow for the future possibility
 // of pre-allocating larger memory pools.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         <%- nodes.each do |node| -%>
@@ -137,14 +137,14 @@ pm_node_memsize_node(pm_node_t *node, pm_memsize_t *memsize) {
 }
 
 // Calculates the memory footprint of a given node.
-PM_EXPORTED_FUNCTION void
+PRISM_EXPORTED_FUNCTION void
 pm_node_memsize(pm_node_t *node, pm_memsize_t *memsize) {
     *memsize = (pm_memsize_t) { .memsize = 0, .node_count = 0 };
     pm_node_memsize_node(node, memsize);
 }
 
 // Returns a string representation of the given node type.
-PM_EXPORTED_FUNCTION const char *
+PRISM_EXPORTED_FUNCTION const char *
 pm_node_type_to_str(pm_node_type_t node_type)
 {
     switch (node_type) {
