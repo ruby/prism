@@ -227,6 +227,7 @@ static const char* const diagnostic_messages[YP_DIAGNOSTIC_ID_LEN] = {
     [YP_ERR_RESCUE_TERM]                        = "Expected a closing delimiter for the `rescue` clause",
     [YP_ERR_RESCUE_VARIABLE]                    = "Expected an exception variable after `=>` in a rescue statement",
     [YP_ERR_RETURN_INVALID]                     = "Invalid `return` in a class or module body",
+    [YP_ERR_STATEMENT]                          = "Expected a newline or semicolon after the statement",
     [YP_ERR_STRING_CONCATENATION]               = "Expected a string for concatenation",
     [YP_ERR_STRING_INTERPOLATED_TERM]           = "Expected a closing delimiter for the interpolated string",
     [YP_ERR_STRING_LITERAL_TERM]                = "Expected a closing delimiter for the string literal",

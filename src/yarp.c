@@ -760,6 +760,7 @@ yp_alias_global_variable_node_create(yp_parser_t *parser, const yp_token_t *keyw
     *node = (yp_alias_global_variable_node_t) {
         {
             .type = YP_ALIAS_GLOBAL_VARIABLE_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = keyword->start,
                 .end = old_name->location.end
@@ -782,6 +783,7 @@ yp_alias_method_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_n
     *node = (yp_alias_method_node_t) {
         {
             .type = YP_ALIAS_METHOD_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = keyword->start,
                 .end = old_name->location.end
@@ -3375,6 +3377,7 @@ yp_match_predicate_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t 
     *node = (yp_match_predicate_node_t) {
         {
             .type = YP_MATCH_PREDICATE_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = value->location.start,
                 .end = pattern->location.end
@@ -3396,6 +3399,7 @@ yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *
     *node = (yp_match_required_node_t) {
         {
             .type = YP_MATCH_REQUIRED_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = value->location.start,
                 .end = pattern->location.end
@@ -3808,6 +3812,7 @@ yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, co
     *node = (yp_post_execution_node_t) {
         {
             .type = YP_POST_EXECUTION_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = keyword->start,
                 .end = closing->end
@@ -3830,6 +3835,7 @@ yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, con
     *node = (yp_pre_execution_node_t) {
         {
             .type = YP_PRE_EXECUTION_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = {
                 .start = keyword->start,
                 .end = closing->end
@@ -4477,6 +4483,7 @@ yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
     *node = (yp_undef_node_t) {
         {
             .type = YP_UNDEF_NODE,
+            .flags = YP_NODE_FLAG_STATEMENT,
             .location = YP_LOCATION_TOKEN_VALUE(token),
         },
         .keyword_loc = YP_LOCATION_TOKEN_VALUE(token),
@@ -14250,6 +14257,10 @@ parse_expression(yp_parser_t *parser, yp_binding_power_t binding_power, yp_diagn
         binding_power <= current_binding_powers.left &&
         current_binding_powers.binary
      ) {
+        if ((node->flags & YP_NODE_FLAG_STATEMENT) && !(parser->current.type & YP_TOKEN_MODIFIER_FLAG)) {
+            yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, YP_ERR_STATEMENT);
+        }
+
         node = parse_expression_infix(parser, node, binding_power, current_binding_powers.right);
     }
 

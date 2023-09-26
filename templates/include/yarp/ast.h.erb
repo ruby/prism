@@ -17,6 +17,11 @@ typedef enum yp_token_type {
     YP_TOKEN_MAXIMUM, // the maximum token value
 } yp_token_type_t;
 
+// Because of the way the grammar is structured, we need to be able to compare
+// against modifier keywords quickly. As such, we ensure that every token that
+// is a modifier keyword is explicitly marked by a flag.
+#define YP_TOKEN_MODIFIER_FLAG (1 << 15)
+
 // This struct represents a token in the Ruby source. We use it to track both
 // type and location information.
 typedef struct {
@@ -54,7 +59,7 @@ typedef uint16_t yp_node_flags_t;
 // all nodes (the ones listed below). Others are specific to certain node types.
 static const yp_node_flags_t YP_NODE_FLAG_STATEMENT = 0x1;
 static const yp_node_flags_t YP_NODE_FLAG_NEWLINE = 0x2;
-static const yp_node_flags_t YP_NODE_FLAG_STATIC_LITERAL = 0x3;
+static const yp_node_flags_t YP_NODE_FLAG_STATIC_LITERAL = 0x4;
 
 // For easy access, we define some macros to check node type
 #define YP_NODE_TYPE(node) ((enum yp_node_type)node->type)

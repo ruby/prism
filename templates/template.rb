@@ -245,12 +245,19 @@ module YARP
 
   # This represents a token in the lexer.
   class Token
+    # Because of the way the grammar is structured, we need to be able to
+    # compare against modifier keywords quickly. As such, we ensure that every
+    # token that is a modifier keyword is explicitly marked by a flag.
+    MODIFIER_FLAG = 2**15
+
     attr_reader :name, :value, :comment
 
     def initialize(config)
       @name = config.fetch("name")
       @value = config["value"]
       @comment = config.fetch("comment")
+
+      raise if name.end_with?("MODIFIER") && !value.anybits?(MODIFIER_FLAG)
     end
 
     def declaration
