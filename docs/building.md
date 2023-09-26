@@ -19,4 +19,4 @@ The following flags should be used to compile prism:
 If you want to build prism as a shared library and link against it, you should compile with:
 
 * `-fPIC -shared` - Compile as a shared library
-* `-DPM_EXPORT_SYMBOLS` - Export the symbols (by default nothing is exported)
+* `-DPRISM_EXPORT_SYMBOLS` - Export the symbols (by default nothing is exported)

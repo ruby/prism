@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to YARP! Below are a couple of ways that you can help out.
+Thank you for your interest in contributing to prism! Below are a couple of ways that you can help out.
 
 ## Discussions
 
@@ -29,7 +29,7 @@ or explicitly running the `compile` task:
 ``` sh
 bundle exec rake compile test
 # or to just compile the C extension ...
-bundle exec rake compile:yarp test
+bundle exec rake compile:prism test
 ```
 
 To test the rust bindings (with caveats about setting up your Rust environment properly first):
