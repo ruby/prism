@@ -5,7 +5,7 @@ task :lint do
   require "yaml"
   config = YAML.safe_load_file(File.expand_path("../config.yml", __dir__))
 
-  tokens = config.fetch("tokens")[4..-1].map { |token| token.fetch("name") }
+  tokens = config.fetch("tokens")[4...-5].map { |token| token.fetch("name") }
   if tokens.sort != tokens
     warn("Tokens are not sorted alphabetically")
 
