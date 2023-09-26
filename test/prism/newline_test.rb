@@ -4,7 +4,7 @@ require_relative "test_helper"
 
 return unless defined?(RubyVM::InstructionSequence)
 
-module YARP
+module Prism
   class NewlineTest < TestCase
     base = File.dirname(__dir__)
     Dir["{lib,test}/**/*.rb", base: base].each do |relative|
@@ -20,7 +20,7 @@ module YARP
       source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
       expected = rubyvm_lines(source)
 
-      result = YARP.parse_file(filepath)
+      result = Prism.parse_file(filepath)
       assert_empty result.errors
       actual = yarp_lines(result)
 
