@@ -1,5 +1,5 @@
-<%- string_type = YARP::JAVA_STRING_TYPE -%>
-package org.yarp;
+<%- string_type = Prism::JAVA_STRING_TYPE -%>
+package org.prism;
 
 import java.lang.Override;
 import java.lang.String;
@@ -201,7 +201,7 @@ public abstract class Nodes {
         <%- end -%>
         }
         <%# methods for flags -%>
-        <%- node.semantic_fields.grep(YARP::FlagsField).each do |field| -%>
+        <%- node.semantic_fields.grep(Prism::FlagsField).each do |field| -%>
         <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
@@ -222,9 +222,9 @@ public abstract class Nodes {
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
           <%- field = node.semantic_fields.find { |f| f.name == node.newline } or raise node.newline -%>
           <%- case field -%>
-          <%- when YARP::NodeField, YARP::OptionalNodeField -%>
+          <%- when Prism::NodeField, Prism::OptionalNodeField -%>
             this.<%= field.name %>.setNewLineFlag(source, newlineMarked);
-          <%- when YARP::NodeListField -%>
+          <%- when Prism::NodeListField -%>
             Node first = this.<%= field.name %>.length > 0 ? this.<%= field.name %>[0] : null;
             if (first != null) {
                 first.setNewLineFlag(source, newlineMarked);
@@ -237,13 +237,13 @@ public abstract class Nodes {
         public <T> void visitChildNodes(AbstractNodeVisitor<T> visitor) {
           <%- node.semantic_fields.each do |field| -%>
             <%- case field -%>
-            <%- when YARP::NodeListField -%>
+            <%- when Prism::NodeListField -%>
             for (Nodes.Node child : this.<%= field.name %>) {
                 child.accept(visitor);
             }
-            <%- when YARP::NodeField -%>
+            <%- when Prism::NodeField -%>
             this.<%= field.name %>.accept(visitor);
-            <%- when YARP::OptionalNodeField -%>
+            <%- when Prism::OptionalNodeField -%>
             if (this.<%= field.name %> != null) {
                 this.<%= field.name %>.accept(visitor);
             }
@@ -252,19 +252,19 @@ public abstract class Nodes {
         }
 
         public Node[] childNodes() {
-          <%- if node.semantic_fields.none?(YARP::NodeListField) and node.semantic_fields.none?(YARP::NodeKindField) -%>
+          <%- if node.semantic_fields.none?(Prism::NodeListField) and node.semantic_fields.none?(Prism::NodeKindField) -%>
             return EMPTY_ARRAY;
-          <%- elsif node.semantic_fields.one?(YARP::NodeListField) and node.semantic_fields.none?(YARP::NodeKindField) -%>
-            return this.<%= node.semantic_fields.grep(YARP::NodeListField).first.name %>;
-          <%- elsif node.semantic_fields.none?(YARP::NodeListField) -%>
-            return new Node[] { <%= node.semantic_fields.grep(YARP::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
+          <%- elsif node.semantic_fields.one?(Prism::NodeListField) and node.semantic_fields.none?(Prism::NodeKindField) -%>
+            return this.<%= node.semantic_fields.grep(Prism::NodeListField).first.name %>;
+          <%- elsif node.semantic_fields.none?(Prism::NodeListField) -%>
+            return new Node[] { <%= node.semantic_fields.grep(Prism::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
           <%- else -%>
             ArrayList<Node> childNodes = new ArrayList<>();
             <%- node.semantic_fields.each do |field| -%>
               <%- case field -%>
-              <%- when YARP::NodeField, YARP::OptionalNodeField -%>
+              <%- when Prism::NodeField, Prism::OptionalNodeField -%>
             childNodes.add(this.<%= field.name %>);
-              <%- when YARP::NodeListField -%>
+              <%- when Prism::NodeListField -%>
             childNodes.addAll(Arrays.asList(this.<%= field.name %>));
               <%- end -%>
             <%- end -%>
@@ -285,37 +285,37 @@ public abstract class Nodes {
             }
             builder.append('\n');
             String nextIndent = indent + "  ";
-            <%- if node.fields.any?(YARP::NodeListField) or node.fields.any?(YARP::ConstantListField) -%>
+            <%- if node.fields.any?(Prism::NodeListField) or node.fields.any?(Prism::ConstantListField) -%>
             String nextNextIndent = nextIndent + "  ";
             <%- end -%>
-            <%- node.fields.grep_v(YARP::LocationField).grep_v(YARP::OptionalLocationField).each do |field| -%>
+            <%- node.fields.grep_v(Prism::LocationField).grep_v(Prism::OptionalLocationField).each do |field| -%>
             builder.append(nextIndent);
             builder.append("<%= field.name %>: ");
             <%- case field -%>
-            <%- when YARP::NodeField -%>
+            <%- when Prism::NodeField -%>
             builder.append(this.<%= field.name %>.toString(nextIndent));
-            <%- when YARP::OptionalNodeField -%>
+            <%- when Prism::OptionalNodeField -%>
             builder.append(this.<%= field.name %> == null ? "null\n" : this.<%= field.name %>.toString(nextIndent));
-            <%- when YARP::NodeListField -%>
+            <%- when Prism::NodeListField -%>
             builder.append('\n');
             for (Node child : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append(child.toString(nextNextIndent));
             }
-            <%- when YARP::StringField -%>
+            <%- when Prism::StringField -%>
             builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
             builder.append('\n');
-            <%- when YARP::ConstantField -%>
+            <%- when Prism::ConstantField -%>
             builder.append('"').append(this.<%= field.name %>).append('"');
             builder.append('\n');
-            <%- when YARP::OptionalConstantField -%>
+            <%- when Prism::OptionalConstantField -%>
             builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
             builder.append('\n');
-            <%- when YARP::ConstantListField -%>
+            <%- when Prism::ConstantListField -%>
             builder.append('\n');
             for (<%= string_type %> constant : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
-            <%- when YARP::UInt32Field, YARP::FlagsField -%>
+            <%- when Prism::UInt32Field, Prism::FlagsField -%>
             builder.append(this.<%= field.name %>);
             builder.append('\n');
             <%- else -%>

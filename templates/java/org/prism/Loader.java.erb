@@ -1,5 +1,5 @@
-<%- string_type = YARP::JAVA_STRING_TYPE -%>
-package org.yarp;
+<%- string_type = Prism::JAVA_STRING_TYPE -%>
+package org.prism;
 
 import java.lang.Short;
 import java.nio.ByteBuffer;
@@ -89,14 +89,15 @@ public class Loader {
     }
 
     private ParseResult load() {
-        expect((byte) 'Y', "incorrect YARP header");
-        expect((byte) 'A', "incorrect YARP header");
-        expect((byte) 'R', "incorrect YARP header");
-        expect((byte) 'P', "incorrect YARP header");
+        expect((byte) 'P', "incorrect prism header");
+        expect((byte) 'R', "incorrect prism header");
+        expect((byte) 'I', "incorrect prism header");
+        expect((byte) 'S', "incorrect prism header");
+        expect((byte) 'M', "incorrect prism header");
 
-        expect((byte) 0, "YARP version does not match");
-        expect((byte) 12, "YARP version does not match");
-        expect((byte) 0, "YARP version does not match");
+        expect((byte) 0, "prism version does not match");
+        expect((byte) 12, "prism version does not match");
+        expect((byte) 0, "prism version does not match");
 
         expect((byte) 1, "Loader.java requires no location fields in the serialized output");
 
@@ -294,17 +295,17 @@ public class Loader {
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
             params.concat node.semantic_fields.map { |field|
               case field
-              when YARP::NodeField then "#{field.java_cast}loadNode()"
-              when YARP::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
-              when YARP::StringField then "loadString()"
-              when YARP::NodeListField then "loadNodes()"
-              when YARP::ConstantField then "loadConstant()"
-              when YARP::OptionalConstantField then "loadOptionalConstant()"
-              when YARP::ConstantListField then "loadConstants()"
-              when YARP::LocationField then "loadLocation()"
-              when YARP::OptionalLocationField then "loadOptionalLocation()"
-              when YARP::UInt32Field then "loadVarInt()"
-              when YARP::FlagsField then "loadFlags()"
+              when Prism::NodeField then "#{field.java_cast}loadNode()"
+              when Prism::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
+              when Prism::StringField then "loadString()"
+              when Prism::NodeListField then "loadNodes()"
+              when Prism::ConstantField then "loadConstant()"
+              when Prism::OptionalConstantField then "loadOptionalConstant()"
+              when Prism::ConstantListField then "loadConstants()"
+              when Prism::LocationField then "loadLocation()"
+              when Prism::OptionalLocationField then "loadOptionalLocation()"
+              when Prism::UInt32Field then "loadVarInt()"
+              when Prism::FlagsField then "loadFlags()"
               else raise
               end
             }
