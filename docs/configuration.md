@@ -1,19 +1,19 @@
 # Configuration
 
-A lot of code in YARP's repository is templated from a single configuration file, [config.yml](../config.yml). This file is used to generate the following files:
+A lot of code in prism's repository is templated from a single configuration file, [config.yml](../config.yml). This file is used to generate the following files:
 
-* `ext/yarp/api_node.c` - for defining how to build Ruby objects for the nodes out of C structs
-* `include/yarp/ast.h` - for defining the C structs that represent the nodes
-* `java/org/yarp/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
-* `java/org/yarp/Loader.java` - for defining how to deserialize the nodes in Java
-* `java/org/yarp/Nodes.java` - for defining the nodes in Java
-* `lib/yarp/compiler.rb` - for defining the compiler for the nodes in Ruby
-* `lib/yarp/dispatcher.rb` - for defining the dispatch visitors for the nodes in Ruby
-* `lib/yarp/dsl.rb` - for defining the DSL for the nodes in Ruby
-* `lib/yarp/mutation_compiler.rb` - for defining the mutation compiler for the nodes in Ruby
-* `lib/yarp/node.rb` - for defining the nodes in Ruby
-* `lib/yarp/serialize.rb` - for defining how to deserialize the nodes in Ruby
-* `lib/yarp/visitor.rb` - for defining the visitor interface for the nodes in Ruby
+* `ext/prism/api_node.c` - for defining how to build Ruby objects for the nodes out of C structs
+* `include/prism/ast.h` - for defining the C structs that represent the nodes
+* `java/org/prism/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
+* `java/org/prism/Loader.java` - for defining how to deserialize the nodes in Java
+* `java/org/prism/Nodes.java` - for defining the nodes in Java
+* `lib/prism/compiler.rb` - for defining the compiler for the nodes in Ruby
+* `lib/prism/dispatcher.rb` - for defining the dispatch visitors for the nodes in Ruby
+* `lib/prism/dsl.rb` - for defining the DSL for the nodes in Ruby
+* `lib/prism/mutation_compiler.rb` - for defining the mutation compiler for the nodes in Ruby
+* `lib/prism/node.rb` - for defining the nodes in Ruby
+* `lib/prism/serialize.rb` - for defining how to deserialize the nodes in Ruby
+* `lib/prism/visitor.rb` - for defining the visitor interface for the nodes in Ruby
 * `src/node.c` - for defining how to free the nodes in C and calculate the size in memory in C
 * `src/prettyprint.c` - for defining how to prettyprint the nodes in C
 * `src/serialize.c` - for defining how to serialize the nodes in C
@@ -29,7 +29,7 @@ This is a list of tokens to be used by the lexer. It is shared here so that it c
 
 Each token is expected to have a `name` key and a `comment` key (both as strings). Optionally they can have a `value` key (an integer) which is used to represent the value in the enum.
 
-In C these tokens will be templated out with the prefix `YP_TOKEN_`. For example, if you have a `name` key with the value `PERCENT`, you can access this in C through `YP_TOKEN_PERCENT`.
+In C these tokens will be templated out with the prefix `PM_TOKEN_`. For example, if you have a `name` key with the value `PERCENT`, you can access this in C through `PM_TOKEN_PERCENT`.
 
 ## `flags`
 
@@ -37,7 +37,7 @@ Sometimes we need to communicate more information in the tree than can be repres
 
 Each flag is expected to have a `name` key (a string) and a `values` key (an array). Each value in the `values` key should be an object that contains both a `name` key (a string) that represents the name of the flag and a `comment` key (a string) that represents the comment for the flag.
 
-In C these flags will get templated out with a `YP_` prefix, then a snake-case version of the flag name, then the flag itself. For example, if you have a flag with the name `RegularExpressionFlags` and a value with the name `IGNORE_CASE`, you can access this in C through `YP_REGULAR_EXPRESSION_FLAGS_IGNORE_CASE`.
+In C these flags will get templated out with a `PM_` prefix, then a snake-case version of the flag name, then the flag itself. For example, if you have a flag with the name `RegularExpressionFlags` and a value with the name `IGNORE_CASE`, you can access this in C through `PM_REGULAR_EXPRESSION_FLAGS_IGNORE_CASE`.
 
 ## `nodes`
 
@@ -47,14 +47,14 @@ Optionally, every node can define a `child_nodes` key that is an array. This arr
 
 The available values for `type` are:
 
-* `node` - A child node that is a node itself. This is a `yp_node_t *` in C.
-* `node?` - A child node that is optionally present. This is also a `yp_node_t *` in C, but can be `NULL`.
-* `node[]` - A child node that is an array of nodes. This is a `yp_node_list_t` in C.
-* `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is a `yp_string_t` in C.
-* `constant` - A variable-length integer that represents an index in the constant pool. This is a `yp_constant_id_t` in C.
-* `constant[]` - A child node that is an array of constants. This is a `yp_constant_id_list_t` in C.
-* `location` - A child node that is a location. This is a `yp_location_t` in C.
-* `location?` - A child node that is a location that is optionally present. This is a `yp_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
+* `node` - A child node that is a node itself. This is a `pm_node_t *` in C.
+* `node?` - A child node that is optionally present. This is also a `pm_node_t *` in C, but can be `NULL`.
+* `node[]` - A child node that is an array of nodes. This is a `pm_node_list_t` in C.
+* `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is a `pm_string_t` in C.
+* `constant` - A variable-length integer that represents an index in the constant pool. This is a `pm_constant_id_t` in C.
+* `constant[]` - A child node that is an array of constants. This is a `pm_constant_id_list_t` in C.
+* `location` - A child node that is a location. This is a `pm_location_t` in C.
+* `location?` - A child node that is a location that is optionally present. This is a `pm_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
 * `uint32` - A child node that is a 32-bit unsigned integer. This is a `uint32_t` in C.
 
-If the type is `node` or `node?` then the value also accepts an optional `kind` key (a string). This key is expected to match to the name of another node type within `config.yml`. This changes a couple of places where code is templated out to use the more specific struct name instead of the generic `yp_node_t`. For example, with `kind: StatementsNode` the `yp_node_t *` in C becomes a `yp_statements_node_t *`.
+If the type is `node` or `node?` then the value also accepts an optional `kind` key (a string). This key is expected to match to the name of another node type within `config.yml`. This changes a couple of places where code is templated out to use the more specific struct name instead of the generic `pm_node_t`. For example, with `kind: StatementsNode` the `pm_node_t *` in C becomes a `pm_statements_node_t *`.
