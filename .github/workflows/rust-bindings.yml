@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        crate: [yarp-sys, yarp]
+        crate: [prism-sys, prism]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        crate: [yarp-sys, yarp]
+        crate: [prism-sys, prism]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -91,7 +91,7 @@ jobs:
       fail-fast: false
       matrix:
         sanitizer: [address, leak]
-        crate: [yarp-sys, yarp]
+        crate: [prism-sys, prism]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby

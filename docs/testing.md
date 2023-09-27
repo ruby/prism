@@ -1,6 +1,6 @@
 # Testing
 
-This document explains how to test YARP, both locally, and against existing test suites.
+This document explains how to test prism, both locally, and against existing test suites.
 
 ## Test suite
 
@@ -8,13 +8,13 @@ This document explains how to test YARP, both locally, and against existing test
 
 ### Unit tests
 
-These test specific YARP implementation details like comments, errors, and regular expressions. There are corresponding files for each thing being tested (like `test/errors_test.rb`).
+These test specific prism implementation details like comments, errors, and regular expressions. There are corresponding files for each thing being tested (like `test/errors_test.rb`).
 
 ### Snapshot tests
 
-Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/yarp/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/yarp/snapshots/` directory. For example, `test/yarp/fixtures/strings.txt` has a corresponding `test/yarp/snapshots/strings.txt`.
+Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/prism/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/prism/snapshots/` directory. For example, `test/prism/fixtures/strings.txt` has a corresponding `test/prism/snapshots/strings.txt`.
 
-If the parsed files do not match, it will raise an error. If there is not a corresponding file in the `test/yarp/snapshots/` directory, one will be created so that it exists for the next test run.
+If the parsed files do not match, it will raise an error. If there is not a corresponding file in the `test/prism/snapshots/` directory, one will be created so that it exists for the next test run.
 
 ### Testing against repositories
 
@@ -24,7 +24,7 @@ To test the parser against a repository, you can run `FILEPATHS='/path/to/reposi
 
 As you are working, you will likely want to test your code locally. `test.rb` is ignored by git, so it can be used for local testing. There are also two executables which may help you:
 
-1. **bin/lex** takes a filepath and compares YARP's lexed output to Ripper's lexed output. It prints any lexed output that doesn't match. It does some minor transformations to the lexed output in order to compare them, like split YARP's heredoc tokens to mirror Ripper's.
+1. **bin/lex** takes a filepath and compares prism's lexed output to Ripper's lexed output. It prints any lexed output that doesn't match. It does some minor transformations to the lexed output in order to compare them, like split prism's heredoc tokens to mirror Ripper's.
 
 ```
 $ bin/lex test.rb
@@ -42,7 +42,7 @@ $ VERBOSE=1 bin/lex test.rb
 $ bin/lex -e "1 + 2"
 ```
 
-2. **bin/parse** takes a filepath and outputs YARP's parsed node structure generated from reading the file.
+2. **bin/parse** takes a filepath and outputs prism's parsed node structure generated from reading the file.
 
 ```
 $ bin/parse test.rb

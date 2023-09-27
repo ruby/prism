@@ -1,0 +1,28 @@
+[package]
+name = "prism"
+version = "0.1.0"
+edition = "2021"
+license-file = "../../LICENSE.md"
+repository = "https://github.com/ruby/prism"
+description = "Rustified version of Ruby's prism parsing library"
+authors = [
+    "Steve Loveless <steve.loveless@gmail.com>",
+    "Ian Ker-Seymer <hello@ianks.com>",
+    "Kevin Newton <kddnewton@gmail.com>"
+]
+keywords = ["ruby", "parser", "ffi", "bindings"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "external-ffi-bindings",
+    "parsing",
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+
+[dependencies]
+prism-sys = { version = "0.1.0", path = "../prism-sys" }

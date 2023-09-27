@@ -7,7 +7,7 @@ flags=""
   flags="-H"
 }
 
-executable=/yarp/build/fuzz."$(basename $(dirname $(dirname $DIR)))"
+executable=/prism/build/fuzz."$(basename $(dirname $(dirname $DIR)))"
 
 for file in $(find "$DIR" -type f ! -name "*.*")
 do

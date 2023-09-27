@@ -12,19 +12,19 @@ on:
 jobs:
   # Inspired from https://github.com/oracle/truffleruby/blob/master/.github/workflows/ci.yml
   test-loader:
-    if: github.repository == 'ruby/yarp'
+    if: github.repository == 'ruby/prism'
     runs-on: ubuntu-20.04 # to be consistent with that workflow and test on older platform
     steps:
-    - name: Clone YARP
+    - name: Clone prism
       uses: actions/checkout@v3
       with:
-        path: yarp
+        path: prism
     - name: Setup system Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ruby
         bundler-cache: true
-        working-directory: yarp
+        working-directory: prism
 
     - run: mkdir truffleruby-ws
     - name: Clone TruffleRuby
@@ -41,8 +41,8 @@ jobs:
         path: ~/.mx/cache
         key: mx-cache-${{ runner.os }}
 
-    - name: Import latest YARP in TruffleRuby
-      run: tool/import-yarp.sh
+    - name: Import latest prism in TruffleRuby
+      run: tool/import-prism.sh
       working-directory: truffleruby-ws/truffleruby
 
     - name: Install JVMCI
@@ -66,13 +66,13 @@ jobs:
       run: jt build -- --dependencies "$(jt -q mx --env jvm graalvm-dist-name)"
       working-directory: truffleruby-ws/truffleruby
 
-    - name: Parse test/yarp/fixtures/**/*.rb
-      run: jt ruby -e 'Dir.glob("test/yarp/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
-      working-directory: yarp
+    - name: Parse test/prism/fixtures/**/*.rb
+      run: jt ruby -e 'Dir.glob("test/prism/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.prism_parse(File.read(file)) }'
+      working-directory: prism
 
     - name: Parse src/main/ruby/truffleruby/**/*.rb
-      run: jt ruby -e 'Dir.glob("src/main/ruby/truffleruby/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+      run: jt ruby -e 'Dir.glob("src/main/ruby/truffleruby/**/*.rb") { |file| puts file; Truffle::Debug.prism_parse(File.read(file)) }'
       working-directory: truffleruby-ws/truffleruby
 
     - name: Execute p 1+2
-      run: jt ruby -e 'Truffle::Debug.yarp_execute "p 1+2"'
+      run: jt ruby -e 'Truffle::Debug.prism_execute "p 1+2"'

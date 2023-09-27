@@ -34,8 +34,8 @@ namespace :test do
 
     desc "Run tests under valgrind"
     task :valgrind do
-      # Recompile with YARP_DEBUG_MODE_BUILD=1
-      ENV["YARP_DEBUG_MODE_BUILD"] = "1"
+      # Recompile with PRISM_DEBUG_MODE_BUILD=1
+      ENV["PRISM_DEBUG_MODE_BUILD"] = "1"
       Rake::Task["clobber"].invoke
       Rake::Task["test:valgrind_internal"].invoke
     end
@@ -61,7 +61,7 @@ namespace :test do
 
   desc "Run the tests for the rust bindings"
   task :rust do
-    ["rust/yarp", "rust/yarp-sys"].each do |dir|
+    ["rust/prism", "rust/prism-sys"].each do |dir|
       Dir.chdir(dir) do
         sh("cargo test")
       end

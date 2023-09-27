@@ -28,9 +28,9 @@ fuzz
 
 There are currently three fuzzing targets
 
-- `yp_parse_serialize` (parse)
-- `yp_regexp_named_capture_group_names` (regexp)
-- `yp_unescape_manipulate_string` (unescape)
+- `pm_parse_serialize` (parse)
+- `pm_regexp_named_capture_group_names` (regexp)
+- `pm_unescape_manipulate_string` (unescape)
 
 Respectively, fuzzing can be performed with
 
@@ -48,7 +48,7 @@ make fuzz-debug
 
 # Out-of-bounds reads
 
-Currently, encoding functionality implementing the `yp_encoding_t` interface can read outside of inputs. For the time being, ASAN instrumentation is disabled for functions from src/enc. See `fuzz/asan.ignore`.
+Currently, encoding functionality implementing the `pm_encoding_t` interface can read outside of inputs. For the time being, ASAN instrumentation is disabled for functions from src/enc. See `fuzz/asan.ignore`.
 
 To disable ASAN read instrumentation globally, use the `FUZZ_FLAGS` environment variable e.g.
 

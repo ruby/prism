@@ -1,6 +1,6 @@
 # Serialization
 
-YARP ships with the ability to serialize a syntax tree to a single string.
+Prism ships with the ability to serialize a syntax tree to a single string.
 The string can then be deserialized back into a syntax tree using a language other than C.
 This is useful for using the parsing logic in other tools without having to write a parser in that language.
 The syntax tree still requires a copy of the original source, as for the most part it just contains byte offsets into the source string.
@@ -50,7 +50,7 @@ The comment type is one of:
 ## Structure
 
 The serialized string representing the syntax tree is composed of three parts: the header, the body, and the constant pool.
-The header contains information like the version of YARP that serialized the tree.
+The header contains information like the version of prism that serialized the tree.
 The body contains the actual nodes in the tree.
 The constant pool contains constants that were interned while parsing.
 
@@ -58,7 +58,7 @@ The header is structured like the following table:
 
 | # bytes | field |
 | --- | --- |
-| `4` | "YARP" |
+| `5` | "PRISM" |
 | `1` | major version number |
 | `1` | minor version number |
 | `1` | patch version number |
@@ -117,42 +117,42 @@ After the constant pool, the contents of the owned constants are serialized. Thi
 The relevant APIs and struct definitions are listed below:
 
 ```c
-// A yp_buffer_t is a simple memory buffer that stores data in a contiguous
+// A pm_buffer_t is a simple memory buffer that stores data in a contiguous
 // block of memory. It is used to store the serialized representation of a
-// YARP tree.
+// prism tree.
 typedef struct {
   char *value;
   size_t length;
   size_t capacity;
-} yp_buffer_t;
+} pm_buffer_t;
 
-// Initialize a yp_buffer_t with its default values.
-bool yp_buffer_init(yp_buffer_t *);
+// Initialize a pm_buffer_t with its default values.
+bool pm_buffer_init(pm_buffer_t *);
 
 // Free the memory associated with the buffer.
-void yp_buffer_free(yp_buffer_t *);
+void pm_buffer_free(pm_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-void yp_parse_serialize(const uint8_t *source, size_t length, yp_buffer_t *buffer, const char *metadata);
+void pm_parse_serialize(const uint8_t *source, size_t length, pm_buffer_t *buffer, const char *metadata);
 ```
 
-Typically you would use a stack-allocated `yp_buffer_t` and call `yp_parse_serialize`, as in:
+Typically you would use a stack-allocated `pm_buffer_t` and call `pm_parse_serialize`, as in:
 
 ```c
 void
 serialize(const uint8_t *source, size_t length) {
-  yp_buffer_t buffer;
-  if (!yp_buffer_init(&buffer)) return;
+  pm_buffer_t buffer;
+  if (!pm_buffer_init(&buffer)) return;
 
-  yp_parse_serialize(source, length, &buffer, NULL);
+  pm_parse_serialize(source, length, &buffer, NULL);
   // Do something with the serialized string.
 
-  yp_buffer_free(&buffer);
+  pm_buffer_free(&buffer);
 }
 ```
 
-The final argument to `yp_parse_serialize` controls the metadata of the source.
+The final argument to `pm_parse_serialize` controls the metadata of the source.
 This includes the filepath that the source is associated with, and any nested local variables scopes that are necessary to properly parse the file (in the case of parsing an `eval`).
 Note that no `varint` are used here to make it easier to produce the metadata for the caller, and also serialized size is less important here.
 The metadata is a serialized format itself, and is structured as follows:

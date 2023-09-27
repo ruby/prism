@@ -1,6 +1,6 @@
 desc "Perform a sanity check on the gemspec file list"
 task :check_manifest => [:templates] do
-  raw_gemspec = Bundler.load_gemspec("yarp.gemspec")
+  raw_gemspec = Bundler.load_gemspec("prism.gemspec")
 
   ignore_directories = %w[
     .bundle
@@ -40,8 +40,8 @@ task :check_manifest => [:templates] do
     config.status
     configure.ac
     compile_commands.json
-    include/yarp/config.h
-    lib/yarp/yarp.{so,bundle,jar}
+    include/prism/config.h
+    lib/prism/prism.{so,bundle,jar}
     tags
   ]
 

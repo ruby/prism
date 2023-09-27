@@ -7,18 +7,18 @@
 #   bin/parse -e "<source-code>"
 
 $:.unshift(File.expand_path("../lib", __dir__))
-require "yarp"
+require "prism"
 
 if ARGV[0] == "-e"
-  result = YARP.parse(ARGV[1])
+  result = Prism.parse(ARGV[1])
 else
-  result = YARP.parse_file(ARGV[0] || "test.rb")
+  result = Prism.parse_file(ARGV[0] || "test.rb")
 end
 
 result.mark_newlines! if ENV["MARK_NEWLINES"]
 
 value = result.value
-value = value.accept(YARP::DesugarCompiler.new) if ENV["DESUGAR"]
+value = value.accept(Prism::DesugarCompiler.new) if ENV["DESUGAR"]
 
 parts = {}
 parts["Comments"] = result.comments if result.comments.any?

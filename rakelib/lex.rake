@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YARP
+module Prism
   # This class is responsible for lexing files with both lex_compat and
   # lex_ripper and ensuring they match up. It keeps track of the files which
   # failed to match up, and the files which passed.
@@ -26,8 +26,8 @@ module YARP
         return true
       end
 
-      result = YARP.lex_compat(source)
-      if result.errors.empty? && YARP.lex_ripper(source) == result.value
+      result = Prism.lex_compat(source)
+      if result.errors.empty? && Prism.lex_ripper(source) == result.value
         @passing_file_count += 1
         true
       else
@@ -114,12 +114,12 @@ TARGETS.each do |name, target|
   task "lex:#{name}" => [dirpath, :compile] do
     $:.unshift(File.expand_path("../lib", __dir__))
     require "ripper"
-    require "yarp"
+    require "prism"
 
     plain_text = ENV.fetch("CI", false)
     warn_failing = ENV.fetch("VERBOSE", false)
 
-    lex_task = YARP::LexTask.new
+    lex_task = Prism::LexTask.new
     filepaths = Dir[File.join(dirpath, "**", "*.rb")]
 
     if excludes = target[:excludes]
@@ -157,12 +157,12 @@ desc "Lex files and compare with lex_compat"
 task lex: :compile do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "ripper"
-  require "yarp"
+  require "prism"
 
   plain_text = ENV.fetch("CI", false)
   warn_failing = ENV.fetch("VERBOSE", false)
 
-  lex_task = YARP::LexTask.new
+  lex_task = Prism::LexTask.new
   filepaths = Dir[ENV.fetch("FILEPATHS")]
 
   filepaths.each do |filepath|
@@ -191,7 +191,7 @@ task "lex:rubygems": [:compile, "tmp/failing"] do
   require "ripper"
   require "rubygems/package"
   require "tmpdir"
-  require "yarp"
+  require "prism"
 
   items = []
   Gem::SpecFetcher.new.available_specs(:latest).first.each do |source, gems|
@@ -206,7 +206,7 @@ task "lex:rubygems": [:compile, "tmp/failing"] do
   passing_gem_count = 0
   failing_gem_count = 0
 
-  YARP.parallelize(items) do |(gem_name, gem_uri)|
+  Prism.parallelize(items) do |(gem_name, gem_uri)|
   # items.each do |(gem_name, gem_uri)|
     response = Net::HTTP.get_response(gem_uri)
     next unless response.is_a?(Net::HTTPSuccess)
@@ -222,7 +222,7 @@ task "lex:rubygems": [:compile, "tmp/failing"] do
         next
       end
 
-      lex_task = YARP::LexTask.new
+      lex_task = Prism::LexTask.new
       Dir[File.join(directory, "**", "*.rb")].each do |filepath|
         unless lex_task.compare(filepath)
           cp filepath, "tmp/failing/#{SecureRandom.hex}-#{File.basename(filepath)}"
@@ -266,7 +266,7 @@ namespace :download do
     require "rubygems/package"
     require "tmpdir"
 
-    YARP.parallelize(YAML.safe_load_file(TOP_100_GEM_FILENAME)) do |gem_name|
+    Prism.parallelize(YAML.safe_load_file(TOP_100_GEM_FILENAME)) do |gem_name|
       directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
       next if File.directory?(directory)
 
@@ -285,16 +285,16 @@ namespace :download do
   end
 end
 
-# This task parses each .rb file of the top 100 gems with YARP and ensures they
+# This task parses each .rb file of the top 100 gems with prism and ensures they
 # parse successfully (unless they are invalid syntax as confirmed by "ruby -c").
 desc "Parse the top 100 rubygems"
 task "parse:topgems": ["download:topgems", :compile] do
   $:.unshift(File.expand_path("../lib", __dir__))
-  require "yarp"
+  require "prism"
 
   incorrect = []
-  YARP.parallelize(Dir["#{TOP_100_GEMS_DIR}/**/*.rb"]) do |filepath|
-    result = YARP.parse_file(filepath)
+  Prism.parallelize(Dir["#{TOP_100_GEMS_DIR}/**/*.rb"]) do |filepath|
+    result = Prism.parse_file(filepath)
 
     if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
       # Check that the file failed to parse and that it actually contains
@@ -323,16 +323,16 @@ task "lex:topgems": ["download:topgems", :compile] do
   require "ripper"
   require "rubygems/package"
   require "tmpdir"
-  require "yarp"
+  require "prism"
 
   gem_names = YAML.safe_load_file(TOP_100_GEM_FILENAME)
   failing_files = {}
 
-  YARP.parallelize(gem_names) do |gem_name|
+  Prism.parallelize(gem_names) do |gem_name|
     puts "Lexing #{gem_name}"
     directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
 
-    lex_task = YARP::LexTask.new
+    lex_task = Prism::LexTask.new
     Dir[File.join(directory, "**", "*.rb")].each do |filepath|
       lex_task.compare(filepath)
     end
@@ -359,7 +359,7 @@ end
 
 task "serialized_size:topgems": ["download:topgems"] do
   $:.unshift(File.expand_path("../lib", __dir__))
-  require "yarp"
+  require "prism"
 
   files = Dir["#{TOP_100_GEMS_DIR}/**/*.rb"]
   total_source_size = 0
@@ -370,7 +370,7 @@ task "serialized_size:topgems": ["download:topgems"] do
     next if source_size == 0
     total_source_size += source_size
 
-    serialized = YARP.dump_file(file)
+    serialized = Prism.dump_file(file)
     serialized_size = serialized.bytesize
     total_serialized_size += serialized_size
 

@@ -4,7 +4,7 @@ Heredocs are one of the most complicated pieces of this parser. There are many d
 
 ## 1. Lexing the identifier
 
-When a heredoc identifier is encountered in the regular process of lexing, we push the `YP_LEX_HEREDOC` mode onto the stack with the following metadata:
+When a heredoc identifier is encountered in the regular process of lexing, we push the `PM_LEX_HEREDOC` mode onto the stack with the following metadata:
 
 * `ident_start`: A pointer to the start of the identifier for the heredoc. We need this to match against the end of the heredoc.
 * `ident_length`: The length of the identifier for the heredoc. We also need this to match.
@@ -16,7 +16,7 @@ Note that if the `parser.heredoc_end` field is already set, then it means we hav
 
 ## 2. Lexing the body
 
-The next time the lexer is asked for a token, it will be in the `YP_LEX_HEREDOC` mode. In this mode we are lexing the body of the heredoc. It will start by checking if the `next_start` field is set. If it is, then this is the first token within the body of the heredoc so we'll start lexing from there. Otherwise we'll start lexing from the end of the previous token.
+The next time the lexer is asked for a token, it will be in the `PM_LEX_HEREDOC` mode. In this mode we are lexing the body of the heredoc. It will start by checking if the `next_start` field is set. If it is, then this is the first token within the body of the heredoc so we'll start lexing from there. Otherwise we'll start lexing from the end of the previous token.
 
 Lexing these fields is extremely similar to lexing an interpolated string. The only difference is that we also do an additional check at the beginning of each line to check if we have hit the terminator.
 
@@ -33,4 +33,4 @@ Once the heredoc has been lexed, the lexer will resume lexing from the `next_sta
 
 ## Compatibility with Ripper
 
-The order in which tokens are emitted is different from that of Ripper. Ripper emits each token in the file in the order in which it appears. YARP instead will emit the tokens that makes the most sense for the lexer, using the process described above. Therefore to line things up, `YARP.lex_compat` will shuffle the tokens around to match Ripper's output.
+The order in which tokens are emitted is different from that of Ripper. Ripper emits each token in the file in the order in which it appears. prism instead will emit the tokens that makes the most sense for the lexer, using the process described above. Therefore to line things up, `Prism.lex_compat` will shuffle the tokens around to match Ripper's output.

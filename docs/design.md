@@ -12,7 +12,7 @@ The design of the parser is based around these main goals.
 
 The first piece to understand about the parser is the design of its syntax tree. This is documented in `config.yml`. Every token and node is defined in that file, along with comments about where they are found in what kinds of syntax. This file is used to template out a lot of different files, all found in the `templates` directory. The `templates/template.rb` script performs the templating and outputs all files matching the directory structure found in the templates directory.
 
-The templated files contain all of the code required to allocate and initialize nodes, pretty print nodes, and serialize nodes. This means for the most part, you will only need to then hook up the parser to call the templated functions to create the nodes in the correct position. That means editing the parser itself, which is housed in `yarp.c`.
+The templated files contain all of the code required to allocate and initialize nodes, pretty print nodes, and serialize nodes. This means for the most part, you will only need to then hook up the parser to call the templated functions to create the nodes in the correct position. That means editing the parser itself, which is housed in `prism.c`.
 
 ## Pratt parsing
 
@@ -24,7 +24,7 @@ In order to provide the best possible error tolerance, the parser is hand-writte
 * https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
 * https://chidiwilliams.com/post/on-recursive-descent-and-pratt-parsing/
 
-You can find most of the functions that correspond to constructs in the Pratt parsing algorithm in `yarp.c`. As a couple of examples:
+You can find most of the functions that correspond to constructs in the Pratt parsing algorithm in `prism.c`. As a couple of examples:
 
 * `parse` corresponds to the `parse_expression` function
 * `nud` (null denotation) corresponds to the `parse_expression_prefix` function

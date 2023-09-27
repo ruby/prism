@@ -1,17 +1,17 @@
 # Build System
 
-There are many ways to build YARP, which means the build system is a bit more complicated than usual.
+There are many ways to build prism, which means the build system is a bit more complicated than usual.
 
 ## Requirements
 
-* It must work to build YARP for all 6 uses-cases below.
-* It must be possible to build YARP without needing ruby/rake/etc.
-  Because once YARP is the single parser in TruffleRuby, JRuby or CRuby there won't be another Ruby parser around to parse such Ruby code.
+* It must work to build prism for all 6 uses-cases below.
+* It must be possible to build prism without needing ruby/rake/etc.
+  Because once prism is the single parser in TruffleRuby, JRuby or CRuby there won't be another Ruby parser around to parse such Ruby code.
   Most/every Ruby implementations want to avoid depending on another Ruby during the build process as that is very brittle.
-* It is desirable to compile YARP with the same or very similar compiler flags for all use-cases (e.g. optimization level, warning flags, etc).
-  Otherwise, there is the risk YARP does not work correctly with those different compiler flags.
+* It is desirable to compile prism with the same or very similar compiler flags for all use-cases (e.g. optimization level, warning flags, etc).
+  Otherwise, there is the risk prism does not work correctly with those different compiler flags.
 
-The main solution for the second point seems a Makefile, otherwise many of the usages would have to duplicate the logic to build YARP.
+The main solution for the second point seems a Makefile, otherwise many of the usages would have to duplicate the logic to build prism.
 
 ## General Design
 
@@ -24,15 +24,15 @@ This way there is minimal duplication, and each layer builds on the previous one
 
 The static library exports no symbols, to avoid any conflict.
 The shared library exports some symbols, and this is fine since there should only be one librubyparser shared library
-loaded per process (i.e., at most one version of the yarp *gem* loaded in a process, only the gem uses the shared library).
+loaded per process (i.e., at most one version of the prism *gem* loaded in a process, only the gem uses the shared library).
 
-## The various ways to build YARP
+## The various ways to build prism
 
-### Building from ruby/yarp repository with `bundle exec rake`
+### Building from ruby/prism repository with `bundle exec rake`
 
 `rake` calls `make` and then uses `Rake::ExtensionTask` to compile the C extension (see above).
 
-### Building the yarp gem by `gem install/bundle install`
+### Building the prism gem by `gem install/bundle install`
 
 The gem contains the pre-generated templates.
 When installing the gem, `extconf.rb` is used and that:
@@ -44,31 +44,31 @@ there is Ruby code using FFI which uses `librubyparser.{so,dylib,dll}`
 to implement the same methods as the C extension, but using serialization instead of many native calls/accesses
 (JRuby does not support C extensions, serialization is faster on TruffleRuby than the C extension).
 
-### Building the yarp gem from git, e.g. `gem 'yarp', github: 'ruby/yarp'`
+### Building the prism gem from git, e.g. `gem "prism", github: "ruby/prism"`
 
 The same as above, except the `extconf.rb` additionally runs first:
 * `templates/template.rb` to generate the templates
 
 Because of course those files are not part of the git repository.
 
-### Building YARP as part of CRuby
+### Building prism as part of CRuby
 
-[This script](https://github.com/ruby/ruby/blob/32e828bb4a6c65a392b2300f3bdf93008c7b6f25/tool/sync_default_gems.rb#L399-L426) imports YARP sources in CRuby.
+[This script](https://github.com/ruby/ruby/blob/32e828bb4a6c65a392b2300f3bdf93008c7b6f25/tool/sync_default_gems.rb#L399-L426) imports prism sources in CRuby.
 
 The script generates the templates when importing.
 
-YARP's `Makefile` is not used at all in CRuby. Instead, CRuby's `Makefile` is used.
+prism's `Makefile` is not used at all in CRuby. Instead, CRuby's `Makefile` is used.
 
-### Building YARP as part of TruffleRuby
+### Building prism as part of TruffleRuby
 
-[This script](https://github.com/oracle/truffleruby/blob/master/tool/import-yarp.sh) imports YARP sources in TruffleRuby.
+[This script](https://github.com/oracle/truffleruby/blob/master/tool/import-prism.sh) imports prism sources in TruffleRuby.
 The script generates the templates when importing.
 
-Then when `mx build` builds TruffleRuby and the `yarp` mx project inside, it runs `make`.
+Then when `mx build` builds TruffleRuby and the `prism` mx project inside, it runs `make`.
 
-Then the `yarp bindings` mx project is built, which contains the [bindings](https://github.com/oracle/truffleruby/blob/master/src/main/c/yarp_bindings/src/yarp_bindings.c)
-and links to `librubyparser.a` (to avoid exporting symbols, so no conflict when installing the yarp gem).
+Then the `prism bindings` mx project is built, which contains the [bindings](https://github.com/oracle/truffleruby/blob/master/src/main/c/prism_bindings/src/prism_bindings.c)
+and links to `librubyparser.a` (to avoid exporting symbols, so no conflict when installing the prism gem).
 
-### Building YARP as part of JRuby
+### Building prism as part of JRuby
 
 TODO, probably similar to TruffleRuby.

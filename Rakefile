@@ -12,7 +12,7 @@ task default: [:check_manifest, :compile, :test]
 require_relative "templates/template"
 
 desc "Generate all ERB template based files"
-task templates: YARP::TEMPLATES
+task templates: Prism::TEMPLATES
 
 def windows?
   RUBY_PLATFORM.include?("mingw")
@@ -35,37 +35,37 @@ end
 task build: [:templates, :check_manifest]
 
 # the C extension
-task "compile:yarp" => ["templates"] # must be before the ExtensionTask is created
+task "compile:prism" => ["templates"] # must be before the ExtensionTask is created
 
-if RUBY_ENGINE == "ruby" and !ENV["YARP_FFI_BACKEND"]
+if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   Rake::ExtensionTask.new(:compile) do |ext|
-    ext.name = "yarp"
-    ext.ext_dir = "ext/yarp"
-    ext.lib_dir = "lib/yarp"
-    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+    ext.name = "prism"
+    ext.ext_dir = "ext/prism"
+    ext.lib_dir = "lib/prism"
+    ext.gem_spec = Gem::Specification.load("prism.gemspec")
   end
 elsif RUBY_ENGINE == "jruby"
   require 'rake/javaextensiontask'
 
   # This compiles java to make sure any templating changes produces valid code.
   Rake::JavaExtensionTask.new(:compile) do |ext|
-    ext.name = "yarp"
+    ext.name = "prism"
     ext.ext_dir = "java"
     ext.lib_dir = "tmp"
     ext.source_version = "1.8"
     ext.target_version = "1.8"
-    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+    ext.gem_spec = Gem::Specification.load("prism.gemspec")
   end
 end
 
 # So `rake clobber` will delete generated files
-CLOBBER.concat(YARP::TEMPLATES)
+CLOBBER.concat(Prism::TEMPLATES)
 CLOBBER.concat(["build"])
-CLOBBER << "lib/yarp/yarp.#{RbConfig::CONFIG["DLEXT"]}"
+CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
 
-YARP::TEMPLATES.each do |filepath|
+Prism::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
-    YARP.template(t.name)
+    Prism.template(t.name)
   end
 end

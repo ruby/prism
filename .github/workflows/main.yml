@@ -62,10 +62,10 @@ jobs:
         ruby: [ruby, jruby, truffleruby]
     runs-on: ubuntu-latest
     env:
-      YARP_FFI_BACKEND: "true"
+      PRISM_FFI_BACKEND: "true"
     steps:
       - uses: actions/checkout@v3
-      # The Gemfile.lock is different with YARP_FFI_BACKEND=true for CRuby
+      # The Gemfile.lock is different with PRISM_FFI_BACKEND=true for CRuby
       - run: rm Gemfile.lock
         if: matrix.ruby == 'ruby'
       - name: Set up Ruby
@@ -92,7 +92,7 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
       env:
-        YARP_DEBUG_MODE_BUILD: "1"
+        PRISM_DEBUG_MODE_BUILD: "1"
 
   build-without-assertions:
     strategy:
@@ -122,7 +122,7 @@ jobs:
         ruby-version: jruby
         bundler-cache: true
     - name: Run Java Loader test
-      run: YARP_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
+      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
 
   lex-ruby:
     runs-on: ubuntu-latest
@@ -164,7 +164,7 @@ jobs:
     - name: Serialized size stats with all fields
       run: bundle exec rake serialized_size:topgems
     - name: Recompile with only semantic fields
-      run: YARP_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake clobber compile
+      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake clobber compile
     - name: Serialized size stats with only semantic fields
       run: bundle exec rake serialized_size:topgems
 
@@ -236,8 +236,8 @@ jobs:
         name: gem-package
         path: pkg
     - run: |
-        gem install --local pkg/yarp-*.gem
-        gem list -d yarp
+        gem install --local pkg/prism-*.gem
+        gem list -d prism
       shell: bash
     - name: Run tests
       run: |

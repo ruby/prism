@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'ruby/yarp'
+    if: github.repository == 'ruby/prism'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
