@@ -551,13 +551,8 @@ impl<'pr> ConstantId<'pr> {{
     pub fn as_slice(&self) -> &'pr [u8] {{
         unsafe {{
             let pool = &(*self.parser.as_ptr()).constant_pool;
-            for i in 0..pool.capacity {{
-                let constant = &(*pool.constants.add(i.try_into().unwrap()));
-                if constant.id() == self.id {{
-                    return std::slice::from_raw_parts(constant.start, constant.length);
-                }}
-            }}
-            panic!("Unable to locate constant id");
+            let constant = &(*pool.constants.add((self.id - 1).try_into().unwrap()));
+            std::slice::from_raw_parts(constant.start, constant.length)
         }}
     }}
 }}

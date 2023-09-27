@@ -42,19 +42,23 @@ void pm_constant_id_list_free(pm_constant_id_list_t *list);
 typedef struct {
     unsigned int id: 31;
     bool owned: 1;
+    uint32_t hash;
+} pm_constant_pool_bucket_t;
+
+typedef struct {
     const uint8_t *start;
     size_t length;
-    uint32_t hash;
 } pm_constant_t;
 
 typedef struct {
+    pm_constant_pool_bucket_t *buckets;
     pm_constant_t *constants;
     uint32_t size;
     uint32_t capacity;
 } pm_constant_pool_t;
 
 // Define an empty constant pool.
-#define PM_CONSTANT_POOL_EMPTY ((pm_constant_pool_t) { .constants = NULL, .size = 0, .capacity = 0 })
+#define PM_CONSTANT_POOL_EMPTY ((pm_constant_pool_t) { .buckets = NULL, .constants = NULL, .size = 0, .capacity = 0 })
 
 // Initialize a new constant pool with a given capacity.
 bool pm_constant_pool_init(pm_constant_pool_t *pool, uint32_t capacity);
