@@ -1,8 +1,8 @@
-@ ProgramNode (location: (1,0)-(168,16))
+@ ProgramNode (location: (1,0)-(170,20))
 ├── locals: [:a, :c, :foo]
 └── statements:
-    @ StatementsNode (location: (1,0)-(168,16))
-    └── body: (length: 62)
+    @ StatementsNode (location: (1,0)-(170,20))
+    └── body: (length: 63)
         ├── @ DefNode (location: (1,0)-(2,3))
         │   ├── name: :foo
         │   ├── name_loc: (1,4)-(1,7) = "foo"
@@ -1624,19 +1624,50 @@
         │   │   @ IntegerNode (location: (167,6)-(167,7))
         │   │   └── flags: decimal
         │   └── operator_loc: (167,4)-(167,5) = "="
-        └── @ DefNode (location: (168,0)-(168,16))
-            ├── name: :bar
-            ├── name_loc: (168,8)-(168,11) = "bar"
-            ├── receiver:
-            │   @ LocalVariableReadNode (location: (168,4)-(168,7))
-            │   ├── name: :foo
-            │   └── depth: 0
-            ├── parameters: ∅
+        ├── @ DefNode (location: (168,0)-(168,16))
+        │   ├── name: :bar
+        │   ├── name_loc: (168,8)-(168,11) = "bar"
+        │   ├── receiver:
+        │   │   @ LocalVariableReadNode (location: (168,4)-(168,7))
+        │   │   ├── name: :foo
+        │   │   └── depth: 0
+        │   ├── parameters: ∅
+        │   ├── body: ∅
+        │   ├── locals: []
+        │   ├── def_keyword_loc: (168,0)-(168,3) = "def"
+        │   ├── operator_loc: (168,7)-(168,8) = "."
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── end_keyword_loc: (168,13)-(168,16) = "end"
+        └── @ DefNode (location: (170,0)-(170,20))
+            ├── name: :foo
+            ├── name_loc: (170,4)-(170,7) = "foo"
+            ├── receiver: ∅
+            ├── parameters:
+            │   @ ParametersNode (location: (170,8)-(170,15))
+            │   ├── requireds: (length: 0)
+            │   ├── optionals: (length: 0)
+            │   ├── rest: ∅
+            │   ├── posts: (length: 0)
+            │   ├── keywords: (length: 1)
+            │   │   └── @ KeywordParameterNode (location: (170,8)-(170,15))
+            │   │       ├── name: :x
+            │   │       ├── name_loc: (170,8)-(170,10) = "x:"
+            │   │       └── value:
+            │   │           @ StringNode (location: (170,10)-(170,15))
+            │   │           ├── flags: ∅
+            │   │           ├── opening_loc: (170,10)-(170,12) = "%("
+            │   │           ├── content_loc: (170,12)-(170,14) = "xx"
+            │   │           ├── closing_loc: (170,14)-(170,15) = ")"
+            │   │           └── unescaped: "xx"
+            │   ├── keyword_rest: ∅
+            │   └── block: ∅
             ├── body: ∅
-            ├── locals: []
-            ├── def_keyword_loc: (168,0)-(168,3) = "def"
-            ├── operator_loc: (168,7)-(168,8) = "."
+            ├── locals: [:x]
+            ├── def_keyword_loc: (170,0)-(170,3) = "def"
+            ├── operator_loc: ∅
             ├── lparen_loc: ∅
             ├── rparen_loc: ∅
             ├── equal_loc: ∅
-            └── end_keyword_loc: (168,13)-(168,16) = "end"
+            └── end_keyword_loc: (170,17)-(170,20) = "end"

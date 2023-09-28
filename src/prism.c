@@ -7106,7 +7106,8 @@ parser_lex(pm_parser_t *parser) {
                     else if(
                         lex_state_beg_p(parser) ||
                         (lex_state_p(parser, PM_LEX_STATE_FITEM) && (peek(parser) == 's')) ||
-                        lex_state_spcarg_p(parser, space_seen)
+                        lex_state_spcarg_p(parser, space_seen) ||
+                        parser->in_keyword_arg
                     ) {
                         if (!parser->encoding.alnum_char(parser->current.end, parser->end - parser->current.end)) {
                             lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
