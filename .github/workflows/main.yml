@@ -169,6 +169,10 @@ jobs:
       run: bundle exec rake serialized_size:topgems
 
   memcheck:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.2", "head"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -196,7 +200,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: head
+        ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
