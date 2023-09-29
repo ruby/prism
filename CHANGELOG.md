@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.13.0] - 2023-09-29
+
+### Added
+
+- `BEGIN {}` blocks are only allowed at the top-level, and will now provide a syntax error if they are not.
+- Numbered parameters are not allowed in block parameters, and will now provide a syntax error if they are.
+- Many more Ruby modules and classes are now documented. Also, many have been moved into their own files and autoloaded so that initial boot time of the gem is much faster.
+- `PM_TOKEN_METHOD_NAME` is introduced, used to indicate an identifier that if definitely a method name because it has an `!` or `?` at the end.
+- In the C API, arrays, assocs, and hashes now can have the `PM_NODE_FLAG_STATIC_LITERAL` flag attached if they can be compiled statically. This is used in CRuby, for example, to determine if a `duphash`/`duparray` instruction can be used as opposed to a `newhash`/`newarray`.
+- `Node#type` is introduced, which returns a symbol representing the type of the node. This is useful for case comparisons when you have to compare against multiple types.
+
+### Changed
+
+- **BREAKING**: Everything has been renamed to `prism` instead of `yarp`. The `yp_`/`YP_` prefix in the C API has been changed to `pm_`/`PM_`. For the most part, everything should be find/replaceable.
+- **BREAKING**: `BlockArgumentNode` nodes now go into the `block` field on `CallNode` nodes, in addition to the `BlockNode` nodes that used to be there. Hopefully this makes it more consistent to compile/deal with in general, but it does mean it can be a surprising breaking change.
+- Escaped whitespace in `%w` lists is now properly unescaped.
+- `Node#pretty_print` now respects pretty print indentation.
+- `Dispatcher` was previously firing `_leave` events in the incorrect order. This has now been fixed.
+- **BREAKING**: `Visitor` has now been split into `Visitor` and `Compiler`. The visitor visits nodes but doesn't return anything from the visit methods. It is suitable for taking action based on the tree, but not manipulating the tree itself. The `Compiler` visits nodes and returns the computed value up the tree. It is suitable for compiling the tree into another format. As such, `MutationVisitor` has been renamed to `MutationCompiler`.
+
 ## [0.12.0] - 2023-09-15
 
 ### Added
