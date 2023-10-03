@@ -55,6 +55,20 @@ struct NodeField {
 }
 
 #[derive(Debug, Deserialize)]
+struct FlagValue {
+    name: String,
+    comment: String
+}
+
+#[derive(Debug, Deserialize)]
+struct Flags {
+    name: String,
+
+    #[serde(default)]
+    values: Vec<FlagValue>,
+}
+
+#[derive(Debug, Deserialize)]
 struct Node {
     name: String,
 
@@ -66,7 +80,8 @@ struct Node {
 
 #[derive(Debug, Deserialize)]
 struct Config {
-    nodes: Vec<Node>
+    nodes: Vec<Node>,
+    flags: Vec<Flags>,
 }
 
 /// The main function for the build script. This will be run by Cargo when
@@ -121,6 +136,39 @@ fn type_name(name: &str) -> String {
             result.push('_');
         }
         result.push(char.to_uppercase().next().unwrap());
+    }
+
+    result
+}
+
+/// Returns the name of the C enum constant from the given flag name and value.
+fn enum_const_name(name: &str, value: &str) -> String {
+    let mut result = String::with_capacity(8 + name.len() + value.len());
+    result.push_str("PM");
+
+    for char in name.chars() {
+        if char.is_uppercase() {
+            result.push('_');
+        }
+        result.extend(char.to_uppercase());
+    }
+
+    result.push('_');
+    result.push_str(value());
+
+    result
+}
+
+/// Returns the name of the C enum type from the given flag name.
+fn enum_type_name(name: &str) -> String {
+    let mut result = String::with_capacity(8 + name.len());
+    result.push_str("pm");
+
+    for char in name.chars() {
+        if char.is_uppercase() {
+            result.push('_');
+        }
+        result.extend(char.to_lowercase());
     }
 
     result
@@ -619,6 +667,13 @@ impl std::fmt::Debug for ConstantList<'_> {{
 
     for node in &config.nodes {
         writeln!(file, "const {}: u16 = pm_node_type::{} as u16;", type_name(&node.name), type_name(&node.name))?;
+    }
+    writeln!(file)?;
+    for flag in &config.flags {
+        for value in &flag.values {
+            let const_name = enum_const_name(&flag.name, &value.name);
+            writeln!(file, "const {}: u16 = {}::{} as u16;", &const_name, enum_type_name(&flag.name), &const_name)?;
+        }
     }
     writeln!(file)?;
 
