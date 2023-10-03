@@ -154,7 +154,7 @@ fn enum_const_name(name: &str, value: &str) -> String {
     }
 
     result.push('_');
-    result.push_str(value());
+    result.push_str(value);
 
     result
 }
@@ -174,8 +174,20 @@ fn enum_type_name(name: &str) -> String {
     result
 }
 
+/// Returns the accessor function name from the given flag value.
+fn accessor_func_name(value: &str) -> String {
+    let mut result = String::with_capacity(8 + value.len());
+    result.push_str("is_");
+
+    for char in value.chars() {
+        result.extend(char.to_lowercase());
+    }
+
+    result
+}
+
 /// Write the generated struct for the node to the file.
-fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Error>> {
+fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<dyn std::error::Error>> {
     let mut example = false;
 
     for line in node.comment.lines() {
@@ -318,9 +330,22 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Flags => {
-                writeln!(file, "    pub fn {}(&self) -> pm_node_flags_t {{", field.name)?;
+                let our_flags = flags.iter().filter(|f| &f.name == field.kind.as_ref().unwrap()).collect::<Vec<_>>();
+                assert!(our_flags.len() == 1);
+
+                writeln!(file, "    fn {}(&self) -> pm_node_flags_t {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
+
+                for flag in &our_flags {
+                    for value in &flag.values {
+                        writeln!(file, "    /// {}", value.comment)?;
+                        writeln!(file, "    #[must_use]")?;
+                        writeln!(file, "    pub fn {}(&self) -> bool {{", accessor_func_name(&value.name))?;
+                        writeln!(file, "        (self.{}() & {}) != 0", field.name, enum_const_name(&flag.name, &value.name))?;
+                        writeln!(file, "    }}")?;
+                    }
+                }
             }
         }
     }
@@ -758,7 +783,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file)?;
 
     for node in &config.nodes {
-        write_node(&mut file, node)?;
+        write_node(&mut file, &config.flags, node)?;
         writeln!(file)?;
     }
 

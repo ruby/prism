@@ -413,4 +413,269 @@ end
         let result = parse(source.as_ref());
         assert!(!result.frozen_string_literals());
     }
+
+    #[test]
+    fn string_flags_test() {
+        let source = r#"
+# frozen_string_literal: true
+"foo"
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let string = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let string = string.as_string_node().unwrap();
+        assert!(string.is_frozen());
+
+        let source = r#"
+"foo"
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let string = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let string = string.as_string_node().unwrap();
+        assert!(!string.is_frozen());
+    }
+
+    #[test]
+    fn call_flags_test() {
+        let source = r#"
+x
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let call = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let call = call.as_call_node().unwrap();
+        assert!(call.is_variable_call());
+
+        let source = r#"
+x&.foo
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let call = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let call = call.as_call_node().unwrap();
+        assert!(call.is_safe_navigation());
+    }
+
+    #[test]
+    fn integer_flags_test() {
+        let source = r#"
+0b1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let i = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let i = i.as_integer_node().unwrap();
+        assert!(i.is_binary());
+        assert!(!i.is_decimal());
+        assert!(!i.is_octal());
+        assert!(!i.is_hexadecimal());
+
+        let source = r#"
+1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let i = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let i = i.as_integer_node().unwrap();
+        assert!(!i.is_binary());
+        assert!(i.is_decimal());
+        assert!(!i.is_octal());
+        assert!(!i.is_hexadecimal());
+
+        let source = r#"
+0o1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let i = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let i = i.as_integer_node().unwrap();
+        assert!(!i.is_binary());
+        assert!(!i.is_decimal());
+        assert!(i.is_octal());
+        assert!(!i.is_hexadecimal());
+
+        let source = r#"
+0x1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let i = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let i = i.as_integer_node().unwrap();
+        assert!(!i.is_binary());
+        assert!(!i.is_decimal());
+        assert!(!i.is_octal());
+        assert!(i.is_hexadecimal());
+    }
+
+    #[test]
+    fn range_flags_test() {
+        let source = r#"
+0..1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let range = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let range = range.as_range_node().unwrap();
+        assert!(!range.is_exclude_end());
+
+        let source = r#"
+0...1
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let range = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let range = range.as_range_node().unwrap();
+        assert!(range.is_exclude_end());
+    }
+
+    #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
+    #[test]
+    fn regex_flags_test() {
+        let source = r#"
+/a/i
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/x
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/m
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/e
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/n
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/s
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/u
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(regex.is_utf_8());
+        assert!(!regex.is_once());
+
+        let source = r#"
+/a/o
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let regex = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let regex = regex.as_regular_expression_node().unwrap();
+        assert!(!regex.is_ignore_case());
+        assert!(!regex.is_extended());
+        assert!(!regex.is_multi_line());
+        assert!(!regex.is_euc_jp());
+        assert!(!regex.is_ascii_8bit());
+        assert!(!regex.is_windows_31j());
+        assert!(!regex.is_utf_8());
+        assert!(regex.is_once());
+    }
 }
