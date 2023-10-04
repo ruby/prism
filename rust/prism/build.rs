@@ -386,18 +386,35 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
 fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     writeln!(file, "/// A trait for visiting the AST.")?;
     writeln!(file, "pub trait Visit<'pr> {{")?;
+    writeln!(file, "   /// Called prior to visiting a node with potential child nodes.")?;
+    writeln!(file, "   fn visit_branch_node_enter(&mut self, _node: Node<'pr>) {{")?;
+    writeln!(file, "   }}")?;
+    writeln!(file)?;
+    writeln!(file, "   /// Called after visiting a node with potential child nodes.")?;
+    writeln!(file, "   fn visit_branch_node_leave(&mut self) {{")?;
+    writeln!(file, "   }}")?;
+    writeln!(file)?;
+    writeln!(file, "   /// Called prior to visiting a node that cannot have child nodes.")?;
+    writeln!(file, "   fn visit_leaf_node_enter(&mut self, _node: Node<'pr>) {{")?;
+    writeln!(file, "   }}")?;
+    writeln!(file)?;
+    writeln!(file, "   /// Called after visiting a node that cannot have child nodes.")?;
+    writeln!(file, "   fn visit_leaf_node_leave(&mut self) {{")?;
+    writeln!(file, "   }}")?;
+    writeln!(file)?;
     writeln!(file, "   /// Visits a node.")?;
     writeln!(file, "   fn visit(&mut self, node: &Node<'pr>) {{")?;
     writeln!(file, "       match node {{")?;
 
     for node in &config.nodes {
-        writeln!(
-            file,
-            "           Node::{} {{ parser, pointer, marker }} => self.visit{}(&{} {{ parser: *parser, pointer: *pointer, marker: *marker }}),",
-            node.name,
-            struct_name(&node.name),
-            node.name
-        )?;
+        let has_child_nodes = node.fields.iter().any(|f| matches!(f.field_type, NodeFieldType::Node | NodeFieldType::OptionalNode | NodeFieldType::NodeList));
+        let (pre_func, post_func) = if has_child_nodes { ("visit_branch_node_enter", "visit_branch_node_leave") } else { ("visit_leaf_node_enter", "visit_leaf_node_leave") };
+        writeln!(file, "           Node::{} {{ parser, pointer, marker }} => {{", node.name)?;
+        writeln!(file, "               let concrete = {} {{ parser: *parser, pointer: *pointer, marker: *marker }};", node.name)?;
+        writeln!(file, "               self.{}(concrete.as_node());", pre_func)?;
+        writeln!(file, "               self.visit{}(&concrete);", struct_name(&node.name))?;
+        writeln!(file, "               self.{}();", post_func)?;
+        writeln!(file, "           }}")?;
     }
 
     writeln!(file, "       }}")?;

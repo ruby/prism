@@ -670,4 +670,95 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(regex.is_once());
     }
+
+    #[test]
+    fn visitor_traversal_test() {
+        use crate::{Node, Visit};
+
+        #[derive(Default)]
+        struct NodeCounts {
+            pre_parent: usize,
+            post_parent: usize,
+            pre_leaf: usize,
+            post_leaf: usize,
+        }
+
+        #[derive(Default)]
+        struct CountingVisitor {
+            counts: NodeCounts,
+        }
+
+        impl<'pr> Visit<'pr> for CountingVisitor {
+            fn visit_branch_node_enter(&mut self, _node: Node<'_>) {
+                self.counts.pre_parent += 1;
+            }
+
+            fn visit_branch_node_leave(&mut self) {
+                self.counts.post_parent += 1;
+            }
+
+            fn visit_leaf_node_enter(&mut self, _node: Node<'_>) {
+                self.counts.pre_leaf += 1;
+            }
+
+            fn visit_leaf_node_leave(&mut self) {
+                self.counts.post_leaf += 1;
+            }
+        }
+
+        let source = r#"
+module Example
+  x = call_func(3, 4)
+  y = x.call_func 5, 6
+end
+"#;
+        let result = parse(source.as_ref());
+        let node = result.node();
+        let mut visitor = CountingVisitor::default();
+        visitor.visit(&node);
+
+        assert_eq!(7, visitor.counts.pre_parent);
+        assert_eq!(7, visitor.counts.post_parent);
+        assert_eq!(6, visitor.counts.pre_leaf);
+        assert_eq!(6, visitor.counts.post_leaf);
+    }
+
+    #[test]
+    fn visitor_lifetime_test() {
+        use crate::{Node, Visit};
+
+        #[derive(Default)]
+        struct StackingNodeVisitor<'a> {
+            stack: Vec<Node<'a>>,
+            max_depth: usize,
+        }
+
+        impl<'pr> Visit<'pr> for StackingNodeVisitor<'pr> {
+            fn visit_branch_node_enter(&mut self, node: Node<'pr>) {
+                self.stack.push(node);
+            }
+
+            fn visit_branch_node_leave(&mut self) {
+                self.stack.pop();
+            }
+
+            fn visit_leaf_node_leave(&mut self) {
+                self.max_depth = self.max_depth.max(self.stack.len());
+            }
+        }
+
+        let source = r#"
+module Example
+  x = call_func(3, 4)
+  y = x.call_func 5, 6
+end
+"#;
+        let result = parse(source.as_ref());
+        let node = result.node();
+        let mut visitor = StackingNodeVisitor::default();
+        visitor.visit(&node);
+
+        assert_eq!(0, visitor.stack.len());
+        assert_eq!(5, visitor.max_depth);
+    }
 }
