@@ -50,7 +50,7 @@ impl<'pr> Diagnostic<'pr> {
     #[must_use]
     pub fn message(&self) -> &str {
         unsafe {
-            let message: *mut c_char = self.diagnostic.as_ref().message as *mut c_char;
+            let message: *mut c_char = self.diagnostic.as_ref().message.cast_mut();
             CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
         }
     }
