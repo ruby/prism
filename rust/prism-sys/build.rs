@@ -75,8 +75,10 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_type("pm_parser_t")
         .allowlist_type("pm_string_t")
         .allowlist_type(r#"^pm_\w+_node_t"#)
+        .allowlist_type(r#"^pm_\w+_flags"#)
         // Enums
         .rustified_non_exhaustive_enum("pm_comment_type_t")
+        .rustified_non_exhaustive_enum(r#"pm_\w+_flags"#)
         .rustified_non_exhaustive_enum("pm_node_type")
         .rustified_non_exhaustive_enum("pm_pack_encoding")
         .rustified_non_exhaustive_enum("pm_pack_endian")

@@ -55,6 +55,20 @@ struct NodeField {
 }
 
 #[derive(Debug, Deserialize)]
+struct FlagValue {
+    name: String,
+    comment: String
+}
+
+#[derive(Debug, Deserialize)]
+struct Flags {
+    name: String,
+
+    #[serde(default)]
+    values: Vec<FlagValue>,
+}
+
+#[derive(Debug, Deserialize)]
 struct Node {
     name: String,
 
@@ -66,7 +80,8 @@ struct Node {
 
 #[derive(Debug, Deserialize)]
 struct Config {
-    nodes: Vec<Node>
+    nodes: Vec<Node>,
+    flags: Vec<Flags>,
 }
 
 /// The main function for the build script. This will be run by Cargo when
@@ -126,8 +141,53 @@ fn type_name(name: &str) -> String {
     result
 }
 
+/// Returns the name of the C enum constant from the given flag name and value.
+fn enum_const_name(name: &str, value: &str) -> String {
+    let mut result = String::with_capacity(8 + name.len() + value.len());
+    result.push_str("PM");
+
+    for char in name.chars() {
+        if char.is_uppercase() {
+            result.push('_');
+        }
+        result.extend(char.to_uppercase());
+    }
+
+    result.push('_');
+    result.push_str(value);
+
+    result
+}
+
+/// Returns the name of the C enum type from the given flag name.
+fn enum_type_name(name: &str) -> String {
+    let mut result = String::with_capacity(8 + name.len());
+    result.push_str("pm");
+
+    for char in name.chars() {
+        if char.is_uppercase() {
+            result.push('_');
+        }
+        result.extend(char.to_lowercase());
+    }
+
+    result
+}
+
+/// Returns the accessor function name from the given flag value.
+fn accessor_func_name(value: &str) -> String {
+    let mut result = String::with_capacity(8 + value.len());
+    result.push_str("is_");
+
+    for char in value.chars() {
+        result.extend(char.to_lowercase());
+    }
+
+    result
+}
+
 /// Write the generated struct for the node to the file.
-fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Error>> {
+fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<dyn std::error::Error>> {
     let mut example = false;
 
     for line in node.comment.lines() {
@@ -270,9 +330,22 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Flags => {
-                writeln!(file, "    pub fn {}(&self) -> pm_node_flags_t {{", field.name)?;
+                let our_flags = flags.iter().filter(|f| &f.name == field.kind.as_ref().unwrap()).collect::<Vec<_>>();
+                assert!(our_flags.len() == 1);
+
+                writeln!(file, "    fn {}(&self) -> pm_node_flags_t {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
+
+                for flag in &our_flags {
+                    for value in &flag.values {
+                        writeln!(file, "    /// {}", value.comment)?;
+                        writeln!(file, "    #[must_use]")?;
+                        writeln!(file, "    pub fn {}(&self) -> bool {{", accessor_func_name(&value.name))?;
+                        writeln!(file, "        (self.{}() & {}) != 0", field.name, enum_const_name(&flag.name, &value.name))?;
+                        writeln!(file, "    }}")?;
+                    }
+                }
             }
         }
     }
@@ -621,6 +694,13 @@ impl std::fmt::Debug for ConstantList<'_> {{
         writeln!(file, "const {}: u16 = pm_node_type::{} as u16;", type_name(&node.name), type_name(&node.name))?;
     }
     writeln!(file)?;
+    for flag in &config.flags {
+        for value in &flag.values {
+            let const_name = enum_const_name(&flag.name, &value.name);
+            writeln!(file, "const {}: u16 = {}::{} as u16;", &const_name, enum_type_name(&flag.name), &const_name)?;
+        }
+    }
+    writeln!(file)?;
 
     writeln!(file, "/// An enum representing the different kinds of nodes that can be parsed.")?;
     writeln!(file, "pub enum Node<'pr> {{")?;
@@ -703,7 +783,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file)?;
 
     for node in &config.nodes {
-        write_node(&mut file, node)?;
+        write_node(&mut file, &config.flags, node)?;
         writeln!(file)?;
     }
 
