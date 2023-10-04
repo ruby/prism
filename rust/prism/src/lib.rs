@@ -186,7 +186,7 @@ impl<'pr> ParseResult<'pr> {
 
     /// Returns the root node of the parse result.
     #[must_use]
-    pub fn node(&self) -> Node<'pr> {
+    pub fn node(&self) -> Node<'_> {
         Node::new(self.parser, self.node.as_ptr())
     }
 }
