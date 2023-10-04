@@ -412,16 +412,7 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
         writeln!(file)?;
         writeln!(file, "/// The default visitor implementation for a `{}` node.", node.name)?;
 
-        let mut children = false;
-        for field in &node.fields {
-            match field.field_type {
-                NodeFieldType::Node | NodeFieldType::OptionalNode | NodeFieldType::NodeList => {
-                    children = true;
-                    break;
-                },
-                _ => {}
-            }
-        }
+        let children = node.fields.iter().any(|f| matches!(f.field_type, NodeFieldType::Node | NodeFieldType::OptionalNode | NodeFieldType::NodeList));
 
         if children {
             writeln!(file, "pub fn visit{}<'pr, V>(visitor: &mut V, node: &{}<'pr>)", struct_name(&node.name), node.name)?;
