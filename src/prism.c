@@ -5277,10 +5277,10 @@ parser_lex_frozen_string_literal_comment(pm_parser_t *parser) {
     const uint8_t *cursor = parser->current.start + 1;
     const uint8_t *end = parser->current.end;
 
-    size_t key_length = strlen("frozen_string_literal");
+    size_t key_length = strlen("frozen_string_literal:");
     if (key_length > (size_t) (end - cursor)) return;
 
-    const uint8_t *cursor_limit = cursor + (end - cursor) - key_length + 1;
+    const uint8_t *cursor_limit = cursor + (end - cursor) - key_length;
 
     while ((cursor = pm_memchr(cursor, 'f', (size_t) (cursor_limit - cursor), parser->encoding_changed, &parser->encoding)) != NULL) {
         if (memcmp(cursor, "frozen_string_literal", key_length) == 0) {
