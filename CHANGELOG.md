@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.14.0] - 2023-10-13
+
+### Added
+
+- Syntax errors are added for invalid lambda local semicolon placement.
+- Lambda locals are now checked for duplicate names.
+- Destructured parameters are now checked for duplicate names.
+- `Constant{Read,Path,PathTarget}Node#full_name` and `Constant{Read,Path,PathTarget}Node#full_name_parts` are added to walk constant paths for you to find the full name of the constant.
+- Syntax errors are added when assigning to a numbered parameter.
+- `Node::type` is added, which matches the `Node#type` API.
+- Magic comments are now parsed as part of the parsing process and a new field is added in the form of `ParseResult#magic_comments` to access them.
+
+### Changed
+
+- **BREAKING**: `Call*Node#name` methods now return symbols instead of strings.
+- **BREAKING**: For loops now have their index value considered as part of the body, so depths of local variable assignments will be increased by 1.
+- Tilde heredocs now split up their lines into multiple string nodes to make them easier to dedent.
+
 ## [0.13.0] - 2023-09-29
 
 ### Added
@@ -161,7 +179,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.13.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/ruby/prism/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/ruby/prism/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/ruby/prism/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/ruby/prism/compare/v0.10.0...v0.11.0
