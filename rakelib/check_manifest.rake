@@ -9,6 +9,7 @@ task :check_manifest => [:templates] do
     .github
     .cache
     .ruby-lsp
+    .vscode
     autom4te.cache
     bin
     build
