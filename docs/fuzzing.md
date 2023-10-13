@@ -6,8 +6,7 @@ We use fuzzing to test the various entrypoints to the library. The fuzzer we use
 fuzz
 ├── corpus
 │   ├── parse             fuzzing corpus for parsing (a symlink to our fixtures)
-│   ├── regexp            fuzzing corpus for regexp
-│   └── unescape          fuzzing corpus for unescaping strings
+│   └── regexp            fuzzing corpus for regexp
 ├── dict                  a AFL++ dictionary containing various tokens
 ├── docker
 │   └── Dockerfile        for building a container with the fuzzer toolchain
@@ -17,11 +16,9 @@ fuzz
 ├── parse.sh              script to run parsing fuzzer
 ├── regexp.c              fuzz handler for regular expression parsing
 ├── regexp.sh             script to run regexp fuzzer
-├── tools
-│   ├── backtrace.sh      generates backtrace files for a crash directory
-│   └── minimize.sh       generates minimized crash or hang files
-├── unescape.c            fuzz handler for unescape functionality
-└── unescape.sh           script to run unescape fuzzer
+└── tools
+    ├── backtrace.sh      generates backtrace files for a crash directory
+    └── minimize.sh       generates minimized crash or hang files
 ```
 
 ## Usage
@@ -30,14 +27,12 @@ There are currently three fuzzing targets
 
 - `pm_parse_serialize` (parse)
 - `pm_regexp_named_capture_group_names` (regexp)
-- `pm_unescape_manipulate_string` (unescape)
 
 Respectively, fuzzing can be performed with
 
 ```
 make fuzz-run-parse
 make fuzz-run-regexp
-make fuzz-run-unescape
 ```
 
 To end a fuzzing job, interrupt with CTRL+C. To enter a container with the fuzzing toolchain and debug utilities, run
@@ -60,7 +55,7 @@ Note, that this may make reproducing bugs difficult as they may depend on memory
 
 ```
 make fuzz-debug # enter the docker container with build tools
-make build/fuzz.heisenbug.parse # or .unescape or .regexp
+make build/fuzz.heisenbug.parse # or .regexp
 ./build/fuzz.heisenbug.parse path-to-problem-input
 ```
 
