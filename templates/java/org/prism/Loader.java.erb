@@ -109,6 +109,7 @@ public class Loader {
         this.encodingCharset = getEncodingCharset(this.encodingName);
 
         ParseResult.Comment[] comments = loadComments();
+        ParseResult.MagicComment[] magicComments = loadMagicComments();
         ParseResult.Error[] errors = loadSyntaxErrors();
         ParseResult.Warning[] warnings = loadWarnings();
 
@@ -127,7 +128,7 @@ public class Loader {
         MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
         node.accept(visitor);
 
-        return new ParseResult(node, comments, errors, warnings);
+        return new ParseResult(node, comments, magicComments, errors, warnings);
     }
 
     private byte[] loadEmbeddedString() {
@@ -165,6 +166,21 @@ public class Loader {
         }
 
         return comments;
+    }
+
+    private ParseResult.MagicComment[] loadMagicComments() {
+        int count = loadVarInt();
+        ParseResult.MagicComment[] magicComments = new ParseResult.MagicComment[count];
+
+        for (int i = 0; i < count; i++) {
+            Nodes.Location keyLocation = loadLocation();
+            Nodes.Location valueLocation = loadLocation();
+
+            ParseResult.MagicComment magicComment = new ParseResult.MagicComment(keyLocation, valueLocation);
+            magicComments[i] = magicComment;
+        }
+
+        return magicComments;
     }
 
     private ParseResult.Error[] loadSyntaxErrors() {

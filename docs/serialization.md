@@ -31,6 +31,7 @@ This drastically cuts down on the size of the serialized string, especially when
 ### comment
 
 The comment type is one of:
+
 * 0=`INLINE` (`# comment`)
 * 1=`EMBEDDED_DOCUMENT` (`=begin`/`=end`)
 * 2=`__END__` (after `__END__`)
@@ -39,6 +40,13 @@ The comment type is one of:
 | --- | --- |
 | `1` | comment type |
 | location | the location in the source of this comment |
+
+### magic comment
+
+| # bytes | field |
+| --- | --- |
+| location | the location of the key of the magic comment |
+| location | the location of the value of the magic comment |
 
 ### diagnostic
 
@@ -66,6 +74,8 @@ The header is structured like the following table:
 | string | the encoding name |
 | varint | number of comments |
 | comment* | comments |
+| varint | number of magic comments |
+| magic comment* | magic comments |
 | varint | number of errors |
 | diagnostic* | errors |
 | varint | number of warnings |

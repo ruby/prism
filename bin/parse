@@ -22,6 +22,7 @@ value = value.accept(Prism::DesugarCompiler.new) if ENV["DESUGAR"]
 
 parts = {}
 parts["Comments"] = result.comments if result.comments.any?
+parts["Magic comments"] = result.magic_comments if result.magic_comments.any?
 parts["Warnings"] = result.warnings if result.warnings.any?
 parts["Errors"] = result.errors if result.errors.any?
 
