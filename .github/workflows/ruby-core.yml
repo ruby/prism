@@ -19,18 +19,11 @@ jobs:
         with:
           ruby-version: head
           bundler: none
-      - name: Save latest buildable revision to environment
-        run: echo "REF=$(ruby -e 'print RUBY_REVISION')" >> $GITHUB_ENV
       - uses: actions/checkout@v3
         with:
           repository: ruby/ruby
           path: ruby/ruby
           fetch-depth: 1
-      - name: Checkout the latest buildable revision
-        run: |
-          git fetch --depth=1 origin ${{ env.REF }}
-          git switch -c ${{ env.REF }}
-        working-directory: ruby/ruby
       - name: Install libraries
         run: |
           set -x
