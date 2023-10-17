@@ -1,0 +1,53 @@
+name: Ruby Core
+
+concurrency:
+  group: "${{github.workflow}}-${{github.ref}}"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-all:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up latest ruby head
+        uses: ruby/setup-ruby@250fcd6a742febb1123a77a841497ccaa8b9e939 # v1.152.0
+        with:
+          ruby-version: head
+          bundler: none
+      - name: Save latest buildable revision to environment
+        run: echo "REF=$(ruby -e 'print RUBY_REVISION')" >> $GITHUB_ENV
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3.1.0
+        with:
+          repository: ruby/ruby
+          path: ruby/ruby
+          fetch-depth: 1
+      - name: Checkout the latest buildable revision
+        run: |
+          git fetch --depth=1 origin ${{ env.REF }}
+          git switch -c ${{ env.REF }}
+        working-directory: ruby/ruby
+      - name: Install libraries
+        run: |
+          set -x
+          sudo apt-get update -q || :
+          sudo apt-get install --no-install-recommends -q -y build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev autoconf ruby
+      - name: Build Ruby
+        run: |
+          autoconf
+          ./configure -C --disable-install-doc
+          make -j2
+        working-directory: ruby/ruby
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3.1.0
+        with:
+          path: ruby/prism
+          fetch-depth: 1
+      - run: tool/sync_default_gems.rb prism
+        working-directory: ruby/ruby
+      - name: make test-all
+        run: make -j2 -s test-all TESTS="prism --no-retry"
+        working-directory: ruby/ruby
