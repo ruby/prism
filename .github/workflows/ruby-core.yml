@@ -15,13 +15,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Set up latest ruby head
-        uses: ruby/setup-ruby@250fcd6a742febb1123a77a841497ccaa8b9e939 # v1.152.0
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: head
           bundler: none
       - name: Save latest buildable revision to environment
         run: echo "REF=$(ruby -e 'print RUBY_REVISION')" >> $GITHUB_ENV
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3.1.0
+      - uses: actions/checkout@v3
         with:
           repository: ruby/ruby
           path: ruby/ruby
@@ -42,7 +42,7 @@ jobs:
           ./configure -C --disable-install-doc
           make -j2
         working-directory: ruby/ruby
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3.1.0
+      - uses: actions/checkout@v3
         with:
           path: ruby/prism
           fetch-depth: 1
