@@ -40,16 +40,14 @@ size_t pm_constant_id_list_memsize(pm_constant_id_list_t *list);
 void pm_constant_id_list_free(pm_constant_id_list_t *list);
 
 // Constant pool buckets can have a couple of different types.
-typedef unsigned int pm_constant_pool_bucket_type_t;
-
-// By default, each constant is a slice of the source.
-static const pm_constant_pool_bucket_type_t PM_CONSTANT_POOL_BUCKET_DEFAULT = 0;
-
-// An owned constant is one for which memory has been allocated.
-static const pm_constant_pool_bucket_type_t PM_CONSTANT_POOL_BUCKET_OWNED = 1;
-
-// A constant constant is known at compile time.
-static const pm_constant_pool_bucket_type_t PM_CONSTANT_POOL_BUCKET_CONSTANT = 2;
+typedef enum {
+    // By default, each constant is a slice of the source.
+    PM_CONSTANT_POOL_BUCKET_DEFAULT = 0,
+    // An owned constant is one for which memory has been allocated.
+    PM_CONSTANT_POOL_BUCKET_OWNED = 1,
+    // A constant constant is known at compile time.
+    PM_CONSTANT_POOL_BUCKET_CONSTANT = 2
+} pm_constant_pool_bucket_type_t;
 
 typedef struct {
     unsigned int id: 30;
