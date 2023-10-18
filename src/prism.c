@@ -107,6 +107,7 @@ debug_lex_mode(pm_parser_t *parser) {
             case PM_LEX_EMBEXPR: fprintf(stderr, "EMBEXPR"); break;
             case PM_LEX_EMBVAR: fprintf(stderr, "EMBVAR"); break;
             case PM_LEX_HEREDOC: fprintf(stderr, "HEREDOC"); break;
+            case PM_LEX_SYMBOL: fprintf(stderr, "SYMBOL"); break;
             case PM_LEX_LIST: fprintf(stderr, "LIST (terminator=%c, interpolation=%d)", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); break;
             case PM_LEX_REGEXP: fprintf(stderr, "REGEXP (terminator=%c)", lex_mode->as.regexp.terminator); break;
             case PM_LEX_STRING: fprintf(stderr, "STRING (terminator=%c, interpolation=%d)", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); break;
@@ -6019,7 +6020,11 @@ lex_identifier(pm_parser_t *parser, bool previous_command_start) {
                 }
             }
 
-            return PM_TOKEN_METHOD_NAME;
+            if (lex_state_p(parser, PM_LEX_STATE_LABEL)) {
+                return PM_TOKEN_METHOD_NAME;
+            } else {
+                return PM_TOKEN_IDENTIFIER;
+            }
         }
 
         if (lex_state_p(parser, PM_LEX_STATE_FNAME) && peek_offset(parser, 1) != '~' && peek_offset(parser, 1) != '>' && (peek_offset(parser, 1) != '=' || peek_offset(parser, 2) == '>') && match(parser, '=')) {
@@ -7029,6 +7034,7 @@ parser_lex(pm_parser_t *parser) {
         case PM_LEX_DEFAULT:
         case PM_LEX_EMBEXPR:
         case PM_LEX_EMBVAR:
+        case PM_LEX_SYMBOL:
 
         // We have a specific named label here because we are going to jump back to
         // this location in the event that we have lexed a token that should not be
@@ -7374,7 +7380,7 @@ parser_lex(pm_parser_t *parser) {
                     parser->enclosure_nesting--;
                     pm_do_loop_stack_pop(parser);
 
-                    if ((parser->lex_modes.current->mode == PM_LEX_EMBEXPR) && (parser->brace_nesting == 0)) {
+                    if ((parser->lex_modes.current->mode == PM_LEX_EMBEXPR || parser->lex_modes.current->mode == PM_LEX_SYMBOL) && (parser->brace_nesting == 0)) {
                         lex_mode_pop(parser);
                         LEX(PM_TOKEN_EMBEXPR_END);
                     }
@@ -11179,7 +11185,9 @@ parse_symbol(pm_parser_t *parser, pm_lex_mode_t *lex_mode, pm_lex_state_t next_s
             case PM_TOKEN_NUMBERED_REFERENCE:
             case PM_TOKEN_BACK_REFERENCE:
             case PM_CASE_KEYWORD:
+                lex_mode_push(parser, (pm_lex_mode_t) { .mode = PM_LEX_SYMBOL });
                 parser_lex(parser);
+                lex_mode_pop(parser);
                 break;
             case PM_CASE_OPERATOR:
                 lex_state_set(parser, next_state == PM_LEX_STATE_NONE ? PM_LEX_STATE_ENDFN : next_state);

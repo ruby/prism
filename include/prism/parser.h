@@ -97,7 +97,10 @@ typedef struct pm_lex_mode {
 
         // This state is used when we are lexing a string or a string-like
         // token, as in string content with either quote or an xstring.
-        PM_LEX_STRING
+        PM_LEX_STRING,
+
+        // This state is used when we are lexing a symbol token.
+        PM_LEX_SYMBOL
     } mode;
 
     union {
