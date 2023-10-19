@@ -38,6 +38,20 @@ jobs:
       env:
         LANG: "C"
 
+  check_annotations:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.2"
+        bundler-cache: true
+    - name: Check annotations
+      run: |
+        bundle exec rake compile
+        bundle exec rake check_annotations
+
   build:
     strategy:
       fail-fast: false
