@@ -46,6 +46,8 @@ a.out
 /src/serialize.c
 /src/token_type.c
 /src/**/*.o
+/sig
+/rbi
 
 compile_commands.json
 .cache/
