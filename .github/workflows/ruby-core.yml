@@ -1,0 +1,46 @@
+name: Ruby Core
+
+concurrency:
+  group: "${{github.workflow}}-${{github.ref}}"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-all:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up latest ruby head
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+          bundler: none
+      - uses: actions/checkout@v3
+        with:
+          repository: ruby/ruby
+          path: ruby/ruby
+          fetch-depth: 1
+      - name: Install libraries
+        run: |
+          set -x
+          sudo apt-get update -q || :
+          sudo apt-get install --no-install-recommends -q -y build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev autoconf ruby
+      - name: Build Ruby
+        run: |
+          autoconf
+          ./configure -C --disable-install-doc
+          make -j2
+        working-directory: ruby/ruby
+      - uses: actions/checkout@v3
+        with:
+          path: ruby/prism
+          fetch-depth: 1
+      - run: tool/sync_default_gems.rb prism
+        working-directory: ruby/ruby
+      - name: make test-all
+        run: make -j2 -s test-all TESTS="prism --no-retry"
+        working-directory: ruby/ruby
