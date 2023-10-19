@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.15.1] - 2023-10-18
+
+### Changed
+
+- Fix compilation warning on assigning to bitfield.
+
+## [0.15.0] - 2023-10-18
+
+### Added
+
+- `BackReferenceReadNode#name` is now provided.
+- `Index{Operator,And,Or}WriteNode` are introduced, split out from `Call{Operator,And,Or}WriteNode` when the method is `[]`.
+
+### Changed
+
+- Ensure `PM_NODE_FLAG_COMMON_MASK` into a constant expression to fix compile errors.
+- `super(&arg)` is now fixed.
+- Ensure the last encoding flag on regular expressions wins.
+- Fix the common whitespace calculation when embedded expressions begin on a line.
+- Capture groups in regular expressions now scan the unescaped version to get the correct local variables.
+- `*` and `&` are added to the local table when `...` is found in the parameters of a method definition.
+
 ## [0.14.0] - 2023-10-13
 
 ### Added
@@ -179,7 +201,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.14.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.15.1...HEAD
+[0.15.1]: https://github.com/ruby/prism/compare/v0.15.0...v0.15.1
+[0.15.0]: https://github.com/ruby/prism/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ruby/prism/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/ruby/prism/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/ruby/prism/compare/v0.11.0...v0.12.0
