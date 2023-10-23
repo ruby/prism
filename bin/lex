@@ -17,7 +17,7 @@ else
   source = File.read(filepath)
 end
 
-pattern = "%-70s %-70s"
+pattern = "%-70s %-70s %-70s"
 
 ripper =
   begin
@@ -30,6 +30,7 @@ ripper =
   end
 
 prism = Prism.lex_compat(source, filepath)
+prism_new = Prism.lex(source, filepath)
 if prism.errors.any?
   puts "Errors lexing:"
   prism.errors.map do |error|
@@ -40,18 +41,20 @@ if prism.errors.any?
   puts "\n"
 end
 
-puts pattern % ["Ripper lex", "Prism lex"]
-puts pattern % ["-" * 70, "-" * 70]
+puts pattern % ["Ripper lex", "Prism compat lex", "Prism Lex"]
+puts pattern % ["-" * 70, "-" * 70, "-" * 70]
 
 prism_value = prism.value
+prism_new_value = prism_new.value
 
-[prism_value.length, ripper.length].max.times do |index|
+[prism_value.length, ripper.length, prism_new_value.length].max.times do |index|
   left = ripper[index]
   right = prism_value[index]
+  new = prism_new_value[index]
 
   color = left == right ? "38;5;102" : "1;31"
 
   if ENV["VERBOSE"] || (left != right)
-    puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect]
+    puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect, [new[0].type, [new[0].location.start_offset, new[0].location.length]]]
   end
 end
