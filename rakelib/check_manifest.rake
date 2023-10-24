@@ -15,6 +15,7 @@ task :check_manifest => [:templates] do
     build
     doc
     fuzz
+    javascript
     java
     pkg
     rakelib

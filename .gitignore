@@ -25,6 +25,12 @@ a.out
 /ext/prism/api_node.c
 /fuzz/output/
 /include/prism/ast.h
+/javascript/node_modules/
+/javascript/package-lock.json
+/javascript/src/deserialize.js
+/javascript/src/nodes.js
+/javascript/src/prism.wasm
+/javascript/types/
 /java/org/prism/AbstractNodeVisitor.java
 /java/org/prism/Loader.java
 /java/org/prism/Nodes.java

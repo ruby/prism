@@ -1,0 +1,15 @@
+{
+  "name": "@ruby/prism",
+  "version": "0.15.2",
+  "description": "Prism Ruby parser",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "prepublishOnly": "npm run type",
+    "test": "node test.js",
+    "type": "tsc --allowJs -d --emitDeclarationOnly --outDir types src/index.js"
+  },
+  "author": "Shopify <ruby@shopify.com>",
+  "license": "MIT"
+}

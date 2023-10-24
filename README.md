@@ -85,6 +85,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Encoding](docs/encoding.md)
 * [Fuzzing](docs/fuzzing.md)
 * [Heredocs](docs/heredocs.md)
+* [JavaScript](docs/javascript.md)
 * [Mapping](docs/mapping.md)
 * [Ripper](docs/ripper.md)
 * [Ruby API](docs/ruby_api.md)

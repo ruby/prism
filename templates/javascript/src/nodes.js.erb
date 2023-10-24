@@ -1,0 +1,109 @@
+<%-
+def prop(field)
+  field.name == "arguments" ? "arguments_" : field.name.gsub(/_([a-z])/) { $1.upcase }
+end
+
+def jstype(field)
+  case field
+  when Prism::NodeField then field.ruby_type
+  when Prism::OptionalNodeField then "#{field.ruby_type} | null"
+  when Prism::NodeListField then "Node[]"
+  when Prism::StringField then "string"
+  when Prism::ConstantField then "string"
+  when Prism::OptionalConstantField then "string | null"
+  when Prism::ConstantListField then "string[]"
+  when Prism::LocationField then "Location"
+  when Prism::OptionalLocationField then "Location | null"
+  when Prism::UInt32Field then "number"
+  when Prism::FlagsField then "number"
+  end
+end
+-%>
+<%- flags.each do |flag| -%>
+
+const <%= flag.name %> = {
+<%- flag.values.each_with_index do |value, index| -%>
+  <%= value.name %>: 1 << <%= index %>,
+<%- end -%>
+};
+<%- end -%>
+
+/**
+ * A location in the source code.
+ *
+ * @typedef {{ startOffset: number, length: number }} Location
+ */
+
+/**
+ * A generic node in the tree.
+ *
+ * @typedef {(<%= nodes.map(&:name).join("|") %>)} Node
+ */
+<%- nodes.each do |node| -%>
+
+/**
+<%= "#{node.comment.split("\n").map { |line| line.empty? ? " *" : " * #{line}" }.join("\n")}" %>
+ */
+export class <%= node.name -%> {
+  <%- node.fields.each do |field| -%>
+  /**
+   * @type <%= jstype(field) %>
+   */
+  <%= field.is_a?(Prism::FlagsField) ? "#flags" : prop(field) %>;
+
+  <%- end -%>
+  /**
+   * @type {Location}
+   */
+  location;
+
+  /**
+   * Construct a new <%= node.name %>.
+   *
+   <%- node.fields.each do |field| -%>
+   * @param {<%= jstype(field) %>} <%= prop(field) %>
+   <%- end -%>
+   * @param {Location} location
+   */
+  constructor(<%= (node.fields.map { |field| prop(field) } + ["location"]).join(", ") %>) {
+    <%- node.fields.each do |field| -%>
+    <%- if field.is_a?(Prism::FlagsField) -%>
+    this.#flags = flags;
+    <%- else -%>
+    this.<%= prop(field) %> = <%= prop(field) %>;
+    <%- end -%>
+    <%- end -%>
+    this.location = location;
+  }
+  <%- if (flags_field = node.fields.find { |field| field.is_a?(Prism::FlagsField) }) -%>
+  <%- flag = flags.find { |flag| flag.name == flags_field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag } -%>
+  <%- flag.values.each do |value| -%>
+
+  /**
+   * True if this node has the <%= value.name %> flag.
+   *
+   * @returns {boolean}
+   */
+  is<%= value.camelcase %>() {
+    return (this.#flags & <%= flag.name %>.<%= value.name %>) !== 0;
+  }
+  <%- end -%>
+  <%- end -%>
+
+  toJSON() {
+    return {
+      type: "<%= node.name %>",
+      <%- node.fields.each do |field| -%>
+      <%- if field.is_a?(Prism::FlagsField) -%>
+      flags: this.#flags,
+      <%- elsif field.name == "arguments" -%>
+      arguments: this.<%= prop(field) %>,
+      <%- else -%>
+      <%= prop(field) %>: this.<%= prop(field) %>,
+      <%- end -%>
+      <%- end -%>
+      location: this.location
+    };
+  }
+}
+<%- end -%>
