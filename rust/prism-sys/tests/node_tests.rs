@@ -1,7 +1,7 @@
 use std::{ffi::CString, mem::MaybeUninit};
 
-use prism_sys::{pm_parser_t, pm_parser_init, pm_parse, pm_parser_free};
-use prism_sys::{pm_node_type, pm_node_destroy};
+use prism_sys::{pm_node_destroy, pm_node_type};
+use prism_sys::{pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 #[test]
 fn node_test() {
