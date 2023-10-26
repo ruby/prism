@@ -11,3 +11,4 @@ gem "ffi", platform: %i[mri mswin mingw x64_mingw]
 group :memcheck do
   gem "ruby_memcheck", platform: %i[mri mswin mingw x64_mingw]
 end
+gem "rbs"
