@@ -1,0 +1,294 @@
+import * as nodes from "./nodes.js";
+
+const MAJOR_VERSION = 0;
+const MINOR_VERSION = 15;
+const PATCH_VERSION = 1;
+
+class SerializationBuffer {
+  constructor(source, array) {
+    this.source = source;
+    this.array = array;
+    this.index = 0;
+  }
+
+  readByte() {
+    const result = this.array[this.index];
+    this.index += 1;
+    return result;
+  }
+
+  readBytes(length) {
+    const result = this.array.slice(this.index, this.index + length);
+    this.index += length;
+    return result;
+  }
+
+  readString(length) {
+    return new TextDecoder().decode(this.readBytes(length));
+  }
+
+  // Read a 32-bit unsigned integer in little-endian format.
+  readUint32() {
+    const result = this.scanUint32(this.index);
+    this.index += 4;
+    return result;
+  }
+
+  scanUint32(offset) {
+    const bytes = this.array.slice(offset, offset + 4);
+    return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
+  }
+
+  readVarInt() {
+    let result = 0;
+    let shift = 0;
+
+    while (true) {
+      const byte = this.readByte();
+      result += (byte & 0x7f) << shift;
+      shift += 7;
+
+      if ((byte & 0x80) === 0) {
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  readLocation() {
+    return { startOffset: this.readVarInt(), length: this.readVarInt() };
+  }
+
+  readOptionalLocationField() {
+    if (this.readByte() != 0) {
+      return this.readLocation();
+    } else {
+      return null;
+    }
+  }
+
+  readStringField() {
+    const type = this.readByte();
+
+    switch (type) {
+      case 1: {
+        const startOffset = this.readVarInt();
+        const length = this.readVarInt();
+        return new TextDecoder().decode(this.source.slice(startOffset, startOffset + length));
+      }
+      case 2:
+        return this.readString(this.readVarInt());
+      default:
+        throw new Error(`Unknown serialized string type: ${type}`);
+    }
+  }
+
+  scanConstant(constantPoolOffset, constantIndex) {
+    const offset = constantPoolOffset + constantIndex * 8;
+    const startOffset = this.scanUint32(offset);
+    const length = this.scanUint32(offset + 4);
+
+    if (startOffset & (1 << 31)) {
+      startOffset &= (1 << 31) - 1;
+      return new TextDecoder().decode(this.array.slice(startOffset, startOffset + length));
+    } else {
+      return new TextDecoder().decode(this.source.slice(startOffset, startOffset + length));
+    }
+  }
+}
+
+/**
+ * A location in the source code.
+ *
+ * @typedef {{ startOffset: number, length: number }} Location
+ */
+
+/**
+ * A comment in the source code.
+ *
+ * @typedef {{ type: number, location: Location }} Comment
+ */
+
+/**
+ * A magic comment in the source code.
+ *
+ * @typedef {{ startLocation: Location, endLocation: Location }} MagicComment
+ */
+
+/**
+ * An error in the source code.
+ *
+ * @typedef {{ message: string, location: Location }} ParseError
+ */
+
+/**
+ * A warning in the source code.
+ *
+ * @typedef {{ message: string, location: Location }} ParseWarning
+ */
+
+/**
+ * The result of parsing the source code.
+ *
+ * @typedef {{ value: ProgramNode, comments: Comment[], magicComments: MagicComment[], errors: ParseError[], warnings: ParseWarning[] }} ParseResult
+ */
+
+/**
+ * The result of calling parse.
+ */
+export class ParseResult {
+  /**
+   * @type {nodes.ProgramNode}
+   */
+  value;
+
+  /**
+   * @type {Comment[]}
+   */
+  comments;
+
+  /**
+   * @type {MagicComment[]}
+   */
+  magicComments;
+
+  /**
+   * @type {ParseError[]}
+   */
+  errors;
+
+  /**
+   * @type {ParseWarning[]}
+   */
+  warnings;
+
+  /**
+   * @param {nodes.ProgramNode} value
+   * @param {Comment[]} comments
+   * @param {MagicComment[]} magicComments
+   * @param {ParseError[]} errors
+   * @param {ParseWarning[]} warnings
+   */
+  constructor(value, comments, magicComments, errors, warnings) {
+    this.value = value;
+    this.comments = comments;
+    this.magicComments = magicComments;
+    this.errors = errors;
+    this.warnings = warnings;
+  }
+}
+
+/**
+ * Accept two Uint8Arrays, one for the source and one for the serialized format.
+ * Return the AST corresponding to the serialized form.
+ *
+ * @param {Uint8Array} source
+ * @param {Uint8Array} array
+ * @returns {ParseResult}
+ * @throws {Error}
+ */
+export function deserialize(source, array) {
+  const buffer = new SerializationBuffer(source, array);
+
+  if (buffer.readString(5) !== "PRISM") {
+    throw new Error("Invalid serialization");
+  }
+
+  if ((buffer.readByte() != MAJOR_VERSION) || (buffer.readByte() != MINOR_VERSION) || (buffer.readByte() != PATCH_VERSION)) {
+    throw new Error("Invalid serialization");
+  }
+
+  if (buffer.readByte() != 0) {
+    throw new Error("Invalid serialization (location fields must be included but are not)");
+  }
+
+  // Skip past the encoding, it means nothing to us in JavaScript.
+  buffer.readString(buffer.readVarInt());
+
+  const comments = Array.from({ length: buffer.readVarInt() }, () => ({
+    type: buffer.readVarInt(),
+    location: buffer.readLocation()
+  }));
+
+  const magicComments = Array.from({ length: buffer.readVarInt() }, () => ({
+    startLocation: buffer.readLocation(),
+    endLocation: buffer.readLocation()
+  }));
+
+  const errors = Array.from({ length: buffer.readVarInt() }, () => ({
+    message: buffer.readString(buffer.readVarInt()),
+    location: buffer.readLocation()
+  }));
+
+  const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
+    message: buffer.readString(buffer.readVarInt()),
+    location: buffer.readLocation()
+  }));
+
+  const constantPoolOffset = buffer.readUint32();
+  const constants = Array.from({ length: buffer.readVarInt() }, () => null);
+
+  return new ParseResult(readRequiredNode(), comments, magicComments, errors, warnings);
+
+  function readRequiredNode() {
+    const type = buffer.readByte();
+    const location = buffer.readLocation();
+
+    switch (type) {
+      <%- nodes.each.with_index(1) do |node, index| -%>
+      case <%= index %>:
+        <%- if node.needs_serialized_length? -%>
+        buffer.readUint32();
+        <%- end -%>
+        return new nodes.<%= node.name %>(<%= (node.fields.map { |field|
+          case field
+          when Prism::NodeField then "readRequiredNode()"
+          when Prism::OptionalNodeField then "readOptionalNode()"
+          when Prism::StringField then "buffer.readStringField()"
+          when Prism::NodeListField then "Array.from({ length: buffer.readVarInt() }, readRequiredNode)"
+          when Prism::ConstantField then "readRequiredConstant()"
+          when Prism::OptionalConstantField then "readOptionalConstant()"
+          when Prism::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
+          when Prism::LocationField then "buffer.readLocation()"
+          when Prism::OptionalLocationField then "buffer.readOptionalLocationField()"
+          when Prism::UInt32Field, Prism::FlagsField then "buffer.readVarInt()"
+          else raise
+          end
+        } + ["location"]).join(", ") -%>);
+      <%- end -%>
+      default:
+        throw new Error(`Unknown node type: ${type}`);
+    }
+  }
+
+  function readOptionalNode() {
+    if (buffer.readByte() != 0) {
+      buffer.index -= 1;
+      return readRequiredNode();
+    } else {
+      return null;
+    }
+  }
+
+  function scanConstant(constantIndex) {
+    if (constants[constantIndex] === null) {
+      constants[constantIndex] = buffer.scanConstant(constantPoolOffset, constantIndex);
+    }
+
+    return constants[constantIndex];
+  }
+
+  function readRequiredConstant() {
+    return scanConstant(buffer.readVarInt() - 1);
+  }
+
+  function readOptionalConstant() {
+    const index = buffer.readVarInt();
+    if (index === 0) {
+      return null;
+    } else {
+      return scanConstant(index - 1);
+    }
+  }
+}
