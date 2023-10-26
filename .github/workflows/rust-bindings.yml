@@ -50,7 +50,7 @@ jobs:
         working-directory: rust/${{ matrix.crate }}
         run: cargo test
 
-  cargo-clippy:
+  lint:
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +67,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.71.1"
-          components: clippy
+          components: clippy, rustfmt
       - uses: actions/cache@v3
         with:
           path: |
@@ -83,6 +83,9 @@ jobs:
       - name: cargo clippy
         working-directory: rust/${{ matrix.crate }}
         run: cargo clippy --tests -- -W "clippy::pedantic"
+      - name: cargo fmt
+        working-directory: rust/${{ matrix.crate }}
+        run: cargo fmt --check
 
   sanitizer-test:
     name: Test with -Zsanitizer=${{ matrix.sanitizer }}

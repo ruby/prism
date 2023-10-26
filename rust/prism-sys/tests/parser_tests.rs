@@ -5,8 +5,7 @@ use std::{
 };
 
 use prism_sys::{
-    pm_comment_t, pm_comment_type_t, pm_diagnostic_t,
-    pm_node_destroy, pm_parse, pm_parser_free, pm_parser_init,
+    pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_node_destroy, pm_parse, pm_parser_free, pm_parser_init,
     pm_parser_t,
 };
 
@@ -84,10 +83,7 @@ fn diagnostics_test() {
 
         let error = error_list.head as *const pm_diagnostic_t;
         let message = CStr::from_ptr((*error).message);
-        assert_eq!(
-            message.to_string_lossy(),
-            "Cannot parse the expression"
-        );
+        assert_eq!(message.to_string_lossy(), "Cannot parse the expression");
 
         let location = {
             let start = (*error).start.offset_from(parser.start);

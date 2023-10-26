@@ -1,8 +1,8 @@
 use std::{ffi::CString, mem::MaybeUninit};
 
 use prism_sys::{
-    pm_pack_encoding, pm_pack_endian, pm_pack_length_type, pm_pack_parse, pm_pack_result,
-    pm_pack_signed, pm_pack_size, pm_pack_type, pm_pack_variant, pm_size_to_native,
+    pm_pack_encoding, pm_pack_endian, pm_pack_length_type, pm_pack_parse, pm_pack_result, pm_pack_signed, pm_pack_size,
+    pm_pack_type, pm_pack_variant, pm_size_to_native,
 };
 
 #[test]

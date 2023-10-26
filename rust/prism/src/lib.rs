@@ -2,19 +2,7 @@
 //!
 //! Rustified version of Ruby's prism parser.
 //!
-#![warn(
-    clippy::all,
-    clippy::nursery,
-    clippy::pedantic,
-    future_incompatible,
-    missing_docs,
-    nonstandard_style,
-    rust_2018_idioms,
-    trivial_casts,
-    trivial_numeric_casts,
-    unreachable_pub,
-    unused_qualifications
-)]
+#![warn(clippy::all, clippy::nursery, clippy::pedantic, future_incompatible, missing_docs, nonstandard_style, rust_2018_idioms, trivial_casts, trivial_numeric_casts, unreachable_pub, unused_qualifications)]
 
 // Most of the code in this file is generated, so sometimes it generates code
 // that doesn't follow the clippy rules. We don't want to see those warnings.
@@ -25,24 +13,24 @@ mod bindings {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
-use std::ffi::{CStr, c_char};
+use std::ffi::{c_char, CStr};
 use std::marker::PhantomData;
 use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
-use prism_sys::{pm_parser_t, pm_parser_init, pm_parse, pm_parser_free, pm_node_destroy, pm_node_t, pm_comment_t, pm_diagnostic_t};
 pub use self::bindings::*;
+use prism_sys::{pm_comment_t, pm_diagnostic_t, pm_node_destroy, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 /// A diagnostic message that came back from the parser.
 #[derive(Debug)]
 pub struct Diagnostic<'pr> {
     diagnostic: NonNull<pm_diagnostic_t>,
-    marker: PhantomData<&'pr pm_diagnostic_t>
+    marker: PhantomData<&'pr pm_diagnostic_t>,
 }
 
 impl<'pr> Diagnostic<'pr> {
     /// Returns the message associated with the diagnostic.
-    /// 
+    ///
     /// # Panics
     ///
     /// Panics if the message is not able to be converted into a `CStr`.
@@ -60,7 +48,7 @@ impl<'pr> Diagnostic<'pr> {
 #[derive(Debug)]
 pub struct Comment<'pr> {
     comment: NonNull<pm_comment_t>,
-    marker: PhantomData<&'pr pm_comment_t>
+    marker: PhantomData<&'pr pm_comment_t>,
 }
 
 impl<'pr> Comment<'pr> {
@@ -81,7 +69,7 @@ impl<'pr> Comment<'pr> {
 /// can be used to iterate over the diagnostics in the parse result.
 pub struct Diagnostics<'pr> {
     diagnostic: *mut pm_diagnostic_t,
-    marker: PhantomData<&'pr pm_diagnostic_t>
+    marker: PhantomData<&'pr pm_diagnostic_t>,
 }
 
 impl<'pr> Iterator for Diagnostics<'pr> {
@@ -102,7 +90,7 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 /// to iterate over the comments in the parse result.
 pub struct Comments<'pr> {
     comment: *mut pm_comment_t,
-    marker: PhantomData<&'pr pm_comment_t>
+    marker: PhantomData<&'pr pm_comment_t>,
 }
 
 impl<'pr> Iterator for Comments<'pr> {
@@ -124,7 +112,7 @@ impl<'pr> Iterator for Comments<'pr> {
 pub struct ParseResult<'pr> {
     source: &'pr [u8],
     parser: NonNull<pm_parser_t>,
-    node: NonNull<pm_node_t>
+    node: NonNull<pm_node_t>,
 }
 
 impl<'pr> ParseResult<'pr> {
@@ -137,9 +125,7 @@ impl<'pr> ParseResult<'pr> {
     /// Returns whether we found a `frozen_string_literal` magic comment with a true value.
     #[must_use]
     pub fn frozen_string_literals(&self) -> bool {
-        unsafe {
-            (*self.parser.as_ptr()).frozen_string_literal
-        }
+        unsafe { (*self.parser.as_ptr()).frozen_string_literal }
     }
 
     /// Returns a slice of the source string that was parsed using the given
@@ -160,7 +146,10 @@ impl<'pr> ParseResult<'pr> {
     pub fn errors(&self) -> Diagnostics<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).error_list;
-            Diagnostics { diagnostic: list.head.cast::<pm_diagnostic_t>(), marker: PhantomData }
+            Diagnostics {
+                diagnostic: list.head.cast::<pm_diagnostic_t>(),
+                marker: PhantomData,
+            }
         }
     }
 
@@ -170,7 +159,10 @@ impl<'pr> ParseResult<'pr> {
     pub fn warnings(&self) -> Diagnostics<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).warning_list;
-            Diagnostics { diagnostic: list.head.cast::<pm_diagnostic_t>(), marker: PhantomData }
+            Diagnostics {
+                diagnostic: list.head.cast::<pm_diagnostic_t>(),
+                marker: PhantomData,
+            }
         }
     }
 
@@ -180,7 +172,10 @@ impl<'pr> ParseResult<'pr> {
     pub fn comments(&self) -> Comments<'_> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).comment_list;
-            Comments { comment: list.head.cast::<pm_comment_t>(), marker: PhantomData }
+            Comments {
+                comment: list.head.cast::<pm_comment_t>(),
+                marker: PhantomData,
+            }
         }
     }
 
@@ -202,7 +197,7 @@ impl<'pr> Drop for ParseResult<'pr> {
 }
 
 /// Parses the given source string and returns a parse result.
-/// 
+///
 /// # Panics
 ///
 /// Panics if the parser fails to initialize.
@@ -213,12 +208,7 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
         let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
         let uninit = Box::into_raw(uninit);
 
-        pm_parser_init(
-            (*uninit).as_mut_ptr(),
-            source.as_ptr(),
-            source.len(),
-            std::ptr::null(),
-        );
+        pm_parser_init((*uninit).as_mut_ptr(), source.as_ptr(), source.len(), std::ptr::null());
 
         let parser = (*uninit).assume_init_mut();
         let parser = NonNull::new_unchecked(parser);
@@ -302,22 +292,18 @@ mod tests {
 
     #[test]
     fn visitor_test() {
-        use super::{
-            Visit,
-            visit_interpolated_regular_expression_node, InterpolatedRegularExpressionNode,
-            visit_regular_expression_node, RegularExpressionNode,
-        };
-    
+        use super::{visit_interpolated_regular_expression_node, visit_regular_expression_node, InterpolatedRegularExpressionNode, RegularExpressionNode, Visit};
+
         struct RegularExpressionVisitor {
-            count: usize
+            count: usize,
         }
-    
+
         impl Visit<'_> for RegularExpressionVisitor {
             fn visit_interpolated_regular_expression_node(&mut self, node: &InterpolatedRegularExpressionNode<'_>) {
                 self.count += 1;
                 visit_interpolated_regular_expression_node(self, node);
             }
-    
+
             fn visit_regular_expression_node(&mut self, node: &RegularExpressionNode<'_>) {
                 self.count += 1;
                 visit_regular_expression_node(self, node);

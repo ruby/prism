@@ -1,7 +1,4 @@
-#![allow(
-    clippy::too_many_lines,
-    clippy::uninlined_format_args
-)]
+#![allow(clippy::too_many_lines, clippy::uninlined_format_args)]
 
 use serde::Deserialize;
 use std::fs::File;
@@ -41,7 +38,7 @@ enum NodeFieldType {
     UInt32,
 
     #[serde(rename = "flags")]
-    Flags
+    Flags,
 }
 
 #[derive(Debug, Deserialize)]
@@ -51,13 +48,13 @@ struct NodeField {
     #[serde(rename = "type")]
     field_type: NodeFieldType,
 
-    kind: Option<String>
+    kind: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 struct FlagValue {
     name: String,
-    comment: String
+    comment: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -75,7 +72,7 @@ struct Node {
     #[serde(default)]
     fields: Vec<NodeField>,
 
-    comment: String
+    comment: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -100,10 +97,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// Gets the path to the config.yml file at `[root]/config.yml`.
 ///
 fn config_path() -> PathBuf {
-    cargo_manifest_path()
-        .join("../../config.yml")
-        .canonicalize()
-        .unwrap()
+    cargo_manifest_path().join("../../config.yml").canonicalize().unwrap()
 }
 
 /// Gets the path to the root directory at `[root]`.
@@ -346,7 +340,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                         writeln!(file, "    }}")?;
                     }
                 }
-            }
+            },
         }
     }
 
@@ -362,7 +356,9 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
     } else {
         let mut padding = false;
         for _ in &node.fields {
-            if padding { write!(file, ", ")?; }
+            if padding {
+                write!(file, ", ")?;
+            }
             write!(file, "{{:?}}")?;
             padding = true;
         }
@@ -371,7 +367,9 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
         padding = false;
 
         for field in &node.fields {
-            if padding { write!(file, ", ")?; }
+            if padding {
+                write!(file, ", ")?;
+            }
             write!(file, "self.{}()", field.name)?;
             padding = true;
         }
@@ -393,7 +391,13 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
     writeln!(file, "       match node {{")?;
 
     for node in &config.nodes {
-        writeln!(file, "           Node::{} {{ parser, pointer, marker }} => self.visit{}(&{} {{ parser: *parser, pointer: *pointer, marker: *marker }}),", node.name, struct_name(&node.name), node.name)?;
+        writeln!(
+            file,
+            "           Node::{} {{ parser, pointer, marker }} => self.visit{}(&{} {{ parser: *parser, pointer: *pointer, marker: *marker }}),",
+            node.name,
+            struct_name(&node.name),
+            node.name
+        )?;
     }
 
     writeln!(file, "       }}")?;
@@ -445,7 +449,7 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
                         writeln!(file, "        visitor.visit(&node);")?;
                         writeln!(file, "    }}")?;
                     },
-                    _ => {}
+                    _ => {},
                 }
             }
 
@@ -467,7 +471,9 @@ fn write_bindings(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     let out_path = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("bindings.rs");
     let mut file = std::fs::File::create(&out_path).expect("Unable to create file");
 
-    writeln!(file, r#"
+    writeln!(
+        file,
+        r#"
 use std::marker::PhantomData;
 use std::ptr::NonNull;
 
@@ -679,7 +685,8 @@ impl std::fmt::Debug for ConstantList<'_> {{
         write!(f, "{{:?}}", self.iter().collect::<Vec<_>>())
     }}
 }}
-"#)?;
+"#
+    )?;
 
     for node in &config.nodes {
         writeln!(file, "const {}: u16 = pm_node_type::{} as u16;", type_name(&node.name), type_name(&node.name))?;
@@ -713,7 +720,9 @@ impl std::fmt::Debug for ConstantList<'_> {{
     writeln!(file, "}}")?;
     writeln!(file)?;
 
-    writeln!(file, r#"
+    writeln!(
+        file,
+        r#"
 impl<'pr> Node<'pr> {{
     /// Creates a new node from the given pointer.
     ///
@@ -724,7 +733,8 @@ impl<'pr> Node<'pr> {{
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
     pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{
-"#)?;
+"#
+    )?;
 
     for node in &config.nodes {
         writeln!(file, "            {} => Self::{} {{ parser, pointer: node.cast::<pm{}_t>(), marker: PhantomData }},", type_name(&node.name), node.name, struct_name(&node.name))?;

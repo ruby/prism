@@ -32,9 +32,8 @@ fn list_test() {
 
 mod string {
     use prism_sys::{
-        pm_string_free, pm_string_length, pm_string_source, pm_string_t,
-        pm_string_t__bindgen_ty_1, PM_STRING_SHARED, PM_STRING_OWNED,
-        PM_STRING_CONSTANT, PM_STRING_MAPPED
+        pm_string_free, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1, PM_STRING_CONSTANT,
+        PM_STRING_MAPPED, PM_STRING_OWNED, PM_STRING_SHARED,
     };
 
     use super::*;
@@ -59,10 +58,7 @@ mod string {
             length: c_string.as_bytes().len(),
         };
 
-        S {
-            c_string,
-            pm_string,
-        }
+        S { c_string, pm_string }
     }
 
     #[test]
