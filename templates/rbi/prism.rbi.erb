@@ -1,14 +1,4 @@
-<%
-  def rbs_to_rbi(type)
-    if type.end_with?("?")
-      "T.nilable(#{rbs_to_rbi(type.delete_suffix("?"))})"
-    elsif type.start_with?("Array[")
-      "T::Array[#{rbs_to_rbi(type.delete_prefix("Array[").delete_suffix("]"))}]"
-    else
-      type
-    end
-  end
-%>
+
 module Prism
   class ParseResult
     sig { returns(ProgramNode) }
@@ -181,11 +171,11 @@ module Prism
   <%- nodes.each do |node| -%>
   <%= "#{node.comment.split("\n").map { |line| line.empty? ? "#" : "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
     <%- node.fields.each do |field| -%>
-    sig { returns(<%= rbs_to_rbi(field.rbs_class) %>) }
+    sig { returns(<%= field.rbi_class %>) }
     attr_reader :<%= field.name %>
 
     <%- end -%>
-    sig { params(<%= (node.fields.map { |field| "#{field.name}: #{rbs_to_rbi(field.rbs_class)}" } + ["location: Location"]).join(", ") %>).void }
+    sig { params(<%= (node.fields.map { |field| "#{field.name}: #{field.rbi_class}" } + ["location: Location"]).join(", ") %>).void }
     def initialize(<%= (node.fields.map(&:name) + ["location"]).join(", ") %>); end
 
     sig { params(visitor: Visitor).void }
@@ -276,7 +266,7 @@ module Prism
 
     <%- nodes.each do |node| -%>
     # Create a new <%= node.name %> node
-    sig { params(<%= (node.fields.map { |field| "#{field.name}: #{rbs_to_rbi(field.rbs_class)}" } + ["location: Location"]).join(", ") %>).returns(<%= node.name %>) }
+    sig { params(<%= (node.fields.map { |field| "#{field.name}: #{field.rbi_class}" } + ["location: Location"]).join(", ") %>).returns(<%= node.name %>) }
     def <%= node.name %>(<%= (node.fields.map(&:name) + ["location"]).join(", ") %>); end
     <%- end -%>
   end
