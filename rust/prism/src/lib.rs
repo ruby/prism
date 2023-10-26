@@ -53,6 +53,9 @@ pub struct Comment<'pr> {
 
 impl<'pr> Comment<'pr> {
     /// Returns the text of the comment.
+    ///
+    /// # Panics
+    /// Panics if the end offset is not greater than the start offset.
     #[must_use]
     pub fn text(&self) -> &[u8] {
         unsafe {
@@ -130,6 +133,9 @@ impl<'pr> ParseResult<'pr> {
 
     /// Returns a slice of the source string that was parsed using the given
     /// location range.
+    ///
+    /// # Panics
+    /// Panics if start offset or end offset are not valid offsets from the root.
     #[must_use]
     pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
         let root = self.source.as_ptr();

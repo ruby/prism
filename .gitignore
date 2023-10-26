@@ -7,7 +7,7 @@
 /pkg/
 /spec/reports/
 /top-100-gems/
-/tmp/
+tmp/
 /vendor/bundle
 
 /build/
