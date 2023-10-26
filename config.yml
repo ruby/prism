@@ -1922,7 +1922,11 @@ nodes:
           ^^^^^^^^^^^^^^
   - name: MultiTargetNode
     fields:
-      - name: targets
+      - name: lefts
+        type: node[]
+      - name: rest
+        type: node?
+      - name: rights
         type: node[]
       - name: lparen_loc
         type: location?
@@ -1935,7 +1939,11 @@ nodes:
              ^^^^^^
   - name: MultiWriteNode
     fields:
-      - name: targets
+      - name: lefts
+        type: node[]
+      - name: rest
+        type: node?
+      - name: rights
         type: node[]
       - name: lparen_loc
         type: location?
@@ -2176,20 +2184,6 @@ nodes:
 
           /foo/i
           ^^^^^^
-  - name: RequiredDestructuredParameterNode
-    fields:
-      - name: parameters
-        type: node[]
-      - name: opening_loc
-        type: location
-      - name: closing_loc
-        type: location
-    comment: |
-      Represents a destructured required parameter node.
-
-          def foo((bar, baz))
-                  ^^^^^^^^^^
-          end
   - name: RequiredParameterNode
     fields:
       - name: name
