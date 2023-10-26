@@ -1,107 +1,4 @@
 module Prism
-  class ParseResult
-    def value: () -> ProgramNode
-    def comments: () -> Array[Comment]
-    def errors: () -> Array[ParseError]
-    def warnings: () -> Array[ParseWarning]
-    def source: () -> Source
-  end
-
-  class ParseError
-    def message: () -> String
-    def location: () -> Location
-  end
-
-  class ParseWarning
-    def message: () -> String
-    def location: () -> Location
-  end
-
-  class Node
-    def child_nodes: () -> Array[Node?]
-    def location: () -> Location
-    def slice: () -> String
-  end
-
-  class Comment
-    def location: () -> Location
-  end
-
-  class Location
-    def initialize: (source: Source, start_offset: Integer, length: Integer) -> void
-    def slice: () -> String
-    def comments: () -> Array[Comment]
-    def copy: (**untyped) -> Location
-    def start_offset: () -> Integer
-    def end_offset: () -> Integer
-    def start_line: () -> Integer
-    def end_line: () -> Integer
-    def start_column: () -> Integer
-    def end_column: () -> Integer
-  end
-
-  class Source
-    attr_reader source: String
-    attr_reader offsets: Array[Integer]
-
-    @source: String
-    @offsets: Array[Integer]
-
-    def initialize: (source: String, offsets: Array[Integer]) -> void
-    def slice: (offset: Integer, length: Integer) -> String
-    def line: (value: Integer) -> Integer
-    def line_offset: (value: Integer) -> Integer
-    def column: (value: Integer) -> Integer
-  end
-
-  class Token
-    attr_reader type: untyped
-    attr_reader value: String
-    attr_reader location: Location
-
-    @type: untyped
-    @value: String
-    @location: Location
-
-    def initialize: (type: untyped, value: String, location: Location) -> void
-    def deconstruct_keys: (keys: untyped) -> untyped
-    def pretty_print: (q: untyped) -> untyped
-    def ==: (other: untyped) -> bool
-  end
-
-  class NodeInspector
-    attr_reader prefix: String
-    attr_reader output: String
-
-    @prefix: String
-    @output: String
-
-    def initialize: (prefix: String) -> void
-
-    # Appends a line to the output with the current prefix.
-    def <<: (line: String) -> void
-
-    # This generates a string that is used as the header of the inspect output
-    # for any given node.
-    def header: (node: Node) -> String
-
-    # Generates a string that represents a list of nodes. It handles properly
-    # using the box drawing characters to make the output look nice.
-    def list: (prefix: String, nodes: Array[Node]) -> String
-
-    # Generates a string that represents a location field on a node.
-    def location: (value: Location) -> String
-
-    # Generates a string that represents a child node.
-    def child_node: (node: Node, append: String) -> String
-
-    # Returns a new inspector that can be used to inspect a child node.
-    def child_inspector: (append: String) -> NodeInspector
-
-    # Returns the output as a string.
-    def to_str: () -> String
-  end
-
   <%- nodes.each do |node| -%>
   <%= "#{node.comment.split("\n").map { |line| line.empty? ? "#" : "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
     <%- node.fields.each do |field| -%>
@@ -150,11 +47,6 @@ module Prism
   end
 
   <%- end -%>
-  class BasicVisitor
-    def visit: (node: Node?) -> void
-    def visit_all: (nodes: Array[Node?]) -> void
-    def visit_child_nodes: (node: Node) -> void
-  end
 
   class Visitor < BasicVisitor
     <%- nodes.each do |node| -%>
