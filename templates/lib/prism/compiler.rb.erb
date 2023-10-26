@@ -22,9 +22,19 @@ module Prism
       node&.accept(self)
     end
 
+    # Visit an individual node with a value.
+    def visit_with(node, value)
+      node&.accept_with(self, value)
+    end
+
     # Visit a list of nodes.
     def visit_all(nodes)
       nodes.map { |node| node&.accept(self) }
+    end
+
+    # Visit a list of nodes with a value.
+    def visit_all_with(nodes, value)
+      nodes.map { |node| node&.accept_with(self, value) }
     end
 
     # Visit the child nodes of the given node.
@@ -32,10 +42,17 @@ module Prism
       node.compact_child_nodes.map { |node| node.accept(self) }
     end
 
+    # Visit the child nodes of the given node with a value.
+    def visit_child_nodes_with(node, value)
+      node.compact_child_nodes.map { |node| node.accept_with(self, value) }
+    end
     <%- nodes.each_with_index do |node, index| -%>
-<%= "\n" if index != 0 -%>
+
     # Compile a <%= node.name %> node
     alias visit_<%= node.human %> visit_child_nodes
+
+    # Compile a <%= node.name %> node with a value
+    alias visit_<%= node.human %>_with visit_child_nodes_with
     <%- end -%>
   end
 end

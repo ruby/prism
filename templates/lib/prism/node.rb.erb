@@ -46,9 +46,14 @@ module Prism
       @location = location
     end
 
-    # def accept: (visitor: Visitor) -> void
+    # def accept: (visitor: Visitor) -> untyped
     def accept(visitor)
       visitor.visit_<%= node.human %>(self)
+    end
+
+    # def accept_with: (visitor: Visitor, value: untyped) -> untyped
+    def accept_with(visitor, value)
+      visitor.visit_<%= node.human %>_with(self, value)
     end
     <%- if node.newline == false -%>
 
