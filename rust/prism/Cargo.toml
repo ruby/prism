@@ -1,6 +1,6 @@
 [package]
 name = "prism"
-version = "0.1.0"
+version = "0.15.1"
 edition = "2021"
 license-file = "../../LICENSE.md"
 repository = "https://github.com/ruby/prism"
@@ -8,7 +8,7 @@ description = "Rustified version of Ruby's prism parsing library"
 authors = [
     "Steve Loveless <steve.loveless@gmail.com>",
     "Ian Ker-Seymer <hello@ianks.com>",
-    "Kevin Newton <kddnewton@gmail.com>"
+    "Kevin Newton <kddnewton@gmail.com>",
 ]
 keywords = ["ruby", "parser", "ffi", "bindings"]
 categories = [
@@ -25,4 +25,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 
 [dependencies]
-prism-sys = { version = "0.1.0", path = "../prism-sys" }
+prism-sys = { path = "../prism-sys" }
+
+[features]
+default = ["vendored"]
+vendored = ["prism-sys/vendored"]

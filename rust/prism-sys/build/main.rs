@@ -1,8 +1,14 @@
+#[cfg(feature = "vendored")]
+mod vendored;
+
 use std::path::{Path, PathBuf};
 
 fn main() {
-    let ruby_build_path = ruby_build_path();
-    let ruby_include_path = ruby_include_path();
+    #[cfg(feature = "vendored")]
+    vendored::build().expect("failed to build Prism from source");
+
+    let ruby_build_path = prism_lib_path();
+    let ruby_include_path = prism_include_path();
 
     // Tell cargo/rustc that we want to link against `librubyparser.a`.
     println!("cargo:rustc-link-lib=static=rubyparser");
@@ -19,14 +25,22 @@ fn main() {
 
 /// Gets the path to project files (`librubyparser*`) at `[root]/build/`.
 ///
-fn ruby_build_path() -> PathBuf {
+fn prism_lib_path() -> PathBuf {
+    if let Ok(lib_dir) = std::env::var("PRISM_LIB_DIR") {
+        return PathBuf::from(lib_dir);
+    }
+
     cargo_manifest_path().join("../../build/").canonicalize().unwrap()
 }
 
 /// Gets the path to the header files that `bindgen` needs for doing code
 /// generation.
 ///
-fn ruby_include_path() -> PathBuf {
+fn prism_include_path() -> PathBuf {
+    if let Ok(include_dir) = std::env::var("PRISM_INCLUDE_DIR") {
+        return PathBuf::from(include_dir);
+    }
+
     cargo_manifest_path().join("../../include/").canonicalize().unwrap()
 }
 

@@ -17,11 +17,10 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
-  cargo-test:
+  test:
+    name: cargo:test
     strategy:
       fail-fast: false
-      matrix:
-        crate: [prism-sys, prism]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,27 +33,26 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.71.1"
+          targets: wasm32-wasi
       - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo-${{ matrix.crate }}
-      - name: rake compile
-        run: bundle exec rake compile
-      - name: cargo test
-        working-directory: rust/${{ matrix.crate }}
-        run: cargo test
+            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo
+      - name: Run tests
+        run: bundle exec rake cargo:test
+      - name: Run examples
+        run: bundle exec rake cargo:examples
 
   lint:
+    name: cargo:lint
     strategy:
       fail-fast: false
-      matrix:
-        crate: [prism-sys, prism]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -74,27 +72,22 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.os }}-cargo--${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo-${{ matrix.crate }}
-      - name: rake compile
-        run: bundle exec rake compile
-      - name: cargo clippy
-        working-directory: rust/${{ matrix.crate }}
-        run: cargo clippy --tests -- -W "clippy::pedantic"
-      - name: cargo fmt
-        working-directory: rust/${{ matrix.crate }}
-        run: cargo fmt --check
+            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo
+      - name: rake cargo:build
+        run: bundle exec rake cargo:build
+      - name: rake cargo:lint
+        run: bundle exec rake cargo:lint
 
-  sanitizer-test:
-    name: Test with -Zsanitizer=${{ matrix.sanitizer }}
+  sanitize:
+    name: cargo:sanitize:${{ matrix.sanitizer }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        sanitizer: [address, leak]
-        crate: [prism-sys, prism]
+        sanitizer: [leak, address]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -102,21 +95,12 @@ jobs:
         with:
           ruby-version: head
           bundler-cache: true
-      - name: rake compile
-        run: bundle exec rake compile
-      - uses: dtolnay/rust-toolchain@nightly
+      - name: rake cargo:build
+        run: bundle exec rake cargo:build
+      - uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: nightly-2023-10-24
           target: "x86_64-unknown-linux-gnu"
           components: "rust-src"
       - name: Test with sanitizer
-        env:
-          RUSTFLAGS: -Zsanitizer=${{ matrix.sanitizer }}
-          RUSTDOCFLAGS: -Zsanitizer=${{ matrix.sanitizer }}
-          # only needed by asan
-          ASAN_OPTIONS: detect_stack_use_after_return=1
-          # Asan's leak detection occasionally complains
-          # about some small leaks if backtraces are captured,
-          # so ensure they're not
-          RUST_BACKTRACE: 0
-        working-directory: rust/${{ matrix.crate }}
-        run: cargo test -Zbuild-std --verbose --target=x86_64-unknown-linux-gnu
+        run: bundle exec rake cargo:sanitize:${{ matrix.sanitizer }}
