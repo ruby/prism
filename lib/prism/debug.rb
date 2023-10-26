@@ -52,9 +52,21 @@ module Prism
         stack = [ISeq.new(RubyVM::InstructionSequence.compile(source).to_a)]
 
         while (iseq = stack.pop)
-          # For some reason, CRuby occasionally pushes this special local
-          # variable when there are splat arguments. We get rid of that here.
-          locals << (iseq.local_table - [:"#arg_rest"])
+          names = [*iseq.local_table]
+          names.map!.with_index do |name, index|
+            # When an anonymous local variable is present in the iseq's local
+            # table, it is represented as the stack offset from the top.
+            # However, when these are dumped to binary and read back in, they
+            # are replaced with the symbol :#arg_rest. To consistently handle
+            # this, we replace them here with their index.
+            if name == :"#arg_rest"
+              names.length - index + 1
+            else
+              name
+            end
+          end
+
+          locals << names
           iseq.each_child { |child| stack << child }
         end
 
