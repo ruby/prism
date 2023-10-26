@@ -1,5 +1,6 @@
 package org.prism;
 
+// @formatter:off
 public final class ParseResult {
 
     public static final class MagicComment {
@@ -44,3 +45,4 @@ public final class ParseResult {
         this.warnings = warnings;
     }
 }
+// @formatter:on
