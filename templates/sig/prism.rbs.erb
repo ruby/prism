@@ -1,0 +1,70 @@
+module Prism
+  <%- nodes.each do |node| -%>
+  <%= "#{node.comment.split("\n").map { |line| line.empty? ? "#" : "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
+    <%- node.fields.each do |field| -%>
+    attr_reader <%= field.name %>: <%= field.rbs_class %>
+    <%- end -%>
+
+    def initialize: (<%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %>) -> void
+    def accept: (visitor: Visitor) -> void
+    def set_newline_flag: (newline_marked: Array[bool]) -> void
+    def child_nodes: () -> Array[Node?]
+    def deconstruct: () -> Array[Node?]
+
+    def copy: (**untyped) -> <%= node.name %>
+
+    def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, (Node | Array[Node] | String | Token | Array[Token] | Location)?]
+    <%- node.fields.each do |field| -%>
+    <%- case field -%>
+    <%- when Prism::LocationField -%>
+    <%- raise unless field.name.end_with?("_loc") -%>
+    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+
+    def <%= field.name.delete_suffix("_loc") %>: () -> String
+    <%- when Prism::OptionalLocationField -%>
+    <%- raise unless field.name.end_with?("_loc") -%>
+    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+
+    def <%= field.name.delete_suffix("_loc") %>: () -> String?
+    <%- when Prism::FlagsField -%>
+    <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
+
+    def <%= value.name.downcase %>?: () -> bool
+    <%- end -%>
+    <%- end -%>
+    <%- end -%>
+
+    def inspect: (inspector: NodeInspector) -> String
+  end
+  <%- end -%>
+
+  <%- flags.each do |flag| -%>
+  module <%= flag.name %>
+    <%- flag.values.each_with_index do |value, index| -%>
+    # <%= value.comment %>
+    <%= value.name %>: Integer
+    <%- end -%>
+  end
+
+  <%- end -%>
+
+  class Visitor < BasicVisitor
+    <%- nodes.each do |node| -%>
+    # Visit a <%= node.name %> node
+    def visit_<%= node.human %>: (node: <%= node.name %>) -> void
+    <%= "\n" if node != nodes.last -%>
+    <%- end -%>
+  end
+
+  module DSL
+    private
+
+    # Create a new Location object
+    def Location: (source: Source?, start_offset: Integer, length: Integer) -> Location
+
+    <%- nodes.each do |node| -%>
+    # Create a new <%= node.name %> node
+    def <%= node.name %>: (<%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %>) -> <%= node.name %>
+    <%- end -%>
+  end
+end

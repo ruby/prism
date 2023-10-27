@@ -16,6 +16,7 @@ GEM
     rake (13.0.6)
     rake-compiler (1.2.5)
       rake
+    rbs (3.2.2)
     ruby_memcheck (2.0.1)
       nokogiri
     test-unit (3.6.1)
@@ -31,6 +32,7 @@ DEPENDENCIES
   prism!
   rake
   rake-compiler
+  rbs
   ruby_memcheck
   test-unit
 
