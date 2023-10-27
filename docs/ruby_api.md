@@ -23,3 +23,5 @@ The full API is documented below.
 * `Prism.parse_lex(source)` - parse the syntax tree corresponding to the given source string and return it within a parse result, along with the tokens
 * `Prism.parse_lex_file(filepath)` - parse the syntax tree corresponding to the given source file and return it within a parse result, along with the tokens
 * `Prism.load(source, serialized)` - load the serialized syntax tree using the source as a reference into a syntax tree
+* `Prism.parse_inline_comments(source)` - parse the inline comments corresponding to the given source string and return them
+* `Prism.parse_file_inline_comments(source)` - parse the inline comments corresponding to the given source file and return them
