@@ -174,9 +174,11 @@ public abstract class Nodes {
 <%# NODES -%>
     <%- nodes.each do |node| -%>
 
+    /**
     <%- node.comment.each_line do |line| -%>
-    //<%= line.prepend(" ").rstrip %>
+     *<%= line.prepend(" ").rstrip %>
     <%- end -%>
+     */
     public static final class <%= node.name -%> extends Node {
         <%- if node.needs_serialized_length? -%>
         public final int serializedLength;
