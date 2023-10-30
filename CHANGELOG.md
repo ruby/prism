@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.16.0] - 2023-10-30
+
+### Added
+
+- `InterpolatedMatchLastLineNode#options` and `MatchLastLineNode#options` are added, which are the same methods as are exposed on `InterpolatedRegularExpressionNode` and `RegularExpressionNode`.
+- The project can now be compiled with `wasi-sdk` to expose a WebAssembly interface.
+- `ArgumentsNode#keyword_splat?` is added to indicate if the arguments node has a keyword splat.
+- The C API `pm_prettyprint` has a much improved output which lines up closely with `Node#inspect`.
+- Prism now ships with `RBS` and `RBI` type signatures (in the `/sig` and `/rbi` directories, respectively).
+- `Prism::parse_comments` and `Prism::parse_file_comments` APIs are added to extract only the comments from the source code.
+
+### Changed
+
+- **BREAKING**: `Multi{Target,Write}Node#targets` is split up now into `lefts`, `rest`, and `rights`. This is to avoid having to scan the list in the case that there are splat nodes.
+- Some bugs are fixed on `Multi{Target,Write}Node` accidentally creating additional nesting when not necessary.
+- **BREAKING**: `RequiredDestructuredParameterNode` has been removed in favor of using `MultiTargetNode` in those places.
+- **BREAKING**: `HashPatternNode#assocs` has been renamed to `HashPatternNode#elements`. `HashPatternNode#kwrest` has been renamed to `HashPatternNode#rest`.
+
 ## [0.15.1] - 2023-10-18
 
 ### Changed
@@ -201,7 +219,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.15.1...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/ruby/prism/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/ruby/prism/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/ruby/prism/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ruby/prism/compare/v0.13.0...v0.14.0

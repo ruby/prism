@@ -87,6 +87,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Heredocs](docs/heredocs.md)
 * [JavaScript](docs/javascript.md)
 * [Mapping](docs/mapping.md)
+* [Releasing](docs/releasing.md)
 * [Ripper](docs/ripper.md)
 * [Ruby API](docs/ruby_api.md)
 * [Serialization](docs/serialization.md)
