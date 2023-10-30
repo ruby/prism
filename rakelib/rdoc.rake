@@ -6,7 +6,9 @@ RDoc::Task.new do |rdoc|
   rdoc.main = "README.md"
   rdoc.markup = "markdown"
   rdoc.rdoc_dir = "doc"
+
   rdoc.options << "--all"
+  rdoc.options << "--coverage-report"
 
   rdoc.rdoc_files.include(
     "docs/*.md",
