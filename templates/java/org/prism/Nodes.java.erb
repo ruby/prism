@@ -175,8 +175,8 @@ public abstract class Nodes {
     <%- nodes.each do |node| -%>
 
     /**
-    <%- node.comment.each_line do |line| -%>
-     *<%= line.prepend(" ").rstrip %>
+    <%- node.each_comment_line do |line| -%>
+     *<%= line %>
     <%- end -%>
      */
     public static final class <%= node.name -%> extends Node {
