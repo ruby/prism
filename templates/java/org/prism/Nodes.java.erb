@@ -125,6 +125,9 @@ public abstract class Nodes {
 <%# FLAGS -%>
     <%- flags.each do |group| -%>
 
+    /**
+     * <%= group.comment %>
+     */
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
         <%- group.values.each_with_index do |value, index| -%>
 
