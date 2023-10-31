@@ -34,6 +34,7 @@ task :check_manifest => [:templates] do
     .gitignore
     .gitmodules
     *.iml
+    Doxyfile
     Gemfile
     Gemfile.lock
     Makefile
