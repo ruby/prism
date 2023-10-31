@@ -5,7 +5,7 @@ require "rdoc/task"
 RDoc::Task.new do |rdoc|
   rdoc.main = "README.md"
   rdoc.markup = "markdown"
-  rdoc.rdoc_dir = "doc"
+  rdoc.rdoc_dir = "doc/ruby"
 
   rdoc.options << "--all"
   rdoc.options << "--coverage-report"
