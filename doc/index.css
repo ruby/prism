@@ -1,0 +1,75 @@
+:root {
+  --color-background: #1c1f26;
+  --color-text: white;
+}
+
+body {
+  background-color: var(--color-background);
+  font-family: "Noto Sans", "Helvetica Neue", Helvetica, sans-serif;
+  margin: 0;
+}
+
+header {
+  height: 10vh;
+}
+
+h1 {
+  color: var(--color-text);
+  text-align: center;
+  line-height: 10vh;
+  margin: 0;
+}
+
+main {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 36vh;
+  margin: 2vh 30vw;
+}
+
+@media only screen and (max-width: 1200px) {
+  main {
+    margin: 2vh 20vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  main {
+    margin: 2vh 5vw;
+  }
+}
+
+.reference {
+  border-radius: 1em;
+  box-sizing: border-box;
+  color: var(--color-text);
+  height: 18vh;
+  padding: 4vh 0;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 100ms ease;
+  vertical-align: middle;
+}
+
+.reference > img {
+  height: 10vh;
+  width: 10vh;
+  margin-right: 1em;
+  vertical-align: middle;
+}
+
+.reference > h2 {
+  display: inline;
+  margin: 0;
+  text-decoration: underline;
+}
+
+.reference:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#logo {
+  display: block;
+  height: 50vh;
+  margin: 0 auto;
+}

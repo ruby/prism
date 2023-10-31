@@ -3,7 +3,8 @@
 /.yardoc
 /_yardoc/
 /coverage/
-/doc/
+/doc/c/
+/doc/rb/
 /pkg/
 /spec/reports/
 /top-100-gems/

@@ -20,7 +20,7 @@
 # doxygen -x [configFile]
 
 # Non-default options
-PROJECT_NAME           = "Prism"
+PROJECT_NAME           = "Prism Ruby parser"
 OUTPUT_DIRECTORY       = doc
 JAVADOC_AUTOBRIEF      = YES
 OPTIMIZE_OUTPUT_FOR_C  = YES

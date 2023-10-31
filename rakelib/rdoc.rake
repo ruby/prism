@@ -30,7 +30,7 @@ RDoc::Task.new do |rdoc|
   rdoc.main = "README.md"
   rdoc.markup = "markdown"
 
-  rdoc.rdoc_dir = "doc/ruby"
+  rdoc.rdoc_dir = "doc/rb"
   rdoc.options << "--all"
 
   rdoc.rdoc_files.include(
