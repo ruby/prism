@@ -288,3 +288,20 @@ jobs:
       run: |
         scan-build bundle exec rake compile 2>&1 | tee /tmp/scan_build_output.log
         grep -q 'scan-build: No bugs found.' /tmp/scan_build_output.log
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+    - name: Install doxygen
+      run: |
+        sudo apt-get update
+        sudo apt-get install doxygen
+    - name: Check ruby coverage
+      run: bundle exec rake rdoc:coverage
+    - name: Check C coverage
+      run: doxygen Doxyfile
