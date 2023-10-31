@@ -24,16 +24,15 @@ PROJECT_NAME           = "Prism"
 OUTPUT_DIRECTORY       = doc
 JAVADOC_AUTOBRIEF      = YES
 OPTIMIZE_OUTPUT_FOR_C  = YES
-EXTRACT_ALL            = YES
 INPUT                  = src src/enc src/util include include/prism include/prism/enc include/prism/util
 HTML_OUTPUT            = c
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = YES
+WARN_AS_ERROR          = FAIL_ON_WARNINGS
+WARN_IF_UNDOC_ENUM_VAL = YES
+SORT_MEMBER_DOCS       = NO
 
 # Default options we might want to edit in the future
 HTML_STYLESHEET        =
 HTML_COLORSTYLE        = AUTO_LIGHT
 GENERATE_LATEX         = NO
-
-# Default options we definitely want to edit in the future
-WARN_IF_UNDOCUMENTED   = NO
-WARN_NO_PARAMDOC       = NO
-WARN_AS_ERROR          = NO
