@@ -298,14 +298,6 @@ module Prism
       @value = config["value"]
       @comment = config.fetch("comment")
     end
-
-    def declaration
-      output = []
-      output << "PM_TOKEN_#{name}"
-      output << " = #{value}" if value
-      output << ", // #{comment}"
-      output.join
-    end
   end
 
   # Represents a set of flags that should be internally represented with an enum.
@@ -321,12 +313,13 @@ module Prism
       end
     end
 
-    attr_reader :name, :human, :values
+    attr_reader :name, :human, :values, :comment
 
     def initialize(config)
       @name = config.fetch("name")
       @human = @name.gsub(/(?<=.)[A-Z]/, "_\\0").downcase
       @values = config.fetch("values").map { |flag| Flag.new(flag) }
+      @comment = config.fetch("comment")
     end
   end
 

@@ -21,6 +21,9 @@ end
 -%>
 <%- flags.each do |flag| -%>
 
+/**
+ * <%= flag.comment %>
+ */
 const <%= flag.name %> = {
 <%- flag.values.each_with_index do |value, index| -%>
   <%= value.name %>: 1 << <%= index %>,
