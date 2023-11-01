@@ -1,4 +1,4 @@
-name: Deploy RDoc to pages
+name: GitHub pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -33,6 +33,10 @@ jobs:
         with:
           ruby-version: "3.2"
           bundler-cache: true
+      - name: Install doxygen and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install doxygen graphviz
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
@@ -40,6 +44,8 @@ jobs:
         run: bundle exec rake templates
       - name: Build with RDoc
         run: bundle exec rake rdoc
+      - name: Build with Doxygen
+        run: doxygen Doxyfile
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
