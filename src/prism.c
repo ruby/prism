@@ -276,6 +276,16 @@ lex_mode_push_list(pm_parser_t *parser, bool interpolation, uint8_t delimiter) {
 }
 
 /**
+ * Push on a new list lex mode that is only used for compatibility. This is
+ * called when we're at the end of the file. We want the parser to be able to
+ * perform its normal error tolerance.
+ */
+static inline bool
+lex_mode_push_list_eof(pm_parser_t *parser) {
+    return lex_mode_push_list(parser, false, '\0');
+}
+
+/**
  * Push on a new regexp lex mode.
  */
 static inline bool
@@ -344,6 +354,16 @@ lex_mode_push_string(pm_parser_t *parser, bool interpolation, bool label_allowed
     }
 
     return lex_mode_push(parser, lex_mode);
+}
+
+/**
+ * Push on a new string lex mode that is only used for compatibility. This is
+ * called when we're at the end of the file. We want the parser to be able to
+ * perform its normal error tolerance.
+ */
+static inline bool
+lex_mode_push_string_eof(pm_parser_t *parser) {
+    return lex_mode_push_string(parser, false, false, '\0', '\0');
 }
 
 /**
@@ -8676,6 +8696,8 @@ parser_lex(pm_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_list(parser, false, *parser->current.end++);
+                                } else {
+                                    lex_mode_push_list_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_PERCENT_LOWER_I);
@@ -8685,6 +8707,8 @@ parser_lex(pm_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_list(parser, true, *parser->current.end++);
+                                } else {
+                                    lex_mode_push_list_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_PERCENT_UPPER_I);
@@ -8696,6 +8720,8 @@ parser_lex(pm_parser_t *parser) {
                                     lex_mode_push_regexp(parser, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                     pm_newline_list_check_append(&parser->newline_list, parser->current.end);
                                     parser->current.end++;
+                                } else {
+                                    lex_mode_push_regexp(parser, '\0', '\0');
                                 }
 
                                 LEX(PM_TOKEN_REGEXP_BEGIN);
@@ -8707,6 +8733,8 @@ parser_lex(pm_parser_t *parser) {
                                     lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                     pm_newline_list_check_append(&parser->newline_list, parser->current.end);
                                     parser->current.end++;
+                                } else {
+                                    lex_mode_push_string_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_STRING_BEGIN);
@@ -8718,6 +8746,8 @@ parser_lex(pm_parser_t *parser) {
                                     lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                     pm_newline_list_check_append(&parser->newline_list, parser->current.end);
                                     parser->current.end++;
+                                } else {
+                                    lex_mode_push_string_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_STRING_BEGIN);
@@ -8729,6 +8759,8 @@ parser_lex(pm_parser_t *parser) {
                                     lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                     lex_state_set(parser, PM_LEX_STATE_FNAME | PM_LEX_STATE_FITEM);
                                     parser->current.end++;
+                                } else {
+                                    lex_mode_push_string_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_SYMBOL_BEGIN);
@@ -8738,6 +8770,8 @@ parser_lex(pm_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_list(parser, false, *parser->current.end++);
+                                } else {
+                                    lex_mode_push_list_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_PERCENT_LOWER_W);
@@ -8747,6 +8781,8 @@ parser_lex(pm_parser_t *parser) {
 
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_list(parser, true, *parser->current.end++);
+                                } else {
+                                    lex_mode_push_list_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_PERCENT_UPPER_W);
@@ -8757,6 +8793,8 @@ parser_lex(pm_parser_t *parser) {
                                 if (parser->current.end < parser->end) {
                                     lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                     parser->current.end++;
+                                } else {
+                                    lex_mode_push_string_eof(parser);
                                 }
 
                                 LEX(PM_TOKEN_PERCENT_LOWER_X);
