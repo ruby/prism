@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING**: `KeywordParameterNode` is split into `OptionalKeywordParameterNode` and `RequiredKeywordParameterNode`. `RequiredKeywordParameterNode` has no `value` field.
+
 ## [0.16.0] - 2023-10-30
 
 ### Added
