@@ -10,12 +10,12 @@ namespace :generate do
       row =
         slice.map do |codepoint|
           character = codepoint.chr
-      
+
           value = 0
           value |= (1 << 0) if ["\t", "\n", "\v", "\f", "\r", " "].include?(character)
           value |= (1 << 1) if ["\t", "\v", "\f", "\r", " "].include?(character)
           value |= (1 << 2) if ["e", "i", "m", "n", "o", "s", "u", "x"].include?(character)
-      
+
           "%d," % value
         end
 
@@ -42,7 +42,7 @@ namespace :generate do
 
           "0x%02x," % value
         end
-      
+
       puts "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
     end
     puts "};"
