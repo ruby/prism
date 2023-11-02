@@ -34,9 +34,11 @@ public abstract class Nodes {
 
     public static final class Source {
         public final byte[] bytes;
+        private final int startLine;
         private final int[] lineOffsets;
 
         public Source(byte[] bytes) {
+            this.startLine = 1;
             this(bytes, computeLineOffsets(bytes));
         }
 
@@ -44,6 +46,11 @@ public abstract class Nodes {
             assert lineOffsets[0] == 0;
             this.bytes = bytes;
             this.lineOffsets = lineOffsets;
+        }
+
+        public void setStartLine(int startLine) {
+            assert startLine >= 1;
+            this.startLine = startLine;
         }
 
         public static int[] computeLineOffsets(byte[] bytes) {
@@ -63,6 +70,10 @@ public abstract class Nodes {
         }
 
         public int line(int byteOffset) {
+            return startLine + findLine(byteOffset);
+        }
+
+        public int findLine(int byteOffset) {
             assert byteOffset >= 0 && byteOffset < bytes.length : byteOffset;
             int index = Arrays.binarySearch(lineOffsets, byteOffset);
             int line;
@@ -102,7 +113,7 @@ public abstract class Nodes {
         }
 
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
-            int line = source.line(this.startOffset);
+            int line = source.findLine(this.startOffset);
             if (!newlineMarked[line]) {
                 newlineMarked[line] = true;
                 this.newLineFlag = true;

@@ -72,6 +72,7 @@ The header is structured like the following table:
 | `1` | patch version number |
 | `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
+| varint | the start line |
 | varint | number of comments |
 | comment* | comments |
 | varint | number of magic comments |
@@ -136,56 +137,54 @@ typedef struct {
   size_t capacity;
 } pm_buffer_t;
 
-// Initialize a pm_buffer_t with its default values.
-bool pm_buffer_init(pm_buffer_t *);
-
 // Free the memory associated with the buffer.
 void pm_buffer_free(pm_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-void pm_parse_serialize(const uint8_t *source, size_t length, pm_buffer_t *buffer, const char *metadata);
+void pm_serialize_parse(pm_buffer_t *buffer, const uint8_t *source, size_t length, const char *data);
 ```
 
-Typically you would use a stack-allocated `pm_buffer_t` and call `pm_parse_serialize`, as in:
+Typically you would use a stack-allocated `pm_buffer_t` and call `pm_serialize_parse`, as in:
 
 ```c
 void
 serialize(const uint8_t *source, size_t length) {
-  pm_buffer_t buffer;
-  if (!pm_buffer_init(&buffer)) return;
+  pm_buffer_t buffer = { 0 };
+  pm_serialize_parse(&buffer, source, length, NULL);
 
-  pm_parse_serialize(source, length, &buffer, NULL);
   // Do something with the serialized string.
 
   pm_buffer_free(&buffer);
 }
 ```
 
-The final argument to `pm_parse_serialize` controls the metadata of the source.
-This includes the filepath that the source is associated with, and any nested local variables scopes that are necessary to properly parse the file (in the case of parsing an `eval`).
-Note that no `varint` are used here to make it easier to produce the metadata for the caller, and also serialized size is less important here.
-The metadata is a serialized format itself, and is structured as follows:
+The final argument to `pm_serialize_parse` is an optional string that controls the options to the parse function. This includes all of the normal options that could be passed to `pm_parser_init` through a `pm_options_t` struct, but serialized as a string to make it easier for callers through FFI. Note that no `varint` are used here to make it easier to produce the data for the caller, and also serialized size is less important here. The format of the data is structured as follows:
 
-| # bytes | field |
-| --- | --- |
-| `4` | the size of the filepath string |
-| | the filepath string |
-| `4` | the number of local variable scopes |
+| # bytes | field                      |
+| ------- | -------------------------- |
+| `4`     | the length of the filepath |
+| ...     | the filepath bytes         |
+| `4`     | the line number            |
+| `4`     | the length the encoding    |
+| ...     | the encoding bytes         |
+| `1`     | frozen string literal      |
+| `1`     | suppress warnings          |
+| `4`     | the number of scopes       |
+| ...     | the scopes                 |
 
-Then, each local variable scope is encoded as:
+Each scope is layed out as follows:
 
-| # bytes | field |
-| --- | --- |
-| `4` | the number of local variables in the scope |
-| | the local variables |
+| # bytes | field                      |
+| ------- | -------------------------- |
+| `4`     | the number of locals       |
+| ...     | the locals                 |
 
-Each local variable within each scope is encoded as:
+Each local is layed out as follows:
 
-| # bytes | field |
-| --- | --- |
-| `4` | the size of the local variable name |
-| | the local variable name |
+| # bytes | field                      |
+| ------- | -------------------------- |
+| `4`     | the length of the local    |
+| ...     | the local bytes            |
 
-The metadata can be `NULL` (as seen in the example above).
-If it is not null, then a minimal metadata string would be `"\0\0\0\0\0\0\0\0"` which would use 4 bytes to indicate an empty filepath string and 4 bytes to indicate that there were no local variable scopes.
+The data can be `NULL` (as seen in the example above).

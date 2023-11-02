@@ -108,6 +108,8 @@ public class Loader {
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
         this.encodingCharset = getEncodingCharset(this.encodingName);
 
+        source.setStartLine(loadVarInt());
+
         ParseResult.MagicComment[] magicComments = loadMagicComments();
         ParseResult.Error[] errors = loadSyntaxErrors();
         ParseResult.Warning[] warnings = loadWarnings();
