@@ -83,8 +83,8 @@ module Prism
   end
 
   class Source
-    sig { params(source: String, offsets: T::Array[Integer]).void }
-    def initialize(source, offsets); end
+    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).void }
+    def initialize(source, start_line, offsets); end
 
     sig { params(offset: Integer, length: Integer).returns(String) }
     def slice(offset, length); end

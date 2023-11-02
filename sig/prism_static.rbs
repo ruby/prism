@@ -42,12 +42,14 @@ module Prism
 
   class Source
     attr_reader source: String
+    attr_reader start_line: Integer
     attr_reader offsets: Array[Integer]
 
     @source: String
+    @start_line: Integer
     @offsets: Array[Integer]
 
-    def initialize: (source: String, offsets: Array[Integer]) -> void
+    def initialize: (source: String, start_line: Integer, offsets: Array[Integer]) -> void
     def slice: (offset: Integer, length: Integer) -> String
     def line: (value: Integer) -> Integer
     def line_offset: (value: Integer) -> Integer
