@@ -34,17 +34,17 @@ public abstract class Nodes {
 
     public static final class Source {
         public final byte[] bytes;
-        private final int startLine;
+        private int startLine;
         private final int[] lineOffsets;
 
         public Source(byte[] bytes) {
-            this.startLine = 1;
-            this(bytes, computeLineOffsets(bytes));
+            this(bytes, 1, computeLineOffsets(bytes));
         }
 
-        public Source(byte[] bytes, int[] lineOffsets) {
+        public Source(byte[] bytes, int startLine, int[] lineOffsets) {
             assert lineOffsets[0] == 0;
             this.bytes = bytes;
+            this.startLine = startLine;
             this.lineOffsets = lineOffsets;
         }
 
