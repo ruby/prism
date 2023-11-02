@@ -206,6 +206,10 @@ export function deserialize(source, array) {
   // Skip past the encoding, it means nothing to us in JavaScript.
   buffer.readString(buffer.readVarInt());
 
+  // Skip past the start line, as we don't support that option yet in
+  // JavaScript.
+  buffer.readVarInt();
+
   const comments = Array.from({ length: buffer.readVarInt() }, () => ({
     type: buffer.readVarInt(),
     location: buffer.readLocation()
