@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.17.1] - 2023-11-03
+
+### Changed
+
+- Do not use constant nesting in RBI files.
+
 ## [0.17.0] - 2023-11-03
 
 ### Added
@@ -233,7 +239,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.17.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.17.1...HEAD
+[0.17.1]: https://github.com/ruby/prism/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/ruby/prism/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/ruby/prism/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/ruby/prism/compare/v0.15.0...v0.15.1
