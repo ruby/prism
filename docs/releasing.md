@@ -4,7 +4,7 @@ To release a new version of Prism, perform the following steps:
 
 ## Preparation
 
-* Update the CHANGELOG.md file.
+* Update the `CHANGELOG.md` file.
   * Add a new section for the new version at the top of the file.
   * Fill in the relevant changes — it may be easiest to click the link for the `Unreleased` heading to find the commits.
   * Update the links at the bottom of the file.
@@ -24,4 +24,7 @@ To release a new version of Prism, perform the following steps:
 
 ## Publishing
 
+* Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
 * Run `bundle exec rake release` to publish the gem to [rubygems.org](rubygems.org). Note that you must have access to the `prism` gem to do this.
+* Either download the `wasm` artifact from GitHub actions or generate it yourself with `make wasm`.
+* Run `npm publish` to publish the JavaScript package to [npmjs.com](npmjs.com). Note that you must have access to the `ruby-prism` package to do this.
