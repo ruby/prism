@@ -17,7 +17,7 @@ export function parsePrism(prism, source) {
   const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, sourceArray.length);
   sourceView.set(sourceArray);
 
-  prism.pm_parse_serialize(sourcePointer, sourceArray.length, bufferPointer);
+  prism.pm_serialize_parse(bufferPointer, sourcePointer, sourceArray.length);
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
   const result = deserialize(sourceArray, serializedView);
 

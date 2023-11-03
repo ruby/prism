@@ -639,6 +639,12 @@ struct pm_parser {
      */
     pm_string_t current_string;
 
+    /**
+     * The line number at the start of the parse. This will be used to offset
+     * the line numbers of all of the locations.
+     */
+    uint32_t start_line;
+
     /** Whether or not we're at the beginning of a command. */
     bool command_start;
 
@@ -672,6 +678,13 @@ struct pm_parser {
      * a true value.
      */
     bool frozen_string_literal;
+
+    /**
+     * Whether or not we should emit warnings. This will be set to false if the
+     * consumer of the library specified it, usually because they are parsing
+     * when $VERBOSE is nil.
+     */
+    bool suppress_warnings;
 };
 
 #endif

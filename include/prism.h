@@ -15,6 +15,7 @@
 #include "prism/ast.h"
 #include "prism/diagnostic.h"
 #include "prism/node.h"
+#include "prism/options.h"
 #include "prism/pack.h"
 #include "prism/parser.h"
 #include "prism/prettyprint.h"
@@ -47,9 +48,9 @@ PRISM_EXPORTED_FUNCTION const char * pm_version(void);
  * @param parser The parser to initialize.
  * @param source The source to parse.
  * @param size The size of the source.
- * @param filepath The optional filepath to pass to the parser.
+ * @param options The optional options to use when parsing.
  */
-PRISM_EXPORTED_FUNCTION void pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const char *filepath);
+PRISM_EXPORTED_FUNCTION void pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm_options_t *options);
 
 /**
  * Register a callback that will be called whenever prism changes the encoding
@@ -123,60 +124,45 @@ void pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buf
 PRISM_EXPORTED_FUNCTION void pm_serialize(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer);
 
 /**
- * Process any additional metadata being passed into a call to the parser via
- * the pm_parse_serialize function. Since the source of these calls will be from
- * Ruby implementation internals we assume it is from a trusted source.
+ * Parse the given source to the AST and dump the AST to the given buffer.
  *
- * Currently, this is only passing in variable scoping surrounding an eval, but
- * eventually it will be extended to hold any additional metadata.  This data
- * is serialized to reduce the calling complexity for a foreign function call
- * vs a foreign runtime making a bindable in-memory version of a C structure.
- *
- * @param parser The parser to process the metadata for.
- * @param metadata The metadata to process.
- */
-void pm_parser_metadata(pm_parser_t *parser, const char *metadata);
-
-/**
- * Parse the given source to the AST and serialize the AST to the given buffer.
- *
+ * @param buffer The buffer to serialize to.
  * @param source The source to parse.
  * @param size The size of the source.
- * @param buffer The buffer to serialize to.
- * @param metadata The optional metadata to pass to the parser.
+ * @param data The optional data to pass to the parser.
  */
-PRISM_EXPORTED_FUNCTION void pm_parse_serialize(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata);
+PRISM_EXPORTED_FUNCTION void pm_serialize_parse(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
 /**
  * Parse and serialize the comments in the given source to the given buffer.
  *
+ * @param buffer The buffer to serialize to.
  * @param source The source to parse.
  * @param size The size of the source.
- * @param buffer The buffer to serialize to.
- * @param metadata The optional metadata to pass to the parser.
+ * @param data The optional data to pass to the parser.
  */
-PRISM_EXPORTED_FUNCTION void pm_parse_serialize_comments(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata);
+PRISM_EXPORTED_FUNCTION void pm_serialize_parse_comments(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
 /**
  * Lex the given source and serialize to the given buffer.
  *
  * @param source The source to lex.
  * @param size The size of the source.
- * @param filepath The optional filepath to pass to the lexer.
  * @param buffer The buffer to serialize to.
+ * @param data The optional data to pass to the lexer.
  */
-PRISM_EXPORTED_FUNCTION void pm_lex_serialize(const uint8_t *source, size_t size, const char *filepath, pm_buffer_t *buffer);
+PRISM_EXPORTED_FUNCTION void pm_serialize_lex(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
 /**
  * Parse and serialize both the AST and the tokens represented by the given
  * source to the given buffer.
  *
+ * @param buffer The buffer to serialize to.
  * @param source The source to parse.
  * @param size The size of the source.
- * @param buffer The buffer to serialize to.
- * @param metadata The optional metadata to pass to the parser.
+ * @param data The optional data to pass to the parser.
  */
-PRISM_EXPORTED_FUNCTION void pm_parse_lex_serialize(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata);
+PRISM_EXPORTED_FUNCTION void pm_serialize_parse_lex(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
 /**
  * Returns a string representation of the given token type.
@@ -247,7 +233,7 @@ PRISM_EXPORTED_FUNCTION const char * pm_token_type_to_str(pm_token_type_t token_
  * * `pm_buffer_t` - a small buffer object that will hold the serialized AST
  * * `pm_buffer_free` - free the memory associated with the buffer
  * * `pm_serialize` - serialize the AST into a buffer
- * * `pm_parse_serialize` - parse and serialize the AST into a buffer
+ * * `pm_serialize_parse` - parse and serialize the AST into a buffer
  *
  * Putting all of this together would look something like:
  *
@@ -255,7 +241,7 @@ PRISM_EXPORTED_FUNCTION const char * pm_token_type_to_str(pm_token_type_t token_
  * void serialize(const uint8_t *source, size_t length) {
  *     pm_buffer_t buffer = { 0 };
  *
- *     pm_parse_serialize(source, length, &buffer, NULL);
+ *     pm_serialize_parse(&buffer, source, length, NULL);
  *     printf("SERIALIZED!\n");
  *
  *     pm_buffer_free(&buffer);

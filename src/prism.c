@@ -508,7 +508,9 @@ pm_parser_err_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic_
  */
 static inline void
 pm_parser_warn(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->warning_list, start, end, diag_id);
+    if (!parser->suppress_warnings) {
+        pm_diagnostic_list_append(&parser->warning_list, start, end, diag_id);
+    }
 }
 
 /**
@@ -5847,7 +5849,7 @@ next_newline(const uint8_t *cursor, ptrdiff_t length) {
  * Here we're going to check if this is a "magic" comment, and perform whatever
  * actions are necessary for it here.
  */
-static void
+static bool
 parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
     size_t width = (size_t) (end - start);
 
@@ -5859,7 +5861,7 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
 
         if (encoding != NULL) {
             parser->encoding = *encoding;
-            return;
+            return true;
         }
     }
 
@@ -5870,7 +5872,7 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
     if ((start + 5 <= end) && (pm_strncasecmp(start, (const uint8_t *) "utf-8", 5) == 0)) {
         // We don't need to do anything here because the default encoding is
         // already UTF-8. We'll just return.
-        return;
+        return true;
     }
 
     // Next, we're going to loop through each of the encodings that we handle
@@ -5880,7 +5882,7 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
         parser->encoding = prebuilt; \
         parser->encoding_changed |= true; \
         if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
-        return; \
+        return true; \
     }
 
     // Check most common first. (This is pretty arbitrary.)
@@ -5921,11 +5923,7 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
 
 #undef ENCODING
 
-    // If nothing was returned by this point, then we've got an issue because we
-    // didn't understand the encoding that the user was trying to use. In this
-    // case we'll keep using the default encoding but add an error to the
-    // parser to indicate an unsuccessful parse.
-    pm_parser_err(parser, start, end, PM_ERR_INVALID_ENCODING_MAGIC_COMMENT);
+    return false;
 }
 
 /**
@@ -5975,7 +5973,13 @@ parser_lex_magic_comment_encoding(pm_parser_t *parser) {
     const uint8_t *value_start = cursor;
     while ((*cursor == '-' || *cursor == '_' || parser->encoding.alnum_char(cursor, 1)) && ++cursor < end);
 
-    parser_lex_magic_comment_encoding_value(parser, value_start, cursor);
+    if (!parser_lex_magic_comment_encoding_value(parser, value_start, cursor)) {
+        // If we were unable to parse the encoding value, then we've got an
+        // issue because we didn't understand the encoding that the user was
+        // trying to use. In this case we'll keep using the default encoding but
+        // add an error to the parser to indicate an unsuccessful parse.
+        pm_parser_err(parser, value_start, cursor, PM_ERR_INVALID_ENCODING_MAGIC_COMMENT);
+    }
 }
 
 /**
@@ -16235,82 +16239,6 @@ parse_program(pm_parser_t *parser) {
     return (pm_node_t *) pm_program_node_create(parser, &locals, statements);
 }
 
-/**
- * Read a 32-bit unsigned integer from a pointer. This function is used to read
- * the metadata that is passed into the parser from the Ruby implementation. It
- * handles aligned and unaligned reads.
- */
-static uint32_t
-pm_metadata_read_u32(const char *ptr) {
-    if (((uintptr_t) ptr) % sizeof(uint32_t) == 0) {
-        return *((uint32_t *) ptr);
-    } else {
-        uint32_t value;
-        memcpy(&value, ptr, sizeof(uint32_t));
-        return value;
-    }
-}
-
-/**
- * Process any additional metadata being passed into a call to the parser via
- * the pm_parse_serialize function. Since the source of these calls will be from
- * Ruby implementation internals we assume it is from a trusted source.
- *
- * Currently, this is only passing in variable scoping surrounding an eval, but
- * eventually it will be extended to hold any additional metadata.  This data
- * is serialized to reduce the calling complexity for a foreign function call
- * vs a foreign runtime making a bindable in-memory version of a C structure.
- *
- * metadata is assumed to be a valid pointer pointing to well-formed data. The
- * format is described below:
- *
- * ```text
- * [
- *   filepath_size: uint32_t,
- *   filepath: char*,
- *   scopes_count: uint32_t,
- *   [
- *     locals_count: uint32_t,
- *     [local_size: uint32_t, local: char*]*
- *   ]*
- * ]
- * ```
- */
-void
-pm_parser_metadata(pm_parser_t *parser, const char *metadata) {
-    uint32_t filepath_size = pm_metadata_read_u32(metadata);
-    metadata += 4;
-
-    if (filepath_size) {
-        pm_string_t filepath_string;
-        pm_string_constant_init(&filepath_string, metadata, filepath_size);
-
-        parser->filepath_string = filepath_string;
-        metadata += filepath_size;
-    }
-
-    uint32_t scopes_count = pm_metadata_read_u32(metadata);
-    metadata += 4;
-
-    for (size_t scope_index = 0; scope_index < scopes_count; scope_index++) {
-        uint32_t locals_count = pm_metadata_read_u32(metadata);
-        metadata += 4;
-
-        pm_parser_scope_push(parser, scope_index == 0);
-
-        for (size_t local_index = 0; local_index < locals_count; local_index++) {
-            uint32_t local_size = pm_metadata_read_u32(metadata);
-            metadata += 4;
-
-            uint8_t *constant = malloc(local_size);
-            memcpy(constant, metadata, local_size);
-
-            pm_parser_local_add_owned(parser, constant, (size_t) local_size);
-            metadata += local_size;
-        }
-    }
-}
-
 /******************************************************************************/
 /* External functions                                                         */
 /******************************************************************************/
@@ -16319,13 +16247,8 @@ pm_parser_metadata(pm_parser_t *parser, const char *metadata) {
  * Initialize a parser with the given start and end pointers.
  */
 PRISM_EXPORTED_FUNCTION void
-pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const char *filepath) {
+pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm_options_t *options) {
     assert(source != NULL);
-
-    // Set filepath to the file that was passed
-    if (!filepath) filepath = "";
-    pm_string_t filepath_string;
-    pm_string_constant_init(&filepath_string, filepath, strlen(filepath));
 
     *parser = (pm_parser_t) {
         .lex_state = PM_LEX_STATE_BEG,
@@ -16356,21 +16279,21 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const ch
         .encoding_decode_callback = NULL,
         .encoding_comment_start = source,
         .lex_callback = NULL,
-        .filepath_string = filepath_string,
+        .filepath_string = { 0 },
         .constant_pool = { 0 },
         .newline_list = { 0 },
         .integer_base = 0,
         .current_string = PM_STRING_EMPTY,
+        .start_line = 1,
         .command_start = true,
         .recovering = false,
         .encoding_changed = false,
         .pattern_matching_newlines = false,
         .in_keyword_arg = false,
         .semantic_token_seen = false,
-        .frozen_string_literal = false
+        .frozen_string_literal = false,
+        .suppress_warnings = false
     };
-
-    pm_accepts_block_stack_push(parser, true);
 
     // Initialize the constant pool. We're going to completely guess as to the
     // number of constants that we'll need based on the size of the input. The
@@ -16394,6 +16317,55 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const ch
     // input.
     size_t newline_size = size / 22;
     pm_newline_list_init(&parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
+
+    // If options were provided to this parse, establish them here.
+    if (options != NULL) {
+        // filepath option
+        parser->filepath_string = options->filepath;
+
+        // line option
+        if (options->line > 0) {
+            parser->start_line = options->line;
+        }
+
+        // encoding option
+        size_t encoding_length = pm_string_length(&options->encoding);
+        if (encoding_length > 0) {
+            const uint8_t *encoding_source = pm_string_source(&options->encoding);
+            parser_lex_magic_comment_encoding_value(parser, encoding_source, encoding_source + encoding_length);
+        }
+
+        // frozen_string_literal option
+        if (options->frozen_string_literal) {
+            parser->frozen_string_literal = true;
+        }
+
+        // suppress_warnings option
+        if (options->suppress_warnings) {
+            parser->suppress_warnings = true;
+        }
+
+        // scopes option
+        for (size_t scope_index = 0; scope_index < options->scopes_count; scope_index++) {
+            const pm_options_scope_t *scope = pm_options_scope_get(options, scope_index);
+            pm_parser_scope_push(parser, scope_index == 0);
+
+            for (size_t local_index = 0; local_index < scope->locals_count; local_index++) {
+                const pm_string_t *local = pm_options_scope_local_get(scope, local_index);
+
+                const uint8_t *source = pm_string_source(local);
+                size_t length = pm_string_length(local);
+
+                uint8_t *allocated = malloc(length);
+                if (allocated == NULL) continue;
+
+                memcpy((void *) allocated, source, length);
+                pm_parser_local_add_owned(parser, allocated, length);
+            }
+        }
+    }
+
+    pm_accepts_block_stack_push(parser, true);
 
     // Skip past the UTF-8 BOM if it exists.
     if (size >= 3 && source[0] == 0xef && source[1] == 0xbb && source[2] == 0xbf) {
@@ -16513,7 +16485,7 @@ PRISM_EXPORTED_FUNCTION void
 pm_serialize(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     pm_serialize_header(buffer);
     pm_serialize_content(parser, node, buffer);
-    pm_buffer_append_string(buffer, "\0", 1);
+    pm_buffer_append_byte(buffer, '\0');
 }
 
 /**
@@ -16521,10 +16493,12 @@ pm_serialize(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
  * buffer.
  */
 PRISM_EXPORTED_FUNCTION void
-pm_parse_serialize(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata) {
+pm_serialize_parse(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data) {
+    pm_options_t options = { 0 };
+    if (data != NULL) pm_options_read(&options, data);
+
     pm_parser_t parser;
-    pm_parser_init(&parser, source, size, NULL);
-    if (metadata) pm_parser_metadata(&parser, metadata);
+    pm_parser_init(&parser, source, size, &options);
 
     pm_node_t *node = pm_parse(&parser);
 
@@ -16534,24 +16508,29 @@ pm_parse_serialize(const uint8_t *source, size_t size, pm_buffer_t *buffer, cons
 
     pm_node_destroy(&parser, node);
     pm_parser_free(&parser);
+    pm_options_free(&options);
 }
 
 /**
  * Parse and serialize the comments in the given source to the given buffer.
  */
 PRISM_EXPORTED_FUNCTION void
-pm_parse_serialize_comments(const uint8_t *source, size_t size, pm_buffer_t *buffer, const char *metadata) {
+pm_serialize_parse_comments(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data) {
+    pm_options_t options = { 0 };
+    if (data != NULL) pm_options_read(&options, data);
+
     pm_parser_t parser;
-    pm_parser_init(&parser, source, size, NULL);
-    if (metadata) pm_parser_metadata(&parser, metadata);
+    pm_parser_init(&parser, source, size, &options);
 
     pm_node_t *node = pm_parse(&parser);
     pm_serialize_header(buffer);
     pm_serialize_encoding(&parser.encoding, buffer);
+    pm_buffer_append_varint(buffer, parser.start_line);
     pm_serialize_comment_list(&parser, &parser.comment_list, buffer);
 
     pm_node_destroy(&parser, node);
     pm_parser_free(&parser);
+    pm_options_free(&options);
 }
 
 #undef PM_CASE_KEYWORD

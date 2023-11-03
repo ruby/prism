@@ -29,8 +29,8 @@ ripper =
     []
   end
 
-prism = Prism.lex_compat(source, filepath)
-prism_new = Prism.lex(source, filepath)
+prism = Prism.lex_compat(source, filepath: filepath)
+prism_new = Prism.lex(source, filepath: filepath)
 if prism.errors.any?
   puts "Errors lexing:"
   prism.errors.map do |error|
