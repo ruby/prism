@@ -6,9 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.17.0] - 2023-11-03
+
+### Added
+
+- We now properly support forwarding arguments into arrays, like `def foo(*) = [*]`.
+- We now have much better documentation for the C and Ruby APIs.
+- We now properly provide an error message when attempting to assign to numbered parameters from within regular expression named capture groups, as in `/(?<_1>)/ =~ ""`.
+
 ### Changed
 
 - **BREAKING**: `KeywordParameterNode` is split into `OptionalKeywordParameterNode` and `RequiredKeywordParameterNode`. `RequiredKeywordParameterNode` has no `value` field.
+- **BREAKING**: Most of the `Prism::` APIs now accept a bunch of keyword options. The options we now support are: `filepath`, `encoding`, `line`, `frozen_string_literal`, `verbose`, and `scopes`. See [the pull request](https://github.com/ruby/prism/pull/1763) for more details.
+- **BREAKING**: Comments are now split into three different classes instead of a single class, and the `type` field has been removed. They are: `InlineComment`, `EmbDocComment`, and `DATAComment`.
 
 ## [0.16.0] - 2023-10-30
 
@@ -223,7 +233,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.16.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/ruby/prism/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/ruby/prism/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/ruby/prism/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/ruby/prism/compare/v0.14.0...v0.15.0
