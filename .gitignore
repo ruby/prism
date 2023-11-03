@@ -22,6 +22,7 @@ tmp/
 
 test.c
 a.out
+out.svg
 
 /ext/prism/api_node.c
 /fuzz/output/
@@ -38,6 +39,7 @@ a.out
 /java/org/prism/Nodes.java
 /lib/prism/compiler.rb
 /lib/prism/dispatcher.rb
+/lib/prism/dot_visitor.rb
 /lib/prism/dsl.rb
 /lib/prism/mutation_compiler.rb
 /lib/prism/node.rb
