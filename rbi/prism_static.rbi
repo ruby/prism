@@ -48,6 +48,20 @@ module Prism
   class Comment
     sig { returns(Location) }
     def location; end
+
+    sig { returns(T::Boolean) }
+    def trailing?; end
+  end
+
+  class InlineComment < Comment
+    sig { override.returns(T::Boolean) }
+    def trailing?; end
+  end
+
+  class EmbDocComment < Comment
+  end
+
+  class DATAComment < Comment
   end
 
   class Location
