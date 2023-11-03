@@ -25,6 +25,17 @@ module Prism
 
   class Comment
     def location: () -> Location
+    def trailing?: () -> bool
+  end
+
+  class InlineComment < Comment
+    def trailing?: () -> bool
+  end
+
+  class EmbDocComment < Comment
+  end
+
+  class DATAComment < Comment
   end
 
   class Location
