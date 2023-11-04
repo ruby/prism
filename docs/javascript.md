@@ -74,6 +74,34 @@ A ParseResult object is very similar to the Prism::ParseResult object from Ruby.
 console.log(JSON.stringify(parseResult.value, null, 2));
 ```
 
+## Visitors
+
+Prism allows you to traverse the AST of parsed Ruby code using visitors.
+
+Here's an example of a custom `FooCalls` visitor:
+
+```js
+import { loadPrism, Visitor } from "@ruby/prism"
+
+const parse = await loadPrism();
+const parseResult = parse("foo()");
+
+class FooCalls extends Visitor {
+  visitCallNode(node) {
+    if (node.name === "foo") {
+      // Do something with the node
+    }
+
+    // Call super so that the visitor continues walking the tree
+    super.visitCallNode(node);
+  }
+}
+
+const fooVisitor = new FooCalls();
+
+parseResult.value.accept(fooVisitor);
+```
+
 ## Building
 
 To build the WASM package yourself, first obtain a copy of `wasi-sdk`. You can retrieve this here: <https://github.com/WebAssembly/wasi-sdk>. Next, run:

@@ -1,6 +1,11 @@
 <%-
+
+def camelize(string)
+  string.gsub(/_([a-z])/) { $1.upcase }
+end
+
 def prop(field)
-  field.name == "arguments" ? "arguments_" : field.name.gsub(/_([a-z])/) { $1.upcase }
+  field.name == "arguments" ? "arguments_" : camelize(field.name)
 end
 
 def jstype(field)
@@ -19,6 +24,8 @@ def jstype(field)
   end
 end
 -%>
+import * as visitors from "./visitor.js"
+
 <%- flags.each do |flag| -%>
 
 /**
@@ -95,6 +102,68 @@ export class <%= node.name -%> {
   <%- end -%>
   <%- end -%>
 
+  /**
+   * Accept a visitor for this node.
+   *
+   * @param {visitors.Visitor} visitor
+   */
+  accept(visitor) {
+    visitor.visit<%= camelize(node.name) %>(this)
+  }
+
+  /**
+   * Returns all child nodes of the current node.
+   *
+   * @returns {(Node | null)[]} An array of child nodes.
+   */
+  childNodes() {
+    return [<%= node.fields.map { |field|
+    case field
+    when Prism::NodeField, Prism::OptionalNodeField then "this.#{prop(field)}"
+    when Prism::NodeListField then "...this.#{prop(field)}"
+    end
+    }.compact.join(", ") %>]
+  }
+
+  /**
+   * Compact and return an array of child nodes.
+   *
+   * @returns {Node[]} An array of compacted child nodes.
+   */
+  compactChildNodes() {
+    <%- if node.fields.any? { |field| field.is_a?(Prism::OptionalNodeField) } -%>
+    const compact = [];
+
+    <%- node.fields.each do |field| -%>
+    <%- case field -%>
+    <%- when Prism::NodeField -%>
+    compact.push(this.<%= prop(field) %>);
+
+    <%- when Prism::OptionalNodeField -%>
+    if (this.<%= prop(field) %>) {
+      compact.push(this.<%= prop(field) %>);
+    }
+    <%- when Prism::NodeListField -%>
+    compact.concat(this.<%= prop(field) %>);
+    <%- end -%>
+    <%- end -%>
+
+    return compact;
+    <%- else -%>
+    return [<%= node.fields.map { |field|
+    case field
+    when Prism::NodeField then "this.#{prop(field)}"
+    when Prism::NodeListField then "...this.#{prop(field)}"
+    end
+    }.compact.join(", ") %>];
+    <%- end -%>
+  }
+
+  /**
+   * Transforms the Node to a JavaScript object.
+   *
+   * @returns {Object}
+   */
   toJSON() {
     return {
       type: "<%= node.name %>",
