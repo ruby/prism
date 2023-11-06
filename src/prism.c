@@ -14636,7 +14636,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
             parser_lex(parser);
             pm_token_t keyword = parser->previous;
 
-            pm_node_t *predicate = parse_expression(parser, PM_BINDING_POWER_COMPOSITION, PM_ERR_CONDITIONAL_UNTIL_PREDICATE);
+            pm_node_t *predicate = parse_expression(parser, PM_BINDING_POWER_MODIFIER, PM_ERR_CONDITIONAL_UNTIL_PREDICATE);
             pm_do_loop_stack_pop(parser);
 
             expect3(parser, PM_TOKEN_KEYWORD_DO_LOOP, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_CONDITIONAL_UNTIL_PREDICATE);
@@ -14657,7 +14657,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
             parser_lex(parser);
             pm_token_t keyword = parser->previous;
 
-            pm_node_t *predicate = parse_expression(parser, PM_BINDING_POWER_COMPOSITION, PM_ERR_CONDITIONAL_WHILE_PREDICATE);
+            pm_node_t *predicate = parse_expression(parser, PM_BINDING_POWER_MODIFIER, PM_ERR_CONDITIONAL_WHILE_PREDICATE);
             pm_do_loop_stack_pop(parser);
 
             expect3(parser, PM_TOKEN_KEYWORD_DO_LOOP, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_CONDITIONAL_WHILE_PREDICATE);
