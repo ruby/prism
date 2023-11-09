@@ -7,17 +7,17 @@ GEM
   remote: https://rubygems.org/
   specs:
     ffi (1.15.5)
-    mini_portile2 (2.8.4)
-    nokogiri (1.15.3)
+    mini_portile2 (2.8.5)
+    nokogiri (1.15.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     power_assert (2.0.3)
-    racc (1.7.1)
+    racc (1.7.3)
     rake (13.0.6)
     rake-compiler (1.2.5)
       rake
     rbs (3.2.2)
-    ruby_memcheck (2.0.1)
+    ruby_memcheck (2.2.1)
       nokogiri
     test-unit (3.6.1)
       power_assert
