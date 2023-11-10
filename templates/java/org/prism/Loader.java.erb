@@ -79,16 +79,18 @@ public class Loader {
 
     private final ByteBuffer buffer;
     private final Nodes.Source source;
-    private String encodingName;
+    protected String encodingName;
+    <%- if string_type == "String" -%>
     private Charset encodingCharset;
+    <%- end -%>
     private ConstantPool constantPool;
 
-    private Loader(byte[] serialized, Nodes.Source source) {
+    protected Loader(byte[] serialized, Nodes.Source source) {
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
         this.source = source;
     }
 
-    private ParseResult load() {
+    protected ParseResult load() {
         expect((byte) 'P', "incorrect prism header");
         expect((byte) 'R', "incorrect prism header");
         expect((byte) 'I', "incorrect prism header");
@@ -106,7 +108,9 @@ public class Loader {
         byte[] encodingNameBytes = new byte[encodingLength];
         buffer.get(encodingNameBytes);
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
+        <%- if string_type == "String" -%>
         this.encodingCharset = getEncodingCharset(this.encodingName);
+        <%- end -%>
 
         source.setStartLine(loadVarInt());
 
