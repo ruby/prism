@@ -10,10 +10,10 @@ fn main() {
     let ruby_build_path = prism_lib_path();
     let ruby_include_path = prism_include_path();
 
-    // Tell cargo/rustc that we want to link against `librubyparser.a`.
-    println!("cargo:rustc-link-lib=static=rubyparser");
+    // Tell cargo/rustc that we want to link against `libprism.a`.
+    println!("cargo:rustc-link-lib=static=prism");
 
-    // Add `[root]/build/` to the search paths, so it can find `librubyparser.a`.
+    // Add `[root]/build/` to the search paths, so it can find `libprism.a`.
     println!("cargo:rustc-link-search=native={}", ruby_build_path.to_str().unwrap());
 
     // This is where the magic happens.
@@ -23,7 +23,7 @@ fn main() {
     write_bindings(&bindings);
 }
 
-/// Gets the path to project files (`librubyparser*`) at `[root]/build/`.
+/// Gets the path to project files (`libprism*`) at `[root]/build/`.
 ///
 fn prism_lib_path() -> PathBuf {
     if let Ok(lib_dir) = std::env::var("PRISM_LIB_DIR") {

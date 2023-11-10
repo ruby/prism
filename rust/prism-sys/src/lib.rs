@@ -27,7 +27,7 @@
 #[allow(non_upper_case_globals)]
 mod bindings {
     // In `build.rs`, we use `bindgen` to generate bindings based on C headers
-    // and `librubyparser`. Here is where we pull in those bindings and make
+    // and `libprism`. Here is where we pull in those bindings and make
     // them part of our library.
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }

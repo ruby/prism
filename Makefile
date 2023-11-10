@@ -22,15 +22,15 @@ STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 
 all: shared static
 
-shared: build/librubyparser.$(SOEXT)
-static: build/librubyparser.a
+shared: build/libprism.$(SOEXT)
+static: build/libprism.a
 wasm: javascript/src/prism.wasm
 
-build/librubyparser.$(SOEXT): $(SHARED_OBJECTS)
+build/libprism.$(SOEXT): $(SHARED_OBJECTS)
 	$(ECHO) "linking $@"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
 
-build/librubyparser.a: $(STATIC_OBJECTS)
+build/libprism.a: $(STATIC_OBJECTS)
 	$(ECHO) "building $@"
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS) $(Q1:0=>/dev/null)
 

@@ -62,7 +62,7 @@ pub fn build() -> Result<(), Box<dyn std::error::Error>> {
 
     build.files(source_files(src_dir()));
     build.out_dir(&out_dir);
-    build.try_compile("rubyparser")?;
+    build.try_compile("prism")?;
 
     std::env::set_var("PRISM_INCLUDE_DIR", include_dir());
     std::env::set_var("PRISM_LIB_DIR", out_dir);

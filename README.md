@@ -7,7 +7,7 @@ This is a parser for the Ruby programming language. It is designed to be portabl
 
 ## Overview
 
-The repository contains the infrastructure for both a shared library (librubyparser) and a native CRuby extension. The shared library has no bindings to CRuby itself, and so can be used by other projects. The native CRuby extension links against `ruby.h`, and so is suitable in the context of CRuby.
+The repository contains the infrastructure for both a shared library (libprism) and a native CRuby extension. The shared library has no bindings to CRuby itself, and so can be used by other projects. The native CRuby extension links against `ruby.h`, and so is suitable in the context of CRuby.
 
 ```
 .
@@ -21,7 +21,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 ├── ext
 │   └── prism
 │       ├── extconf.rb    configuration to generate the Makefile for the native extension
-│       └── extension.c   the native extension that interacts with librubyparser
+│       └── extension.c   the native extension that interacts with libprism
 ├── fuzz                  files related to fuzz testing
 ├── include
 │   ├── prism             header files for the shared library
