@@ -30,6 +30,7 @@ a.out
 /javascript/package-lock.json
 /javascript/src/deserialize.js
 /javascript/src/nodes.js
+/javascript/src/visitor.js
 /javascript/src/prism.wasm
 /javascript/types/
 /java/org/prism/AbstractNodeVisitor.java

@@ -1,0 +1,78 @@
+import * as nodes from "./nodes.js";
+
+/**
+ * A class that knows how to walk down the tree. None of the individual visit
+ * methods are implemented on this visitor, so it forces the consumer to
+ * implement each one that they need. For a default implementation that
+ * continues walking the tree, see the `Visitor` class.
+ *
+ */
+export class BasicVisitor {
+  /**
+   * Calls `accept` on the given node if it is not `null`, which in turn should
+   * call back into this visitor by calling the appropriate `visit*` method.
+   *
+   * @param {Node} node
+   */
+  visit(node) {
+    node?.accept(this);
+  }
+
+  /**
+   * Visits each node in `nodes` by calling `accept` on each one.
+   *
+   * @param {Node[]} node
+   */
+  visitAll(nodes) {
+    nodes.forEach((node) => {
+      node?.accept(this);
+    });
+  }
+
+  /**
+   * Visits the child nodes of `node` by calling `accept` on each one.
+   *
+   * @param {Node} node
+   */
+  visitChildNodes(node) {
+    node.compactChildNodes().forEach((childNode) => {
+      childNode.accept(this);
+    });
+  }
+}
+
+/**
+ * A visitor is a class that provides a default implementation for every accept
+ * method defined on the nodes. This means it can walk a tree without the
+ * caller needing to define any special handling. This allows you to handle a
+ * subset of the tree, while still walking the whole tree.
+ *
+ * For example, to find all of the method calls that call the `foo` method, you
+ * could write:
+ *
+ * @example
+ * class FooCalls extends Visitor {
+ *   visitCallNode(node) {
+ *     if (node.name === "foo") {
+ *       // Do something with the node
+ *     }
+ *
+ *     // Call super so that the visitor continues walking the tree
+ *     super.visitCallNode(node);
+ *   }
+ * }
+ *
+ */
+export class Visitor extends BasicVisitor {
+<%- nodes.each_with_index do |node, index| -%>
+<%= "\n" if index != 0 -%>
+  /**
+   * Visit a <%= node.name %> node.
+   *
+   * @param {nodes.<%= node.name %>} node
+   */
+  <%= "visit#{node.name.gsub(/_([a-z])/) { $1.upcase }}" %>(node) {
+    this.visitChildNodes(node);
+  }
+<%- end -%>
+}
