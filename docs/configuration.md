@@ -11,6 +11,7 @@ A lot of code in prism's repository is templated from a single configuration fil
 * `java/org/prism/Nodes.java` - for defining the nodes in Java
 * `lib/prism/compiler.rb` - for defining the compiler for the nodes in Ruby
 * `lib/prism/dispatcher.rb` - for defining the dispatch visitors for the nodes in Ruby
+* `lib/prism/dot_visitor.rb` - for defining the dot visitor for the nodes in Ruby
 * `lib/prism/dsl.rb` - for defining the DSL for the nodes in Ruby
 * `lib/prism/mutation_compiler.rb` - for defining the mutation compiler for the nodes in Ruby
 * `lib/prism/node.rb` - for defining the nodes in Ruby
