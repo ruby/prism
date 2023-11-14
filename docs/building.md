@@ -10,7 +10,7 @@ All of the source files match `src/**/*.c` and all of the headers match `include
 The following flags should be used to compile prism:
 
 * `-std=c99` - Use the C99 standard
-* `-Wall -Wconversion -Wextra -Wpedantic -Wundef` - Enable the warnings we care about
+* `-Wall -Wconversion -Wextra -Wpedantic -Wundef -Wno-missing-braces` - Enable the warnings we care about
 * `-Werror` - Treat warnings as errors
 * `-fvisibility=hidden` - Hide all symbols by default
 
