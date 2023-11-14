@@ -7,24 +7,25 @@ module Prism
     class << self
       def configure
         unless RUBY_ENGINE == "ruby"
-          # On non-CRuby we only need the shared library, so build only that and not the C extension.
-          # We also avoid `require "mkmf"` as that prepends the LLVM toolchain to PATH on TruffleRuby,
-          # but we want to use the native toolchain here since librubyparser is run natively.
-          build_shared_rubyparser
+          # On non-CRuby we only need the shared library, so build only that and
+          # not the C extension. We also avoid `require "mkmf"` as that prepends
+          # the LLVM toolchain to PATH on TruffleRuby, but we want to use the
+          # native toolchain here since libprism is run natively.
+          build_shared_prism
           File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
           return
         end
 
         require "mkmf"
         configure_c_extension
-        configure_rubyparser
+        configure_libprism
 
         create_makefile("prism/prism")
 
         if static_link?
           File.open('Makefile', 'a') do |mf|
             mf.puts
-            mf.puts '# Automatically rebuild the extension if librubyparser.a changed'
+            mf.puts '# Automatically rebuild the extension if libprism.a changed'
             mf.puts '$(TARGET_SO): $(LOCAL_LIBS)'
           end
         end
@@ -35,19 +36,19 @@ module Prism
         append_cflags("-fvisibility=hidden")
       end
 
-      def configure_rubyparser
+      def configure_libprism
         if static_link?
-          static_archive_path = File.join(build_dir, "librubyparser.a")
+          static_archive_path = File.join(build_dir, "libprism.a")
           unless File.exist?(static_archive_path)
-            build_static_rubyparser
+            build_static_prism
           end
           $LOCAL_LIBS << " #{static_archive_path}"
         else
-          shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["SOEXT"]}")
+          shared_library_path = File.join(build_dir, "libprism.#{RbConfig::CONFIG["SOEXT"]}")
           unless File.exist?(shared_library_path)
-            build_shared_rubyparser
+            build_shared_prism
           end
-          unless find_library("rubyparser", "pm_parser_init", build_dir)
+          unless find_library("prism", "pm_parser_init", build_dir)
             raise "could not link against #{File.basename(shared_library_path)}"
           end
         end
@@ -60,15 +61,15 @@ module Prism
         find_header("prism/extension.h", File.join(__dir__, "..")) or raise "prism/extension.h is required"
       end
 
-      def build_shared_rubyparser
-        build_target_rubyparser "build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
+      def build_shared_prism
+        build_target_prism "build/libprism.#{RbConfig::CONFIG["SOEXT"]}"
       end
 
-      def build_static_rubyparser
-        build_target_rubyparser "build/librubyparser.a"
+      def build_static_prism
+        build_target_prism "build/libprism.a"
       end
 
-      def build_target_rubyparser(target)
+      def build_target_prism(target)
         Dir.chdir(root_dir) do
           if !File.exist?("include/prism/ast.h") && Dir.exist?(".git")
             # this block only exists to support building the gem from a "git" source,
@@ -99,7 +100,7 @@ module Prism
 
                 --enable-static
                 --disable-static
-                    Enable or disable static linking against librubyparser.
+                    Enable or disable static linking against libprism.
                     The default is to statically link.
 
                 --enable-debug-mode-build
