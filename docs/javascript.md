@@ -24,7 +24,7 @@ const parse = await loadPrism();
 
 ## Browser
 
-To use the package from the browser, you will need to do some additional work. The [javascript/example.html](javascript/example.html) file shows an example of running Prism in the browser. You will need to instantiate the WebAssembly module yourself and then pass it to the `parsePrism` function.
+To use the package from the browser, you will need to do some additional work. The [javascript/example.html](../javascript/example.html) file shows an example of running Prism in the browser. You will need to instantiate the WebAssembly module yourself and then pass it to the `parsePrism` function.
 
 First, get a shim for WASI since not all browsers support it yet.
 
