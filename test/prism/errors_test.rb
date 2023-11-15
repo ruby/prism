@@ -1708,6 +1708,14 @@ module Prism
       ]
     end
 
+    def test_non_assoc_range
+      source = '1....2'
+      assert_errors expression(source), source, [
+        ['Expected a newline or semicolon after the statement', 4..4],
+        ['Cannot parse the expression', 4..4],
+      ]
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
