@@ -15365,6 +15365,25 @@ parse_call_operator_write(pm_parser_t *parser, pm_call_node_t *call_node, const 
     }
 }
 
+static bool
+name_is_identifier(pm_parser_t *parser, const uint8_t *source, size_t length) {
+    if (length == 0) {
+        return false;
+    }
+
+    size_t width = char_is_identifier_start(parser, source);
+    if (!width) {
+        return false;
+    }
+
+    uint8_t *cursor = ((uint8_t *)source) + width;
+    while (cursor < source + length && (width = char_is_identifier(parser, cursor))) {
+        cursor += width;
+    }
+
+    return cursor == source + length;
+}
+
 /**
  * Potentially change a =~ with a regular expression with named captures into a
  * match write node.
@@ -15382,6 +15401,10 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
 
             const uint8_t *source = pm_string_source(name);
             size_t length = pm_string_length(name);
+
+            if (!name_is_identifier(parser, source, length)) {
+                continue;
+            }
 
             pm_constant_id_t local;
             if (content->type == PM_STRING_SHARED) {
@@ -15405,6 +15428,10 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
                     const pm_location_t *location = &call->receiver->location;
                     pm_parser_err_location(parser, location, PM_ERR_PARAMETER_NUMBERED_RESERVED);
                 }
+            }
+
+            if (pm_constant_id_list_includes(&match->locals, local)) {
+                continue;
             }
 
             pm_constant_id_list_append(&match->locals, local);
