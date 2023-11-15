@@ -361,6 +361,8 @@ flags:
     values:
       - name: EXCLUDE_END
         comment: "... operator"
+      - name: END_NOT_SUPPLIED
+        comment: "x.. (as distinct from x..nil)"
     comment: Flags for range and flip-flop nodes.
   - name: RegularExpressionFlags
     values:

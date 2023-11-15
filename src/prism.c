@@ -4607,12 +4607,12 @@ pm_pre_execution_node_create(pm_parser_t *parser, const pm_token_t *keyword, con
  * Allocate and initialize new RangeNode node.
  */
 static pm_range_node_t *
-pm_range_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *operator, pm_node_t *right) {
+pm_range_node_create_with_flags(pm_parser_t *parser, pm_node_t *left, const pm_token_t *operator, pm_node_t *right, pm_node_flags_t supplied_flags) {
     pm_assert_value_expression(parser, left);
     pm_assert_value_expression(parser, right);
 
     pm_range_node_t *node = PM_ALLOC_NODE(parser, pm_range_node_t);
-    pm_node_flags_t flags = 0;
+    pm_node_flags_t flags = supplied_flags;
 
     // Indicate that this node an exclusive range if the operator is `...`.
     if (operator->type == PM_TOKEN_DOT_DOT_DOT || operator->type == PM_TOKEN_UDOT_DOT_DOT) {
@@ -4644,6 +4644,11 @@ pm_range_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *ope
     };
 
     return node;
+}
+
+static pm_range_node_t *
+pm_range_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *operator, pm_node_t *right) {
+    return pm_range_node_create_with_flags(parser, left, operator, right, 0);
 }
 
 /**
@@ -16144,9 +16149,10 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             pm_node_t *right = NULL;
             if (token_begins_expression_p(parser->current.type)) {
                 right = parse_expression(parser, binding_power, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
+                return (pm_node_t *) pm_range_node_create(parser, node, &token, right);
+            } else {
+                return (pm_node_t *) pm_range_node_create_with_flags(parser, node, &token, right, PM_RANGE_FLAGS_END_NOT_SUPPLIED);
             }
-
-            return (pm_node_t *) pm_range_node_create(parser, node, &token, right);
         }
         case PM_TOKEN_KEYWORD_IF_MODIFIER: {
             pm_token_t keyword = parser->current;
