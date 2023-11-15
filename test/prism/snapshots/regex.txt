@@ -272,31 +272,28 @@
         ├── @ LocalVariableReadNode (location: (35,26)-(35,29))
         │   ├── name: :abc
         │   └── depth: 0
-        └── @ MatchWriteNode (location: (37,0)-(37,16))
-            ├── call:
-            │   @ CallNode (location: (37,0)-(37,16))
-            │   ├── receiver:
-            │   │   @ RegularExpressionNode (location: (37,0)-(37,10))
-            │   │   ├── opening_loc: (37,0)-(37,1) = "/"
-            │   │   ├── content_loc: (37,1)-(37,9) = "(?<a b>)"
-            │   │   ├── closing_loc: (37,9)-(37,10) = "/"
-            │   │   ├── unescaped: "(?<a b>)"
-            │   │   └── flags: ∅
-            │   ├── call_operator_loc: ∅
-            │   ├── message_loc: (37,11)-(37,13) = "=~"
-            │   ├── opening_loc: ∅
-            │   ├── arguments:
-            │   │   @ ArgumentsNode (location: (37,14)-(37,16))
-            │   │   ├── arguments: (length: 1)
-            │   │   │   └── @ StringNode (location: (37,14)-(37,16))
-            │   │   │       ├── flags: ∅
-            │   │   │       ├── opening_loc: (37,14)-(37,15) = "\""
-            │   │   │       ├── content_loc: (37,15)-(37,15) = ""
-            │   │   │       ├── closing_loc: (37,15)-(37,16) = "\""
-            │   │   │       └── unescaped: ""
-            │   │   └── flags: ∅
-            │   ├── closing_loc: ∅
-            │   ├── block: ∅
-            │   ├── flags: ∅
-            │   └── name: :=~
-            └── locals: []
+        └── @ CallNode (location: (37,0)-(37,16))
+            ├── receiver:
+            │   @ RegularExpressionNode (location: (37,0)-(37,10))
+            │   ├── opening_loc: (37,0)-(37,1) = "/"
+            │   ├── content_loc: (37,1)-(37,9) = "(?<a b>)"
+            │   ├── closing_loc: (37,9)-(37,10) = "/"
+            │   ├── unescaped: "(?<a b>)"
+            │   └── flags: ∅
+            ├── call_operator_loc: ∅
+            ├── message_loc: (37,11)-(37,13) = "=~"
+            ├── opening_loc: ∅
+            ├── arguments:
+            │   @ ArgumentsNode (location: (37,14)-(37,16))
+            │   ├── arguments: (length: 1)
+            │   │   └── @ StringNode (location: (37,14)-(37,16))
+            │   │       ├── flags: ∅
+            │   │       ├── opening_loc: (37,14)-(37,15) = "\""
+            │   │       ├── content_loc: (37,15)-(37,15) = ""
+            │   │       ├── closing_loc: (37,15)-(37,16) = "\""
+            │   │       └── unescaped: ""
+            │   └── flags: ∅
+            ├── closing_loc: ∅
+            ├── block: ∅
+            ├── flags: ∅
+            └── name: :=~

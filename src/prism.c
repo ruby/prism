@@ -15394,7 +15394,9 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
     pm_node_t *result;
 
     if (pm_regexp_named_capture_group_names(pm_string_source(content), pm_string_length(content), &named_captures, parser->encoding_changed, &parser->encoding) && (named_captures.length > 0)) {
-        pm_match_write_node_t *match = pm_match_write_node_create(parser, call);
+        // Since we should not create a MatchWriteNode when all capture names are invalid,
+        // creating a MatchWriteNode is delayed here.
+        pm_match_write_node_t *match = NULL;
 
         for (size_t index = 0; index < named_captures.length; index++) {
             pm_string_t *name = &named_captures.strings[index];
@@ -15430,6 +15432,10 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
                 }
             }
 
+            if (match == NULL) {
+                match = pm_match_write_node_create(parser, call);
+            }
+
             if (pm_constant_id_list_includes(&match->locals, local)) {
                 continue;
             }
@@ -15437,7 +15443,11 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
             pm_constant_id_list_append(&match->locals, local);
         }
 
-        result = (pm_node_t *) match;
+        if (match != NULL) {
+            result = (pm_node_t *) match;
+        } else {
+            result = (pm_node_t *) call;
+        }
     } else {
         result = (pm_node_t *) call;
     }
