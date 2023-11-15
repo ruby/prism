@@ -16110,6 +16110,13 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                 return (pm_node_t *) pm_call_node_shorthand_create(parser, node, &operator, &arguments);
             }
 
+            // This handles attempts to call a method directly on unterminated ranges. There's
+            // nothing _inherently_ wrong with that, but it certainly looks odd, and the core
+            // parser doesn't allow it.
+            if (node->type == PM_RANGE_NODE && node->flags & PM_RANGE_FLAGS_END_NOT_SUPPLIED) {
+                pm_parser_err_current(parser, PM_ERR_CALL_UNTERMINATED_RANGE);
+            }
+
             pm_token_t message;
 
             switch (parser->current.type) {

@@ -1676,6 +1676,24 @@ module Prism
       ], compare_ripper: false # Ripper does not check 'void value expression'.
     end
 
+    def test_unterminated_range_with_method_call
+      source = <<~RUBY
+        a....b
+        a...&.b
+        a..&.b
+        a... .b
+        a.. .b
+      RUBY
+      message = 'Cannot call a method directly on an unterminated range-literal'
+      assert_errors expression(source), source, [
+        [message, 5..6],
+        [message, 13..14],
+        [message, 20..21],
+        [message, 28..29],
+        [message, 35..36],
+      ], compare_ripper: true
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
