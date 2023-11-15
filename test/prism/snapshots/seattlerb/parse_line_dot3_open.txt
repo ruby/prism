@@ -9,7 +9,7 @@
         │   │   └── flags: decimal
         │   ├── right: ∅
         │   ├── operator_loc: (1,1)-(1,4) = "..."
-        │   └── flags: exclude_end
+        │   └── flags: exclude_end, end_not_supplied
         ├── @ RangeNode (location: (2,2)-(2,6))
         │   ├── left:
         │   │   @ CallNode (location: (2,2)-(2,3))
@@ -24,7 +24,7 @@
         │   │   └── name: :a
         │   ├── right: ∅
         │   ├── operator_loc: (2,3)-(2,6) = "..."
-        │   └── flags: exclude_end
+        │   └── flags: exclude_end, end_not_supplied
         └── @ CallNode (location: (3,2)-(3,3))
             ├── receiver: ∅
             ├── call_operator_loc: ∅

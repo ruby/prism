@@ -1399,7 +1399,7 @@
         │   │   │           │           │   └── flags: decimal
         │   │   │           │           ├── right: ∅
         │   │   │           │           ├── operator_loc: (148,13)-(148,16) = "..."
-        │   │   │           │           └── flags: exclude_end
+        │   │   │           │           └── flags: exclude_end, end_not_supplied
         │   │   │           ├── opening_loc: (148,11)-(148,12) = "("
         │   │   │           └── closing_loc: (148,16)-(148,17) = ")"
         │   │   ├── keyword_rest: ∅
@@ -1515,7 +1515,7 @@
         │   │   │           │           │   └── flags: decimal
         │   │   │           │           ├── right: ∅
         │   │   │           │           ├── operator_loc: (157,14)-(157,17) = "..."
-        │   │   │           │           └── flags: exclude_end
+        │   │   │           │           └── flags: exclude_end, end_not_supplied
         │   │   │           ├── opening_loc: (157,12)-(157,13) = "("
         │   │   │           └── closing_loc: (157,17)-(157,18) = ")"
         │   │   ├── rest: ∅

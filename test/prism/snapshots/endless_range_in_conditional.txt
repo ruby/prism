@@ -40,7 +40,7 @@
             │   │   └── flags: decimal
             │   ├── right: ∅
             │   ├── operator_loc: (3,4)-(3,6) = ".."
-            │   └── flags: ∅
+            │   └── flags: end_not_supplied
             ├── statements: ∅
             ├── consequent: ∅
             └── end_keyword_loc: (3,9)-(3,12) = "end"

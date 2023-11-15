@@ -106,7 +106,7 @@
         │   │           │   └── flags: decimal
         │   │           ├── right: ∅
         │   │           ├── operator_loc: (11,2)-(11,5) = "..."
-        │   │           └── flags: exclude_end
+        │   │           └── flags: exclude_end, end_not_supplied
         │   ├── opening_loc: (11,0)-(11,1) = "("
         │   └── closing_loc: (11,5)-(11,6) = ")"
         ├── @ RangeNode (location: (13,0)-(13,4))
@@ -156,6 +156,6 @@
             │           │   └── flags: decimal
             │           ├── right: ∅
             │           ├── operator_loc: (17,2)-(17,4) = ".."
-            │           └── flags: ∅
+            │           └── flags: end_not_supplied
             ├── opening_loc: (17,0)-(17,1) = "("
             └── closing_loc: (17,4)-(17,5) = ")"

@@ -9,4 +9,4 @@
             │   └── flags: decimal
             ├── right: ∅
             ├── operator_loc: (1,1)-(1,4) = "..."
-            └── flags: exclude_end
+            └── flags: exclude_end, end_not_supplied

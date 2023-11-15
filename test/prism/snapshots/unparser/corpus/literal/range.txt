@@ -13,7 +13,7 @@
         │   │           │   └── flags: decimal
         │   │           ├── right: ∅
         │   │           ├── operator_loc: (1,2)-(1,4) = ".."
-        │   │           └── flags: ∅
+        │   │           └── flags: end_not_supplied
         │   ├── opening_loc: (1,0)-(1,1) = "("
         │   └── closing_loc: (1,4)-(1,5) = ")"
         ├── @ RangeNode (location: (2,0)-(2,4))
@@ -35,7 +35,7 @@
         │   │           │   └── flags: decimal
         │   │           ├── right: ∅
         │   │           ├── operator_loc: (3,2)-(3,5) = "..."
-        │   │           └── flags: exclude_end
+        │   │           └── flags: exclude_end, end_not_supplied
         │   ├── opening_loc: (3,0)-(3,1) = "("
         │   └── closing_loc: (3,5)-(3,6) = ")"
         └── @ RangeNode (location: (4,0)-(4,5))
