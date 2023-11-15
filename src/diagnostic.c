@@ -81,6 +81,7 @@ static const char* const diagnostic_messages[PM_DIAGNOSTIC_ID_LEN] = {
     [PM_ERR_BLOCK_PARAM_PIPE_TERM]              = "Expected the block parameters to end with `|`",
     [PM_ERR_BLOCK_TERM_BRACE]                   = "Expected a block beginning with `{` to end with `}`",
     [PM_ERR_BLOCK_TERM_END]                     = "Expected a block beginning with `do` to end with `end`",
+    [PM_ERR_CALL_UNTERMINATED_RANGE]            = "Cannot call a method directly on an unterminated range-literal",
     [PM_ERR_CANNOT_PARSE_EXPRESSION]            = "Cannot parse the expression",
     [PM_ERR_CANNOT_PARSE_STRING_PART]           = "Cannot parse the string part",
     [PM_ERR_CASE_EXPRESSION_AFTER_CASE]         = "Expected an expression after `case`",
