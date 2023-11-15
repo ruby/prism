@@ -10217,6 +10217,8 @@ pm_binding_powers_t pm_binding_powers[PM_TOKEN_MAXIMUM] = {
     // .. ...
     [PM_TOKEN_DOT_DOT] = LEFT_ASSOCIATIVE(PM_BINDING_POWER_RANGE),
     [PM_TOKEN_DOT_DOT_DOT] = LEFT_ASSOCIATIVE(PM_BINDING_POWER_RANGE),
+    [PM_TOKEN_UDOT_DOT] = RIGHT_ASSOCIATIVE_UNARY(PM_BINDING_POWER_LOGICAL_OR),
+    [PM_TOKEN_UDOT_DOT_DOT] = RIGHT_ASSOCIATIVE_UNARY(PM_BINDING_POWER_LOGICAL_OR),
 
     // ||
     [PM_TOKEN_PIPE_PIPE] = LEFT_ASSOCIATIVE(PM_BINDING_POWER_LOGICAL_OR),
@@ -13956,7 +13958,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
             pm_token_t operator = parser->current;
             parser_lex(parser);
 
-            pm_node_t *right = parse_expression(parser, binding_power, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
+            pm_node_t *right = parse_expression(parser, pm_binding_powers[operator.type].left, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
             return (pm_node_t *) pm_range_node_create(parser, NULL, &operator, right);
         }
         case PM_TOKEN_FLOAT:
@@ -16747,6 +16749,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
 static pm_node_t *
 parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, pm_diagnostic_id_t diag_id) {
     pm_token_t recovery = parser->previous;
+    bool is_udot = parser->current.type == PM_TOKEN_UDOT_DOT || parser->current.type == PM_TOKEN_UDOT_DOT_DOT;
     pm_node_t *node = parse_expression_prefix(parser, binding_power);
 
     // If we found a syntax error, then the type of node returned by
@@ -16754,6 +16757,14 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, pm_diagn
     // to add the error message to the parser's error list.
     if (PM_NODE_TYPE_P(node, PM_MISSING_NODE)) {
         pm_parser_err(parser, recovery.end, recovery.end, diag_id);
+        return node;
+    }
+
+    // Range operators are non-associative, so that it does not associate with
+    // other range operators (i.e. `..1..` should be rejected.)
+    // For this reason, we check such a case for unary ranges here, and if so,
+    // it returns the node immediately,
+    if (is_udot && pm_binding_powers[parser->current.type].left >= PM_BINDING_POWER_RANGE) {
         return node;
     }
 
