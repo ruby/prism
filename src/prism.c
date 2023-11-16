@@ -5793,7 +5793,16 @@ pm_parser_scope_pop(pm_parser_t *parser) {
 static inline size_t
 char_is_identifier_start(pm_parser_t *parser, const uint8_t *b) {
     if (parser->encoding_changed) {
-        return parser->encoding.alpha_char(b, parser->end - b) || (*b == '_') || (*b >= 0x80);
+        size_t width;
+        if ((width = parser->encoding.alpha_char(b, parser->end - b)) != 0) {
+            return width;
+        } else if (*b == '_') {
+            return 1;
+        } else if (*b >= 0x80) {
+            return parser->encoding.char_width(b, parser->end - b);
+        } else {
+            return 0;
+        }
     } else if (*b < 0x80) {
         return (pm_encoding_unicode_table[*b] & PRISM_ENCODING_ALPHABETIC_BIT ? 1 : 0) || (*b == '_');
     } else {
@@ -5809,7 +5818,16 @@ char_is_identifier_start(pm_parser_t *parser, const uint8_t *b) {
 static inline size_t
 char_is_identifier(pm_parser_t *parser, const uint8_t *b) {
     if (parser->encoding_changed) {
-        return parser->encoding.alnum_char(b, parser->end - b) || (*b == '_') || (*b >= 0x80);
+        size_t width;
+        if ((width = parser->encoding.alnum_char(b, parser->end - b)) != 0) {
+            return width;
+        } else if (*b == '_') {
+            return 1;
+        } else if (*b >= 0x80) {
+            return parser->encoding.char_width(b, parser->end - b);
+        } else {
+            return 0;
+        }
     } else if (*b < 0x80) {
         return (pm_encoding_unicode_table[*b] & PRISM_ENCODING_ALPHANUMERIC_BIT ? 1 : 0) || (*b == '_');
     } else {
@@ -6004,10 +6022,18 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
     }
 
     // Next, we're going to check for UTF-8. This is the most common encoding.
-    // Extensions like utf-8 can contain extra encoding details like,
-    // utf-8-dos, utf-8-linux, utf-8-mac. We treat these all as utf-8 should
-    // treat any encoding starting utf-8 as utf-8.
+    // utf-8 can contain extra information at the end about the platform it is
+    // encoded on, such as utf-8-mac or utf-8-unix. We'll ignore those suffixes.
     if ((start + 5 <= end) && (pm_strncasecmp(start, (const uint8_t *) "utf-8", 5) == 0)) {
+        // We need to explicitly handle utf-8-hfs, as that one needs to switch
+        // over to being utf8-mac.
+        if (width == 9 && (pm_strncasecmp(start + 5, (const uint8_t *) "-hfs", 4) == 0)) {
+            parser->encoding = pm_encoding_utf8_mac;
+            parser->encoding_changed = true;
+            if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser);
+            return true;
+        }
+
         // We don't need to do anything here because the default encoding is
         // already UTF-8. We'll just return.
         return true;
@@ -6015,52 +6041,134 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
 
     // Next, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
-#define ENCODING(value, prebuilt) \
+#define ENCODING1(value, prebuilt) \
     if (width == sizeof(value) - 1 && start + width <= end && pm_strncasecmp(start, (const uint8_t *) value, width) == 0) { \
         parser->encoding = prebuilt; \
-        parser->encoding_changed |= true; \
+        parser->encoding_changed = true; \
         if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
         return true; \
     }
 
-    // Check most common first. (This is pretty arbitrary.)
-    ENCODING("ascii", pm_encoding_ascii);
-    ENCODING("ascii-8bit", pm_encoding_ascii_8bit);
-    ENCODING("us-ascii", pm_encoding_ascii);
-    ENCODING("binary", pm_encoding_ascii_8bit);
-    ENCODING("shift_jis", pm_encoding_shift_jis);
-    ENCODING("euc-jp", pm_encoding_euc_jp);
+    // A convenience macros for comparing two aliases for the same encoding.
+#define ENCODING2(value1, value2, prebuilt) ENCODING1(value1, prebuilt) ENCODING1(value2, prebuilt)
 
-    // Then check all the others.
-    ENCODING("big5", pm_encoding_big5);
-    ENCODING("cp51932", pm_encoding_cp51932);
-    ENCODING("gbk", pm_encoding_gbk);
-    ENCODING("iso-8859-1", pm_encoding_iso_8859_1);
-    ENCODING("iso-8859-2", pm_encoding_iso_8859_2);
-    ENCODING("iso-8859-3", pm_encoding_iso_8859_3);
-    ENCODING("iso-8859-4", pm_encoding_iso_8859_4);
-    ENCODING("iso-8859-5", pm_encoding_iso_8859_5);
-    ENCODING("iso-8859-6", pm_encoding_iso_8859_6);
-    ENCODING("iso-8859-7", pm_encoding_iso_8859_7);
-    ENCODING("iso-8859-8", pm_encoding_iso_8859_8);
-    ENCODING("iso-8859-9", pm_encoding_iso_8859_9);
-    ENCODING("iso-8859-10", pm_encoding_iso_8859_10);
-    ENCODING("iso-8859-11", pm_encoding_iso_8859_11);
-    ENCODING("iso-8859-13", pm_encoding_iso_8859_13);
-    ENCODING("iso-8859-14", pm_encoding_iso_8859_14);
-    ENCODING("iso-8859-15", pm_encoding_iso_8859_15);
-    ENCODING("iso-8859-16", pm_encoding_iso_8859_16);
-    ENCODING("koi8-r", pm_encoding_koi8_r);
-    ENCODING("windows-31j", pm_encoding_windows_31j);
-    ENCODING("windows-1251", pm_encoding_windows_1251);
-    ENCODING("windows-1252", pm_encoding_windows_1252);
-    ENCODING("cp1251", pm_encoding_windows_1251);
-    ENCODING("cp1252", pm_encoding_windows_1252);
-    ENCODING("cp932", pm_encoding_windows_31j);
-    ENCODING("sjis", pm_encoding_windows_31j);
-    ENCODING("utf8-mac", pm_encoding_utf8_mac);
+    if (width >= 3) {
+        switch (*start) {
+            case 'A': case 'a':
+                ENCODING1("ASCII", pm_encoding_ascii);
+                ENCODING1("ASCII-8BIT", pm_encoding_ascii_8bit);
+                ENCODING1("ANSI_X3.4-1968", pm_encoding_ascii);
+                break;
+            case 'B': case 'b':
+                ENCODING1("BINARY", pm_encoding_ascii_8bit);
+                ENCODING1("Big5", pm_encoding_big5);
+                break;
+            case 'C': case 'c':
+                ENCODING1("CP437", pm_encoding_ibm437);
+                ENCODING1("CP720", pm_encoding_ibm720);
+                ENCODING1("CP737", pm_encoding_ibm737);
+                ENCODING1("CP775", pm_encoding_ibm775);
+                ENCODING1("CP850", pm_encoding_cp850);
+                ENCODING1("CP852", pm_encoding_cp852);
+                ENCODING1("CP855", pm_encoding_cp855);
+                ENCODING1("CP857", pm_encoding_ibm857);
+                ENCODING1("CP860", pm_encoding_ibm860);
+                ENCODING1("CP861", pm_encoding_ibm861);
+                ENCODING1("CP862", pm_encoding_ibm862);
+                ENCODING1("CP878", pm_encoding_koi8_r);
+                ENCODING2("CP932", "csWindows31J", pm_encoding_windows_31j);
+                ENCODING1("CP936", pm_encoding_gbk);
+                ENCODING1("CP1250", pm_encoding_windows_1250);
+                ENCODING1("CP1251", pm_encoding_windows_1251);
+                ENCODING1("CP1252", pm_encoding_windows_1252);
+                ENCODING1("CP1253", pm_encoding_windows_1253);
+                ENCODING1("CP1254", pm_encoding_windows_1254);
+                ENCODING1("CP1255", pm_encoding_windows_1255);
+                ENCODING1("CP1256", pm_encoding_windows_1256);
+                ENCODING1("CP1257", pm_encoding_windows_1257);
+                ENCODING1("CP1258", pm_encoding_windows_1258);
+                ENCODING1("CP51932", pm_encoding_cp51932);
+                ENCODING1("CP65001", pm_encoding_utf_8);
+                break;
+            case 'E': case 'e':
+                ENCODING2("EUC-JP", "eucJP", pm_encoding_euc_jp);
+                ENCODING1("external", pm_encoding_utf_8);
+                break;
+            case 'F': case 'f':
+                ENCODING1("filesystem", pm_encoding_utf_8);
+                break;
+            case 'G': case 'g':
+                ENCODING1("GBK", pm_encoding_gbk);
+                break;
+            case 'I': case 'i':
+                ENCODING1("IBM437", pm_encoding_ibm437);
+                ENCODING1("IBM720", pm_encoding_ibm720);
+                ENCODING1("IBM737", pm_encoding_ibm737);
+                ENCODING1("IBM775", pm_encoding_ibm775);
+                ENCODING1("IBM850", pm_encoding_cp850);
+                ENCODING1("IBM852", pm_encoding_ibm852);
+                ENCODING1("IBM855", pm_encoding_ibm855);
+                ENCODING1("IBM857", pm_encoding_ibm857);
+                ENCODING1("IBM860", pm_encoding_ibm860);
+                ENCODING1("IBM861", pm_encoding_ibm861);
+                ENCODING1("IBM862", pm_encoding_ibm862);
+                ENCODING2("ISO-8859-1", "ISO8859-1", pm_encoding_iso_8859_1);
+                ENCODING2("ISO-8859-2", "ISO8859-2", pm_encoding_iso_8859_2);
+                ENCODING2("ISO-8859-3", "ISO8859-3", pm_encoding_iso_8859_3);
+                ENCODING2("ISO-8859-4", "ISO8859-4", pm_encoding_iso_8859_4);
+                ENCODING2("ISO-8859-5", "ISO8859-5", pm_encoding_iso_8859_5);
+                ENCODING2("ISO-8859-6", "ISO8859-6", pm_encoding_iso_8859_6);
+                ENCODING2("ISO-8859-7", "ISO8859-7", pm_encoding_iso_8859_7);
+                ENCODING2("ISO-8859-8", "ISO8859-8", pm_encoding_iso_8859_8);
+                ENCODING2("ISO-8859-9", "ISO8859-9", pm_encoding_iso_8859_9);
+                ENCODING2("ISO-8859-10", "ISO8859-10", pm_encoding_iso_8859_10);
+                ENCODING2("ISO-8859-11", "ISO8859-11", pm_encoding_iso_8859_11);
+                ENCODING2("ISO-8859-13", "ISO8859-13", pm_encoding_iso_8859_13);
+                ENCODING2("ISO-8859-14", "ISO8859-14", pm_encoding_iso_8859_14);
+                ENCODING2("ISO-8859-15", "ISO8859-15", pm_encoding_iso_8859_15);
+                ENCODING2("ISO-8859-16", "ISO8859-16", pm_encoding_iso_8859_16);
+                break;
+            case 'K': case 'k':
+                ENCODING1("KOI8-R", pm_encoding_koi8_r);
+                break;
+            case 'L': case 'l':
+                ENCODING1("locale", pm_encoding_utf_8);
+                break;
+            case 'M': case 'm':
+                ENCODING1("macIceland", pm_encoding_mac_iceland);
+                ENCODING1("macRomania", pm_encoding_mac_romania);
+                break;
+            case 'P': case 'p':
+                ENCODING1("PCK", pm_encoding_windows_31j);
+                break;
+            case 'S': case 's':
+                ENCODING1("Shift_JIS", pm_encoding_shift_jis);
+                ENCODING1("SJIS", pm_encoding_windows_31j);
+                break;
+            case 'U': case 'u':
+                ENCODING1("US-ASCII", pm_encoding_ascii);
+                ENCODING2("UTF8-MAC", "UTF-8-HFS", pm_encoding_utf8_mac);
+                break;
+            case 'W': case 'w':
+                ENCODING1("Windows-31J", pm_encoding_windows_31j);
+                ENCODING1("Windows-1250", pm_encoding_windows_1250);
+                ENCODING1("Windows-1251", pm_encoding_windows_1251);
+                ENCODING1("Windows-1252", pm_encoding_windows_1252);
+                ENCODING1("Windows-1253", pm_encoding_windows_1253);
+                ENCODING1("Windows-1254", pm_encoding_windows_1254);
+                ENCODING1("Windows-1255", pm_encoding_windows_1255);
+                ENCODING1("Windows-1256", pm_encoding_windows_1256);
+                ENCODING1("Windows-1257", pm_encoding_windows_1257);
+                ENCODING1("Windows-1258", pm_encoding_windows_1258);
+                break;
+            case '6':
+                ENCODING1("646", pm_encoding_ascii);
+                break;
+        }
+    }
 
-#undef ENCODING
+#undef ENCODING2
+#undef ENCODING1
 
     return false;
 }
@@ -6165,6 +6273,8 @@ parser_lex_magic_comment_emacs_marker(pm_parser_t *parser, const uint8_t *cursor
  */
 static inline bool
 parser_lex_magic_comment(pm_parser_t *parser, bool semantic_token_seen) {
+    bool result = true;
+
     const uint8_t *start = parser->current.start + 1;
     const uint8_t *end = parser->current.end;
     if (end - start <= 7) return false;
@@ -6262,7 +6372,7 @@ parser_lex_magic_comment(pm_parser_t *parser, bool semantic_token_seen) {
                 (key_length == 8 && pm_strncasecmp(key_source, (const uint8_t *) "encoding", 8) == 0) ||
                 (key_length == 6 && pm_strncasecmp(key_source, (const uint8_t *) "coding", 6) == 0)
             ) {
-                parser_lex_magic_comment_encoding_value(parser, value_start, value_end);
+                result = parser_lex_magic_comment_encoding_value(parser, value_start, value_end);
             }
         }
 
@@ -6289,7 +6399,7 @@ parser_lex_magic_comment(pm_parser_t *parser, bool semantic_token_seen) {
         }
     }
 
-    return true;
+    return result;
 }
 
 /******************************************************************************/
