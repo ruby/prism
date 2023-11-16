@@ -46,6 +46,9 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `ISO-8859-15`
 * `ISO-8859-16`
 * `KOI8-R`
+* `macGreek`
+* `macIceland`
+* `macRomania`
 * `Shift_JIS`
 * `US-ASCII`
 * `UTF-8`
@@ -60,8 +63,6 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `Windows-1257`
 * `Windows-1258`
 * `Windows-31J`
-* `macIceland`
-* `macRomania`
 
 For each of these encodings, prism provides a function for checking if the subsequent bytes form an alphabetic or alphanumeric character.
 
