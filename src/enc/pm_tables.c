@@ -98,6 +98,30 @@ static uint8_t pm_encoding_cp855_table[256] = {
 
 /**
  * Each element of the following table contains a bitfield that indicates a
+ * piece of information about the corresponding CP863 character.
+ */
+static uint8_t pm_encoding_cp863_table[256] = {
+//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, // 3x
+    0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // 4x
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, // 5x
+    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 6x
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, // 7x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 8x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ax
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Bx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Cx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Dx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ex
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Fx
+};
+
+/**
+ * Each element of the following table contains a bitfield that indicates a
  * piece of information about the corresponding IBM437 character.
  */
 static uint8_t pm_encoding_ibm437_table[256] = {
@@ -335,6 +359,32 @@ static uint8_t pm_encoding_ibm862_table[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ex
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Fx
 };
+
+/**
+ * Each element of the following table contains a bitfield that indicates a
+ * piece of information about the corresponding IBM863 character.
+ */
+static uint8_t pm_encoding_ibm863_table[256] = {
+//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, // 3x
+    0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // 4x
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, // 5x
+    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 6x
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, // 7x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 8x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ax
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Bx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Cx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Dx
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ex
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Fx
+};
+
+
 
 /**
  * Each element of the following table contains a bitfield that indicates a
@@ -1076,6 +1126,7 @@ pm_encoding_koi8_r_char_width(const uint8_t *b, PRISM_ATTRIBUTE_UNUSED ptrdiff_t
 PRISM_ENCODING_TABLE(cp850)
 PRISM_ENCODING_TABLE(cp852)
 PRISM_ENCODING_TABLE(cp855)
+PRISM_ENCODING_TABLE(cp863)
 PRISM_ENCODING_TABLE(ibm437)
 PRISM_ENCODING_TABLE(ibm720)
 PRISM_ENCODING_TABLE(ibm737)
@@ -1086,6 +1137,7 @@ PRISM_ENCODING_TABLE(ibm857)
 PRISM_ENCODING_TABLE(ibm860)
 PRISM_ENCODING_TABLE(ibm861)
 PRISM_ENCODING_TABLE(ibm862)
+PRISM_ENCODING_TABLE(ibm863)
 PRISM_ENCODING_TABLE(iso_8859_1)
 PRISM_ENCODING_TABLE(iso_8859_2)
 PRISM_ENCODING_TABLE(iso_8859_3)
@@ -1166,6 +1218,17 @@ pm_encoding_t pm_encoding_cp855 = {
     .isupper_char = pm_encoding_cp855_isupper_char,
     .multibyte = false
 };
+
+/** CP863 */
+pm_encoding_t pm_encoding_cp863 = {
+    .name = "CP863",
+    .char_width = pm_encoding_single_char_width,
+    .alnum_char = pm_encoding_cp863_alnum_char,
+    .alpha_char = pm_encoding_cp863_alpha_char,
+    .isupper_char = pm_encoding_cp863_isupper_char,
+    .multibyte = false
+};
+
 
 /** IBM437 */
 pm_encoding_t pm_encoding_ibm437 = {
@@ -1264,6 +1327,16 @@ pm_encoding_t pm_encoding_ibm862 = {
     .alnum_char = pm_encoding_ibm862_alnum_char,
     .alpha_char = pm_encoding_ibm862_alpha_char,
     .isupper_char = pm_encoding_ibm862_isupper_char,
+    .multibyte = false
+};
+
+/** IBM863 */
+pm_encoding_t pm_encoding_ibm863 = {
+    .name = "IBM863",
+    .char_width = pm_encoding_single_char_width,
+    .alnum_char = pm_encoding_ibm863_alnum_char,
+    .alpha_char = pm_encoding_ibm863_alpha_char,
+    .isupper_char = pm_encoding_ibm863_isupper_char,
     .multibyte = false
 };
 
