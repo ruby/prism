@@ -48,6 +48,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `KOI8-R`
 * `macGreek`
 * `macIceland`
+* `macRoman`
 * `macRomania`
 * `macTurkish`
 * `macUkraine`
