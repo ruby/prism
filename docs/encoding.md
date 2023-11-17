@@ -50,6 +50,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `macIceland`
 * `macRomania`
 * `macTurkish`
+* `macUkraine`
 * `Shift_JIS`
 * `US-ASCII`
 * `UTF-8`
