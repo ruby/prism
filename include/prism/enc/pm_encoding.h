@@ -193,6 +193,7 @@ extern pm_encoding_t pm_encoding_koi8_r;
 extern pm_encoding_t pm_encoding_mac_greek;
 extern pm_encoding_t pm_encoding_mac_iceland;
 extern pm_encoding_t pm_encoding_mac_romania;
+extern pm_encoding_t pm_encoding_mac_thai;
 extern pm_encoding_t pm_encoding_mac_turkish;
 extern pm_encoding_t pm_encoding_shift_jis;
 extern pm_encoding_t pm_encoding_utf_8;
