@@ -100,5 +100,6 @@ when "windows-1256" then table(Encoding::Windows_1256)
 when "windows-1257" then table(Encoding::Windows_1257)
 when "windows-1258" then table(Encoding::Windows_1258)
 when "windows-31j"  then lists("windows-31j", 0...0x10000, Encoding::Windows_31J)
+when "windows-874"  then table(Encoding::Windows_874)
 else raise "Unknown encoding `#{ARGV[0]}'"
 end
