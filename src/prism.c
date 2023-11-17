@@ -6113,6 +6113,7 @@ parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *star
                 ENCODING1("IBM860", pm_encoding_ibm860);
                 ENCODING1("IBM861", pm_encoding_ibm861);
                 ENCODING1("IBM862", pm_encoding_ibm862);
+                ENCODING1("IBM866", pm_encoding_ibm866);
                 ENCODING2("ISO-8859-1", "ISO8859-1", pm_encoding_iso_8859_1);
                 ENCODING2("ISO-8859-2", "ISO8859-2", pm_encoding_iso_8859_2);
                 ENCODING2("ISO-8859-3", "ISO8859-3", pm_encoding_iso_8859_3);
