@@ -12,7 +12,7 @@ When a heredoc identifier is encountered in the regular process of lexing, we pu
 
 We also set the special `parser.next_start` field which is a pointer to the place in the source where we should start lexing the next token. This is set to the pointer of the character immediately following the next newline.
 
-Note that if the `parser.heredoc_end` field is already set, then it means we have already encountered a heredoc on this line. In that case the `parser.next_start` field will be set to the `parser.heredoc_end` field. This is because we want to skip past the heredoc previous heredocs on this line and instead lex the body of this heredoc.
+Note that if the `parser.heredoc_end` field is already set, then it means we have already encountered a heredoc on this line. In that case the `parser.next_start` field will be set to the `parser.heredoc_end` field. This is because we want to skip past the previous heredocs on this line and instead lex the body of this heredoc.
 
 ## 2. Lexing the body
 
