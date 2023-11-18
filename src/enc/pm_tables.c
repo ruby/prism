@@ -365,7 +365,7 @@ static uint8_t pm_encoding_ibm864_table[256] = {
  * piece of information about the corresponding IBM866 character.
  */
 static uint8_t pm_encoding_ibm866_table[256] = {
-  //  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
