@@ -30,6 +30,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `IBM860`
 * `IBM861`
 * `IBM862`
+* `IBM864`
 * `IBM866`
 * `ISO-8859-1`
 * `ISO-8859-2`
@@ -47,6 +48,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `ISO-8859-15`
 * `ISO-8859-16`
 * `KOI8-R`
+* `macCentEuro`
 * `macGreek`
 * `macIceland`
 * `macRoman`

@@ -54,7 +54,6 @@ public class Loader {
 
             if (constant == null) {
                 int offset = bufferOffset + index * 8;
-
                 int start = buffer.getInt(offset);
                 int length = buffer.getInt(offset + 4);
 
@@ -87,7 +86,7 @@ public class Loader {
     private ConstantPool constantPool;
 
     protected Loader(byte[] serialized, Nodes.Source source) {
-        this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.LITTLE_ENDIAN);
+        this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
         this.source = source;
     }
 
