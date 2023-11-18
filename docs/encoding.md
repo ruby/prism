@@ -46,6 +46,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `ISO-8859-15`
 * `ISO-8859-16`
 * `KOI8-R`
+* `macCentEuro`
 * `macGreek`
 * `macIceland`
 * `macRoman`
