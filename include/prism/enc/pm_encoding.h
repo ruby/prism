@@ -19,7 +19,8 @@
  * Each callback should return the number of bytes, or 0 if the next bytes are
  * invalid for the encoding and type.
  */
-typedef struct {
+typedef struct
+{
     /**
      * Return the number of bytes that the next character takes if it is valid
      * in the encoding. Does not read more than n bytes. It is assumed that n is
@@ -177,6 +178,7 @@ extern pm_encoding_t pm_encoding_ibm860;
 extern pm_encoding_t pm_encoding_ibm861;
 extern pm_encoding_t pm_encoding_ibm862;
 extern pm_encoding_t pm_encoding_ibm864;
+extern pm_encoding_t pm_encoding_ibm865;
 extern pm_encoding_t pm_encoding_ibm866;
 extern pm_encoding_t pm_encoding_iso_8859_1;
 extern pm_encoding_t pm_encoding_iso_8859_2;
