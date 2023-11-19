@@ -55,6 +55,7 @@ prism_new_value = prism_new.value
   color = left == right ? "38;5;102" : "1;31"
 
   if ENV["VERBOSE"] || (left != right)
-    puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect, [new[0].type, [new[0].location.start_offset, new[0].location.length]]]
+    new_value = [new[0].type, [new[0].location.start_offset, new[0].location.length]] if new
+    puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect, new_value.inspect]
   end
 end
