@@ -19,8 +19,7 @@
  * Each callback should return the number of bytes, or 0 if the next bytes are
  * invalid for the encoding and type.
  */
-typedef struct
-{
+typedef struct {
     /**
      * Return the number of bytes that the next character takes if it is valid
      * in the encoding. Does not read more than n bytes. It is assumed that n is
