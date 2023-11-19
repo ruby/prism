@@ -818,6 +818,30 @@ static uint8_t pm_encoding_mac_cent_euro_table[256] = {
 
 /**
  * Each element of the following table contains a bitfield that indicates a
+ * piece of information about the corresponding macCroatian character.
+ */
+static uint8_t pm_encoding_mac_croatian_table[256] = {
+//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, // 3x
+    0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // 4x
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, // 5x
+    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 6x
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, // 7x
+    7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 8x
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 9x
+    0, 0, 0, 0, 0, 0, 0, 3, 0, 7, 0, 0, 0, 0, 7, 7, // Ax
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 7, 3, 3, // Bx
+    0, 0, 0, 0, 3, 0, 7, 0, 7, 0, 0, 7, 7, 7, 7, 3, // Cx
+    7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, // Dx
+    0, 0, 0, 0, 0, 7, 3, 7, 3, 7, 7, 7, 7, 7, 7, 7, // Ex
+    3, 7, 7, 7, 7, 3, 0, 0, 0, 3, 7, 0, 0, 7, 3, 0, // Fx
+};
+
+ /**
+ * Each element of the following table contains a bitfield that indicates a
  * piece of information about the corresponding macCyrillic character.
  */
 static uint8_t pm_encoding_mac_cyrillic_table[256] = {
@@ -1346,6 +1370,7 @@ PRISM_ENCODING_TABLE(iso_8859_15)
 PRISM_ENCODING_TABLE(iso_8859_16)
 PRISM_ENCODING_TABLE(koi8_r)
 PRISM_ENCODING_TABLE(mac_cent_euro)
+PRISM_ENCODING_TABLE(mac_croatian)
 PRISM_ENCODING_TABLE(mac_cyrillic)
 PRISM_ENCODING_TABLE(mac_greek)
 PRISM_ENCODING_TABLE(mac_iceland)
@@ -1714,6 +1739,16 @@ pm_encoding_t pm_encoding_mac_cent_euro = {
     .alnum_char = pm_encoding_mac_cent_euro_alnum_char,
     .alpha_char = pm_encoding_mac_cent_euro_alpha_char,
     .isupper_char = pm_encoding_mac_cent_euro_isupper_char,
+    .multibyte = false
+};
+
+/** macCroatian */
+pm_encoding_t pm_encoding_mac_croatian = {
+    .name = "macCroatian",
+    .char_width = pm_encoding_single_char_width,
+    .alnum_char = pm_encoding_mac_croatian_alnum_char,
+    .alpha_char = pm_encoding_mac_croatian_alpha_char,
+    .isupper_char = pm_encoding_mac_croatian_isupper_char,
     .multibyte = false
 };
 
