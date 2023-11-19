@@ -61,3 +61,7 @@ A
   #{
   2}
 B
+
+<<-' FOO'
+  https://github.com/ruby/prism/issues/753
+ FOO

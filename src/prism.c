@@ -9770,6 +9770,17 @@ parser_lex(pm_parser_t *parser) {
             const uint8_t *ident_start = lex_mode->as.heredoc.ident_start;
             size_t ident_length = lex_mode->as.heredoc.ident_length;
 
+            // If we have a - or ~ heredoc, then we should adjust the start and the
+            // length of the ident so that we can match the lines.
+            if (
+                lex_mode->as.heredoc.indent == PM_HEREDOC_INDENT_TILDE ||
+                lex_mode->as.heredoc.indent == PM_HEREDOC_INDENT_DASH
+            ) {
+                size_t ident_leading_whitespace = pm_strspn_inline_whitespace(ident_start, (ptrdiff_t)ident_length);
+                ident_start += ident_leading_whitespace;
+                ident_length -= ident_leading_whitespace;
+            }
+
             // If we are immediately following a newline and we have hit the
             // terminator, then we need to return the ending of the heredoc.
             if (current_token_starts_line(parser)) {
