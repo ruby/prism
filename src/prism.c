@@ -11135,7 +11135,7 @@ parse_arguments(pm_parser_t *parser, pm_arguments_t *arguments, bool accepts_for
                             pm_parser_err_previous(parser, PM_ERR_ARGUMENT_NO_FORWARDING_ELLIPSES);
                         }
                         if (parsed_first_argument && terminator == PM_TOKEN_EOF) {
-                            pm_parser_err_previous(parser, PM_ERR_ARGUMENT_FORWARDING_ELLIPSIS_IN_NO_PAREN);
+                            pm_parser_err_previous(parser, PM_ERR_ARGUMENT_FORWARDING_UNBOUND);
                         }
 
                         argument = (pm_node_t *) pm_forwarding_arguments_node_create(parser, &parser->previous);
