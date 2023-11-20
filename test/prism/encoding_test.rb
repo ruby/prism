@@ -12,7 +12,6 @@ module Prism
       Encoding::CP850 =>        0x00...0x100,
       Encoding::CP852 =>        0x00...0x100,
       Encoding::CP855 =>        0x00...0x100,
-      Encoding::CP863 =>        0x00...0x100,
       Encoding::GB1988 =>       0x00...0x100,
       Encoding::IBM437 =>       0x00...0x100,
       Encoding::IBM720 =>       0x00...0x100,
