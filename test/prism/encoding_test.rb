@@ -13,6 +13,7 @@ module Prism
       Encoding::CP852 =>        0x00...0x100,
       Encoding::CP855 =>        0x00...0x100,
       Encoding::CP863 =>        0x00...0x100,
+      Encoding::GB1988 =>       0x00...0x100,
       Encoding::IBM437 =>       0x00...0x100,
       Encoding::IBM720 =>       0x00...0x100,
       Encoding::IBM737 =>       0x00...0x100,
@@ -24,6 +25,9 @@ module Prism
       Encoding::IBM861 =>       0x00...0x100,
       Encoding::IBM862 =>       0x00...0x100,
       Encoding::IBM863 =>       0x00...0x100,
+      Encoding::IBM864 =>       0x00...0x100,
+      Encoding::IBM865 =>       0x00...0x100,
+      Encoding::IBM866 =>       0x00...0x100,
       Encoding::ISO_8859_1 =>   0x00...0x100,
       Encoding::ISO_8859_2 =>   0x00...0x100,
       Encoding::ISO_8859_3 =>   0x00...0x100,
@@ -40,9 +44,15 @@ module Prism
       Encoding::ISO_8859_15 =>  0x00...0x100,
       Encoding::ISO_8859_16 =>  0x00...0x100,
       Encoding::KOI8_R =>       0x00...0x100,
+      Encoding::MACCENTEURO =>  0x00...0x100,
+      Encoding::MACCROATIAN =>  0x00...0x100,
+      Encoding::MACCYRILLIC =>  0x00...0x100,
       Encoding::MACGREEK =>     0x00...0x100,
       Encoding::MACICELAND =>   0x00...0x100,
+      Encoding::MACROMAN =>     0x00...0x100,
       Encoding::MACROMANIA =>   0x00...0x100,
+      Encoding::MACTHAI =>      0x00...0x100,
+      Encoding::MACTURKISH =>   0x00...0x100,
       Encoding::Windows_1250 => 0x00...0x100,
       Encoding::Windows_1251 => 0x00...0x100,
       Encoding::Windows_1252 => 0x00...0x100,
@@ -52,7 +62,9 @@ module Prism
       Encoding::Windows_1256 => 0x00...0x100,
       Encoding::Windows_1257 => 0x00...0x100,
       Encoding::Windows_1258 => 0x00...0x100,
+      Encoding::Windows_874 =>  0x00...0x100,
       Encoding::Big5 =>         0x00...0x10000,
+      Encoding::Big5_HKSCS =>   0x00...0x10000,
       Encoding::CP51932 =>      0x00...0x10000,
       Encoding::GBK =>          0x00...0x10000,
       Encoding::Shift_JIS =>    0x00...0x10000,
@@ -72,6 +84,8 @@ module Prism
 
     encodings.each do |encoding, range|
       encoding.names.each do |name|
+        next if name == "locale"
+
         define_method(:"test_encoding_#{name}") do
           assert_encoding(encoding, name, range)
         end
