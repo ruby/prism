@@ -34,6 +34,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `IBM864`
 * `IBM865`
 * `IBM866`
+* `IBM869`
 * `ISO-8859-1`
 * `ISO-8859-2`
 * `ISO-8859-3`
