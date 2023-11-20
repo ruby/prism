@@ -374,6 +374,14 @@ module Prism
       write_to ||= File.expand_path("../#{name}", __dir__)
       contents = heading + erb.result_with_hash(locals)
 
+      if (extension == ".c" || extension == ".h") && !contents.ascii_only?
+        # Enforce that we only have ASCII characters here. This is necessary
+        # for some locales that only allow ASCII characters in C source files.
+        contents.each_line.with_index(1) do |line, line_number|
+          raise "Non-ASCII character on line #{line_number} of #{write_to}" unless line.ascii_only?
+        end
+      end
+
       FileUtils.mkdir_p(File.dirname(write_to))
       File.write(write_to, contents)
     end
