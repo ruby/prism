@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.18.0] - 2023-11-21
+
+### Added
+
+- The `ParametersNode#signature` method is added, which returns the same thing as `Method#parameters`.
+- Visitor functionality has been added to the JavaScript API.
+- The `Node#to_dot` API has been added to convert syntax trees to Graphviz digraphs.
+- `IfNode` and `UnlessNode` now have a `then_keyword_loc` field.
+- Many more encodings are now supported.
+- Some new `Location` APIs have been added for dealing with characters instead of bytes, which are: `start_character_offset`, `end_character_offset`, `start_character_column`, and `end_character_column`.
+- A warning has been added for when `END {}` is used within a method.
+- `ConstantPathNode#full_name{,_parts}` will now raise an error if the receiver of the constant path is not itself a constant.
+- The `in` keyword and the `=>` operator now respect non-associativity.
+- The `..` and `...` operators now properly respect non-associativity.
+
+### Changed
+
+- Previously `...` in blocks was accepted, but it is now properly rejected.
+- **BREAKING**: `librubyparser.*` has been renamed to `libprism.*` in the C API.
+- We now properly reject floats with exponent and rational suffixes.
+- We now properly reject void value expressions.
+- **BREAKING**: The `--disable-static` option has been removed from the C extension.
+- The rescue modifier keyword is now properly parsed in terms of precedence.
+- We now properly reject defining a numbered parameter method.
+- **BREAKING**: `MatchWriteNode` now has a list of `targets`, which are local variable target nodes. This is instead of `locals` which was a constant list. This is to support writing to local variables outside the current scope. It has the added benefit of providing location information for the local variable targets.
+- **BREAKING**: `CaseNode` has been split into `CaseNode` and `CaseMatchNode`, the latter is used for `case ... in` expressions.
+- **BREAKING**: `StringConcatNode` has been removed in favor of using `InterpolatedStringNode` as a list.
+
 ## [0.17.1] - 2023-11-03
 
 ### Changed
@@ -239,7 +267,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.17.1...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/ruby/prism/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/ruby/prism/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/ruby/prism/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/ruby/prism/compare/v0.15.1...v0.16.0
