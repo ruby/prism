@@ -162,7 +162,7 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (31,12)-(31,15))
         │   │   │   ├── name: :foo
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements: ∅
         │   │   └── consequent: ∅
         │   ├── else_clause: ∅
@@ -381,13 +381,13 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (62,10)-(62,13))
         │   │   │   ├── name: :bar
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (63,2)-(63,5))
         │   │   │   └── body: (length: 1)
         │   │   │       └── @ LocalVariableReadNode (location: (63,2)-(63,5))
         │   │   │           ├── name: :bar
-        │   │   │           └── depth: 0
+        │   │   │           └── depth: 1
         │   │   └── consequent: ∅
         │   ├── else_clause: ∅
         │   ├── ensure_clause: ∅
@@ -412,13 +412,13 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (68,27)-(68,30))
         │   │   │   ├── name: :bar
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (69,2)-(69,5))
         │   │   │   └── body: (length: 1)
         │   │   │       └── @ LocalVariableReadNode (location: (69,2)-(69,5))
         │   │   │           ├── name: :bar
-        │   │   │           └── depth: 0
+        │   │   │           └── depth: 1
         │   │   └── consequent: ∅
         │   ├── else_clause: ∅
         │   ├── ensure_clause: ∅
@@ -442,12 +442,12 @@
         │   │   │       └── expression:
         │   │   │           @ LocalVariableReadNode (location: (74,19)-(74,22))
         │   │   │           ├── name: :bar
-        │   │   │           └── depth: 0
+        │   │   │           └── depth: 1
         │   │   ├── operator_loc: (74,23)-(74,25) = "=>"
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (74,26)-(74,35))
         │   │   │   ├── name: :exception
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (75,2)-(75,5))
         │   │   │   └── body: (length: 1)

@@ -66,7 +66,7 @@
             │   ├── reference:
             │   │   @ LocalVariableTargetNode (location: (3,23)-(3,25))
             │   │   ├── name: :ex
-            │   │   └── depth: 0
+            │   │   └── depth: 1
             │   ├── statements:
             │   │   @ StatementsNode (location: (3,27)-(3,30))
             │   │   └── body: (length: 1)

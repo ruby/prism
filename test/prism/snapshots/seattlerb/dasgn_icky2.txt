@@ -44,7 +44,7 @@
             │   │           │   ├── reference:
             │   │           │   │   @ LocalVariableTargetNode (location: (5,22)-(5,23))
             │   │           │   │   ├── name: :v
-            │   │           │   │   └── depth: 0
+            │   │           │   │   └── depth: 1
             │   │           │   ├── statements:
             │   │           │   │   @ StatementsNode (location: (6,4)-(6,9))
             │   │           │   │   └── body: (length: 1)

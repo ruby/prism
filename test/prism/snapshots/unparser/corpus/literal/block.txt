@@ -840,7 +840,7 @@
         │   │   │   │   ├── reference:
         │   │   │   │   │   @ LocalVariableTargetNode (location: (50,20)-(50,21))
         │   │   │   │   │   ├── name: :e
-        │   │   │   │   │   └── depth: 0
+        │   │   │   │   │   └── depth: 1
         │   │   │   │   ├── statements: ∅
         │   │   │   │   └── consequent: ∅
         │   │   │   ├── else_clause: ∅
@@ -887,13 +887,13 @@
         │   │   │   │   ├── reference:
         │   │   │   │   │   @ LocalVariableTargetNode (location: (54,20)-(54,23))
         │   │   │   │   │   ├── name: :bar
-        │   │   │   │   │   └── depth: 0
+        │   │   │   │   │   └── depth: 1
         │   │   │   │   ├── statements:
         │   │   │   │   │   @ StatementsNode (location: (55,2)-(55,5))
         │   │   │   │   │   └── body: (length: 1)
         │   │   │   │   │       └── @ LocalVariableReadNode (location: (55,2)-(55,5))
         │   │   │   │   │           ├── name: :bar
-        │   │   │   │   │           └── depth: 0
+        │   │   │   │   │           └── depth: 1
         │   │   │   │   └── consequent: ∅
         │   │   │   ├── else_clause: ∅
         │   │   │   ├── ensure_clause: ∅
@@ -1021,7 +1021,7 @@
         │   │   │   │   ├── reference:
         │   │   │   │   │   @ LocalVariableTargetNode (location: (64,26)-(64,35))
         │   │   │   │   │   ├── name: :exception
-        │   │   │   │   │   └── depth: 0
+        │   │   │   │   │   └── depth: 1
         │   │   │   │   ├── statements:
         │   │   │   │   │   @ StatementsNode (location: (65,2)-(65,5))
         │   │   │   │   │   └── body: (length: 1)
@@ -1260,7 +1260,7 @@
         │   │   │   │   ├── reference:
         │   │   │   │   │   @ LocalVariableTargetNode (location: (84,15)-(84,24))
         │   │   │   │   │   ├── name: :exception
-        │   │   │   │   │   └── depth: 0
+        │   │   │   │   │   └── depth: 1
         │   │   │   │   ├── statements:
         │   │   │   │   │   @ StatementsNode (location: (85,2)-(85,5))
         │   │   │   │   │   └── body: (length: 1)

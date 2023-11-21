@@ -304,7 +304,7 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (28,20)-(28,22))
         │   │   │   ├── name: :ex
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (29,2)-(29,3))
         │   │   │   └── body: (length: 1)
@@ -330,7 +330,7 @@
         │   │       ├── reference:
         │   │       │   @ LocalVariableTargetNode (location: (30,45)-(30,47))
         │   │       │   ├── name: :ex
-        │   │       │   └── depth: 0
+        │   │       │   └── depth: 1
         │   │       ├── statements:
         │   │       │   @ StatementsNode (location: (31,2)-(31,3))
         │   │       │   └── body: (length: 1)
@@ -373,7 +373,7 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (36,20)-(36,22))
         │   │   │   ├── name: :ex
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (37,2)-(37,3))
         │   │   │   └── body: (length: 1)
@@ -636,7 +636,7 @@
         │   │   ├── reference:
         │   │   │   @ LocalVariableTargetNode (location: (70,37)-(70,39))
         │   │   │   ├── name: :ex
-        │   │   │   └── depth: 0
+        │   │   │   └── depth: 1
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (71,2)-(71,3))
         │   │   │   └── body: (length: 1)
@@ -679,7 +679,7 @@
             │   ├── reference:
             │   │   @ LocalVariableTargetNode (location: (76,20)-(76,22))
             │   │   ├── name: :ex
-            │   │   └── depth: 0
+            │   │   └── depth: 1
             │   ├── statements:
             │   │   @ StatementsNode (location: (77,2)-(77,3))
             │   │   └── body: (length: 1)

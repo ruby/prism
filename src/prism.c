@@ -5694,17 +5694,16 @@ pm_parser_scope_push_transparent(pm_parser_t *parser) {
 }
 
 /**
- * Check if the current scope has a given local variables.
+ * Check if any of the currently visible scopes contain a local variable
+ * described by the given constant id.
  */
 static int
-pm_parser_local_depth(pm_parser_t *parser, pm_token_t *token) {
-    pm_constant_id_t constant_id = pm_parser_constant_id_token(parser, token);
+pm_parser_local_depth_constant_id(pm_parser_t *parser, pm_constant_id_t constant_id) {
     pm_scope_t *scope = parser->current_scope;
     int depth = 0;
 
     while (scope != NULL) {
-        if (!scope->transparent &&
-                pm_constant_id_list_includes(&scope->locals, constant_id)) return depth;
+        if (!scope->transparent && pm_constant_id_list_includes(&scope->locals, constant_id)) return depth;
         if (scope->closed) break;
 
         scope = scope->previous;
@@ -5712,6 +5711,17 @@ pm_parser_local_depth(pm_parser_t *parser, pm_token_t *token) {
     }
 
     return -1;
+}
+
+/**
+ * Check if any of the currently visible scopes contain a local variable
+ * described by the given token. This function implicitly inserts a constant
+ * into the constant pool.
+ */
+static inline int
+pm_parser_local_depth(pm_parser_t *parser, pm_token_t *token) {
+    pm_constant_id_t constant_id = pm_parser_constant_id_token(parser, token);
+    return pm_parser_local_depth_constant_id(parser, constant_id);
 }
 
 /**
@@ -10642,12 +10652,16 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
             pm_local_variable_read_node_t *local_read = (pm_local_variable_read_node_t *) target;
 
             pm_constant_id_t constant_id = local_read->name;
-            uint32_t depth = local_read->depth;
-
             pm_location_t name_loc = target->location;
+            int depth = pm_parser_local_depth_constant_id(parser, constant_id);
+
+            if (depth < 0) {
+                depth = 0;
+            }
+
             pm_node_destroy(parser, target);
 
-            return (pm_node_t *) pm_local_variable_write_node_create(parser, constant_id, depth, value, &name_loc, operator);
+            return (pm_node_t *) pm_local_variable_write_node_create(parser, constant_id, (uint32_t)depth, value, &name_loc, operator);
         }
         case PM_INSTANCE_VARIABLE_READ_NODE: {
             pm_node_t *write_node = (pm_node_t *) pm_instance_variable_write_node_create(parser, (pm_instance_variable_read_node_t *) target, operator, value);
@@ -11665,6 +11679,8 @@ parse_parameters(
  */
 static inline void
 parse_rescues(pm_parser_t *parser, pm_begin_node_t *parent_node) {
+    pm_parser_scope_push_transparent(parser);
+
     pm_rescue_node_t *current = NULL;
 
     while (accept1(parser, PM_TOKEN_KEYWORD_RESCUE)) {
@@ -11743,6 +11759,8 @@ parse_rescues(pm_parser_t *parser, pm_begin_node_t *parent_node) {
 
         current = rescue;
     }
+
+    pm_parser_scope_pop(parser);
 
     // The end node locations on rescue nodes will not be set correctly
     // since we won't know the end until we've found all consequent
@@ -15918,10 +15936,14 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     parser_lex(parser);
 
                     pm_node_t *value = parse_assignment_value(parser, binding_power, PM_ERR_EXPECT_EXPRESSION_AFTER_AMPAMPEQ);
-                    pm_node_t *result = (pm_node_t *) pm_local_variable_and_write_node_create(parser, node, &token, value, cast->name, cast->depth);
+                    int depth = pm_parser_local_depth(parser, &token);
+
+                    if (depth < 0) {
+                        depth = 0;
+                    }
 
                     pm_node_destroy(parser, node);
-                    return result;
+                    return (pm_node_t *) pm_local_variable_and_write_node_create(parser, node, &token, value, cast->name, (uint32_t)depth);
                 }
                 case PM_CALL_NODE: {
                     parser_lex(parser);
@@ -16028,8 +16050,14 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     pm_local_variable_read_node_t *cast = (pm_local_variable_read_node_t *) node;
                     parser_lex(parser);
 
+                    int depth = pm_parser_local_depth(parser, &token);
+
+                    if (depth < 0) {
+                        depth = 0;
+                    }
+
                     pm_node_t *value = parse_assignment_value(parser, binding_power, PM_ERR_EXPECT_EXPRESSION_AFTER_PIPEPIPEEQ);
-                    pm_node_t *result = (pm_node_t *) pm_local_variable_or_write_node_create(parser, node, &token, value, cast->name, cast->depth);
+                    pm_node_t *result = (pm_node_t *) pm_local_variable_or_write_node_create(parser, node, &token, value, cast->name, (uint8_t)depth);
 
                     pm_node_destroy(parser, node);
                     return result;
