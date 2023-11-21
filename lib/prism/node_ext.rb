@@ -79,7 +79,7 @@ module Prism
     # Foo::Bar::Baz -> does not raise because all parts of the constant path are
     # simple constants
     # var::Bar::Baz -> raises because the first part of the constant path is a
-    # local variablV
+    # local variable
     class DynamicPartsInConstantPathError < StandardError; end
 
     # Returns the list of parts for the full name of this constant path.
