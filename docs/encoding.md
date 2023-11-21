@@ -14,6 +14,8 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 
 * `ASCII-8BIT`
 * `Big5`
+* `Big5-HKSCS`
+* `Big5-UAO`
 * `CP51932`
 * `CP850`
 * `CP852`
