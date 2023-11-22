@@ -318,7 +318,7 @@
         │   │   │               │   ├── flags: variable_call
         │   │   │               │   └── name: :kwargs
         │   │   │               └── operator_loc: (27,2)-(27,4) = "**"
-        │   │   └── flags: keyword_splat
+        │   │   └── flags: contains_keyword_splat
         │   ├── closing_loc: (27,10)-(27,11) = ")"
         │   ├── block: ∅
         │   ├── flags: ∅
@@ -553,7 +553,8 @@
         │       │   └── @ IntegerNode (location: (41,22)-(41,23))
         │       │       └── flags: decimal
         │       ├── opening_loc: ∅
-        │       └── closing_loc: ∅
+        │       ├── closing_loc: ∅
+        │       └── flags: ∅
         ├── @ CallNode (location: (43,0)-(43,4))
         │   ├── receiver:
         │   │   @ CallNode (location: (43,0)-(43,1))
@@ -802,7 +803,8 @@
         │   │   │           │   │   │       ├── closing_loc: ∅
         │   │   │           │   │   │       └── unescaped: "y"
         │   │   │           │   │   ├── opening_loc: (60,14)-(60,15) = "["
-        │   │   │           │   │   └── closing_loc: (60,21)-(60,22) = "]"
+        │   │   │           │   │   ├── closing_loc: (60,21)-(60,22) = "]"
+        │   │   │           │   │   └── flags: ∅
         │   │   │           │   └── operator_loc: (60,11)-(60,13) = "=>"
         │   │   │           └── @ AssocNode (location: (60,24)-(60,32))
         │   │   │               ├── key:
@@ -1030,7 +1032,7 @@
         │   │   │               │   ├── closing_loc: ∅
         │   │   │               │   └── unescaped: "dog"
         │   │   │               └── operator_loc: ∅
-        │   │   └── flags: keyword_splat
+        │   │   └── flags: contains_keyword_splat
         │   ├── closing_loc: ∅
         │   ├── block: ∅
         │   ├── flags: ∅
@@ -1080,7 +1082,7 @@
         │   │   │               │   ├── closing_loc: ∅
         │   │   │               │   └── unescaped: "dog"
         │   │   │               └── operator_loc: ∅
-        │   │   └── flags: keyword_splat
+        │   │   └── flags: contains_keyword_splat
         │   ├── closing_loc: (70,40)-(70,41) = ")"
         │   ├── block: ∅
         │   ├── flags: ∅
@@ -1760,7 +1762,8 @@
         │   │   │       │       ├── flags: ∅
         │   │   │       │       └── name: :baz
         │   │   │       ├── opening_loc: (115,4)-(115,5) = "["
-        │   │   │       └── closing_loc: (115,15)-(115,16) = "]"
+        │   │   │       ├── closing_loc: (115,15)-(115,16) = "]"
+        │   │   │       └── flags: ∅
         │   │   └── flags: ∅
         │   ├── closing_loc: ∅
         │   ├── block: ∅

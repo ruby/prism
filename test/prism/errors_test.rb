@@ -563,15 +563,15 @@ module Prism
       end
       RUBY
       assert_errors expected, source, [
-        ["Token reserved for a numbered parameter", 8..10],
-        ["Token reserved for a numbered parameter", 14..16],
-        ["Token reserved for a numbered parameter", 20..22],
-        ["Token reserved for a numbered parameter", 26..28],
-        ["Token reserved for a numbered parameter", 32..34],
-        ["Token reserved for a numbered parameter", 40..42],
-        ["Token reserved for a numbered parameter", 46..48],
-        ["Token reserved for a numbered parameter", 52..54],
-        ["Token reserved for a numbered parameter", 58..60],
+        ["_1 is reserved for a numbered parameter", 8..10],
+        ["_2 is reserved for a numbered parameter", 14..16],
+        ["_3 is reserved for a numbered parameter", 20..22],
+        ["_4 is reserved for a numbered parameter", 26..28],
+        ["_5 is reserved for a numbered parameter", 32..34],
+        ["_6 is reserved for a numbered parameter", 40..42],
+        ["_7 is reserved for a numbered parameter", 46..48],
+        ["_8 is reserved for a numbered parameter", 52..54],
+        ["_9 is reserved for a numbered parameter", 58..60],
       ]
     end
 
@@ -937,7 +937,7 @@ module Prism
     end
 
     def test_case_without_when_clauses_errors_on_else_clause
-      expected = CaseNode(
+      expected = CaseMatchNode(
         SymbolNode(Location(), Location(), nil, "a"),
         [],
         ElseNode(Location(), nil, Location()),
@@ -1225,6 +1225,11 @@ module Prism
       assert_error_messages "Foo::foo,", error_messages
       assert_error_messages "foo[foo],", error_messages
       assert_error_messages "(foo, bar)", error_messages
+      assert_error_messages "foo((foo, bar))", error_messages
+      assert_error_messages "foo((*))", error_messages
+      assert_error_messages "foo(((foo, bar), *))", error_messages
+      assert_error_messages "(foo, bar) + 1", error_messages
+      assert_error_messages "(foo, bar) in baz", error_messages
     end
 
     def test_call_with_block_and_write
@@ -1253,18 +1258,18 @@ module Prism
 
     def test_writing_numbered_parameter
       assert_errors expression("-> { _1 = 0 }"), "-> { _1 = 0 }", [
-        ["Token reserved for a numbered parameter", 5..7]
+        ["_1 is reserved for a numbered parameter", 5..7]
       ]
     end
 
     def test_targeting_numbered_parameter
       assert_errors expression("-> { _1, = 0 }"), "-> { _1, = 0 }", [
-        ["Token reserved for a numbered parameter", 5..7]
+        ["_1 is reserved for a numbered parameter", 5..7]
       ]
     end
 
     def test_defining_numbered_parameter
-      error_messages = ["Token reserved for a numbered parameter"]
+      error_messages = ["_1 is reserved for a numbered parameter"]
 
       assert_error_messages "def _1; end", error_messages
       assert_error_messages "def self._1; end", error_messages
@@ -1319,7 +1324,7 @@ module Prism
     def test_numbered_parameters_in_block_arguments
       source = "foo { |_1| }"
       assert_errors expression(source), source, [
-        ["Token reserved for a numbered parameter", 7..9],
+        ["_1 is reserved for a numbered parameter", 7..9],
       ]
     end
 
@@ -1405,7 +1410,7 @@ module Prism
         /(?<_1>)/ =~ a
       RUBY
 
-      message = "Token reserved for a numbered parameter"
+      message = "_1 is reserved for a numbered parameter"
       assert_errors expression(source), source, [
         [message, 5..7],
         [message, 13..15],
@@ -1703,6 +1708,20 @@ module Prism
       ]
     end
 
+    def test_non_assoc_range
+      source = '1....2'
+      assert_errors expression(source), source, [
+        ['Expected a newline or semicolon after the statement', 4..4],
+        ['Cannot parse the expression', 4..4],
+      ]
+    end
+
+    def test_upcase_end_in_def
+      assert_warning_messages "def foo; END { }; end", [
+        "END in method; use at_exit"
+      ]
+    end
+
     private
 
     def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
@@ -1720,6 +1739,11 @@ module Prism
       assert_nil Ripper.sexp_raw(source) if compare_ripper
       result = Prism.parse(source)
       assert_equal(errors, result.errors.map(&:message))
+    end
+
+    def assert_warning_messages(source, warnings)
+      result = Prism.parse(source)
+      assert_equal(warnings, result.warnings.map(&:message))
     end
 
     def expression(source)

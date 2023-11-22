@@ -30,6 +30,13 @@ typedef struct {
 
     /** The message associated with the diagnostic. */
     const char *message;
+
+    /**
+     * Whether or not the memory related to the message of this diagnostic is
+     * owned by this diagnostic. If it is, it needs to be freed when the
+     * diagnostic is freed.
+     */
+    bool owned;
 } pm_diagnostic_t;
 
 /**
@@ -73,6 +80,7 @@ typedef enum {
     PM_ERR_CANNOT_PARSE_STRING_PART,
     PM_ERR_CASE_EXPRESSION_AFTER_CASE,
     PM_ERR_CASE_EXPRESSION_AFTER_WHEN,
+    PM_ERR_CASE_MATCH_MISSING_PREDICATE,
     PM_ERR_CASE_MISSING_CONDITIONS,
     PM_ERR_CASE_TERM,
     PM_ERR_CLASS_IN_METHOD,
@@ -242,13 +250,15 @@ typedef enum {
     PM_WARN_AMBIGUOUS_FIRST_ARGUMENT_PLUS,
     PM_WARN_AMBIGUOUS_PREFIX_STAR,
     PM_WARN_AMBIGUOUS_SLASH,
+    PM_WARN_END_IN_METHOD,
 
     /* This must be the last member. */
     PM_DIAGNOSTIC_ID_LEN,
 } pm_diagnostic_id_t;
 
 /**
- * Append a diagnostic to the given list of diagnostics.
+ * Append a diagnostic to the given list of diagnostics that is using shared
+ * memory for its message.
  *
  * @param list The list to append to.
  * @param start The start of the diagnostic.
@@ -257,6 +267,19 @@ typedef enum {
  * @return Whether the diagnostic was successfully appended.
  */
 bool pm_diagnostic_list_append(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id);
+
+/**
+ * Append a diagnostic to the given list of diagnostics that is using a format
+ * string for its message.
+ *
+ * @param list The list to append to.
+ * @param start The start of the diagnostic.
+ * @param end The end of the diagnostic.
+ * @param diag_id The diagnostic ID.
+ * @param ... The arguments to the format string for the message.
+ * @return Whether the diagnostic was successfully appended.
+ */
+bool pm_diagnostic_list_append_format(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id, ...);
 
 /**
  * Deallocate the internal state of the given diagnostic list.

@@ -3,7 +3,7 @@
 └── statements:
     @ StatementsNode (location: (1,0)-(3,3))
     └── body: (length: 1)
-        └── @ CaseNode (location: (1,0)-(3,3))
+        └── @ CaseMatchNode (location: (1,0)-(3,3))
             ├── predicate:
             │   @ ArrayNode (location: (1,5)-(1,13))
             │   ├── elements: (length: 2)
@@ -18,7 +18,8 @@
             │   │       ├── closing_loc: ∅
             │   │       └── unescaped: "b"
             │   ├── opening_loc: (1,5)-(1,6) = "["
-            │   └── closing_loc: (1,12)-(1,13) = "]"
+            │   ├── closing_loc: (1,12)-(1,13) = "]"
+            │   └── flags: ∅
             ├── conditions: (length: 1)
             │   └── @ InNode (location: (2,0)-(2,25))
             │       ├── pattern:

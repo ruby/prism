@@ -201,6 +201,13 @@ module Prism
       assert_location(CaseNode, "case foo; when bar; when baz; else; end")
     end
 
+    def test_CaseMatchNode
+      assert_location(CaseMatchNode, "case foo; in bar; end")
+      assert_location(CaseMatchNode, "case foo; in bar; else; end")
+      assert_location(CaseMatchNode, "case foo; in bar; in baz; end")
+      assert_location(CaseMatchNode, "case foo; in bar; in baz; else; end")
+    end
+
     def test_ClassNode
       assert_location(ClassNode, "class Foo end")
       assert_location(ClassNode, "class Foo < Bar; end")
@@ -488,6 +495,7 @@ module Prism
     def test_InterpolatedStringNode
       assert_location(InterpolatedStringNode, "\"foo \#@bar baz\"")
       assert_location(InterpolatedStringNode, "<<~A\nhello \#{1} world\nA", 0...4)
+      assert_location(InterpolatedStringNode, '"foo" "bar"')
     end
 
     def test_InterpolatedSymbolNode
@@ -780,10 +788,6 @@ module Prism
       assert_location(StatementsNode, "END { foo }", 6...9, &:statements)
 
       assert_location(StatementsNode, "\"\#{foo}\"", 3...6) { |node| node.parts.first.statements }
-    end
-
-    def test_StringConcatNode
-      assert_location(StringConcatNode, '"foo" "bar"')
     end
 
     def test_StringNode

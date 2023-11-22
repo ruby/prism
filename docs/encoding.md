@@ -14,6 +14,8 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 
 * `ASCII-8BIT`
 * `Big5`
+* `Big5-HKSCS`
+* `Big5-UAO`
 * `CP51932`
 * `CP850`
 * `CP852`
@@ -34,6 +36,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `IBM864`
 * `IBM865`
 * `IBM866`
+* `IBM869`
 * `ISO-8859-1`
 * `ISO-8859-2`
 * `ISO-8859-3`
@@ -61,6 +64,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `macTurkish`
 * `macUkraine`
 * `Shift_JIS`
+* `TIS-620`
 * `US-ASCII`
 * `UTF-8`
 * `UTF8-MAC`
@@ -80,7 +84,7 @@ For each of these encodings, prism provides a function for checking if the subse
 
 ## Support for other encodings
 
-If an encoding is encountered that is not supported by prism, prism will call a user-provided callback function with the name of the encoding if one is provided. That function can be registered with `pm_parser_register_encoding_decode_callback`. The user-provided callback function can then provide a pointer to an encoding struct that contains the requisite functions that prism will use those to parse identifiers going forward.
+If an encoding is encountered that is not supported by prism, prism will call a user-provided callback function with the name of the encoding if one is provided. That function can be registered with `pm_parser_register_encoding_decode_callback`. The user-provided callback function can then provide a pointer to an encoding struct that contains the requisite functions that prism will use to parse identifiers going forward.
 
 If the user-provided callback function returns `NULL` (the value also provided by the default implementation in case a callback was not registered), an error will be added to the parser's error list and parsing will continue on using the default UTF-8 encoding.
 

@@ -242,7 +242,7 @@ public abstract class Nodes {
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
           <%- field = node.semantic_fields.find { |f| f.name == node.newline } or raise node.newline -%>
           <%- case field -%>
-          <%- when Prism::NodeField, Prism::OptionalNodeField -%>
+          <%- when Prism::NodeField -%>
             this.<%= field.name %>.setNewLineFlag(source, newlineMarked);
           <%- when Prism::NodeListField -%>
             Node first = this.<%= field.name %>.length > 0 ? this.<%= field.name %>[0] : null;
