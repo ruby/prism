@@ -1418,7 +1418,7 @@ pm_encoding_single_char_width(PRISM_ATTRIBUTE_UNUSED const uint8_t *b, PRISM_ATT
  * checking if it's a valid codepoint in KOI-8 and if it is returning 1.
  */
 static size_t
-pm_encoding_koi8_r_char_width(const uint8_t *b, PRISM_ATTRIBUTE_UNUSED ptrdiff_t n) {
+pm_encoding_koi8_char_width(const uint8_t *b, PRISM_ATTRIBUTE_UNUSED ptrdiff_t n) {
     return ((*b >= 0x20 && *b <= 0x7E) || (*b >= 0x80)) ? 1 : 0;
 }
 
@@ -1855,7 +1855,7 @@ pm_encoding_t pm_encoding_iso_8859_16 = {
 /** KOI8-R */
 pm_encoding_t pm_encoding_koi8_r = {
     .name = "KOI8-R",
-    .char_width = pm_encoding_koi8_r_char_width,
+    .char_width = pm_encoding_koi8_char_width,
     .alnum_char = pm_encoding_koi8_r_alnum_char,
     .alpha_char = pm_encoding_koi8_r_alpha_char,
     .isupper_char = pm_encoding_koi8_r_isupper_char,
