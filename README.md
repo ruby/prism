@@ -86,6 +86,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Fuzzing](docs/fuzzing.md)
 * [Heredocs](docs/heredocs.md)
 * [JavaScript](docs/javascript.md)
+* [Local variable depth](docs/local_variable_depth.md)
 * [Mapping](docs/mapping.md)
 * [Releasing](docs/releasing.md)
 * [Ripper](docs/ripper.md)
