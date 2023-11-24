@@ -86,7 +86,7 @@ class SerializationBuffer {
 
   scanConstant(constantPoolOffset, constantIndex) {
     const offset = constantPoolOffset + constantIndex * 8;
-    const startOffset = this.scanUint32(offset);
+    let startOffset = this.scanUint32(offset);
     const length = this.scanUint32(offset + 4);
 
     if (startOffset & (1 << 31)) {
