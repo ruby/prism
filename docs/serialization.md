@@ -34,7 +34,6 @@ The comment type is one of:
 
 * 0=`INLINE` (`# comment`)
 * 1=`EMBEDDED_DOCUMENT` (`=begin`/`=end`)
-* 2=`__END__` (after `__END__`)
 
 | # bytes | field |
 | --- | --- |
@@ -77,6 +76,7 @@ The header is structured like the following table:
 | comment* | comments |
 | varint | number of magic comments |
 | magic comment* | magic comments |
+| location? | the optional location of the `__END__` keyword and its contents |
 | varint | number of errors |
 | diagnostic* | errors |
 | varint | number of warnings |
