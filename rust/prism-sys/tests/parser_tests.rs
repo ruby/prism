@@ -83,7 +83,7 @@ fn diagnostics_test() {
 
         let error = error_list.head as *const pm_diagnostic_t;
         let message = CStr::from_ptr((*error).message);
-        assert_eq!(message.to_string_lossy(), "Cannot parse the expression");
+        assert_eq!(message.to_string_lossy(), "cannot parse the expression");
 
         let location = {
             let start = (*error).start.offset_from(parser.start);
