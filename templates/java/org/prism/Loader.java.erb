@@ -115,6 +115,7 @@ public class Loader {
         source.setStartLine(loadVarInt());
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
+        Nodes.Location dataLocation = loadOptionalLocation();
         ParseResult.Error[] errors = loadSyntaxErrors();
         ParseResult.Warning[] warnings = loadWarnings();
 
@@ -133,7 +134,7 @@ public class Loader {
         MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
         node.accept(visitor);
 
-        return new ParseResult(node, magicComments, errors, warnings);
+        return new ParseResult(node, magicComments, dataLocation, errors, warnings);
     }
 
     private byte[] loadEmbeddedString() {

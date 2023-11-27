@@ -60,7 +60,7 @@ class SerializationBuffer {
     return { startOffset: this.readVarInt(), length: this.readVarInt() };
   }
 
-  readOptionalLocationField() {
+  readOptionalLocation() {
     if (this.readByte() != 0) {
       return this.readLocation();
     } else {
@@ -154,6 +154,10 @@ export class ParseResult {
   magicComments;
 
   /**
+   * @type {Location | null}
+   */
+
+  /**
    * @type {ParseError[]}
    */
   errors;
@@ -170,10 +174,11 @@ export class ParseResult {
    * @param {ParseError[]} errors
    * @param {ParseWarning[]} warnings
    */
-  constructor(value, comments, magicComments, errors, warnings) {
+  constructor(value, comments, magicComments, dataLoc, errors, warnings) {
     this.value = value;
     this.comments = comments;
     this.magicComments = magicComments;
+    this.dataLoc = dataLoc;
     this.errors = errors;
     this.warnings = warnings;
   }
@@ -220,6 +225,8 @@ export function deserialize(source, array) {
     endLocation: buffer.readLocation()
   }));
 
+  const dataLoc = buffer.readOptionalLocation();
+
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation()
@@ -233,7 +240,7 @@ export function deserialize(source, array) {
   const constantPoolOffset = buffer.readUint32();
   const constants = Array.from({ length: buffer.readVarInt() }, () => null);
 
-  return new ParseResult(readRequiredNode(), comments, magicComments, errors, warnings);
+  return new ParseResult(readRequiredNode(), comments, magicComments, dataLoc, errors, warnings);
 
   function readRequiredNode() {
     const type = buffer.readByte();
@@ -255,7 +262,7 @@ export function deserialize(source, array) {
           when Prism::OptionalConstantField then "readOptionalConstant()"
           when Prism::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
           when Prism::LocationField then "buffer.readLocation()"
-          when Prism::OptionalLocationField then "buffer.readOptionalLocationField()"
+          when Prism::OptionalLocationField then "buffer.readOptionalLocation()"
           when Prism::UInt32Field, Prism::FlagsField then "buffer.readVarInt()"
           else raise
           end
