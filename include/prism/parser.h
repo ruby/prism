@@ -675,6 +675,9 @@ struct pm_parser {
     /** This flag indicates that we are currently parsing a keyword argument. */
     bool in_keyword_arg;
 
+    /** The current parameter name id on parsing its default value. */
+    pm_constant_id_t current_param_name;
+
     /**
      * Whether or not the parser has seen a token that has semantic meaning
      * (i.e., a token that is not a comment or whitespace).
