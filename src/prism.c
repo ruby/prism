@@ -4037,8 +4037,6 @@ pm_local_variable_or_write_node_create(pm_parser_t *parser, pm_node_t *target, c
     return node;
 }
 
-static bool context_p(pm_parser_t *parser, pm_context_t context);
-
 /**
  * Allocate a new LocalVariableReadNode node.
  */
@@ -4046,10 +4044,7 @@ static pm_local_variable_read_node_t *
 pm_local_variable_read_node_create(pm_parser_t *parser, const pm_token_t *name, uint32_t depth) {
     pm_constant_id_t name_id = pm_parser_constant_id_token(parser, name);
 
-    if (
-        context_p(parser, PM_CONTEXT_DEFAULT_PARAMS) &&
-        parser->current_param_name == name_id
-    ) {
+    if (parser->current_param_name == name_id) {
         pm_parser_err_token(parser, name, PM_ERR_PARAMETER_CIRCULAR);
     }
 
@@ -16912,6 +16907,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .encoding_changed = false,
         .pattern_matching_newlines = false,
         .in_keyword_arg = false,
+        .current_param_name = 0,
         .semantic_token_seen = false,
         .frozen_string_literal = false,
         .suppress_warnings = false
