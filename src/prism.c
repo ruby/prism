@@ -14561,6 +14561,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 pm_token_t operator = parser->previous;
                 pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_NOT, PM_ERR_EXPECT_EXPRESSION_AFTER_LESS_LESS);
 
+                pm_constant_id_t old_param_name = parser->current_param_name;
+                parser->current_param_name = 0;
                 pm_parser_scope_push(parser, true);
                 accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
 
@@ -14580,6 +14582,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
 
                 pm_constant_id_list_t locals = parser->current_scope->locals;
                 pm_parser_scope_pop(parser);
+                parser->current_param_name = old_param_name;
                 pm_do_loop_stack_pop(parser);
                 return (pm_node_t *) pm_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous);
             }
@@ -14606,6 +14609,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 superclass = NULL;
             }
 
+            pm_constant_id_t old_param_name = parser->current_param_name;
+            parser->current_param_name = 0;
             pm_parser_scope_push(parser, true);
             if (inheritance_operator.type != PM_TOKEN_NOT_PROVIDED) {
                 expect2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_CLASS_UNEXPECTED_END);
@@ -14633,6 +14638,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
 
             pm_constant_id_list_t locals = parser->current_scope->locals;
             pm_parser_scope_pop(parser);
+            parser->current_param_name = old_param_name;
             pm_do_loop_stack_pop(parser);
 
             if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
@@ -14650,10 +14656,12 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
 
             context_push(parser, PM_CONTEXT_DEF_PARAMS);
             parser_lex(parser);
+            pm_constant_id_t old_param_name = parser->current_param_name;
 
             switch (parser->current.type) {
                 case PM_CASE_OPERATOR:
                     pm_parser_scope_push(parser, true);
+                    parser->current_param_name = 0;
                     lex_state_set(parser, PM_LEX_STATE_ENDFN);
                     parser_lex(parser);
                     name = parser->previous;
@@ -14665,6 +14673,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                         receiver = parse_variable_call(parser);
 
                         pm_parser_scope_push(parser, true);
+                        parser->current_param_name = 0;
                         lex_state_set(parser, PM_LEX_STATE_FNAME);
                         parser_lex(parser);
 
@@ -14673,6 +14682,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                     } else {
                         pm_refute_numbered_parameter(parser, parser->previous.start, parser->previous.end);
                         pm_parser_scope_push(parser, true);
+                        parser->current_param_name = 0;
                         name = parser->previous;
                     }
 
@@ -14690,6 +14700,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 case PM_TOKEN_KEYWORD___LINE__:
                 case PM_TOKEN_KEYWORD___ENCODING__: {
                     pm_parser_scope_push(parser, true);
+                    parser->current_param_name = 0;
                     parser_lex(parser);
                     pm_token_t identifier = parser->previous;
 
@@ -14757,11 +14768,13 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                     receiver = (pm_node_t *) pm_parentheses_node_create(parser, &lparen, expression, &rparen);
 
                     pm_parser_scope_push(parser, true);
+                    parser->current_param_name = 0;
                     name = parse_method_definition_name(parser);
                     break;
                 }
                 default:
                     pm_parser_scope_push(parser, true);
+                    parser->current_param_name = 0;
                     name = parse_method_definition_name(parser);
                     break;
             }
@@ -14874,6 +14887,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
             }
 
             pm_constant_id_list_t locals = parser->current_scope->locals;
+            parser->current_param_name = old_param_name;
             pm_parser_scope_pop(parser);
 
             return (pm_node_t *) pm_def_node_create(
@@ -15104,6 +15118,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 pm_parser_err_token(parser, &name, PM_ERR_MODULE_NAME);
             }
 
+            pm_constant_id_t old_param_name = parser->current_param_name;
+            parser->current_param_name = 0;
             pm_parser_scope_push(parser, true);
             accept2(parser, PM_TOKEN_SEMICOLON, PM_TOKEN_NEWLINE);
             pm_node_t *statements = NULL;
@@ -15121,6 +15137,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
 
             pm_constant_id_list_t locals = parser->current_scope->locals;
             pm_parser_scope_pop(parser);
+            parser->current_param_name = old_param_name;
 
             expect1(parser, PM_TOKEN_KEYWORD_END, PM_ERR_MODULE_TERM);
 
