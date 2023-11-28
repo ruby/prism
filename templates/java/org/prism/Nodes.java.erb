@@ -122,6 +122,10 @@ public abstract class Nodes {
             }
         }
 
+        public void setNewLineFlag(boolean newLineFlag) {
+            this.newLineFlag = newLineFlag;
+        }
+
         public abstract <T> T accept(AbstractNodeVisitor<T> visitor);
 
         public abstract <T> void visitChildNodes(AbstractNodeVisitor<T> visitor);

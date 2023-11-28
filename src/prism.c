@@ -1840,8 +1840,8 @@ pm_call_node_variable_call_p(pm_call_node_t *node) {
 }
 
 /**
- * Returns whether or not this call is to the [] method in the index form (as
- * opposed to `foo.[]`).
+ * Returns whether or not this call is to the [] method in the index form without a block (as
+ * opposed to `foo.[]` and `foo[] { }`).
  */
 static inline bool
 pm_call_node_index_p(pm_call_node_t *node) {
@@ -1849,7 +1849,8 @@ pm_call_node_index_p(pm_call_node_t *node) {
         (node->call_operator_loc.start == NULL) &&
         (node->message_loc.start != NULL) &&
         (node->message_loc.start[0] == '[') &&
-        (node->message_loc.end[-1] == ']')
+        (node->message_loc.end[-1] == ']') &&
+        (node->block == NULL || PM_NODE_TYPE_P(node->block, PM_BLOCK_ARGUMENT_NODE))
     );
 }
 
@@ -2456,6 +2457,8 @@ pm_constant_path_or_write_node_create(pm_parser_t *parser, pm_constant_path_node
  */
 static pm_constant_path_node_t *
 pm_constant_path_node_create(pm_parser_t *parser, pm_node_t *parent, const pm_token_t *delimiter, pm_node_t *child) {
+    pm_assert_value_expression(parser, parent);
+
     pm_constant_path_node_t *node = PM_ALLOC_NODE(parser, pm_constant_path_node_t);
 
     *node = (pm_constant_path_node_t) {
@@ -4139,6 +4142,21 @@ pm_local_variable_target_node_create(pm_parser_t *parser, const pm_token_t *name
         &(pm_location_t) { .start = name->start, .end = name->end },
         pm_parser_constant_id_token(parser, name),
         0
+    );
+}
+
+/**
+ * Allocate and initialize a new LocalVariableTargetNode node with the given depth.
+ */
+static pm_local_variable_target_node_t *
+pm_local_variable_target_node_create_depth(pm_parser_t *parser, const pm_token_t *name, uint32_t depth) {
+    pm_refute_numbered_parameter(parser, name->start, name->end);
+
+    return pm_local_variable_target_node_create_values(
+        parser,
+        &(pm_location_t) { .start = name->start, .end = name->end },
+        pm_parser_constant_id_token(parser, name),
+        depth
     );
 }
 
@@ -5896,6 +5914,19 @@ char_is_identifier_start(pm_parser_t *parser, const uint8_t *b) {
 }
 
 /**
+ * Similar to char_is_identifier but this function assumes that the encoding
+ * has not been changed.
+ */
+static inline size_t
+char_is_identifier_utf8(const uint8_t *b, const uint8_t *end) {
+    if (*b < 0x80) {
+        return (*b == '_') || (pm_encoding_unicode_table[*b] & PRISM_ENCODING_ALPHANUMERIC_BIT ? 1 : 0);
+    } else {
+        return (size_t) (pm_encoding_utf_8_alnum_char(b, end - b) || 1u);
+    }
+}
+
+/**
  * Like the above, this function is also used extremely frequently to lex all of
  * the identifiers in a source file once the first character has been found. So
  * it's important that it be as fast as possible.
@@ -5913,11 +5944,8 @@ char_is_identifier(pm_parser_t *parser, const uint8_t *b) {
         } else {
             return 0;
         }
-    } else if (*b < 0x80) {
-        return (pm_encoding_unicode_table[*b] & PRISM_ENCODING_ALPHANUMERIC_BIT ? 1 : 0) || (*b == '_');
-    } else {
-        return (size_t) (pm_encoding_utf_8_alnum_char(b, parser->end - b) || 1u);
     }
+    return char_is_identifier_utf8(b, parser->end);
 }
 
 // Here we're defining a perfect hash for the characters that are allowed in
@@ -6991,9 +7019,16 @@ lex_identifier(pm_parser_t *parser, bool previous_command_start) {
     const uint8_t *end = parser->end;
     const uint8_t *current_start = parser->current.start;
     const uint8_t *current_end = parser->current.end;
+    bool encoding_changed = parser->encoding_changed;
 
-    while (current_end < end && (width = char_is_identifier(parser, current_end)) > 0) {
-        current_end += width;
+    if (encoding_changed) {
+        while (current_end < end && (width = char_is_identifier(parser, current_end)) > 0) {
+            current_end += width;
+        }
+    } else {
+        while (current_end < end && (width = char_is_identifier_utf8(current_end, end)) > 0) {
+            current_end += width;
+        }
     }
     parser->current.end = current_end;
 
@@ -7111,7 +7146,7 @@ lex_identifier(pm_parser_t *parser, bool previous_command_start) {
         }
     }
 
-    if (parser->encoding_changed) {
+    if (encoding_changed) {
         return parser->encoding.isupper_char(current_start, end - current_start) ? PM_TOKEN_CONSTANT : PM_TOKEN_IDENTIFIER;
     }
     return pm_encoding_utf_8_isupper_char(current_start, end - current_start) ? PM_TOKEN_CONSTANT : PM_TOKEN_IDENTIFIER;
@@ -10818,13 +10853,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
             // If there is no call operator and the message is "[]" then this is
             // an aref expression, and we can transform it into an aset
             // expression.
-            if (
-                (call->call_operator_loc.start == NULL) &&
-                (call->message_loc.start != NULL) &&
-                (call->message_loc.start[0] == '[') &&
-                (call->message_loc.end[-1] == ']') &&
-                (call->block == NULL)
-            ) {
+            if (pm_call_node_index_p(call)) {
                 if (call->arguments == NULL) {
                     call->arguments = pm_arguments_node_create(parser);
                 }
@@ -13016,8 +13045,13 @@ parse_pattern_primitive(pm_parser_t *parser, pm_diagnostic_id_t diag_id) {
         case PM_TOKEN_IDENTIFIER:
         case PM_TOKEN_METHOD_NAME: {
             parser_lex(parser);
-            pm_parser_local_add_token(parser, &parser->previous);
-            return (pm_node_t *) pm_local_variable_target_node_create(parser, &parser->previous);
+            pm_token_t name = parser->previous;
+            int depth = pm_parser_local_depth(parser, &name);
+            if (depth < 0) {
+                depth = 0;
+                pm_parser_local_add_token(parser, &name);
+            }
+            return (pm_node_t *) pm_local_variable_target_node_create_depth(parser, &name, (uint32_t) depth);
         }
         case PM_TOKEN_BRACKET_LEFT_ARRAY: {
             pm_token_t opening = parser->current;
@@ -13334,9 +13368,13 @@ parse_pattern_primitives(pm_parser_t *parser, pm_diagnostic_id_t diag_id) {
 
         expect1(parser, PM_TOKEN_IDENTIFIER, PM_ERR_PATTERN_IDENT_AFTER_HROCKET);
         pm_token_t identifier = parser->previous;
-        pm_parser_local_add_token(parser, &identifier);
+        int depth = pm_parser_local_depth(parser, &identifier);
+        if (depth < 0) {
+            depth = 0;
+            pm_parser_local_add_token(parser, &identifier);
+        }
 
-        pm_node_t *target = (pm_node_t *) pm_local_variable_target_node_create(parser, &identifier);
+        pm_node_t *target = (pm_node_t *) pm_local_variable_target_node_create_depth(parser, &identifier, (uint32_t) depth);
         node = (pm_node_t *) pm_capture_pattern_node_create(parser, node, target, &operator);
     }
 
