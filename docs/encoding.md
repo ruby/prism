@@ -60,6 +60,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `macCyrillic`
 * `macGreek`
 * `macIceland`
+* `MacJapanese`
 * `macRoman`
 * `macRomania`
 * `macThai`

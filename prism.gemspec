@@ -90,6 +90,7 @@ Gem::Specification.new do |spec|
     "src/enc/pm_cp949.c",
     "src/enc/pm_euc_jp.c",
     "src/enc/pm_gbk.c",
+    "src/enc/pm_mac_japanese.c",
     "src/enc/pm_shift_jis.c",
     "src/enc/pm_tables.c",
     "src/enc/pm_unicode.c",
