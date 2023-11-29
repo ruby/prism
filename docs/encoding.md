@@ -22,6 +22,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `CP855`
 * `CP949`
 * `CP950`
+* `CP951`
 * `EUC-JP`
 * `eucJP-ms`
 * `EUC-JIS-2004`
