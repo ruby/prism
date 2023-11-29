@@ -104,7 +104,7 @@ public class Loader {
         expect((byte) 1, "Loader.java requires no location fields in the serialized output");
 
         // This loads the name of the encoding.
-        int encodingLength = loadVarInt();
+        int encodingLength = loadVarUInt();
         byte[] encodingNameBytes = new byte[encodingLength];
         buffer.get(encodingNameBytes);
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
@@ -112,7 +112,7 @@ public class Loader {
         this.encodingCharset = getEncodingCharset(this.encodingName);
         <%- end -%>
 
-        source.setStartLine(loadVarInt());
+        source.setStartLine(loadVarUInt());
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
         Nodes.Location dataLocation = loadOptionalLocation();
@@ -120,7 +120,7 @@ public class Loader {
         ParseResult.Warning[] warnings = loadWarnings();
 
         int constantPoolBufferOffset = buffer.getInt();
-        int constantPoolLength = loadVarInt();
+        int constantPoolLength = loadVarUInt();
         this.constantPool = new ConstantPool(this, source.bytes, constantPoolBufferOffset, constantPoolLength);
 
         Nodes.Node node = loadNode();
@@ -138,7 +138,7 @@ public class Loader {
     }
 
     private byte[] loadEmbeddedString() {
-        int length = loadVarInt();
+        int length = loadVarUInt();
         byte[] bytes = new byte[length];
         buffer.get(bytes);
         return bytes;
@@ -147,8 +147,8 @@ public class Loader {
     private byte[] loadString() {
         switch (buffer.get()) {
             case 1:
-                int start = loadVarInt();
-                int length = loadVarInt();
+                int start = loadVarUInt();
+                int length = loadVarUInt();
                 byte[] bytes = new byte[length];
                 System.arraycopy(source.bytes, start, bytes, 0, length);
                 return bytes;
@@ -160,7 +160,7 @@ public class Loader {
     }
 
     private ParseResult.MagicComment[] loadMagicComments() {
-        int count = loadVarInt();
+        int count = loadVarUInt();
         ParseResult.MagicComment[] magicComments = new ParseResult.MagicComment[count];
 
         for (int i = 0; i < count; i++) {
@@ -175,7 +175,7 @@ public class Loader {
     }
 
     private ParseResult.Error[] loadSyntaxErrors() {
-        int count = loadVarInt();
+        int count = loadVarUInt();
         ParseResult.Error[] errors = new ParseResult.Error[count];
 
         // error messages only contain ASCII characters
@@ -192,7 +192,7 @@ public class Loader {
     }
 
     private ParseResult.Warning[] loadWarnings() {
-        int count = loadVarInt();
+        int count = loadVarUInt();
         ParseResult.Warning[] warnings = new ParseResult.Warning[count];
 
         // warning messages only contain ASCII characters
@@ -218,7 +218,7 @@ public class Loader {
     }
 
     private <%= string_type %> loadConstant() {
-        return constantPool.get(buffer, loadVarInt());
+        return constantPool.get(buffer, loadVarUInt());
     }
 
     private <%= string_type %> loadOptionalConstant() {
@@ -231,19 +231,19 @@ public class Loader {
     }
 
     private <%= string_type %>[] loadConstants() {
-        int length = loadVarInt();
+        int length = loadVarUInt();
         if (length == 0) {
             return Nodes.EMPTY_STRING_ARRAY;
         }
         <%= string_type %>[] constants = new <%= string_type %>[length];
         for (int i = 0; i < length; i++) {
-            constants[i] = constantPool.get(buffer, loadVarInt());
+            constants[i] = constantPool.get(buffer, loadVarUInt());
         }
         return constants;
     }
 
     private Nodes.Node[] loadNodes() {
-        int length = loadVarInt();
+        int length = loadVarUInt();
         if (length == 0) {
             return Nodes.Node.EMPTY_ARRAY;
         }
@@ -255,7 +255,7 @@ public class Loader {
     }
 
     private Nodes.Location loadLocation() {
-        return new Nodes.Location(loadVarInt(), loadVarInt());
+        return new Nodes.Location(loadVarUInt(), loadVarUInt());
     }
 
     private Nodes.Location loadOptionalLocation() {
@@ -267,7 +267,7 @@ public class Loader {
     }
 
     // From https://github.com/protocolbuffers/protobuf/blob/v23.1/java/core/src/main/java/com/google/protobuf/BinaryReader.java#L1507
-    private int loadVarInt() {
+    private int loadVarUInt() {
         int x;
         if ((x = buffer.get()) >= 0) {
             return x;
@@ -285,15 +285,15 @@ public class Loader {
     }
 
     private short loadFlags() {
-        int flags = loadVarInt();
+        int flags = loadVarUInt();
         assert flags >= 0 && flags <= Short.MAX_VALUE;
         return (short) flags;
     }
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        int startOffset = loadVarInt();
-        int length = loadVarInt();
+        int startOffset = loadVarUInt();
+        int length = loadVarUInt();
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
@@ -311,7 +311,7 @@ public class Loader {
               when Prism::ConstantListField then "loadConstants()"
               when Prism::LocationField then "loadLocation()"
               when Prism::OptionalLocationField then "loadOptionalLocation()"
-              when Prism::UInt32Field then "loadVarInt()"
+              when Prism::UInt32Field then "loadVarUInt()"
               when Prism::FlagsField then "loadFlags()"
               else raise
               end
