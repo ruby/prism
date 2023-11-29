@@ -11,8 +11,12 @@ Let us define some simple types for readability.
 
 ### varuint
 
-A variable-length integer with the value fitting in `uint32_t` using between 1 and 5 bytes, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding.
+A variable-length unsigned integer with the value fitting in `uint32_t` using between 1 and 5 bytes, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding.
 This drastically cuts down on the size of the serialized string, especially when the source file is large.
+
+### varsint
+
+A variable-length signed integer with the value fitting in `int32_t` using between 1 and 5 bytes, using [ZigZag encoding](https://protobuf.dev/programming-guides/encoding/#signed-ints) into [LEB128].
 
 ### string
 
@@ -71,7 +75,7 @@ The header is structured like the following table:
 | `1` | patch version number |
 | `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
-| varuint | the start line |
+| varsint | the start line |
 | varuint | number of comments |
 | comment* | comments |
 | varuint | number of magic comments |

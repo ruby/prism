@@ -112,7 +112,7 @@ public class Loader {
         this.encodingCharset = getEncodingCharset(this.encodingName);
         <%- end -%>
 
-        source.setStartLine(loadVarUInt());
+        source.setStartLine(loadVarSInt());
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
         Nodes.Location dataLocation = loadOptionalLocation();
@@ -282,6 +282,12 @@ public class Loader {
             x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21) ^ (~0 << 28);
         }
         return x;
+    }
+
+    // From https://github.com/protocolbuffers/protobuf/blob/v25.1/java/core/src/main/java/com/google/protobuf/CodedInputStream.java#L508-L510
+    private int loadVarSInt() {
+        int x = loadVarUInt();
+        return (x >>> 1) ^ (-(x & 1));
     }
 
     private short loadFlags() {
