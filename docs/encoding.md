@@ -68,6 +68,9 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `macTurkish`
 * `macUkraine`
 * `Shift_JIS`
+* `SJIS-DoCoMo`
+* `SJIS-KDDI`
+* `SJIS-SoftBank`
 * `TIS-620`
 * `US-ASCII`
 * `UTF-8`
