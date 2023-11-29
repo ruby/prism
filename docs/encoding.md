@@ -72,6 +72,9 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `US-ASCII`
 * `UTF-8`
 * `UTF8-MAC`
+* `UTF8-DoCoMo`
+* `UTF8-KDDI`
+* `UTF8-SoftBank`
 * `Windows-1250`
 * `Windows-1251`
 * `Windows-1252`
