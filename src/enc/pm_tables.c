@@ -97,31 +97,6 @@ static uint8_t pm_encoding_cp855_table[256] = {
 };
 
 /**
- * TODO
- * Each element of the following table contains a bitfield that indicates a
- * piece of information about the corresponding GB12345 character.
- */
-static uint8_t pm_encoding_gb12345_table[256] = {
-//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, // 3x
-    0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // 4x
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, // 5x
-    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 6x
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, // 7x
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 8x
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9x
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ax
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Bx
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Cx
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Dx
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Ex
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Fx
-};
-
-/**
  * Each element of the following table contains a bitfield that indicates a
  * piece of information about the corresponding GB1988 character.
  */
@@ -1485,7 +1460,6 @@ pm_encoding_koi8_char_width(const uint8_t *b, PRISM_ATTRIBUTE_UNUSED ptrdiff_t n
 PRISM_ENCODING_TABLE(cp850)
 PRISM_ENCODING_TABLE(cp852)
 PRISM_ENCODING_TABLE(cp855)
-PRISM_ENCODING_TABLE(gb12345)
 PRISM_ENCODING_TABLE(gb1988)
 PRISM_ENCODING_TABLE(ibm437)
 PRISM_ENCODING_TABLE(ibm720)
