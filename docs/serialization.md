@@ -9,24 +9,28 @@ The syntax tree still requires a copy of the original source, as for the most pa
 
 Let us define some simple types for readability.
 
-### varint
+### varuint
 
-A variable-length integer with the value fitting in `uint32_t` using between 1 and 5 bytes, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding.
+A variable-length unsigned integer with the value fitting in `uint32_t` using between 1 and 5 bytes, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding.
 This drastically cuts down on the size of the serialized string, especially when the source file is large.
+
+### varsint
+
+A variable-length signed integer with the value fitting in `int32_t` using between 1 and 5 bytes, using [ZigZag encoding](https://protobuf.dev/programming-guides/encoding/#signed-ints) into [LEB128].
 
 ### string
 
 | # bytes | field |
 | --- | --- |
-| varint | the length of the string in bytes |
+| varuint | the length of the string in bytes |
 | ... | the string bytes |
 
 ### location
 
 | # bytes | field |
 | --- | --- |
-| varint | byte offset into the source string where this location begins |
-| varint | length of the location in bytes in the source string |
+| varuint | byte offset into the source string where this location begins |
+| varuint | length of the location in bytes in the source string |
 
 ### comment
 
@@ -71,18 +75,18 @@ The header is structured like the following table:
 | `1` | patch version number |
 | `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
-| varint | the start line |
-| varint | number of comments |
+| varsint | the start line |
+| varuint | number of comments |
 | comment* | comments |
-| varint | number of magic comments |
+| varuint | number of magic comments |
 | magic comment* | magic comments |
 | location? | the optional location of the `__END__` keyword and its contents |
-| varint | number of errors |
+| varuint | number of errors |
 | diagnostic* | errors |
-| varint | number of warnings |
+| varuint | number of warnings |
 | diagnostic* | warnings |
 | `4` | content pool offset |
-| varint | content pool size |
+| varuint | content pool size |
 
 After the header comes the body of the serialized string.
 The body consists of a sequence of nodes that is built using a prefix traversal order of the syntax tree.
@@ -159,7 +163,7 @@ serialize(const uint8_t *source, size_t length) {
 }
 ```
 
-The final argument to `pm_serialize_parse` is an optional string that controls the options to the parse function. This includes all of the normal options that could be passed to `pm_parser_init` through a `pm_options_t` struct, but serialized as a string to make it easier for callers through FFI. Note that no `varint` are used here to make it easier to produce the data for the caller, and also serialized size is less important here. The format of the data is structured as follows:
+The final argument to `pm_serialize_parse` is an optional string that controls the options to the parse function. This includes all of the normal options that could be passed to `pm_parser_init` through a `pm_options_t` struct, but serialized as a string to make it easier for callers through FFI. Note that no `varuint` are used here to make it easier to produce the data for the caller, and also serialized size is less important here. The format of the data is structured as follows:
 
 | # bytes | field                      |
 | ------- | -------------------------- |
