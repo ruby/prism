@@ -85,6 +85,7 @@ Gem::Specification.new do |spec|
     "lib/prism/parse_result/newlines.rb",
     "lib/prism/visitor.rb",
     "src/diagnostic.c",
+    "src/enc/pm_gb12345.c",
     "src/enc/pm_big5.c",
     "src/enc/pm_cp51932.c",
     "src/enc/pm_cp949.c",
