@@ -21,6 +21,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `CP852`
 * `CP855`
 * `CP949`
+* `CP950`
 * `EUC-JP`
 * `GB1988`
 * `GBK`
