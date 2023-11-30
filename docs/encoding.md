@@ -29,6 +29,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `EUC-JIS-2004`
 * `EUC-KR`
 * `GB12345`
+* `GB18030`
 * `GB1988`
 * `GB2312`
 * `GBK`
