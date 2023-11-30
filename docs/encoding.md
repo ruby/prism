@@ -102,7 +102,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `Windows-31J`
 * `Windows-874`
 
-For each of these encodings, prism provides a function for checking if the subsequent bytes form an alphabetic or alphanumeric character.
+For each of these encodings, prism provides functions for checking if the subsequent bytes can be interpreted as a character, and then if that character is alphabetic, alphanumeric, or uppercase.
 
 ## Getting notified when the encoding changes
 
