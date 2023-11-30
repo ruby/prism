@@ -104,61 +104,6 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 
 For each of these encodings, prism provides a function for checking if the subsequent bytes form an alphabetic or alphanumeric character.
 
-## Support for other encodings
-
-If an encoding is encountered that is not supported by prism, prism will call a user-provided callback function with the name of the encoding if one is provided. That function can be registered with `pm_parser_register_encoding_decode_callback`. The user-provided callback function can then provide a pointer to an encoding struct that contains the requisite functions that prism will use to parse identifiers going forward.
-
-If the user-provided callback function returns `NULL` (the value also provided by the default implementation in case a callback was not registered), an error will be added to the parser's error list and parsing will continue on using the default UTF-8 encoding.
-
-```c
-// This struct defines the functions necessary to implement the encoding
-// interface so we can determine how many bytes the subsequent character takes.
-// Each callback should return the number of bytes, or 0 if the next bytes are
-// invalid for the encoding and type.
-typedef struct {
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding. Does not read more than n bytes. It is assumed that n is
-    // at least 1.
-    size_t (*char_width)(const uint8_t *b, ptrdiff_t n);
-
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphabetical. Does not read more than n bytes. It
-    // is assumed that n is at least 1.
-    size_t (*alpha_char)(const uint8_t *b, ptrdiff_t n);
-
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphanumeric. Does not read more than n bytes. It
-    // is assumed that n is at least 1.
-    size_t (*alnum_char)(const uint8_t *b, ptrdiff_t n);
-
-    // Return true if the next character is valid in the encoding and is an
-    // uppercase character. Does not read more than n bytes. It is assumed that
-    // n is at least 1.
-    bool (*isupper_char)(const uint8_t *b, ptrdiff_t n);
-
-    // The name of the encoding. This should correspond to a value that can be
-    // passed to Encoding.find in Ruby.
-    const char *name;
-
-    // Return true if the encoding is a multibyte encoding.
-    bool multibyte;
-} pm_encoding_t;
-
-// When an encoding is encountered that isn't understood by prism, we provide
-// the ability here to call out to a user-defined function to get an encoding
-// struct. If the function returns something that isn't NULL, we set that to
-// our encoding and use it to parse identifiers.
-typedef pm_encoding_t *(*pm_encoding_decode_callback_t)(pm_parser_t *parser, const uint8_t *name, size_t width);
-
-// Register a callback that will be called when prism encounters a magic comment
-// with an encoding referenced that it doesn't understand. The callback should
-// return NULL if it also doesn't understand the encoding or it should return a
-// pointer to a pm_encoding_t struct that contains the functions necessary to
-// parse identifiers.
-PRISM_EXPORTED_FUNCTION void
-pm_parser_register_encoding_decode_callback(pm_parser_t *parser, pm_encoding_decode_callback_t callback);
-```
-
 ## Getting notified when the encoding changes
 
 You may want to get notified when the encoding changes based on the result of parsing an encoding comment. We use this internally for our `lex` function in order to provide the correct encodings for the tokens that are returned. For that you can register a callback with `pm_parser_register_encoding_changed_callback`. The callback will be called with a pointer to the parser. The encoding can be accessed through `parser->encoding`.
