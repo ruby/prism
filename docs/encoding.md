@@ -23,6 +23,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `CP949`
 * `CP950`
 * `CP951`
+* `Emacs-Mule`
 * `EUC-JP`
 * `eucJP-ms`
 * `EUC-JIS-2004`
@@ -77,6 +78,8 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `SJIS-DoCoMo`
 * `SJIS-KDDI`
 * `SJIS-SoftBank`
+* `stateless-ISO-2022-JP`
+* `stateless-ISO-2022-JP-KDDI`
 * `TIS-620`
 * `US-ASCII`
 * `UTF-8`
