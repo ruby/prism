@@ -45,6 +45,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `IBM860`
 * `IBM861`
 * `IBM862`
+* `IBM863`
 * `IBM864`
 * `IBM865`
 * `IBM866`
