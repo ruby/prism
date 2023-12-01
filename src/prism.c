@@ -6153,199 +6153,17 @@ next_newline(const uint8_t *cursor, ptrdiff_t length) {
  */
 static bool
 parser_lex_magic_comment_encoding_value(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
-    size_t width = (size_t) (end - start);
+    const pm_encoding_t *encoding = pm_encoding_find(start, end);
 
-    // First, we're going to call out to a user-defined callback if one was
-    // provided. If they return an encoding struct that we can use, then we'll
-    // use that here.
-    if (parser->encoding_decode_callback != NULL) {
-        pm_encoding_t *encoding = parser->encoding_decode_callback(parser, start, width);
-
-        if (encoding != NULL) {
+    if (encoding != NULL) {
+        if (encoding != pm_encoding_utf_8) {
             parser->encoding = *encoding;
-            return true;
-        }
-    }
-
-    // Next, we're going to check for UTF-8. This is the most common encoding.
-    // utf-8 can contain extra information at the end about the platform it is
-    // encoded on, such as utf-8-mac or utf-8-unix. We'll ignore those suffixes.
-    if ((start + 5 <= end) && (pm_strncasecmp(start, (const uint8_t *) "utf-8", 5) == 0)) {
-        // We need to explicitly handle utf-8-hfs, as that one needs to switch
-        // over to being utf8-mac.
-        if (width == 9 && (pm_strncasecmp(start + 5, (const uint8_t *) "-hfs", 4) == 0)) {
-            parser->encoding = pm_encoding_utf8_mac;
             parser->encoding_changed = true;
             if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser);
-            return true;
         }
 
-        // We don't need to do anything here because the default encoding is
-        // already UTF-8. We'll just return.
         return true;
     }
-
-    // Next, we're going to loop through each of the encodings that we handle
-    // explicitly. If we found one that we understand, we'll use that value.
-#define ENCODING1(value, prebuilt) \
-    if (width == sizeof(value) - 1 && start + width <= end && pm_strncasecmp(start, (const uint8_t *) value, width) == 0) { \
-        parser->encoding = prebuilt; \
-        parser->encoding_changed = true; \
-        if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
-        return true; \
-    }
-
-    // A convenience macros for comparing two aliases for the same encoding.
-#define ENCODING2(value1, value2, prebuilt) ENCODING1(value1, prebuilt) ENCODING1(value2, prebuilt)
-
-    if (width >= 3) {
-        switch (*start) {
-            case 'A': case 'a':
-                ENCODING1("ASCII", pm_encoding_ascii);
-                ENCODING1("ASCII-8BIT", pm_encoding_ascii_8bit);
-                ENCODING1("ANSI_X3.4-1968", pm_encoding_ascii);
-                break;
-            case 'B': case 'b':
-                ENCODING1("BINARY", pm_encoding_ascii_8bit);
-                ENCODING1("Big5", pm_encoding_big5);
-                ENCODING1("Big5-HKSCS", pm_encoding_big5_hkscs);
-                ENCODING1("Big5-UAO", pm_encoding_big5_uao);
-                break;
-            case 'C': case 'c':
-                ENCODING1("CP437", pm_encoding_ibm437);
-                ENCODING1("CP720", pm_encoding_ibm720);
-                ENCODING1("CP737", pm_encoding_ibm737);
-                ENCODING1("CP775", pm_encoding_ibm775);
-                ENCODING1("CP850", pm_encoding_cp850);
-                ENCODING1("CP852", pm_encoding_cp852);
-                ENCODING1("CP855", pm_encoding_cp855);
-                ENCODING1("CP857", pm_encoding_ibm857);
-                ENCODING1("CP860", pm_encoding_ibm860);
-                ENCODING1("CP861", pm_encoding_ibm861);
-                ENCODING1("CP862", pm_encoding_ibm862);
-                ENCODING1("CP864", pm_encoding_ibm864);
-                ENCODING1("CP865", pm_encoding_ibm865);
-                ENCODING1("CP866", pm_encoding_ibm866);
-                ENCODING1("CP869", pm_encoding_ibm869);
-                ENCODING1("CP874", pm_encoding_windows_874);
-                ENCODING1("CP878", pm_encoding_koi8_r);
-                ENCODING1("CP863", pm_encoding_ibm863);
-                ENCODING2("CP932", "csWindows31J", pm_encoding_windows_31j);
-                ENCODING1("CP936", pm_encoding_gbk);
-                ENCODING1("CP949", pm_encoding_cp949);
-                ENCODING1("CP950", pm_encoding_cp950);
-                ENCODING1("CP1250", pm_encoding_windows_1250);
-                ENCODING1("CP1251", pm_encoding_windows_1251);
-                ENCODING1("CP1252", pm_encoding_windows_1252);
-                ENCODING1("CP1253", pm_encoding_windows_1253);
-                ENCODING1("CP1254", pm_encoding_windows_1254);
-                ENCODING1("CP1255", pm_encoding_windows_1255);
-                ENCODING1("CP1256", pm_encoding_windows_1256);
-                ENCODING1("CP1257", pm_encoding_windows_1257);
-                ENCODING1("CP1258", pm_encoding_windows_1258);
-                ENCODING1("CP51932", pm_encoding_cp51932);
-                ENCODING1("CP65001", pm_encoding_utf_8);
-                break;
-            case 'E': case 'e':
-                ENCODING2("EUC-JP", "eucJP", pm_encoding_euc_jp);
-                ENCODING1("external", pm_encoding_utf_8);
-                break;
-            case 'F': case 'f':
-                ENCODING1("filesystem", pm_encoding_utf_8);
-                break;
-            case 'G': case 'g':
-                ENCODING1("GB1988", pm_encoding_gb1988);
-                ENCODING1("GBK", pm_encoding_gbk);
-                break;
-            case 'I': case 'i':
-                ENCODING1("IBM437", pm_encoding_ibm437);
-                ENCODING1("IBM720", pm_encoding_ibm720);
-                ENCODING1("IBM737", pm_encoding_ibm737);
-                ENCODING1("IBM775", pm_encoding_ibm775);
-                ENCODING1("IBM850", pm_encoding_cp850);
-                ENCODING1("IBM852", pm_encoding_ibm852);
-                ENCODING1("IBM855", pm_encoding_ibm855);
-                ENCODING1("IBM857", pm_encoding_ibm857);
-                ENCODING1("IBM860", pm_encoding_ibm860);
-                ENCODING1("IBM861", pm_encoding_ibm861);
-                ENCODING1("IBM862", pm_encoding_ibm862);
-                ENCODING1("IBM863", pm_encoding_ibm863);
-                ENCODING1("IBM864", pm_encoding_ibm864);
-                ENCODING1("IBM865", pm_encoding_ibm865);
-                ENCODING1("IBM866", pm_encoding_ibm866);
-                ENCODING1("IBM869", pm_encoding_ibm869);
-                ENCODING2("ISO-8859-1", "ISO8859-1", pm_encoding_iso_8859_1);
-                ENCODING2("ISO-8859-2", "ISO8859-2", pm_encoding_iso_8859_2);
-                ENCODING2("ISO-8859-3", "ISO8859-3", pm_encoding_iso_8859_3);
-                ENCODING2("ISO-8859-4", "ISO8859-4", pm_encoding_iso_8859_4);
-                ENCODING2("ISO-8859-5", "ISO8859-5", pm_encoding_iso_8859_5);
-                ENCODING2("ISO-8859-6", "ISO8859-6", pm_encoding_iso_8859_6);
-                ENCODING2("ISO-8859-7", "ISO8859-7", pm_encoding_iso_8859_7);
-                ENCODING2("ISO-8859-8", "ISO8859-8", pm_encoding_iso_8859_8);
-                ENCODING2("ISO-8859-9", "ISO8859-9", pm_encoding_iso_8859_9);
-                ENCODING2("ISO-8859-10", "ISO8859-10", pm_encoding_iso_8859_10);
-                ENCODING2("ISO-8859-11", "ISO8859-11", pm_encoding_iso_8859_11);
-                ENCODING2("ISO-8859-13", "ISO8859-13", pm_encoding_iso_8859_13);
-                ENCODING2("ISO-8859-14", "ISO8859-14", pm_encoding_iso_8859_14);
-                ENCODING2("ISO-8859-15", "ISO8859-15", pm_encoding_iso_8859_15);
-                ENCODING2("ISO-8859-16", "ISO8859-16", pm_encoding_iso_8859_16);
-                break;
-            case 'K': case 'k':
-                ENCODING1("KOI8-R", pm_encoding_koi8_r);
-                ENCODING1("KOI8-U", pm_encoding_koi8_u);
-                break;
-            case 'L': case 'l':
-                ENCODING1("locale", pm_encoding_utf_8);
-                break;
-            case 'M': case 'm':
-                ENCODING1("macCentEuro", pm_encoding_mac_cent_euro);
-                ENCODING1("macCroatian", pm_encoding_mac_croatian);
-                ENCODING1("macCyrillic", pm_encoding_mac_cyrillic);
-                ENCODING1("macGreek", pm_encoding_mac_greek);
-                ENCODING1("macIceland", pm_encoding_mac_iceland);
-                ENCODING1("MacJapanese", pm_encoding_mac_japanese);
-                ENCODING1("MacJapan", pm_encoding_mac_japanese);
-                ENCODING1("macRoman", pm_encoding_mac_roman);
-                ENCODING1("macRomania", pm_encoding_mac_romania);
-                ENCODING1("macThai", pm_encoding_mac_thai);
-                ENCODING1("macTurkish", pm_encoding_mac_turkish);
-                ENCODING1("macUkraine", pm_encoding_mac_ukraine);
-                break;
-            case 'P': case 'p':
-                ENCODING1("PCK", pm_encoding_windows_31j);
-                break;
-            case 'S': case 's':
-                ENCODING1("Shift_JIS", pm_encoding_shift_jis);
-                ENCODING1("SJIS", pm_encoding_windows_31j);
-                break;
-            case 'T': case 't':
-                ENCODING1("TIS-620", pm_encoding_tis_620);
-                break;
-            case 'U': case 'u':
-                ENCODING1("US-ASCII", pm_encoding_ascii);
-                ENCODING2("UTF8-MAC", "UTF-8-HFS", pm_encoding_utf8_mac);
-                break;
-            case 'W': case 'w':
-                ENCODING1("Windows-31J", pm_encoding_windows_31j);
-                ENCODING1("Windows-874", pm_encoding_windows_874);
-                ENCODING1("Windows-1250", pm_encoding_windows_1250);
-                ENCODING1("Windows-1251", pm_encoding_windows_1251);
-                ENCODING1("Windows-1252", pm_encoding_windows_1252);
-                ENCODING1("Windows-1253", pm_encoding_windows_1253);
-                ENCODING1("Windows-1254", pm_encoding_windows_1254);
-                ENCODING1("Windows-1255", pm_encoding_windows_1255);
-                ENCODING1("Windows-1256", pm_encoding_windows_1256);
-                ENCODING1("Windows-1257", pm_encoding_windows_1257);
-                ENCODING1("Windows-1258", pm_encoding_windows_1258);
-                break;
-            case '6':
-                ENCODING1("646", pm_encoding_ascii);
-                break;
-        }
-    }
-
-#undef ENCODING2
-#undef ENCODING1
 
     return false;
 }
@@ -17018,9 +16836,8 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .error_list = { 0 },
         .current_scope = NULL,
         .current_context = NULL,
-        .encoding = pm_encoding_utf_8,
+        .encoding = *pm_encoding_utf_8,
         .encoding_changed_callback = NULL,
-        .encoding_decode_callback = NULL,
         .encoding_comment_start = source,
         .lex_callback = NULL,
         .filepath_string = { 0 },
@@ -17133,18 +16950,6 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
 PRISM_EXPORTED_FUNCTION void
 pm_parser_register_encoding_changed_callback(pm_parser_t *parser, pm_encoding_changed_callback_t callback) {
     parser->encoding_changed_callback = callback;
-}
-
-/**
- * Register a callback that will be called when prism encounters a magic comment
- * with an encoding referenced that it doesn't understand. The callback should
- * return NULL if it also doesn't understand the encoding or it should return a
- * pointer to a pm_encoding_t struct that contains the functions necessary to
- * parse identifiers.
- */
-PRISM_EXPORTED_FUNCTION void
-pm_parser_register_encoding_decode_callback(pm_parser_t *parser, pm_encoding_decode_callback_t callback) {
-    parser->encoding_decode_callback = callback;
 }
 
 /**
