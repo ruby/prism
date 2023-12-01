@@ -317,6 +317,7 @@ public class Loader {
               when Prism::ConstantListField then "loadConstants()"
               when Prism::LocationField then "loadLocation()"
               when Prism::OptionalLocationField then "loadOptionalLocation()"
+              when Prism::UInt8Field then "buffer.get()"
               when Prism::UInt32Field then "loadVarUInt()"
               when Prism::FlagsField then "loadFlags()"
               else raise

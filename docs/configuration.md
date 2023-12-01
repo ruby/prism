@@ -50,14 +50,15 @@ Optionally, every node can define a `child_nodes` key that is an array. This arr
 
 The available values for `type` are:
 
-* `node` - A child node that is a node itself. This is a `pm_node_t *` in C.
-* `node?` - A child node that is optionally present. This is also a `pm_node_t *` in C, but can be `NULL`.
-* `node[]` - A child node that is an array of nodes. This is a `pm_node_list_t` in C.
-* `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is a `pm_string_t` in C.
-* `constant` - A variable-length integer that represents an index in the constant pool. This is a `pm_constant_id_t` in C.
-* `constant[]` - A child node that is an array of constants. This is a `pm_constant_id_list_t` in C.
-* `location` - A child node that is a location. This is a `pm_location_t` in C.
-* `location?` - A child node that is a location that is optionally present. This is a `pm_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
-* `uint32` - A child node that is a 32-bit unsigned integer. This is a `uint32_t` in C.
+* `node` - A field that is a node. This is a `pm_node_t *` in C.
+* `node?` - A field that is a node that is optionally present. This is also a `pm_node_t *` in C, but can be `NULL`.
+* `node[]` - A field that is an array of nodes. This is a `pm_node_list_t` in C.
+* `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is a `pm_string_t` in C.
+* `constant` - A field that is an integer that represents an index in the constant pool. This is a `pm_constant_id_t` in C.
+* `constant[]` - A field that is an array of constants. This is a `pm_constant_id_list_t` in C.
+* `location` - A field that is a location. This is a `pm_location_t` in C.
+* `location?` - A field that is a location that is optionally present. This is a `pm_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
+* `uint8` - A field that is an 8-bit unsigned integer. This is a `uint8_t` in C.
+* `uint32` - A field that is a 32-bit unsigned integer. This is a `uint32_t` in C.
 
 If the type is `node` or `node?` then the value also accepts an optional `kind` key (a string). This key is expected to match to the name of another node type within `config.yml`. This changes a couple of places where code is templated out to use the more specific struct name instead of the generic `pm_node_t`. For example, with `kind: StatementsNode` the `pm_node_t *` in C becomes a `pm_statements_node_t *`.
