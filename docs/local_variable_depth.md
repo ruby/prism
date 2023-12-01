@@ -48,23 +48,23 @@ tap { foo, bar = 5, 6 } # depth 1
 
 ## `for` loops
 
-`for` loops in Ruby break down to calls to `.each` with a block. In this case local variable reads within the block will be 1 more than the number of currently nested blocks. For example:
+`for` loops in Ruby break down to calls to `.each` with a block. In this case local variable reads within the block will be at the same level as currently nested blocks. For example:
 
 ```ruby
 foo = 1
 
 for bar in baz
-  foo # depth 1
+  foo # depth 0
 end
 ```
 
-It's important to note that `for` loops consider their index to be a part of the block, so any local variable targets in the index declaration will also be 1 more than the number of currently nested blocks. For example:
+It's important to note that `for` loops consider their index to be a part of the block, so any local variable targets in the index declaration will also be at the same level as the currently nested blocks. For example:
 
 ```ruby
 foo = 1
 
 for foo in bar # depth 1
-  foo # depth 1
+  foo # depth 0
 end
 ```
 
