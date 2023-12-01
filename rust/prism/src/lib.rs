@@ -46,7 +46,7 @@ impl<'pr> Diagnostic<'pr> {
 
     /// The location of the diagnostic in the source.
     #[must_use]
-    pub const fn location(&self) -> Location<'pr> {
+    pub fn location(&self) -> Location<'pr> {
         Location::new(self.parser, unsafe { &self.diagnostic.as_ref().location })
     }
 }
@@ -71,7 +71,7 @@ impl<'pr> Comment<'pr> {
 
     /// The location of the comment in the source.
     #[must_use]
-    pub const fn location(&self) -> Location<'pr> {
+    pub fn location(&self) -> Location<'pr> {
         Location::new(self.parser, unsafe { &self.comment.as_ref().location })
     }
 }
