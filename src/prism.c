@@ -9344,7 +9344,9 @@ parser_lex(pm_parser_t *parser) {
 
             // If we were unable to find a breakpoint, then this token hits the
             // end of the file.
-            LEX(PM_TOKEN_EOF);
+            parser->current.end = parser->end;
+            pm_token_buffer_flush(parser, &token_buffer);
+            LEX(PM_TOKEN_STRING_CONTENT);
         }
         case PM_LEX_REGEXP: {
             // First, we'll set to start of this token to be the current end.
@@ -9533,7 +9535,9 @@ parser_lex(pm_parser_t *parser) {
 
             // If we were unable to find a breakpoint, then this token hits the
             // end of the file.
-            LEX(PM_TOKEN_EOF);
+            parser->current.end = parser->end;
+            pm_token_buffer_flush(parser, &token_buffer);
+            LEX(PM_TOKEN_STRING_CONTENT);
         }
         case PM_LEX_STRING: {
             // First, we'll set to start of this token to be the current end.
@@ -9737,8 +9741,10 @@ parser_lex(pm_parser_t *parser) {
             }
 
             // If we've hit the end of the string, then this is an unterminated
-            // string. In that case we'll return the EOF token.
-            LEX(PM_TOKEN_EOF);
+            // string. In that case we'll return a string content token.
+            parser->current.end = parser->end;
+            pm_token_buffer_flush(parser, &token_buffer);
+            LEX(PM_TOKEN_STRING_CONTENT);
         }
         case PM_LEX_HEREDOC: {
             // First, we'll set to start of this token.
@@ -9985,8 +9991,10 @@ parser_lex(pm_parser_t *parser) {
             }
 
             // If we've hit the end of the string, then this is an unterminated
-            // heredoc. In that case we'll return the EOF token.
-            LEX(PM_TOKEN_EOF);
+            // heredoc. In that case we'll return a string content token.
+            parser->current.end = parser->end;
+            pm_token_buffer_flush(parser, &token_buffer);
+            LEX(PM_TOKEN_STRING_CONTENT);
         }
     }
 
@@ -12376,7 +12384,11 @@ parse_symbol(pm_parser_t *parser, pm_lex_mode_t *lex_mode, pm_lex_state_t next_s
         }
 
         if (next_state != PM_LEX_STATE_NONE) lex_state_set(parser, next_state);
-        expect1(parser, PM_TOKEN_STRING_END, PM_ERR_SYMBOL_TERM_INTERPOLATED);
+        if (match1(parser, PM_TOKEN_EOF)) {
+            pm_parser_err_token(parser, &opening, PM_ERR_SYMBOL_TERM_INTERPOLATED);
+        } else {
+            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_SYMBOL_TERM_INTERPOLATED);
+        }
 
         return (pm_node_t *) pm_interpolated_symbol_node_create(parser, &opening, &node_list, &parser->previous);
     }
@@ -12397,7 +12409,11 @@ parse_symbol(pm_parser_t *parser, pm_lex_mode_t *lex_mode, pm_lex_state_t next_s
         lex_state_set(parser, next_state);
     }
 
-    expect1(parser, PM_TOKEN_STRING_END, PM_ERR_SYMBOL_TERM_DYNAMIC);
+    if (match1(parser, PM_TOKEN_EOF)) {
+        pm_parser_err_token(parser, &opening, PM_ERR_SYMBOL_TERM_DYNAMIC);
+    } else {
+        expect1(parser, PM_TOKEN_STRING_END, PM_ERR_SYMBOL_TERM_DYNAMIC);
+    }
     return (pm_node_t *) pm_symbol_node_create_unescaped(parser, &opening, &content, &parser->previous, &unescaped);
 }
 
@@ -13432,14 +13448,15 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
             // If we don't accept interpolation then we expect the string to
             // start with a single string content node.
             pm_string_t unescaped;
+            pm_token_t content;
             if (match1(parser, PM_TOKEN_EOF)) {
                 unescaped = PM_STRING_EMPTY;
+                content = not_provided(parser);
             } else {
                 unescaped = parser->current_string;
+                expect1(parser, PM_TOKEN_STRING_CONTENT, PM_ERR_EXPECT_STRING_CONTENT);
+                content = parser->previous;
             }
-
-            expect1(parser, PM_TOKEN_STRING_CONTENT, PM_ERR_EXPECT_STRING_CONTENT);
-            pm_token_t content = parser->previous;
 
             // It is unfortunately possible to have multiple string content
             // nodes in a row in the case that there's heredoc content in
@@ -13469,6 +13486,9 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
                 node = (pm_node_t *) pm_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
             } else if (accept1(parser, PM_TOKEN_LABEL_END) && !state_is_arg_labeled) {
                 node = (pm_node_t *) pm_symbol_node_create_unescaped(parser, &opening, &content, &parser->previous, &unescaped);
+            } else if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_STRING_LITERAL_TERM);
+                node = (pm_node_t *) pm_string_node_create_unescaped(parser, &opening, &content, &parser->previous, &unescaped);
             } else {
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_STRING_LITERAL_TERM);
                 node = (pm_node_t *) pm_string_node_create_unescaped(parser, &opening, &content, &parser->previous, &unescaped);
@@ -13505,6 +13525,9 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
 
                 if (accept1(parser, PM_TOKEN_LABEL_END) && !state_is_arg_labeled) {
                     node = (pm_node_t *) pm_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
+                } else if (match1(parser, PM_TOKEN_EOF)) {
+                    pm_parser_err_token(parser, &opening, PM_ERR_STRING_INTERPOLATED_TERM);
+                    node = (pm_node_t *) pm_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
                 } else {
                     expect1(parser, PM_TOKEN_STRING_END, PM_ERR_STRING_INTERPOLATED_TERM);
                     node = (pm_node_t *) pm_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
@@ -13525,6 +13548,9 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
 
             if (accept1(parser, PM_TOKEN_LABEL_END)) {
                 node = (pm_node_t *) pm_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
+            } else if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_STRING_INTERPOLATED_TERM);
+                node = (pm_node_t *) pm_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
             } else {
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_STRING_INTERPOLATED_TERM);
                 node = (pm_node_t *) pm_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
@@ -15132,7 +15158,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
         }
         case PM_TOKEN_PERCENT_LOWER_I: {
             parser_lex(parser);
-            pm_array_node_t *array = pm_array_node_create(parser, &parser->previous);
+            pm_token_t opening = parser->previous;
+            pm_array_node_t *array = pm_array_node_create(parser, &opening);
 
             while (!match2(parser, PM_TOKEN_STRING_END, PM_TOKEN_EOF)) {
                 accept1(parser, PM_TOKEN_WORDS_SEP);
@@ -15147,14 +15174,21 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 expect1(parser, PM_TOKEN_STRING_CONTENT, PM_ERR_LIST_I_LOWER_ELEMENT);
             }
 
-            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_LOWER_TERM);
-            pm_array_node_close_set(array, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_LIST_I_LOWER_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_LOWER_TERM);
+            }
+            pm_array_node_close_set(array, &closing);
 
             return (pm_node_t *) array;
         }
         case PM_TOKEN_PERCENT_UPPER_I: {
             parser_lex(parser);
-            pm_array_node_t *array = pm_array_node_create(parser, &parser->previous);
+            pm_token_t opening = parser->previous;
+            pm_array_node_t *array = pm_array_node_create(parser, &opening);
 
             // This is the current node that we are parsing that will be added to the
             // list of elements.
@@ -15294,14 +15328,21 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 pm_array_node_elements_append(array, current);
             }
 
-            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_UPPER_TERM);
-            pm_array_node_close_set(array, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_LIST_I_UPPER_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_UPPER_TERM);
+            }
+            pm_array_node_close_set(array, &closing);
 
             return (pm_node_t *) array;
         }
         case PM_TOKEN_PERCENT_LOWER_W: {
             parser_lex(parser);
-            pm_array_node_t *array = pm_array_node_create(parser, &parser->previous);
+            pm_token_t opening = parser->previous;
+            pm_array_node_t *array = pm_array_node_create(parser, &opening);
 
             // skip all leading whitespaces
             accept1(parser, PM_TOKEN_WORDS_SEP);
@@ -15321,14 +15362,21 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 expect1(parser, PM_TOKEN_STRING_CONTENT, PM_ERR_LIST_W_LOWER_ELEMENT);
             }
 
-            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_LOWER_TERM);
-            pm_array_node_close_set(array, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_LIST_W_LOWER_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_LOWER_TERM);
+            }
+            pm_array_node_close_set(array, &closing);
 
             return (pm_node_t *) array;
         }
         case PM_TOKEN_PERCENT_UPPER_W: {
             parser_lex(parser);
-            pm_array_node_t *array = pm_array_node_create(parser, &parser->previous);
+            pm_token_t opening = parser->previous;
+            pm_array_node_t *array = pm_array_node_create(parser, &opening);
 
             // This is the current node that we are parsing that will be added to the
             // list of elements.
@@ -15448,8 +15496,14 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 pm_array_node_elements_append(array, current);
             }
 
-            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_UPPER_TERM);
-            pm_array_node_close_set(array, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_LIST_W_UPPER_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_UPPER_TERM);
+            }
+            pm_array_node_close_set(array, &closing);
 
             return (pm_node_t *) array;
         }
@@ -15513,8 +15567,14 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 }
             }
 
-            expect1(parser, PM_TOKEN_REGEXP_END, PM_ERR_REGEXP_TERM);
-            pm_interpolated_regular_expression_node_closing_set(node, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_REGEXP_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_REGEXP_END, PM_ERR_REGEXP_TERM);
+            }
+            pm_interpolated_regular_expression_node_closing_set(node, &closing);
 
             return (pm_node_t *) node;
         }
@@ -15579,8 +15639,15 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power) {
                 }
             }
 
-            expect1(parser, PM_TOKEN_STRING_END, PM_ERR_XSTRING_TERM);
-            pm_interpolated_xstring_node_closing_set(node, &parser->previous);
+            pm_token_t closing = parser->current;
+            if (match1(parser, PM_TOKEN_EOF)) {
+                pm_parser_err_token(parser, &opening, PM_ERR_XSTRING_TERM);
+                closing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            } else {
+                expect1(parser, PM_TOKEN_STRING_END, PM_ERR_XSTRING_TERM);
+            }
+            pm_interpolated_xstring_node_closing_set(node, &closing);
+
             return (pm_node_t *) node;
         }
         case PM_TOKEN_USTAR: {
