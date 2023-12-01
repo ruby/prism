@@ -25,6 +25,8 @@ The full API is documented below.
 * `Prism.load(source, serialized)` - load the serialized syntax tree using the source as a reference into a syntax tree
 * `Prism.parse_comments(source)` - parse the comments corresponding to the given source string and return them
 * `Prism.parse_file_comments(source)` - parse the comments corresponding to the given source file and return them
+* `Prism.parse_success?(source)` - parse the syntax tree corresponding to the given source string and return true if it was parsed without errors or warnings
+* `Prism.parse_file_success?(filepath)` - parse the syntax tree corresponding to the given source file and return true if it was parsed without errors or warnings
 
 ## Nodes
 

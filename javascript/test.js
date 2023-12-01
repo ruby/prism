@@ -65,6 +65,11 @@ test("location? absent", () => {
   assert(result.value.statements.body[0].equalLoc === null);
 });
 
+test("uint8", () => {
+  const result = parse("-> { _3 }");
+  assert(result.value.statements.body[0].parameters.maximum === 3);
+});
+
 test("uint32", () => {
   const result = parse("foo = 1");
   assert(result.value.statements.body[0].depth === 0);

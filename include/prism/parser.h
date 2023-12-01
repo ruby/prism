@@ -8,7 +8,7 @@
 
 #include "prism/ast.h"
 #include "prism/defines.h"
-#include "prism/enc/pm_encoding.h"
+#include "prism/encoding.h"
 #include "prism/util/pm_constant_pool.h"
 #include "prism/util/pm_list.h"
 #include "prism/util/pm_newline_list.h"
@@ -419,14 +419,6 @@ typedef struct {
 typedef void (*pm_encoding_changed_callback_t)(pm_parser_t *parser);
 
 /**
- * When an encoding is encountered that isn't understood by prism, we provide
- * the ability here to call out to a user-defined function to get an encoding
- * struct. If the function returns something that isn't NULL, we set that to
- * our encoding and use it to parse identifiers.
- */
-typedef pm_encoding_t *(*pm_encoding_decode_callback_t)(pm_parser_t *parser, const uint8_t *name, size_t width);
-
-/**
  * When you are lexing through a file, the lexer needs all of the information
  * that the parser additionally provides (for example, the local table). So if
  * you want to properly lex Ruby, you need to actually lex it in the context of
@@ -479,14 +471,7 @@ typedef struct pm_scope {
      * numbered parameters, and to pass information to consumers of the AST
      * about how many numbered parameters exist.
      */
-    uint32_t numbered_parameters;
-
-    /**
-     * A transparent scope is a scope that cannot have locals set on itself.
-     * When a local is set on this scope, it will instead be set on the parent
-     * scope's local table.
-     */
-    bool transparent;
+    uint8_t numbered_parameters;
 } pm_scope_t;
 
 /**
@@ -604,14 +589,6 @@ struct pm_parser {
      * function.
      */
     pm_encoding_changed_callback_t encoding_changed_callback;
-
-    /**
-     * When an encoding is encountered that isn't understood by prism, we
-     * provide the ability here to call out to a user-defined function to get an
-     * encoding struct. If the function returns something that isn't NULL, we
-     * set that to our encoding and use it to parse identifiers.
-     */
-    pm_encoding_decode_callback_t encoding_decode_callback;
 
     /**
      * This pointer indicates where a comment must start if it is to be

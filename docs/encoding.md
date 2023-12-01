@@ -16,14 +16,24 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `Big5`
 * `Big5-HKSCS`
 * `Big5-UAO`
+* `CESU-8`
 * `CP51932`
 * `CP850`
 * `CP852`
 * `CP855`
 * `CP949`
 * `CP950`
+* `CP951`
+* `Emacs-Mule`
 * `EUC-JP`
+* `eucJP-ms`
+* `EUC-JIS-2004`
+* `EUC-KR`
+* `EUC-TW`
+* `GB12345`
+* `GB18030`
 * `GB1988`
+* `GB2312`
 * `GBK`
 * `IBM437`
 * `IBM720`
@@ -35,6 +45,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `IBM860`
 * `IBM861`
 * `IBM862`
+* `IBM863`
 * `IBM864`
 * `IBM865`
 * `IBM866`
@@ -68,10 +79,18 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `macTurkish`
 * `macUkraine`
 * `Shift_JIS`
+* `SJIS-DoCoMo`
+* `SJIS-KDDI`
+* `SJIS-SoftBank`
+* `stateless-ISO-2022-JP`
+* `stateless-ISO-2022-JP-KDDI`
 * `TIS-620`
 * `US-ASCII`
 * `UTF-8`
 * `UTF8-MAC`
+* `UTF8-DoCoMo`
+* `UTF8-KDDI`
+* `UTF8-SoftBank`
 * `Windows-1250`
 * `Windows-1251`
 * `Windows-1252`
@@ -84,62 +103,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `Windows-31J`
 * `Windows-874`
 
-For each of these encodings, prism provides a function for checking if the subsequent bytes form an alphabetic or alphanumeric character.
-
-## Support for other encodings
-
-If an encoding is encountered that is not supported by prism, prism will call a user-provided callback function with the name of the encoding if one is provided. That function can be registered with `pm_parser_register_encoding_decode_callback`. The user-provided callback function can then provide a pointer to an encoding struct that contains the requisite functions that prism will use to parse identifiers going forward.
-
-If the user-provided callback function returns `NULL` (the value also provided by the default implementation in case a callback was not registered), an error will be added to the parser's error list and parsing will continue on using the default UTF-8 encoding.
-
-```c
-// This struct defines the functions necessary to implement the encoding
-// interface so we can determine how many bytes the subsequent character takes.
-// Each callback should return the number of bytes, or 0 if the next bytes are
-// invalid for the encoding and type.
-typedef struct {
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding. Does not read more than n bytes. It is assumed that n is
-    // at least 1.
-    size_t (*char_width)(const uint8_t *b, ptrdiff_t n);
-
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphabetical. Does not read more than n bytes. It
-    // is assumed that n is at least 1.
-    size_t (*alpha_char)(const uint8_t *b, ptrdiff_t n);
-
-    // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphanumeric. Does not read more than n bytes. It
-    // is assumed that n is at least 1.
-    size_t (*alnum_char)(const uint8_t *b, ptrdiff_t n);
-
-    // Return true if the next character is valid in the encoding and is an
-    // uppercase character. Does not read more than n bytes. It is assumed that
-    // n is at least 1.
-    bool (*isupper_char)(const uint8_t *b, ptrdiff_t n);
-
-    // The name of the encoding. This should correspond to a value that can be
-    // passed to Encoding.find in Ruby.
-    const char *name;
-
-    // Return true if the encoding is a multibyte encoding.
-    bool multibyte;
-} pm_encoding_t;
-
-// When an encoding is encountered that isn't understood by prism, we provide
-// the ability here to call out to a user-defined function to get an encoding
-// struct. If the function returns something that isn't NULL, we set that to
-// our encoding and use it to parse identifiers.
-typedef pm_encoding_t *(*pm_encoding_decode_callback_t)(pm_parser_t *parser, const uint8_t *name, size_t width);
-
-// Register a callback that will be called when prism encounters a magic comment
-// with an encoding referenced that it doesn't understand. The callback should
-// return NULL if it also doesn't understand the encoding or it should return a
-// pointer to a pm_encoding_t struct that contains the functions necessary to
-// parse identifiers.
-PRISM_EXPORTED_FUNCTION void
-pm_parser_register_encoding_decode_callback(pm_parser_t *parser, pm_encoding_decode_callback_t callback);
-```
+For each of these encodings, prism provides functions for checking if the subsequent bytes can be interpreted as a character, and then if that character is alphabetic, alphanumeric, or uppercase.
 
 ## Getting notified when the encoding changes
 

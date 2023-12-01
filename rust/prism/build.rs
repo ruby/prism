@@ -34,6 +34,9 @@ enum NodeFieldType {
     #[serde(rename = "location?")]
     OptionalLocation,
 
+    #[serde(rename = "uint8")]
+    UInt8,
+
     #[serde(rename = "uint32")]
     UInt32,
 
@@ -316,6 +319,11 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "        }} else {{")?;
                 writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
                 writeln!(file, "        }}")?;
+                writeln!(file, "    }}")?;
+            },
+            NodeFieldType::UInt8 => {
+                writeln!(file, "    pub fn {}(&self) -> u8 {{", field.name)?;
+                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::UInt32 => {

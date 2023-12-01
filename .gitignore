@@ -16,6 +16,7 @@ tmp/
 /lib/prism.bundle
 /lib/prism.so
 /test.rb
+.DS_Store
 *.dSYM
 /*.iml
 *~
