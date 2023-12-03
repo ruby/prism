@@ -9,7 +9,7 @@ foo / bar#/
 If `foo` is a local variable, this is a call to `/` with `bar` as an argument, followed by a comment. If it's not a local variable, this is a method call to `foo` with a regular expression argument.
 
 "Depth" refers to the number of visible scopes that Prism has to go up to find the declaration of a local variable.
-Note that this follows the same scoping rules as Ruby, so a local variable is only visible through blocks nested in that scope.
+Note that this follows the same scoping rules as Ruby, so a local variable is only visible in the scope it is declared in and in blocks nested in that scope.
 The rules for calculating the depth are very important to understand because they may differ from individual Ruby implementations since they are not specified by the language.
 
 Prism uses the minimum number of scopes, i.e., it only creates scopes when necessary semantically, in other words when there must be distinct scopes (which can be observed through `binding.local_variables`).
