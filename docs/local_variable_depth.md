@@ -55,7 +55,7 @@ tap { foo, bar = 5, 6 } # depth 1
 ## `for` loops
 
 `for` loops in Ruby break down to calls to `.each` with a block.
-However in that case local variable reads and writes within the block will be at the same level as currently nested blocks and not in a deeper scope (surprising, but this is Ruby semantics).
+However in that case local variable reads and writes within the block will be in the same scope as the scope surrounding the `for` and not in a deeper/separate scope (surprising, but this is Ruby semantics).
 For example:
 
 ```ruby
