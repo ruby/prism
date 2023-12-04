@@ -13,8 +13,8 @@ namespace :cargo do
     cp_r("./src", prism_sys_vendor_dir.join("src"))
 
     # Align the Cargo.toml version with the gemspec version
-    ["prism-sys", "prism"].each do |dir|
-      cargo_toml_path = Pathname.new("rust/#{dir}/Cargo.toml")
+    CRATES.each do |crate|
+      cargo_toml_path = Pathname.new("rust/#{crate}/Cargo.toml")
       old_cargo_toml = cargo_toml_path.read
       new_cargo_toml = old_cargo_toml.gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
       File.write(cargo_toml_path, new_cargo_toml)
@@ -23,8 +23,8 @@ namespace :cargo do
 
   desc "Run all cargo tests"
   task test: [:build] do
-    Dir["rust/*/Cargo.toml"].each do |cargo_toml|
-      Dir.chdir(File.dirname(cargo_toml)) do
+    CRATES.each do |crate|
+      Dir.chdir("rust/#{crate}") do
         sh "cargo test -- --nocapture"
       end
     end
@@ -48,8 +48,8 @@ namespace :cargo do
 
   desc "Run clippy the Rust code"
   task lint: [:build] do
-    CRATES.each do |dir|
-      Dir.chdir("rust/#{dir}") do
+    CRATES.each do |crate|
+      Dir.chdir("rust/#{crate}") do
         sh "cargo clippy --tests -- -W 'clippy::pedantic'"
         sh "cargo fmt --all -- --check"
       end
@@ -58,8 +58,8 @@ namespace :cargo do
 
   desc "Run rustfmt on the Rust code"
   task fmt: [:build] do
-    ["prism-sys", "prism"].each do |dir|
-      Dir.chdir("rust/#{dir}") do
+    CRATES.each do |crate|
+      Dir.chdir("rust/#{crate}") do
         sh "cargo fmt --all"
       end
     end
