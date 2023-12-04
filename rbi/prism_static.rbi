@@ -40,6 +40,9 @@ class Prism::Node
 
   sig { returns(String) }
   def slice; end
+
+  sig { returns(String) }
+  def to_dot; end
 end
 
 class Prism::Comment

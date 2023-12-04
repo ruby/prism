@@ -21,6 +21,7 @@ module Prism
     def child_nodes: () -> Array[Node?]
     def location: () -> Location
     def slice: () -> String
+    def to_dot: () -> String
   end
 
   class Comment
