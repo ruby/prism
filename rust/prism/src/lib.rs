@@ -25,6 +25,7 @@ use prism_sys::{pm_comment_t, pm_diagnostic_t, pm_node_destroy, pm_node_t, pm_pa
 #[derive(Debug)]
 pub struct Diagnostic<'pr> {
     diagnostic: NonNull<pm_diagnostic_t>,
+    parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_diagnostic_t>,
 }
 
@@ -42,12 +43,19 @@ impl<'pr> Diagnostic<'pr> {
             CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
         }
     }
+
+    /// The location of the diagnostic in the source.
+    #[must_use]
+    pub fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.diagnostic.as_ref().location })
+    }
 }
 
 /// A comment that was found during parsing.
 #[derive(Debug)]
 pub struct Comment<'pr> {
     comment: NonNull<pm_comment_t>,
+    parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_comment_t>,
 }
 
@@ -58,13 +66,13 @@ impl<'pr> Comment<'pr> {
     /// Panics if the end offset is not greater than the start offset.
     #[must_use]
     pub fn text(&self) -> &[u8] {
-        unsafe {
-            let start = self.comment.as_ref().start;
-            let end = self.comment.as_ref().end;
+        self.location().as_slice()
+    }
 
-            let len = usize::try_from(end.offset_from(start)).expect("end should point to memory after start");
-            std::slice::from_raw_parts(start, len)
-        }
+    /// The location of the comment in the source.
+    #[must_use]
+    pub fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.comment.as_ref().location })
     }
 }
 
@@ -72,6 +80,7 @@ impl<'pr> Comment<'pr> {
 /// can be used to iterate over the diagnostics in the parse result.
 pub struct Diagnostics<'pr> {
     diagnostic: *mut pm_diagnostic_t,
+    parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_diagnostic_t>,
 }
 
@@ -80,7 +89,7 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(diagnostic) = NonNull::new(self.diagnostic) {
-            let current = Diagnostic { diagnostic, marker: PhantomData };
+            let current = Diagnostic { diagnostic, parser: self.parser, marker: PhantomData };
             self.diagnostic = unsafe { diagnostic.as_ref().node.next.cast::<pm_diagnostic_t>() };
             Some(current)
         } else {
@@ -93,6 +102,7 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 /// to iterate over the comments in the parse result.
 pub struct Comments<'pr> {
     comment: *mut pm_comment_t,
+    parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_comment_t>,
 }
 
@@ -101,7 +111,7 @@ impl<'pr> Iterator for Comments<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(comment) = NonNull::new(self.comment) {
-            let current = Comment { comment, marker: PhantomData };
+            let current = Comment { comment, parser: self.parser, marker: PhantomData };
             self.comment = unsafe { comment.as_ref().node.next.cast::<pm_comment_t>() };
             Some(current)
         } else {
@@ -154,6 +164,7 @@ impl<'pr> ParseResult<'pr> {
             let list = &mut (*self.parser.as_ptr()).error_list;
             Diagnostics {
                 diagnostic: list.head.cast::<pm_diagnostic_t>(),
+                parser: self.parser,
                 marker: PhantomData,
             }
         }
@@ -167,6 +178,7 @@ impl<'pr> ParseResult<'pr> {
             let list = &mut (*self.parser.as_ptr()).warning_list;
             Diagnostics {
                 diagnostic: list.head.cast::<pm_diagnostic_t>(),
+                parser: self.parser,
                 marker: PhantomData,
             }
         }
@@ -180,6 +192,7 @@ impl<'pr> ParseResult<'pr> {
             let list = &mut (*self.parser.as_ptr()).comment_list;
             Comments {
                 comment: list.head.cast::<pm_comment_t>(),
+                parser: self.parser,
                 marker: PhantomData,
             }
         }
