@@ -67,7 +67,15 @@ to fetch the Ruby dependencies. Finally, run:
 rake compile
 ```
 
-to compile the shared library. It will be built in the `build` directory. To test that everything is working, run:
+to compile the shared library.
+
+One way to speed up the build process is to utilize `MAKEFLAGS` to pass options into `make`. For example, to use 10 jobs, run:
+
+```
+MAKEFLAGS="-j10" rake compile
+```
+
+It will be built in the `build` directory. To test that everything is working, run:
 
 ```
 bin/parse -e "1 + 2"
