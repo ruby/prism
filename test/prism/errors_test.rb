@@ -81,15 +81,15 @@ module Prism
       expected = PreExecutionNode(
         StatementsNode([
           CallNode(
+            0,
             expression("1"),
             nil,
             :+,
             Location(),
             nil,
-            ArgumentsNode([MissingNode()], 0),
+            ArgumentsNode(0, [MissingNode()]),
             nil,
-            nil,
-            0
+            nil
           )
         ]),
         Location(),
@@ -339,18 +339,18 @@ module Prism
 
     def test_double_splat_followed_by_splat_argument
       expected = CallNode(
+        0,
         nil,
         nil,
         :a,
         Location(),
         Location(),
-        ArgumentsNode([
+        ArgumentsNode(1, [
           KeywordHashNode([AssocSplatNode(expression("kwargs"), Location())]),
           SplatNode(Location(), expression("args"))
-        ], 1),
+        ]),
         Location(),
-        nil,
-        0
+        nil
       )
 
       assert_errors expected, "a(**kwargs, *args)", [
@@ -360,15 +360,15 @@ module Prism
 
     def test_arguments_after_block
       expected = CallNode(
+        0,
         nil,
         nil,
         :a,
         Location(),
         Location(),
-        ArgumentsNode([expression("foo")], 0),
+        ArgumentsNode(0, [expression("foo")]),
         Location(),
-        BlockArgumentNode(expression("block"), Location()),
-        0
+        BlockArgumentNode(expression("block"), Location())
       )
 
       assert_errors expected, "a(&block, foo)", [
@@ -386,12 +386,13 @@ module Prism
 
     def test_splat_argument_after_keyword_argument
       expected = CallNode(
+        0,
         nil,
         nil,
         :a,
         Location(),
         Location(),
-        ArgumentsNode([
+        ArgumentsNode(0, [
           KeywordHashNode(
             [AssocNode(
               SymbolNode(nil, Location(), Location(), "foo"),
@@ -400,10 +401,9 @@ module Prism
             )]
           ),
           SplatNode(Location(), expression("args"))
-        ], 0),
+        ]),
         Location(),
-        nil,
-        0
+        nil
       )
 
       assert_errors expected, "a(foo: bar, *args)", [
@@ -441,6 +441,7 @@ module Prism
         nil,
         StatementsNode(
           [CallNode(
+            0,
             nil,
             nil,
             :bar,
@@ -455,8 +456,7 @@ module Prism
               StatementsNode([ModuleNode([], Location(), ConstantReadNode(:Foo), nil, Location(), :Foo)]),
               Location(),
               Location()
-            ),
-            0
+            )
           )]
         ),
         [],
@@ -1049,6 +1049,7 @@ module Prism
 
     def test_do_not_allow_forward_arguments_in_blocks
       expected = CallNode(
+        0,
         nil,
         nil,
         :a,
@@ -1063,8 +1064,7 @@ module Prism
           nil,
           Location(),
           Location()
-        ),
-        0
+        )
       )
 
       assert_errors expected, "a {|...|}", [
