@@ -46,7 +46,8 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,7)-(1,8) = "|"
-                │   └── closing_loc: (1,12)-(1,13) = "|"
+                │   ├── closing_loc: (1,12)-(1,13) = "|"
+                │   └── flags: ∅
                 ├── body:
                 │   @ StatementsNode (location: (2,2)-(2,7))
                 │   └── body: (length: 1)

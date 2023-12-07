@@ -144,7 +144,8 @@
         │   │   │       │   │   └── block: ∅
         │   │   │       │   ├── locals: (length: 0)
         │   │   │       │   ├── opening_loc: (17,11)-(17,12) = "|"
-        │   │   │       │   └── closing_loc: (17,15)-(17,16) = "|"
+        │   │   │       │   ├── closing_loc: (17,15)-(17,16) = "|"
+        │   │   │       │   └── flags: ambiguous_param0
         │   │   │       ├── body: ∅
         │   │   │       ├── opening_loc: (17,9)-(17,10) = "{"
         │   │   │       └── closing_loc: (18,0)-(18,1) = "}"

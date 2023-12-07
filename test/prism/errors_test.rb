@@ -661,7 +661,8 @@ module Prism
           ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], nil, [], [], nil, nil),
           [],
           Location(),
-          Location()
+          Location(),
+          0
         ),
         nil
       )
@@ -1050,7 +1051,7 @@ module Prism
         Location(),
         Location(),
         Location(),
-        BlockParametersNode(ParametersNode([], [], nil, [], [], ForwardingParameterNode(), nil), [], Location(), Location()),
+        BlockParametersNode(ParametersNode([], [], nil, [], [], ForwardingParameterNode(), nil), [], Location(), Location(), 0),
         nil
       )
 
@@ -1072,7 +1073,7 @@ module Prism
         BlockNode(
           [],
           0,
-          BlockParametersNode(ParametersNode([], [], nil, [], [], ForwardingParameterNode(), nil), [], Location(), Location()),
+          BlockParametersNode(ParametersNode([], [], nil, [], [], ForwardingParameterNode(), nil), [], Location(), Location(), 0),
           nil,
           Location(),
           Location()

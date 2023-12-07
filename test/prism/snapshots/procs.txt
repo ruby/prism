@@ -30,7 +30,8 @@
         │   │   │   └── @ BlockLocalVariableNode (location: (1,13)-(1,14))
         │   │   │       └── name: :d
         │   │   ├── opening_loc: (1,3)-(1,4) = "("
-        │   │   └── closing_loc: (1,14)-(1,15) = ")"
+        │   │   ├── closing_loc: (1,14)-(1,15) = ")"
+        │   │   └── flags: ambiguous_param0
         │   └── body:
         │       @ StatementsNode (location: (1,18)-(1,19))
         │       └── body: (length: 1)
@@ -164,7 +165,8 @@
         │   │   │       └── operator_loc: (17,21)-(17,22) = "&"
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: ∅
-        │   │   └── closing_loc: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   └── flags: ∅
         │   └── body:
         │       @ StatementsNode (location: (17,26)-(17,27))
         │       └── body: (length: 1)
@@ -217,7 +219,8 @@
         │   │   │       └── operator_loc: (19,31)-(19,32) = "&"
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (19,3)-(19,4) = "("
-        │   │   └── closing_loc: (19,33)-(19,34) = ")"
+        │   │   ├── closing_loc: (19,33)-(19,34) = ")"
+        │   │   └── flags: ∅
         │   └── body:
         │       @ StatementsNode (location: (19,37)-(19,38))
         │       └── body: (length: 1)
@@ -270,7 +273,8 @@
         │   │   │       └── operator_loc: (21,31)-(21,32) = "&"
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (21,3)-(21,4) = "("
-        │   │   └── closing_loc: (21,33)-(21,34) = ")"
+        │   │   ├── closing_loc: (21,33)-(21,34) = ")"
+        │   │   └── flags: ∅
         │   └── body:
         │       @ StatementsNode (location: (22,2)-(22,3))
         │       └── body: (length: 1)
@@ -298,7 +302,8 @@
         │   │   │   └── block: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (25,3)-(25,4) = "("
-        │   │   └── closing_loc: (25,5)-(25,6) = ")"
+        │   │   ├── closing_loc: (25,5)-(25,6) = ")"
+        │   │   └── flags: ambiguous_param0
         │   └── body:
         │       @ StatementsNode (location: (25,9)-(25,23))
         │       └── body: (length: 1)
@@ -323,7 +328,8 @@
         │               │   │   └── block: ∅
         │               │   ├── locals: (length: 0)
         │               │   ├── opening_loc: ∅
-        │               │   └── closing_loc: ∅
+        │               │   ├── closing_loc: ∅
+        │               │   └── flags: ambiguous_param0
         │               └── body:
         │                   @ StatementsNode (location: (25,16)-(25,21))
         │                   └── body: (length: 1)
@@ -379,5 +385,6 @@
             │   │   └── block: ∅
             │   ├── locals: (length: 0)
             │   ├── opening_loc: (27,3)-(27,4) = "("
-            │   └── closing_loc: (27,14)-(27,15) = ")"
+            │   ├── closing_loc: (27,14)-(27,15) = ")"
+            │   └── flags: ∅
             └── body: ∅

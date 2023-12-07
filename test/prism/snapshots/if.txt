@@ -363,7 +363,8 @@
             │               │   │   └── block: ∅
             │               │   ├── locals: (length: 0)
             │               │   ├── opening_loc: (34,12)-(34,13) = "|"
-            │               │   └── closing_loc: (34,14)-(34,15) = "|"
+            │               │   ├── closing_loc: (34,14)-(34,15) = "|"
+            │               │   └── flags: ambiguous_param0
             │               ├── body: ∅
             │               ├── opening_loc: (34,9)-(34,11) = "do"
             │               └── closing_loc: (35,2)-(35,5) = "end"
@@ -405,7 +406,8 @@
             │   │               │   │   └── block: ∅
             │   │               │   ├── locals: (length: 0)
             │   │               │   ├── opening_loc: (37,12)-(37,13) = "|"
-            │   │               │   └── closing_loc: (37,14)-(37,15) = "|"
+            │   │               │   ├── closing_loc: (37,14)-(37,15) = "|"
+            │   │               │   └── flags: ambiguous_param0
             │   │               ├── body: ∅
             │   │               ├── opening_loc: (37,9)-(37,11) = "do"
             │   │               └── closing_loc: (38,2)-(38,5) = "end"
@@ -443,7 +445,8 @@
             │   │   │               │   │   └── block: ∅
             │   │   │               │   ├── locals: (length: 0)
             │   │   │               │   ├── opening_loc: (40,12)-(40,13) = "|"
-            │   │   │               │   └── closing_loc: (40,14)-(40,15) = "|"
+            │   │   │               │   ├── closing_loc: (40,14)-(40,15) = "|"
+            │   │   │               │   └── flags: ambiguous_param0
             │   │   │               ├── body: ∅
             │   │   │               ├── opening_loc: (40,9)-(40,11) = "do"
             │   │   │               └── closing_loc: (41,2)-(41,5) = "end"

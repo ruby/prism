@@ -179,7 +179,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (18,7)-(18,8) = "|"
-        │       │   └── closing_loc: (18,9)-(18,10) = "|"
+        │       │   ├── closing_loc: (18,9)-(18,10) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body:
         │       │   @ StatementsNode (location: (19,2)-(19,40))
         │       │   └── body: (length: 1)

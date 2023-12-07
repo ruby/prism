@@ -50,7 +50,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (3,9)-(3,10) = "|"
-        │       │   └── closing_loc: (3,14)-(3,15) = "|"
+        │       │   ├── closing_loc: (3,14)-(3,15) = "|"
+        │       │   └── flags: ∅
         │       ├── body:
         │       │   @ StatementsNode (location: (4,2)-(4,3))
         │       │   └── body: (length: 1)
@@ -70,7 +71,8 @@
         │   │   ├── parameters: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (6,2)-(6,3) = "("
-        │   │   └── closing_loc: (6,3)-(6,4) = ")"
+        │   │   ├── closing_loc: (6,3)-(6,4) = ")"
+        │   │   └── flags: ∅
         │   └── body: ∅
         ├── @ LambdaNode (location: (8,0)-(9,1))
         │   ├── locals: [:a]
@@ -93,7 +95,8 @@
         │   │   │   └── block: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (8,2)-(8,3) = "("
-        │   │   └── closing_loc: (8,4)-(8,5) = ")"
+        │   │   ├── closing_loc: (8,4)-(8,5) = ")"
+        │   │   └── flags: ambiguous_param0
         │   └── body: ∅
         ├── @ LambdaNode (location: (10,0)-(11,1))
         │   ├── locals: [:a, :b]
@@ -118,7 +121,8 @@
         │   │   │   └── block: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (10,2)-(10,3) = "("
-        │   │   └── closing_loc: (10,7)-(10,8) = ")"
+        │   │   ├── closing_loc: (10,7)-(10,8) = ")"
+        │   │   └── flags: ∅
         │   └── body: ∅
         └── @ LambdaNode (location: (12,0)-(13,1))
             ├── locals: [:a, :b, :c]
@@ -145,5 +149,6 @@
             │   │   └── @ BlockLocalVariableNode (location: (12,9)-(12,10))
             │   │       └── name: :c
             │   ├── opening_loc: (12,2)-(12,3) = "("
-            │   └── closing_loc: (12,10)-(12,11) = ")"
+            │   ├── closing_loc: (12,10)-(12,11) = ")"
+            │   └── flags: ∅
             └── body: ∅

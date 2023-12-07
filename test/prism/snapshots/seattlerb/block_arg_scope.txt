@@ -33,7 +33,8 @@
                 │   │   └── @ BlockLocalVariableNode (location: (1,8)-(1,9))
                 │   │       └── name: :c
                 │   ├── opening_loc: (1,4)-(1,5) = "|"
-                │   └── closing_loc: (1,9)-(1,10) = "|"
+                │   ├── closing_loc: (1,9)-(1,10) = "|"
+                │   └── flags: ambiguous_param0
                 ├── body: ∅
                 ├── opening_loc: (1,2)-(1,3) = "{"
                 └── closing_loc: (1,11)-(1,12) = "}"

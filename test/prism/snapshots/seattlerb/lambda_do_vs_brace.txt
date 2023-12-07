@@ -67,7 +67,8 @@
         │   │           │   ├── parameters: ∅
         │   │           │   ├── locals: (length: 0)
         │   │           │   ├── opening_loc: (5,4)-(5,5) = "("
-        │   │           │   └── closing_loc: (5,5)-(5,6) = ")"
+        │   │           │   ├── closing_loc: (5,5)-(5,6) = ")"
+        │   │           │   └── flags: ∅
         │   │           └── body: ∅
         │   ├── closing_loc: ∅
         │   └── block: ∅
@@ -93,7 +94,8 @@
             │           │   ├── parameters: ∅
             │           │   ├── locals: (length: 0)
             │           │   ├── opening_loc: (7,4)-(7,5) = "("
-            │           │   └── closing_loc: (7,5)-(7,6) = ")"
+            │           │   ├── closing_loc: (7,5)-(7,6) = ")"
+            │           │   └── flags: ∅
             │           └── body: ∅
             ├── closing_loc: ∅
             └── block: ∅

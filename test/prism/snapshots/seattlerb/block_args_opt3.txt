@@ -49,7 +49,8 @@
                 │   │       └── operator_loc: (1,24)-(1,25) = "&"
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,4)-(1,5) = "|"
-                │   └── closing_loc: (1,26)-(1,27) = "|"
+                │   ├── closing_loc: (1,26)-(1,27) = "|"
+                │   └── flags: ∅
                 ├── body:
                 │   @ StatementsNode (location: (1,28)-(1,40))
                 │   └── body: (length: 1)

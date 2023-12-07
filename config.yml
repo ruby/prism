@@ -339,6 +339,11 @@ flags:
       - name: CONTAINS_SPLAT
         comment: "if array contains splat nodes"
     comment: Flags for array nodes.
+  - name: BlockParametersNodeFlags
+    values:
+      - name: AMBIGUOUS_PARAM0
+        comment: "if there is only one required parameter"
+    comment: Flags for the block parameters nodes.
   - name: CallNodeFlags
     values:
       - name: SAFE_NAVIGATION
@@ -638,6 +643,9 @@ nodes:
         type: location?
       - name: closing_loc
         type: location?
+      - name: flags
+        type: flags
+        kind: BlockParametersNodeFlags
     comment: |
       Represents a block's parameters declaration.
 

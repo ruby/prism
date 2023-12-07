@@ -23,7 +23,8 @@
                 │   │   └── @ BlockLocalVariableNode (location: (1,9)-(1,10))
                 │   │       └── name: :a
                 │   ├── opening_loc: (1,7)-(1,8) = "|"
-                │   └── closing_loc: (1,10)-(1,11) = "|"
+                │   ├── closing_loc: (1,10)-(1,11) = "|"
+                │   └── flags: ∅
                 ├── body:
                 │   @ StatementsNode (location: (1,11)-(1,12))
                 │   └── body: (length: 1)

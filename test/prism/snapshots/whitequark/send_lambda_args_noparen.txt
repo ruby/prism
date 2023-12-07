@@ -28,7 +28,8 @@
         │   │   │   └── block: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: ∅
-        │   │   └── closing_loc: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   └── flags: ∅
         │   └── body: ∅
         └── @ LambdaNode (location: (3,0)-(3,9))
             ├── locals: [:a]
@@ -52,5 +53,6 @@
             │   │   └── block: ∅
             │   ├── locals: (length: 0)
             │   ├── opening_loc: ∅
-            │   └── closing_loc: ∅
+            │   ├── closing_loc: ∅
+            │   └── flags: ∅
             └── body: ∅

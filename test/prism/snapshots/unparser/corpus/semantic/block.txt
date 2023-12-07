@@ -105,7 +105,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (13,7)-(13,8) = "|"
-        │       │   └── closing_loc: (13,9)-(13,10) = "|"
+        │       │   ├── closing_loc: (13,9)-(13,10) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body: ∅
         │       ├── opening_loc: (13,4)-(13,6) = "do"
         │       └── closing_loc: (14,0)-(14,3) = "end"
@@ -146,7 +147,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (16,15)-(16,16) = "|"
-        │       │   └── closing_loc: (16,17)-(16,18) = "|"
+        │       │   ├── closing_loc: (16,17)-(16,18) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body:
         │       │   @ StatementsNode (location: (19,2)-(19,3))
         │       │   └── body: (length: 1)

@@ -32,7 +32,8 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,8)-(1,9) = "|"
-                │   └── closing_loc: (1,11)-(1,12) = "|"
+                │   ├── closing_loc: (1,11)-(1,12) = "|"
+                │   └── flags: ∅
                 ├── body: ∅
                 ├── opening_loc: (1,5)-(1,7) = "do"
                 └── closing_loc: (1,13)-(1,16) = "end"

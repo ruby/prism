@@ -11906,8 +11906,19 @@ parse_block_parameters(
             false
         );
     }
-
     pm_block_parameters_node_t *block_parameters = pm_block_parameters_node_create(parser, parameters, opening);
+
+    if (
+        (parameters != NULL) &&
+        (parameters->requireds.size == 1) &&
+        (parameters->optionals.size == 0) &&
+        (parameters->rest == NULL) &&
+        (parameters->keyword_rest == NULL) &&
+        (parameters->keywords.size == 0)
+    ) {
+        block_parameters->base.flags = PM_BLOCK_PARAMETERS_NODE_FLAGS_AMBIGUOUS_PARAM0;
+    }
+
     if ((opening->type != PM_TOKEN_NOT_PROVIDED) && accept1(parser, PM_TOKEN_SEMICOLON)) {
         do {
             expect1(parser, PM_TOKEN_IDENTIFIER, PM_ERR_BLOCK_PARAM_LOCAL_VARIABLE);

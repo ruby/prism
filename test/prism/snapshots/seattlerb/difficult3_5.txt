@@ -25,7 +25,8 @@
             │           │   ├── parameters: ∅
             │           │   ├── locals: (length: 0)
             │           │   ├── opening_loc: (1,4)-(1,5) = "("
-            │           │   └── closing_loc: (1,5)-(1,6) = ")"
+            │           │   ├── closing_loc: (1,5)-(1,6) = ")"
+            │           │   └── flags: ∅
             │           └── body:
             │               @ StatementsNode (location: (1,9)-(1,17))
             │               └── body: (length: 1)

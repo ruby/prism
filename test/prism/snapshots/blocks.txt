@@ -152,7 +152,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (7,14)-(7,15) = "|"
-        │       │   └── closing_loc: (7,22)-(7,23) = "|"
+        │       │   ├── closing_loc: (7,22)-(7,23) = "|"
+        │       │   └── flags: ∅
         │       ├── body:
         │       │   @ StatementsNode (location: (7,24)-(7,33))
         │       │   └── body: (length: 1)
@@ -360,7 +361,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (17,7)-(17,8) = "|"
-        │       │   └── closing_loc: (17,16)-(17,17) = "|"
+        │       │   ├── closing_loc: (17,16)-(17,17) = "|"
+        │       │   └── flags: ∅
         │       ├── body: ∅
         │       ├── opening_loc: (17,4)-(17,6) = "do"
         │       └── closing_loc: (18,0)-(18,3) = "end"
@@ -540,7 +542,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (33,6)-(33,7) = "|"
-        │       │   └── closing_loc: (33,19)-(33,20) = "|"
+        │       │   ├── closing_loc: (33,19)-(33,20) = "|"
+        │       │   └── flags: ∅
         │       ├── body:
         │       │   @ StatementsNode (location: (33,21)-(33,22))
         │       │   └── body: (length: 1)
@@ -577,7 +580,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (35,6)-(35,7) = "|"
-        │       │   └── closing_loc: (35,8)-(35,9) = "|"
+        │       │   ├── closing_loc: (35,8)-(35,9) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body: ∅
         │       ├── opening_loc: (35,4)-(35,5) = "{"
         │       └── closing_loc: (35,10)-(35,11) = "}"
@@ -617,7 +621,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (38,8)-(38,9) = "|"
-        │       │   └── closing_loc: (38,10)-(38,11) = "|"
+        │       │   ├── closing_loc: (38,10)-(38,11) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body: ∅
         │       ├── opening_loc: (38,5)-(38,7) = "do"
         │       └── closing_loc: (39,0)-(39,3) = "end"
@@ -649,7 +654,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (41,7)-(41,8) = "|"
-        │       │   └── closing_loc: (41,9)-(41,10) = "|"
+        │       │   ├── closing_loc: (41,9)-(41,10) = "|"
+        │       │   └── flags: ambiguous_param0
         │       ├── body: ∅
         │       ├── opening_loc: (41,5)-(41,6) = "{"
         │       └── closing_loc: (41,11)-(41,12) = "}"
@@ -736,7 +742,8 @@
         │   │               │   │   └── block: ∅
         │   │               │   ├── locals: (length: 0)
         │   │               │   ├── opening_loc: (48,13)-(48,14) = "|"
-        │   │               │   └── closing_loc: (51,2)-(51,3) = "|"
+        │   │               │   ├── closing_loc: (51,2)-(51,3) = "|"
+        │   │               │   └── flags: ∅
         │   │               ├── body: ∅
         │   │               ├── opening_loc: (48,11)-(48,12) = "{"
         │   │               └── closing_loc: (52,0)-(52,1) = "}"
@@ -771,7 +778,8 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (54,7)-(54,8) = "|"
-                │   └── closing_loc: (54,12)-(54,13) = "|"
+                │   ├── closing_loc: (54,12)-(54,13) = "|"
+                │   └── flags: ∅
                 ├── body: ∅
                 ├── opening_loc: (54,4)-(54,6) = "do"
                 └── closing_loc: (54,14)-(54,17) = "end"

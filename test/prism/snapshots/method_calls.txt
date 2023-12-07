@@ -937,7 +937,8 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (64,19)-(64,20) = "|"
-        │       │   └── closing_loc: (64,24)-(64,25) = "|"
+        │       │   ├── closing_loc: (64,24)-(64,25) = "|"
+        │       │   └── flags: ∅
         │       ├── body:
         │       │   @ StatementsNode (location: (64,26)-(64,32))
         │       │   └── body: (length: 1)
@@ -1886,7 +1887,8 @@
         │   │           │               │   │   └── block: ∅
         │   │           │               │   ├── locals: (length: 0)
         │   │           │               │   ├── opening_loc: (121,11)-(121,12) = "|"
-        │   │           │               │   └── closing_loc: (121,13)-(121,14) = "|"
+        │   │           │               │   ├── closing_loc: (121,13)-(121,14) = "|"
+        │   │           │               │   └── flags: ambiguous_param0
         │   │           │               ├── body:
         │   │           │               │   @ StatementsNode (location: (122,6)-(122,7))
         │   │           │               │   └── body: (length: 1)
@@ -1961,7 +1963,8 @@
         │   │       │                   │   │   └── block: ∅
         │   │       │                   │   ├── locals: (length: 0)
         │   │       │                   │   ├── opening_loc: (128,11)-(128,12) = "|"
-        │   │       │                   │   └── closing_loc: (128,13)-(128,14) = "|"
+        │   │       │                   │   ├── closing_loc: (128,13)-(128,14) = "|"
+        │   │       │                   │   └── flags: ambiguous_param0
         │   │       │                   ├── body:
         │   │       │                   │   @ StatementsNode (location: (129,6)-(129,7))
         │   │       │                   │   └── body: (length: 1)
@@ -2084,7 +2087,8 @@
         │   │               │   │   └── block: ∅
         │   │               │   ├── locals: (length: 0)
         │   │               │   ├── opening_loc: (139,9)-(139,10) = "|"
-        │   │               │   └── closing_loc: (139,11)-(139,12) = "|"
+        │   │               │   ├── closing_loc: (139,11)-(139,12) = "|"
+        │   │               │   └── flags: ambiguous_param0
         │   │               ├── body:
         │   │               │   @ StatementsNode (location: (139,13)-(139,14))
         │   │               │   └── body: (length: 1)

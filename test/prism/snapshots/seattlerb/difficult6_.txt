@@ -30,7 +30,8 @@
             │   │   └── block: ∅
             │   ├── locals: (length: 0)
             │   ├── opening_loc: (1,2)-(1,3) = "("
-            │   └── closing_loc: (1,11)-(1,12) = ")"
+            │   ├── closing_loc: (1,11)-(1,12) = ")"
+            │   └── flags: ∅
             └── body:
                 @ StatementsNode (location: (1,15)-(1,23))
                 └── body: (length: 1)

@@ -49,7 +49,8 @@
             │               │   │   └── block: ∅
             │               │   ├── locals: (length: 0)
             │               │   ├── opening_loc: (1,17)-(1,18) = "|"
-            │               │   └── closing_loc: (1,21)-(1,22) = "|"
+            │               │   ├── closing_loc: (1,21)-(1,22) = "|"
+            │               │   └── flags: ambiguous_param0
             │               ├── body: ∅
             │               ├── opening_loc: (1,14)-(1,16) = "do"
             │               └── closing_loc: (1,23)-(1,26) = "end"

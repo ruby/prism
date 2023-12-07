@@ -96,7 +96,8 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,24)-(1,25) = "|"
-                │   └── closing_loc: (1,26)-(1,27) = "|"
+                │   ├── closing_loc: (1,26)-(1,27) = "|"
+                │   └── flags: ambiguous_param0
                 ├── body:
                 │   @ StatementsNode (location: (1,28)-(1,29))
                 │   └── body: (length: 1)
