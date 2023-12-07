@@ -16,7 +16,10 @@ namespace :cargo do
     CRATES.each do |crate|
       cargo_toml_path = Pathname.new("rust/#{crate}/Cargo.toml")
       old_cargo_toml = cargo_toml_path.read
-      new_cargo_toml = old_cargo_toml.gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
+      new_cargo_toml = old_cargo_toml
+        .gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
+        .gsub(/^prism-sys = { version = ".*",/, %(prism-sys = { version = "#{gemspec.version}",))
+
       File.write(cargo_toml_path, new_cargo_toml)
     end
   end
@@ -113,7 +116,12 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🚢 Publishing #{crate} to crates.io"
-          sh "cargo publish --dry-run"
+          if crate == "prism-sys"
+            # Use --allow-dirty to support rust/prism-sys/vendor/ files copied in by cargo:build`
+            sh "cargo publish --dry-run --allow-dirty"
+          else
+            sh "cargo publish --dry-run"
+          end
         end
       end
     end
@@ -132,7 +140,12 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🌵 [dry-run] Checking publish of #{crate} to crates.io"
-          sh "cargo publish --dry-run"
+          if crate == "prism-sys"
+            # Use --allow-dirty to support rust/prism-sys/vendor/ files copied in by cargo:build`
+            sh "cargo publish --dry-run --allow-dirty"
+          else
+            sh "cargo publish --dry-run"
+          end
         end
       end
     end

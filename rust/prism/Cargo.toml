@@ -25,7 +25,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 
 [dependencies]
-prism-sys = { path = "../prism-sys" }
+prism-sys = { version = "0.18.0", path = "../prism-sys" }
 
 [features]
 default = ["vendored"]
