@@ -18,6 +18,7 @@
                 ├── locals_body_index: 2
                 ├── parameters:
                 │   @ BlockParametersNode (location: (1,5)-(1,28))
+                │   ├── flags: ∅
                 │   ├── parameters:
                 │   │   @ ParametersNode (location: (1,6)-(1,26))
                 │   │   ├── requireds: (length: 0)
@@ -47,8 +48,7 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,5)-(1,6) = "|"
-                │   ├── closing_loc: (1,27)-(1,28) = "|"
-                │   └── flags: ∅
+                │   └── closing_loc: (1,27)-(1,28) = "|"
                 ├── body:
                 │   @ StatementsNode (location: (1,29)-(1,31))
                 │   └── body: (length: 1)

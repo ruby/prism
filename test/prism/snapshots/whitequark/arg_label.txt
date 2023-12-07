@@ -86,11 +86,11 @@
                 ├── locals_body_index: 0
                 ├── parameters:
                 │   @ BlockParametersNode (location: (6,4)-(6,6))
+                │   ├── flags: ∅
                 │   ├── parameters: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (6,4)-(6,5) = "|"
-                │   ├── closing_loc: (6,5)-(6,6) = "|"
-                │   └── flags: ∅
+                │   └── closing_loc: (6,5)-(6,6) = "|"
                 ├── body:
                 │   @ StatementsNode (location: (6,7)-(6,10))
                 │   └── body: (length: 1)

@@ -342,7 +342,7 @@ flags:
   - name: BlockParametersNodeFlags
     values:
       - name: AMBIGUOUS_PARAM0
-        comment: "if there is only one required parameter"
+        comment: "if there is only one required parameter it changes the behavior of array iteration"
     comment: Flags for the block parameters nodes.
   - name: CallNodeFlags
     values:
@@ -634,6 +634,9 @@ nodes:
           end
   - name: BlockParametersNode
     fields:
+      - name: flags
+        type: flags
+        kind: BlockParametersNodeFlags
       - name: parameters
         type: node?
         kind: ParametersNode
@@ -643,9 +646,6 @@ nodes:
         type: location?
       - name: closing_loc
         type: location?
-      - name: flags
-        type: flags
-        kind: BlockParametersNodeFlags
     comment: |
       Represents a block's parameters declaration.
 

@@ -35,11 +35,11 @@
         │       ├── locals_body_index: 0
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (3,3)-(3,6))
+        │       │   ├── flags: ∅
         │       │   ├── parameters: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (3,3)-(3,4) = "|"
-        │       │   ├── closing_loc: (3,5)-(3,6) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (3,5)-(3,6) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (3,1)-(3,2) = "{"
         │       └── closing_loc: (3,7)-(3,8) = "}"
@@ -58,6 +58,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (5,3)-(5,7))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (5,4)-(5,6))
         │       │   │   ├── requireds: (length: 0)
@@ -73,8 +74,7 @@
         │       │   │       └── operator_loc: (5,4)-(5,5) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (5,3)-(5,4) = "|"
-        │       │   ├── closing_loc: (5,6)-(5,7) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (5,6)-(5,7) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (5,1)-(5,2) = "{"
         │       └── closing_loc: (5,8)-(5,9) = "}"
@@ -93,6 +93,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (7,3)-(7,14))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (7,4)-(7,13))
         │       │   │   ├── requireds: (length: 0)
@@ -112,8 +113,7 @@
         │       │   │       └── operator_loc: (7,11)-(7,12) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (7,3)-(7,4) = "|"
-        │       │   ├── closing_loc: (7,13)-(7,14) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (7,13)-(7,14) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (7,1)-(7,2) = "{"
         │       └── closing_loc: (7,15)-(7,16) = "}"
@@ -132,6 +132,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (9,3)-(9,10))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (9,4)-(9,9))
         │       │   │   ├── requireds: (length: 0)
@@ -151,8 +152,7 @@
         │       │   │       └── operator_loc: (9,7)-(9,8) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (9,3)-(9,4) = "|"
-        │       │   ├── closing_loc: (9,9)-(9,10) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (9,9)-(9,10) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (9,1)-(9,2) = "{"
         │       └── closing_loc: (9,11)-(9,12) = "}"
@@ -171,6 +171,7 @@
         │       ├── locals_body_index: 3
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (11,3)-(11,14))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (11,4)-(11,13))
         │       │   │   ├── requireds: (length: 0)
@@ -192,8 +193,7 @@
         │       │   │       └── operator_loc: (11,11)-(11,12) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (11,3)-(11,4) = "|"
-        │       │   ├── closing_loc: (11,13)-(11,14) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (11,13)-(11,14) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (11,1)-(11,2) = "{"
         │       └── closing_loc: (11,15)-(11,16) = "}"
@@ -212,6 +212,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (13,3)-(13,11))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (13,4)-(13,10))
         │       │   │   ├── requireds: (length: 0)
@@ -231,8 +232,7 @@
         │       │   │       └── operator_loc: (13,8)-(13,9) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (13,3)-(13,4) = "|"
-        │       │   ├── closing_loc: (13,10)-(13,11) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (13,10)-(13,11) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (13,1)-(13,2) = "{"
         │       └── closing_loc: (13,12)-(13,13) = "}"
@@ -251,6 +251,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (15,3)-(15,7))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (15,4)-(15,6))
         │       │   │   ├── requireds: (length: 0)
@@ -266,8 +267,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (15,3)-(15,4) = "|"
-        │       │   ├── closing_loc: (15,6)-(15,7) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (15,6)-(15,7) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (15,1)-(15,2) = "{"
         │       └── closing_loc: (15,8)-(15,9) = "}"
@@ -286,6 +286,7 @@
         │       ├── locals_body_index: 0
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (17,3)-(17,6))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (17,4)-(17,5))
         │       │   │   ├── requireds: (length: 0)
@@ -301,8 +302,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (17,3)-(17,4) = "|"
-        │       │   ├── closing_loc: (17,5)-(17,6) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (17,5)-(17,6) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (17,1)-(17,2) = "{"
         │       └── closing_loc: (17,7)-(17,8) = "}"
@@ -321,13 +321,13 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (19,3)-(21,1))
+        │       │   ├── flags: ∅
         │       │   ├── parameters: ∅
         │       │   ├── locals: (length: 1)
         │       │   │   └── @ BlockLocalVariableNode (location: (20,0)-(20,1))
         │       │   │       └── name: :a
         │       │   ├── opening_loc: (19,3)-(19,4) = "|"
-        │       │   ├── closing_loc: (21,0)-(21,1) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (21,0)-(21,1) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (19,1)-(19,2) = "{"
         │       └── closing_loc: (21,2)-(21,3) = "}"
@@ -346,13 +346,13 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (23,3)-(23,7))
+        │       │   ├── flags: ∅
         │       │   ├── parameters: ∅
         │       │   ├── locals: (length: 1)
         │       │   │   └── @ BlockLocalVariableNode (location: (23,5)-(23,6))
         │       │   │       └── name: :a
         │       │   ├── opening_loc: (23,3)-(23,4) = "|"
-        │       │   ├── closing_loc: (23,6)-(23,7) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (23,6)-(23,7) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (23,1)-(23,2) = "{"
         │       └── closing_loc: (23,8)-(23,9) = "}"
@@ -371,6 +371,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (25,3)-(25,10))
+        │       │   ├── flags: ambiguous_param0
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (25,4)-(25,9))
         │       │   │   ├── requireds: (length: 1)
@@ -388,8 +389,7 @@
         │       │   │       └── operator_loc: (25,7)-(25,8) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (25,3)-(25,4) = "|"
-        │       │   ├── closing_loc: (25,9)-(25,10) = "|"
-        │       │   └── flags: ambiguous_param0
+        │       │   └── closing_loc: (25,9)-(25,10) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (25,1)-(25,2) = "{"
         │       └── closing_loc: (25,11)-(25,12) = "}"
@@ -408,6 +408,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (27,3)-(27,13))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (27,4)-(27,12))
         │       │   │   ├── requireds: (length: 1)
@@ -429,8 +430,7 @@
         │       │   │       └── operator_loc: (27,10)-(27,11) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (27,3)-(27,4) = "|"
-        │       │   ├── closing_loc: (27,12)-(27,13) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (27,12)-(27,13) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (27,1)-(27,2) = "{"
         │       └── closing_loc: (27,14)-(27,15) = "}"
@@ -449,6 +449,7 @@
         │       ├── locals_body_index: 4
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (29,3)-(29,17))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (29,4)-(29,16))
         │       │   │   ├── requireds: (length: 1)
@@ -472,8 +473,7 @@
         │       │   │       └── operator_loc: (29,14)-(29,15) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (29,3)-(29,4) = "|"
-        │       │   ├── closing_loc: (29,16)-(29,17) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (29,16)-(29,17) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (29,1)-(29,2) = "{"
         │       └── closing_loc: (29,18)-(29,19) = "}"
@@ -492,6 +492,7 @@
         │       ├── locals_body_index: 3
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (31,3)-(31,14))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (31,4)-(31,13))
         │       │   │   ├── requireds: (length: 1)
@@ -513,8 +514,7 @@
         │       │   │       └── operator_loc: (31,11)-(31,12) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (31,3)-(31,4) = "|"
-        │       │   ├── closing_loc: (31,13)-(31,14) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (31,13)-(31,14) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (31,1)-(31,2) = "{"
         │       └── closing_loc: (31,15)-(31,16) = "}"
@@ -533,6 +533,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (33,3)-(33,10))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (33,4)-(33,9))
         │       │   │   ├── requireds: (length: 1)
@@ -550,8 +551,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (33,3)-(33,4) = "|"
-        │       │   ├── closing_loc: (33,9)-(33,10) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (33,9)-(33,10) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (33,1)-(33,2) = "{"
         │       └── closing_loc: (33,11)-(33,12) = "}"
@@ -570,6 +570,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (35,3)-(35,9))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (35,4)-(35,8))
         │       │   │   ├── requireds: (length: 1)
@@ -587,8 +588,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (35,3)-(35,4) = "|"
-        │       │   ├── closing_loc: (35,8)-(35,9) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (35,8)-(35,9) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (35,1)-(35,2) = "{"
         │       └── closing_loc: (35,10)-(35,11) = "}"
@@ -607,6 +607,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (37,3)-(37,10))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (37,4)-(37,9))
         │       │   │   ├── requireds: (length: 2)
@@ -623,8 +624,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (37,3)-(37,4) = "|"
-        │       │   ├── closing_loc: (37,9)-(37,10) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (37,9)-(37,10) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (37,1)-(37,2) = "{"
         │       └── closing_loc: (37,11)-(37,12) = "}"
@@ -643,6 +643,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (39,3)-(39,9))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (39,4)-(39,8))
         │       │   │   ├── requireds: (length: 2)
@@ -658,8 +659,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (39,3)-(39,4) = "|"
-        │       │   ├── closing_loc: (39,8)-(39,9) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (39,8)-(39,9) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (39,1)-(39,2) = "{"
         │       └── closing_loc: (39,10)-(39,11) = "}"
@@ -678,6 +678,7 @@
         │       ├── locals_body_index: 3
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (41,3)-(41,15))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (41,4)-(41,14))
         │       │   │   ├── requireds: (length: 1)
@@ -702,8 +703,7 @@
         │       │   │       └── operator_loc: (41,12)-(41,13) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (41,3)-(41,4) = "|"
-        │       │   ├── closing_loc: (41,14)-(41,15) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (41,14)-(41,15) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (41,1)-(41,2) = "{"
         │       └── closing_loc: (41,16)-(41,17) = "}"
@@ -722,6 +722,7 @@
         │       ├── locals_body_index: 5
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (43,3)-(43,22))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (43,4)-(43,21))
         │       │   │   ├── requireds: (length: 1)
@@ -752,8 +753,7 @@
         │       │   │       └── operator_loc: (43,19)-(43,20) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (43,3)-(43,4) = "|"
-        │       │   ├── closing_loc: (43,21)-(43,22) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (43,21)-(43,22) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (43,1)-(43,2) = "{"
         │       └── closing_loc: (43,23)-(43,24) = "}"
@@ -772,6 +772,7 @@
         │       ├── locals_body_index: 5
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (45,3)-(45,25))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (45,4)-(45,24))
         │       │   │   ├── requireds: (length: 1)
@@ -807,8 +808,7 @@
         │       │   │       └── operator_loc: (45,22)-(45,23) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (45,3)-(45,4) = "|"
-        │       │   ├── closing_loc: (45,24)-(45,25) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (45,24)-(45,25) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (45,1)-(45,2) = "{"
         │       └── closing_loc: (45,26)-(45,27) = "}"
@@ -827,6 +827,7 @@
         │       ├── locals_body_index: 4
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (47,3)-(47,18))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (47,4)-(47,17))
         │       │   │   ├── requireds: (length: 1)
@@ -853,8 +854,7 @@
         │       │   │       └── operator_loc: (47,15)-(47,16) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (47,3)-(47,4) = "|"
-        │       │   ├── closing_loc: (47,17)-(47,18) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (47,17)-(47,18) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (47,1)-(47,2) = "{"
         │       └── closing_loc: (47,19)-(47,20) = "}"
@@ -873,6 +873,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (49,3)-(49,7))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (49,4)-(49,6))
         │       │   │   ├── requireds: (length: 1)
@@ -887,8 +888,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (49,3)-(49,4) = "|"
-        │       │   ├── closing_loc: (49,6)-(49,7) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (49,6)-(49,7) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (49,1)-(49,2) = "{"
         │       └── closing_loc: (49,8)-(49,9) = "}"
@@ -907,6 +907,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (51,3)-(51,6))
+        │       │   ├── flags: ambiguous_param0
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (51,4)-(51,5))
         │       │   │   ├── requireds: (length: 1)
@@ -920,8 +921,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (51,3)-(51,4) = "|"
-        │       │   ├── closing_loc: (51,5)-(51,6) = "|"
-        │       │   └── flags: ambiguous_param0
+        │       │   └── closing_loc: (51,5)-(51,6) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (51,1)-(51,2) = "{"
         │       └── closing_loc: (51,7)-(51,8) = "}"
@@ -940,6 +940,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (53,3)-(53,6))
+        │       │   ├── flags: ambiguous_param0
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (53,4)-(53,5))
         │       │   │   ├── requireds: (length: 1)
@@ -953,8 +954,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (53,3)-(53,4) = "|"
-        │       │   ├── closing_loc: (53,5)-(53,6) = "|"
-        │       │   └── flags: ambiguous_param0
+        │       │   └── closing_loc: (53,5)-(53,6) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (53,1)-(53,2) = "{"
         │       └── closing_loc: (53,7)-(53,8) = "}"
@@ -973,6 +973,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (55,3)-(55,6))
+        │       │   ├── flags: ambiguous_param0
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (55,4)-(55,5))
         │       │   │   ├── requireds: (length: 1)
@@ -986,8 +987,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (55,3)-(55,4) = "|"
-        │       │   ├── closing_loc: (55,5)-(55,6) = "|"
-        │       │   └── flags: ambiguous_param0
+        │       │   └── closing_loc: (55,5)-(55,6) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (55,1)-(55,2) = "{"
         │       └── closing_loc: (55,7)-(55,8) = "}"
@@ -1006,6 +1006,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (57,3)-(57,15))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (57,4)-(57,14))
         │       │   │   ├── requireds: (length: 0)
@@ -1027,8 +1028,7 @@
         │       │   │       └── operator_loc: (57,12)-(57,13) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (57,3)-(57,4) = "|"
-        │       │   ├── closing_loc: (57,14)-(57,15) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (57,14)-(57,15) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (57,1)-(57,2) = "{"
         │       └── closing_loc: (57,16)-(57,17) = "}"
@@ -1047,6 +1047,7 @@
         │       ├── locals_body_index: 4
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (59,3)-(59,30))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (59,4)-(59,29))
         │       │   │   ├── requireds: (length: 0)
@@ -1078,8 +1079,7 @@
         │       │   │       └── operator_loc: (59,27)-(59,28) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (59,3)-(59,4) = "|"
-        │       │   ├── closing_loc: (59,29)-(59,30) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (59,29)-(59,30) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (59,1)-(59,2) = "{"
         │       └── closing_loc: (59,31)-(59,32) = "}"
@@ -1098,6 +1098,7 @@
         │       ├── locals_body_index: 1
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (61,3)-(61,9))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (61,4)-(61,8))
         │       │   │   ├── requireds: (length: 0)
@@ -1112,8 +1113,7 @@
         │       │   │   └── block: ∅
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (61,3)-(61,4) = "|"
-        │       │   ├── closing_loc: (61,8)-(61,9) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (61,8)-(61,9) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (61,1)-(61,2) = "{"
         │       └── closing_loc: (61,10)-(61,11) = "}"
@@ -1132,6 +1132,7 @@
         │       ├── locals_body_index: 2
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (63,3)-(63,12))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (63,4)-(63,11))
         │       │   │   ├── requireds: (length: 0)
@@ -1154,8 +1155,7 @@
         │       │   │       └── operator_loc: (63,9)-(63,10) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (63,3)-(63,4) = "|"
-        │       │   ├── closing_loc: (63,11)-(63,12) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (63,11)-(63,12) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (63,1)-(63,2) = "{"
         │       └── closing_loc: (63,13)-(63,14) = "}"
@@ -1174,6 +1174,7 @@
         │       ├── locals_body_index: 3
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (65,3)-(65,16))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (65,4)-(65,15))
         │       │   │   ├── requireds: (length: 0)
@@ -1200,8 +1201,7 @@
         │       │   │       └── operator_loc: (65,13)-(65,14) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (65,3)-(65,4) = "|"
-        │       │   ├── closing_loc: (65,15)-(65,16) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (65,15)-(65,16) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (65,1)-(65,2) = "{"
         │       └── closing_loc: (65,17)-(65,18) = "}"
@@ -1220,6 +1220,7 @@
         │       ├── locals_body_index: 4
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (67,3)-(67,19))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (67,4)-(67,18))
         │       │   │   ├── requireds: (length: 0)
@@ -1248,8 +1249,7 @@
         │       │   │       └── operator_loc: (67,16)-(67,17) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (67,3)-(67,4) = "|"
-        │       │   ├── closing_loc: (67,18)-(67,19) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (67,18)-(67,19) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (67,1)-(67,2) = "{"
         │       └── closing_loc: (67,20)-(67,21) = "}"
@@ -1268,6 +1268,7 @@
         │       ├── locals_body_index: 3
         │       ├── parameters:
         │       │   @ BlockParametersNode (location: (69,3)-(69,15))
+        │       │   ├── flags: ∅
         │       │   ├── parameters:
         │       │   │   @ ParametersNode (location: (69,4)-(69,14))
         │       │   │   ├── requireds: (length: 0)
@@ -1292,8 +1293,7 @@
         │       │   │       └── operator_loc: (69,12)-(69,13) = "&"
         │       │   ├── locals: (length: 0)
         │       │   ├── opening_loc: (69,3)-(69,4) = "|"
-        │       │   ├── closing_loc: (69,14)-(69,15) = "|"
-        │       │   └── flags: ∅
+        │       │   └── closing_loc: (69,14)-(69,15) = "|"
         │       ├── body: ∅
         │       ├── opening_loc: (69,1)-(69,2) = "{"
         │       └── closing_loc: (69,16)-(69,17) = "}"
@@ -1312,11 +1312,11 @@
                 ├── locals_body_index: 0
                 ├── parameters:
                 │   @ BlockParametersNode (location: (71,3)-(71,5))
+                │   ├── flags: ∅
                 │   ├── parameters: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (71,3)-(71,4) = "|"
-                │   ├── closing_loc: (71,4)-(71,5) = "|"
-                │   └── flags: ∅
+                │   └── closing_loc: (71,4)-(71,5) = "|"
                 ├── body: ∅
                 ├── opening_loc: (71,1)-(71,2) = "{"
                 └── closing_loc: (71,6)-(71,7) = "}"

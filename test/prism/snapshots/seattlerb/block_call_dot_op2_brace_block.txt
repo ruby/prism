@@ -70,6 +70,7 @@
                 ├── locals_body_index: 1
                 ├── parameters:
                 │   @ BlockParametersNode (location: (1,22)-(1,25))
+                │   ├── flags: ambiguous_param0
                 │   ├── parameters:
                 │   │   @ ParametersNode (location: (1,23)-(1,24))
                 │   │   ├── requireds: (length: 1)
@@ -83,8 +84,7 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,22)-(1,23) = "|"
-                │   ├── closing_loc: (1,24)-(1,25) = "|"
-                │   └── flags: ambiguous_param0
+                │   └── closing_loc: (1,24)-(1,25) = "|"
                 ├── body:
                 │   @ StatementsNode (location: (1,26)-(1,27))
                 │   └── body: (length: 1)

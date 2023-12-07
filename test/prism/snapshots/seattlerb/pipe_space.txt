@@ -28,11 +28,11 @@
                 ├── locals_body_index: 0
                 ├── parameters:
                 │   @ BlockParametersNode (location: (1,7)-(1,10))
+                │   ├── flags: ∅
                 │   ├── parameters: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (1,7)-(1,8) = "|"
-                │   ├── closing_loc: (1,9)-(1,10) = "|"
-                │   └── flags: ∅
+                │   └── closing_loc: (1,9)-(1,10) = "|"
                 ├── body: ∅
                 ├── opening_loc: (1,4)-(1,6) = "do"
                 └── closing_loc: (1,11)-(1,14) = "end"

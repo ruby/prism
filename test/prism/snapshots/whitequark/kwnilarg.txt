@@ -11,6 +11,7 @@
         │   ├── closing_loc: (1,11)-(1,12) = "}"
         │   ├── parameters:
         │   │   @ BlockParametersNode (location: (1,2)-(1,9))
+        │   │   ├── flags: ∅
         │   │   ├── parameters:
         │   │   │   @ ParametersNode (location: (1,3)-(1,8))
         │   │   │   ├── requireds: (length: 0)
@@ -25,8 +26,7 @@
         │   │   │   └── block: ∅
         │   │   ├── locals: (length: 0)
         │   │   ├── opening_loc: (1,2)-(1,3) = "("
-        │   │   ├── closing_loc: (1,8)-(1,9) = ")"
-        │   │   └── flags: ∅
+        │   │   └── closing_loc: (1,8)-(1,9) = ")"
         │   └── body: ∅
         ├── @ DefNode (location: (3,0)-(3,17))
         │   ├── name: :f
@@ -68,6 +68,7 @@
                 ├── locals_body_index: 0
                 ├── parameters:
                 │   @ BlockParametersNode (location: (5,4)-(5,11))
+                │   ├── flags: ∅
                 │   ├── parameters:
                 │   │   @ ParametersNode (location: (5,5)-(5,10))
                 │   │   ├── requireds: (length: 0)
@@ -82,8 +83,7 @@
                 │   │   └── block: ∅
                 │   ├── locals: (length: 0)
                 │   ├── opening_loc: (5,4)-(5,5) = "|"
-                │   ├── closing_loc: (5,10)-(5,11) = "|"
-                │   └── flags: ∅
+                │   └── closing_loc: (5,10)-(5,11) = "|"
                 ├── body: ∅
                 ├── opening_loc: (5,2)-(5,3) = "{"
                 └── closing_loc: (5,12)-(5,13) = "}"

@@ -27,6 +27,7 @@
         │   │               ├── locals_body_index: 1
         │   │               ├── parameters:
         │   │               │   @ BlockParametersNode (location: (2,8)-(2,13))
+        │   │               │   ├── flags: ambiguous_param0
         │   │               │   ├── parameters:
         │   │               │   │   @ ParametersNode (location: (2,9)-(2,12))
         │   │               │   │   ├── requireds: (length: 1)
@@ -40,8 +41,7 @@
         │   │               │   │   └── block: ∅
         │   │               │   ├── locals: (length: 0)
         │   │               │   ├── opening_loc: (2,8)-(2,9) = "|"
-        │   │               │   ├── closing_loc: (2,12)-(2,13) = "|"
-        │   │               │   └── flags: ambiguous_param0
+        │   │               │   └── closing_loc: (2,12)-(2,13) = "|"
         │   │               ├── body:
         │   │               │   @ StatementsNode (location: (3,4)-(5,7))
         │   │               │   └── body: (length: 1)
@@ -287,6 +287,7 @@
         │   │               ├── locals_body_index: 1
         │   │               ├── parameters:
         │   │               │   @ BlockParametersNode (location: (28,9)-(28,14))
+        │   │               │   ├── flags: ambiguous_param0
         │   │               │   ├── parameters:
         │   │               │   │   @ ParametersNode (location: (28,10)-(28,13))
         │   │               │   │   ├── requireds: (length: 1)
@@ -300,8 +301,7 @@
         │   │               │   │   └── block: ∅
         │   │               │   ├── locals: (length: 0)
         │   │               │   ├── opening_loc: (28,9)-(28,10) = "|"
-        │   │               │   ├── closing_loc: (28,13)-(28,14) = "|"
-        │   │               │   └── flags: ambiguous_param0
+        │   │               │   └── closing_loc: (28,13)-(28,14) = "|"
         │   │               ├── body:
         │   │               │   @ StatementsNode (location: (29,4)-(31,7))
         │   │               │   └── body: (length: 1)
@@ -367,6 +367,7 @@
         │   │               ├── locals_body_index: 1
         │   │               ├── parameters:
         │   │               │   @ BlockParametersNode (location: (36,9)-(36,14))
+        │   │               │   ├── flags: ambiguous_param0
         │   │               │   ├── parameters:
         │   │               │   │   @ ParametersNode (location: (36,10)-(36,13))
         │   │               │   │   ├── requireds: (length: 1)
@@ -380,8 +381,7 @@
         │   │               │   │   └── block: ∅
         │   │               │   ├── locals: (length: 0)
         │   │               │   ├── opening_loc: (36,9)-(36,10) = "|"
-        │   │               │   ├── closing_loc: (36,13)-(36,14) = "|"
-        │   │               │   └── flags: ambiguous_param0
+        │   │               │   └── closing_loc: (36,13)-(36,14) = "|"
         │   │               ├── body:
         │   │               │   @ StatementsNode (location: (37,4)-(39,7))
         │   │               │   └── body: (length: 1)

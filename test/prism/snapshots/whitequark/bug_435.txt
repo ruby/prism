@@ -19,6 +19,7 @@
             │       │           ├── closing_loc: (1,11)-(1,12) = "}"
             │       │           ├── parameters:
             │       │           │   @ BlockParametersNode (location: (1,6)-(1,9))
+            │       │           │   ├── flags: ambiguous_param0
             │       │           │   ├── parameters:
             │       │           │   │   @ ParametersNode (location: (1,6)-(1,9))
             │       │           │   │   ├── requireds: (length: 1)
@@ -32,8 +33,7 @@
             │       │           │   │   └── block: ∅
             │       │           │   ├── locals: (length: 0)
             │       │           │   ├── opening_loc: ∅
-            │       │           │   ├── closing_loc: ∅
-            │       │           │   └── flags: ambiguous_param0
+            │       │           │   └── closing_loc: ∅
             │       │           └── body: ∅
             │       └── closing_loc: (1,12)-(1,13) = "}"
             └── closing_loc: (1,13)-(1,14) = "\""

@@ -37,6 +37,7 @@
                             ├── locals_body_index: 1
                             ├── parameters:
                             │   @ BlockParametersNode (location: (1,18)-(1,23))
+                            │   ├── flags: ambiguous_param0
                             │   ├── parameters:
                             │   │   @ ParametersNode (location: (1,19)-(1,22))
                             │   │   ├── requireds: (length: 1)
@@ -50,8 +51,7 @@
                             │   │   └── block: ∅
                             │   ├── locals: (length: 0)
                             │   ├── opening_loc: (1,18)-(1,19) = "|"
-                            │   ├── closing_loc: (1,22)-(1,23) = "|"
-                            │   └── flags: ambiguous_param0
+                            │   └── closing_loc: (1,22)-(1,23) = "|"
                             ├── body: ∅
                             ├── opening_loc: (1,15)-(1,17) = "do"
                             └── closing_loc: (1,24)-(1,27) = "end"

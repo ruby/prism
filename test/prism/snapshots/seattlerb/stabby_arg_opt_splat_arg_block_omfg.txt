@@ -11,6 +11,7 @@
             ├── closing_loc: (1,22)-(1,23) = "}"
             ├── parameters:
             │   @ BlockParametersNode (location: (1,2)-(1,21))
+            │   ├── flags: ∅
             │   ├── parameters:
             │   │   @ ParametersNode (location: (1,3)-(1,20))
             │   │   ├── requireds: (length: 1)
@@ -41,6 +42,5 @@
             │   │       └── operator_loc: (1,18)-(1,19) = "&"
             │   ├── locals: (length: 0)
             │   ├── opening_loc: (1,2)-(1,3) = "("
-            │   ├── closing_loc: (1,20)-(1,21) = ")"
-            │   └── flags: ∅
+            │   └── closing_loc: (1,20)-(1,21) = ")"
             └── body: ∅

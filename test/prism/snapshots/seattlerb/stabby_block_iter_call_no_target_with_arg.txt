@@ -22,11 +22,11 @@
             │           ├── closing_loc: (4,0)-(4,3) = "end"
             │           ├── parameters:
             │           │   @ BlockParametersNode (location: (1,5)-(1,7))
+            │           │   ├── flags: ∅
             │           │   ├── parameters: ∅
             │           │   ├── locals: (length: 0)
             │           │   ├── opening_loc: (1,5)-(1,6) = "("
-            │           │   ├── closing_loc: (1,6)-(1,7) = ")"
-            │           │   └── flags: ∅
+            │           │   └── closing_loc: (1,6)-(1,7) = ")"
             │           └── body:
             │               @ StatementsNode (location: (2,0)-(3,3))
             │               └── body: (length: 1)
