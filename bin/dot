@@ -4,17 +4,25 @@
 $:.unshift(File.expand_path("../lib", __dir__))
 require "prism"
 
+index = 0
 result =
-  if ARGV[0] == "-e"
-    Prism.parse(ARGV[1])
+  if ARGV[index] == "-e"
+    Prism.parse(ARGV[index += 1])
   else
-    Prism.parse_file(ARGV[0] || "test.rb")
+    Prism.parse_file(ARGV[index] || "test.rb")
   end
+
+node = result.value
+if ARGV[index += 1].match?(/\A[\w\.]+\z/)
+  ARGV[index].split(".").each do |field|
+    node = node.public_send(field)
+  end
+end
 
 File.write(
   "out.svg",
   IO.popen("dot -Tsvg", "w+") do |file|
-    file.write(result.value.to_dot)
+    file.write(node.to_dot)
     file.close_write
     file.read
   end
