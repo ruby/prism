@@ -22,18 +22,22 @@ if ARGV.delete("--help")
   exit!(0)
 end
 
+# If this gem is being build from a git source, then we need to run
+# templating if it hasn't been run yet. In normal packaging, we would have
+# shipped the templated files with the gem, so this wouldn't be necessary.
+def generate_templates
+  Dir.chdir(File.expand_path("../..", __dir__)) do
+    if !File.exist?("include/prism/ast.h") && Dir.exist?(".git")
+      system("templates/template.rb", exception: true)
+    end
+  end
+end
+
 # Runs `make` in the root directory of the project. Note that this is the
 # `Makefile` for the overall project, not the `Makefile` that is being generated
 # by this script.`
 def make(target)
   Dir.chdir(File.expand_path("../..", __dir__)) do
-    # If this gem is being build from a git source, then we need to run
-    # templating if it hasn't been run yet. In normal packaging, we would have
-    # shipped the templated files with the gem, so this wouldn't be necessary.
-    if !File.exist?("include/prism/ast.h") && Dir.exist?(".git")
-      system("templates/template.rb", exception: true)
-    end
-
     system("make", target, exception: true)
   end
 end
@@ -45,6 +49,7 @@ require "rbconfig"
 # `require "mkmf"` as that prepends the LLVM toolchain to PATH on TruffleRuby,
 # but we want to use the native toolchain here since libprism is run natively.
 if RUBY_ENGINE != "ruby"
+  generate_templates
   make("build/libprism.#{RbConfig::CONFIG["SOEXT"]}")
   File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
   return
@@ -53,6 +58,7 @@ end
 require "mkmf"
 
 # First, ensure that we can find the header for the prism library.
+generate_templates # Templates should be generated before find_header.
 unless find_header("prism.h", File.expand_path("../../include", __dir__))
   raise "prism.h is required"
 end
