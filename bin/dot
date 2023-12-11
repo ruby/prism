@@ -13,10 +13,15 @@ result =
   end
 
 node = result.value
-if ARGV[index += 1].match?(/\A[\w\.]+\z/)
-  ARGV[index].split(".").each do |field|
-    node = node.public_send(field)
+path =
+  if ARGV[index += 1]&.match?(/\A[\w\.]+\z/)
+    ARGV[index].split(".")
+  else
+    %w[statements body first]
   end
+
+path.each do |field|
+  node = node.public_send(field)
 end
 
 File.write(
