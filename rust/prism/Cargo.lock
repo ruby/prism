@@ -195,7 +195,7 @@ dependencies = [
 
 [[package]]
 name = "prism"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "prism-sys",
  "serde",
@@ -204,7 +204,7 @@ dependencies = [
 
 [[package]]
 name = "prism-sys"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "bindgen",
  "cc",

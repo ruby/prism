@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.19.0] - 2023-12-14
+
+### Added
+
+- `ArrayNode` now has a `contains_splat?` flag if it has a splatted element in it.
+- All of the remaining encodings have been implemented.
+- Allow forwarding `&` in a method that has a `...` parameter.
+- Many statements that are found in non-statement positions are being properly rejected now.
+- Void values are now properly checked.
+- Referencing a parameter in its own default value is now properly rejected.
+- `DATA`/`__END__` is now parsed as its own field on parse result (`data_loc`) as opposed to as a comment.
+- Blank `*` now properly forwards into arrays.
+- `ImplicitRestNode` is introduced to represent the implicit rest of a destructure.
+- We now support negative start lines.
+- `StringNode#heredoc?`, `InterpolatedStringNode#heredoc?`, `XStringNode#heredoc?`, and `InterpolatedXStringNode#heredoc?` are introduced.
+- `NumberedParametersNode` is introduced to represent the implicit set of parameters when numbered parameters are used.
+- `Prism::parse_success?` and `Prism::parse_failure?` are introduced to bypass reifying the AST.
+- We now emit a warning for constant assignments in method definitions.
+- We now provide flags on strings and xstrings to indicate the correct encoding.
+- The hash pattern `rest` field now more accurately parses `**` and `**nil`.
+- The equality operators are now properly parsed as non-associative.
+
+### Changed
+
+- **BREAKING**: Many fields have changed positions within their nodes. This impacts the C API and the Ruby API if you are manually creating nodes through the initializer.
+- **BREAKING**: Almost all of the error messages have been updated to begin with lowercase characters to match ruby/spec.
+- Unterminated strings with only plain content are now always `StringNode` as opposed to `InterpolatedStringNode`
+- **BREAKING**: Call node has been split up when it is in the target position into `CallTargetNode` and `IndexTargetNode`.
+
 ## [0.18.0] - 2023-11-21
 
 ### Added
@@ -267,7 +296,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.18.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/ruby/prism/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/ruby/prism/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/ruby/prism/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/ruby/prism/compare/v0.16.0...v0.17.0
