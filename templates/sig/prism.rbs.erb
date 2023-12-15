@@ -5,18 +5,18 @@ module Prism
   <%- end -%>
   class <%= node.name -%> < Node
     <%- node.fields.each do |field| -%>
-    attr_reader <%= field.name %>: <%= field.rbs_class %>
+    <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
-    def initialize: (<%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %>) -> void
-    def accept: (visitor: Visitor) -> void
-    def set_newline_flag: (newline_marked: Array[bool]) -> void
+    def initialize: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["Location location"]).join(", ") %>) -> void
+    def accept: (Visitor visitor) -> void
+    def set_newline_flag: (Array[bool] newline_marked) -> void
     def child_nodes: () -> Array[Node?]
     def deconstruct: () -> Array[Node?]
 
     def copy: (**untyped) -> <%= node.name %>
 
-    def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, (Node | Array[Node] | String | Token | Array[Token] | Location)?]
+    def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
     <%- node.fields.each do |field| -%>
     <%- case field -%>
     <%- when Prism::LocationField -%>
@@ -37,7 +37,7 @@ module Prism
     <%- end -%>
     <%- end -%>
 
-    def inspect: (inspector: NodeInspector) -> String
+    def inspect: (?NodeInspector inspector) -> String
   end
   <%- end -%>
 
@@ -55,7 +55,7 @@ module Prism
   class Visitor < BasicVisitor
     <%- nodes.each do |node| -%>
     # Visit a <%= node.name %> node
-    def visit_<%= node.human %>: (node: <%= node.name %>) -> void
+    def visit_<%= node.human %>: (<%= node.name %> node) -> void
     <%= "\n" if node != nodes.last -%>
     <%- end -%>
   end
@@ -64,7 +64,7 @@ module Prism
     private
 
     # Create a new Location object
-    def Location: (source: Source?, start_offset: Integer, length: Integer) -> Location
+    def Location: (?Source? source, ?Integer start_offset, ?Integer length) -> Location
 
     <%- nodes.each do |node| -%>
     # Create a new <%= node.name %> node
