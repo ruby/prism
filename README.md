@@ -32,8 +32,8 @@ The repository contains the infrastructure for both a shared library (libprism) 
 │   └── prism.rb          main entrypoint for the Ruby library
 ├── rakelib               various Rake tasks for the project
 ├── rust
-│   ├── prism             Rustified crate for the shared library
-│   └── prism-sys         FFI binding for Rust
+│   ├── ruby-prism        Rustified crate for the shared library
+│   └── ruby-prism-sys    FFI binding for Rust
 ├── src
 │   ├── enc               various encoding files
 │   ├── util              various utility files

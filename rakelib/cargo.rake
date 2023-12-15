@@ -1,10 +1,11 @@
 namespace :cargo do
-  CRATES = ["prism-sys", "prism"]
+  CRATES = ["ruby-prism-sys", "ruby-prism"]
 
   desc "Build and test the Rust packages"
   task build: [:templates] do
     gemspec = Gem::Specification.load("prism.gemspec")
-    prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "prism-sys")))
+
+    prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism-sys")))
     prism_sys_vendor_dir = prism_sys_dir.join("vendor/prism-#{gemspec.version}")
 
     rm_rf(prism_sys_vendor_dir)
@@ -12,11 +13,21 @@ namespace :cargo do
     cp_r("./include", prism_sys_vendor_dir.join("include"))
     cp_r("./src", prism_sys_vendor_dir.join("src"))
 
+    prism_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism")))
+    prism_vendor_dir = prism_dir.join("vendor/prism-#{gemspec.version}")
+
+    rm_rf(prism_vendor_dir)
+    mkdir_p(prism_vendor_dir)
+    cp(File.expand_path("../config.yml", __dir__), prism_vendor_dir.join("config.yml"))
+
     # Align the Cargo.toml version with the gemspec version
     CRATES.each do |crate|
       cargo_toml_path = Pathname.new("rust/#{crate}/Cargo.toml")
       old_cargo_toml = cargo_toml_path.read
-      new_cargo_toml = old_cargo_toml.gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
+      new_cargo_toml = old_cargo_toml
+        .gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
+        .gsub(/^ruby-prism-sys = { version = ".*",/, %(ruby-prism-sys = { version = "#{gemspec.version}",))
+
       File.write(cargo_toml_path, new_cargo_toml)
     end
   end
@@ -32,7 +43,7 @@ namespace :cargo do
 
   desc "Run all examples"
   task examples: [:build] do
-    Dir.chdir("rust/prism") do
+    Dir.chdir("rust/ruby-prism") do
       Dir.glob("examples/*").each do |example|
         puts "Running #{example}"
 
@@ -113,7 +124,7 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🚢 Publishing #{crate} to crates.io"
-          sh "cargo publish --dry-run"
+          sh "cargo publish --allow-dirty"
         end
       end
     end
@@ -132,7 +143,7 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🌵 [dry-run] Checking publish of #{crate} to crates.io"
-          sh "cargo publish --dry-run"
+          sh "cargo publish --dry-run --allow-dirty"
         end
       end
     end
