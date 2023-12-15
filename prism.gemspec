@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
     "docs/javascript.md",
     "docs/local_variable_depth.md",
     "docs/mapping.md",
+    "docs/node_groups.md",
     "docs/releasing.md",
     "docs/ripper.md",
     "docs/ruby_api.md",
