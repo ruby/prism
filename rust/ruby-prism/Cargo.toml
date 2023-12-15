@@ -19,6 +19,7 @@ categories = [
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+include = ["src/", "build.rs", "Cargo.toml", "Cargo.lock", "vendor"]
 
 [build-dependencies]
 serde = { version = "1.0", features = ["derive"] }

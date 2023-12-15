@@ -3,7 +3,7 @@
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::Path;
 
 #[derive(Debug, Deserialize)]
 enum NodeFieldType {
@@ -88,25 +88,16 @@ struct Config {
 /// building the library.
 ///
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = config_path();
-    let file = std::fs::File::open(&path)?;
-    println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
-    let config: Config = serde_yaml::from_reader(file)?;
+    let prism_dir = format!("prism-{}", env!("CARGO_PKG_VERSION"));
+    let config_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("vendor").join(prism_dir).join("config.yml");
 
+    let config_file = std::fs::File::open(&config_path)?;
+    println!("cargo:rerun-if-changed={}", config_path.to_str().unwrap());
+
+    let config: Config = serde_yaml::from_reader(config_file)?;
     write_bindings(&config)?;
+
     Ok(())
-}
-
-/// Gets the path to the config.yml file at `[root]/config.yml`.
-///
-fn config_path() -> PathBuf {
-    cargo_manifest_path().join("../../config.yml").canonicalize().unwrap()
-}
-
-/// Gets the path to the root directory at `[root]`.
-///
-fn cargo_manifest_path() -> PathBuf {
-    PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
 
 /// Returns the name of a C struct from the given node name.
@@ -493,10 +484,11 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
 /// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into
 /// the actual library in `src/lib.rs`.
 fn write_bindings(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-    let out_path = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("bindings.rs");
-    let mut file = std::fs::File::create(&out_path).expect("Unable to create file");
+    let out_dir = std::env::var_os("OUT_DIR").unwrap();
+    let dest_path = Path::new(&out_dir).join("bindings.rs");
+    let mut file = std::fs::File::create(&dest_path).expect("Unable to create file");
 
-    writeln!(
+    write!(
         file,
         r#"
 use std::marker::PhantomData;
