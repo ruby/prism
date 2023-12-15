@@ -1,4 +1,4 @@
-# prism-sys
+# ruby-prism-sys
 
 Rust bindings to [ruby/prism](https://github.com/ruby/prism)'s C API.
 
@@ -10,7 +10,7 @@ Currently the best examples are found in the integration tests (in `tests/`).
 
 Since this crate has not been released, docs are not yet online anywhere. You can generate them,
 however, from this directory in this repo by running `cargo doc`, then opening
-`target/doc/prism_sys/index.html` in your browser. (You could, instead, combine those two steps by
+`target/doc/ruby_prism_sys/index.html` in your browser. (You could, instead, combine those two steps by
 doing `cargo doc --open`!)
 
 ## Development

@@ -1,10 +1,10 @@
 namespace :cargo do
-  CRATES = ["prism-sys", "prism"]
+  CRATES = ["ruby-prism-sys", "ruby-prism"]
 
   desc "Build and test the Rust packages"
   task build: [:templates] do
     gemspec = Gem::Specification.load("prism.gemspec")
-    prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "prism-sys")))
+    prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism-sys")))
     prism_sys_vendor_dir = prism_sys_dir.join("vendor/prism-#{gemspec.version}")
 
     rm_rf(prism_sys_vendor_dir)
@@ -18,7 +18,7 @@ namespace :cargo do
       old_cargo_toml = cargo_toml_path.read
       new_cargo_toml = old_cargo_toml
         .gsub(/^version = ".*"/, %(version = "#{gemspec.version}"))
-        .gsub(/^prism-sys = { version = ".*",/, %(prism-sys = { version = "#{gemspec.version}",))
+        .gsub(/^ruby-prism-sys = { version = ".*",/, %(ruby-prism-sys = { version = "#{gemspec.version}",))
 
       File.write(cargo_toml_path, new_cargo_toml)
     end
@@ -116,8 +116,9 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🚢 Publishing #{crate} to crates.io"
-          if crate == "prism-sys"
-            # Use --allow-dirty to support rust/prism-sys/vendor/ files copied in by cargo:build`
+
+          if crate == "ruby-prism-sys"
+            # Use --allow-dirty to support rust/ruby-prism-sys/vendor/ files copied in by cargo:build`
             sh "cargo publish --dry-run --allow-dirty"
           else
             sh "cargo publish --dry-run"
@@ -140,8 +141,8 @@ namespace :cargo do
       CRATES.each do |crate|
         Dir.chdir("rust/#{crate}") do
           puts "🌵 [dry-run] Checking publish of #{crate} to crates.io"
-          if crate == "prism-sys"
-            # Use --allow-dirty to support rust/prism-sys/vendor/ files copied in by cargo:build`
+          if crate == "ruby-prism-sys"
+            # Use --allow-dirty to support rust/ruby-prism-sys/vendor/ files copied in by cargo:build`
             sh "cargo publish --dry-run --allow-dirty"
           else
             sh "cargo publish --dry-run"

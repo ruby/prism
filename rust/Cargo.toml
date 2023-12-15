@@ -1,7 +1,7 @@
 [workspace]
 members = [
-  "prism",
-  "prism-sys",
+  "ruby-prism",
+  "ruby-prism-sys",
 ]
 
 resolver = "2" # Use 2021 edition

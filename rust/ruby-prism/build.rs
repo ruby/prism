@@ -503,7 +503,7 @@ use std::marker::PhantomData;
 use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
-use prism_sys::*;
+use ruby_prism_sys::*;
 
 /// A range in the source file.
 pub struct Location<'pr> {{

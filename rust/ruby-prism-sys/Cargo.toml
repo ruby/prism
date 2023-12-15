@@ -1,10 +1,11 @@
 [package]
-name = "prism"
+name = "ruby-prism-sys"
 version = "0.19.0"
 edition = "2021"
 license-file = "../../LICENSE.md"
 repository = "https://github.com/ruby/prism"
-description = "Rustified version of Ruby's prism parsing library"
+description = "Rust bindings to Ruby's prism parsing library"
+links = "prism"
 authors = [
     "Steve Loveless <steve.loveless@gmail.com>",
     "Ian Ker-Seymer <hello@ianks.com>",
@@ -17,16 +18,13 @@ categories = [
     "external-ffi-bindings",
     "parsing",
 ]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+build = "build/main.rs"
+include = ["src/", "build/", "Cargo.toml", "Cargo.lock", "README.md", "vendor"]
 
 [build-dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
-
-[dependencies]
-prism-sys = { version = "0.19.0", path = "../prism-sys" }
+bindgen = "0.66"
+cc = { version = "1.0", optional = true }
 
 [features]
 default = ["vendored"]
-vendored = ["prism-sys/vendored"]
+vendored = ["dep:cc"]

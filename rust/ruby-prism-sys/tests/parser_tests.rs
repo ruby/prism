@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use prism_sys::{
+use ruby_prism_sys::{
     pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_node_destroy, pm_parse, pm_parser_free, pm_parser_init,
     pm_parser_t,
 };
