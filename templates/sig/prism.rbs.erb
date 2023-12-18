@@ -1,74 +1,62 @@
 module Prism
-  <%- nodes.each do |node| -%>
-  <%- node.each_comment_line do |line| -%>
-  #<%= line %>
-  <%- end -%>
-  class <%= node.name -%> < Node
-    <%- node.fields.each do |field| -%>
-    <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
-    <%- end -%>
+  BACKEND: :CEXT | :FFI
+  VERSION: String
 
-    def initialize: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["Location location"]).join(", ") %>) -> void
-    def accept: (Visitor visitor) -> void
-    def set_newline_flag: (Array[bool] newline_marked) -> void
-    def child_nodes: () -> Array[Node?]
-    def deconstruct: () -> Array[Node?]
+  # Methods taking a Ruby source code string:
+  <%-
+    {
+      parse: "ParseResult[ProgramNode]",
+      lex: "ParseResult[Array[[Token, Integer]]]",
+      lex_compat: "ParseResult[Array[LexCompat::Token]]",
+      parse_lex: "ParseResult[[ProgramNode, Array[[Token, Integer]]]]",
+      dump: "String",
+      parse_comments: "Array[comment]",
+      parse_success?: "bool",
+      parse_failure?: "bool",
+    }.each do |method, return_type|
+  -%>
 
-    def copy: (**untyped) -> <%= node.name %>
-
-    def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
-    <%- node.fields.each do |field| -%>
-    <%- case field -%>
-    <%- when Prism::LocationField -%>
-    <%- raise unless field.name.end_with?("_loc") -%>
-    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
-
-    def <%= field.name.delete_suffix("_loc") %>: () -> String
-    <%- when Prism::OptionalLocationField -%>
-    <%- raise unless field.name.end_with?("_loc") -%>
-    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
-
-    def <%= field.name.delete_suffix("_loc") %>: () -> String?
-    <%- when Prism::FlagsField -%>
-    <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
-
-    def <%= value.name.downcase %>?: () -> bool
-    <%- end -%>
-    <%- end -%>
-    <%- end -%>
-
-    def inspect: (?NodeInspector inspector) -> String
-  end
+  def self.<%= method %>: (
+    String source,
+    ?filepath: String,
+    ?line: Integer,
+    ?encoding: Encoding,
+    ?frozen_string_literal: bool,
+    ?verbose: bool,
+    ?scopes: Array[Array[Symbol]]
+  ) -> <%= return_type %>
   <%- end -%>
 
-  <%- flags.each do |flag| -%>
-  # <%= flag.comment %>
-  module <%= flag.name %>
-    <%- flag.values.each_with_index do |value, index| -%>
-    # <%= value.comment %>
-    <%= value.name %>: Integer
-    <%- end -%>
-  end
+  def self.load: (
+    String source,
+    String serialized
+  ) -> ParseResult[ProgramNode]
 
+  def self.lex_ripper: (
+    String source
+  ) -> Array[[[Integer, Integer], Symbol, String, Ripper::Lexer::State]]
+
+
+  # Methods taking a path to a Ruby file:
+  <%-
+    {
+      parse_file: "ParseResult[ProgramNode]",
+      lex_file: "ParseResult[Array[[Token, Integer]]]",
+      parse_lex_file: "ParseResult[[ProgramNode, Array[[Token, Integer]]]]",
+      dump_file: "String",
+      parse_file_comments: "Array[comment]",
+      parse_file_success?: "bool",
+      parse_file_failure?: "bool",
+    }.each do |method, return_type|
+  -%>
+
+  def self.<%= method %>: (
+    String filepath,
+    ?line: Integer,
+    ?encoding: Encoding,
+    ?frozen_string_literal: bool,
+    ?verbose: bool,
+    ?scopes: Array[Array[Symbol]]
+  ) -> <%= return_type %>
   <%- end -%>
-
-  class Visitor < BasicVisitor
-    <%- nodes.each do |node| -%>
-    # Visit a <%= node.name %> node
-    def visit_<%= node.human %>: (<%= node.name %> node) -> void
-    <%= "\n" if node != nodes.last -%>
-    <%- end -%>
-  end
-
-  module DSL
-    private
-
-    # Create a new Location object
-    def Location: (?Source? source, ?Integer start_offset, ?Integer length) -> Location
-
-    <%- nodes.each do |node| -%>
-    # Create a new <%= node.name %> node
-    def <%= node.name %>: (<%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %>) -> <%= node.name %>
-    <%- end -%>
-  end
 end

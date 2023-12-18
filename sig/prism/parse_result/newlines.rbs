@@ -1,0 +1,18 @@
+module Prism
+  class ParseResult[T]
+    class Newlines < Visitor
+      @newline_marked: Array[bool]
+
+      # Create a new Newlines visitor with the given newline offsets.
+      def initialize: (Array[bool] newline_marked) -> void
+
+      def visit_block_node: (BlockNode node) -> void
+      def visit_lambda_node: (LambdaNode node) -> void
+      def visit_if_node: (IfNode node) -> void
+      def visit_unless_node: (UnlessNode node) -> void
+      def visit_statements_node: (StatementsNode node) -> void
+    end
+
+    def mark_newlines!: () -> untyped
+  end
+end

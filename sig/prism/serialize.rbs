@@ -1,0 +1,5 @@
+module Prism
+  module Serialize
+    def self.load: (String, String) -> ParseResult[ProgramNode]
+  end
+end

@@ -1,0 +1,70 @@
+module Prism
+  class Node
+    @newline: bool
+
+    attr_reader location: Location
+
+    def child_nodes: () -> Array[node?]
+    def newline?: () -> bool
+    def set_newline_flag: (Array[bool] newline_marked) -> void
+    def slice: () -> String
+    def pretty_print: (untyped q) -> untyped
+    def to_dot: () -> String
+  end
+
+  interface _NodeImpl
+    def accept: (_Visitor) -> void
+    def comment_targets: () -> Array[node | Location]
+    def compact_child_nodes: () -> Array[node]
+    def inspect: (?NodeInspector) -> String
+  end
+
+  type node = Node & _NodeImpl
+
+  <%- nodes.each do |node| -%>
+
+  <%- node.each_comment_line do |line| -%>
+  #<%= line %>
+  <%- end -%>
+  class <%= node.name -%> < Node
+    include _NodeImpl
+
+    <%- node.fields.each do |field| -%>
+    <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
+    <%- end -%>
+
+    def initialize: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["Location location"]).join(", ") %>) -> void
+    def copy: (**untyped) -> <%= node.name %>
+    alias deconstruct child_nodes
+    def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
+    <%- node.fields.each do |field| -%>
+    <%- case field -%>
+    <%- when Prism::LocationField -%>
+    <%- raise unless field.name.end_with?("_loc") -%>
+    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+    def <%= field.name.delete_suffix("_loc") %>: () -> String
+    <%- when Prism::OptionalLocationField -%>
+    <%- raise unless field.name.end_with?("_loc") -%>
+    <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+    def <%= field.name.delete_suffix("_loc") %>: () -> String?
+    <%- when Prism::FlagsField -%>
+    <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
+    def <%= value.name.downcase %>?: () -> bool
+    <%- end -%>
+    <%- end -%>
+    <%- end -%>
+    def type: () -> :<%= node.human %>
+    def self.type: () -> :<%= node.human %>
+  end
+  <%- end -%>
+  <%- flags.each do |flag| -%>
+
+  # <%= flag.comment %>
+  module <%= flag.name %>
+    <%- flag.values.each do |value| -%>
+    # <%= value.comment %>
+    <%= value.name %>: Integer
+    <%- end -%>
+  end
+  <%- end -%>
+end

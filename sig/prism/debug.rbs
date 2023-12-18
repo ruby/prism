@@ -1,0 +1,28 @@
+module Prism
+  module Debug
+    type iseq_locals = Array[Symbol | Integer]
+
+    class ISeq
+      attr_reader parts: Array[untyped]
+
+      def initialize: (Array[untyped]) -> void
+      def type: () -> String
+      def local_table: () -> iseq_locals
+      def instructions: () -> Array[untyped]
+      def each_child: () { (ISeq) -> void } -> void
+    end
+
+    def self.cruby_locals: (String source) -> Array[iseq_locals]
+
+    AnonymousLocal: Object
+
+    def self.prism_locals: (String source) -> Array[iseq_locals]
+    def self.newlines: (String source) -> Array[Integer]
+
+    # C extension
+    def self.named_captures: (String source) -> Array[String]
+    def self.memsize: (String source) -> { length: Integer, memsize: Integer, node_count: Integer }
+    def self.profile_file: (String filepath) -> nil
+    def self.inspect_node: (String source) -> String
+  end
+end

@@ -1,0 +1,13 @@
+module Prism
+  module DSL
+    private
+
+    # Create a new Location object
+    def Location: (?Source? source, ?Integer start_offset, ?Integer length) -> Location
+    <%- nodes.each do |node| -%>
+
+    # Create a new <%= node.name %> node
+    def <%= node.name %>: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["?Location location"]).join(", ") %>) -> <%= node.name %>
+    <%- end -%>
+  end
+end

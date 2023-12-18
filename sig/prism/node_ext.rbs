@@ -1,0 +1,90 @@
+module Prism
+  module RegularExpressionOptions: _NodeWithFlags
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    def options: () -> Integer
+  end
+
+  interface _NodeWithFlags
+    # TODO: this needs a private modifier but RBS throws a syntax error when defining visibility in an interface.
+    # def flags: () -> Integer
+  end
+
+  class InterpolatedMatchLastLineNode < Node
+    include RegularExpressionOptions
+  end
+
+  class InterpolatedRegularExpressionNode < Node
+    include RegularExpressionOptions
+  end
+
+  class MatchLastLineNode < Node
+    include RegularExpressionOptions
+  end
+
+  class RegularExpressionNode < Node
+    include RegularExpressionOptions
+  end
+
+  module HeredocQuery: _NodeWithOpening
+    def heredoc?: () -> bool?
+  end
+
+  interface _NodeWithOpening
+    def opening: () -> String?
+  end
+
+  class InterpolatedStringNode < Node
+    include HeredocQuery
+  end
+
+  class InterpolatedXStringNode < Node
+    include HeredocQuery
+  end
+
+  class StringNode < Node
+    include HeredocQuery
+  end
+
+  class XStringNode < Node
+    include HeredocQuery
+  end
+
+  class FloatNode < Node
+    def value: () -> Float
+  end
+
+  class ImaginaryNode < Node
+    def value: () -> Complex
+  end
+
+  class IntegerNode < Node
+    def value: () -> Integer
+  end
+
+  class RationalNode < Node
+    def value: () -> Rational
+  end
+
+  class ConstantReadNode < Node
+    def full_name_parts: () -> [Symbol]
+    def full_name: () -> String
+  end
+
+  class ConstantPathNode < Node
+    class DynamicPartsInConstantPathError < StandardError
+    end
+
+    def full_name_parts: () -> Array[Symbol]
+    def full_name: () -> String
+  end
+
+  class ConstantPathTargetNode < Node
+    def full_name_parts: () -> Array[Symbol]
+    def full_name: () -> String
+  end
+
+  class ParametersNode < Node
+    def signature: () -> Array[[:req | :opt | :rest | :keyreq | :key | :keyrest | :block, Symbol] | [:rest | :keyrest | :nokey]]
+  end
+end

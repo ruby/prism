@@ -1,0 +1,92 @@
+module Prism
+  module Pack
+    SPACE: :SPACE
+    COMMENT: :COMMENT
+    INTEGER: :INTEGER
+    UTF8: :UTF8
+    BER: :BER
+    FLOAT: :FLOAT
+    STRING_SPACE_PADDED: :STRING_SPACE_PADDED
+    STRING_NULL_PADDED: :STRING_NULL_PADDED
+    STRING_NULL_TERMINATED: :STRING_NULL_TERMINATED
+    STRING_MSB: :STRING_MSB
+    STRING_LSB: :STRING_LSB
+    STRING_HEX_HIGH: :STRING_HEX_HIGH
+    STRING_HEX_LOW: :STRING_HEX_LOW
+    STRING_UU: :STRING_UU
+    STRING_MIME: :STRING_MIME
+    STRING_BASE64: :STRING_BASE64
+    STRING_FIXED: :STRING_FIXED
+    STRING_POINTER: :STRING_POINTER
+    MOVE: :MOVE
+    BACK: :BACK
+    NULL: :NULL
+    UNSIGNED: :UNSIGNED
+    SIGNED: :SIGNED
+    SIGNED_NA: :SIGNED_NA
+    AGNOSTIC_ENDIAN: :AGNOSTIC_ENDIAN
+    LITTLE_ENDIAN: :LITTLE_ENDIAN
+    BIG_ENDIAN: :BIG_ENDIAN
+    NATIVE_ENDIAN: :NATIVE_ENDIAN
+    ENDIAN_NA: :ENDIAN_NA
+    SIZE_SHORT: :SIZE_SHORT
+    SIZE_INT: :SIZE_INT
+    SIZE_LONG: :SIZE_LONG
+    SIZE_LONG_LONG: :SIZE_LONG_LONG
+    SIZE_8: :SIZE_8
+    SIZE_16: :SIZE_16
+    SIZE_32: :SIZE_32
+    SIZE_64: :SIZE_64
+    SIZE_P: :SIZE_P
+    SIZE_NA: :SIZE_NA
+    LENGTH_FIXED: :LENGTH_FIXED
+    LENGTH_MAX: :LENGTH_MAX
+    LENGTH_RELATIVE: :LENGTH_RELATIVE
+    LENGTH_NA: :LENGTH_NA
+
+    class Directive
+      attr_reader version: Symbol
+
+      type t_variant = :pack | :unpack
+      attr_reader variant: t_variant
+
+      attr_reader source: String
+
+      type t_type = :SPACE | :COMMENT | :INTEGER | :UTF8 | :BER | :FLOAT | :STRING_SPACE_PADDED |
+        :STRING_NULL_PADDED | :STRING_NULL_TERMINATED | :STRING_MSB | :STRING_LSB | :STRING_HEX_HIGH | :STRING_HEX_LOW |
+        :STRING_UU | :STRING_MIME | :STRING_BASE64 | :STRING_FIXED | :STRING_POINTER | :MOVE | :BACK | :NULL
+      attr_reader type: t_type
+
+      type t_signed = :UNSIGNED | :SIGNED | :SIGNED_NA
+      attr_reader signed: t_signed
+
+      type t_endian = :AGNOSTIC_ENDIAN | :LITTLE_ENDIAN | :BIG_ENDIAN | :NATIVE_ENDIAN | :ENDIAN_NA
+      attr_reader endian: t_endian
+
+      type t_size = :SIZE_SHORT | :SIZE_INT | :SIZE_LONG | :SIZE_LONG_LONG | :SIZE_8 | :SIZE_16 | :SIZE_32 |
+        :SIZE_64 | :SIZE_P | :SIZE_NA
+      attr_reader size: t_size
+
+      type t_length_type = :LENGTH_FIXED | :LENGTH_MAX | :LENGTH_RELATIVE | :LENGTH_NA
+      attr_reader length_type: t_length_type
+
+      attr_reader length: Integer
+
+      def initialize: (Symbol version, t_variant variant, String source, t_type type, t_signed signed, t_endian endian, t_size size, t_length_type length_type, Integer length) -> void
+
+      ENDIAN_DESCRIPTIONS: Hash[t_endian, String]
+      SIGNED_DESCRIPTIONS: Hash[t_signed, String]
+      SIZE_DESCRIPTIONS: Hash[t_size, String]
+
+      def describe: () -> String
+    end
+
+    class Format
+      attr_reader directives: Array[Directive]
+      attr_reader encoding: Encoding
+
+      def initialize: (Array[Directive] directives, Encoding encoding) -> void
+      def describe: () -> String
+    end
+  end
+end

@@ -1,0 +1,122 @@
+module Prism
+  class Source
+    attr_reader source: String
+    attr_reader start_line: Integer
+    attr_reader offsets: Array[Integer]
+
+    def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
+    def slice: (Integer byte_offset, Integer length) -> String
+    def line: (Integer byte_offset) -> Integer
+    def line_start: (Integer byte_offset) -> Integer
+    def line_offset: (Integer byte_offset) -> Integer
+    def column: (Integer byte_offset) -> Integer
+    def character_offset: (Integer byte_offset) -> Integer
+    def character_column: (Integer byte_offset) -> Integer
+
+    private
+
+    def find_line: (Integer) -> Integer
+    def compute_offsets: (String) -> Array[Integer]
+  end
+
+  class Location
+    attr_reader source: Source
+    attr_reader start_offset: Integer
+    attr_reader length: Integer
+    attr_reader comments: Array[comment]
+
+    def initialize: (Source source, Integer start_offset, Integer length) -> void
+    def copy: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
+    def slice: () -> String
+    def start_character_offset: () -> Integer
+    def end_offset: () -> Integer
+    def end_character_offset: () -> Integer
+    def start_line: () -> Integer
+    def start_line_slice: () -> String
+    def end_line: () -> Integer
+    def start_column: () -> Integer
+    def start_character_column: () -> Integer
+    def end_column: () -> Integer
+    def end_character_column: () -> Integer
+    def deconstruct_keys: (Array[Symbol] keys) -> { start_offset: Integer, end_offset: Integer }
+    def pretty_print: (untyped q) -> untyped
+    def join: (Location other) -> Location
+
+    def self.null: () -> Location
+  end
+
+  class Comment
+    attr_reader location: Location
+
+    def initialize: (Location location) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { location: Location }
+  end
+
+  interface _CommentImpl
+    def trailing?: () -> bool
+  end
+
+  type comment = Comment & _CommentImpl
+
+  class InlineComment < Comment
+    include _CommentImpl
+  end
+
+  class EmbDocComment < Comment
+    include _CommentImpl
+  end
+
+  class MagicComment
+    attr_reader key_loc: Location
+    attr_reader value_loc: Location
+
+    def initialize: (Location key_loc, Location value_loc) -> void
+
+    def key: () -> String
+    def value: () -> String
+
+    def deconstruct_keys: (Array[Symbol] keys) -> { key_loc: Location, value_loc: Location }
+  end
+
+  class ParseError
+    attr_reader message: String
+    attr_reader location: Location
+
+    def initialize: (String message, Location location) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location }
+  end
+
+  class ParseWarning
+    attr_reader message: String
+    attr_reader location: Location
+
+    def initialize: (String message, Location location) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location }
+  end
+
+  class ParseResult[T]
+    attr_reader value: T
+    attr_reader comments: Array[comment]
+    attr_reader magic_comments: Array[MagicComment]
+    attr_reader data_loc: Location?
+    attr_reader errors: Array[ParseError]
+    attr_reader warnings: Array[ParseWarning]
+    attr_reader source: Source
+
+    def initialize: (T value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { value: T, comments: Array[comment], magic_comments: Array[MagicComment], data_loc: Location?, errors: Array[ParseError], warnings: Array[ParseWarning] }
+    def success?: () -> bool
+    def failure?: () -> bool
+  end
+
+  class Token
+    attr_reader type: Symbol
+    attr_reader value: String
+    attr_reader location: Location
+
+    def initialize: (Symbol type, String value, Location location) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { type: Symbol, value: String, location: Location }
+    def pretty_print: (untyped q) -> untyped
+    def ==: (untyped other) -> bool
+  end
+end

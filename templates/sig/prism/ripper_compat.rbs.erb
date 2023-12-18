@@ -1,0 +1,72 @@
+<%- require "ripper" -%>
+module Prism
+  class RipperCompat < Visitor
+    class SexpBuilder < RipperCompat
+      def parse: () -> Array[untyped]
+
+      private
+
+      <%- Ripper::PARSER_EVENTS.each do |event| -%>
+      def on_<%= event %>: (*untyped) -> Array[untyped]
+      <%- end -%>
+
+      <%- Ripper::SCANNER_EVENTS.each do |event| -%>
+      def on_<%= event %>: (untyped) -> [<%= :"@#{event}".inspect %>, untyped, [Integer, Integer]]
+      <%- end -%>
+    end
+
+    class SexpBuilderPP < SexpBuilder
+      private
+
+      def _dispatch_event_new: () -> Array[untyped]
+      def _dispatch_event_push: (Array[untyped], untyped) -> Array[untyped]
+
+      <%- Ripper::PARSER_EVENT_TABLE.each do |event, arity| -%>
+      <%- if event =~ /_new\z/ -%>
+      alias on_<%= event %> _dispatch_event_new
+      <%- elsif event =~ /_add\z/ -%>
+      alias on_<%= event %> _dispatch_event_push
+      <%- end -%>
+      <%- end -%>
+    end
+
+    attr_reader source: String
+    attr_reader lineno: Integer?
+    attr_reader column: Integer?
+
+    def initialize: (String) -> void
+
+    def error?: () -> bool
+    def parse: () -> untyped
+
+    def visit_call_node: (CallNode) -> untyped
+    def visit_float_node: (FloatNode) -> untyped
+    def visit_imaginary_node: (ImaginaryNode) -> untyped
+    def visit_integer_node: (IntegerNode) -> untyped
+    def visit_rational_node: (RationalNode) -> untyped
+    def visit_statements_node: (StatementsNode) -> untyped
+    def visit_program_node: (ProgramNode) -> untyped
+
+    def self.sexp_raw: (String) -> Array[untyped]
+    def self.sexp: (String) -> Array[untyped]
+
+    private
+
+    @result: ParseResult[ProgramNode] | nil
+
+    def bounds: (Location) -> untyped
+    def result: () -> ParseResult[ProgramNode]
+
+    def _dispatch0: () -> void
+    def _dispatch1: (untyped) -> void
+    def _dispatch2: (untyped, untyped) -> void
+    def _dispatch3: (untyped, untyped, untyped) -> void
+    def _dispatch4: (untyped, untyped, untyped, untyped) -> void
+    def _dispatch5: (untyped, untyped, untyped, untyped, untyped) -> void
+    def _dispatch7: (untyped, untyped, untyped, untyped, untyped, untyped, untyped) -> void
+
+    <%- (Ripper::SCANNER_EVENT_TABLE.merge(Ripper::PARSER_EVENT_TABLE)).each do |event, arity| -%>
+    alias on_<%= event %> _dispatch<%= arity %>
+    <%- end -%>
+  end
+end

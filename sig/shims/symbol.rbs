@@ -1,0 +1,4 @@
+class Symbol
+  # Returns a frozen string representation of self (not including the leading colon):
+  def name: () -> String
+end

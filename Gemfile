@@ -17,6 +17,7 @@ group :memcheck do
 end
 
 gem "rbs", platform: platforms
+gem "steep", platforms: platforms
 gem "parser", platform: platforms
 gem "ruby_parser", platform: platforms
 gem "benchmark-ips"
