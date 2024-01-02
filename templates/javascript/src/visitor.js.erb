@@ -12,7 +12,7 @@ export class BasicVisitor {
    * Calls `accept` on the given node if it is not `null`, which in turn should
    * call back into this visitor by calling the appropriate `visit*` method.
    *
-   * @param {Node} node
+   * @param {nodes.Node} node
    */
   visit(node) {
     node?.accept(this);
@@ -21,7 +21,7 @@ export class BasicVisitor {
   /**
    * Visits each node in `nodes` by calling `accept` on each one.
    *
-   * @param {Node[]} node
+   * @param {nodes.Node[]} nodes
    */
   visitAll(nodes) {
     nodes.forEach((node) => {
@@ -32,7 +32,7 @@ export class BasicVisitor {
   /**
    * Visits the child nodes of `node` by calling `accept` on each one.
    *
-   * @param {Node} node
+   * @param {nodes.Node} node
    */
   visitChildNodes(node) {
     node.compactChildNodes().forEach((childNode) => {
