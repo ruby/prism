@@ -2126,7 +2126,7 @@ nodes:
       parameters within a block or lambda.
 
           -> { _1 + _2 }
-          ^^^^^^^^^^^^^^
+               ^^   ^^
   - name: NumberedReferenceReadNode
     fields:
       - name: number
