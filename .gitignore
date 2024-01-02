@@ -34,7 +34,7 @@ out.svg
 /javascript/src/nodes.js
 /javascript/src/visitor.js
 /javascript/src/prism.wasm
-/javascript/types/
+/javascript/src/*.d.ts
 /java/org/prism/AbstractNodeVisitor.java
 /java/org/prism/Loader.java
 /java/org/prism/Nodes.java
