@@ -204,8 +204,19 @@ public abstract class Nodes {
         public final int serializedLength;
         <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
+        <%- if field.class.name.include?('Optional') or field.comment -%>
+        /**
         <%- if field.class.name.include?('Optional') -%>
-        /** optional (can be null) */
+         * optional (can be null)
+        <%- end -%>
+        <%- if field.comment -%>
+         * <pre>
+        <%- field.each_comment_line do |line| -%>
+         *<%= line %>
+        <%- end -%>
+         * </pre>
+        <%- end -%>
+         */
         <%- end -%>
         public final <%= field.java_type %> <%= field.name %>;
         <%- end -%>
