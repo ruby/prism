@@ -4,6 +4,10 @@ package org.prism;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.StringBuilder;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +18,11 @@ public abstract class Nodes {
 
     public static final byte[][] EMPTY_BYTE_ARRAY_ARRAY = {};
     public static final <%= string_type %>[] EMPTY_STRING_ARRAY = {};
+
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Nullable {
+    }
 
     public static final class Location {
 
@@ -204,19 +213,17 @@ public abstract class Nodes {
         public final int serializedLength;
         <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
-        <%- if field.class.name.include?('Optional') or field.comment -%>
-        /**
-        <%- if field.class.name.include?('Optional') -%>
-         * optional (can be null)
-        <%- end -%>
         <%- if field.comment -%>
+        /**
          * <pre>
         <%- field.each_comment_line do |line| -%>
          *<%= line %>
         <%- end -%>
          * </pre>
-        <%- end -%>
          */
+        <%- end -%>
+        <%- if field.class.name.include?('Optional') -%>
+        @Nullable
         <%- end -%>
         public final <%= field.java_type %> <%= field.name %>;
         <%- end -%>
