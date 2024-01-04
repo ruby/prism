@@ -431,10 +431,25 @@ nodes:
     fields:
       - name: new_name
         type: node
+        comment: |
+          Represents a GlobalVariableReadNode.
+
+              alias $foo $bar
+                    ^^^^
       - name: old_name
         type: node
+        comment: |
+          Represents a GlobalVariableReadNode.
+
+              alias $foo $bar
+                         ^^^^
       - name: keyword_loc
         type: location
+        comment: |
+          The location of the `alias` keyword.
+
+              alias $foo $bar
+              ^^^^^
     comment: |
       Represents the use of the `alias` keyword to alias a global variable.
 
