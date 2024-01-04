@@ -496,12 +496,20 @@ nodes:
       - name: flags
         type: flags
         kind: ArrayNodeFlags
+        comment: |
+          Represents whether or not there is a splat operator in the array.
       - name: elements
         type: node[]
+        comment: |
+          Represent list of elements in the array.
       - name: opening_loc
         type: location?
+        comment: |
+          Represents optional source location for opening token.
       - name: closing_loc
         type: location?
+        comment: |
+          Represents optional source location for closing token.
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -2494,6 +2502,8 @@ nodes:
     fields:
       - name: filepath
         type: string
+        comment: |
+          Represents the name of the file being parsed.
     comment: |
       Represents the use of the `__FILE__` keyword.
 
