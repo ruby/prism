@@ -53,12 +53,12 @@ out.svg
 /src/token_type.c
 /src/**/*.o
 /sig/prism.rbs
-/sig/prism/dot_visitor.rbs
 /sig/prism/dsl.rbs
 /sig/prism/mutation_compiler.rbs
 /sig/prism/node.rbs
-/sig/prism/ripper_compat.rbs
 /sig/prism/visitor.rbs
+/sig/prism/_private/dot_visitor.rbs
+/sig/prism/_private/ripper_compat.rbs
 /rbi/prism.rbi
 
 compile_commands.json

@@ -1,25 +1,25 @@
 module Prism
   class Node
-    @newline: bool
-
     attr_reader location: Location
 
-    def child_nodes: () -> Array[node?]
-    def newline?: () -> bool
-    def set_newline_flag: (Array[bool] newline_marked) -> void
+    def child_nodes: () -> Array[Prism::node?]
     def slice: () -> String
     def pretty_print: (untyped q) -> untyped
     def to_dot: () -> String
   end
 
-  interface _NodeImpl
+  # Methods implemented by every subclass of Node
+  interface _Node
     def accept: (_Visitor) -> void
-    def comment_targets: () -> Array[node | Location]
-    def compact_child_nodes: () -> Array[node]
+    def deconstruct: () -> Array[Prism::node?]
+    def compact_child_nodes: () -> Array[Prism::node]
+    def comment_targets: () -> Array[Prism::node | Location]
+
     def inspect: (?NodeInspector) -> String
+    def type: () -> Symbol
   end
 
-  type node = Node & _NodeImpl
+  type node = Node & _Node
 
   <%- nodes.each do |node| -%>
 
@@ -27,15 +27,14 @@ module Prism
   #<%= line %>
   <%- end -%>
   class <%= node.name -%> < Node
-    include _NodeImpl
+    include _Node
 
     <%- node.fields.each do |field| -%>
     <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
     def initialize: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["Location location"]).join(", ") %>) -> void
-    def copy: (**untyped) -> <%= node.name %>
-    alias deconstruct child_nodes
+    def copy: (<%= (node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" } + ["?location: Location"]).join(", ") %>) -> <%= node.name %>
     def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
     <%- node.fields.each do |field| -%>
     <%- case field -%>
@@ -54,6 +53,7 @@ module Prism
     <%- end -%>
     <%- end -%>
     def type: () -> :<%= node.human %>
+            | ...
     def self.type: () -> :<%= node.human %>
   end
   <%- end -%>

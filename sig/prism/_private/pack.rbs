@@ -1,0 +1,69 @@
+module Prism
+  module Pack
+    SPACE: :SPACE
+    COMMENT: :COMMENT
+    INTEGER: :INTEGER
+    UTF8: :UTF8
+    BER: :BER
+    FLOAT: :FLOAT
+    STRING_SPACE_PADDED: :STRING_SPACE_PADDED
+    STRING_NULL_PADDED: :STRING_NULL_PADDED
+    STRING_NULL_TERMINATED: :STRING_NULL_TERMINATED
+    STRING_MSB: :STRING_MSB
+    STRING_LSB: :STRING_LSB
+    STRING_HEX_HIGH: :STRING_HEX_HIGH
+    STRING_HEX_LOW: :STRING_HEX_LOW
+    STRING_UU: :STRING_UU
+    STRING_MIME: :STRING_MIME
+    STRING_BASE64: :STRING_BASE64
+    STRING_FIXED: :STRING_FIXED
+    STRING_POINTER: :STRING_POINTER
+    MOVE: :MOVE
+    BACK: :BACK
+    NULL: :NULL
+    UNSIGNED: :UNSIGNED
+    SIGNED: :SIGNED
+    SIGNED_NA: :SIGNED_NA
+    AGNOSTIC_ENDIAN: :AGNOSTIC_ENDIAN
+    LITTLE_ENDIAN: :LITTLE_ENDIAN
+    BIG_ENDIAN: :BIG_ENDIAN
+    NATIVE_ENDIAN: :NATIVE_ENDIAN
+    ENDIAN_NA: :ENDIAN_NA
+    SIZE_SHORT: :SIZE_SHORT
+    SIZE_INT: :SIZE_INT
+    SIZE_LONG: :SIZE_LONG
+    SIZE_LONG_LONG: :SIZE_LONG_LONG
+    SIZE_8: :SIZE_8
+    SIZE_16: :SIZE_16
+    SIZE_32: :SIZE_32
+    SIZE_64: :SIZE_64
+    SIZE_P: :SIZE_P
+    SIZE_NA: :SIZE_NA
+    LENGTH_FIXED: :LENGTH_FIXED
+    LENGTH_MAX: :LENGTH_MAX
+    LENGTH_RELATIVE: :LENGTH_RELATIVE
+    LENGTH_NA: :LENGTH_NA
+
+    class Directive
+      ENDIAN_DESCRIPTIONS: Hash[endianness, String]
+      SIGNED_DESCRIPTIONS: Hash[signness, String]
+      SIZE_DESCRIPTIONS: Hash[size, String]
+
+      def initialize: (
+        Symbol version,
+        variant variant,
+        String source,
+        directive_type type,
+        signness signed,
+        endianness endian,
+        size size,
+        length_type length_type,
+        Integer length
+      ) -> void
+    end
+
+    class Format
+      def initialize: (Array[Directive] directives, Encoding encoding) -> void
+    end
+  end
+end

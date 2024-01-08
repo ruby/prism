@@ -2,8 +2,8 @@ module Prism
   class Compiler
     include _Visitor
 
-    def visit: (node?) -> untyped
-    def visit_all: (Array[node?]) -> untyped
-    def visit_child_nodes: (node) -> void
+    def visit: (Prism::node?) -> untyped
+    def visit_all: (Array[Prism::node?]) -> untyped
+    def visit_child_nodes: (Prism::node) -> void
   end
 end

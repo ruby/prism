@@ -1,5 +1,15 @@
 module Prism
-  class ParseResult[T]
+  class Source
+    private
+
+    def find_line: (Integer) -> Integer
+    def compute_offsets: (String) -> Array[Integer]
+  end
+
+  class ParseResult[out T]
+    def attach_comments!: () -> void
+    def mark_newlines!: () -> untyped
+
     class Comments
       interface _Target
         def start_offset: () -> Integer
@@ -34,6 +44,17 @@ module Prism
       def nearest_targets: (Prism::node, comment) -> (untyped | ::Array[untyped])
     end
 
-    def attach_comments!: () -> void
+    class Newlines < Visitor
+      @newline_marked: Array[bool]
+
+      # Create a new Newlines visitor with the given newline offsets.
+      def initialize: (Array[bool] newline_marked) -> void
+
+      def visit_block_node: (BlockNode node) -> void
+      def visit_lambda_node: (LambdaNode node) -> void
+      def visit_if_node: (IfNode node) -> void
+      def visit_unless_node: (UnlessNode node) -> void
+      def visit_statements_node: (StatementsNode node) -> void
+    end
   end
 end

@@ -1,22 +1,22 @@
+use RubyVM::InstructionSequence as ISeq # See sig/_shims/ruby_vm.rbs
+
 module Prism
   module Debug
-    type iseq_locals = Array[Symbol | Integer]
-
     class ISeq
-      attr_reader parts: Array[untyped]
+      attr_reader parts: ISeq::tuple
 
-      def initialize: (Array[untyped]) -> void
-      def type: () -> String
-      def local_table: () -> iseq_locals
+      def initialize: (ISeq::tuple) -> void
+      def type: () -> "YARVInstructionSequence/SimpleDataFormat"
+      def local_table: () -> ISeq::locals
       def instructions: () -> Array[untyped]
       def each_child: () { (ISeq) -> void } -> void
     end
 
-    def self.cruby_locals: (String source) -> Array[iseq_locals]
+    def self.cruby_locals: (String source) -> Array[ISeq::locals]
 
     AnonymousLocal: Object
 
-    def self.prism_locals: (String source) -> Array[iseq_locals]
+    def self.prism_locals: (String source) -> Array[ISeq::locals]
     def self.newlines: (String source) -> Array[Integer]
 
     # C extension

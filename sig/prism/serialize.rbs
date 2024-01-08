@@ -1,5 +1,7 @@
 module Prism
   module Serialize
     def self.load: (String, String) -> ParseResult[ProgramNode]
+
+    def self.load_tokens: (Source, String) -> ParseResult[Array[Token]]   # TODO: check if array[token] is right
   end
 end

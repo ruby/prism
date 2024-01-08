@@ -1,0 +1,32 @@
+class RubyVM
+  class InstructionSequence
+    type locals = Array[Symbol | Integer]
+
+    type tuple = [
+      "YARVInstructionSequence/SimpleDataFormat", # magic
+      Integer, # major_version
+      Integer, # minor_version
+      Integer, # format_type
+      Hash[Symbol, Integer | Array[Integer]], # misc
+      String, # name
+      String, # relative_path
+      String?, # absolute_path
+      Integer, # first_lineno
+      :top | :method | :block | :class | :rescue | :ensure | :eval | :main | :plain, # type
+      locals, # locals
+      Hash[Symbol, untyped], # params
+      Array[untyped], # catch_table
+      Array[untyped] # bytecode
+    ]
+
+    def self.compile: (
+      String source,
+      ?String? file,
+      ?String? path,
+      ?Integer line,
+      ?Hash[Symbol, bool | Integer] | bool | nil options
+    ) -> instance
+
+    def to_a: () -> tuple
+  end
+end

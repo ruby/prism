@@ -1,53 +1,46 @@
 module Prism
-  module RegularExpressionOptions: _NodeWithFlags
+  class InterpolatedMatchLastLineNode < Node
     # Returns a numeric value that represents the flags that were used to create
     # the regular expression.
     def options: () -> Integer
   end
 
-  interface _NodeWithFlags
-    # TODO: this needs a private modifier but RBS throws a syntax error when defining visibility in an interface.
-    # def flags: () -> Integer
-  end
-
-  class InterpolatedMatchLastLineNode < Node
-    include RegularExpressionOptions
-  end
-
   class InterpolatedRegularExpressionNode < Node
-    include RegularExpressionOptions
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    def options: () -> Integer
   end
 
   class MatchLastLineNode < Node
-    include RegularExpressionOptions
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    def options: () -> Integer
   end
 
   class RegularExpressionNode < Node
-    include RegularExpressionOptions
-  end
-
-  module HeredocQuery: _NodeWithOpening
-    def heredoc?: () -> bool?
-  end
-
-  interface _NodeWithOpening
-    def opening: () -> String?
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    def options: () -> Integer
   end
 
   class InterpolatedStringNode < Node
-    include HeredocQuery
+    # Returns true if this node was represented as a heredoc in the source code.
+    def heredoc?: () -> bool?
   end
 
   class InterpolatedXStringNode < Node
-    include HeredocQuery
+    # Returns true if this node was represented as a heredoc in the source code.
+    def heredoc?: () -> bool?
   end
 
   class StringNode < Node
-    include HeredocQuery
+    # Returns true if this node was represented as a heredoc in the source code.
+    def heredoc?: () -> bool?
   end
 
   class XStringNode < Node
-    include HeredocQuery
+    # Returns true if this node was represented as a heredoc in the source code.
+    def heredoc?: () -> bool?
   end
 
   class FloatNode < Node
@@ -85,6 +78,6 @@ module Prism
   end
 
   class ParametersNode < Node
-    def signature: () -> Array[[:req | :opt | :rest | :keyreq | :key | :keyrest | :block, Symbol] | [:rest | :keyrest | :nokey]]
+    def signature: () -> Array[[:req | :opt | :rest | :keyreq | :key | :keyrest | :block, Symbol] | [:req | :rest | :keyrest | :nokey]]
   end
 end

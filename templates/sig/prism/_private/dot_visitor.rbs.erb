@@ -33,12 +33,9 @@ module Prism
 
     attr_reader digraph: Digraph
 
-    def initialize: () -> void
-    def to_dot: () -> String
-
     private
 
-    def node_id: (Node node) -> String
+    def node_id: (Prism::node node) -> String
     def location_inspect: (Location location) -> String
 
     <%- flags.each do |flag| -%>

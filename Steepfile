@@ -1,23 +1,19 @@
 # frozen_string_literal: true
 
-D = Steep::Diagnostic
-
 target :lib do
   signature "sig"
 
-  check "lib"
-
-  ignore "lib/prism/serialize.rb"
-  ignore "lib/prism/ffi.rb"
-
-  library "ripper"
+  # Tell Steep about stdlib require's
+  library "ripper" # RipperCompat
+  library "delegate"  # LexCompat
   library "cgi"  # DotVisitor
 
-  # configure_code_diagnostics(D::Ruby.default)      # `default` diagnostics setting (applies by default)
-  # configure_code_diagnostics(D::Ruby.strict)       # `strict` diagnostics setting
-  # configure_code_diagnostics(D::Ruby.lenient)      # `lenient` diagnostics setting
-  # configure_code_diagnostics(D::Ruby.silent)       # `silent` diagnostics setting
-  # configure_code_diagnostics do |hash|             # You can setup everything yourself
-  #   hash[D::Ruby::NoMethod] = :information
-  # end
+  check "lib"
+
+  # TODO: Type-checking these files is still WIP
+  ignore "lib/prism/debug.rb"
+  ignore "lib/prism/desugar_compiler.rb"
+  ignore "lib/prism/lex_compat.rb"
+  ignore "lib/prism/serialize.rb"
+  ignore "lib/prism/ffi.rb"
 end

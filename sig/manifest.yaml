@@ -2,4 +2,3 @@
 # the gemspec.
 dependencies:
   - name: ripper
-  - name: cgi
