@@ -431,10 +431,25 @@ nodes:
     fields:
       - name: new_name
         type: node
+        comment: |
+          The value of the new global variable name
+
+            alias $foo $bar
+                  ^^^^
       - name: old_name
         type: node
+        comment: |
+          The value of the existing global variable name
+
+            alias $foo $bar
+                       ^^^^
       - name: keyword_loc
         type: location
+        comment: |
+          The location of the `alias` keyword
+
+            alias $foo $bar
+            ^^^^^
     comment: |
       Represents the use of the `alias` keyword to alias a global variable.
 
@@ -444,10 +459,25 @@ nodes:
     fields:
       - name: new_name
         type: node
+        comment: |
+          The value of the new method name
+
+            alias foo bar
+                  ^^^
       - name: old_name
         type: node
+        comment: |
+          The value of the existing method name
+
+            alias foo bar
+                      ^^^
       - name: keyword_loc
         type: location
+        comment: |
+          The location of the `alias` keyword
+
+            alias foo bar
+            ^^^^^
     comment: |
       Represents the use of the `alias` keyword to alias a method.
 
