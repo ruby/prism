@@ -2,7 +2,7 @@
 
 namespace :typecheck do
   desc "Typecheck with Steep"
-  task :steep do
+  task steep: :compile do
     require 'steep'
     require 'steep/cli'
 
