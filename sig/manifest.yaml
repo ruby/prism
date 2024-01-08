@@ -1,4 +1,0 @@
-# For users of the Prism gem who use RBS, inform `rbs collection' of stdlib dependencies, since they do not appear in
-# the gemspec.
-dependencies:
-  - name: ripper

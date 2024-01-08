@@ -68,6 +68,9 @@ module Prism
     class DynamicPartsInConstantPathError < StandardError
     end
 
+    class MissingNodesInConstantPathError < StandardError
+    end
+
     def full_name_parts: () -> Array[Symbol]
     def full_name: () -> String
   end
@@ -78,6 +81,6 @@ module Prism
   end
 
   class ParametersNode < Node
-    def signature: () -> Array[[:req | :opt | :rest | :keyreq | :key | :keyrest | :block, Symbol] | [:req | :rest | :keyrest | :nokey]]
+    def signature: () -> Array[[Symbol, Symbol] | [Symbol]]
   end
 end
