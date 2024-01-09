@@ -15,7 +15,7 @@ module Prism
     def compact_child_nodes: () -> Array[Prism::node]
     def comment_targets: () -> Array[Prism::node | Location]
 
-    def inspect: (?NodeInspector) -> String
+    def inspect: (?untyped) -> String
     def type: () -> Symbol
   end
 

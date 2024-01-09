@@ -7,7 +7,7 @@ module Prism
     {
       parse: "ParseResult[ProgramNode]",
       lex: "ParseResult[Array[[Token, Integer]]]",
-      lex_compat: "ParseResult[Array[LexCompat::Token]]",
+      lex_compat: "ParseResult[Array[[[Integer, Integer], Symbol, String, untyped]]]",
       parse_lex: "ParseResult[[ProgramNode, Array[[Token, Integer]]]]",
       dump: "String",
       parse_comments: "Array[comment]",
