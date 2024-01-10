@@ -1808,12 +1808,41 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the instance variable, including the leading `@`. Variable
+          names begin with an underscore, alphabetical, or non-ASCII character,
+          followed by arbitrarily many underscones, alphanumeric or non-ASCII
+          characters. The exact definitions of "alphabetical" and "alphanumeric"
+          are encoding-dependent.
+
+              @x = :y       # name `:@x`
+
+              @_foo = "bar" # name `@_foo`
       - name: name_loc
         type: location
+        comment: |
+          The location of the variable name.
+
+              @_x = 1
+              ^^^
       - name: value
         type: node
+        comment: |
+          The value to assign to the instance variable. Can be any node that
+          represents a non-void expression.
+
+              @foo = :bar
+                     ^^^^
+
+              @_x = 1234
+                    ^^^^
       - name: operator_loc
         type: location
+        comment: |
+          The location of the `=` operator.
+
+              @x = y
+                 ^
     comment: |
       Represents writing to an instance variable.
 
