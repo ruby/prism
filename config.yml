@@ -1036,7 +1036,7 @@ nodes:
       - name: value
         type: node
       - name: operator_loc
-        type: location?
+        type: location
     comment: |
       Represents writing to a class variable.
 
