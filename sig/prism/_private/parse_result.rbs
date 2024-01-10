@@ -6,6 +6,12 @@ module Prism
     def compute_offsets: (String) -> Array[Integer]
   end
 
+  class Location
+    private
+
+    def source!: () -> Source
+  end
+
   class ParseResult[out T]
     def attach_comments!: () -> void
     def mark_newlines!: () -> untyped
