@@ -12,3 +12,4 @@ group :memcheck do
   gem "ruby_memcheck", platform: %i[mri mswin mingw x64_mingw]
 end
 gem "rbs", platform: %i[mri mswin mingw x64_mingw]
+gem "parser"
