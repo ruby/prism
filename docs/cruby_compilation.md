@@ -1,6 +1,6 @@
 # Compiling Prism's AST
 
-One important class of consumers of Prism's AST is compilers. Currently, JRuby, TruffleRuby and CRuby have all build compilation code on top of Prism's AST.
+One important class of consumers of Prism's AST is compilers. Currently, JRuby, TruffleRuby and CRuby have all built compilation code on top of Prism's AST.
 
 This document will describe, at a high level, how CRuby's compilation of Prism's AST works.
 
