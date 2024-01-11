@@ -18,7 +18,7 @@ Once the AST has been created, it is recursively descended in order to compute t
 
 The code for this step is almost exclusively in [`prism_compile.c`](https://github.com/ruby/ruby/blob/master/prism_compile.c). The main function used for compilation is `pm_compile_node` which is essentially a huge switch statement over practically every node type which computes the appropriate instruction sequences for that node type. There are several convenience helpers, such as `PM_COMPILE`, `PM_COMPILE_POPPED`, `PM_COMPILE_NOT_POPPED` which all call into the `pm_compile_node` function.
 
-There are also several functions, like `parse_string`, `parse_integer` which consumer Prism nodes and return CRuby values. These are all called for their relevant types within the big switch statement.
+There are also several functions, like `parse_string`, `parse_integer` which consume Prism nodes and return CRuby values. These are all called for their relevant types within the big switch statement.
 
 The Prism compiler also uses a concept of "scope nodes" which are not standard Prism nodes in the AST, but instead nodes constructed within the compiler for the sole purpose of making compilation easier. Scope nodes are defined in [`prism_compile.h`](https://github.com/ruby/ruby/blob/master/prism_compile.h) and store information such as locals, local table size, local depth offset and the index lookup tables. Scope nodes can be generated for node types which have their own "scope".
 
