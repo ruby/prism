@@ -41,9 +41,11 @@ pm_serialize_string(pm_parser_t *parser, pm_string_t *string, pm_buffer_t *buffe
             pm_buffer_append_bytes(buffer, pm_string_source(string), length);
             break;
         }
+#ifndef PRISM_NO_MEMORY_MAP
         case PM_STRING_MAPPED:
             assert(false && "Cannot serialize mapped strings.");
             break;
+#endif
     }
 }
 

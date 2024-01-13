@@ -72,3 +72,13 @@ and links to `libprism.a` (to avoid exporting symbols, so no conflict when insta
 ### Building prism as part of JRuby
 
 TODO, probably similar to TruffleRuby.
+
+### Building prism for cross-platform
+
+Prism is designed to be portable though, a simple build fails for a platform that doesn't support a memory map interface such as `mmap(2)`.
+Defining `PRISM_NO_MEMORY_MAP` constant macro excludes those functions from the build.
+
+For instance, the commands below demonstrate how to build `libprism.a` targeting the Arm Cortex-M0+ embedded system:
+
+* `templates/template.rb`
+* `CFLAGS="-mcpu=cortex-m0plus -DPRISM_NO_MEMORY_MAP" make static CC=arm-none-eabi-gcc`

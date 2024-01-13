@@ -58,6 +58,7 @@ pm_string_constant_init(pm_string_t *string, const char *source, size_t length) 
  * `MapViewOfFile`, on POSIX systems that have access to `mmap` we'll use
  * `mmap`, and on other POSIX systems we'll use `read`.
  */
+#ifndef PRISM_NO_MEMORY_MAP
 bool
 pm_string_mapped_init(pm_string_t *string, const char *filepath) {
 #ifdef _WIN32
@@ -144,6 +145,7 @@ pm_string_mapped_init(pm_string_t *string, const char *filepath) {
     return true;
 #endif
 }
+#endif /* PRISM_NO_MEMORY_MAP */
 
 /**
  * Returns the memory size associated with the string.
@@ -200,11 +202,13 @@ pm_string_free(pm_string_t *string) {
 
     if (string->type == PM_STRING_OWNED) {
         free(memory);
+#ifndef PRISM_NO_MEMORY_MAP
     } else if (string->type == PM_STRING_MAPPED && string->length) {
 #if defined(_WIN32)
         UnmapViewOfFile(memory);
 #else
         munmap(memory, string->length);
+#endif
 #endif
     }
 }

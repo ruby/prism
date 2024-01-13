@@ -15,6 +15,7 @@
 #include <string.h>
 
 // The following headers are necessary to read files using demand paging.
+#ifndef PRISM_NO_MEMORY_MAP
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -22,6 +23,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 #endif
 
 /**
@@ -45,8 +47,10 @@ typedef struct {
         /** This string owns its memory, and should be freed using `pm_string_free`. */
         PM_STRING_OWNED,
 
+#ifndef PRISM_NO_MEMORY_MAP
         /** This string is a memory-mapped file, and should be freed using `pm_string_free`. */
         PM_STRING_MAPPED
+#endif
     } type;
 } pm_string_t;
 
@@ -106,7 +110,9 @@ void pm_string_constant_init(pm_string_t *string, const char *source, size_t len
  * @param filepath The filepath to read.
  * @return Whether or not the file was successfully mapped.
  */
+#ifndef PRISM_NO_MEMORY_MAP
 PRISM_EXPORTED_FUNCTION bool pm_string_mapped_init(pm_string_t *string, const char *filepath);
+#endif
 
 /**
  * Returns the memory size associated with the string.
