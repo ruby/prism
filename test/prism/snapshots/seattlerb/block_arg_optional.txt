@@ -4,7 +4,7 @@
     @ StatementsNode (location: (1,0)-(1,13))
     └── body: (length: 1)
         └── @ CallNode (location: (1,0)-(1,13))
-            ├── flags: ∅
+            ├── flags: ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
             ├── name: :a
@@ -23,6 +23,7 @@
                 │   │   ├── requireds: (length: 0)
                 │   │   ├── optionals: (length: 1)
                 │   │   │   └── @ OptionalParameterNode (location: (1,5)-(1,10))
+                │   │   │       ├── flags: ∅
                 │   │   │       ├── name: :b
                 │   │   │       ├── name_loc: (1,5)-(1,6) = "b"
                 │   │   │       ├── operator_loc: (1,7)-(1,8) = "="

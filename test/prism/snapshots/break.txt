@@ -129,7 +129,7 @@
         │   ├── flags: ∅
         │   ├── receiver:
         │   │   @ CallNode (location: (23,0)-(23,16))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: ignore_visibility
         │   │   ├── receiver: ∅
         │   │   ├── call_operator_loc: ∅
         │   │   ├── name: :foo
@@ -171,7 +171,7 @@
             ├── flags: ∅
             ├── receiver:
             │   @ CallNode (location: (25,0)-(25,17))
-            │   ├── flags: ∅
+            │   ├── flags: ignore_visibility
             │   ├── receiver: ∅
             │   ├── call_operator_loc: ∅
             │   ├── name: :foo
@@ -189,6 +189,7 @@
             │       │   │   @ ParametersNode (location: (25,7)-(25,8))
             │       │   │   ├── requireds: (length: 1)
             │       │   │   │   └── @ RequiredParameterNode (location: (25,7)-(25,8))
+            │       │   │   │       ├── flags: ∅
             │       │   │   │       └── name: :a
             │       │   │   ├── optionals: (length: 0)
             │       │   │   ├── rest: ∅

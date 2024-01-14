@@ -15,6 +15,7 @@
         │   │   │   @ ParametersNode (location: (2,2)-(2,5))
         │   │   │   ├── requireds: (length: 1)
         │   │   │   │   └── @ RequiredParameterNode (location: (2,2)-(2,5))
+        │   │   │   │       ├── flags: ∅
         │   │   │   │       └── name: :foo
         │   │   │   ├── optionals: (length: 0)
         │   │   │   ├── rest: ∅
@@ -42,6 +43,7 @@
         │   │   │   ├── posts: (length: 0)
         │   │   │   ├── keywords: (length: 1)
         │   │   │   │   └── @ OptionalKeywordParameterNode (location: (5,3)-(5,13))
+        │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── name: :x
         │   │   │   │       ├── name_loc: (5,3)-(5,5) = "x:"
         │   │   │   │       └── value:
@@ -60,7 +62,7 @@
         │   │   │   │           │       │   @ StatementsNode (location: (5,10)-(5,11))
         │   │   │   │           │       │   └── body: (length: 1)
         │   │   │   │           │       │       └── @ CallNode (location: (5,10)-(5,11))
-        │   │   │   │           │       │           ├── flags: variable_call
+        │   │   │   │           │       │           ├── flags: variable_call, ignore_visibility
         │   │   │   │           │       │           ├── receiver: ∅
         │   │   │   │           │       │           ├── call_operator_loc: ∅
         │   │   │   │           │       │           ├── name: :a
@@ -93,6 +95,7 @@
         │   │   │   ├── posts: (length: 0)
         │   │   │   ├── keywords: (length: 1)
         │   │   │   │   └── @ OptionalKeywordParameterNode (location: (7,3)-(7,11))
+        │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── name: :a
         │   │   │   │       ├── name_loc: (7,3)-(7,5) = "a:"
         │   │   │   │       └── value:
@@ -100,7 +103,7 @@
         │   │   │   │           ├── flags: ∅
         │   │   │   │           ├── receiver:
         │   │   │   │           │   @ CallNode (location: (7,6)-(7,7))
-        │   │   │   │           │   ├── flags: variable_call
+        │   │   │   │           │   ├── flags: variable_call, ignore_visibility
         │   │   │   │           │   ├── receiver: ∅
         │   │   │   │           │   ├── call_operator_loc: ∅
         │   │   │   │           │   ├── name: :b
@@ -140,12 +143,13 @@
         │   │   │   ├── requireds: (length: 0)
         │   │   │   ├── optionals: (length: 1)
         │   │   │   │   └── @ OptionalParameterNode (location: (9,3)-(9,12))
+        │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── name: :foo
         │   │   │   │       ├── name_loc: (9,3)-(9,6) = "foo"
         │   │   │   │       ├── operator_loc: (9,7)-(9,8) = "="
         │   │   │   │       └── value:
         │   │   │   │           @ CallNode (location: (9,9)-(9,12))
-        │   │   │   │           ├── flags: variable_call
+        │   │   │   │           ├── flags: variable_call, ignore_visibility
         │   │   │   │           ├── receiver: ∅
         │   │   │   │           ├── call_operator_loc: ∅
         │   │   │   │           ├── name: :bar
@@ -179,11 +183,12 @@
             │   │   ├── posts: (length: 0)
             │   │   ├── keywords: (length: 1)
             │   │   │   └── @ OptionalKeywordParameterNode (location: (11,3)-(11,11))
+            │   │   │       ├── flags: ∅
             │   │   │       ├── name: :foo
             │   │   │       ├── name_loc: (11,3)-(11,7) = "foo:"
             │   │   │       └── value:
             │   │   │           @ CallNode (location: (11,8)-(11,11))
-            │   │   │           ├── flags: variable_call
+            │   │   │           ├── flags: variable_call, ignore_visibility
             │   │   │           ├── receiver: ∅
             │   │   │           ├── call_operator_loc: ∅
             │   │   │           ├── name: :bar

@@ -22,6 +22,7 @@ ID rb_option_id_encoding;
 ID rb_option_id_line;
 ID rb_option_id_frozen_string_literal;
 ID rb_option_id_verbose;
+ID rb_option_id_version;
 ID rb_option_id_scopes;
 
 /******************************************************************************/
@@ -131,6 +132,14 @@ build_options_i(VALUE key, VALUE value, VALUE argument) {
         if (!NIL_P(value)) pm_options_frozen_string_literal_set(options, value == Qtrue);
     } else if (key_id == rb_option_id_verbose) {
         pm_options_suppress_warnings_set(options, value != Qtrue);
+    } else if (key_id == rb_option_id_version) {
+        if (!NIL_P(value)) {
+            const char *version = check_string(value);
+
+            if (!pm_options_version_set(options, version, RSTRING_LEN(value))) {
+                rb_raise(rb_eArgError, "invalid version: %"PRIsVALUE, value);
+            }
+        }
     } else if (key_id == rb_option_id_scopes) {
         if (!NIL_P(value)) build_options_scopes(options, value);
     } else {
@@ -637,6 +646,10 @@ parse_input(pm_string_t *input, const pm_options_t *options) {
  *       has been set. This should be a boolean or nil.
  * * `verbose` - the current level of verbosity. This controls whether or not
  *       the parser emits warnings. This should be a boolean or nil.
+ * * `version` - the version of prism that should be used to parse Ruby code. By
+ *       default prism assumes you want to parse with the latest vesion of
+ *       prism (which you can trigger with `nil` or `"latest"`). If you want to
+ *       parse exactly as CRuby 3.3.0 would, then you can pass `"3.3.0"`.
  * * `scopes` - the locals that are in scope surrounding the code that is being
  *       parsed. This should be an array of arrays of symbols or nil.
  */
@@ -971,6 +984,36 @@ inspect_node(VALUE self, VALUE source) {
     return string;
 }
 
+/**
+ * call-seq:
+ *   Debug::format_errors(source) -> String
+ *
+ * Format the errors that are found when parsing the given source string.
+ */
+static VALUE
+format_errors(VALUE self, VALUE source) {
+    pm_string_t input;
+    input_load_string(&input, source);
+
+    pm_parser_t parser;
+    pm_parser_init(&parser, pm_string_source(&input), pm_string_length(&input), NULL);
+
+    pm_node_t *node = pm_parse(&parser);
+    pm_buffer_t buffer = { 0 };
+
+    pm_parser_errors_format(&parser, &buffer, true);
+
+    rb_encoding *encoding = rb_enc_find(parser.encoding->name);
+    VALUE result = rb_enc_str_new(pm_buffer_value(&buffer), pm_buffer_length(&buffer), encoding);
+
+    pm_buffer_free(&buffer);
+    pm_node_destroy(&parser, node);
+    pm_parser_free(&parser);
+    pm_string_free(&input);
+
+    return result;
+}
+
 /******************************************************************************/
 /* Initialization of the extension                                            */
 /******************************************************************************/
@@ -1013,6 +1056,7 @@ Init_prism(void) {
     rb_option_id_line = rb_intern_const("line");
     rb_option_id_frozen_string_literal = rb_intern_const("frozen_string_literal");
     rb_option_id_verbose = rb_intern_const("verbose");
+    rb_option_id_version = rb_intern_const("version");
     rb_option_id_scopes = rb_intern_const("scopes");
 
     /**
@@ -1048,6 +1092,7 @@ Init_prism(void) {
     rb_define_singleton_method(rb_cPrismDebug, "memsize", memsize, 1);
     rb_define_singleton_method(rb_cPrismDebug, "profile_file", profile_file, 1);
     rb_define_singleton_method(rb_cPrismDebug, "inspect_node", inspect_node, 1);
+    rb_define_singleton_method(rb_cPrismDebug, "format_errors", format_errors, 1);
 
     // Next, initialize the other APIs.
     Init_prism_api_node();

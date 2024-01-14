@@ -8,7 +8,7 @@
   "scripts": {
     "prepublishOnly": "npm run type",
     "test": "node test.js",
-    "type": "tsc --allowJs -d --emitDeclarationOnly --outDir types src/index.js"
+    "type": "tsc --allowJs -d --emitDeclarationOnly --outDir src src/index.js"
   },
   "author": "Shopify <ruby@shopify.com>",
   "license": "MIT"

@@ -4,7 +4,7 @@
     @ StatementsNode (location: (1,0)-(3,3))
     └── body: (length: 1)
         └── @ CallNode (location: (1,0)-(3,3))
-            ├── flags: ∅
+            ├── flags: ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
             ├── name: :f
@@ -15,7 +15,7 @@
             │   ├── flags: ∅
             │   └── arguments: (length: 1)
             │       └── @ CallNode (location: (1,2)-(1,3))
-            │           ├── flags: variable_call
+            │           ├── flags: variable_call, ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :a
@@ -35,8 +35,10 @@
                 │   │   @ ParametersNode (location: (1,9)-(1,13))
                 │   │   ├── requireds: (length: 2)
                 │   │   │   ├── @ RequiredParameterNode (location: (1,9)-(1,10))
+                │   │   │   │   ├── flags: ∅
                 │   │   │   │   └── name: :x
                 │   │   │   └── @ RequiredParameterNode (location: (1,12)-(1,13))
+                │   │   │       ├── flags: ∅
                 │   │   │       └── name: :y
                 │   │   ├── optionals: (length: 0)
                 │   │   ├── rest: ∅

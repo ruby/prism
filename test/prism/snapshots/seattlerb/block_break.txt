@@ -9,7 +9,7 @@
             │   ├── flags: ∅
             │   └── arguments: (length: 1)
             │       └── @ CallNode (location: (1,6)-(1,26))
-            │           ├── flags: ∅
+            │           ├── flags: ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :foo
@@ -20,7 +20,7 @@
             │           │   ├── flags: ∅
             │           │   └── arguments: (length: 1)
             │           │       └── @ CallNode (location: (1,10)-(1,13))
-            │           │           ├── flags: variable_call
+            │           │           ├── flags: variable_call, ignore_visibility
             │           │           ├── receiver: ∅
             │           │           ├── call_operator_loc: ∅
             │           │           ├── name: :arg
@@ -40,6 +40,7 @@
             │               │   │   @ ParametersNode (location: (1,18)-(1,21))
             │               │   │   ├── requireds: (length: 1)
             │               │   │   │   └── @ RequiredParameterNode (location: (1,18)-(1,21))
+            │               │   │   │       ├── flags: ∅
             │               │   │   │       └── name: :bar
             │               │   │   ├── optionals: (length: 0)
             │               │   │   ├── rest: ∅

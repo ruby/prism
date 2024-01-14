@@ -11,6 +11,7 @@
         │   │   @ ParametersNode (location: (1,9)-(1,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (1,9)-(1,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :cmd
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -25,7 +26,7 @@
         │   │   │   @ StatementsNode (location: (2,2)-(2,13))
         │   │   │   └── body: (length: 1)
         │   │   │       └── @ CallNode (location: (2,2)-(2,13))
-        │   │   │           ├── flags: ∅
+        │   │   │           ├── flags: ignore_visibility
         │   │   │           ├── receiver: ∅
         │   │   │           ├── call_operator_loc: ∅
         │   │   │           ├── name: :system
@@ -70,6 +71,7 @@
         │   │   @ ParametersNode (location: (8,9)-(8,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (8,9)-(8,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :cmd
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -83,7 +85,7 @@
         │   │       └── @ RescueModifierNode (location: (9,2)-(9,24))
         │   │           ├── expression:
         │   │           │   @ CallNode (location: (9,2)-(9,13))
-        │   │           │   ├── flags: ∅
+        │   │           │   ├── flags: ignore_visibility
         │   │           │   ├── receiver: ∅
         │   │           │   ├── call_operator_loc: ∅
         │   │           │   ├── name: :system
@@ -117,6 +119,7 @@
             │   @ ParametersNode (location: (13,9)-(13,12))
             │   ├── requireds: (length: 1)
             │   │   └── @ RequiredParameterNode (location: (13,9)-(13,12))
+            │   │       ├── flags: ∅
             │   │       └── name: :cmd
             │   ├── optionals: (length: 0)
             │   ├── rest: ∅
@@ -130,7 +133,7 @@
             │       └── @ RescueModifierNode (location: (13,16)-(13,38))
             │           ├── expression:
             │           │   @ CallNode (location: (13,16)-(13,27))
-            │           │   ├── flags: ∅
+            │           │   ├── flags: ignore_visibility
             │           │   ├── receiver: ∅
             │           │   ├── call_operator_loc: ∅
             │           │   ├── name: :system

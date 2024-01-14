@@ -48,6 +48,48 @@ fn cargo_manifest_path() -> PathBuf {
     PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
 
+#[derive(Debug)]
+struct Callbacks;
+
+impl bindgen::callbacks::ParseCallbacks for Callbacks {
+    /// Accept a string that is a comment on a node. Replace any internal code
+    /// examples that are indented by 4 spaces with a fenced code block.
+    fn process_comment(&self, comment: &str) -> Option<String> {
+        let mut result = String::new();
+
+        let mut in_code_block = false;
+        let mut previous_blank = false;
+
+        for line in comment.lines() {
+            if in_code_block {
+                if line.starts_with("    ") {
+                    result.push_str(line.strip_prefix("    ").unwrap());
+                } else {
+                    in_code_block = false;
+                    previous_blank = line.trim().is_empty();
+                    result.push_str("```\n");
+                    result.push_str(line);
+                }
+            } else if line.starts_with("    ") && previous_blank {
+                in_code_block = true;
+                result.push_str("``` ruby\n");
+                result.push_str(line.strip_prefix("    ").unwrap());
+            } else {
+                previous_blank = line.trim().is_empty();
+                result.push_str(line);
+            }
+
+            result.push('\n');
+        }
+
+        if in_code_block {
+            result.push_str("```\n");
+        }
+
+        Some(result)
+    }
+}
+
 /// Uses `bindgen` to generate bindings to the C API. Update this to allow new
 /// types/functions/etc to be generated (it's allowlisted to only expose
 /// functions that'd make sense for public consumption).
@@ -67,6 +109,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .layout_tests(true)
         .merge_extern_blocks(true)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(Callbacks))
         .prepend_enum_name(false)
         .size_t_is_usize(true)
         .sort_semantically(true)

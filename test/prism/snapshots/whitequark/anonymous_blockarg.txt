@@ -17,6 +17,7 @@
             │   ├── keyword_rest: ∅
             │   └── block:
             │       @ BlockParameterNode (location: (1,8)-(1,9))
+            │       ├── flags: ∅
             │       ├── name: ∅
             │       ├── name_loc: ∅
             │       └── operator_loc: (1,8)-(1,9) = "&"
@@ -24,7 +25,7 @@
             │   @ StatementsNode (location: (1,12)-(1,17))
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (1,12)-(1,17))
-            │           ├── flags: ∅
+            │           ├── flags: ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :bar

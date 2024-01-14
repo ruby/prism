@@ -1,5 +1,5 @@
 [package]
-name = "prism"
+name = "ruby-prism"
 version = "0.19.0"
 edition = "2021"
 license-file = "../../LICENSE.md"
@@ -19,14 +19,15 @@ categories = [
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+include = ["src/", "build.rs", "Cargo.toml", "Cargo.lock", "vendor"]
 
 [build-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 
 [dependencies]
-prism-sys = { path = "../prism-sys" }
+ruby-prism-sys = { version = "0.19.0", path = "../ruby-prism-sys" }
 
 [features]
 default = ["vendored"]
-vendored = ["prism-sys/vendored"]
+vendored = ["ruby-prism-sys/vendored"]

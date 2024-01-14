@@ -4,7 +4,7 @@
     @ StatementsNode (location: (1,0)-(1,11))
     └── body: (length: 1)
         └── @ CallNode (location: (1,0)-(1,11))
-            ├── flags: ∅
+            ├── flags: ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
             ├── name: :a
@@ -27,6 +27,7 @@
                 │   │   ├── keywords: (length: 0)
                 │   │   ├── keyword_rest:
                 │   │   │   @ KeywordRestParameterNode (location: (1,5)-(1,8))
+                │   │   │   ├── flags: ∅
                 │   │   │   ├── name: :b
                 │   │   │   ├── name_loc: (1,7)-(1,8) = "b"
                 │   │   │   └── operator_loc: (1,5)-(1,7) = "**"

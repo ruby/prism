@@ -5,7 +5,7 @@ use std::{
 
 #[test]
 fn version_test() {
-    use prism_sys::pm_version;
+    use ruby_prism_sys::pm_version;
 
     let cstring = unsafe {
         let version = pm_version();
@@ -17,7 +17,7 @@ fn version_test() {
 
 #[test]
 fn list_test() {
-    use prism_sys::{pm_list_empty_p, pm_list_free, pm_list_t};
+    use ruby_prism_sys::{pm_list_empty_p, pm_list_free, pm_list_t};
 
     let mut list = MaybeUninit::<pm_list_t>::zeroed();
 
@@ -31,7 +31,7 @@ fn list_test() {
 }
 
 mod string {
-    use prism_sys::{
+    use ruby_prism_sys::{
         pm_string_free, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1, PM_STRING_CONSTANT,
         PM_STRING_MAPPED, PM_STRING_OWNED, PM_STRING_SHARED,
     };

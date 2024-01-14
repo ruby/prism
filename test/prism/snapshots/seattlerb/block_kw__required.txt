@@ -4,7 +4,7 @@
     @ StatementsNode (location: (1,0)-(1,16))
     └── body: (length: 1)
         └── @ CallNode (location: (1,0)-(1,16))
-            ├── flags: ∅
+            ├── flags: ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
             ├── name: :blah
@@ -26,6 +26,7 @@
                 │   │   ├── posts: (length: 0)
                 │   │   ├── keywords: (length: 1)
                 │   │   │   └── @ RequiredKeywordParameterNode (location: (1,9)-(1,11))
+                │   │   │       ├── flags: ∅
                 │   │   │       ├── name: :k
                 │   │   │       └── name_loc: (1,9)-(1,11) = "k:"
                 │   │   ├── keyword_rest: ∅

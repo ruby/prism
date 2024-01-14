@@ -335,10 +335,10 @@ module Prism
 
     def test_def_with_multiple_statements_receiver
       assert_errors expression("def (\na\nb\n).c; end"), "def (\na\nb\n).c; end", [
-        ["expected a matching `)`", 7..7],
-        ["expected a `.` or `::` after the receiver in a method definition", 7..7],
-        ["expected a method name", 7..7],
-        ["cannot parse the expression", 10..10],
+        ["expected a matching `)`", 8..8],
+        ["expected a `.` or `::` after the receiver in a method definition", 8..8],
+        ["expected a delimiter to close the parameters", 9..9],
+        ["cannot parse the expression", 9..9],
         ["cannot parse the expression", 11..11]
       ]
     end
@@ -360,7 +360,7 @@ module Prism
 
     def test_double_splat_followed_by_splat_argument
       expected = CallNode(
-        0,
+        CallNodeFlags::IGNORE_VISIBILITY,
         nil,
         nil,
         :a,
@@ -381,7 +381,7 @@ module Prism
 
     def test_arguments_after_block
       expected = CallNode(
-        0,
+        CallNodeFlags::IGNORE_VISIBILITY,
         nil,
         nil,
         :a,
@@ -407,7 +407,7 @@ module Prism
 
     def test_splat_argument_after_keyword_argument
       expected = CallNode(
-        0,
+        CallNodeFlags::IGNORE_VISIBILITY,
         nil,
         nil,
         :a,
@@ -462,7 +462,7 @@ module Prism
         nil,
         StatementsNode(
           [CallNode(
-            0,
+            CallNodeFlags::IGNORE_VISIBILITY,
             nil,
             nil,
             :bar,
@@ -566,10 +566,10 @@ module Prism
         Location(),
         nil,
         ParametersNode([
-          RequiredParameterNode(:A),
-          RequiredParameterNode(:@a),
-          RequiredParameterNode(:$A),
-          RequiredParameterNode(:@@a),
+          RequiredParameterNode(0, :A),
+          RequiredParameterNode(0, :@a),
+          RequiredParameterNode(0, :$A),
+          RequiredParameterNode(0, :@@a),
         ], [], nil, [], [], nil, nil),
         nil,
         [:A, :@a, :$A, :@@a],
@@ -635,7 +635,7 @@ module Prism
         Location(),
         nil,
         ParametersNode(
-          [RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:c)],
+          [RequiredParameterNode(0, :a), RequiredParameterNode(0, :b), RequiredParameterNode(0, :c)],
           [],
           nil,
           [],
@@ -667,7 +667,7 @@ module Prism
         Location(),
         Location(),
         BlockParametersNode(
-          ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], nil, [], [], nil, nil),
+          ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b)], [], nil, [], [], nil, nil),
           [],
           Location(),
           Location()
@@ -724,10 +724,10 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
+          [RequiredParameterNode(0, :a)],
           [],
           nil,
-          BlockParameterNode(:block, Location(), Location())
+          BlockParameterNode(0, :block, Location(), Location())
         ),
         nil,
         [:block, :a],
@@ -749,7 +749,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([], [], nil, [RequiredParameterNode(:a)], [], nil, BlockParameterNode(nil, nil, Location())),
+        ParametersNode([], [], nil, [RequiredParameterNode(0, :a)], [], nil, BlockParameterNode(0, nil, nil, Location())),
         nil,
         [:&, :a],
         2,
@@ -775,7 +775,7 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
+          [RequiredParameterNode(0, :a)],
           [],
           ForwardingParameterNode(),
           nil
@@ -804,8 +804,8 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
-          [RequiredKeywordParameterNode(:b, Location())],
+          [RequiredParameterNode(0, :a)],
+          [RequiredKeywordParameterNode(0, :b, Location())],
           nil,
           nil
         ),
@@ -834,8 +834,8 @@ module Prism
           [],
           nil,
           [],
-          [RequiredKeywordParameterNode(:b, Location())],
-          KeywordRestParameterNode(:rest, Location(), Location()),
+          [RequiredKeywordParameterNode(0, :b, Location())],
+          KeywordRestParameterNode(0, :rest, Location(), Location()),
           nil
         ),
         nil,
@@ -885,9 +885,9 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
-          [RequiredKeywordParameterNode(:b, Location())],
-          KeywordRestParameterNode(:args, Location(), Location()),
+          [RequiredParameterNode(0, :a)],
+          [RequiredKeywordParameterNode(0, :b, Location())],
+          KeywordRestParameterNode(0, :args, Location(), Location()),
           nil
         ),
         nil,
@@ -916,9 +916,9 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
-          [RequiredKeywordParameterNode(:b, Location())],
-          KeywordRestParameterNode(:args, Location(), Location()),
+          [RequiredParameterNode(0, :a)],
+          [RequiredKeywordParameterNode(0, :b, Location())],
+          KeywordRestParameterNode(0, :args, Location(), Location()),
           nil
         ),
         nil,
@@ -947,9 +947,9 @@ module Prism
           [],
           [],
           nil,
-          [RequiredParameterNode(:a)],
-          [RequiredKeywordParameterNode(:b, Location())],
-          KeywordRestParameterNode(:args, Location(), Location()),
+          [RequiredParameterNode(0, :a)],
+          [RequiredKeywordParameterNode(0, :b, Location())],
+          KeywordRestParameterNode(0, :args, Location(), Location()),
           nil
         ),
         nil,
@@ -975,13 +975,13 @@ module Prism
         Location(),
         nil,
         ParametersNode(
-          [RequiredParameterNode(:a)],
+          [RequiredParameterNode(0, :a)],
           [
-            OptionalParameterNode(:b, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL)),
-            OptionalParameterNode(:d, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL))
+            OptionalParameterNode(0, :b, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL)),
+            OptionalParameterNode(0, :d, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL))
           ],
           nil,
-          [RequiredParameterNode(:c), RequiredParameterNode(:e)],
+          [RequiredParameterNode(0, :c), RequiredParameterNode(0, :e)],
           [],
           nil,
           nil
@@ -1070,7 +1070,7 @@ module Prism
 
     def test_do_not_allow_forward_arguments_in_blocks
       expected = CallNode(
-        0,
+        CallNodeFlags::IGNORE_VISIBILITY,
         nil,
         nil,
         :a,
@@ -1152,7 +1152,7 @@ module Prism
           :foo,
           Location(),
           nil,
-          ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:a)], [], nil, [], [], nil, nil),
+          ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b), RequiredParameterNode(ParameterFlags::REPEATED_PARAMETER, :a)], [], nil, [], [], nil, nil),
           nil,
           [:a, :b],
           2,
@@ -1173,7 +1173,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], RestParameterNode(:a, Location(), Location()), [], [], nil, nil),
+        ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b)], [], RestParameterNode(ParameterFlags::REPEATED_PARAMETER, :a, Location(), Location()), [], [], nil, nil),
         nil,
         [:a, :b],
         2,
@@ -1193,7 +1193,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], nil, [], [], KeywordRestParameterNode(:a, Location(), Location()), nil),
+        ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b)], [], nil, [], [], KeywordRestParameterNode(ParameterFlags::REPEATED_PARAMETER, :a, Location(), Location()), nil),
         nil,
         [:a, :b],
         2,
@@ -1213,7 +1213,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], nil, [], [], nil, BlockParameterNode(:a, Location(), Location())),
+        ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b)], [], nil, [], [], nil, BlockParameterNode(ParameterFlags::REPEATED_PARAMETER, :a, Location(), Location())),
         nil,
         [:a, :b],
         2,
@@ -1233,7 +1233,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([], [OptionalParameterNode(:a, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL))], RestParameterNode(:c, Location(), Location()), [RequiredParameterNode(:b)], [], nil, nil),
+        ParametersNode([], [OptionalParameterNode(0, :a, Location(), Location(), IntegerNode(IntegerBaseFlags::DECIMAL))], RestParameterNode(0, :c, Location(), Location()), [RequiredParameterNode(0, :b)], [], nil, nil),
         nil,
         [:a, :b, :c],
         3,
@@ -1246,6 +1246,15 @@ module Prism
       )
 
       assert_errors expected, "def foo(a = 1,b,*c);end", [["unexpected parameter `*`", 16..17]]
+    end
+
+    def test_content_after_unterminated_heredoc
+      receiver = StringNode(0, Location(), Location(), Location(), "")
+      expected = CallNode(0, receiver, Location(), :foo, Location(), nil, nil, nil, nil)
+
+      assert_errors expected, "<<~FOO.foo\n", [
+        ["could not find a terminator for the heredoc", 11..11]
+      ]
     end
 
     def test_invalid_message_name
@@ -1997,6 +2006,21 @@ module Prism
       end
     end
 
+    def test_command_call_in
+      source = <<~RUBY
+        foo 1 in a
+        a = foo 2 in b
+      RUBY
+      message1 = 'unexpected `in` keyword in arguments'
+      message2 = 'expected a newline or semicolon after the statement'
+      assert_errors expression(source), source, [
+        [message1, 9..10],
+        [message2, 8..8],
+        [message1, 24..25],
+        [message2, 23..23],
+      ]
+    end
+
     def test_constant_assignment_in_method
       source = 'def foo();A=1;end'
       assert_errors expression(source), source, [
@@ -2029,6 +2053,20 @@ module Prism
         [message1, 69..69],
         [message2, 69..69],
       ]
+    end
+
+    def test_block_arg_and_block
+      source = 'foo(&1) { }'
+      assert_errors expression(source), source, [
+        ['multiple block arguments; only one block is allowed', 8..11]
+      ], compare_ripper: false # Ripper does not check 'both block arg and actual block given'.
+    end
+
+    def test_forwarding_arg_and_block
+      source = 'def foo(...) = foo(...) { }'
+      assert_errors expression(source), source, [
+        ['both a block argument and a forwarding argument; only one block is allowed', 24..27]
+      ], compare_ripper: false # Ripper does not check 'both block arg and actual block given'.
     end
 
     private

@@ -61,7 +61,7 @@ namespace :test do
 
   desc "Run the tests for the rust bindings"
   task :rust do
-    ["rust/prism", "rust/prism-sys"].each do |dir|
+    ["rust/ruby-prism", "rust/ruby-prism-sys"].each do |dir|
       Dir.chdir(dir) do
         sh("cargo test")
       end

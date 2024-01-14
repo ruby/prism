@@ -25,7 +25,7 @@
         │   │           │   @ StatementsNode (location: (2,2)-(2,10))
         │   │           │   └── body: (length: 1)
         │   │           │       └── @ CallNode (location: (2,2)-(2,10))
-        │   │           │           ├── flags: ∅
+        │   │           │           ├── flags: ignore_visibility
         │   │           │           ├── receiver: ∅
         │   │           │           ├── call_operator_loc: ∅
         │   │           │           ├── name: :bar
@@ -70,7 +70,7 @@
         │   │           │   @ StatementsNode (location: (5,14)-(5,22))
         │   │           │   └── body: (length: 1)
         │   │           │       └── @ CallNode (location: (5,14)-(5,22))
-        │   │           │           ├── flags: ∅
+        │   │           │           ├── flags: ignore_visibility
         │   │           │           ├── receiver: ∅
         │   │           │           ├── call_operator_loc: ∅
         │   │           │           ├── name: :bar
@@ -134,7 +134,7 @@
         │   │   @ StatementsNode (location: (10,13)-(10,21))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (10,13)-(10,21))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :bar
@@ -163,6 +163,7 @@
         │   │   @ ParametersNode (location: (12,8)-(12,14))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (12,8)-(12,9))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :a
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -175,7 +176,7 @@
         │   │   @ StatementsNode (location: (13,2)-(13,10))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (13,2)-(13,10))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :bar
@@ -204,6 +205,7 @@
         │   │   @ ParametersNode (location: (16,8)-(16,14))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (16,8)-(16,9))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :a
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -216,7 +218,7 @@
         │   │   @ StatementsNode (location: (16,16)-(16,24))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (16,16)-(16,24))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :bar
@@ -245,9 +247,11 @@
         │   │   @ ParametersNode (location: (18,8)-(18,21))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (18,8)-(18,9))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :a
         │   │   ├── optionals: (length: 1)
         │   │   │   └── @ OptionalParameterNode (location: (18,11)-(18,16))
+        │   │   │       ├── flags: ∅
         │   │   │       ├── name: :b
         │   │   │       ├── name_loc: (18,11)-(18,12) = "b"
         │   │   │       ├── operator_loc: (18,13)-(18,14) = "="
@@ -278,6 +282,7 @@
         │   │   ├── requireds: (length: 0)
         │   │   ├── optionals: (length: 1)
         │   │   │   └── @ OptionalParameterNode (location: (21,8)-(21,13))
+        │   │   │       ├── flags: ∅
         │   │   │       ├── name: :b
         │   │   │       ├── name_loc: (21,8)-(21,9) = "b"
         │   │   │       ├── operator_loc: (21,10)-(21,11) = "="
@@ -294,7 +299,7 @@
         │   │   @ StatementsNode (location: (22,2)-(22,10))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (22,2)-(22,10))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :bar
@@ -324,6 +329,7 @@
         │   │   ├── requireds: (length: 0)
         │   │   ├── optionals: (length: 1)
         │   │   │   └── @ OptionalParameterNode (location: (25,8)-(25,13))
+        │   │   │       ├── flags: ∅
         │   │   │       ├── name: :b
         │   │   │       ├── name_loc: (25,8)-(25,9) = "b"
         │   │   │       ├── operator_loc: (25,10)-(25,11) = "="
@@ -340,7 +346,7 @@
         │   │   @ StatementsNode (location: (25,20)-(25,28))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (25,20)-(25,28))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :bar
@@ -369,6 +375,7 @@
             │   @ ParametersNode (location: (27,8)-(27,14))
             │   ├── requireds: (length: 1)
             │   │   └── @ RequiredParameterNode (location: (27,8)-(27,9))
+            │   │       ├── flags: ∅
             │   │       └── name: :a
             │   ├── optionals: (length: 0)
             │   ├── rest: ∅
@@ -381,7 +388,7 @@
             │   @ StatementsNode (location: (27,16)-(27,24))
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (27,16)-(27,24))
-            │           ├── flags: ∅
+            │           ├── flags: ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :bar

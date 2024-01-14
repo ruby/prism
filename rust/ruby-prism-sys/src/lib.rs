@@ -1,4 +1,4 @@
-//! # prism-sys
+//! # ruby-prism-sys
 //!
 //! FFI-bindings for `prism`.
 //!

@@ -11,6 +11,7 @@
         │   │   @ ParametersNode (location: (1,7)-(1,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (1,7)-(1,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :other
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -22,7 +23,7 @@
         │   │   @ StatementsNode (location: (1,16)-(1,28))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (1,16)-(1,28))
-        │   │           ├── flags: variable_call
+        │   │           ├── flags: variable_call, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :do_something
@@ -47,6 +48,7 @@
         │   │   @ ParametersNode (location: (3,7)-(3,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (3,7)-(3,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :other
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -58,7 +60,7 @@
         │   │   @ StatementsNode (location: (3,16)-(3,28))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (3,16)-(3,28))
-        │   │           ├── flags: variable_call
+        │   │           ├── flags: variable_call, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :do_something
@@ -83,6 +85,7 @@
         │   │   @ ParametersNode (location: (5,7)-(5,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (5,7)-(5,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :other
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -94,7 +97,7 @@
         │   │   @ StatementsNode (location: (5,16)-(5,28))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (5,16)-(5,28))
-        │   │           ├── flags: variable_call
+        │   │           ├── flags: variable_call, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :do_something
@@ -119,6 +122,7 @@
         │   │   @ ParametersNode (location: (7,7)-(7,12))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (7,7)-(7,12))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :other
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -130,7 +134,7 @@
         │   │   @ StatementsNode (location: (7,16)-(7,28))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (7,16)-(7,28))
-        │   │           ├── flags: variable_call
+        │   │           ├── flags: variable_call, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :do_something
@@ -155,6 +159,7 @@
         │   │   @ ParametersNode (location: (9,8)-(9,13))
         │   │   ├── requireds: (length: 1)
         │   │   │   └── @ RequiredParameterNode (location: (9,8)-(9,13))
+        │   │   │       ├── flags: ∅
         │   │   │       └── name: :other
         │   │   ├── optionals: (length: 0)
         │   │   ├── rest: ∅
@@ -166,7 +171,7 @@
         │   │   @ StatementsNode (location: (9,17)-(9,29))
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (9,17)-(9,29))
-        │   │           ├── flags: variable_call
+        │   │           ├── flags: variable_call, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
         │   │           ├── name: :do_something
@@ -191,6 +196,7 @@
             │   @ ParametersNode (location: (11,7)-(11,12))
             │   ├── requireds: (length: 1)
             │   │   └── @ RequiredParameterNode (location: (11,7)-(11,12))
+            │   │       ├── flags: ∅
             │   │       └── name: :other
             │   ├── optionals: (length: 0)
             │   ├── rest: ∅
@@ -202,7 +208,7 @@
             │   @ StatementsNode (location: (11,16)-(11,28))
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (11,16)-(11,28))
-            │           ├── flags: variable_call
+            │           ├── flags: variable_call, ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :do_something

@@ -4,7 +4,7 @@
     @ StatementsNode (location: (1,0)-(1,13))
     └── body: (length: 1)
         └── @ CallNode (location: (1,0)-(1,13))
-            ├── flags: ∅
+            ├── flags: ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
             ├── name: :lambda
@@ -21,6 +21,7 @@
                 │   ├── parameters: ∅
                 │   ├── locals: (length: 1)
                 │   │   └── @ BlockLocalVariableNode (location: (1,9)-(1,10))
+                │   │       ├── flags: ∅
                 │   │       └── name: :a
                 │   ├── opening_loc: (1,7)-(1,8) = "|"
                 │   └── closing_loc: (1,10)-(1,11) = "|"

@@ -16,6 +16,7 @@
             │   ├── keywords: (length: 0)
             │   ├── keyword_rest:
             │   │   @ KeywordRestParameterNode (location: (1,8)-(1,10))
+            │   │   ├── flags: ∅
             │   │   ├── name: ∅
             │   │   ├── name_loc: ∅
             │   │   └── operator_loc: (1,8)-(1,10) = "**"
@@ -24,7 +25,7 @@
             │   @ StatementsNode (location: (1,13)-(1,36))
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (1,13)-(1,36))
-            │           ├── flags: ∅
+            │           ├── flags: ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
             │           ├── name: :bar
