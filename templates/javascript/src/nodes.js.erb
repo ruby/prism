@@ -105,9 +105,10 @@ export class <%= node.name -%> {
    * Accept a visitor for this node.
    *
    * @param {visitors.Visitor} visitor
+   * @param {any[]} args
    */
-  accept(visitor) {
-    visitor.visit<%= camelize(node.name) %>(this)
+  accept(visitor, ...args) {
+    visitor.visit<%= camelize(node.name) %>(this, ...args)
   }
 
   /**

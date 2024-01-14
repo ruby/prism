@@ -12,31 +12,34 @@ export class BasicVisitor {
    * Calls `accept` on the given node if it is not `null`, which in turn should
    * call back into this visitor by calling the appropriate `visit*` method.
    *
-   * @param {Node} node
+   * @param {nodes.Node} node
+   * @param {any[]} args
    */
-  visit(node) {
-    node?.accept(this);
+  visit(node, ...args) {
+    node?.accept(this, ...args);
   }
 
   /**
    * Visits each node in `nodes` by calling `accept` on each one.
    *
-   * @param {Node[]} node
+   * @param {nodes.Node[]} node
+   * @param {any[]} args
    */
-  visitAll(nodes) {
+  visitAll(nodes, ...args) {
     nodes.forEach((node) => {
-      node?.accept(this);
+      node?.accept(this, ...args);
     });
   }
 
   /**
    * Visits the child nodes of `node` by calling `accept` on each one.
    *
-   * @param {Node} node
+   * @param {nodes.Node} node
+   * @param {any[]} args
    */
-  visitChildNodes(node) {
+  visitChildNodes(node, ...args) {
     node.compactChildNodes().forEach((childNode) => {
-      childNode.accept(this);
+      childNode.accept(this, ...args);
     });
   }
 }
@@ -70,9 +73,10 @@ export class Visitor extends BasicVisitor {
    * Visit a <%= node.name %> node.
    *
    * @param {nodes.<%= node.name %>} node
+   * @param {any[]} args
    */
-  <%= "visit#{node.name.gsub(/_([a-z])/) { $1.upcase }}" %>(node) {
-    this.visitChildNodes(node);
+  <%= "visit#{node.name.gsub(/_([a-z])/) { $1.upcase }}" %>(node, ...args) {
+    this.visitChildNodes(node, ...args);
   }
 <%- end -%>
 }
