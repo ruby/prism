@@ -506,6 +506,14 @@ nodes:
         type: location?
         comment: |
           Represents optional source location for opening token.
+
+              1,2,3]: The value is (1,0)-(1,1) = "[".
+              %w[foo bar baz]: The value is (1,0)-(1,3) = "%w[".
+              %I(apple orange banana): The value is (1,0)-(1,3) = "%I(".
+              foo = 1, 2, 3: Brackets are missing, so the value is ∅ (optional).
+
+          closing_loc typically corresponds to the opening_loc but without the specific
+          syntax of percentage literals like  %w or  %I.
       - name: closing_loc
         type: location?
         comment: |
