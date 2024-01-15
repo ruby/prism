@@ -32,9 +32,6 @@ class Prism::ParseWarning
 end
 
 class Prism::Node
-  sig { returns(T::Array[T.nilable(Prism::Node)]) }
-  def child_nodes; end
-
   sig { returns(Prism::Location) }
   def location; end
 
