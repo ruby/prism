@@ -1,5 +1,4 @@
 import { ParseResult, deserialize } from "./deserialize.js";
-import os from "os";
 
 /**
  * Parse the given source code.
@@ -132,8 +131,15 @@ function sizeOf(values, template, index) {
   }
 }
 
+// platform-agnostic implementation of Node's os.endianness()
+function endianness() {
+  const arr = new Uint8Array(4);
+  new Uint32Array(arr.buffer)[0] = 0xffcc0011;
+  return arr[0] === 0xff ? "BE" : "LE";
+}
+
 function pack(values, template) {
-  const littleEndian = os.endianness() === "LE";
+  const littleEndian = endianness() === "LE";
   const buffer = new ArrayBuffer(totalSizeOf(values, template));
   const data_view = new DataView(buffer);
   let offset = 0;
