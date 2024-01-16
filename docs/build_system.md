@@ -71,4 +71,22 @@ and links to `libprism.a` (to avoid exporting symbols, so no conflict when insta
 
 ### Building prism as part of JRuby
 
-TODO, probably similar to TruffleRuby.
+TODO, similar to TruffleRuby.
+
+### Building prism from source as a C library
+
+All of the source files match `src/**/*.c` and all of the headers match `include/**/*.h`.
+
+If you want to build prism as a shared library and link against it, you should compile with:
+
+* `-fPIC -shared` - Compile as a shared library
+* `-DPRISM_EXPORT_SYMBOLS` - Export the symbols (by default nothing is exported)
+
+#### Flags
+
+`make` respects the `MAKEFLAGS` environment variable. As such, to speed up the build you can run:
+
+```
+MAKEFLAGS="-j10" bundle exec rake compile
+```
+

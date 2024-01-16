@@ -79,8 +79,9 @@ to see the syntax tree for the expression `1 + 2`.
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additionally have documentation about the overall design of the project as well as various subtopics.
 
-* [Building](docs/building.md)
+* [Build system](docs/build_system.md)
 * [Configuration](docs/configuration.md)
+* [CRuby compilation](docs/cruby_compilation.md)
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
 * [Fuzzing](docs/fuzzing.md)
