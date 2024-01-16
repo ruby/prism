@@ -515,7 +515,7 @@ nodes:
               [1,2,3]                 The value is (1,0)-(1,1) = "[".
               %w[foo bar baz]         The value is (1,0)-(1,3) = "%w[".
               %I(apple orange banana) The value is (1,0)-(1,3) = "%I(".
-              foo = 1, 2, 3           Brackets are missing, so the value is ∅ (optional).
+              foo = 1, 2, 3           Brackets are missing, so the value is empty (optional).
 
           closing_loc typically corresponds to the opening_loc but without the specific
           syntax of percentage literals like  %w or  %I.
@@ -527,7 +527,7 @@ nodes:
               [1,2,3]                 The value is (1,6)-(1,7) = "]".
               %w[foo bar baz]         The value is (1,14)-(1,15) = "]".
               %I(apple orange banana) The value is (1,22)-(1,23) = ")".
-              foo = 1, 2, 3           Brackets are missing, so the value is ∅ (optional).
+              foo = 1, 2, 3           Brackets are missing, so the value is empty (optional).
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
