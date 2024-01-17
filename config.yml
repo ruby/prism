@@ -1188,10 +1188,29 @@ nodes:
       - name: target
         type: node
         kind: ConstantPathNode
+        comment: |
+          A `ConstantPathNode` representing the constant path being written to.
+
+              Foo::Bar = 1
+              ^^^^^^^^
+
+              ::Foo = :abc
+              ^^^^^
       - name: operator_loc
         type: location
+        comment: |
+          The location of the `=` operator.
+
+              ::ABC = 123
+                    ^
       - name: value
         type: node
+        comment: |
+          The value to assign to the constant path. Can be any node that
+          represents a non-void expression.
+
+              FOO::BAR = :abc
+                         ^^^^
     comment: |
       Represents writing to a constant path.
 
