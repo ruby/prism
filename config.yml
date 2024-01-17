@@ -1134,8 +1134,7 @@ nodes:
         comment: |
           The left-hand node of the path, if present. Can be `nil` or any kind
           of a node returning a non-void value. Will be missing when constant
-          lookup is at the root of the module tree (i.e. `::Foo` has no
-          `parent`).
+          lookup is at the root of the module tree.
 
               Foo::Bar
               ^^^
