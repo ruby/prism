@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-20.04 # to be consistent with that workflow and test on older platform
     steps:
     - name: Clone prism
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: prism
     - name: Setup system Ruby
@@ -28,7 +28,7 @@ jobs:
 
     - run: mkdir truffleruby-ws
     - name: Clone TruffleRuby
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: oracle/truffleruby
         path: truffleruby-ws/truffleruby
@@ -53,7 +53,7 @@ jobs:
       id: graal_commit
       run: echo "graal_commit=$(jt truffle_version)" >> $GITHUB_OUTPUT
     - name: Clone Graal
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: oracle/graal
         path: truffleruby-ws/graal
