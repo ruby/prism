@@ -1226,12 +1226,40 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the constant.
+
+          For more information on permitted constant names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              Foo = :bar # name `:Foo`
+
+              XYZ = 1    # name `:XYZ`
       - name: name_loc
         type: location
+        comment: |
+          The location of the constant name.
+
+              FOO = 1
+              ^^^
       - name: value
         type: node
+        comment: |
+          The value to assign to the constant. Can be any node that represents
+          a non-void expression.
+
+              FOO = :bar
+                    ^^^^
+
+              MyClass = Class.new
+                        ^^^^^^^^^
       - name: operator_loc
         type: location
+        comment: |
+          The location of the `=` operator.
+
+              FOO = :bar
+                  ^
     comment: |
       Represents writing to a constant.
 
