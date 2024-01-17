@@ -1809,11 +1809,10 @@ nodes:
       - name: name
         type: constant
         comment: |
-          The name of the instance variable, including the leading `@`. Variable
-          names begin with an underscore, alphabetical, or non-ASCII character,
-          followed by arbitrarily many underscones, alphanumeric or non-ASCII
-          characters. The exact definitions of "alphabetical" and "alphanumeric"
-          are encoding-dependent.
+          The name of the instance variable, including the leading `@`.
+
+          For more information on permitted instance variable names, see
+          [the Prism documentation](https://github.com/ruby/prism/main/docs/lexing.md).
 
               @x = :y       # name `:@x`
 
