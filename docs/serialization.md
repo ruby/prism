@@ -179,6 +179,8 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `4`     | the number of scopes       |
 | ...     | the scopes                 |
 
+Scopes are ordered from the outermost scope to the innermost one.
+
 Each scope is layed out as follows:
 
 | # bytes | field                      |
