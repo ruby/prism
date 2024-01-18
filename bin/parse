@@ -13,6 +13,8 @@ if ARGV[0] == "-e"
   result = Prism.parse(ARGV[1])
 else
   result = Prism.parse_file(ARGV[0] || "test.rb")
+
+  raise ArgumentError, "There was nothing to parse. You must pass source code with `-e` or a Ruby file." if result.nil?
 end
 
 result.mark_newlines! if ENV["MARK_NEWLINES"]
