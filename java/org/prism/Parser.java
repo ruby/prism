@@ -1,6 +1,6 @@
 package org.prism;
 
-public class Parser {
+public abstract class Parser {
 
     public static void loadLibrary(String path) {
         System.load(path);

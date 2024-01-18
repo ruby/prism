@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 // @formatter:off
-public class ParsingOptions {
+public abstract class ParsingOptions {
     /** Serialize parsing options into byte array.
      *
      * @param filepath the name of the file that is currently being parsed
