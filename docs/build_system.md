@@ -53,7 +53,7 @@ Because of course those files are not part of the git repository.
 
 ### Building prism as part of CRuby
 
-[This script](https://github.com/ruby/ruby/blob/32e828bb4a6c65a392b2300f3bdf93008c7b6f25/tool/sync_default_gems.rb#L399-L426) imports prism sources in CRuby.
+[This script](https://github.com/ruby/ruby/blob/5124f9ac7513eb590c37717337c430cb93caa151/tool/sync_default_gems.rb#L399-L422) imports prism sources in CRuby.
 
 The script generates the templates when importing.
 
@@ -89,4 +89,3 @@ If you want to build prism as a shared library and link against it, you should c
 ```
 MAKEFLAGS="-j10" bundle exec rake compile
 ```
-
