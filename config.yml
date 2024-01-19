@@ -633,6 +633,12 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the back-reference variable, including the leading `$`.
+
+              $& # name `:$&`
+
+              $+ # name `:$+`
     comment: |
       Represents reading a reference to a field in the previous match.
 
@@ -1037,6 +1043,15 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the class variable, including the leading `@@`.
+
+          For more information on permitted class variable names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              @@abc   # name `:@@abc`
+
+              @@_test # name `:@@_test`
     comment: |
       Represents referencing a class variable.
 
@@ -1207,6 +1222,15 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the constant.
+
+          For more information on permitted constant names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              X              # name `:X`
+
+              SOME_CONSTANT  # name `:SOME_CONSTANT`
     comment: |
       Represents referencing a constant.
 
@@ -1495,6 +1519,15 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the global variable, including the leading `$`.
+
+          For more information on permitted global variable names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              $foo   # name `:$foo`
+
+              $_Test # name `:$_Test`
     comment: |
       Represents referencing a global variable.
 
@@ -1815,6 +1848,15 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the instance variable, including the leading `@`.
+
+          For more information on permitted instance variable names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              @x     # name `:@x`
+
+              @_test # name `:@_test`
     comment: |
       Represents referencing an instance variable.
 
@@ -2039,8 +2081,30 @@ nodes:
     fields:
       - name: name
         type: constant
+        comment: |
+          The name of the local variable.
+
+          For more information on permitted local variable names, see
+          [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/lexing.md).
+
+              x      # name `:x`
+
+              _Test  # name `:_Test`
       - name: depth
         type: uint32
+        comment: |
+          The number of visible scopes searched up to find the declaration of
+          this local variable.
+
+              foo = 1; foo # depth 0
+
+              bar = 2; tap { bar } # depth 1
+
+          The specific rules for calculating the depth may differ from
+          individual Ruby implementations, as they are not specified by the
+          language.
+
+          For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -2241,6 +2305,16 @@ nodes:
     fields:
       - name: number
         type: uint32
+        comment: |
+          The (1-indexed, from the left) number of the capture group. Numbered
+          references that would overflow a `uint32`  result in a `number` of
+          exactly `2**32 - 1`.
+
+              $1          # number `1`
+
+              $5432       # number `5432`
+
+              $4294967296 # number `4294967295`
     comment: |
       Represents reading a numbered reference to a capture in the previous match.
 
