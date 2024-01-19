@@ -89,6 +89,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [JavaScript](docs/javascript.md)
 * [Local variable depth](docs/local_variable_depth.md)
 * [Mapping](docs/mapping.md)
+* [Parsing rules](docs/parsing_rules.md)
 * [Releasing](docs/releasing.md)
 * [Ripper](docs/ripper.md)
 * [Ruby API](docs/ruby_api.md)
