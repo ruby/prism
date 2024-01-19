@@ -748,8 +748,20 @@ nodes:
       - name: arguments
         type: node?
         kind: ArgumentsNode
+        comment: |
+          The argument to the break statement, if present. It can be any kind of
+          node that represents a non-void expression, or `nil` if no argument is
+          present.
+
+              break foo
+                    ^^^
       - name: keyword_loc
         type: location
+        comment: |
+          The location of the `break` keyword.
+
+              break foo
+              ^^^^^
     comment: |
       Represents the use of the `break` keyword.
 
