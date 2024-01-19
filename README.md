@@ -50,10 +50,9 @@ The repository contains the infrastructure for both a shared library (libprism) 
 
 To compile the shared library, you will need:
 
-* A C99 compiler
-* autotools (autoconf, automake, libtool)
+* C99 compiler
 * make
-* Ruby 3.3.0-preview1 or later
+* Ruby 3.0.0 or later
 
 Once you have these dependencies, run:
 
