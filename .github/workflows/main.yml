@@ -191,7 +191,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libc6-dbg
     - name: Cache valgrind
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache-valgrind
       with:
         path: valgrind-3.20.0
