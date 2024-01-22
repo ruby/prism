@@ -73,6 +73,15 @@ and links to `libprism.a` (to avoid exporting symbols, so no conflict when insta
 
 TODO, similar to TruffleRuby.
 
+### Building prism for embedded system
+
+For instance, you can build a static library `libprism.a` targeting the Arm Cortex-M0+ embedded system by the commands below:
+
+* `templates/template.rb`
+* `CFLAGS="-mcpu=cortex-m0plus" make static CC=arm-none-eabi-gcc`
+
+The build process internally looks up `_POSIX_MAPPED_FILES` and `_WIN32` macros to determine whether the functions of the memory map are available on the target platform.
+
 ### Building prism from source as a C library
 
 All of the source files match `src/**/*.c` and all of the headers match `include/**/*.h`.
