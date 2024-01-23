@@ -2465,7 +2465,7 @@ nodes:
         type: flags
         kind: RangeFlags
         comment: |
-          Represents whether the given flag is exclusive or inclusive. The value is empty if the range is inclusive (..), and it holds the EXCLUDE_END flag if the range is exclusive (...)
+          Represents whether the given range is exclusive or inclusive. The value is empty if the range is inclusive (..), and it holds the EXCLUDE_END flag if the range is exclusive (...)
       - name: left
         type: node?
         comment: |
