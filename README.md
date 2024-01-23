@@ -50,10 +50,9 @@ The repository contains the infrastructure for both a shared library (libprism) 
 
 To compile the shared library, you will need:
 
-* A C99 compiler
-* autotools (autoconf, automake, libtool)
+* C99 compiler
 * make
-* Ruby 3.3.0-preview1 or later
+* Ruby 3.0.0 or later
 
 Once you have these dependencies, run:
 
@@ -79,8 +78,9 @@ to see the syntax tree for the expression `1 + 2`.
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additionally have documentation about the overall design of the project as well as various subtopics.
 
-* [Building](docs/building.md)
+* [Build system](docs/build_system.md)
 * [Configuration](docs/configuration.md)
+* [CRuby compilation](docs/cruby_compilation.md)
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
 * [Fuzzing](docs/fuzzing.md)
@@ -88,6 +88,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [JavaScript](docs/javascript.md)
 * [Local variable depth](docs/local_variable_depth.md)
 * [Mapping](docs/mapping.md)
+* [Parsing rules](docs/parsing_rules.md)
 * [Releasing](docs/releasing.md)
 * [Ripper](docs/ripper.md)
 * [Ruby API](docs/ruby_api.md)

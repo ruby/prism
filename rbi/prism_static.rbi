@@ -32,9 +32,6 @@ class Prism::ParseWarning
 end
 
 class Prism::Node
-  sig { returns(T::Array[T.nilable(Prism::Node)]) }
-  def child_nodes; end
-
   sig { returns(Prism::Location) }
   def location; end
 
@@ -43,6 +40,21 @@ class Prism::Node
 
   sig { returns(String) }
   def to_dot; end
+
+  sig { params(visitor: Prism::Visitor).void }
+  def accept(visitor); end
+
+  sig { returns(T::Array[T.nilable(Prism::Node)]) }
+  def child_nodes; end
+
+  sig { returns(T::Array[Prism::Node]) }
+  def compact_child_nodes; end
+
+  sig { returns(T::Array[T.nilable(Prism::Node)]) }
+  def deconstruct; end
+
+  sig { returns(Symbol) }
+  def type; end
 end
 
 class Prism::Comment

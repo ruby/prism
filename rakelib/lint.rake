@@ -40,7 +40,7 @@ task :lint do
     exit(1)
   end
 
-  trailing_spaces_found = false
+  failed = false
   extensions = %w[.c .h .erb .rb .yml .rake]
 
   `git ls-files -z`.split("\x0").each do |filepath|
@@ -49,10 +49,15 @@ task :lint do
     File.foreach(filepath).with_index(1) do |line, index|
       if line.match?(/[ \t]+$/)
         warn("Trailing spaces found in #{filepath} on line #{index}")
-        trailing_spaces_found = true
+        failed = true
+      end
+
+      if line.match?(/^\t/)
+        warn("Tabs found in #{filepath} on line #{index}")
+        failed = true
       end
     end
   end
 
-  exit(1) if trailing_spaces_found
+  exit(1) if failed
 end
