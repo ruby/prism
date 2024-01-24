@@ -1,0 +1,51 @@
+name: Bindings to Chicory
+
+on:
+  push:
+    paths:
+      - ".github/workflows/java-wasm-bindings.yml"
+      - "include/"
+      - "src/"
+      - "*akefile*"
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+          bundler-cache: true
+
+      - name: rake templates
+        run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
+
+      - name: Set up WASI-SDK
+        run: |
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-21/wasi-sdk-21.0-linux.tar.gz
+          tar xvf wasi-sdk-21.0-linux.tar.gz
+
+      - name: Build the project
+        run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-21.0 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      - name: Run the tests
+        run: mvn -B install
+        working-directory: java-wasm
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: prism.wasm
+          path: java-wasm/src/test/resources/prism.wasm

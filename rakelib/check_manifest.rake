@@ -17,6 +17,7 @@ task check_manifest: :templates do
     fuzz
     javascript
     java
+    java-wasm
     pkg
     rakelib
     rust
