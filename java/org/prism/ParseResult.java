@@ -13,23 +13,38 @@ public final class ParseResult {
         }
     }
 
+    public enum DiagnosticLevel {
+        /** The default level for errors. */
+        ERROR_DEFAULT,
+        /** For warnings which should be emitted if $VERBOSE != nil. */
+        WARNING_VERBOSE_NOT_NIL,
+        /** For warnings which should be emitted if $VERBOSE == true. */
+        WARNING_VERBOSE_TRUE
+    }
+
+    public static DiagnosticLevel[] DIAGNOSTIC_LEVELS = DiagnosticLevel.values();
+
     public static final class Error {
         public final String message;
         public final Nodes.Location location;
+        public final DiagnosticLevel level;
 
-        public Error(String message, Nodes.Location location) {
+        public Error(String message, Nodes.Location location, DiagnosticLevel level) {
             this.message = message;
             this.location = location;
+            this.level = level;
         }
     }
 
     public static final class Warning {
         public final String message;
         public final Nodes.Location location;
+        public final DiagnosticLevel level;
 
-        public Warning(String message, Nodes.Location location) {
+        public Warning(String message, Nodes.Location location, DiagnosticLevel level) {
             this.message = message;
             this.location = location;
+            this.level = level;
         }
     }
 

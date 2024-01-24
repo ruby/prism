@@ -119,13 +119,13 @@ class SerializationBuffer {
 /**
  * An error in the source code.
  *
- * @typedef {{ message: string, location: Location }} ParseError
+ * @typedef {{ message: string, location: Location, level: string }} ParseError
  */
 
 /**
  * A warning in the source code.
  *
- * @typedef {{ message: string, location: Location }} ParseWarning
+ * @typedef {{ message: string, location: Location, level: string }} ParseWarning
  */
 
 /**
@@ -184,6 +184,12 @@ export class ParseResult {
   }
 }
 
+const diagnosticLevels = [
+    "error_default",
+    "warning_verbose_not_nil",
+    "warning_verbose_true"
+];
+
 /**
  * Accept two Uint8Arrays, one for the source and one for the serialized format.
  * Return the AST corresponding to the serialized form.
@@ -229,12 +235,14 @@ export function deserialize(source, array) {
 
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
     message: buffer.readString(buffer.readVarInt()),
-    location: buffer.readLocation()
+    location: buffer.readLocation(),
+    level: diagnosticLevels[buffer.readByte()]
   }));
 
   const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
     message: buffer.readString(buffer.readVarInt()),
-    location: buffer.readLocation()
+    location: buffer.readLocation(),
+    level: diagnosticLevels[buffer.readByte()]
   }));
 
   const constantPoolOffset = buffer.readUint32();
