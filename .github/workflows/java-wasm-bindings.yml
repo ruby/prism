@@ -2,14 +2,14 @@ name: Bindings to Chicory
 
 on:
   push:
-    paths:
-      - ".github/workflows/java-wasm-bindings.yml"
-      - "include/"
-      - "src/"
-      - "*akefile*"
-    branches:
-      - main
-  pull_request:
+  #   paths:
+  #     - ".github/workflows/java-wasm-bindings.yml"
+  #     - "include/"
+  #     - "src/"
+  #     - "*akefile*"
+  #   branches:
+  #     - main
+  # pull_request:
 
 jobs:
   build:
