@@ -15,14 +15,14 @@ public class DummyTest {
 
     @Test
     public void test1() {
-        var wasmPrism = Module.build(new File("src/test/resources/prism.wasm")).instantiate();
-        var memory = wasmPrism.getMemory();
-        var calloc = wasmPrism.getExport("calloc");
-        var pmSerializeParse = wasmPrism.getExport("pm_serialize_parse");
-        var pmBufferInit = wasmPrism.getExport("pm_buffer_init");
-        var pmBufferSizeof = wasmPrism.getExport("pm_buffer_sizeof");
-        var pmBufferValue = wasmPrism.getExport("pm_buffer_value");
-        var pmBufferLength = wasmPrism.getExport("pm_buffer_length");
+        var wasmPrism = Module.builder("prism.wasm").build().instantiate();
+        var memory = wasmPrism.memory();
+        var calloc = wasmPrism.export("calloc");
+        var pmSerializeParse = wasmPrism.export("pm_serialize_parse");
+        var pmBufferInit = wasmPrism.export("pm_buffer_init");
+        var pmBufferSizeof = wasmPrism.export("pm_buffer_sizeof");
+        var pmBufferValue = wasmPrism.export("pm_buffer_value");
+        var pmBufferLength = wasmPrism.export("pm_buffer_length");
 
         // The Ruby source code to be processed
         var source = "1 + 1";
@@ -58,14 +58,14 @@ public class DummyTest {
 
     @Test
     public void test2() {
-        var wasmPrism = Module.build(new File("src/test/resources/prism.wasm")).instantiate();
-        var memory = wasmPrism.getMemory();
-        var calloc = wasmPrism.getExport("calloc");
-        var pmSerializeParse = wasmPrism.getExport("pm_serialize_parse");
-        var pmBufferInit = wasmPrism.getExport("pm_buffer_init");
-        var pmBufferSizeof = wasmPrism.getExport("pm_buffer_sizeof");
-        var pmBufferValue = wasmPrism.getExport("pm_buffer_value");
-        var pmBufferLength = wasmPrism.getExport("pm_buffer_length");
+        var wasmPrism = Module.builder("prism.wasm").build().instantiate();
+        var memory = wasmPrism.memory();
+        var calloc = wasmPrism.export("calloc");
+        var pmSerializeParse = wasmPrism.export("pm_serialize_parse");
+        var pmBufferInit = wasmPrism.export("pm_buffer_init");
+        var pmBufferSizeof = wasmPrism.export("pm_buffer_sizeof");
+        var pmBufferValue = wasmPrism.export("pm_buffer_value");
+        var pmBufferLength = wasmPrism.export("pm_buffer_length");
 
         // The Ruby source code to be processed
         var source = "puts \"h\ne\nl\nl\no\n\"";
