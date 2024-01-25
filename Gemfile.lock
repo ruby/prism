@@ -18,7 +18,6 @@ GEM
       racc
     power_assert (2.0.3)
     racc (1.7.3)
-    racc (1.7.3-java)
     rake (13.1.0)
     rake-compiler (1.2.6)
       rake
@@ -26,13 +25,16 @@ GEM
       abbrev
     ruby_memcheck (2.3.0)
       nokogiri
+    ruby_parser (3.21.0)
+      racc (~> 1.5)
+      sexp_processor (~> 4.16)
+    sexp_processor (4.17.1)
     test-unit (3.6.1)
       power_assert
 
 PLATFORMS
+  arm64-darwin-23
   ruby
-  universal-java-17
-  universal-java-20
 
 DEPENDENCIES
   ffi
@@ -42,7 +44,8 @@ DEPENDENCIES
   rake-compiler
   rbs
   ruby_memcheck
+  ruby_parser
   test-unit
 
 BUNDLED WITH
-   2.3.6
+   2.6.0.dev

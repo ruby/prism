@@ -93,5 +93,6 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Releasing](docs/releasing.md)
 * [Ripper](docs/ripper.md)
 * [Ruby API](docs/ruby_api.md)
+* [RubyParser translation](docs/ruby_parser_translation.md)
 * [Serialization](docs/serialization.md)
 * [Testing](docs/testing.md)
