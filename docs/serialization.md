@@ -51,12 +51,21 @@ The comment type is one of:
 | location | the location of the key of the magic comment |
 | location | the location of the value of the magic comment |
 
-### diagnostic
+### error
 
 | # bytes | field |
 | --- | --- |
-| string | diagnostic message (ASCII-only characters) |
-| location | the location in the source this diagnostic applies to |
+| string | error message (ASCII-only characters) |
+| location | the location in the source this error applies to |
+| `1` | the level of the error, see pm_diagnostic_level_t for the values |
+
+## warning
+
+| # bytes | field |
+| --- | --- |
+| string | warning message (ASCII-only characters) |
+| location | the location in the source this warning applies to |
+| `1` | the level of the warning, see pm_diagnostic_level_t for the values |
 
 ## Structure
 
@@ -82,9 +91,9 @@ The header is structured like the following table:
 | magic comment* | magic comments |
 | location? | the optional location of the `__END__` keyword and its contents |
 | varuint | number of errors |
-| diagnostic* | errors |
+| error* | errors |
 | varuint | number of warnings |
-| diagnostic* | warnings |
+| warning* | warnings |
 | `4` | content pool offset |
 | varuint | content pool size |
 
