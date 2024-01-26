@@ -57,7 +57,7 @@ The comment type is one of:
 | --- | --- |
 | string | error message (ASCII-only characters) |
 | location | the location in the source this error applies to |
-| `1` | the level of the error, see pm_diagnostic_level_t for the values |
+| `1` | the level of the error: `0` for `fatal` |
 
 ## warning
 
@@ -65,7 +65,7 @@ The comment type is one of:
 | --- | --- |
 | string | warning message (ASCII-only characters) |
 | location | the location in the source this warning applies to |
-| `1` | the level of the warning, see pm_diagnostic_level_t for the values |
+| `1` | the level of the warning: `0` for `default` and `1` for `verbose` |
 
 ## Structure
 

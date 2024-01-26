@@ -183,7 +183,7 @@ public class Loader {
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
-            ParseResult.DiagnosticLevel level = ParseResult.DIAGNOSTIC_LEVELS[buffer.get()];
+            ParseResult.ErrorLevel level = ParseResult.ERROR_LEVELS[buffer.get()];
 
             ParseResult.Error error = new ParseResult.Error(message, location, level);
             errors[i] = error;
@@ -201,7 +201,7 @@ public class Loader {
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
-            ParseResult.DiagnosticLevel level = ParseResult.DIAGNOSTIC_LEVELS[buffer.get()];
+            ParseResult.WarningLevel level = ParseResult.WARNING_LEVELS[buffer.get()];
 
             ParseResult.Warning warning = new ParseResult.Warning(message, location, level);
             warnings[i] = warning;

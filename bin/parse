@@ -8,7 +8,6 @@
 
 $:.unshift(File.expand_path("../lib", __dir__))
 require "prism"
-require "pp"
 
 if ARGV[0] == "-e"
   result = Prism.parse(ARGV[1])
