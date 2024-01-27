@@ -7,19 +7,24 @@ GEM
   remote: https://rubygems.org/
   specs:
     abbrev (0.1.2)
-    ffi (1.15.5)
+    ast (2.4.2)
+    ffi (1.16.3)
     mini_portile2 (2.8.5)
-    nokogiri (1.15.4)
+    nokogiri (1.16.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    parser (3.3.0.5)
+      ast (~> 2.4.1)
+      racc
     power_assert (2.0.3)
     racc (1.7.3)
-    rake (13.0.6)
-    rake-compiler (1.2.5)
+    racc (1.7.3-java)
+    rake (13.1.0)
+    rake-compiler (1.2.6)
       rake
-    rbs (3.4.2)
+    rbs (3.4.3)
       abbrev
-    ruby_memcheck (2.2.1)
+    ruby_memcheck (2.3.0)
       nokogiri
     test-unit (3.6.1)
       power_assert
@@ -31,6 +36,7 @@ PLATFORMS
 
 DEPENDENCIES
   ffi
+  parser
   prism!
   rake
   rake-compiler
