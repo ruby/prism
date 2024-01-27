@@ -65,10 +65,11 @@ module Prism
       right = offsets.length - 1
 
       while left <= right
-        mid = left + (right - left) / 2
-        return mid if offsets[mid] == byte_offset
+        mid = left + ((right - left) >> 1)
+        current_offset = offsets[mid]
+        return mid if current_offset == byte_offset
 
-        if offsets[mid] < byte_offset
+        if current_offset < byte_offset
           left = mid + 1
         else
           right = mid - 1
