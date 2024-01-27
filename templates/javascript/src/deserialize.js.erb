@@ -184,11 +184,8 @@ export class ParseResult {
   }
 }
 
-const diagnosticLevels = [
-    "error_default",
-    "warning_verbose_not_nil",
-    "warning_verbose_true"
-];
+const errorLevels = ["fatal"];
+const warningLevels = ["default", "verbose"];
 
 /**
  * Accept two Uint8Arrays, one for the source and one for the serialized format.
@@ -236,13 +233,13 @@ export function deserialize(source, array) {
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
-    level: diagnosticLevels[buffer.readByte()]
+    level: errorLevels[buffer.readByte()]
   }));
 
   const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
-    level: diagnosticLevels[buffer.readByte()]
+    level: warningLevels[buffer.readByte()]
   }));
 
   const constantPoolOffset = buffer.readUint32();
