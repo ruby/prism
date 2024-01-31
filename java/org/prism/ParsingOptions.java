@@ -26,7 +26,7 @@ public abstract class ParsingOptions {
     /** Serialize parsing options into byte array.
      *
      * @param filepath the name of the file that is currently being parsed
-     * @param line the line within the file that the parser starts on. This value is 0-indexed
+     * @param line the line within the file that the parser starts on. This value is 1-indexed
      * @param encoding the name of the encoding that the source file is in
      * @param frozenStringLiteral whether the frozen string literal option has been set
      * @param verbose whether the parser emits warnings
