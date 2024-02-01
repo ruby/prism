@@ -9,7 +9,7 @@ The `parser` gem provides multiple parsers to support different versions of the 
 You can use the `prism` parser like you would any other. After requiring the parser, you should be able to call any of the regular `Parser::Base` APIs that you would normally use.
 
 ```ruby
-require "prism/translation/parser"
+require "prism"
 
 Prism::Translation::Parser.parse_file("path/to/file.rb")
 ```
