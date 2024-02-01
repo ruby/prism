@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.20.0] - 2024-01-01
+
+### Added
+
+- String literal hash keys are now marked as frozen as static literal.
+- `IndexTargetNode` now always has the `ATTRIBUTE_WRITE` flag.
+- `Call*Node` nodes now have an `IGNORE_VISIBILITY` flag.
+- We now support the `it` default parameter.
+- Errors and warnings now have levels associated with them.
+- Symbols now have correct encoding flags.
+- We have now merged `parser-prism` in, which provides translation to the `whitequark/parser` AST.
+- We now emit errors for invalid method definition receivers.
+
+### Changed
+
+- We now emit errors on invalid pinned local variables.
+- When passed scopes, it is now assumed that the innermost scope is the current binding.
+- We now provide better error recovery for non terminated heredocs.
+- Fix for `RationalNode#value` for non-decimal integers.
+- Unary symbols `!@` and `~@` now unescape to `!` and `~`, respectively.
+- `frozen_string_literal: false` now works properly.
+
+### Removed
+
+- We've removed the `locals_body_index` field.
+- We've removed the `verbose` option on the various parse APIs. Warnings are now always emitted with their associated level so that consumers can decide how to handle them.
+
 ## [0.19.0] - 2023-12-14
 
 ### Added
@@ -296,7 +323,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.19.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/ruby/prism/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/ruby/prism/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/ruby/prism/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/ruby/prism/compare/v0.17.0...v0.17.1
