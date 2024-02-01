@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Removed
 
 - We've removed the `locals_body_index` field.
+- We've removed the `verbose` option on the various parse APIs. Warnings are now always emitted with their associated level so that consumers can decide how to handle them.
 
 ## [0.19.0] - 2023-12-14
 

@@ -2,26 +2,26 @@ module Prism
   BACKEND: :CEXT | :FFI
   VERSION: String
 
-  def self.parse: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[ProgramNode]
-  def self.lex: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[[Token, Integer]]]
-  def self.parse_lex: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[[ProgramNode, Array[[Token, Integer]]]]
-  def self.dump: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> String
-  def self.parse_comments: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> Array[Comment]
-  def self.parse_success?: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> bool
-  def self.parse_failure?: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> bool
+  def self.parse: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[ProgramNode]
+  def self.lex: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[[Token, Integer]]]
+  def self.parse_lex: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[[ProgramNode, Array[[Token, Integer]]]]
+  def self.dump: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> String
+  def self.parse_comments: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> Array[Comment]
+  def self.parse_success?: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> bool
+  def self.parse_failure?: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> bool
 
-  def self.parse_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[ProgramNode]
-  def self.lex_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[[Token, Integer]]]
-  def self.parse_lex_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[[ProgramNode, Array[[Token, Integer]]]]
-  def self.dump_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> String
-  def self.parse_file_comments: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> Array[Comment]
-  def self.parse_file_failure?: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> bool
-  def self.parse_file_success?: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> bool
+  def self.parse_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[ProgramNode]
+  def self.lex_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[[Token, Integer]]]
+  def self.parse_lex_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[[ProgramNode, Array[[Token, Integer]]]]
+  def self.dump_file: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> String
+  def self.parse_file_comments: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> Array[Comment]
+  def self.parse_file_failure?: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> bool
+  def self.parse_file_success?: (String filepath, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> bool
 
   def self.load: (String source, String serialized) -> ParseResult[ProgramNode]
 
   type ripper_token = [[Integer, Integer], Symbol, String, untyped]
-  def self.lex_compat: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?verbose: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[ripper_token]]
+  def self.lex_compat: (String source, ?filepath: String, ?line: Integer, ?encoding: Encoding, ?frozen_string_literal: bool, ?scopes: Array[Array[Symbol]]) -> ParseResult[Array[ripper_token]]
   def self.lex_ripper: (String source) -> Array[ripper_token]
 
   class ParseResult[T]
