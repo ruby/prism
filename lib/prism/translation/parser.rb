@@ -93,15 +93,21 @@ module Prism
 
       private
 
+      # This is a hook to allow consumers to disable some errors if they don't
+      # want them to block creating the syntax tree.
+      def valid_error?(error)
+        true
+      end
+
       # If there was a error generated during the parse, then raise an
       # appropriate syntax error. Otherwise return the result.
       def unwrap(result)
-        return result if result.success?
+        error = result.errors.find { |error| valid_error?(error) }
+        return result if error.nil?
 
-        error = result.errors.first
         offset_cache = build_offset_cache(source_buffer.source)
-
         diagnostic = Diagnostic.new(error.message, build_range(error.location, offset_cache))
+
         raise ::Parser::SyntaxError, diagnostic
       end
 
