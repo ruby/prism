@@ -1,0 +1,16 @@
+language: ruby
+
+dist: jammy
+
+matrix:
+  include:
+    - arch: arm64
+    - arch: ppc64le
+    - arch: s390x
+  allow_failures:
+    - arch: ppc64le
+  fast_finish: true
+
+before_script:
+  # Enable the verbose option in mkmf.rb to print the compiling commands.
+  - export MAKEFLAGS="V=1"
