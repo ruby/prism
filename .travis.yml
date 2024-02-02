@@ -7,8 +7,6 @@ matrix:
     - arch: arm64
     - arch: ppc64le
     - arch: s390x
-  allow_failures:
-    - arch: ppc64le
   fast_finish: true
 
 before_script:
