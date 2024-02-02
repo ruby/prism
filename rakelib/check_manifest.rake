@@ -35,6 +35,7 @@ task check_manifest: :templates do
     .gitattributes
     .gitignore
     .gitmodules
+    .travis.yml
     *.iml
     Doxyfile
     Gemfile
