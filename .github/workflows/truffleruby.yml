@@ -45,10 +45,6 @@ jobs:
       run: tool/import-prism.sh
       working-directory: truffleruby-ws/truffleruby
 
-    - name: Install JVMCI
-      run: jt install jvmci
-    - name: Set JAVA_HOME
-      run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
     - name: Get graal commit
       id: graal_commit
       run: echo "graal_commit=$(jt truffle_version)" >> $GITHUB_OUTPUT
@@ -59,20 +55,18 @@ jobs:
         path: truffleruby-ws/graal
         ref: ${{ steps.graal_commit.outputs.graal_commit }}
 
-    - name: Download dependencies
-      run: jt -q mx --env jvm graalvm-dist-name
-      working-directory: truffleruby-ws/truffleruby
+    - name: Install JVMCI
+      run: jt install jvmci
+    - name: Set JAVA_HOME
+      run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
+
     - name: Build TruffleRuby
-      run: jt build -- --dependencies "$(jt -q mx --env jvm graalvm-dist-name)"
+      run: jt build
       working-directory: truffleruby-ws/truffleruby
 
     - name: Parse test/prism/fixtures/**/*.rb
-      run: jt ruby -e 'Dir.glob("test/prism/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+      run: jt ruby -e 'Dir.glob("test/prism/fixtures/**/*.txt") { |file| puts file; puts Truffle::Debug.parse_ast(File.read(file)) }'
       working-directory: prism
 
-    - name: Parse src/main/ruby/truffleruby/**/*.rb
-      run: jt ruby -e 'Dir.glob("src/main/ruby/truffleruby/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
-      working-directory: truffleruby-ws/truffleruby
-
     - name: Execute p 1+2
-      run: jt ruby -e 'Truffle::Debug.yarp_execute "p 1+2"'
+      run: jt ruby -e 'p 1+2'
