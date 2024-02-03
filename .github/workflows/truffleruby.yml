@@ -59,11 +59,8 @@ jobs:
         path: truffleruby-ws/graal
         ref: ${{ steps.graal_commit.outputs.graal_commit }}
 
-    - name: Download dependencies
-      run: jt -q mx --env jvm graalvm-dist-name
-      working-directory: truffleruby-ws/truffleruby
     - name: Build TruffleRuby
-      run: jt build -- --dependencies "$(jt -q mx --env jvm graalvm-dist-name)"
+      run: jt build
       working-directory: truffleruby-ws/truffleruby
 
     - name: Parse test/prism/fixtures/**/*.rb
