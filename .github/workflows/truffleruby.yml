@@ -45,10 +45,6 @@ jobs:
       run: tool/import-prism.sh
       working-directory: truffleruby-ws/truffleruby
 
-    - name: Install JVMCI
-      run: jt install jvmci
-    - name: Set JAVA_HOME
-      run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
     - name: Get graal commit
       id: graal_commit
       run: echo "graal_commit=$(jt truffle_version)" >> $GITHUB_OUTPUT
@@ -58,6 +54,11 @@ jobs:
         repository: oracle/graal
         path: truffleruby-ws/graal
         ref: ${{ steps.graal_commit.outputs.graal_commit }}
+
+    - name: Install JVMCI
+      run: jt install jvmci
+    - name: Set JAVA_HOME
+      run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
 
     - name: Build TruffleRuby
       run: jt build
