@@ -64,12 +64,8 @@ jobs:
       working-directory: truffleruby-ws/truffleruby
 
     - name: Parse test/prism/fixtures/**/*.rb
-      run: jt ruby -e 'Dir.glob("test/prism/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+      run: jt ruby -e 'Dir.glob("test/prism/fixtures/**/*.txt") { |file| puts file; puts Truffle::Debug.parse_ast(File.read(file)) }'
       working-directory: prism
 
-    - name: Parse src/main/ruby/truffleruby/**/*.rb
-      run: jt ruby -e 'Dir.glob("src/main/ruby/truffleruby/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
-      working-directory: truffleruby-ws/truffleruby
-
     - name: Execute p 1+2
-      run: jt ruby -e 'Truffle::Debug.yarp_execute "p 1+2"'
+      run: jt ruby -e 'p 1+2'
