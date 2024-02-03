@@ -18,6 +18,7 @@ module Prism
       when "parser"     then parser(argv)
       when "ripper"     then ripper(argv)
       when "rubyparser" then rubyparser(argv)
+      when "benchmark"  then benchmark(argv)
       else
         puts <<~TXT
           Usage:
@@ -31,6 +32,7 @@ module Prism
             bin/prism parser [source]
             bin/prism ripper [source]
             bin/prism rubyparser [source]
+            bin/prism benchmark [source_file]
         TXT
       end
     end
@@ -146,9 +148,9 @@ module Prism
 
       puts "CRuby:"
       p Debug.cruby_locals(source)
-      
+
       puts "Prism:"
-      p Debug.prism_locals(source)    
+      p Debug.prism_locals(source)
     end
 
     # bin/prism parse [source]
@@ -246,6 +248,24 @@ module Prism
       pp prism
     end
 
+    # bin/prism benchmark [source_file]
+    def benchmark(argv)
+      require "benchmark/ips"
+      require "parser/current"
+      require "ruby_parser"
+
+      filepath = argv.fetch(0) { File.expand_path("../lib/prism/translation/parser/compiler.rb", __dir__) }
+
+      Benchmark.ips do |x|
+        x.report("Parser::CurrentRuby") { Parser::CurrentRuby.parse_file(filepath) }
+        x.report("Parser::Prism") { Prism.parse_file(filepath) }
+        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse_file(filepath) }
+        x.report("RubyParser") { RubyParser.new.parse(File.read(filepath), filepath) }
+        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.parse_file(filepath) }
+        x.compare!
+      end
+    end
+
     ############################################################################
     # Helpers
     ############################################################################
@@ -291,18 +311,18 @@ module Prism
 
       { alpha: /[[:alpha:]]/, alnum: /[[:alnum:]]/, isupper: /[[:upper:]]/ }.map do |kind, regex|
         codepoints = range.select { |codepoint| codepoint.chr(encoding).match?(regex) }
-    
+
         previous = nil
         groups =
           codepoints.slice_before do |codepoint|
             (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
           end
-    
+
         matched =
           groups.flat_map do |group|
             ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
           end
-    
+
         puts "\n#define UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH #{matched.length}"
         puts "unicode_codepoint_t unicode_#{kind}_codepoints[UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH] = {"
         matched.each_slice(2) { |slice| puts "    #{slice.join(", ")}," }
