@@ -6,7 +6,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [0.20.0] - 2024-01-01
+## [0.21.0] - 2024-02-05
+
+### Added
+
+- Add the `pm_constant_pool_find` API for finding a constant.
+
+### Changed
+
+- Fixes for `Prism::Translation::Parser`.
+  - Ensure all errors flow through `parser.diagnostics.process`.
+  - Fix the find pattern node.
+  - Fix block forwarding with `NumberedParametersNode`.
+  - Ensure we can parse strings with invalid bytes for the encoding.
+  - Fix hash pairs in pattern matching.
+- Properly reject operator writes on operator calls, e.g., `a.+ -= b`.
+- Fix multi-byte escapes.
+- Handle missing body in `begin` within the receiver of a method call.
+
+## [0.20.0] - 2024-02-01
 
 ### Added
 
@@ -323,7 +341,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.20.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/ruby/prism/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/ruby/prism/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/ruby/prism/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/ruby/prism/compare/v0.17.1...v0.18.0
