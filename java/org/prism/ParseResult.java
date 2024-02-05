@@ -15,7 +15,10 @@ public final class ParseResult {
 
     public enum ErrorLevel {
         /** For errors that cannot be recovered from. */
-        ERROR_FATAL
+        ERROR_FATAL,
+
+        /** For errors that should raise ArgumentError. */
+        ERROR_ARGUMENT,
     }
 
     public static ErrorLevel[] ERROR_LEVELS = ErrorLevel.values();
@@ -35,6 +38,7 @@ public final class ParseResult {
     public enum WarningLevel {
         /** For warnings which should be emitted if $VERBOSE != nil. */
         WARNING_DEFAULT,
+
         /** For warnings which should be emitted if $VERBOSE == true. */
         WARNING_VERBOSE
     }
