@@ -17,7 +17,6 @@ return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 # Don't bother trying to configure memcheck on old versions of Ruby.
 return if RUBY_VERSION < "3.0"
 
-
 begin
   require "ruby_memcheck"
   have_memcheck = true

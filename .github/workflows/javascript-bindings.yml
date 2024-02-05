@@ -1,4 +1,4 @@
-name: JavaScript Bindings
+name: JavaScript bindings
 
 on:
   push:

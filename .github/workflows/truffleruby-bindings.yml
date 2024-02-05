@@ -1,4 +1,4 @@
-name: Test Loader.java with TruffleRuby
+name: TruffleRuby bindings
 
 concurrency:
   group: "${{github.workflow}}-${{github.ref}}"

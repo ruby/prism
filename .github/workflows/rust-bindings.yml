@@ -1,5 +1,4 @@
----
-name: Rust Bindings
+name: Rust bindings
 
 on:
   push:
