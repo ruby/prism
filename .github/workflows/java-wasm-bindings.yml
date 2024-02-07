@@ -1,4 +1,4 @@
-name: Bindings to Chicory
+name: Java WASM bindings
 
 on:
   push:
