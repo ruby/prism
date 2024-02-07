@@ -43,6 +43,26 @@ chruby truffleruby-23.1.2 && BUNDLE_GEMFILE=gemfiles/truffleruby/Gemfile bundle 
 ## Publishing
 
 * Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
-* Run `bundle exec rake release` to publish the gem to [rubygems.org](rubygems.org). Note that you must have access to the `prism` gem to do this.
-* Either download the `wasm` artifact from GitHub actions or generate it yourself with `make wasm`.
-* Run `npm publish` to publish the JavaScript package to [npmjs.com](npmjs.com). Note that you must have access to the `ruby-prism` package to do this.
+* Publish the gem to [rubygems.org](rubygems.org). Note that you must have access to the `prism` gem to do this.
+
+```sh
+bundle exec rake release
+```
+
+* Generate the `wasm` artifact (or download it from GitHub actions and put it in `javascript/src/prism.wasm`).
+
+```sh
+make wasm
+```
+
+* Publish the JavaScript package to [npmjs.com](npmjs.com). Note that you must have access to the `@ruby/prism` package to do this.
+
+```sh
+npm publish
+```
+
+* Publish the rust crate to [crates.io](crates.io). Note that you must have access to the `ruby-prism-sys` and `ruby-prism` crates to do this.
+
+```sh
+bundle exec rake cargo:publish:real
+```
