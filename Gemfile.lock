@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    prism (0.21.0)
+    prism (0.22.0)
 
 GEM
   remote: https://rubygems.org/
@@ -12,8 +12,6 @@ GEM
     mini_portile2 (2.8.5)
     nokogiri (1.16.2)
       mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
-    nokogiri (1.16.2-java)
       racc (~> 1.4)
     parser (3.3.0.5)
       ast (~> 2.4.1)
