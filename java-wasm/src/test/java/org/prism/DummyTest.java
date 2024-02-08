@@ -6,6 +6,7 @@ import com.dylibso.chicory.wasm.types.Value;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,7 @@ public class DummyTest {
 
         // The Ruby source code to be processed
         var source = "1 + 1";
+        var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
 
         var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
         memory.writeString(sourcePointer[0].asInt(), source);
@@ -46,9 +48,7 @@ public class DummyTest {
 
         System.out.println("RESULT: " + new String(result));
 
-        var byteResults = result;
-        Nodes.Source nodeSource = new Nodes.Source(byteResults);
-        ParseResult pr = Loader.load(byteResults, nodeSource);
+        ParseResult pr = Loader.load(result, sourceBytes);
 
         assertEquals(1, pr.value.childNodes().length);
         System.out.println("Nodes:");
@@ -69,6 +69,7 @@ public class DummyTest {
 
         // The Ruby source code to be processed
         var source = "puts \"h\ne\nl\nl\no\n\"";
+        var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
 
         var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
         memory.writeString(sourcePointer[0].asInt(), source);
@@ -89,9 +90,7 @@ public class DummyTest {
 
         System.out.println("RESULT: " + new String(result));
 
-        var byteResults = result;
-        Nodes.Source nodeSource = new Nodes.Source(byteResults);
-        ParseResult pr = Loader.load(byteResults, nodeSource);
+        ParseResult pr = Loader.load(result, sourceBytes);
 
         assertEquals(1, pr.value.childNodes().length);
 
