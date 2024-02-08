@@ -16,6 +16,7 @@ module Prism
       when "memsize"  then memsize
       when "parse"    then parse(argv)
       when "parser"   then parser(argv)
+      when "ripper"   then ripper(argv)
       else
         puts <<~TXT
           Usage:
@@ -208,6 +209,23 @@ module Prism
 
       puts "Prism:"
       pp Translation::Parser.parse(source, filepath)
+    end
+
+    # bin/prism ripper [source]
+    def ripper(argv)
+      require "ripper"
+      source, filepath = read_source(argv)
+
+      ripper = Ripper.sexp_raw(source)
+      prism = Prism::RipperCompat.sexp_raw(source)
+
+      puts "Ripper:"
+      pp ripper
+
+      puts "Prism:"
+      pp prism
+
+      puts "Output is #{ripper == prism ? "" : "not "}identical"
     end
 
     ############################################################################
