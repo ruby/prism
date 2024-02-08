@@ -85,6 +85,8 @@ The header is structured like the following table:
 | `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
 | varsint | the start line |
+| varuint | number of newline offsets |
+| varuint* | newline offsets |
 | varuint | number of comments |
 | comment* | comments |
 | varuint | number of magic comments |
