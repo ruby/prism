@@ -1094,14 +1094,16 @@ pm_statements_node_body_length(pm_statements_node_t *node);
  * This function is here to allow us a place to extend in the future when we
  * implement our own arena allocation.
  */
-static inline void *
-pm_alloc_node(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, size_t size) {
-    void *memory = calloc(1, size);
-    if (memory == NULL) {
+static void *
+pm_alloc_node(pm_parser_t *parser, size_t size) {
+    pm_node_t *node = calloc(1, size);
+    if (node == NULL) {
         fprintf(stderr, "Failed to allocate %d bytes\n", (int) size);
         abort();
     }
-    return memory;
+
+    node->id = ++parser->node_id;
+    return (void *) node;
 }
 
 #define PM_ALLOC_NODE(parser, type) (type *) pm_alloc_node(parser, sizeof(type))
@@ -17774,6 +17776,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
     assert(source != NULL);
 
     *parser = (pm_parser_t) {
+        .node_id = 0,
         .lex_state = PM_LEX_STATE_BEG,
         .enclosure_nesting = 0,
         .lambda_enclosure_nesting = -1,

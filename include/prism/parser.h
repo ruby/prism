@@ -503,6 +503,9 @@ static const uint8_t PM_FORWARDING_ALL = 0x8;
  * it's considering.
  */
 struct pm_parser {
+    /** The current node ID that will be written to the next node. */
+    uint32_t node_id;
+
     /** The current state of the lexer. */
     pm_lex_state_t lex_state;
 

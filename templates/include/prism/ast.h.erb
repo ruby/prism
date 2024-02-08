@@ -127,6 +127,13 @@ static const pm_node_flags_t PM_NODE_FLAG_COMMON_MASK = (1 << (PM_NODE_FLAG_BITS
  */
 typedef struct pm_node {
     /**
+     * A unique identifier for this node in the syntax tree. This will be the
+     * same integer for each parse of the same source, which makes it suitable
+     * for finding the node again based on the identifier.
+     */
+    uint32_t id;
+
+    /**
      * This represents the type of the node. It somewhat maps to the nodes that
      * existed in the original grammar and ripper, but it's not a 1:1 mapping.
      */
