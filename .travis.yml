@@ -9,6 +9,11 @@ matrix:
     - arch: s390x
   fast_finish: true
 
+before_install:
+  - sudo apt update -yq
+  - sudo apt -yq install gcc-11
+  - gcc-11 --version
+
 before_script:
   # Enable the verbose option in mkmf.rb to print the compiling commands.
-  - export MAKEFLAGS="V=1"
+  - export MAKEFLAGS="V=1 CC=gcc-11"
