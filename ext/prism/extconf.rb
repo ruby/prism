@@ -83,6 +83,10 @@ end
 # By default, all symbols are hidden in the shared library.
 append_cflags("-fvisibility=hidden")
 
+# We'll use the `CC` environment variable if it is set, otherwise we'll use the
+# default compiler that `mkmf` would have chosen.
+RbConfig::MAKEFILE_CONFIG["CC"] = ENV["CC"] if ENV["CC"]
+
 # We need to link against the libprism.a archive, which is built by the
 # project's `Makefile`. We'll build it if it doesn't exist yet, and then add it
 # to `mkmf`'s list of local libraries.
