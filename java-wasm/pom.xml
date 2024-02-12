@@ -22,7 +22,7 @@
     <dependency>
       <groupId>com.dylibso.chicory</groupId>
       <artifactId>runtime</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.9</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
