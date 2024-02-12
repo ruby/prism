@@ -21,7 +21,7 @@ GEM
     rake (13.1.0)
     rake-compiler (1.2.7)
       rake
-    rbs (3.4.3)
+    rbs (3.4.4)
       abbrev
     ruby_memcheck (2.3.0)
       nokogiri
