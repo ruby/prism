@@ -68,7 +68,7 @@ function dumpOptions(options) {
   values.push(options.frozen_string_literal === undefined ? 0 : 1);
 
   template.push("C");
-  if (!options.version || options.version === "latest") {
+  if (!options.version || options.version === "latest" || options.version === "3.4.0") {
     values.push(0);
   } else if (options.version === "3.3.0") {
     values.push(1);
