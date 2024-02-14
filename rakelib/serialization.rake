@@ -19,7 +19,6 @@ task "test:java_loader:internal" => :compile do
   require "fileutils"
   require 'java'
   require_relative '../tmp/prism.jar'
-  java_import 'org.prism.Nodes$Source'
 
   Dir["**/*.txt", base: fixtures].each do |relative|
     path = "#{fixtures}/#{relative}"
@@ -27,8 +26,7 @@ task "test:java_loader:internal" => :compile do
     puts path
     serialized = Prism.dump_file(path)
     source_bytes = File.binread(path).unpack('c*')
-    source = Source.new(source_bytes.to_java(:byte))
-    parse_result = org.prism.Loader.load(serialized.unpack('c*'), source)
+    parse_result = org.prism.Loader.load(serialized.unpack('c*'), source_bytes)
     puts parse_result.value
   end
 end

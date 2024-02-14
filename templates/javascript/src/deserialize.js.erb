@@ -218,6 +218,13 @@ export function deserialize(source, array) {
   // JavaScript.
   buffer.readVarInt();
 
+  // Skip past the line offsets, as there is no Source object yet in JavaScript.
+  // const lineOffsets = Array.from({ length: buffer.readVarInt() }, () => buffer.readVarInt());
+  const lineOffsetsCount = buffer.readVarInt();
+  for (let i = 0; i < lineOffsetsCount; i ++) {
+    buffer.readVarInt();
+  }
+
   const comments = Array.from({ length: buffer.readVarInt() }, () => ({
     type: buffer.readVarInt(),
     location: buffer.readLocation()

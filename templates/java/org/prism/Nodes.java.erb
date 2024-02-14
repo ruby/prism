@@ -42,38 +42,19 @@ public abstract class Nodes {
 
     public static final class Source {
         public final byte[] bytes;
-        private int startLine;
-        private final int[] lineOffsets;
+        private int startLine = 1;
+        private int[] lineOffsets = null;
 
-        public Source(byte[] bytes) {
-            this(bytes, 1, computeLineOffsets(bytes));
+        Source(byte[] bytes) {
+          this.bytes = bytes;
         }
 
-        public Source(byte[] bytes, int startLine, int[] lineOffsets) {
-            assert lineOffsets[0] == 0;
-            this.bytes = bytes;
+        void setStartLine(int startLine) {
             this.startLine = startLine;
+        }
+
+        void setLineOffsets(int[] lineOffsets) {
             this.lineOffsets = lineOffsets;
-        }
-
-        public void setStartLine(int startLine) {
-            this.startLine = startLine;
-        }
-
-        public static int[] computeLineOffsets(byte[] bytes) {
-            int[] lineOffsets = new int[8];
-            int lineOffsetsSize = 0;
-            lineOffsets[lineOffsetsSize++] = 0;
-
-            for (int i = 0; i < bytes.length; i++) {
-                if (bytes[i] == '\n') {
-                    if (lineOffsetsSize == lineOffsets.length) {
-                        lineOffsets = Arrays.copyOf(lineOffsets, lineOffsets.length * 2);
-                    }
-                    lineOffsets[lineOffsetsSize++] = i + 1;
-                }
-            }
-            return Arrays.copyOf(lineOffsets, lineOffsetsSize);
         }
 
         // 1-based
