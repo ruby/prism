@@ -12,12 +12,12 @@ module Prism
 
     # Visits each node in `nodes` by calling `accept` on each one.
     def visit_all(nodes)
-      nodes.each { |node| node&.accept(self) }
+      nodes.each { |node| visit(self) }
     end
 
     # Visits the child nodes of `node` by calling `accept` on each one.
     def visit_child_nodes(node)
-      node.compact_child_nodes.each { |node| node.accept(self) }
+      node.compact_child_nodes.each { |node| visit(node) }
     end
   end
 
@@ -40,6 +40,8 @@ module Prism
   #       end
   #     end
   #
+  #     ast = Prism.parse(code).value
+  #     FooCalls.new.visit(ast)
   class Visitor < BasicVisitor
     <%- nodes.each_with_index do |node, index| -%>
 <%= "\n" if index != 0 -%>

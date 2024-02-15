@@ -75,7 +75,7 @@ module Prism
       ast = Prism.parse(source).value.accept(DesugarCompiler.new)
       assert_equal expected, ast_inspect(ast.statements.body.last)
 
-      ast.accept(EnsureEveryNodeOnceInAST.new)
+      EnsureEveryNodeOnceInAST.new.visit(ast)
     end
 
     def assert_not_desugared(source, reason)
