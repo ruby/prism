@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.24.0] - 2024-02-15
+
+### Added
+
+- More support for `Prism::Translation::Ripper` is added.
+- Support multiple versions for `Prism::Translation::Parser`.
+- Improved memory usage in the FFI backend.
+- Very large speed and memory improvements for creating the Ruby AST.
+
+### Changed
+
+- Fix location for empty symbol in hash key.
+- Fix parsing a rescue modifier on the value of an assignment when the LHS is a method call with arguments and no parentheses.
+
 ## [0.23.0] - 2024-02-14
 
 ### Added
@@ -378,7 +392,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.23.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/ruby/prism/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/ruby/prism/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/ruby/prism/compare/v0.20.0...v0.21.0

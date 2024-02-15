@@ -34,7 +34,7 @@ ruby -pi -e 'gsub(/MINOR_VERSION = \d+/, %Q{MINOR_VERSION = #{ENV["PRISM_MINOR"]
 ruby -pi -e 'gsub(/PATCH_VERSION = \d+/, %Q{PATCH_VERSION = #{ENV["PRISM_PATCH"]}})' templates/lib/prism/serialize.rb.erb
 ruby -pi -e 'gsub(/^version = ".+?"/, %Q{version = "#{ENV["PRISM_VERSION"]}"})' rust/ruby-prism-sys/Cargo.toml
 ruby -pi -e 'gsub(/^version = ".+?"/, %Q{version = "#{ENV["PRISM_VERSION"]}"})' rust/ruby-prism/Cargo.toml
-ruby -pi -e 'gsub(/^ruby-prism-sys = { version = ".+?"/, %Q{ruby-prism-sys = { version = "#{ENV["PRISM_VERSION"]}"})' rust/ruby-prism/Cargo.toml
+ruby -pi -e 'gsub(/^ruby-prism-sys = \{ version = ".+?"/, %Q{ruby-prism-sys = \{ version = "#{ENV["PRISM_VERSION"]}"})' rust/ruby-prism/Cargo.toml
 ```
 
 * Update the `Gemfile.lock` file:
