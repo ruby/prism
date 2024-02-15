@@ -177,9 +177,14 @@ module Prism
 
     def test_incomplete_instance_var_string
       assert_errors expression('%@#@@#'), '%@#@@#', [
-        ["`@#' is not allowed as an instance variable name", 4..5],
+        ["'@#' is not allowed as an instance variable name", 4..5],
         ["unexpected instance variable, expecting end-of-input", 4..5]
       ]
+
+      assert_errors expression('%@#@@#'), '%@#@@#', [
+        ["`@#' is not allowed as an instance variable name", 4..5],
+        ["unexpected instance variable, expecting end-of-input", 4..5]
+      ], version: "3.3.0"
     end
 
     def test_unterminated_s_symbol
@@ -1258,8 +1263,12 @@ module Prism
 
     def test_unterminated_global_variable
       assert_errors expression("$"), "$", [
-        ["`$' is not allowed as a global variable name", 0..1]
+        ["'$' is not allowed as a global variable name", 0..1]
       ]
+
+      assert_errors expression("$"), "$", [
+        ["`$' is not allowed as a global variable name", 0..1]
+      ], version: "3.3.0"
     end
 
     def test_invalid_global_variable_write
@@ -2115,11 +2124,13 @@ module Prism
 
     private
 
-    def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
+    def assert_errors(expected, source, errors, version: nil, compare_ripper: RUBY_ENGINE == "ruby")
       # Ripper behaves differently on JRuby/TruffleRuby, so only check this on CRuby
       assert_nil Ripper.sexp_raw(source) if compare_ripper
 
-      result = Prism.parse(source)
+      opts = {}
+      opts[:version] = version if version
+      result = Prism.parse(source, **opts)
       node = result.value.statements.body.last
 
       assert_equal_nodes(expected, node, compare_location: false)

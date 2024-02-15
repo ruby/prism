@@ -486,14 +486,14 @@ debug_lex_state_set(pm_parser_t *parser, pm_lex_state_t state, char const * call
  */
 static inline void
 pm_parser_err(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->error_list, start, end, diag_id);
+    pm_diagnostic_list_append(&parser->error_list, parser->version, start, end, diag_id);
 }
 
 /**
  * Append an error to the list of errors on the parser using a format string.
  */
 #define PM_PARSER_ERR_FORMAT(parser, start, end, diag_id, ...) \
-    pm_diagnostic_list_append_format(&parser->error_list, start, end, diag_id, __VA_ARGS__)
+    pm_diagnostic_list_append_format(&parser->error_list, parser->version, start, end, diag_id, __VA_ARGS__)
 
 /**
  * Append an error to the list of errors on the parser using the location of the
@@ -571,7 +571,7 @@ pm_parser_err_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic_
  */
 static inline void
 pm_parser_warn(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->warning_list, start, end, diag_id);
+    pm_diagnostic_list_append(&parser->warning_list, parser->version, start, end, diag_id);
 }
 
 /**

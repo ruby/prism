@@ -5,7 +5,7 @@
  */
 static inline void
 pm_strpbrk_invalid_multibyte_character(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
-    pm_diagnostic_list_append_format(&parser->error_list, start, end, PM_ERR_INVALID_MULTIBYTE_CHARACTER, *start);
+    pm_diagnostic_list_append_format(&parser->error_list, parser->version, start, end, PM_ERR_INVALID_MULTIBYTE_CHARACTER, *start);
 }
 
 /**

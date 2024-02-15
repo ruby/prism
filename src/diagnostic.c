@@ -190,8 +190,8 @@ static const pm_diagnostic_data_t diagnostic_messages[PM_DIAGNOSTIC_ID_LEN] = {
     [PM_ERR_HASH_VALUE]                         = { "expected a value in the hash literal", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_HEREDOC_TERM]                       = { "could not find a terminator for the heredoc", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INCOMPLETE_QUESTION_MARK]           = { "incomplete expression at `?`", PM_ERROR_LEVEL_FATAL },
-    [PM_ERR_INCOMPLETE_VARIABLE_CLASS]          = { "`%.*s' is not allowed as a class variable name", PM_ERROR_LEVEL_FATAL },
-    [PM_ERR_INCOMPLETE_VARIABLE_INSTANCE]       = { "`%.*s' is not allowed as an instance variable name", PM_ERROR_LEVEL_FATAL },
+    [PM_ERR_INCOMPLETE_VARIABLE_CLASS]          = { "'%.*s' is not allowed as a class variable name", PM_ERROR_LEVEL_FATAL },
+    [PM_ERR_INCOMPLETE_VARIABLE_INSTANCE]       = { "'%.*s' is not allowed as an instance variable name", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INVALID_FLOAT_EXPONENT]             = { "invalid exponent", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INVALID_NUMBER_BINARY]              = { "invalid binary number", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INVALID_NUMBER_DECIMAL]             = { "invalid decimal number", PM_ERROR_LEVEL_FATAL },
@@ -202,7 +202,7 @@ static const pm_diagnostic_data_t diagnostic_messages[PM_DIAGNOSTIC_ID_LEN] = {
     [PM_ERR_INVALID_MULTIBYTE_CHARACTER]        = { "invalid multibyte character 0x%X", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INVALID_PRINTABLE_CHARACTER]        = { "invalid character `%c`", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_INVALID_PERCENT]                    = { "invalid `%` token", PM_ERROR_LEVEL_FATAL }, // TODO WHAT?
-    [PM_ERR_INVALID_VARIABLE_GLOBAL]            = { "`%.*s' is not allowed as a global variable name", PM_ERROR_LEVEL_FATAL },
+    [PM_ERR_INVALID_VARIABLE_GLOBAL]            = { "'%.*s' is not allowed as a global variable name", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_IT_NOT_ALLOWED]                     = { "`it` is not allowed when an ordinary parameter is defined", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_LAMBDA_OPEN]                        = { "expected a `do` keyword or a `{` to open the lambda block", PM_ERROR_LEVEL_FATAL },
     [PM_ERR_LAMBDA_TERM_BRACE]                  = { "expected a lambda block beginning with `{` to end with `}`", PM_ERROR_LEVEL_FATAL },
@@ -304,8 +304,23 @@ static const pm_diagnostic_data_t diagnostic_messages[PM_DIAGNOSTIC_ID_LEN] = {
 };
 
 static inline const char *
-pm_diagnostic_message(pm_diagnostic_id_t diag_id) {
+pm_diagnostic_message(pm_options_version_t version, pm_diagnostic_id_t diag_id) {
     assert(diag_id < PM_DIAGNOSTIC_ID_LEN);
+
+    // Support changes in error message format between Ruby versions
+    if (version == PM_OPTIONS_VERSION_CRUBY_3_3_0) {
+        // Ruby 3.3 uses a backtick as an open quote
+        switch (diag_id) {
+            case PM_ERR_INCOMPLETE_VARIABLE_CLASS:
+                return "`%.*s' is not allowed as a class variable name";
+            case PM_ERR_INCOMPLETE_VARIABLE_INSTANCE:
+                return "`%.*s' is not allowed as an instance variable name";
+            case PM_ERR_INVALID_VARIABLE_GLOBAL:
+                return "`%.*s' is not allowed as a global variable name";
+            default:
+                break;
+        }
+    }
 
     const char *message = diagnostic_messages[diag_id].message;
     assert(message);
@@ -324,13 +339,13 @@ pm_diagnostic_level(pm_diagnostic_id_t diag_id) {
  * Append an error to the given list of diagnostic.
  */
 bool
-pm_diagnostic_list_append(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
+pm_diagnostic_list_append(pm_list_t *list, pm_options_version_t version, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
     pm_diagnostic_t *diagnostic = (pm_diagnostic_t *) calloc(sizeof(pm_diagnostic_t), 1);
     if (diagnostic == NULL) return false;
 
     *diagnostic = (pm_diagnostic_t) {
         .location = { start, end },
-        .message = pm_diagnostic_message(diag_id),
+        .message = pm_diagnostic_message(version, diag_id),
         .owned = false,
         .level = pm_diagnostic_level(diag_id)
     };
@@ -344,11 +359,11 @@ pm_diagnostic_list_append(pm_list_t *list, const uint8_t *start, const uint8_t *
  * string for its message.
  */
 bool
-pm_diagnostic_list_append_format(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id, ...) {
+pm_diagnostic_list_append_format(pm_list_t *list, pm_options_version_t version, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id, ...) {
     va_list arguments;
     va_start(arguments, diag_id);
 
-    const char *format = pm_diagnostic_message(diag_id);
+    const char *format = pm_diagnostic_message(version, diag_id);
     int result = vsnprintf(NULL, 0, format, arguments);
     va_end(arguments);
 

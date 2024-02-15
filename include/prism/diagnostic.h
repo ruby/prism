@@ -8,6 +8,7 @@
 
 #include "prism/ast.h"
 #include "prism/defines.h"
+#include "prism/options.h"
 #include "prism/util/pm_list.h"
 
 #include <stdbool.h>
@@ -314,7 +315,7 @@ typedef enum {
  * @param diag_id The diagnostic ID.
  * @return Whether the diagnostic was successfully appended.
  */
-bool pm_diagnostic_list_append(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id);
+bool pm_diagnostic_list_append(pm_list_t *list, pm_options_version_t version, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id);
 
 /**
  * Append a diagnostic to the given list of diagnostics that is using a format
@@ -327,7 +328,7 @@ bool pm_diagnostic_list_append(pm_list_t *list, const uint8_t *start, const uint
  * @param ... The arguments to the format string for the message.
  * @return Whether the diagnostic was successfully appended.
  */
-bool pm_diagnostic_list_append_format(pm_list_t *list, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id, ...);
+bool pm_diagnostic_list_append_format(pm_list_t *list, pm_options_version_t version, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id, ...);
 
 /**
  * Deallocate the internal state of the given diagnostic list.
