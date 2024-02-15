@@ -1,6 +1,6 @@
 {
   "name": "@ruby/prism",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Prism Ruby parser",
   "type": "module",
   "main": "src/index.js",
