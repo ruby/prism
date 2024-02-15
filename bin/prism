@@ -220,7 +220,7 @@ module Prism
       source, filepath = read_source(argv)
 
       ripper = Ripper.sexp_raw(source)
-      prism = Prism::RipperCompat.sexp_raw(source)
+      prism = Prism::Translation::Ripper.sexp_raw(source) rescue :parse_error
 
       puts "Ripper:"
       pp ripper
