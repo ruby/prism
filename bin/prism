@@ -8,6 +8,7 @@ module Prism
   class CLI
     def run(argv)
       case argv.shift
+      when "benchmark"  then benchmark(argv)
       when "console"    then console
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
@@ -18,10 +19,10 @@ module Prism
       when "parser"     then parser(argv)
       when "ripper"     then ripper(argv)
       when "rubyparser" then rubyparser(argv)
-      when "benchmark"  then benchmark(argv)
       else
         puts <<~TXT
           Usage:
+            bin/prism benchmark [source_file]
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
@@ -32,7 +33,6 @@ module Prism
             bin/prism parser [source]
             bin/prism ripper [source]
             bin/prism rubyparser [source]
-            bin/prism benchmark [source_file]
         TXT
       end
     end
@@ -42,6 +42,24 @@ module Prism
     ############################################################################
     # Commands
     ############################################################################
+
+    # bin/prism benchmark [source_file]
+    def benchmark(argv)
+      require "benchmark/ips"
+      require "parser/current"
+      require "ruby_parser"
+
+      filepath = argv.fetch(0) { File.expand_path("../lib/prism/node.rb", __dir__) }
+
+      Benchmark.ips do |x|
+        x.report("prism") { Prism.parse_file(filepath) }
+        x.report("parser") { Parser::CurrentRuby.parse_file(filepath) }
+        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse_file(filepath) }
+        x.report("ruby_parser") { RubyParser.new.parse(File.read(filepath), filepath) }
+        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.parse_file(filepath) }
+        x.compare!
+      end
+    end
 
     # bin/prism console
     def console
@@ -246,24 +264,6 @@ module Prism
 
       puts "Prism:"
       pp prism
-    end
-
-    # bin/prism benchmark [source_file]
-    def benchmark(argv)
-      require "benchmark/ips"
-      require "parser/current"
-      require "ruby_parser"
-
-      filepath = argv.fetch(0) { File.expand_path("../lib/prism/translation/parser/compiler.rb", __dir__) }
-
-      Benchmark.ips do |x|
-        x.report("Parser::CurrentRuby") { Parser::CurrentRuby.parse_file(filepath) }
-        x.report("Parser::Prism") { Prism.parse_file(filepath) }
-        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse_file(filepath) }
-        x.report("RubyParser") { RubyParser.new.parse(File.read(filepath), filepath) }
-        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.parse_file(filepath) }
-        x.compare!
-      end
     end
 
     ############################################################################
