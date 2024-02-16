@@ -3,7 +3,7 @@
   <img alt="Prism Ruby parser" height="256px" src="https://github.com/ruby/prism/blob/main/doc/images/prism.png?raw=true">
 </div>
 
-This is a parser for the Ruby programming language. It is designed to be portable, error tolerant, and maintainable. It is written in C99 and has no dependencies. It is currently being integrated into [CRuby](https://github.com/ruby/ruby), [JRuby](https://github.com/jruby/jruby), [TruffleRuby](https://github.com/oracle/truffleruby), [Sorbet](https://github.com/sorbet/sorbet), and [Syntax Tree](https://github.com/ruby-syntax-tree/syntax_tree).
+This is a parser for the Ruby programming language. It is designed to be portable, error tolerant, and maintainable. It is written in C99 and has no dependencies.
 
 ## Overview
 
@@ -96,3 +96,36 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [RubyParser translation](docs/ruby_parser_translation.md)
 * [Serialization](docs/serialization.md)
 * [Testing](docs/testing.md)
+
+## Examples
+
+Prism has been integrated into the majority of Ruby runtimes, many libraries, and some applications. Below is a list of some of the projects that use Prism:
+
+### Runtimes
+
+* [CRuby](https://github.com/ruby/ruby/pull/7964) (via C)
+* [Garnet](https://github.com/camertron/garnet-js) (via WASM)
+* [JRuby](https://github.com/jruby/jruby/pull/8103) (via Java)
+* [Natalie](https://github.com/natalie-lang/natalie/pull/1213) (via C++ and Ruby)
+* [Opal](https://github.com/opal/opal/pull/2642) (via Ruby and WASM)
+* [TruffleRuby](https://github.com/oracle/truffleruby/issues/3117) (via Java)
+
+### Libraries
+
+* [dispersion](https://github.com/joeldrapper/dispersion)
+* [packwerk](https://github.com/Shopify/packwerk/pull/388) (via parser translator)
+* [rbi](https://github.com/Shopify/rbi)
+* [rails](https://github.com/rails/rails)
+  * [parsing renders](https://github.com/rails/rails/pull/49438)
+  * [parsing rdoc](https://github.com/rails/rails/pull/50870)
+  * [parsing tests](https://github.com/rails/rails/pull/51006)
+* [repl_type_completor](https://github.com/ruby/repl_type_completor)
+* [rubocop](https://github.com/rubocop/rubocop/issues/12600) (via parser translator)
+* [ruby-lsp](https://github.com/Shopify/ruby-lsp)
+* [smart_todo](https://github.com/Shopify/smart_todo/pull/69)
+* [sorbet-eraser](https://github.com/kddnewton/sorbet-eraser/pull/25)
+* [synvert](https://github.com/xinminlabs/synvert-core-ruby)
+
+### Applications
+
+* [gem.sh](https://github.com/marcoroth/gem.sh/pull/96)
