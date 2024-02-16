@@ -7,7 +7,7 @@ require "rake/clean"
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-task default: [:check_manifest, :compile, :test]
+task default: [:compile, :test]
 
 require_relative "templates/template"
 
@@ -32,7 +32,7 @@ task make_no_debug: [:templates] do
 end
 
 # decorate the gem build task with prerequisites
-task build: [:templates, :check_annotations, :check_manifest]
+task build: [:check_manifest, :templates, :check_annotations]
 
 # the C extension
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created
