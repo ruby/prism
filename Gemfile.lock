@@ -64,7 +64,7 @@ GEM
       sexp_processor (~> 4.16)
     securerandom (0.3.1)
     sexp_processor (4.17.1)
-    steep (1.6.0)
+    steep (1.7.0.dev.2)
       activesupport (>= 5.1)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)
@@ -102,7 +102,7 @@ DEPENDENCIES
   rbs
   ruby_memcheck
   ruby_parser
-  steep
+  steep (>= 1.7.0.dev.1)
   test-unit
 
 BUNDLED WITH

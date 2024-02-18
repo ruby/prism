@@ -22,5 +22,5 @@ end
 
 group :types do
   gem "rbs", platform: platforms
-  gem "steep", platform: platforms
+  gem "steep", ">= 1.7.0.dev.1", platform: platforms
 end
