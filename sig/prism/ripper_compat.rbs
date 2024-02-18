@@ -16,14 +16,6 @@ module Prism
     def error?: () -> bool
     def parse: () -> untyped
 
-    def visit_call_node: (CallNode) -> untyped
-    def visit_float_node: (FloatNode) -> untyped
-    def visit_imaginary_node: (ImaginaryNode) -> untyped
-    def visit_integer_node: (IntegerNode) -> untyped
-    def visit_rational_node: (RationalNode) -> untyped
-    def visit_statements_node: (StatementsNode) -> untyped
-    def visit_program_node: (ProgramNode) -> untyped
-
     def self.sexp_raw: (String) -> Array[untyped]
     def self.sexp: (String) -> Array[untyped]
   end
