@@ -278,6 +278,9 @@ module Prism
               if token.type == :REGEXP_END
                 value = value[0]
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])
+              elsif token.type == :HEREDOC_END && value[-1] == "\n"
+                value.chomp!
+                location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - 1])
               end
             when :tSYMBEG
               if (next_token = lexed[index]) && next_token.type != :STRING_CONTENT && next_token.type != :EMBEXPR_BEGIN && next_token.type != :EMBVAR

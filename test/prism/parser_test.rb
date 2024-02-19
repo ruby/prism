@@ -94,11 +94,74 @@ module Prism
       end
     end
 
+    def test_basic_string
+      assert_equal_text_parses(<<~RUBY)
+        "bob"
+      RUBY
+    end
+
+    def test_basic_heredoc
+      assert_equal_text_parses(<<~RUBY)
+        <<HEREDOC
+#{1}
+HEREDOC
+      RUBY
+    end
+
+#    def test_basic_squiggly_heredoc
+#      assert_equal_text_parses(<<~RUBY)
+#        <<~HEREDOC
+#          #{1}
+#        HEREDOC
+#      RUBY
+#    end
+#
+#    def test_basic_minus_heredoc
+#      assert_equal_text_parses(<<~RUBY)
+#        <<-HEREDOC
+#
+#          #{1}
+#
+#        HEREDOC
+#      RUBY
+#    end
+#
+#    def test_basic_single_quote_heredoc
+#      assert_equal_text_parses(<<~RUBY)
+#        <<~'HEREDOC'
+#          #{1}
+#        HEREDOC
+#      RUBY
+#    end
+
     private
 
     def assert_equal_parses(filepath, compare_tokens: true)
       buffer = Parser::Source::Buffer.new(filepath, 1)
       buffer.source = File.read(filepath)
+
+      parser = Parser::CurrentRuby.default_parser
+      parser.diagnostics.consumer = ->(*) {}
+      parser.diagnostics.all_errors_are_fatal = true
+
+      expected_ast, expected_comments, expected_tokens =
+        begin
+          parser.tokenize(buffer)
+        rescue ArgumentError, Parser::SyntaxError
+          return
+        end
+
+      actual_ast, actual_comments, actual_tokens =
+        Prism::Translation::Parser.new.tokenize(buffer)
+
+      assert_equal expected_ast, actual_ast, -> { assert_equal_asts_message(expected_ast, actual_ast) }
+      assert_equal_tokens(expected_tokens, actual_tokens) if compare_tokens
+      assert_equal_comments(expected_comments, actual_comments)
+    end
+
+    def assert_equal_text_parses(content, compare_tokens: true)
+      buffer = Parser::Source::Buffer.new("inline_ruby", 1)
+      buffer.source = content
 
       parser = Parser::CurrentRuby.default_parser
       parser.diagnostics.consumer = ->(*) {}
@@ -128,7 +191,7 @@ module Prism
         end
 
         if left.location != right.location
-          return "expected:\n#{left.inspect}\n#{left.location}\nactual:\n#{right.inspect}\n#{right.location}"
+          return "expected:\n#{left.inspect}\n#{left.location.to_hash}\nactual:\n#{right.inspect}\n#{right.location.to_hash}"
         end
 
         if left.type == :str && left.children[0] != right.children[0]
