@@ -108,14 +108,14 @@ HEREDOC
       RUBY
     end
 
-#    def test_basic_squiggly_heredoc
-#      assert_equal_text_parses(<<~RUBY)
-#        <<~HEREDOC
-#          #{1}
-#        HEREDOC
-#      RUBY
-#    end
-#
+    def test_basic_tilde_heredoc
+      assert_equal_text_parses(<<~RUBY)
+        <<~HEREDOC
+          #{1}
+        HEREDOC
+      RUBY
+    end
+
 #    def test_basic_minus_heredoc
 #      assert_equal_text_parses(<<~RUBY)
 #        <<-HEREDOC

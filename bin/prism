@@ -225,13 +225,31 @@ module Prism
     # bin/prism parser [source]
     def parser(argv)
       require "parser/current"
+
+      with_locations = argv.delete("--source-locations")
+
       source, filepath = read_source(argv)
 
+      buffer = Parser::Source::Buffer.new(filepath, 1)
+      buffer.source = source
+
       puts "Parser:"
-      pp Parser::CurrentRuby.parse(source, filepath)
+      ast, _comments, _tokens = Parser::CurrentRuby.default_parser.tokenize(buffer)
+      pp with_locations ? parser_ast_with_locations(ast) : ast
 
       puts "Prism:"
-      pp Translation::Parser.parse(source, filepath)
+      ast, _comments, _tokens = Translation::Parser.new.tokenize(buffer)
+      pp with_locations ? parser_ast_with_locations(ast) : ast
+    end
+
+    def parser_ast_with_locations(a)
+      [a.type] + a.children.map do |elt|
+        if elt.is_a?(AST::Node)
+          parser_ast_with_locations(elt)
+        else
+          elt
+        end
+      end + [a.location.expression.begin_pos, a.location.expression.end_pos]
     end
 
     # bin/prism ripper [source]

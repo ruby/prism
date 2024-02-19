@@ -204,6 +204,8 @@ module Prism
           tokens = []
           index = 0
 
+          string_stack = []
+
           while index < lexed.length
             token, = lexed[index]
             index += 1
@@ -272,15 +274,48 @@ module Prism
                 quote = value[2] == "-" || value[2] == "~" ? value[3] : value[2]
                 value = "<<#{quote == "'" || quote == "\"" ? quote : "\""}"
               end
+
+              # We keep a string stack to track tilde-heredocs, which must remove
+              # leading whitespace from their lines. For tilde-heredocs, element
+              # 1 is the smallest amount of leading whitespace, while element 2
+              # is all the strings that need to be modified when the leading
+              # whitespace is known. Inside an interpolation inside a tilde-heredoc
+              # the lines should *not* be modified.
+              if token.value.start_with?("<<~")
+                string_stack << ["~", 2_000_000_000, []]
+              else
+                string_stack << ["'", 0, nil]
+              end
             when :tSTRING_DVAR
               value = nil
             when :tSTRING_END
               if token.type == :REGEXP_END
                 value = value[0]
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])
-              elsif token.type == :HEREDOC_END && value[-1] == "\n"
+              end
+
+              if token.type == :HEREDOC_END && value[-1] == "\n"
+                # Prism includes the newline with the closing heredoc delimiter. Parser does not.
                 value.chomp!
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - 1])
+              end
+
+              entry = string_stack.pop
+              ws = entry[1] # how much leading whitespace to trim
+
+              # If strings need per-line leading whitespace trimmed, update them in place
+              if entry[0] == "~" && ws > 0
+                entry[2].each do |s|
+                  trim_whitespace_in_place(s, ws)
+                end
+              end
+            when :tSTRING_CONTENT
+              # Keep a list of tilde-heredoc strings that will need updating.
+              # Track the smallest amount of leading whitespace we have yet seen.
+              if string_stack[-1] && string_stack[-1][0] == "~"
+                string_stack[-1][2] << value
+                spaces = leading_whitespace_num(value)
+                string_stack[-1][1] = spaces if string_stack[-1][1] > spaces
               end
             when :tSYMBEG
               if (next_token = lexed[index]) && next_token.type != :STRING_CONTENT && next_token.type != :EMBEXPR_BEGIN && next_token.type != :EMBVAR
@@ -330,6 +365,40 @@ module Prism
             Rational(Integer(value))
           else
             Rational(value)
+          end
+        end
+
+        # This is specifically for tilde heredocs and does not
+        # count non-ASCII Unicode spaces as spaces. In Ruby those
+        # are characters and can be used for e.g. variable names.
+        # This also treats tabs as padding out to the next
+        # multiple of eight whitespace characters.
+        def leading_whitespace_num(str)
+          num = 0
+
+          str.each_codepoint do |cp|
+            case cp
+            when 0xA...0xD, 0x20
+              num += 1
+            when 0x9
+              num = (num * 8 + 1) / 8
+            else
+              return num
+            end
+          end
+
+          num
+        end
+
+        def trim_whitespace_in_place(s, spaces)
+          # A simple slice! almost works, but tabs count as 8 spaces.
+          # If we slice out two spaces from a tab, six spaces should
+          # be left behind.
+          if s[0...spaces].include?("\t")
+            # Fix me
+            raise NotImplementedError
+          else
+            s.slice!(0...spaces)
           end
         end
       end
