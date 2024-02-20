@@ -3,10 +3,8 @@
 target :lib do
   signature "sig"
 
-  # Tell Steep about stdlib require's
-  library "ripper" # RipperCompat
-  library "delegate"  # LexCompat
-  library "cgi"  # DotVisitor
+  # Tell Steep about any stdlib "require"s
+  library "cgi" # in lib/prism/dot_visitor.rb (Prism::DotVisitor)
 
   check "lib"
 
@@ -16,4 +14,5 @@ target :lib do
   ignore "lib/prism/lex_compat.rb"
   ignore "lib/prism/serialize.rb"
   ignore "lib/prism/ffi.rb"
+  ignore "lib/prism/translation"
 end

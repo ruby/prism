@@ -58,7 +58,6 @@ out.svg
 /sig/prism/node.rbs
 /sig/prism/visitor.rbs
 /sig/prism/_private/dot_visitor.rbs
-/sig/prism/_private/ripper_compat.rbs
 /rbi/prism.rbi
 
 compile_commands.json
