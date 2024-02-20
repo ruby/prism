@@ -2,6 +2,8 @@ module Prism
   class Node
     attr_reader location: Location
 
+    def start_offset: () -> Integer
+    def end_offset: () -> Integer
     def slice: () -> String
     def pretty_print: (untyped q) -> untyped
     def to_dot: () -> String

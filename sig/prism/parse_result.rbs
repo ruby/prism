@@ -5,6 +5,7 @@ module Prism
     attr_reader offsets: Array[Integer]
 
     def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
+    def encoding: () -> Encoding
     def slice: (Integer byte_offset, Integer length) -> String
     def line: (Integer byte_offset) -> Integer
     def line_start: (Integer byte_offset) -> Integer
@@ -18,9 +19,13 @@ module Prism
     attr_reader source: Source?
     attr_reader start_offset: Integer
     attr_reader length: Integer
-    attr_reader comments: Array[comment]
 
     def initialize: (Source? source, Integer start_offset, Integer length) -> void
+    def leading_comments: () -> Array[comment]
+    def leading_comment: (comment) -> void
+    def trailing_comments: () -> Array[comment]
+    def trailing_comment: (comment) -> void
+    def comments: () -> Array[comment]
     def copy: (?source: Source?, ?start_offset: Integer, ?length: Integer) -> Location
     def slice: () -> String
     def start_character_offset: () -> Integer
