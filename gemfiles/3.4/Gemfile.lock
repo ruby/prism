@@ -25,7 +25,7 @@ GEM
       abbrev
     ruby_memcheck (2.3.0)
       nokogiri
-    test-unit (3.6.1)
+    test-unit (3.6.2)
       power_assert
 
 PLATFORMS
