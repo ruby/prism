@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 /**
  * We want to be able to use the PRI* macros for printing out integers, but on
@@ -97,6 +98,15 @@
 #   define PM_STATIC_ASSERT(line, condition, message) _Static_assert(condition, message)
 #else
 #   define PM_STATIC_ASSERT(line, condition, message) typedef char PM_CONCATENATE(static_assert_, line)[(condition) ? 1 : -1]
+#endif
+
+/**
+ * In general, libc for embedded systems does not support memory-mapped files.
+ * If the target platform is POSIX or Windows, we can map a file in memory and
+ * read it in a more efficient manner.
+ */
+#if defined(_POSIX_MAPPED_FILES) || defined(_WIN32)
+#   define PRISM_HAS_MMAP
 #endif
 
 #endif
