@@ -136,10 +136,44 @@ pm_string_mapped_init(pm_string_t *string, const char *filepath) {
     *string = (pm_string_t) { .type = PM_STRING_MAPPED, .source = source, .length = size };
     return true;
 #else
-    (void) string;
-    (void) filepath;
-    perror("pm_string_mapped_init is not implemented for this platform");
-    return false;
+    FILE *file = fopen(filepath, "rb");
+    if (file == NULL) {
+        return false;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+
+    if (file_size == -1) {
+        fclose(file);
+        return false;
+    }
+
+    if (file_size == 0) {
+        fclose(file);
+        const uint8_t source[] = "";
+        *string = (pm_string_t) { .type = PM_STRING_CONSTANT, .source = source, .length = 0 };
+        return true;
+    }
+
+    size_t length = (size_t) file_size;
+    uint8_t *source = malloc(length);
+    if (source == NULL) {
+        fclose(file);
+        return false;
+    }
+
+    fseek(file, 0, SEEK_SET);
+    size_t bytes_read = fread(source, length, 1, file);
+    fclose(file);
+
+    if (bytes_read != 1) {
+        free(source);
+        return false;
+    }
+
+    *string = (pm_string_t) { .type = PM_STRING_OWNED, .source = source, .length = length };
+    return true;
 #endif
 }
 
