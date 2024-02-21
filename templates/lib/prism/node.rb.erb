@@ -101,8 +101,6 @@ module Prism
     def ==(other)
       return false unless other.is_a?(Node) && other.type == type
 
-      return false unless !self.respond_to?(:value) || value == other.value
-
       deconstructed_self = deconstruct_keys(nil)
       deconstructed_other = other.deconstruct_keys(nil)
 
@@ -118,8 +116,6 @@ module Prism
     # Case equality. Implemented like #==, but ignores locations.
     def ===(other)
       return false unless other.is_a?(Node) && other.type == type
-
-      return false unless !self.respond_to?(:value) || value == other.value
 
       deconstructed_self = deconstruct_keys(nil)
       deconstructed_other = other.deconstruct_keys(nil)
