@@ -202,7 +202,7 @@ module Prism
 
     <%- node.fields.each do |field| -%>
     <%- if field.comment.nil? -%>
-    # <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
+    # <%= "protected " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- else -%>
     <%- field.each_comment_line do |line| -%>
     #<%= line %>
@@ -228,7 +228,7 @@ module Prism
       end
     end
     <%- else -%>
-    attr_reader :<%= field.name -%><%= "\n    private :#{field.name}" if field.is_a?(Prism::FlagsField) %>
+    attr_reader :<%= field.name -%><%= "\n    protected :#{field.name}" if field.is_a?(Prism::FlagsField) %>
     <%- end -%>
 
     <%- end -%>
@@ -333,7 +333,7 @@ module Prism
     def ==(other)
       return false unless other.is_a?(Node) && other.type == type
 
-      <%- node.fields.reject { |field| field.is_a?(Prism::FlagsField) }.each do |field| -%>
+      <%- node.fields.each do |field| -%>
       return false unless <%= field.name %> == other.<%= field.name %>
       <%- end -%>
 
