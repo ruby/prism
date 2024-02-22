@@ -277,6 +277,7 @@ export function deserialize(source, array) {
           when Prism::OptionalLocationField then "buffer.readOptionalLocation()"
           when Prism::UInt8Field then "buffer.readByte()"
           when Prism::UInt32Field, Prism::FlagsField then "buffer.readVarInt()"
+          when Prism::IntegerField then "readInteger()"
           else raise
           end
         } + ["location"]).join(", ") -%>);
@@ -314,5 +315,17 @@ export function deserialize(source, array) {
     } else {
       return scanConstant(index - 1);
     }
+  }
+
+  function readInteger() {
+    const negative = buffer.readByte() != 0;
+    const length = buffer.readVarInt();
+
+    let result = 0;
+    for (let index = 0; index < length; index++) {
+      result |= (buffer.readVarInt() << (index * 32));
+    }
+
+    return result;
   }
 }

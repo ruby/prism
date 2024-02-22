@@ -310,6 +310,18 @@ public class Loader {
         return (short) flags;
     }
 
+    private VariableInteger loadVariableInteger() {
+        boolean negative = buffer.get() != 0;
+        int length = loadVarUInt();
+        int[] nodes = new int[length];
+
+        for (int i = 0; i < length; i++) {
+            nodes[i] = loadVarUInt();
+        }
+
+        return new VariableInteger(negative, nodes);
+    }
+
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarUInt();
@@ -334,6 +346,7 @@ public class Loader {
               when Prism::UInt8Field then "buffer.get()"
               when Prism::UInt32Field then "loadVarUInt()"
               when Prism::FlagsField then "loadFlags()"
+              when Prism::IntegerField then "loadVariableInteger()"
               else raise
               end
             }
