@@ -14,6 +14,14 @@ module Prism
     end
   end
 
+  module EqualityWithValueMethod # :nodoc:
+    def ==(other)
+      super && value == other.value
+    end
+
+    alias eql? ==
+  end
+
   class InterpolatedMatchLastLineNode < Node
     include RegularExpressionOptions
   end
@@ -58,6 +66,7 @@ module Prism
   private_constant :HeredocQuery
 
   class FloatNode < Node
+    prepend EqualityWithValueMethod
     # Returns the value of the node as a Ruby Float.
     def value
       Float(slice)
@@ -65,6 +74,7 @@ module Prism
   end
 
   class ImaginaryNode < Node
+    prepend EqualityWithValueMethod
     # Returns the value of the node as a Ruby Complex.
     def value
       Complex(0, numeric.value)
@@ -72,6 +82,7 @@ module Prism
   end
 
   class IntegerNode < Node
+    prepend EqualityWithValueMethod
     # Returns the value of the node as a Ruby Integer.
     def value
       Integer(slice)
@@ -79,6 +90,7 @@ module Prism
   end
 
   class RationalNode < Node
+    prepend EqualityWithValueMethod
     # Returns the value of the node as a Ruby Rational.
     def value
       Rational(numeric.is_a?(IntegerNode) ? numeric.value : slice.chomp("r"))
