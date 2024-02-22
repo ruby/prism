@@ -96,39 +96,6 @@ module Prism
     def type
       raise NoMethodError, "undefined method `type' for #{inspect}"
     end
-
-    # Value equality.
-    def ==(other)
-      return false unless other.is_a?(Node) && other.type == type
-
-      deconstructed_self = deconstruct_keys(nil)
-      deconstructed_other = other.deconstruct_keys(nil)
-
-      return false unless deconstructed_self.keys == deconstructed_other.keys
-
-      deconstructed_self.all? do |key, value|
-        value == deconstructed_other[key]
-      end
-    end
-
-    alias eql? ==
-
-    # Case equality. Implemented like #==, but ignores locations.
-    def ===(other)
-      return false unless other.is_a?(Node) && other.type == type
-
-      deconstructed_self = deconstruct_keys(nil)
-      deconstructed_other = other.deconstruct_keys(nil)
-
-      deconstructed_self.delete(:location)
-      deconstructed_other.delete(:location)
-
-      return false unless deconstructed_self.keys == deconstructed_other.keys
-
-      deconstructed_self.all? do |key, value|
-        value === deconstructed_other[key]
-      end
-    end
   end
   <%- nodes.each do |node| -%>
 
@@ -362,6 +329,20 @@ module Prism
     def self.type
       :<%= node.human %>
     end
+
+    def ==(other)
+      return false unless other.is_a?(Node) && other.type == type
+
+      <%- node.fields.reject { |field| field.is_a?(Prism::FlagsField) }.each do |field| -%>
+      return false unless <%= field.name %> == other.<%= field.name %>
+      <%- end -%>
+
+      return false unless self.location == other.location
+
+      true
+    end
+
+    alias eql? ==
   end
   <%- end -%>
   <%- flags.each_with_index do |flag, flag_index| -%>
