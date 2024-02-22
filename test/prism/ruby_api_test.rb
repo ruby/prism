@@ -243,6 +243,8 @@ module Prism
       refute_equal parse_expression("1"), parse_expression("2")
       refute_operator parse_expression("1"), :eql?, parse_expression("2")
 
+      refute_equal parse_expression("1"), parse_expression("0x1")
+
       refute_equal parse_expression("1"), parse_expression("a = 1").value
 
       complex_source_1 = "class Something; @var = something.else { _1 }; end"
