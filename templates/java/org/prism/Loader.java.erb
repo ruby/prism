@@ -379,6 +379,7 @@ public class Loader {
               when Prism::UInt32Field then "loadVarUInt()"
               when Prism::FlagsField then "loadFlags()"
               when Prism::IntegerField then "loadInteger()"
+              when Prism::DoubleField then "buffer.getDouble()"
               else raise
               end
             }

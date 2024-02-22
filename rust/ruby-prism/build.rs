@@ -45,6 +45,9 @@ enum NodeFieldType {
 
     #[serde(rename = "integer")]
     Integer,
+
+    #[serde(rename = "double")]
+    Double,
 }
 
 #[derive(Debug, Deserialize)]
@@ -346,6 +349,11 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
             NodeFieldType::Integer => {
                 writeln!(file, "    pub fn {}(&self) -> Integer<'pr> {{", field.name)?;
                 writeln!(file, "        Integer::new(unsafe {{ &(*self.pointer).{} }})", field.name)?;
+                writeln!(file, "    }}")?;
+            },
+            NodeFieldType::Double => {
+                writeln!(file, "    pub fn {}(&self) -> f64 {{", field.name)?;
+                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                 writeln!(file, "    }}")?;
             },
         }
@@ -729,6 +737,27 @@ impl<'pr> Integer<'pr> {{
 impl std::fmt::Debug for Integer<'_> {{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
         write!(f, "{{:?}}", self.pointer)
+    }}
+}}
+
+impl TryInto<i32> for Integer<'_> {{
+    type Error = ();
+
+    fn try_into(self) -> Result<i32, Self::Error> {{
+        let negative = unsafe {{ (*self.pointer).negative }};
+        let length = unsafe {{ (*self.pointer).length }};
+
+        if length == 0 {{
+            i32::try_from(unsafe {{ (*self.pointer).head.value }}).map_or(Err(()), |value| 
+                if negative {{
+                    Ok(-value)
+                }} else {{
+                    Ok(value)
+                }}
+            )
+        }} else {{
+            Err(())
+        }}
     }}
 }}
 "#

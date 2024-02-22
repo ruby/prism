@@ -19,7 +19,7 @@ def jstype(field)
   when Prism::ConstantListField then "string[]"
   when Prism::LocationField then "Location"
   when Prism::OptionalLocationField then "Location | null"
-  when Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::IntegerField then "number"
+  when Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::IntegerField, Prism::DoubleField then "number"
   else raise
   end
 end

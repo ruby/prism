@@ -118,6 +118,7 @@ Each node is structured like the following table:
 
 Every field on the node is then appended to the serialized string. The fields can be determined by referencing `config.yml`. Depending on the type of field, it could take a couple of different forms, described below:
 
+* `double` - A field that is a `double`. This is structured as a sequence of 8 bytes in native endian order.
 * `node` - A field that is a node. This is structured just as like parent node.
 * `node?` - A field that is a node that is optionally present. If the node is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just as like parent node.
 * `node[]` - A field that is an array of nodes. This is structured as a variable-length integer length, followed by the child nodes themselves.

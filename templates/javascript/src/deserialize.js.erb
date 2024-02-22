@@ -96,6 +96,15 @@ class SerializationBuffer {
       return new TextDecoder().decode(this.source.slice(startOffset, startOffset + length));
     }
   }
+
+  readDouble() {
+    const view = new DataVieW(new ArrayBuffer(8));
+    for (let index = 0; index < 8; index++) {
+      view.setUint8(index, this.readByte());
+    }
+
+    return view.getFloat64(0);
+  }
 }
 
 /**
@@ -278,6 +287,7 @@ export function deserialize(source, array) {
           when Prism::UInt8Field then "buffer.readByte()"
           when Prism::UInt32Field, Prism::FlagsField then "buffer.readVarInt()"
           when Prism::IntegerField then "readInteger()"
+          when Prism::DoubleField then "buffer.readDouble()"
           else raise
           end
         } + ["location"]).join(", ") -%>);

@@ -337,7 +337,7 @@ public abstract class Nodes {
             for (<%= string_type %> constant : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
-            <%- when Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::IntegerField -%>
+            <%- when Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::IntegerField, Prism::DoubleField -%>
             builder.append(this.<%= field.name %>);
             builder.append('\n');
             <%- else -%>
