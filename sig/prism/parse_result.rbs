@@ -16,17 +16,17 @@ module Prism
   end
 
   class Location
-    attr_reader source: Source?
+    attr_reader source: Source
     attr_reader start_offset: Integer
     attr_reader length: Integer
 
-    def initialize: (Source? source, Integer start_offset, Integer length) -> void
+    def initialize: (Source source, Integer start_offset, Integer length) -> void
     def leading_comments: () -> Array[comment]
     def leading_comment: (comment) -> void
     def trailing_comments: () -> Array[comment]
     def trailing_comment: (comment) -> void
     def comments: () -> Array[comment]
-    def copy: (?source: Source?, ?start_offset: Integer, ?length: Integer) -> Location
+    def copy: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
     def slice: () -> String
     def start_character_offset: () -> Integer
     def end_offset: () -> Integer
