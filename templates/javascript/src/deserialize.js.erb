@@ -321,11 +321,22 @@ export function deserialize(source, array) {
     const negative = buffer.readByte() != 0;
     const length = buffer.readVarInt();
 
-    let result = 0;
-    for (let index = 0; index < length; index++) {
-      result |= (buffer.readVarInt() << (index * 32));
+    const firstWord = buffer.readVarInt();
+    if (length == 1) {
+      if (negative && firstWord >= 0x80000000) {
+        return -BigInt(firstWord);
+      } else if (negative) {
+        return -firstWord;
+      } else {
+        return firstWord;
+      }
     }
 
-    return result;
+    let result = BigInt(firstWord);
+    for (let index = 1; index < length; index++) {
+      result |= (BigInt(buffer.readVarInt()) << BigInt(index * 32));
+    }
+
+    return negative ? -result : result;
   }
 }

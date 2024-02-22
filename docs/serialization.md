@@ -59,13 +59,21 @@ The comment type is one of:
 | location | the location in the source this error applies to |
 | `1` | the level of the error: `0` for `fatal` |
 
-## warning
+### warning
 
 | # bytes | field |
 | --- | --- |
 | string | warning message (ASCII-only characters) |
 | location | the location in the source this warning applies to |
 | `1` | the level of the warning: `0` for `default` and `1` for `verbose` |
+
+### integer
+
+| # bytes | field |
+| --- | --- |
+| `1` | `1` if the integer is negative, `0` if the integer is positive |
+| varuint | the number of words in this integer |
+| varuint+ | the words of the integer, least-significant to most-significant |
 
 ## Structure
 
@@ -116,6 +124,7 @@ Every field on the node is then appended to the serialized string. The fields ca
 * `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a variable-length integer byte length, followed by the string itself (_without_ a trailing null byte).
 * `constant` - A variable-length integer that represents an index in the constant pool.
 * `constant?` - An optional variable-length integer that represents an index in the constant pool. If it's not present, then a single `0` byte will be written in its place.
+* `integer` - A field that represents an arbitrary-sized integer. The structure is listed above.
 * `location` - A field that is a location. This is structured as a variable-length integer start followed by a variable-length integer length.
 * `location?` - A field that is a location that is optionally present. If the location is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just like the `location` child node.
 * `uint8` - A field that is an 8-bit unsigned integer. This is structured as a single byte.

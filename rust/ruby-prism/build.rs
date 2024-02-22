@@ -42,6 +42,9 @@ enum NodeFieldType {
 
     #[serde(rename = "flags")]
     Flags,
+
+    #[serde(rename = "integer")]
+    Integer,
 }
 
 #[derive(Debug, Deserialize)]
@@ -330,7 +333,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
 
-                for flag in &our_flags {
+                for flag in our_flags {
                     for value in &flag.values {
                         writeln!(file, "    /// {}", value.comment)?;
                         writeln!(file, "    #[must_use]")?;
@@ -339,6 +342,11 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                         writeln!(file, "    }}")?;
                     }
                 }
+            },
+            NodeFieldType::Integer => {
+                writeln!(file, "    pub fn {}(&self) -> Integer<'pr> {{", field.name)?;
+                writeln!(file, "        Integer::new(unsafe {{ &(*self.pointer).{} }})", field.name)?;
+                writeln!(file, "    }}")?;
             },
         }
     }
@@ -700,6 +708,27 @@ impl<'pr> ConstantList<'pr> {{
 impl std::fmt::Debug for ConstantList<'_> {{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
         write!(f, "{{:?}}", self.iter().collect::<Vec<_>>())
+    }}
+}}
+
+/// A handle for an arbitarily-sized integer.
+pub struct Integer<'pr> {{
+    /// The raw pointer to the integer allocated by prism.
+    pointer: *const pm_integer_t,
+
+    /// The marker to indicate the lifetime of the pointer.
+    marker: PhantomData<&'pr mut pm_constant_id_t>
+}}
+
+impl<'pr> Integer<'pr> {{
+    fn new(pointer: *const pm_integer_t) -> Self {{
+        Integer {{ pointer, marker: PhantomData }}
+    }}
+}}
+
+impl std::fmt::Debug for Integer<'_> {{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
+        write!(f, "{{:?}}", self.pointer)
     }}
 }}
 "#

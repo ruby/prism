@@ -96,10 +96,10 @@ test("integer (hex)", () => {
 
 test("integer (2 nodes)", () => {
   const result = parse("4294967296");
-  assert(result.value.statements.body[0].value == 4294967296);
+  assert(result.value.statements.body[0].value == 4294967296n);
 });
 
 test("integer (3 nodes)", () => {
   const result = parse("18446744073709552000");
-  assert(result.value.statements.body[0].value == 18446744073709552000);
+  assert(result.value.statements.body[0].value == 18446744073709552000n);
 });

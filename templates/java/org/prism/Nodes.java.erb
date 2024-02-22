@@ -23,17 +23,6 @@ public abstract class Nodes {
     public @interface Nullable {
     }
 
-    public static final class VariableInteger {
-
-        public final boolean negative;
-        public final int[] nodes;
-
-        public VariableInteger(boolean negative, int[] nodes) {
-            this.negative = negative;
-            this.nodes = nodes;
-        }
-    }
-
     public static final class Location {
 
         public static final Location[] EMPTY_ARRAY = {};

@@ -4,6 +4,7 @@ package org.prism;
 import org.prism.Nodes;
 
 import java.lang.Short;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -310,16 +311,47 @@ public class Loader {
         return (short) flags;
     }
 
-    private VariableInteger loadVariableInteger() {
-        boolean negative = buffer.get() != 0;
-        int length = loadVarUInt();
-        int[] nodes = new int[length];
+    private static final long UNSIGNED_INT_MASK = (1L << Integer.SIZE) - 1L;
+    private static final BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
 
-        for (int i = 0; i < length; i++) {
-            nodes[i] = loadVarUInt();
+    private Object loadInteger() {
+        boolean negative = buffer.get() != 0;
+
+        int wordsLength = loadVarUInt();
+        assert wordsLength > 0;
+
+        // Load the first word. If it's the only word, then return an int if it
+        // fits into one and a long otherwise.
+        int firstWord = loadVarUInt();
+        if (wordsLength == 1) {
+            if (firstWord < 0) {
+                long words = firstWord & UNSIGNED_INT_MASK;
+                return negative ? -words : words;
+            }
+            return negative ? -firstWord : firstWord;
         }
 
-        return new VariableInteger(negative, nodes);
+        // Load the second word. If there are only two words, then return a long
+        // if it fits into one and a BigInt otherwise.
+        int secondWord = loadVarUInt();
+        if (wordsLength == 2) {
+            long words = ((long) secondWord << 32L) | (firstWord & UNSIGNED_INT_MASK);
+            if (words < 0L) {
+                BigInteger result = BigInteger.valueOf(words).and(UNSIGNED_LONG_MASK);
+                return negative ? result.negate() : result;
+            }
+            return negative ? -words : words;
+        }
+
+        // Otherwise, load the remaining words and return a BigInt.
+        BigInteger result = BigInteger.valueOf(firstWord & UNSIGNED_INT_MASK);
+        result = result.or(BigInteger.valueOf(secondWord & UNSIGNED_INT_MASK).shiftLeft(32));
+
+        for (int wordsIndex = 2; wordsIndex < wordsLength; wordsIndex++) {
+            result = result.or(BigInteger.valueOf(loadVarUInt() & UNSIGNED_INT_MASK).shiftLeft(wordsIndex * 32));
+        }
+
+        return result;
     }
 
     private Nodes.Node loadNode() {
@@ -346,7 +378,7 @@ public class Loader {
               when Prism::UInt8Field then "buffer.get()"
               when Prism::UInt32Field then "loadVarUInt()"
               when Prism::FlagsField then "loadFlags()"
-              when Prism::IntegerField then "loadVariableInteger()"
+              when Prism::IntegerField then "loadInteger()"
               else raise
               end
             }
