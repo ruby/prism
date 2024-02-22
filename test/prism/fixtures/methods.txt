@@ -181,3 +181,5 @@ end
 def foo(bar = (def baz(bar) = bar; 1)) = 2
 
 def (class Foo; end).foo(bar = 1) = 2
+
+def foo(bar: bar = 1); end
