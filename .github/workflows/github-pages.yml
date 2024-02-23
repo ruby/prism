@@ -46,6 +46,9 @@ jobs:
         run: bundle exec rake rdoc
       - name: Build with Doxygen
         run: doxygen Doxyfile
+      - name: Build with JavaDoc
+        run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
+        working-directory: java
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

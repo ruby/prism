@@ -23,13 +23,14 @@ h1 {
 main {
   display: grid;
   grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   height: 36vh;
-  margin: 2vh 30vw;
+  margin: 2vh 20vw;
 }
 
 @media only screen and (max-width: 1200px) {
   main {
-    margin: 2vh 20vw;
+    margin: 2vh 10vw;
   }
 }
 
@@ -49,6 +50,10 @@ main {
   text-decoration: none;
   transition: background-color 100ms ease;
   vertical-align: middle;
+}
+
+.reference:first-child {
+  grid-column: span 2;
 }
 
 .reference > img {
