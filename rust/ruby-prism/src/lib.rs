@@ -774,4 +774,20 @@ end
         assert_eq!(0, visitor.stack.len());
         assert_eq!(5, visitor.max_depth);
     }
+
+    #[test]
+    fn integer_value_test() {
+        let result = parse("0xA".as_ref());
+        let value: i32 = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value().try_into().unwrap();
+
+        assert_eq!(value, 10);
+    }
+
+    #[test]
+    fn float_value_test() {
+        let result = parse("1.0".as_ref());
+        let value: f64 = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_float_node().unwrap().value();
+
+        assert!((value - 1.0).abs() < f64::EPSILON);
+    }
 }

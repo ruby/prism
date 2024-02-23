@@ -1396,6 +1396,10 @@ nodes:
           baz if foo .. bar
                  ^^^^^^^^^^
   - name: FloatNode
+    fields:
+      - name: value
+        type: double
+        comment: The value of the floating point number as a Float.
     comment: |
       Represents a floating point number literal.
 
@@ -1867,6 +1871,9 @@ nodes:
       - name: flags
         type: flags
         kind: IntegerBaseFlags
+      - name: value
+        type: integer
+        comment: The value of the integer literal as a number.
     comment: |
       Represents an integer number literal.
 

@@ -56,12 +56,12 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
         <%- nodes.each do |node| -%>
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
-            <%- if node.fields.any? { |field| ![Prism::LocationField, Prism::OptionalLocationField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::ConstantField, Prism::OptionalConstantField].include?(field.class) } -%>
+            <%- if node.fields.any? { |field| ![Prism::LocationField, Prism::OptionalLocationField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::ConstantField, Prism::OptionalConstantField, Prism::DoubleField].include?(field.class) } -%>
             pm_<%= node.human %>_t *cast = (pm_<%= node.human %>_t *) node;
             <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field -%>
-            <%- when Prism::LocationField, Prism::OptionalLocationField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::ConstantField, Prism::OptionalConstantField -%>
+            <%- when Prism::LocationField, Prism::OptionalLocationField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::ConstantField, Prism::OptionalConstantField, Prism::DoubleField -%>
             <%- when Prism::NodeField -%>
             pm_node_destroy(parser, (pm_node_t *)cast-><%= field.name %>);
             <%- when Prism::OptionalNodeField -%>
@@ -74,6 +74,8 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             pm_node_list_free(parser, &cast-><%= field.name %>);
             <%- when Prism::ConstantListField -%>
             pm_constant_id_list_free(&cast-><%= field.name %>);
+            <%- when Prism::IntegerField -%>
+            pm_integer_free(&cast-><%= field.name %>);
             <%- else -%>
             <%- raise -%>
             <%- end -%>
@@ -103,17 +105,9 @@ pm_node_memsize_node(pm_node_t *node, pm_memsize_t *memsize) {
         case <%= node.type %>: {
             pm_<%= node.human %>_t *cast = (pm_<%= node.human %>_t *) node;
             memsize->memsize += sizeof(*cast);
-            <%- if node.fields.any? { |f| f.is_a?(Prism::NodeListField) } -%>
-            // Node lists will add in their own sizes below.
-            memsize->memsize -= sizeof(pm_node_list_t) * <%= node.fields.count { |f| f.is_a?(Prism::NodeListField) } %>;
-            <%- end -%>
-            <%- if node.fields.any? { |f| f.is_a?(Prism::ConstantListField) } -%>
-            // Constant id lists will add in their own sizes below.
-            memsize->memsize -= sizeof(pm_constant_id_list_t) * <%= node.fields.count { |f| f.is_a?(Prism::ConstantListField) } %>;
-            <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field -%>
-            <%- when Prism::ConstantField, Prism::OptionalConstantField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::LocationField, Prism::OptionalLocationField -%>
+            <%- when Prism::ConstantField, Prism::OptionalConstantField, Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::LocationField, Prism::OptionalLocationField, Prism::DoubleField -%>
             <%- when Prism::NodeField -%>
             pm_node_memsize_node((pm_node_t *)cast-><%= field.name %>, memsize);
             <%- when Prism::OptionalNodeField -%>
@@ -121,11 +115,13 @@ pm_node_memsize_node(pm_node_t *node, pm_memsize_t *memsize) {
                 pm_node_memsize_node((pm_node_t *)cast-><%= field.name %>, memsize);
             }
             <%- when Prism::StringField -%>
-            memsize->memsize += pm_string_memsize(&cast-><%= field.name %>);
+            memsize->memsize += (pm_string_memsize(&cast-><%= field.name %>) - sizeof(pm_string_t));
             <%- when Prism::NodeListField -%>
-            memsize->memsize += pm_node_list_memsize(&cast-><%= field.name %>, memsize);
+            memsize->memsize += (pm_node_list_memsize(&cast-><%= field.name %>, memsize) - sizeof(pm_node_list_t));
             <%- when Prism::ConstantListField -%>
-            memsize->memsize += pm_constant_id_list_memsize(&cast-><%= field.name %>);
+            memsize->memsize += (pm_constant_id_list_memsize(&cast-><%= field.name %>) - sizeof(pm_constant_id_list_t));
+            <%- when Prism::IntegerField -%>
+            memsize->memsize += (pm_integer_memsize(&cast-><%= field.name %>) - sizeof(pm_integer_t));
             <%- else -%>
             <%- raise -%>
             <%- end -%>
@@ -257,6 +253,31 @@ pm_dump_json(pm_buffer_t *buffer, const pm_parser_t *parser, const pm_node_t *no
             }
             <%- end -%>
             pm_buffer_append_byte(buffer, ']');
+            <%- when Prism::IntegerField -%>
+            {
+                const pm_integer_t *integer = &cast-><%= field.name %>;
+                if (integer->length == 0) {
+                    if (integer->negative) pm_buffer_append_byte(buffer, '-');
+                    pm_buffer_append_string(buffer, "%" PRIu32, integer->head.value);
+                } else if (integer->length == 1) {
+                    if (integer->negative) pm_buffer_append_byte(buffer, '-');
+                    pm_buffer_append_format(buffer, "%" PRIu64, ((uint64_t) integer->head.value) | (((uint64_t) integer->head.next->value) << 32));
+                } else {
+                    pm_buffer_append_byte(buffer, '{');
+                    pm_buffer_append_format(buffer, "\"negative\": %s", integer->negative ? "true" : "false");
+                    pm_buffer_append_string(buffer, ",\"values\":[", 11);
+
+                    const pm_integer_word_t *node = &integer->head;
+                    while (node != NULL) {
+                        pm_buffer_append_format(buffer, "%" PRIu32, node->value);
+                        node = node->next;
+                        if (node != NULL) pm_buffer_append_byte(buffer, ',');
+                    }
+                    pm_buffer_append_string(buffer, "]}", 2);
+                }
+            }
+            <%- when Prism::DoubleField -%>
+            pm_buffer_append_format(buffer, "%f", cast-><%= field.name %>);
             <%- else -%>
             <%- raise %>
             <%- end -%>
