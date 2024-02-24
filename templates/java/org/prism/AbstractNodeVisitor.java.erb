@@ -6,6 +6,12 @@ public abstract class AbstractNodeVisitor<T> {
     protected abstract T defaultVisit(Nodes.Node node);
 
     <%- nodes.each do |node| -%>
+    /**
+     * Visit a <%= node.name %> node.
+     *
+     * @param node The node to visit.
+     * @return The result of visiting the node.
+     */
     public T visit<%= node.name -%>(Nodes.<%= node.name -%> node) {
         return defaultVisit(node);
     }

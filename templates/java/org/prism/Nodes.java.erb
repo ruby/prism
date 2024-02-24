@@ -132,7 +132,7 @@ public abstract class Nodes {
     <%- flags.each do |group| -%>
 
     /**
-     * <%= group.comment %>
+     * <%= Prism::JavaDoc.escape(group.comment) %>
      */
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
         <%- group.values.each_with_index do |value, index| -%>
@@ -184,9 +184,11 @@ public abstract class Nodes {
     <%- nodes.each do |node| -%>
 
     /**
-    <%- node.each_comment_line do |line| -%>
+     * <pre>
+    <%- node.each_comment_java_line do |line| -%>
      *<%= line %>
     <%- end -%>
+     * </pre>
      */
     public static final class <%= node.name -%> extends Node {
         <%- if node.needs_serialized_length? -%>
@@ -196,7 +198,7 @@ public abstract class Nodes {
         <%- if field.comment -%>
         /**
          * <pre>
-        <%- field.each_comment_line do |line| -%>
+        <%- field.each_comment_java_line do |line| -%>
          *<%= line %>
         <%- end -%>
          * </pre>
