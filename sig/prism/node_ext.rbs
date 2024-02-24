@@ -43,16 +43,8 @@ module Prism
     def heredoc?: () -> bool?
   end
 
-  class FloatNode < Node
-    def value: () -> Float
-  end
-
   class ImaginaryNode < Node
     def value: () -> Complex
-  end
-
-  class IntegerNode < Node
-    def value: () -> Integer
   end
 
   class RationalNode < Node

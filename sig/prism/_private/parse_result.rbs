@@ -3,7 +3,6 @@ module Prism
     private
 
     def find_line: (Integer) -> Integer
-    def compute_offsets: (String) -> Array[Integer]
   end
 
   class Location

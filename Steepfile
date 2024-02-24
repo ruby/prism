@@ -3,7 +3,6 @@
 target :lib do
   signature "sig"
 
-  # Tell Steep about any stdlib "require"s
   library "cgi" # in lib/prism/dot_visitor.rb (Prism::DotVisitor)
 
   check "lib"

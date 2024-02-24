@@ -13,6 +13,8 @@ module Prism
     def column: (Integer byte_offset) -> Integer
     def character_offset: (Integer byte_offset) -> Integer
     def character_column: (Integer byte_offset) -> Integer
+    def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
+    def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
   end
 
   class Location
@@ -81,17 +83,19 @@ module Prism
   class ParseError
     attr_reader message: String
     attr_reader location: Location
+    attr_reader level: Symbol
 
-    def initialize: (String message, Location location) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location }
+    def initialize: (String message, Location location, Symbol level) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
   end
 
   class ParseWarning
     attr_reader message: String
     attr_reader location: Location
+    attr_reader level: Symbol
 
-    def initialize: (String message, Location location) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location }
+    def initialize: (String message, Location location, Symbol level) -> void
+    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
   end
 
   class ParseResult[out T]
@@ -110,11 +114,12 @@ module Prism
   end
 
   class Token
+    attr_reader source: Source
     attr_reader type: Symbol
     attr_reader value: String
     attr_reader location: Location
 
-    def initialize: (Symbol type, String value, Location location) -> void
+    def initialize: (Source source, Symbol type, String value, Location location) -> void
     def deconstruct_keys: (Array[Symbol] keys) -> { type: Symbol, value: String, location: Location }
     def pretty_print: (untyped q) -> untyped
     def ==: (untyped other) -> bool

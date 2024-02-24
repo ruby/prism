@@ -1,6 +1,7 @@
 module Prism
   class Node
     attr_reader location: Location
+    attr_reader source: Source
 
     def start_offset: () -> Integer
     def end_offset: () -> Integer
@@ -35,7 +36,7 @@ module Prism
     <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
-    def initialize: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["Location location"]).join(", ") %>) -> void
+    def initialize: (<%= ["Source source", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }, "Location location"].join(", ") %>) -> void
     def copy: (<%= (node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" } + ["?location: Location"]).join(", ") %>) -> <%= node.name %>
     def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
     <%- node.fields.each do |field| -%>
