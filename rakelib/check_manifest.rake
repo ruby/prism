@@ -43,12 +43,15 @@ task check_manifest: :templates do
     Gemfile.lock
     Makefile
     Rakefile
+    Steepfile
     config.log
     config.status
     configure.ac
     compile_commands.json
     include/prism/config.h
     lib/prism/prism.{so,bundle,jar}
+    sig/_*/*.rbs
+    sig/**/_*/*.rbs
     tags
   ]
 

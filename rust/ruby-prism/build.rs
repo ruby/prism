@@ -51,13 +51,20 @@ enum NodeFieldType {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum NodeFieldKind {
+    Concrete(String),
+    Union(Vec<String>),
+}
+
+#[derive(Debug, Deserialize)]
 struct NodeField {
     name: String,
 
     #[serde(rename = "type")]
     field_type: NodeFieldType,
 
-    kind: Option<String>,
+    kind: Option<NodeFieldKind>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -236,7 +243,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
 
         match field.field_type {
             NodeFieldType::Node => {
-                if let Some(kind) = &field.kind {
+                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", field.name, kind)?;
                     writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
@@ -249,7 +256,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 }
             },
             NodeFieldType::OptionalNode => {
-                if let Some(kind) = &field.kind {
+                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", field.name, kind)?;
                     writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
@@ -329,7 +336,10 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Flags => {
-                let our_flags = flags.iter().filter(|f| &f.name == field.kind.as_ref().unwrap()).collect::<Vec<_>>();
+                let Some(NodeFieldKind::Concrete(kind)) = &field.kind else {
+                    panic!("Flag fields must have a concrete kind");
+                };
+                let our_flags = flags.iter().filter(|f| &f.name == kind).collect::<Vec<_>>();
                 assert!(our_flags.len() == 1);
 
                 writeln!(file, "    fn {}(&self) -> pm_node_flags_t {{", field.name)?;
@@ -459,14 +469,14 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
             for field in &node.fields {
                 match field.field_type {
                     NodeFieldType::Node => {
-                        if let Some(kind) = &field.kind {
+                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                             writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(kind), field.name)?;
                         } else {
                             writeln!(file, "    visitor.visit(&node.{}());", field.name)?;
                         }
                     },
                     NodeFieldType::OptionalNode => {
-                        if let Some(kind) = &field.kind {
+                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                             writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
                             writeln!(file, "        visitor.visit{}(&node);", struct_name(kind))?;
                             writeln!(file, "    }}")?;

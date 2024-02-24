@@ -12,11 +12,15 @@ gem "test-unit"
 platforms = %i[mri mswin mingw x64_mingw]
 
 gem "ffi", platform: platforms
+gem "parser", platform: platforms
+gem "ruby_parser", platform: platforms
+gem "benchmark-ips"
+
 group :memcheck do
   gem "ruby_memcheck", platform: platforms
 end
 
-gem "rbs", platform: platforms
-gem "parser", platform: platforms
-gem "ruby_parser", platform: platforms
-gem "benchmark-ips"
+group :types do
+  gem "rbs", platform: platforms
+  gem "steep", ">= 1.7.0.dev.1", platform: platforms
+end

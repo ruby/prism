@@ -1,0 +1,9 @@
+module Prism
+  module RegularExpressionOptions: InterpolatedMatchLastLineNode, InterpolatedRegularExpressionNode, MatchLastLineNode, RegularExpressionNode
+    def options: () -> Integer
+  end
+
+  module HeredocQuery: InterpolatedStringNode, InterpolatedXStringNode, StringNode, XStringNode
+    def heredoc?: () -> bool?
+  end
+end

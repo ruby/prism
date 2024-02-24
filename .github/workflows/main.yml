@@ -51,6 +51,7 @@ jobs:
       run: |
         bundle exec rake compile
         bundle exec rake check_annotations
+        bundle exec rake typecheck:steep
 
   build:
     strategy:

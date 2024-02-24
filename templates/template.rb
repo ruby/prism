@@ -75,27 +75,35 @@ module Prism
   # node and not just a generic node.
   class NodeKindField < Field
     def c_type
-      if options[:kind]
-        "pm_#{options[:kind].gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
+      if specific_kind
+        "pm_#{specific_kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
       else
         "pm_node"
       end
     end
 
     def ruby_type
-      options[:kind] || "Node"
+      specific_kind || "Node"
     end
 
     def java_type
-      options[:kind] || "Node"
+      specific_kind || "Node"
     end
 
     def java_cast
-      if options[:kind]
+      if specific_kind
         "(Nodes.#{options[:kind]}) "
       else
         ""
       end
+    end
+
+    def specific_kind
+      options[:kind] unless options[:kind].is_a?(Array)
+    end
+
+    def union_kind
+      options[:kind] if options[:kind].is_a?(Array)
     end
   end
 
@@ -103,7 +111,13 @@ module Prism
   # references and store them as references.
   class NodeField < NodeKindField
     def rbs_class
-      ruby_type
+      if specific_kind
+        specific_kind
+      elsif union_kind
+        union_kind.join(" | ")
+      else
+        "Prism::node"
+      end
     end
 
     def rbi_class
@@ -115,7 +129,13 @@ module Prism
   # optionally null. We pass them as references and store them as references.
   class OptionalNodeField < NodeKindField
     def rbs_class
-      "#{ruby_type}?"
+      if specific_kind
+        "#{specific_kind}?"
+      elsif union_kind
+        [*union_kind, "nil"].join(" | ")
+      else
+        "Prism::node?"
+      end
     end
 
     def rbi_class
@@ -127,7 +147,13 @@ module Prism
   # references and store them directly on the struct.
   class NodeListField < Field
     def rbs_class
-      "Array[Node]"
+      if specific_kind
+        "Array[#{specific_kind}]"
+      elsif union_kind
+        "Array[#{union_kind.join(" | ")}]"
+      else
+        "Array[Prism::node]"
+      end
     end
 
     def rbi_class
@@ -136,6 +162,15 @@ module Prism
 
     def java_type
       "Node[]"
+    end
+
+    # TODO: unduplicate with NodeKindField
+    def specific_kind
+      options[:kind] unless options[:kind].is_a?(Array)
+    end
+
+    def union_kind
+      options[:kind] if options[:kind].is_a?(Array)
     end
   end
 
@@ -549,6 +584,11 @@ module Prism
     "src/token_type.c",
     "rbi/prism.rbi",
     "sig/prism.rbs",
+    "sig/prism/dsl.rbs",
+    "sig/prism/mutation_compiler.rbs",
+    "sig/prism/node.rbs",
+    "sig/prism/visitor.rbs",
+    "sig/prism/_private/dot_visitor.rbs"
   ]
 end
 

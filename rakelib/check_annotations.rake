@@ -6,10 +6,10 @@ task check_annotations: :compile do
   require "rbs"
   require "rbs/cli"
 
-  # Run `rbs` against the generated file, which checks for valid syntax and any missing constants
+  # Run `rbs` against public RBS files. Checks for valid syntax and any missing constants.
   puts "Checking RBS annotations"
   cli = RBS::CLI.new(stdout: STDOUT, stderr: STDERR)
-  cli.run(["-I", "sig", "validate"])
+  cli.run(["-r", "prism", "validate"])
 
   # For RBI files, we just use Prism itself to check for valid syntax since they use Ruby compliant syntax
   puts "Checking RBI annotations"

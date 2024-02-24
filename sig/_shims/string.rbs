@@ -1,0 +1,4 @@
+class String
+  def start_with?: (*(string | Regexp) prefixes) -> bool
+                 | ...
+end
