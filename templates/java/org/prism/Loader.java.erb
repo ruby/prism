@@ -257,18 +257,6 @@ public class Loader {
         return constants;
     }
 
-    private Nodes.Node[] loadNodes() {
-        int length = loadVarUInt();
-        if (length == 0) {
-            return Nodes.Node.EMPTY_ARRAY;
-        }
-        Nodes.Node[] nodes = new Nodes.Node[length];
-        for (int i = 0; i < length; i++) {
-            nodes[i] = loadNode();
-        }
-        return nodes;
-    }
-
     private Nodes.Location loadLocation() {
         return new Nodes.Location(loadVarUInt(), loadVarUInt());
     }
@@ -367,6 +355,7 @@ public class Loader {
         int length = loadVarUInt();
 
         switch (type) {
+            <%- array_types = [] -%>
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
             <%-
@@ -376,7 +365,10 @@ public class Loader {
               when Prism::NodeField then "#{field.java_cast}loadNode()"
               when Prism::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
               when Prism::StringField then "loadString()"
-              when Prism::NodeListField then "loadNodes()"
+              when Prism::NodeListField then
+                element_type = field.java_type.sub('[]', '')
+                array_types << element_type
+                "load#{element_type}s()"
               when Prism::ConstantField then "loadConstant()"
               when Prism::OptionalConstantField then "loadOptionalConstant()"
               when Prism::ConstantListField then "loadConstants()"
@@ -398,6 +390,26 @@ public class Loader {
                 throw new Error("Unknown node type: " + type);
         }
     }
+    <%- array_types.uniq.each do |type| -%>
+
+    private static final Nodes.<%= type %>[] EMPTY_<%= type %>_ARRAY = {};
+
+    private Nodes.<%= type %>[] load<%= type %>s() {
+        int length = loadVarUInt();
+        if (length == 0) {
+            return EMPTY_<%= type %>_ARRAY;
+        }
+        Nodes.<%= type %>[] nodes = new Nodes.<%= type %>[length];
+        for (int i = 0; i < length; i++) {
+            <%- if type == 'Node' -%>
+            nodes[i] = loadNode();
+            <%- else -%>
+            nodes[i] = (Nodes.<%= type %>) loadNode();
+            <%- end -%>
+        }
+        return nodes;
+    }
+    <%- end -%>
 
     private void expect(byte value, String error) {
         byte b = buffer.get();
