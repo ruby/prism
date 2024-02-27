@@ -844,7 +844,7 @@ impl<'pr> Node<'pr> {{
     for node in &config.nodes {
         writeln!(file, "    /// Returns the node as a `{}`.", node.name)?;
         writeln!(file, "    #[must_use]")?;
-        writeln!(file, "    pub fn as{}(&self) -> Option<{}<'_>> {{", struct_name(&node.name), node.name)?;
+        writeln!(file, "    pub fn as{}(&self) -> Option<{}<'pr>> {{", struct_name(&node.name), node.name)?;
         writeln!(file, "        match *self {{")?;
         writeln!(file, "            Self::{} {{ parser, pointer, marker }} => Some({} {{ parser, pointer, marker }}),", node.name, node.name)?;
         writeln!(file, "            _ => None")?;
