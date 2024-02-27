@@ -68,6 +68,18 @@ function dumpOptions(options) {
   values.push(options.frozen_string_literal === undefined ? 0 : 1);
 
   template.push("C");
+  values.push(options.command_line_p === undefined ? 0 : 1);
+
+  template.push("C");
+  values.push(options.command_line_n === undefined ? 0 : 1);
+
+  template.push("C");
+  values.push(options.command_line_l === undefined ? 0 : 1);
+
+  template.push("C");
+  values.push(options.command_line_a === undefined ? 0 : 1);
+
+  template.push("C");
   if (!options.version || options.version === "latest" || options.version === "3.4.0") {
     values.push(0);
   } else if (options.version === "3.3.0") {

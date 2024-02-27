@@ -29,10 +29,14 @@ public abstract class ParsingOptions {
      * @param line the line within the file that the parser starts on. This value is 1-indexed
      * @param encoding the name of the encoding that the source file is in
      * @param frozenStringLiteral whether the frozen string literal option has been set
+     * @param commandLineP whether the -p command line option has been set
+     * @param commandLineN whether the -n command line option has been set
+     * @param commandLineL whether the -l command line option has been set
+     * @param commandLineA whether the -a command line option has been set
      * @param version code of Ruby version which syntax will be used to parse
      * @param scopes scopes surrounding the code that is being parsed with local variable names defined in every scope
      *            ordered from the outermost scope to the innermost one */
-    public static byte[] serialize(byte[] filepath, int line, byte[] encoding, boolean frozenStringLiteral, SyntaxVersion version, byte[][][] scopes) {
+    public static byte[] serialize(byte[] filepath, int line, byte[] encoding, boolean frozenStringLiteral, boolean commandLineP, boolean commandLineN, boolean commandLineL, boolean commandLineA, SyntaxVersion version, byte[][][] scopes) {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         // filepath
@@ -47,11 +51,13 @@ public abstract class ParsingOptions {
         write(output, encoding);
 
         // frozenStringLiteral
-        if (frozenStringLiteral) {
-            output.write(1);
-        } else {
-            output.write(0);
-        }
+        output.write(frozenStringLiteral ? 1 : 0);
+
+        // command line flags
+        output.write(commandLineP ? 1 : 0);
+        output.write(commandLineN ? 1 : 0);
+        output.write(commandLineL ? 1 : 0);
+        output.write(commandLineA ? 1 : 0);
 
         // version
         output.write(version.getValue());
