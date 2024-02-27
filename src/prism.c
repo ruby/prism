@@ -11414,12 +11414,10 @@ parse_target(pm_parser_t *parser, pm_node_t *target) {
             target->type = PM_GLOBAL_VARIABLE_TARGET_NODE;
             return target;
         case PM_LOCAL_VARIABLE_READ_NODE:
-            if (pm_token_is_numbered_parameter(target->location.start, target->location.end)) {
-                PM_PARSER_ERR_NODE_FORMAT(parser, target, PM_ERR_PARAMETER_NUMBERED_RESERVED, target->location.start);
-            } else {
-                assert(sizeof(pm_local_variable_target_node_t) == sizeof(pm_local_variable_read_node_t));
-                target->type = PM_LOCAL_VARIABLE_TARGET_NODE;
-            }
+            pm_refute_numbered_parameter(parser, target->location.start, target->location.end);
+
+            assert(sizeof(pm_local_variable_target_node_t) == sizeof(pm_local_variable_read_node_t));
+            target->type = PM_LOCAL_VARIABLE_TARGET_NODE;
 
             return target;
         case PM_INSTANCE_VARIABLE_READ_NODE:
@@ -16523,15 +16521,22 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
                             pm_interpolated_symbol_node_append((pm_interpolated_symbol_node_t *) current, string);
                         } else if (PM_NODE_TYPE_P(current, PM_SYMBOL_NODE)) {
-                            // If we hit string content and the current node is a string node,
+                            // If we hit string content and the current node is a symbol node,
                             // then we need to convert the current node into an interpolated
                             // string and add the string content to the list of child nodes.
-                            pm_node_t *string = (pm_node_t *) pm_string_node_create_current_string(parser, &opening, &parser->previous, &closing);
+                            pm_symbol_node_t *cast = (pm_symbol_node_t *) current;
+                            pm_token_t bounds = not_provided(parser);
+
+                            pm_token_t content = { .type = PM_TOKEN_STRING_CONTENT, .start = cast->value_loc.start, .end = cast->value_loc.end };
+                            pm_node_t *first_string = (pm_node_t *) pm_string_node_create_unescaped(parser, &bounds, &content, &bounds, &cast->unescaped);
+                            pm_node_t *second_string = (pm_node_t *) pm_string_node_create_current_string(parser, &opening, &parser->previous, &closing);
                             parser_lex(parser);
 
                             pm_interpolated_symbol_node_t *interpolated = pm_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
-                            pm_interpolated_symbol_node_append(interpolated, current);
-                            pm_interpolated_symbol_node_append(interpolated, string);
+                            pm_interpolated_symbol_node_append(interpolated, first_string);
+                            pm_interpolated_symbol_node_append(interpolated, second_string);
+
+                            free(current);
                             current = (pm_node_t *) interpolated;
                         } else {
                             assert(false && "unreachable");
