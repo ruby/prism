@@ -32,7 +32,19 @@ public class DummyTest {
         var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
         memory.writeString(sourcePointer[0].asInt(), source);
 
-        var packedOptions = new byte[] {};
+        var packedOptions = ParsingOptions.serialize(
+            new byte[] {},
+            1,
+            new byte[] {},
+            false,
+            false,
+            false,
+            false,
+            false,
+            ParsingOptions.SyntaxVersion.LATEST,
+            new byte[][][] {}
+        );
+
         var optionsPointer = calloc.apply(Value.i32(1), Value.i32(packedOptions.length));
         memory.write(optionsPointer[0].asInt(), packedOptions);
 
@@ -74,7 +86,19 @@ public class DummyTest {
         var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
         memory.writeString(sourcePointer[0].asInt(), source);
 
-        var packedOptions = new byte[] {};
+        var packedOptions = ParsingOptions.serialize(
+            new byte[] {},
+            1,
+            new byte[] {},
+            false,
+            false,
+            false,
+            false,
+            false,
+            ParsingOptions.SyntaxVersion.LATEST,
+            new byte[][][] {}
+        );
+
         var optionsPointer = calloc.apply(Value.i32(1), Value.i32(packedOptions.length));
         memory.write(optionsPointer[0].asInt(), packedOptions);
 
