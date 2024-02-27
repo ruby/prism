@@ -790,4 +790,40 @@ end
 
         assert!((value - 1.0).abs() < f64::EPSILON);
     }
+
+    #[test]
+    fn node_field_lifetime_test() {
+        // The code below wouldn't typecheck prior to https://github.com/ruby/prism/pull/2519,
+        // but we need to stop clippy from complaining about it.
+        #![allow(clippy::needless_pass_by_value)]
+
+        use crate::Node;
+
+        #[derive(Default)]
+        struct Extract<'pr> {
+            scopes: Vec<crate::ConstantId<'pr>>,
+        }
+
+        impl<'pr> Extract<'pr> {
+            fn push_scope(&mut self, path: Node<'pr>) {
+                if let Some(cread) = path.as_constant_read_node() {
+                    self.scopes.push(cread.name());
+                } else if let Some(cpath) = path.as_constant_path_node() {
+                    if let Some(parent) = cpath.parent() {
+                        self.push_scope(parent);
+                    }
+                    self.push_scope(cpath.child());
+                } else {
+                    panic!("Wrong node kind!");
+                }
+            }
+        }
+
+        let source = "Some::Random::Constant";
+        let result = parse(source.as_ref());
+        let node = result.node();
+        let mut extractor = Extract::default();
+        extractor.push_scope(node.as_program_node().unwrap().statements().body().iter().next().unwrap());
+        assert_eq!(3, extractor.scopes.len());
+    }
 }
