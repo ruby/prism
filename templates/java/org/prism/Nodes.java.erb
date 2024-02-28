@@ -23,6 +23,12 @@ public abstract class Nodes {
     public @interface Nullable {
     }
 
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface UnionType {
+        Class<? extends Node>[] value();
+    }
+
     public static final class Location {
 
         public static final Location[] EMPTY_ARRAY = {};
@@ -206,6 +212,9 @@ public abstract class Nodes {
         <%- end -%>
         <%- if field.class.name.include?('Optional') -%>
         @Nullable
+        <%- end -%>
+        <%- if field.respond_to?(:union_kind) && field.union_kind -%>
+        @UnionType({ <%= field.union_kind.map { |t| "#{t}.class" }.join(', ') %> })
         <%- end -%>
         public final <%= field.java_type %> <%= field.name %>;
         <%- end -%>

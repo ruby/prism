@@ -6,6 +6,7 @@ require "yaml"
 
 module Prism
   SERIALIZE_ONLY_SEMANTICS_FIELDS = ENV.fetch("PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS", false)
+  CHECK_FIELD_KIND = ENV.fetch("CHECK_FIELD_KIND", false)
 
   JAVA_BACKEND = ENV["PRISM_JAVA_BACKEND"] || "truffleruby"
   JAVA_STRING_TYPE = JAVA_BACKEND == "jruby" ? "org.jruby.RubySymbol" : "String"
@@ -123,6 +124,14 @@ module Prism
     def rbi_class
       "Prism::#{ruby_type}"
     end
+
+    def check_field_kind
+      if union_kind
+        "[#{union_kind.join(', ')}].include?(#{name}.class)"
+      else
+        "#{name}.is_a?(#{ruby_type})"
+      end
+    end
   end
 
   # This represents a field on a node that is itself a node and can be
@@ -141,11 +150,19 @@ module Prism
     def rbi_class
       "T.nilable(Prism::#{ruby_type})"
     end
+
+    def check_field_kind
+      if union_kind
+        "[#{union_kind.join(', ')}, NilClass].include?(#{name}.class)"
+      else
+        "#{name}.nil? || #{name}.is_a?(#{ruby_type})"
+      end
+    end
   end
 
   # This represents a field on a node that is a list of nodes. We pass them as
   # references and store them directly on the struct.
-  class NodeListField < Field
+  class NodeListField < NodeKindField
     def rbs_class
       if specific_kind
         "Array[#{specific_kind}]"
@@ -157,20 +174,19 @@ module Prism
     end
 
     def rbi_class
-      "T::Array[Prism::Node]"
+      "T::Array[Prism::#{ruby_type}]"
     end
 
     def java_type
-      "Node[]"
+      "#{super}[]"
     end
 
-    # TODO: unduplicate with NodeKindField
-    def specific_kind
-      options[:kind] unless options[:kind].is_a?(Array)
-    end
-
-    def union_kind
-      options[:kind] if options[:kind].is_a?(Array)
+    def check_field_kind
+      if union_kind
+        "#{name}.all? { |n| [#{union_kind.join(', ')}].include?(n.class) }"
+      else
+        "#{name}.all? { |n| n.is_a?(#{ruby_type}) }"
+      end
     end
   end
 
