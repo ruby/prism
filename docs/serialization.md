@@ -195,13 +195,19 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `4`     | the length the encoding    |
 | ...     | the encoding bytes         |
 | `1`     | frozen string literal      |
-| `1`     | `-p` command line flag     |
-| `1`     | `-n` command line flag     |
-| `1`     | `-l` command line flag     |
-| `1`     | `-a` command line flag     |
+| `1`     | command line flags         |
 | `1`     | syntax version, see [pm_options_version_t](https://github.com/ruby/prism/blob/main/include/prism/options.h) for valid values |
 | `4`     | the number of scopes       |
 | ...     | the scopes                 |
+
+Command line flags are a bitset. By default every flag is `0`. It includes the following values:
+
+* `0x1` - the `-a` option
+* `0x2` - the `-e` option
+* `0x4` - the `-l` option
+* `0x8` - the `-n` option
+* `0x10` - the `-p` option
+* `0x20` - the `-x` option
 
 Scopes are ordered from the outermost scope to the innermost one.
 
