@@ -38,8 +38,10 @@ jobs:
       env:
         LANG: "C"
 
-  check_annotations:
+  typecheck:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -49,8 +51,7 @@ jobs:
         bundler-cache: true
     - name: Check annotations
       run: |
-        bundle exec rake compile
-        bundle exec rake check_annotations
+        bundle exec rake typecheck:tapioca typecheck:sorbet
         bundle exec rake typecheck:steep
         rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
 

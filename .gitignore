@@ -28,6 +28,7 @@ out.svg
 
 /ext/prism/api_node.c
 /fuzz/output/
+/gemfiles/typecheck/bin/
 /include/prism/ast.h
 /javascript/node_modules/
 /javascript/package-lock.json
@@ -47,6 +48,7 @@ out.svg
 /lib/prism/node.rb
 /lib/prism/serialize.rb
 /lib/prism/visitor.rb
+/sorbet/
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c
@@ -58,7 +60,8 @@ out.svg
 /sig/prism/node.rbs
 /sig/prism/visitor.rbs
 /sig/prism/_private/dot_visitor.rbs
-/rbi/prism.rbi
+/rbi/prism/node.rbi
+/rbi/prism/visitor.rbi
 
 compile_commands.json
 .cache/
