@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,10 +38,7 @@ public class DummyTest {
             1,
             new byte[] {},
             false,
-            false,
-            false,
-            false,
-            false,
+            EnumSet.noneOf(ParsingOptions.CommandLine.class),
             ParsingOptions.SyntaxVersion.LATEST,
             new byte[][][] {}
         );
@@ -91,10 +89,7 @@ public class DummyTest {
             1,
             new byte[] {},
             false,
-            false,
-            false,
-            false,
-            false,
+            EnumSet.noneOf(ParsingOptions.CommandLine.class),
             ParsingOptions.SyntaxVersion.LATEST,
             new byte[][][] {}
         );
