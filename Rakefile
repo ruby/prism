@@ -14,15 +14,6 @@ require_relative "templates/template"
 desc "Generate all ERB template based files"
 task templates: Prism::TEMPLATES
 
-def windows?
-  RUBY_PLATFORM.include?("mingw")
-end
-
-def run_script(command)
-  command = "sh #{command}" if windows?
-  sh command
-end
-
 task make: [:templates] do
   sh "make"
 end
@@ -32,7 +23,7 @@ task make_no_debug: [:templates] do
 end
 
 # decorate the gem build task with prerequisites
-task build: [:check_manifest, :templates, :check_annotations]
+task build: [:check_manifest, :templates, :"typecheck:sorbet", :"typecheck:steep"]
 
 # the C extension
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created

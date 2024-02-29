@@ -1,0 +1,18 @@
+class Prism::BasicVisitor
+  sig { params(node: T.nilable(Prism::Node)).void }
+  def visit(node); end
+
+  sig { params(nodes: T::Array[T.nilable(Prism::Node)]).void }
+  def visit_all(nodes); end
+
+  sig { params(node: Prism::Node).void }
+  def visit_child_nodes(node); end
+end
+
+class Prism::Visitor < Prism::BasicVisitor
+  <%- nodes.each_with_index do |node, index| -%>
+<%= "\n" if index != 0 -%>
+  sig { params(node: Prism::<%= node.name %>).void }
+  def visit_<%= node.human %>(node); end
+  <%- end -%>
+end
