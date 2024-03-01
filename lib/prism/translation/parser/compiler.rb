@@ -1607,11 +1607,7 @@ module Prism
           builder.when(
             token(node.keyword_loc),
             visit_all(node.conditions),
-            if node.then_keyword_loc
-              token(node.then_keyword_loc)
-            else
-              srange_find(node.conditions.last.location.end_offset, node.statements&.location&.start_offset || (node.conditions.last.location.end_offset + 1), [";"])
-            end,
+            srange_find(node.conditions.last.location.end_offset, node.statements&.location&.start_offset || node.statements&.then_keyword_loc, [";", "then"]),
             visit(node.statements)
           )
         end
