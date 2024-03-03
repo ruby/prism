@@ -86,9 +86,9 @@ The build process internally looks up `_POSIX_MAPPED_FILES` and `_WIN32` macros 
 
 If you need to use memory allocation functions implemented outside of the standard library, follow these steps:
 
-* Add `-D PRISM_CUSTOM_ALLOCATOR` to the build options
-* Additionally, include `-I [path/to/custom_allocator]` where your `custom_allocator.h` is located
-* Link the implementation of `custom_allocator.c` that contains functions declared in `custom_allocator.h`
+* Add `-D PRISM_XALLOCATOR` to the build options
+* Additionally, include `-I [path/to/custom_allocator]` where your `prism_xallocator.h` is located
+* Link the implementation of `prism_xallocator.c` that contains functions declared in `prism_xallocator.h`
 
 For further clarity, refer to `include/prism/defines.h`.
 
