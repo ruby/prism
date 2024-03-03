@@ -98,7 +98,7 @@ class SerializationBuffer {
   }
 
   readDouble() {
-    const view = new DataVieW(new ArrayBuffer(8));
+    const view = new DataView(new ArrayBuffer(8));
     for (let index = 0; index < 8; index++) {
       view.setUint8(index, this.readByte());
     }
