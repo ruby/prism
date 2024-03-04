@@ -512,6 +512,9 @@ static const int8_t PM_SCOPE_NUMBERED_PARAMETERS_NONE = 0;
  * it's considering.
  */
 struct pm_parser {
+    /** The current node ID that will be written to the next node. */
+    uint32_t node_id;
+
     /** The current state of the lexer. */
     pm_lex_state_t lex_state;
 
