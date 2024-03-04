@@ -38,7 +38,7 @@ end
 # by this script.`
 def make(target)
   Dir.chdir(File.expand_path("../..", __dir__)) do
-    system("make", target, exception: true)
+    system(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make", target, exception: true)
   end
 end
 

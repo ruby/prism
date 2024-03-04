@@ -15,11 +15,11 @@ desc "Generate all ERB template based files"
 task templates: Prism::TEMPLATES
 
 task make: [:templates] do
-  sh "make"
+  sh(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make")
 end
 
 task make_no_debug: [:templates] do
-  sh "make all-no-debug"
+  sh("#{RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make"} all-no-debug")
 end
 
 # decorate the gem build task with prerequisites
