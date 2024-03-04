@@ -82,6 +82,16 @@ For instance, you can build a static library `libprism.a` targeting the Arm Cort
 
 The build process internally looks up `_POSIX_MAPPED_FILES` and `_WIN32` macros to determine whether the functions of the memory map are available on the target platform.
 
+### Building prism with custom memory allocator
+
+If you need to use memory allocation functions implemented outside of the standard library, follow these steps:
+
+* Add `-D PRISM_XALLOCATOR` to the build options
+* Additionally, include `-I [path/to/custom_allocator]` where your `prism_xallocator.h` is located
+* Link the implementation of `prism_xallocator.c` that contains functions declared in `prism_xallocator.h`
+
+For further clarity, refer to `include/prism/defines.h`.
+
 ### Building prism from source as a C library
 
 All of the source files match `src/**/*.c` and all of the headers match `include/**/*.h`.

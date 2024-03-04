@@ -10,7 +10,7 @@ FUZZ_OUTPUT_DIR = $(shell pwd)/fuzz/output
 
 SOEXT := $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
-CPPFLAGS := -Iinclude
+CPPFLAGS := -Iinclude $(CPPFLAGS)
 CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden $(CFLAGS)
 CC := cc
 WASI_SDK_PATH := /opt/wasi-sdk
