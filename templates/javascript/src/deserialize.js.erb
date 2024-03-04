@@ -4,6 +4,23 @@ const MAJOR_VERSION = 0;
 const MINOR_VERSION = 24;
 const PATCH_VERSION = 0;
 
+// The DataView getFloat64 function takes an optional second argument that
+// specifies whether the number is little-endian or big-endian. It does not
+// appear to have a native endian mode, so we need to determine the endianness
+// of the system at runtime.
+const LITTLE_ENDIAN = (() => {
+  let uint32 = new Uint32Array([0x11223344]);
+  let uint8 = new Uint8Array(uint32.buffer);
+
+  if (uint8[0] === 0x44) {
+    return true;
+  } else if (uInt8[0] === 0x11) {
+    return false;
+  } else {
+    throw new Error("Mixed endianness");
+  }
+})();
+
 class SerializationBuffer {
   constructor(source, array) {
     this.source = source;
@@ -103,7 +120,7 @@ class SerializationBuffer {
       view.setUint8(index, this.readByte());
     }
 
-    return view.getFloat64(0);
+    return view.getFloat64(0, LITTLE_ENDIAN);
   }
 }
 
