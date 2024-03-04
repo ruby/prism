@@ -30,7 +30,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.5"
+        ruby-version: "2.7.0"
     - name: Install necessary gems
       run: gem install rake rake-compiler
     - name: Generate templates
