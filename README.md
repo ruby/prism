@@ -57,7 +57,7 @@ The repository contains the infrastructure for both a shared library (libprism) 
 To compile the shared library, you will need:
 
 * C99 compiler
-* make
+* GNU make
 * Ruby 2.7.0 or later
 
 Once you have these dependencies, run:
