@@ -97,7 +97,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Parser translation](docs/parser_translation.md)
 * [Parsing rules](docs/parsing_rules.md)
 * [Releasing](docs/releasing.md)
-* [Ripper](docs/ripper.md)
+* [Ripper translation](docs/ripper_translation.md)
 * [Ruby API](docs/ruby_api.md)
 * [RubyParser translation](docs/ruby_parser_translation.md)
 * [Serialization](docs/serialization.md)
