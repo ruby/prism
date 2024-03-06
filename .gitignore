@@ -30,6 +30,7 @@ out.svg
 /fuzz/output/
 /gemfiles/typecheck/bin/
 /include/prism/ast.h
+/include/prism/diagnostic.h
 /javascript/node_modules/
 /javascript/package-lock.json
 /javascript/src/deserialize.js
@@ -49,6 +50,7 @@ out.svg
 /lib/prism/serialize.rb
 /lib/prism/visitor.rb
 /sorbet/
+/src/diagnostic.c
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c

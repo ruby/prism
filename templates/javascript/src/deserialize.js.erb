@@ -145,13 +145,13 @@ class SerializationBuffer {
 /**
  * An error in the source code.
  *
- * @typedef {{ message: string, location: Location, level: string }} ParseError
+ * @typedef {{ type: string, message: string, location: Location, level: string }} ParseError
  */
 
 /**
  * A warning in the source code.
  *
- * @typedef {{ message: string, location: Location, level: string }} ParseWarning
+ * @typedef {{ type: string, message: string, location: Location, level: string }} ParseWarning
  */
 
 /**
@@ -211,7 +211,18 @@ export class ParseResult {
 }
 
 const errorLevels = ["fatal", "argument"];
+const errorTypes = [
+  <%- errors.each do |error| -%>
+  "<%= error.name.downcase %>",
+  <%- end -%>
+];
+
 const warningLevels = ["default", "verbose"];
+const warningTypes = [
+  <%- warnings.each do |warning| -%>
+  "<%= warning.name.downcase %>",
+  <%- end -%>
+];
 
 /**
  * Accept two Uint8Arrays, one for the source and one for the serialized format.
@@ -264,12 +275,14 @@ export function deserialize(source, array) {
   const dataLoc = buffer.readOptionalLocation();
 
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
+    type: errorTypes[buffer.readByte()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: errorLevels[buffer.readByte()]
   }));
 
   const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
+    type: warningTypes[buffer.readByte()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: warningLevels[buffer.readByte()]

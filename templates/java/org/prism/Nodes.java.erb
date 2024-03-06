@@ -360,5 +360,20 @@ public abstract class Nodes {
     }
     <%- end -%>
 
+    public enum ErrorType {
+        <%- errors.each do |error| -%>
+        <%= error.name %>,
+        <%- end -%>
+    }
+
+    public static ErrorType[] ERROR_TYPES = ErrorType.values();
+
+    public enum WarningType {
+        <%- warnings.each do |warning| -%>
+        <%= warning.name %>,
+        <%- end -%>
+    }
+
+    public static WarningType[] WARNING_TYPES = WarningType.values();
 }
 // @formatter:on

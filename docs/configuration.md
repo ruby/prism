@@ -4,6 +4,7 @@ A lot of code in prism's repository is templated from a single configuration fil
 
 * `ext/prism/api_node.c` - for defining how to build Ruby objects for the nodes out of C structs
 * `include/prism/ast.h` - for defining the C structs that represent the nodes
+* `include/prism/diagnostic.h` - for defining the diagnostics
 * `javascript/src/deserialize.js` - for defining how to deserialize the nodes in JavaScript
 * `javascript/src/nodes.js` - for defining the nodes in JavaScript
 * `java/org/prism/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
@@ -17,6 +18,7 @@ A lot of code in prism's repository is templated from a single configuration fil
 * `lib/prism/node.rb` - for defining the nodes in Ruby
 * `lib/prism/serialize.rb` - for defining how to deserialize the nodes in Ruby
 * `lib/prism/visitor.rb` - for defining the visitor interface for the nodes in Ruby
+* `src/diagnostic.c` - for defining how to build diagnostics
 * `src/node.c` - for defining how to free the nodes in C and calculate the size in memory in C
 * `src/prettyprint.c` - for defining how to prettyprint the nodes in C
 * `src/serialize.c` - for defining how to serialize the nodes in C
