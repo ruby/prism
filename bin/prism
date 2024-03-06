@@ -47,20 +47,41 @@ module Prism
     def benchmark(argv)
       require "benchmark/ips"
       require "parser/current"
-      require "ruby_parser"
       require "ripper"
+      require "ruby_parser"
 
       filepath = argv.fetch(0) { File.expand_path("../lib/prism/node.rb", __dir__) }
       source = File.read(filepath)
 
       Benchmark.ips do |x|
-        x.report("Prism") { Prism.parse(source, filepath: filepath) }
-        x.report("Ripper::SexpBuilder") { Ripper.sexp_raw(source, filepath) }
-        x.report("Prism::Translation::Ripper::SexpBuilder") { Prism::Translation::Ripper.sexp_raw(source, filepath) }
-        x.report("Parser::CurrentRuby") { Parser::CurrentRuby.parse(source, filepath) }
-        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse(source, filepath) }
-        x.report("RubyParser") { RubyParser.new.parse(source, filepath) }
-        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.new.parse(source, filepath) }
+        x.report("Prism") do
+          Prism.parse(source, filepath: filepath)
+        end
+
+        x.report("Ripper::SexpBuilder") do
+          Ripper.sexp_raw(source, filepath)
+        end
+
+        x.report("Prism::Translation::Ripper::SexpBuilder") do
+          Prism::Translation::Ripper.sexp_raw(source, filepath)
+        end
+
+        x.report("Parser::CurrentRuby") do
+          Parser::CurrentRuby.parse(source, filepath)
+        end
+
+        x.report("Prism::Translation::Parser") do
+          Prism::Translation::Parser.parse(source, filepath)
+        end
+
+        x.report("RubyParser") do
+          RubyParser.new.parse(source, filepath)
+        end
+
+        x.report("Prism::Translation::RubyParser") do
+          Prism::Translation::RubyParser.new.parse(source, filepath)
+        end
+
         x.compare!
       end
     end
