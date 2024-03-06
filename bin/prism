@@ -48,15 +48,19 @@ module Prism
       require "benchmark/ips"
       require "parser/current"
       require "ruby_parser"
+      require "ripper"
 
       filepath = argv.fetch(0) { File.expand_path("../lib/prism/node.rb", __dir__) }
+      source = File.read(filepath)
 
       Benchmark.ips do |x|
-        x.report("prism") { Prism.parse_file(filepath) }
-        x.report("parser") { Parser::CurrentRuby.parse_file(filepath) }
-        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse_file(filepath) }
-        x.report("ruby_parser") { RubyParser.new.parse(File.read(filepath), filepath) }
-        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.parse_file(filepath) }
+        x.report("Prism") { Prism.parse(source, filepath: filepath) }
+        x.report("Ripper::SexpBuilder") { Ripper.sexp_raw(source, filepath) }
+        x.report("Prism::Translation::Ripper::SexpBuilder") { Prism::Translation::Ripper.sexp_raw(source, filepath) }
+        x.report("Parser::CurrentRuby") { Parser::CurrentRuby.parse(source, filepath) }
+        x.report("Prism::Translation::Parser") { Prism::Translation::Parser.parse(source, filepath) }
+        x.report("RubyParser") { RubyParser.new.parse(source, filepath) }
+        x.report("Prism::Translation::RubyParser") { Prism::Translation::RubyParser.new.parse(source, filepath) }
         x.compare!
       end
     end
@@ -247,7 +251,7 @@ module Prism
       source, filepath = read_source(argv)
 
       ripper = Ripper.sexp_raw(source)
-      prism = Prism::Translation::Ripper.sexp_raw(source) rescue :parse_error
+      prism = Prism::Translation::Ripper.sexp_raw(source)
 
       puts "Ripper:"
       pp ripper
