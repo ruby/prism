@@ -120,7 +120,7 @@ public class Loader {
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
         Nodes.Location dataLocation = loadOptionalLocation();
-        ParseResult.Error[] errors = loadSyntaxErrors();
+        ParseResult.Error[] errors = loadErrors();
         ParseResult.Warning[] warnings = loadWarnings();
 
         int constantPoolBufferOffset = buffer.getInt();
@@ -187,13 +187,13 @@ public class Loader {
         return magicComments;
     }
 
-    private ParseResult.Error[] loadSyntaxErrors() {
+    private ParseResult.Error[] loadErrors() {
         int count = loadVarUInt();
         ParseResult.Error[] errors = new ParseResult.Error[count];
 
         // error messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
-            Nodes.ErrorType type = Nodes.ERROR_TYPES[buffer.get()];
+            Nodes.ErrorType type = Nodes.ERROR_TYPES[buffer.get() & 0xFF];
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
@@ -212,7 +212,7 @@ public class Loader {
 
         // warning messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
-            Nodes.WarningType type = Nodes.WARNING_TYPES[buffer.get()];
+            Nodes.WarningType type = Nodes.WARNING_TYPES[(buffer.get() & 0xFF) - <%= errors.length %>];
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
