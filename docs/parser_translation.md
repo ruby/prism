@@ -16,19 +16,24 @@ Prism::Translation::Parser.parse_file("path/to/file.rb")
 
 ### RuboCop
 
-To run RuboCop using the `prism` gem as the parser, you will need to require the `prism/translation/parser/rubocop` file. This file injects `prism` into the known options for both `rubocop` and `rubocop-ast`, such that you can specify it in your `.rubocop.yml` file. Unfortunately `rubocop` doesn't support any direct way to do this, so we have to get a bit hacky.
+Prism as a parser engine is directly supported since RuboCop 1.62. The class used for parsing is `Prism::Translation::Parser`.
 
-First, set the `TargetRubyVersion` in your RuboCop configuration file to `80_82_73_83_77.33`. This is the version of Ruby that `prism` reports itself as. (The leading numbers are the ASCII values for `PRISM`.)
+First, specify `prism` in your Gemfile:
+
+```ruby
+gem "prism"
+```
+
+To use Prism with RuboCop, specify `ParserEngine` and `TargetRubyVersion` in your RuboCop configuration file:
 
 ```yaml
 AllCops:
-  TargetRubyVersion: 80_82_73_83_77.33
+  ParserEngine: parser_prism
+  TargetRubyVersion: 3.3
 ```
 
-Now when you run `rubocop` you will need to require the `prism/translation/parser/rubocop` file before executing so that it can inject the `prism` parser into the known options.
+The default value for `ParserEngine` is `parser_whitequark`, which indicates the Parser gem. You need to explicitly switch it to `parser_prism` to indicate Prism. Additionally, the value for `TargetRubyVersion` must be specified as `3.3` or higher, as Prism supports parsing versions of Ruby 3.3 and higher.
+The parser class is determined by the combination of values for `ParserEngine` and `TargetRubyVersion`. For example, if `TargetRubyVersion: 3.3`, parsing is performed by `Prism::Translation::Parser33`, and for `TargetRubyVersion 3.4`, parsing is performed by `Prism::Translation::Parser34`.
 
-```
-bundle exec ruby -rprism/translation/parser/rubocop $(bundle exec which rubocop)
-```
-
-This should run RuboCop using the `prism` parser.
+For further information, please refer to the RuboCop documentation:
+https://docs.rubocop.org/rubocop/configuration.html#setting-the-parser-engine
