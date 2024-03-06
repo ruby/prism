@@ -49,12 +49,12 @@ jobs:
       with:
         ruby-version: "3.3"
         bundler-cache: true
-    - name: Check annotations
-      run: |
-        bundle exec rake typecheck:tapioca typecheck:sorbet
-        bundle exec rake typecheck:steep
-        rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
-
+    - name: Check Sorbet
+      run: bundle exec rake typecheck:tapioca typecheck:sorbet
+    - name: Check Steep
+      run: bundle exec rake typecheck:steep
+    - name: Check field kinds
+      run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
   build:
     strategy:
       fail-fast: false

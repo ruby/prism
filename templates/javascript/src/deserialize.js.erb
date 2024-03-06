@@ -292,19 +292,19 @@ export function deserialize(source, array) {
         <%- end -%>
         return new nodes.<%= node.name %>(<%= (node.fields.map { |field|
           case field
-          when Prism::NodeField then "readRequiredNode()"
-          when Prism::OptionalNodeField then "readOptionalNode()"
-          when Prism::StringField then "buffer.readStringField()"
-          when Prism::NodeListField then "Array.from({ length: buffer.readVarInt() }, readRequiredNode)"
-          when Prism::ConstantField then "readRequiredConstant()"
-          when Prism::OptionalConstantField then "readOptionalConstant()"
-          when Prism::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
-          when Prism::LocationField then "buffer.readLocation()"
-          when Prism::OptionalLocationField then "buffer.readOptionalLocation()"
-          when Prism::UInt8Field then "buffer.readByte()"
-          when Prism::UInt32Field, Prism::FlagsField then "buffer.readVarInt()"
-          when Prism::IntegerField then "readInteger()"
-          when Prism::DoubleField then "buffer.readDouble()"
+          when Prism::Template::NodeField then "readRequiredNode()"
+          when Prism::Template::OptionalNodeField then "readOptionalNode()"
+          when Prism::Template::StringField then "buffer.readStringField()"
+          when Prism::Template::NodeListField then "Array.from({ length: buffer.readVarInt() }, readRequiredNode)"
+          when Prism::Template::ConstantField then "readRequiredConstant()"
+          when Prism::Template::OptionalConstantField then "readOptionalConstant()"
+          when Prism::Template::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
+          when Prism::Template::LocationField then "buffer.readLocation()"
+          when Prism::Template::OptionalLocationField then "buffer.readOptionalLocation()"
+          when Prism::Template::UInt8Field then "buffer.readByte()"
+          when Prism::Template::UInt32Field, Prism::Template::FlagsField then "buffer.readVarInt()"
+          when Prism::Template::IntegerField then "readInteger()"
+          when Prism::Template::DoubleField then "buffer.readDouble()"
           else raise
           end
         } + ["location"]).join(", ") -%>);

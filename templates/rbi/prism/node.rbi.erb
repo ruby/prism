@@ -22,7 +22,7 @@ class Prism::Node
   sig { returns(String) }
   def to_dot; end
 
-  sig { abstract.params(visitor: Prism::Visitor).void }
+  sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
 
   sig { abstract.returns(T::Array[T.nilable(Prism::Node)]) }
@@ -39,6 +39,9 @@ class Prism::Node
 
   sig { abstract.returns(Symbol) }
   def type; end
+
+  sig { abstract.params(inspector: Prism::NodeInspector).returns(String) }
+  def inspect(inspector = Prism::NodeInspector.new); end
 end
 <%- nodes.each do |node| -%>
 
@@ -54,7 +57,7 @@ class Prism::<%= node.name -%> < Prism::Node
   sig { params(<%= ["source: Prism::Source", *node.fields.map { |field| "#{field.name}: #{field.rbi_class}" }, "location: Prism::Location"].join(", ") %>).void }
   def initialize(<%= ["source", *node.fields.map(&:name), "location"].join(", ") %>); end
 
-  sig { override.params(visitor: Prism::Visitor).void }
+  sig { override.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
 
   sig { override.returns(T::Array[T.nilable(Prism::Node)]) }
@@ -76,19 +79,19 @@ class Prism::<%= node.name -%> < Prism::Node
   def deconstruct_keys(keys); end
   <%- node.fields.each do |field| -%>
   <%- case field -%>
-  <%- when Prism::LocationField -%>
+  <%- when Prism::Template::LocationField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
   sig { returns(String) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::OptionalLocationField -%>
+  <%- when Prism::Template::OptionalLocationField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
   sig { returns(T.nilable(String)) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::FlagsField -%>
+  <%- when Prism::Template::FlagsField -%>
   <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
   sig { returns(T::Boolean) }

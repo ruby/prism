@@ -87,9 +87,9 @@ module Prism
 
       while left <= right
         mid = left + (right - left) / 2
-        return mid if offsets[mid] == byte_offset
+        return mid if (offset = offsets[mid]) == byte_offset
 
-        if offsets[mid] < byte_offset
+        if offset < byte_offset
           left = mid + 1
         else
           right = mid - 1
@@ -262,7 +262,7 @@ module Prism
 
     # Returns true if the given other location is equal to this location.
     def ==(other)
-      other.is_a?(Location) &&
+      Location === other &&
         other.start_offset == start_offset &&
         other.end_offset == end_offset
     end
@@ -275,13 +275,6 @@ module Prism
       raise "Incompatible locations" if start_offset > other.start_offset
 
       Location.new(source, start_offset, other.end_offset - start_offset)
-    end
-
-    # Returns a null location that does not correspond to a source and points to
-    # the beginning of the file. Useful for when you want a location object but
-    # do not care where it points.
-    def self.null
-      new(nil, 0, 0) # steep:ignore
     end
   end
 
@@ -541,7 +534,7 @@ module Prism
 
     # Returns true if the given other token is equal to this token.
     def ==(other)
-      other.is_a?(Token) &&
+      Token === other &&
         other.type == type &&
         other.value == value
     end

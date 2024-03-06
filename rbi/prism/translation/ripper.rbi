@@ -1,6 +1,6 @@
 # typed: strict
 
-class Prism::Translation::Ripper < Prism::Translation::RipperCompiler
+class Prism::Translation::Ripper < Prism::Compiler
   Result = type_member
 
   sig { returns(T::Boolean) }
@@ -9,11 +9,11 @@ class Prism::Translation::Ripper < Prism::Translation::RipperCompiler
   sig { returns(T.nilable(Result)) }
   def parse; end
 
-  sig { params(source: String).returns(T.untyped) }
-  def self.sexp_raw(source); end
+  sig { params(source: String, filename: String, lineno: Integer, raise_errors: T.untyped).returns(T.untyped) }
+  def self.sexp_raw(source, filename = "-", lineno = 1, raise_errors: false); end
 
-  sig { params(source: String).returns(T.untyped) }
-  def self.sexp(source); end
+  sig { params(source: String, filename: String, lineno: Integer, raise_errors: T.untyped).returns(T.untyped) }
+  def self.sexp(source, filename = "-", lineno = 1, raise_errors: false); end
 end
 
 class Prism::Translation::Ripper::SexpBuilder < Prism::Translation::Ripper
