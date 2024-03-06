@@ -256,14 +256,10 @@ module Prism
       buffer.source = source
 
       puts "Parser:"
-      parser_ast, _, parser_tokens = Parser::Ruby33.new.tokenize(buffer)
-      pp parser_ast
-      pp parser_tokens
+      parser_parse(Parser::Ruby33.new, buffer)
 
       puts "Prism:"
-      prism_ast, _, prism_tokens = Prism::Translation::Parser33.new.tokenize(buffer)
-      pp prism_ast
-      pp prism_tokens
+      parser_parse(Prism::Translation::Parser33.new, buffer)
     end
 
     # bin/prism ripper [source]
@@ -301,6 +297,17 @@ module Prism
     ############################################################################
     # Helpers
     ############################################################################
+
+    # Parse a Parser::Source::Buffer with a given parser.
+    def parser_parse(parser, buffer)
+      diagnostics = []
+      parser.diagnostics.consumer = -> (diagnostic) { diagnostics << diagnostic }
+
+      parser_ast, _, parser_tokens = parser.tokenize(buffer, true)
+      pp diagnostics if diagnostics.any?
+      pp parser_ast
+      pp parser_tokens
+    end
 
     # Generate the list of values that will be used in a lookup table for a
     # given encoding.
