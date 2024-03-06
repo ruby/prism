@@ -192,6 +192,9 @@ class Prism::MagicComment
 end
 
 class Prism::ParseError
+  sig { returns(Symbol) }
+  attr_reader :type
+
   sig { returns(String) }
   attr_reader :message
 
@@ -201,8 +204,8 @@ class Prism::ParseError
   sig { returns(Symbol) }
   attr_reader :level
 
-  sig { params(message: String, location: Prism::Location, level: Symbol).void }
-  def initialize(message, location, level); end
+  sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
+  def initialize(type, message, location, level); end
 
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
@@ -212,6 +215,9 @@ class Prism::ParseError
 end
 
 class Prism::ParseWarning
+  sig { returns(Symbol) }
+  attr_reader :type
+
   sig { returns(String) }
   attr_reader :message
 
@@ -221,8 +227,8 @@ class Prism::ParseWarning
   sig { returns(Symbol) }
   attr_reader :level
 
-  sig { params(message: String, location: Prism::Location, level: Symbol).void }
-  def initialize(message, location, level); end
+  sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
+  def initialize(type, message, location, level); end
 
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
