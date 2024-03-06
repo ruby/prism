@@ -1,4 +1,4 @@
-<%- string_type = Prism::JAVA_STRING_TYPE -%>
+<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
 package org.prism;
 
 import java.lang.Override;
@@ -138,7 +138,7 @@ public abstract class Nodes {
     <%- flags.each do |group| -%>
 
     /**
-     * <%= Prism::JavaDoc.escape(group.comment) %>
+     * <%= Prism::Template::JavaDoc.escape(group.comment) %>
      */
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
         <%- group.values.each_with_index do |value, index| -%>
@@ -234,7 +234,7 @@ public abstract class Nodes {
         <%- end -%>
         }
         <%# methods for flags -%>
-        <%- node.semantic_fields.grep(Prism::FlagsField).each do |field| -%>
+        <%- node.semantic_fields.grep(Prism::Template::FlagsField).each do |field| -%>
         <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
@@ -255,9 +255,9 @@ public abstract class Nodes {
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
           <%- field = node.semantic_fields.find { |f| f.name == node.newline } or raise node.newline -%>
           <%- case field -%>
-          <%- when Prism::NodeField -%>
+          <%- when Prism::Template::NodeField -%>
             this.<%= field.name %>.setNewLineFlag(source, newlineMarked);
-          <%- when Prism::NodeListField -%>
+          <%- when Prism::Template::NodeListField -%>
             Node first = this.<%= field.name %>.length > 0 ? this.<%= field.name %>[0] : null;
             if (first != null) {
                 first.setNewLineFlag(source, newlineMarked);
@@ -270,13 +270,13 @@ public abstract class Nodes {
         public <T> void visitChildNodes(AbstractNodeVisitor<T> visitor) {
           <%- node.semantic_fields.each do |field| -%>
             <%- case field -%>
-            <%- when Prism::NodeListField -%>
+            <%- when Prism::Template::NodeListField -%>
             for (Nodes.Node child : this.<%= field.name %>) {
                 child.accept(visitor);
             }
-            <%- when Prism::NodeField -%>
+            <%- when Prism::Template::NodeField -%>
             this.<%= field.name %>.accept(visitor);
-            <%- when Prism::OptionalNodeField -%>
+            <%- when Prism::Template::OptionalNodeField -%>
             if (this.<%= field.name %> != null) {
                 this.<%= field.name %>.accept(visitor);
             }
@@ -285,19 +285,19 @@ public abstract class Nodes {
         }
 
         public Node[] childNodes() {
-          <%- if node.semantic_fields.none?(Prism::NodeListField) and node.semantic_fields.none?(Prism::NodeKindField) -%>
+          <%- if node.semantic_fields.none?(Prism::Template::NodeListField) and node.semantic_fields.none?(Prism::Template::NodeKindField) -%>
             return EMPTY_ARRAY;
-          <%- elsif node.semantic_fields.one?(Prism::NodeListField) and node.semantic_fields.none?(Prism::NodeKindField) -%>
-            return this.<%= node.semantic_fields.grep(Prism::NodeListField).first.name %>;
-          <%- elsif node.semantic_fields.none?(Prism::NodeListField) -%>
-            return new Node[] { <%= node.semantic_fields.grep(Prism::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
+          <%- elsif node.semantic_fields.one?(Prism::Template::NodeListField) and node.semantic_fields.none?(Prism::Template::NodeKindField) -%>
+            return this.<%= node.semantic_fields.grep(Prism::Template::NodeListField).first.name %>;
+          <%- elsif node.semantic_fields.none?(Prism::Template::NodeListField) -%>
+            return new Node[] { <%= node.semantic_fields.grep(Prism::Template::NodeKindField).map { |field| "this.#{field.name}" }.join(', ') %> };
           <%- else -%>
             ArrayList<Node> childNodes = new ArrayList<>();
             <%- node.semantic_fields.each do |field| -%>
               <%- case field -%>
-              <%- when Prism::NodeField, Prism::OptionalNodeField -%>
+              <%- when Prism::Template::NodeField, Prism::Template::OptionalNodeField -%>
             childNodes.add(this.<%= field.name %>);
-              <%- when Prism::NodeListField -%>
+              <%- when Prism::Template::NodeListField -%>
             childNodes.addAll(Arrays.asList(this.<%= field.name %>));
               <%- end -%>
             <%- end -%>
@@ -318,37 +318,37 @@ public abstract class Nodes {
             }
             builder.append('\n');
             String nextIndent = indent + "  ";
-            <%- if node.fields.any?(Prism::NodeListField) or node.fields.any?(Prism::ConstantListField) -%>
+            <%- if node.fields.any?(Prism::Template::NodeListField) or node.fields.any?(Prism::Template::ConstantListField) -%>
             String nextNextIndent = nextIndent + "  ";
             <%- end -%>
-            <%- node.fields.grep_v(Prism::LocationField).grep_v(Prism::OptionalLocationField).each do |field| -%>
+            <%- node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::OptionalLocationField).each do |field| -%>
             builder.append(nextIndent);
             builder.append("<%= field.name %>: ");
             <%- case field -%>
-            <%- when Prism::NodeField -%>
+            <%- when Prism::Template::NodeField -%>
             builder.append(this.<%= field.name %>.toString(nextIndent));
-            <%- when Prism::OptionalNodeField -%>
+            <%- when Prism::Template::OptionalNodeField -%>
             builder.append(this.<%= field.name %> == null ? "null\n" : this.<%= field.name %>.toString(nextIndent));
-            <%- when Prism::NodeListField -%>
+            <%- when Prism::Template::NodeListField -%>
             builder.append('\n');
             for (Node child : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append(child.toString(nextNextIndent));
             }
-            <%- when Prism::StringField -%>
+            <%- when Prism::Template::StringField -%>
             builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
             builder.append('\n');
-            <%- when Prism::ConstantField -%>
+            <%- when Prism::Template::ConstantField -%>
             builder.append('"').append(this.<%= field.name %>).append('"');
             builder.append('\n');
-            <%- when Prism::OptionalConstantField -%>
+            <%- when Prism::Template::OptionalConstantField -%>
             builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
             builder.append('\n');
-            <%- when Prism::ConstantListField -%>
+            <%- when Prism::Template::ConstantListField -%>
             builder.append('\n');
             for (<%= string_type %> constant : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
-            <%- when Prism::UInt8Field, Prism::UInt32Field, Prism::FlagsField, Prism::IntegerField, Prism::DoubleField -%>
+            <%- when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::FlagsField, Prism::Template::IntegerField, Prism::Template::DoubleField -%>
             builder.append(this.<%= field.name %>);
             builder.append('\n');
             <%- else -%>

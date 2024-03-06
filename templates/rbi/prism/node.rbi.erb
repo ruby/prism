@@ -76,19 +76,19 @@ class Prism::<%= node.name -%> < Prism::Node
   def deconstruct_keys(keys); end
   <%- node.fields.each do |field| -%>
   <%- case field -%>
-  <%- when Prism::LocationField -%>
+  <%- when Prism::Template::LocationField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
   sig { returns(String) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::OptionalLocationField -%>
+  <%- when Prism::Template::OptionalLocationField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
   sig { returns(T.nilable(String)) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::FlagsField -%>
+  <%- when Prism::Template::FlagsField -%>
   <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
 
   sig { returns(T::Boolean) }

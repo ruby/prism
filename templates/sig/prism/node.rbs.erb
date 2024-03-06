@@ -33,7 +33,7 @@ module Prism
     include _Node
 
     <%- node.fields.each do |field| -%>
-    <%= "private " if field.is_a?(Prism::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
+    <%= "private " if field.is_a?(Prism::Template::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
     def initialize: (<%= ["Source source", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }, "Location location"].join(", ") %>) -> void
@@ -41,15 +41,15 @@ module Prism
     def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
     <%- node.fields.each do |field| -%>
     <%- case field -%>
-    <%- when Prism::LocationField -%>
+    <%- when Prism::Template::LocationField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String
-    <%- when Prism::OptionalLocationField -%>
+    <%- when Prism::Template::OptionalLocationField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String?
-    <%- when Prism::FlagsField -%>
+    <%- when Prism::Template::FlagsField -%>
     <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
     def <%= value.name.downcase %>?: () -> bool
     <%- end -%>

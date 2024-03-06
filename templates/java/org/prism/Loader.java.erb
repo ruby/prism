@@ -1,4 +1,4 @@
-<%- string_type = Prism::JAVA_STRING_TYPE -%>
+<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
 package org.prism;
 
 import org.prism.Nodes;
@@ -362,23 +362,23 @@ public class Loader {
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
             params.concat node.semantic_fields.map { |field|
               case field
-              when Prism::NodeField then "#{field.java_cast}loadNode()"
-              when Prism::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
-              when Prism::StringField then "loadString()"
-              when Prism::NodeListField then
+              when Prism::Template::NodeField then "#{field.java_cast}loadNode()"
+              when Prism::Template::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
+              when Prism::Template::StringField then "loadString()"
+              when Prism::Template::NodeListField then
                 element_type = field.java_type.sub('[]', '')
                 array_types << element_type
                 "load#{element_type}s()"
-              when Prism::ConstantField then "loadConstant()"
-              when Prism::OptionalConstantField then "loadOptionalConstant()"
-              when Prism::ConstantListField then "loadConstants()"
-              when Prism::LocationField then "loadLocation()"
-              when Prism::OptionalLocationField then "loadOptionalLocation()"
-              when Prism::UInt8Field then "buffer.get()"
-              when Prism::UInt32Field then "loadVarUInt()"
-              when Prism::FlagsField then "loadFlags()"
-              when Prism::IntegerField then "loadInteger()"
-              when Prism::DoubleField then "buffer.getDouble()"
+              when Prism::Template::ConstantField then "loadConstant()"
+              when Prism::Template::OptionalConstantField then "loadOptionalConstant()"
+              when Prism::Template::ConstantListField then "loadConstants()"
+              when Prism::Template::LocationField then "loadLocation()"
+              when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
+              when Prism::Template::UInt8Field then "buffer.get()"
+              when Prism::Template::UInt32Field then "loadVarUInt()"
+              when Prism::Template::FlagsField then "loadFlags()"
+              when Prism::Template::IntegerField then "loadInteger()"
+              when Prism::Template::DoubleField then "buffer.getDouble()"
               else raise
               end
             }
