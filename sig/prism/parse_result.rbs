@@ -43,8 +43,6 @@ module Prism
     def deconstruct_keys: (Array[Symbol] keys) -> { start_offset: Integer, end_offset: Integer }
     def pretty_print: (untyped q) -> untyped
     def join: (Location other) -> Location
-
-    def self.null: () -> Location
   end
 
   class Comment
