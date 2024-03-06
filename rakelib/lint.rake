@@ -48,12 +48,12 @@ task :lint do
 
     File.foreach(filepath).with_index(1) do |line, index|
       if line.match?(/[ \t]+$/)
-        warn("Trailing spaces found in #{filepath} on line #{index}")
+        warn("Trailing spaces found in #{filepath}:#{index}")
         failed = true
       end
 
       if line.match?(/^\t/)
-        warn("Tabs found in #{filepath} on line #{index}")
+        warn("Tabs found in #{filepath}:#{index}")
         failed = true
       end
     end
