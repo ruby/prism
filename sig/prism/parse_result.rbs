@@ -79,20 +79,22 @@ module Prism
   end
 
   class ParseError
+    attr_reader type: Symbol
     attr_reader message: String
     attr_reader location: Location
     attr_reader level: Symbol
 
-    def initialize: (String message, Location location, Symbol level) -> void
+    def initialize: (Symbol type, String message, Location location, Symbol level) -> void
     def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
   end
 
   class ParseWarning
+    attr_reader type: Symbol
     attr_reader message: String
     attr_reader location: Location
     attr_reader level: Symbol
 
-    def initialize: (String message, Location location, Symbol level) -> void
+    def initialize: (Symbol type, String message, Location location, Symbol level) -> void
     def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
   end
 

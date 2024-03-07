@@ -19,15 +19,10 @@ module Prism
     # The main known difference is that we may omit dispatching some events in
     # some cases. This impacts the following events:
     #
-    # * on_alias_error
-    # * on_arg_ambiguous
     # * on_assign_error
-    # * on_class_name_error
-    # * on_operator_ambiguous
-    # * on_param_error
-    #
     # * on_comma
     # * on_ignored_nl
+    # * on_ignored_sp
     # * on_kw
     # * on_label_end
     # * on_lbrace
@@ -35,17 +30,15 @@ module Prism
     # * on_lparen
     # * on_nl
     # * on_op
+    # * on_operator_ambiguous
     # * on_rbrace
     # * on_rbracket
     # * on_rparen
     # * on_semicolon
     # * on_sp
     # * on_symbeg
-    # * on_tlambda
-    # * on_tlambeg
     # * on_tstring_beg
     # * on_tstring_end
-    # * on_ignored_sp
     #
     class Ripper < Compiler
       # Parses the given Ruby program read from +src+.
@@ -502,16 +495,45 @@ module Prism
         end
 
         result.warnings.each do |warning|
+          bounds(warning.location)
+
           if warning.level == :default
             warning(warning.message)
           else
-            warn(warning.message)
+            case warning.type
+            when :ambiguous_first_argument_plus
+              on_arg_ambiguous("+")
+            when :ambiguous_first_argument_minus
+              on_arg_ambiguous("-")
+            when :ambiguous_slash
+              on_arg_ambiguous("/")
+            else
+              warn(warning.message)
+            end
           end
         end
 
         if error?
           result.errors.each do |error|
-            on_parse_error(error.message)
+            location = error.location
+            bounds(location)
+
+            case error.type
+            when :alias_argument
+              on_alias_error("can't make alias for the number variables", location.slice)
+            when :argument_formal_class
+              on_param_error("formal argument cannot be a class variable", location.slice)
+            when :argument_format_constant
+              on_param_error("formal argument cannot be a constant", location.slice)
+            when :argument_formal_global
+              on_param_error("formal argument cannot be a global variable", location.slice)
+            when :argument_formal_ivar
+              on_param_error("formal argument cannot be an instance variable", location.slice)
+            when :class_name, :module_name
+              on_class_name_error("class/module name must be CONSTANT", location.slice)
+            else
+              on_parse_error(error.message)
+            end
           end
 
           nil
@@ -2219,6 +2241,9 @@ module Prism
 
       # -> {}
       def visit_lambda_node(node)
+        bounds(node.operator_loc)
+        on_tlambda(node.operator)
+
         parameters =
           if node.parameters.is_a?(BlockParametersNode)
             # Ripper does not track block-locals within lambdas, so we skip
@@ -2243,6 +2268,11 @@ module Prism
           end
 
         braces = node.opening == "{"
+        if braces
+          bounds(node.opening_loc)
+          on_tlambeg(node.opening)
+        end
+
         body =
           case node.body
           when nil

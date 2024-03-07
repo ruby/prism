@@ -366,6 +366,10 @@ module Prism
 
   # This represents an error that was encountered during parsing.
   class ParseError
+    # The type of error. This is an _internal_ symbol that is used for
+    # communicating with translation layers. It is not meant to be public API.
+    attr_reader :type
+
     # The message associated with this error.
     attr_reader :message
 
@@ -376,7 +380,8 @@ module Prism
     attr_reader :level
 
     # Create a new error object with the given message and location.
-    def initialize(message, location, level)
+    def initialize(type, message, location, level)
+      @type = type
       @message = message
       @location = location
       @level = level
@@ -384,17 +389,21 @@ module Prism
 
     # Implement the hash pattern matching interface for ParseError.
     def deconstruct_keys(keys)
-      { message: message, location: location, level: level }
+      { type: type, message: message, location: location, level: level }
     end
 
     # Returns a string representation of this error.
     def inspect
-      "#<Prism::ParseError @message=#{@message.inspect} @location=#{@location.inspect} @level=#{@level.inspect}>"
+      "#<Prism::ParseError @type=#{@type.inspect} @message=#{@message.inspect} @location=#{@location.inspect} @level=#{@level.inspect}>"
     end
   end
 
   # This represents a warning that was encountered during parsing.
   class ParseWarning
+    # The type of warning. This is an _internal_ symbol that is used for
+    # communicating with translation layers. It is not meant to be public API.
+    attr_reader :type
+
     # The message associated with this warning.
     attr_reader :message
 
@@ -405,7 +414,8 @@ module Prism
     attr_reader :level
 
     # Create a new warning object with the given message and location.
-    def initialize(message, location, level)
+    def initialize(type, message, location, level)
+      @type = type
       @message = message
       @location = location
       @level = level
@@ -413,12 +423,12 @@ module Prism
 
     # Implement the hash pattern matching interface for ParseWarning.
     def deconstruct_keys(keys)
-      { message: message, location: location, level: level }
+      { type: type, message: message, location: location, level: level }
     end
 
     # Returns a string representation of this warning.
     def inspect
-      "#<Prism::ParseWarning @message=#{@message.inspect} @location=#{@location.inspect} @level=#{@level.inspect}>"
+      "#<Prism::ParseWarning @type=#{@type.inspect} @message=#{@message.inspect} @location=#{@location.inspect} @level=#{@level.inspect}>"
     end
   end
 
