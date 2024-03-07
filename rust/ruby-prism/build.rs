@@ -758,7 +758,7 @@ impl TryInto<i32> for Integer<'_> {{
         let length = unsafe {{ (*self.pointer).length }};
 
         if length == 0 {{
-            i32::try_from(unsafe {{ (*self.pointer).head.value }}).map_or(Err(()), |value| 
+            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value| 
                 if negative {{
                     Ok(-value)
                 }} else {{
