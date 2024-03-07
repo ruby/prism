@@ -36,7 +36,6 @@ module Prism
     String source
   ) -> Array[[[Integer, Integer], Symbol, String, untyped]]
 
-
   # Methods taking a path to a Ruby file:
   <%-
     {
@@ -59,4 +58,18 @@ module Prism
     ?scopes: Array[Array[Symbol]]
   ) -> <%= return_type %>
   <%- end -%>
+
+  interface _Stream
+    def gets(?Integer integer) -> String | nil
+  end
+
+  def self.parse_stream(
+    _Stream stream,
+    ?filepath: String,
+    ?line: Integer,
+    ?encoding: Encoding,
+    ?frozen_string_literal: bool,
+    ?verbose: bool,
+    ?scopes: Array[Array[Symbol]]
+  ) -> ParseResult[ProgramNode]
 end
