@@ -28,6 +28,9 @@ module Prism
   sig { params(filepath: String, options: T::Hash[Symbol, T.untyped]).returns(Prism::ParseResult[Prism::ProgramNode]) }
   def self.parse_file(filepath, **options); end
 
+  sig { params(stream: T.any(IO, StringIO), options: T::Hash[Symbol, T.untyped]).returns(Prism::ParseResult[Prism::ProgramNode]) }
+  def self.parse_stream(stream, **options); end
+
   sig { params(source: String, options: T::Hash[Symbol, T.untyped]).returns(T::Array[Prism::Comment]) }
   def self.parse_comments(source, **options); end
 
