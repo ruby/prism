@@ -5950,7 +5950,7 @@ parse_symbol_encoding(const pm_parser_t *parser, const pm_string_t *contents) {
 }
 
 static pm_node_flags_t
-parse_and_validate_regular_expression_encoding_modifier(pm_parser_t *parser, const pm_string_t *source, const pm_string_t *contents, pm_node_flags_t flags, char modifier, const pm_encoding_t *modifier_encoding) {
+parse_and_validate_regular_expression_encoding_modifier(pm_parser_t *parser, const pm_string_t *source, bool ascii_only, pm_node_flags_t flags, char modifier, const pm_encoding_t *modifier_encoding) {
     assert ((modifier == 'n' && modifier_encoding == PM_ENCODING_ASCII_8BIT_ENTRY) ||
             (modifier == 'u' && modifier_encoding == PM_ENCODING_UTF_8_ENTRY) ||
             (modifier == 'e' && modifier_encoding == PM_ENCODING_EUC_JP_ENTRY) ||
@@ -5961,7 +5961,6 @@ parse_and_validate_regular_expression_encoding_modifier(pm_parser_t *parser, con
         // If an ASCII-only string without character escapes is used with an encoding modifier, then resulting Regexp
         // has the modifier encoding, unless the ASCII-8BIT modifier is used, in which case the Regexp "downgrades" to
         // the US-ASCII encoding.
-        bool ascii_only = pm_ascii_only_p(contents);
         if (ascii_only) {
             return modifier == 'n' ? PM_REGULAR_EXPRESSION_FLAGS_FORCED_US_ASCII_ENCODING : flags;
         }
@@ -6011,7 +6010,7 @@ parse_and_validate_regular_expression_encoding_modifier(pm_parser_t *parser, con
  * may be explicitly set with an escape sequence.
  */
 static pm_node_flags_t
-parse_and_validate_regular_expression_encoding(pm_parser_t *parser, const pm_string_t *source, const pm_string_t *contents, pm_node_flags_t flags) {
+parse_and_validate_regular_expression_encoding(pm_parser_t *parser, const pm_string_t *source, bool ascii_only, pm_node_flags_t flags) {
     // TODO (nirvdrum 22-Feb-2024): CRuby reports a special Regexp-specific error for invalid Unicode ranges. We either need to scan again or modify the "invalid Unicode escape sequence" message we already report.
     bool valid_unicode_range = true;
     if (parser->explicit_encoding == PM_ENCODING_UTF_8_ENTRY && !valid_unicode_range) {
@@ -6021,7 +6020,7 @@ parse_and_validate_regular_expression_encoding(pm_parser_t *parser, const pm_str
 
     // US-ASCII strings do not admit multi-byte character literals. However, character escape sequences corresponding
     // to multi-byte characters are allowed.
-    if (parser->encoding == PM_ENCODING_US_ASCII_ENTRY && parser->explicit_encoding == NULL && !pm_ascii_only_p(contents)) {
+    if (parser->encoding == PM_ENCODING_US_ASCII_ENTRY && parser->explicit_encoding == NULL && !ascii_only) {
         // CRuby will continue processing even though a SyntaxError has already been detected. It may result in the
         // following error message appearing twice. We do the same for compatibility.
         PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_INVALID_MULTIBYTE_CHAR, parser->encoding->name);
@@ -6036,25 +6035,25 @@ parse_and_validate_regular_expression_encoding(pm_parser_t *parser, const pm_str
      */
 
     if (flags & PM_REGULAR_EXPRESSION_FLAGS_ASCII_8BIT) {
-        return parse_and_validate_regular_expression_encoding_modifier(parser, source, contents, flags, 'n', PM_ENCODING_ASCII_8BIT_ENTRY);
+        return parse_and_validate_regular_expression_encoding_modifier(parser, source, ascii_only, flags, 'n', PM_ENCODING_ASCII_8BIT_ENTRY);
     }
 
     if (flags & PM_REGULAR_EXPRESSION_FLAGS_UTF_8) {
-        return parse_and_validate_regular_expression_encoding_modifier(parser, source, contents, flags, 'u', PM_ENCODING_UTF_8_ENTRY);
+        return parse_and_validate_regular_expression_encoding_modifier(parser, source, ascii_only, flags, 'u', PM_ENCODING_UTF_8_ENTRY);
     }
 
     if (flags & PM_REGULAR_EXPRESSION_FLAGS_EUC_JP) {
-        return parse_and_validate_regular_expression_encoding_modifier(parser, source, contents, flags, 'e', PM_ENCODING_EUC_JP_ENTRY);
+        return parse_and_validate_regular_expression_encoding_modifier(parser, source, ascii_only, flags, 'e', PM_ENCODING_EUC_JP_ENTRY);
     }
 
     if (flags & PM_REGULAR_EXPRESSION_FLAGS_WINDOWS_31J) {
-        return parse_and_validate_regular_expression_encoding_modifier(parser, source, contents, flags, 's', PM_ENCODING_WINDOWS_31J_ENTRY);
+        return parse_and_validate_regular_expression_encoding_modifier(parser, source, ascii_only, flags, 's', PM_ENCODING_WINDOWS_31J_ENTRY);
     }
 
     // At this point no encoding modifiers will be present on the regular expression as they would have already
     // been processed. Ruby stipulates that all source files must use an ASCII-compatible encoding. Thus, all
     // regular expressions without an encoding modifier appearing in source are eligible for "downgrading" to US-ASCII.
-    if (pm_ascii_only_p(contents)) {
+    if (ascii_only) {
         return PM_REGULAR_EXPRESSION_FLAGS_FORCED_US_ASCII_ENCODING;
     }
 
@@ -8932,6 +8931,15 @@ pm_regexp_token_buffer_push_escaped(pm_regexp_token_buffer_t *token_buffer, pm_p
     parser->current.end += width;
 }
 
+static bool
+pm_slice_ascii_only_p(const uint8_t *value, size_t length) {
+    for (size_t index = 0; index < length; index++) {
+        if (value[index] & 0x80) return false;
+    }
+
+    return true;
+}
+
 /**
  * When we're about to return from lexing the current token and we know for sure
  * that we have found an escape sequence, this function is called to copy the
@@ -8946,7 +8954,8 @@ pm_token_buffer_copy(pm_parser_t *parser, pm_token_buffer_t *token_buffer) {
 static inline void
 pm_regexp_token_buffer_copy(pm_parser_t *parser, pm_regexp_token_buffer_t *token_buffer) {
     pm_string_owned_init(&parser->current_string, (uint8_t *) pm_buffer_value(&token_buffer->base.buffer), pm_buffer_length(&token_buffer->base.buffer));
-    pm_string_owned_init(&parser->current_regular_expression_source, (uint8_t *) pm_buffer_value(&token_buffer->regexp_buffer), pm_buffer_length(&token_buffer->regexp_buffer));
+    parser->current_regular_expression_ascii_only = pm_slice_ascii_only_p((const uint8_t *) pm_buffer_value(&token_buffer->regexp_buffer), pm_buffer_length(&token_buffer->regexp_buffer));
+    pm_buffer_free(&token_buffer->regexp_buffer);
 }
 
 /**
@@ -8972,7 +8981,7 @@ static void
 pm_regexp_token_buffer_flush(pm_parser_t *parser, pm_regexp_token_buffer_t *token_buffer) {
     if (token_buffer->base.cursor == NULL) {
         pm_string_shared_init(&parser->current_string, parser->current.start, parser->current.end);
-        pm_string_shared_init(&parser->current_regular_expression_source, parser->current.start, parser->current.end);
+        parser->current_regular_expression_ascii_only = pm_slice_ascii_only_p(parser->current.start, (size_t) (parser->current.end - parser->current.start));
     } else {
         pm_buffer_append_bytes(&token_buffer->base.buffer, token_buffer->base.cursor, (size_t) (parser->current.end - token_buffer->base.cursor));
         pm_buffer_append_bytes(&token_buffer->regexp_buffer, token_buffer->base.cursor, (size_t) (parser->current.end - token_buffer->base.cursor));
@@ -10594,10 +10603,10 @@ parser_lex(pm_parser_t *parser) {
                             parser->current.end++;
                             if (peek(parser) != '\n') {
                                 if (lex_mode->as.regexp.terminator != '\r') {
-                                    pm_regexp_token_buffer_push_byte(&token_buffer, '\\');
+                                    pm_token_buffer_push_byte(&token_buffer.base, '\\');
                                 }
-                                pm_token_buffer_push_byte(&token_buffer.base, '\r');
                                 pm_regexp_token_buffer_push_byte(&token_buffer, '\r');
+                                pm_token_buffer_push_byte(&token_buffer.base, '\r');
                                 break;
                             }
                         /* fallthrough */
@@ -10621,7 +10630,7 @@ parser_lex(pm_parser_t *parser) {
                         case 'M':
                         case 'u':
                         case 'x':
-                            escape_read(parser, &token_buffer.base.buffer, &token_buffer.regexp_buffer, PM_ESCAPE_FLAG_REGEXP);
+                            escape_read(parser, &token_buffer.regexp_buffer, &token_buffer.base.buffer, PM_ESCAPE_FLAG_REGEXP);
                             break;
                         default:
                             if (lex_mode->as.regexp.terminator == peeked) {
@@ -10632,19 +10641,19 @@ parser_lex(pm_parser_t *parser) {
                                     case '$': case ')': case '*': case '+':
                                     case '.': case '>': case '?': case ']':
                                     case '^': case '|': case '}':
-                                        pm_regexp_token_buffer_push_byte(&token_buffer, '\\');
+                                        pm_token_buffer_push_byte(&token_buffer.base, '\\');
                                         break;
                                     default:
                                         break;
                                 }
 
-                                pm_token_buffer_push_byte(&token_buffer.base, peeked);
                                 pm_regexp_token_buffer_push_byte(&token_buffer, peeked);
+                                pm_token_buffer_push_byte(&token_buffer.base, peeked);
                                 parser->current.end++;
                                 break;
                             }
 
-                            if (peeked < 0x80) pm_regexp_token_buffer_push_byte(&token_buffer, '\\');
+                            if (peeked < 0x80) pm_token_buffer_push_byte(&token_buffer.base, '\\');
                             pm_regexp_token_buffer_push_escaped(&token_buffer, parser);
                             break;
                     }
@@ -17157,19 +17166,15 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 // regular expression) or if it's not then it has interpolation.
                 pm_string_t unescaped = parser->current_string;
                 pm_token_t content = parser->current;
-
-                pm_string_t source = parser->current_regular_expression_source;
-                pm_string_constant_init(&parser->current_regular_expression_source, "", 0);
-
+                bool ascii_only = parser->current_regular_expression_ascii_only;
                 parser_lex(parser);
 
                 // If we hit an end, then we can create a regular expression node
                 // without interpolation, which can be represented more succinctly and
                 // more easily compiled.
                 if (accept1(parser, PM_TOKEN_REGEXP_END)) {
-                    pm_node_t *node = (pm_node_t *) pm_regular_expression_node_create_unescaped(parser, &opening, &content, &parser->previous, &source);
-                    pm_node_flag_set(node, parse_and_validate_regular_expression_encoding(parser, &source, &unescaped, node->flags));
-                    pm_string_free(&unescaped);
+                    pm_node_t *node = (pm_node_t *) pm_regular_expression_node_create_unescaped(parser, &opening, &content, &parser->previous, &unescaped);
+                    pm_node_flag_set(node, parse_and_validate_regular_expression_encoding(parser, &unescaped, ascii_only, node->flags));
                     return node;
                 }
 
@@ -17179,9 +17184,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
                 pm_token_t opening = not_provided(parser);
                 pm_token_t closing = not_provided(parser);
-                pm_node_t *part = (pm_node_t *) pm_string_node_create_unescaped(parser, &opening, &parser->previous, &closing, &source);
+                pm_node_t *part = (pm_node_t *) pm_string_node_create_unescaped(parser, &opening, &parser->previous, &closing, &unescaped);
                 pm_interpolated_regular_expression_node_append(interpolated, part);
-                pm_string_free(&unescaped);
             } else {
                 // If the first part of the body of the regular expression is not a
                 // string content, then we have interpolation and we need to create an
@@ -17193,19 +17197,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             // parts into the list.
             pm_node_t *part;
             while (!match2(parser, PM_TOKEN_REGEXP_END, PM_TOKEN_EOF)) {
-                if (match1(parser, PM_TOKEN_STRING_CONTENT)) {
-                    pm_token_t opening = not_provided(parser);
-                    pm_token_t closing = not_provided(parser);
-
-                    pm_node_t *node = (pm_node_t *) pm_string_node_create_unescaped(parser, &opening, &parser->current, &closing, &parser->current_regular_expression_source);
-                    pm_node_flag_set(node, parse_unescaped_encoding(parser));
-
-                    pm_string_free(&parser->current_string);
-                    pm_string_constant_init(&parser->current_regular_expression_source, "", 0);
-
-                    parser_lex(parser);
-                    pm_interpolated_regular_expression_node_append(interpolated, node);
-                } else if ((part = parse_string_part(parser)) != NULL) {
+                if ((part = parse_string_part(parser)) != NULL) {
                     pm_interpolated_regular_expression_node_append(interpolated, part);
                 }
             }
@@ -18744,7 +18736,6 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .newline_list = { 0 },
         .integer_base = 0,
         .current_string = PM_STRING_EMPTY,
-        .current_regular_expression_source = PM_STRING_EMPTY,
         .start_line = 1,
         .explicit_encoding = NULL,
         .command_line = 0,
@@ -18755,7 +18746,8 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .in_keyword_arg = false,
         .current_param_name = 0,
         .semantic_token_seen = false,
-        .frozen_string_literal = false
+        .frozen_string_literal = false,
+        .current_regular_expression_ascii_only = false
     };
 
     // Initialize the constant pool. We're going to completely guess as to the
