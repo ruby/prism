@@ -126,7 +126,7 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
   * [parsing rdoc](https://github.com/rails/rails/pull/50870)
   * [parsing tests](https://github.com/rails/rails/pull/51006)
 * [repl_type_completor](https://github.com/ruby/repl_type_completor)
-* [rubocop](https://github.com/rubocop/rubocop/issues/12600) (via parser translator)
+* [rubocop](https://docs.rubocop.org/rubocop/configuration.html#setting-the-parser-engine) (via parser translator)
 * [ruby-lsp](https://github.com/Shopify/ruby-lsp)
 * [smart_todo](https://github.com/Shopify/smart_todo/pull/69)
 * [sorbet-eraser](https://github.com/kddnewton/sorbet-eraser/pull/25)
