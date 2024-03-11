@@ -20,6 +20,7 @@ module Prism
     String source,
     ?filepath: String,
     ?line: Integer,
+    ?offset: Integer,
     ?encoding: Encoding,
     ?frozen_string_literal: bool,
     ?verbose: bool,
@@ -52,6 +53,7 @@ module Prism
   def self.<%= method %>: (
     String filepath,
     ?line: Integer,
+    ?offset: Integer,
     ?encoding: Encoding,
     ?frozen_string_literal: bool,
     ?verbose: bool,
@@ -67,6 +69,7 @@ module Prism
     _Stream stream,
     ?filepath: String,
     ?line: Integer,
+    ?offset: Integer,
     ?encoding: Encoding,
     ?frozen_string_literal: bool,
     ?verbose: bool,
