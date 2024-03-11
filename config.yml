@@ -1032,10 +1032,7 @@ nodes:
       - name: name
         type: constant
         comment: |
-          The name of the class variable, including the leading `@@`.
-
-          For more information on permitted class variable names, see
-          [the Prism documentation](https://github.com/ruby/prism/main/docs/lexing.md).
+          The name of the class variable, which is a `@@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
 
               @@abc = 123     # name `@@abc`
 
