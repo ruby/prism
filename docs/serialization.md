@@ -194,6 +194,7 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `4`     | the length of the filepath |
 | ...     | the filepath bytes         |
 | `4`     | the line number            |
+| `4`     | the offset in the source   |
 | `4`     | the length the encoding    |
 | ...     | the encoding bytes         |
 | `1`     | frozen string literal      |
