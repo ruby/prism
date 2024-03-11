@@ -21,7 +21,7 @@
             │   │       ├── operator_loc: (1,11)-(1,12) = "="
             │   │       └── value:
             │   │           @ SymbolNode (location: (1,13)-(1,15))
-            │   │           ├── flags: ∅
+            │   │           ├── flags: forced_us_ascii_encoding
             │   │           ├── opening_loc: (1,13)-(1,14) = ":"
             │   │           ├── value_loc: (1,14)-(1,15) = "c"
             │   │           ├── closing_loc: ∅
@@ -36,7 +36,6 @@
             │   └── block: ∅
             ├── body: ∅
             ├── locals: [:a, :b, :d]
-            ├── locals_body_index: 3
             ├── def_keyword_loc: (1,0)-(1,3) = "def"
             ├── operator_loc: ∅
             ├── lparen_loc: (1,5)-(1,6) = "("

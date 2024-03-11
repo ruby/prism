@@ -83,3 +83,28 @@ test("flags", () => {
   assert(regexp.isMultiLine());
   assert(!regexp.isExtended());
 });
+
+test("integer (decimal)", () => {
+  const result = parse("10");
+  assert(result.value.statements.body[0].value == 10);
+});
+
+test("integer (hex)", () => {
+  const result = parse("0xA");
+  assert(result.value.statements.body[0].value == 10);
+});
+
+test("integer (2 nodes)", () => {
+  const result = parse("4294967296");
+  assert(result.value.statements.body[0].value == 4294967296n);
+});
+
+test("integer (3 nodes)", () => {
+  const result = parse("18446744073709552000");
+  assert(result.value.statements.body[0].value == 18446744073709552000n);
+});
+
+test("double", () => {
+  const result = parse("1.0");
+  assert(result.value.statements.body[0].value == 1.0);
+});

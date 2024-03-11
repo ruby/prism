@@ -1,5 +1,4 @@
----
-name: Rust Bindings
+name: Rust bindings
 
 on:
   push:
@@ -34,7 +33,7 @@ jobs:
         with:
           toolchain: "1.71.1"
           targets: wasm32-wasi
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -66,7 +65,7 @@ jobs:
         with:
           toolchain: "1.71.1"
           components: clippy, rustfmt
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -126,7 +125,7 @@ jobs:
   #       with:
   #         toolchain: "1.71.1"
   #         targets: wasm32-wasi
-  #     - uses: actions/cache@v3
+  #     - uses: actions/cache@v4
   #       with:
   #         path: |
   #           ~/.cargo/registry

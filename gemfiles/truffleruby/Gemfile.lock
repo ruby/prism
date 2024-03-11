@@ -1,0 +1,35 @@
+PATH
+  remote: ../..
+  specs:
+    prism (0.24.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.2)
+    parser (3.3.0.5)
+      ast (~> 2.4.1)
+      racc
+    power_assert (2.0.3)
+    racc (1.7.3)
+    rake (13.1.0)
+    rake-compiler (1.2.7)
+      rake
+    test-unit (3.6.2)
+      power_assert
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  parser
+  prism!
+  rake
+  rake-compiler
+  test-unit
+
+RUBY VERSION
+   ruby 3.2.2p0 (truffleruby 23.1.2)
+
+BUNDLED WITH
+   2.2.32

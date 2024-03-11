@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# typed: ignore
 
 module Prism
   # This class is responsible for lexing files with both lex_compat and

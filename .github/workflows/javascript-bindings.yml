@@ -1,4 +1,4 @@
-name: JavaScript Bindings
+name: JavaScript bindings
 
 on:
   push:
@@ -34,6 +34,11 @@ jobs:
       - name: Build the project
         run: make wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-20.0
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: prism.wasm
+          path: javascript/src/prism.wasm
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
@@ -41,8 +46,3 @@ jobs:
       - name: Run the tests
         run: npm test
         working-directory: javascript
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: prism.wasm
-          path: javascript/src/prism.wasm

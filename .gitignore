@@ -4,6 +4,7 @@
 /_yardoc/
 /coverage/
 /doc/c/
+/doc/java/
 /doc/rb/
 /pkg/
 /spec/reports/
@@ -27,7 +28,9 @@ out.svg
 
 /ext/prism/api_node.c
 /fuzz/output/
+/gemfiles/typecheck/bin/
 /include/prism/ast.h
+/include/prism/diagnostic.h
 /javascript/node_modules/
 /javascript/package-lock.json
 /javascript/src/deserialize.js
@@ -46,13 +49,21 @@ out.svg
 /lib/prism/node.rb
 /lib/prism/serialize.rb
 /lib/prism/visitor.rb
+/sorbet/
+/src/diagnostic.c
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c
 /src/token_type.c
 /src/**/*.o
 /sig/prism.rbs
-/rbi/prism.rbi
+/sig/prism/dsl.rbs
+/sig/prism/mutation_compiler.rbs
+/sig/prism/node.rbs
+/sig/prism/visitor.rbs
+/sig/prism/_private/dot_visitor.rbs
+/rbi/prism/node.rbi
+/rbi/prism/visitor.rbi
 
 compile_commands.json
 .cache/

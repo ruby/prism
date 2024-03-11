@@ -1,0 +1,119 @@
+class Prism::Node
+  abstract!
+
+  sig { returns(Prism::Source) }
+  attr_reader :source
+
+  sig { returns(Prism::Location) }
+  def location; end
+
+  sig { returns(Integer) }
+  def start_offset; end
+
+  sig { returns(Integer) }
+  def end_offset; end
+
+  sig { returns(String) }
+  def slice; end
+
+  sig { params(q: T.untyped).void }
+  def pretty_print(q); end
+
+  sig { returns(String) }
+  def to_dot; end
+
+  sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
+  def accept(visitor); end
+
+  sig { abstract.returns(T::Array[T.nilable(Prism::Node)]) }
+  def child_nodes; end
+
+  sig { abstract.returns(T::Array[T.nilable(Prism::Node)]) }
+  def deconstruct; end
+
+  sig { abstract.returns(T::Array[Prism::Node]) }
+  def compact_child_nodes; end
+
+  sig { abstract.returns(T::Array[T.any(Prism::Node, Prism::Location)]) }
+  def comment_targets; end
+
+  sig { abstract.returns(Symbol) }
+  def type; end
+
+  sig { abstract.params(inspector: Prism::NodeInspector).returns(String) }
+  def inspect(inspector = Prism::NodeInspector.new); end
+end
+<%- nodes.each do |node| -%>
+
+<%- node.each_comment_line do |line| -%>
+#<%= line %>
+<%- end -%>
+class Prism::<%= node.name -%> < Prism::Node
+  <%- node.fields.each do |field| -%>
+  sig { returns(<%= field.rbi_class %>) }
+  def <%= field.name %>; end
+
+  <%- end -%>
+  sig { params(<%= ["source: Prism::Source", *node.fields.map { |field| "#{field.name}: #{field.rbi_class}" }, "location: Prism::Location"].join(", ") %>).void }
+  def initialize(<%= ["source", *node.fields.map(&:name), "location"].join(", ") %>); end
+
+  sig { override.params(visitor: Prism::Visitor).returns(T.untyped) }
+  def accept(visitor); end
+
+  sig { override.returns(T::Array[T.nilable(Prism::Node)]) }
+  def child_nodes; end
+
+  sig { override.returns(T::Array[T.nilable(Prism::Node)]) }
+  def deconstruct; end
+
+  sig { override.returns(T::Array[Prism::Node]) }
+  def compact_child_nodes; end
+
+  sig { override.returns(T::Array[T.any(Prism::Node, Prism::Location)]) }
+  def comment_targets; end
+
+  sig { params(<%= (node.fields.map { |field| "#{field.name}: #{field.rbi_class}" } + ["location: Prism::Location"]).join(", ") %>).returns(Prism::<%= node.name %>) }
+  def copy(<%= (node.fields.map(&:name) + ["location"]).map { |field| "#{field}: self.#{field}" }.join(", ") %>); end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+  <%- node.fields.each do |field| -%>
+  <%- case field -%>
+  <%- when Prism::Template::LocationField -%>
+  <%- raise unless field.name.end_with?("_loc") -%>
+  <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+
+  sig { returns(String) }
+  def <%= field.name.delete_suffix("_loc") %>; end
+  <%- when Prism::Template::OptionalLocationField -%>
+  <%- raise unless field.name.end_with?("_loc") -%>
+  <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
+
+  sig { returns(T.nilable(String)) }
+  def <%= field.name.delete_suffix("_loc") %>; end
+  <%- when Prism::Template::FlagsField -%>
+  <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
+
+  sig { returns(T::Boolean) }
+  def <%= value.name.downcase %>?; end
+  <%- end -%>
+  <%- end -%>
+  <%- end -%>
+
+  sig { params(inspector: T.untyped).returns(String) }
+  def inspect(inspector = nil); end
+
+  sig { override.returns(Symbol) }
+  def type; end
+end
+<%- end -%>
+<%- flags.each do |flag| -%>
+
+# <%= flag.comment %>
+module Prism::<%= flag.name %>
+  <%- flag.values.each_with_index do |value, index| -%>
+  # <%= value.comment %>
+  <%= value.name %> = T.let(1 << <%= index %>, Integer)
+  <%- end -%>
+end
+<%- end -%>

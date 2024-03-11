@@ -7,32 +7,23 @@ require "rake/clean"
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-task default: [:check_manifest, :compile, :test]
+task default: [:compile, :test]
 
 require_relative "templates/template"
 
 desc "Generate all ERB template based files"
-task templates: Prism::TEMPLATES
-
-def windows?
-  RUBY_PLATFORM.include?("mingw")
-end
-
-def run_script(command)
-  command = "sh #{command}" if windows?
-  sh command
-end
+task templates: Prism::Template::TEMPLATES
 
 task make: [:templates] do
-  sh "make"
+  sh(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make")
 end
 
 task make_no_debug: [:templates] do
-  sh "make all-no-debug"
+  sh("#{RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make"} all-no-debug")
 end
 
 # decorate the gem build task with prerequisites
-task build: [:templates, :check_annotations, :check_manifest]
+task build: [:check_manifest, :templates]
 
 # the C extension
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created
@@ -59,13 +50,13 @@ elsif RUBY_ENGINE == "jruby"
 end
 
 # So `rake clobber` will delete generated files
-CLOBBER.concat(Prism::TEMPLATES)
+CLOBBER.concat(Prism::Template::TEMPLATES)
 CLOBBER.concat(["build"])
 CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
 
-Prism::TEMPLATES.each do |filepath|
+Prism::Template::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
-    Prism.template(t.name)
+    Prism::Template.render(t.name)
   end
 end

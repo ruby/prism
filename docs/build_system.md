@@ -53,7 +53,7 @@ Because of course those files are not part of the git repository.
 
 ### Building prism as part of CRuby
 
-[This script](https://github.com/ruby/ruby/blob/32e828bb4a6c65a392b2300f3bdf93008c7b6f25/tool/sync_default_gems.rb#L399-L426) imports prism sources in CRuby.
+[This script](https://github.com/ruby/ruby/blob/5124f9ac7513eb590c37717337c430cb93caa151/tool/sync_default_gems.rb#L399-L422) imports prism sources in CRuby.
 
 The script generates the templates when importing.
 
@@ -73,6 +73,25 @@ and links to `libprism.a` (to avoid exporting symbols, so no conflict when insta
 
 TODO, similar to TruffleRuby.
 
+### Building prism for embedded system
+
+For instance, you can build a static library `libprism.a` targeting the Arm Cortex-M0+ embedded system by the commands below:
+
+* `templates/template.rb`
+* `CFLAGS="-mcpu=cortex-m0plus" make static CC=arm-none-eabi-gcc`
+
+The build process internally looks up `_POSIX_MAPPED_FILES` and `_WIN32` macros to determine whether the functions of the memory map are available on the target platform.
+
+### Building prism with custom memory allocator
+
+If you need to use memory allocation functions implemented outside of the standard library, follow these steps:
+
+* Add `-D PRISM_XALLOCATOR` to the build options
+* Additionally, include `-I [path/to/custom_allocator]` where your `prism_xallocator.h` is located
+* Link the implementation of `prism_xallocator.c` that contains functions declared in `prism_xallocator.h`
+
+For further clarity, refer to `include/prism/defines.h`.
+
 ### Building prism from source as a C library
 
 All of the source files match `src/**/*.c` and all of the headers match `include/**/*.h`.
@@ -89,4 +108,3 @@ If you want to build prism as a shared library and link against it, you should c
 ```
 MAKEFLAGS="-j10" bundle exec rake compile
 ```
-

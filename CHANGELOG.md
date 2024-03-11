@@ -6,6 +6,102 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.24.0] - 2024-02-15
+
+### Added
+
+- More support for `Prism::Translation::Ripper` is added.
+- Support multiple versions for `Prism::Translation::Parser`.
+- Improved memory usage in the FFI backend.
+- Very large speed and memory improvements for creating the Ruby AST.
+
+### Changed
+
+- Fix location for empty symbol in hash key.
+- Fix parsing a rescue modifier on the value of an assignment when the LHS is a method call with arguments and no parentheses.
+
+## [0.23.0] - 2024-02-14
+
+### Added
+
+- More support for `Prism::RipperCompat` is added.
+- A significantly faster offset cache for `Prism::Translation::Parser` is added for files with multibyte characters.
+- `Prism::Translation::RubyParser` is added.
+- `Prism::ConstantPathTarget#full_name` is added.
+- `version: "3.4.0"` is added as an option that is an alias for `version: "latest"`.
+- Four new APIs are added to `Prism::Location`:
+  - `Prism::Location#start_code_units_offset`
+  - `Prism::Location#end_code_units_offset`
+  - `Prism::Location#start_code_units_column`
+  - `Prism::Location#end_code_units_column`
+- Invalid multibyte characters are now validated within strings, lists, and heredocs.
+
+### Changed
+
+- When defining `def !@`, the `name_loc` was previously only pointing to `!`, but now includes the `@`. The `name` is the same.
+- `Prism::RipperCompat` has been moved to `Prism::Translation::Ripper`.
+- Many of the error messages that prism produces have been changed to match the error messages that CRuby produces.
+
+## [0.22.0] - 2024-02-07
+
+### Added
+
+- More support for `Prism::RipperCompat` is added.
+- Support for Ruby 2.7 has been added, and the minimum Ruby requirement has been lowered to 2.7.
+
+### Changed
+
+- The error for an invalid source encoding has a new `:argument` level to indicate it raises an argument error.
+- `BeginNode` nodes that are used when a class, singleton class, module, method definition, or block have an inline `rescue`/`ensure`/`else` now have their opening locations set to the beginning of the respective keyword.
+- Improved error messages for invalid characters.
+- `Prism.parse_file` and similar APIs will raise more appropriate errors when the file does not exist or cannot be mapped.
+- Correctly handle the `recover` parameter for `Prism::Translation::Parser`.
+
+## [0.21.0] - 2024-02-05
+
+### Added
+
+- Add the `pm_constant_pool_find` API for finding a constant.
+
+### Changed
+
+- Fixes for `Prism::Translation::Parser`.
+  - Ensure all errors flow through `parser.diagnostics.process`.
+  - Fix the find pattern node.
+  - Fix block forwarding with `NumberedParametersNode`.
+  - Ensure we can parse strings with invalid bytes for the encoding.
+  - Fix hash pairs in pattern matching.
+- Properly reject operator writes on operator calls, e.g., `a.+ -= b`.
+- Fix multi-byte escapes.
+- Handle missing body in `begin` within the receiver of a method call.
+
+## [0.20.0] - 2024-02-01
+
+### Added
+
+- String literal hash keys are now marked as frozen as static literal.
+- `IndexTargetNode` now always has the `ATTRIBUTE_WRITE` flag.
+- `Call*Node` nodes now have an `IGNORE_VISIBILITY` flag.
+- We now support the `it` default parameter.
+- Errors and warnings now have levels associated with them.
+- Symbols now have correct encoding flags.
+- We have now merged `parser-prism` in, which provides translation to the `whitequark/parser` AST.
+- We now emit errors for invalid method definition receivers.
+
+### Changed
+
+- We now emit errors on invalid pinned local variables.
+- When passed scopes, it is now assumed that the innermost scope is the current binding.
+- We now provide better error recovery for non terminated heredocs.
+- Fix for `RationalNode#value` for non-decimal integers.
+- Unary symbols `!@` and `~@` now unescape to `!` and `~`, respectively.
+- `frozen_string_literal: false` now works properly.
+
+### Removed
+
+- We've removed the `locals_body_index` field.
+- We've removed the `verbose` option on the various parse APIs. Warnings are now always emitted with their associated level so that consumers can decide how to handle them.
+
 ## [0.19.0] - 2023-12-14
 
 ### Added
@@ -296,7 +392,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.19.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
+[0.23.0]: https://github.com/ruby/prism/compare/v0.22.0...v0.23.0
+[0.22.0]: https://github.com/ruby/prism/compare/v0.21.0...v0.22.0
+[0.21.0]: https://github.com/ruby/prism/compare/v0.20.0...v0.21.0
+[0.20.0]: https://github.com/ruby/prism/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/ruby/prism/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/ruby/prism/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/ruby/prism/compare/v0.17.0...v0.17.1

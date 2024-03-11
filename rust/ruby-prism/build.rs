@@ -42,6 +42,19 @@ enum NodeFieldType {
 
     #[serde(rename = "flags")]
     Flags,
+
+    #[serde(rename = "integer")]
+    Integer,
+
+    #[serde(rename = "double")]
+    Double,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum NodeFieldKind {
+    Concrete(String),
+    Union(Vec<String>),
 }
 
 #[derive(Debug, Deserialize)]
@@ -51,7 +64,7 @@ struct NodeField {
     #[serde(rename = "type")]
     field_type: NodeFieldType,
 
-    kind: Option<String>,
+    kind: Option<NodeFieldKind>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -230,7 +243,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
 
         match field.field_type {
             NodeFieldType::Node => {
-                if let Some(kind) = &field.kind {
+                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", field.name, kind)?;
                     writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
@@ -243,7 +256,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 }
             },
             NodeFieldType::OptionalNode => {
-                if let Some(kind) = &field.kind {
+                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                     writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", field.name, kind)?;
                     writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
@@ -323,14 +336,17 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Flags => {
-                let our_flags = flags.iter().filter(|f| &f.name == field.kind.as_ref().unwrap()).collect::<Vec<_>>();
+                let Some(NodeFieldKind::Concrete(kind)) = &field.kind else {
+                    panic!("Flag fields must have a concrete kind");
+                };
+                let our_flags = flags.iter().filter(|f| &f.name == kind).collect::<Vec<_>>();
                 assert!(our_flags.len() == 1);
 
                 writeln!(file, "    fn {}(&self) -> pm_node_flags_t {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
 
-                for flag in &our_flags {
+                for flag in our_flags {
                     for value in &flag.values {
                         writeln!(file, "    /// {}", value.comment)?;
                         writeln!(file, "    #[must_use]")?;
@@ -339,6 +355,16 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                         writeln!(file, "    }}")?;
                     }
                 }
+            },
+            NodeFieldType::Integer => {
+                writeln!(file, "    pub fn {}(&self) -> Integer<'pr> {{", field.name)?;
+                writeln!(file, "        Integer::new(unsafe {{ &(*self.pointer).{} }})", field.name)?;
+                writeln!(file, "    }}")?;
+            },
+            NodeFieldType::Double => {
+                writeln!(file, "    pub fn {}(&self) -> f64 {{", field.name)?;
+                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
+                writeln!(file, "    }}")?;
             },
         }
     }
@@ -443,14 +469,14 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
             for field in &node.fields {
                 match field.field_type {
                     NodeFieldType::Node => {
-                        if let Some(kind) = &field.kind {
+                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                             writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(kind), field.name)?;
                         } else {
                             writeln!(file, "    visitor.visit(&node.{}());", field.name)?;
                         }
                     },
                     NodeFieldType::OptionalNode => {
-                        if let Some(kind) = &field.kind {
+                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
                             writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
                             writeln!(file, "        visitor.visit{}(&node);", struct_name(kind))?;
                             writeln!(file, "    }}")?;
@@ -702,6 +728,48 @@ impl std::fmt::Debug for ConstantList<'_> {{
         write!(f, "{{:?}}", self.iter().collect::<Vec<_>>())
     }}
 }}
+
+/// A handle for an arbitarily-sized integer.
+pub struct Integer<'pr> {{
+    /// The raw pointer to the integer allocated by prism.
+    pointer: *const pm_integer_t,
+
+    /// The marker to indicate the lifetime of the pointer.
+    marker: PhantomData<&'pr mut pm_constant_id_t>
+}}
+
+impl<'pr> Integer<'pr> {{
+    fn new(pointer: *const pm_integer_t) -> Self {{
+        Integer {{ pointer, marker: PhantomData }}
+    }}
+}}
+
+impl std::fmt::Debug for Integer<'_> {{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
+        write!(f, "{{:?}}", self.pointer)
+    }}
+}}
+
+impl TryInto<i32> for Integer<'_> {{
+    type Error = ();
+
+    fn try_into(self) -> Result<i32, Self::Error> {{
+        let negative = unsafe {{ (*self.pointer).negative }};
+        let length = unsafe {{ (*self.pointer).length }};
+
+        if length == 0 {{
+            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value| 
+                if negative {{
+                    Ok(-value)
+                }} else {{
+                    Ok(value)
+                }}
+            )
+        }} else {{
+            Err(())
+        }}
+    }}
+}}
 "#
     )?;
 
@@ -776,7 +844,7 @@ impl<'pr> Node<'pr> {{
     for node in &config.nodes {
         writeln!(file, "    /// Returns the node as a `{}`.", node.name)?;
         writeln!(file, "    #[must_use]")?;
-        writeln!(file, "    pub fn as{}(&self) -> Option<{}<'_>> {{", struct_name(&node.name), node.name)?;
+        writeln!(file, "    pub fn as{}(&self) -> Option<{}<'pr>> {{", struct_name(&node.name), node.name)?;
         writeln!(file, "        match *self {{")?;
         writeln!(file, "            Self::{} {{ parser, pointer, marker }} => Some({} {{ parser, pointer, marker }}),", node.name, node.name)?;
         writeln!(file, "            _ => None")?;

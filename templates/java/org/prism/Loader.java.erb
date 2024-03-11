@@ -1,7 +1,10 @@
-<%- string_type = Prism::JAVA_STRING_TYPE -%>
+<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
 package org.prism;
 
+import org.prism.Nodes;
+
 import java.lang.Short;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -12,8 +15,8 @@ import java.util.Locale;
 // @formatter:off
 public class Loader {
 
-    public static ParseResult load(byte[] serialized, Nodes.Source source) {
-        return new Loader(serialized, source).load();
+    public static ParseResult load(byte[] serialized, byte[] sourceBytes) {
+        return new Loader(serialized, sourceBytes).load();
     }
 
     // Overridable methods
@@ -85,9 +88,9 @@ public class Loader {
     <%- end -%>
     private ConstantPool constantPool;
 
-    protected Loader(byte[] serialized, Nodes.Source source) {
+    protected Loader(byte[] serialized, byte[] sourceBytes) {
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
-        this.source = source;
+        this.source = new Nodes.Source(sourceBytes);
     }
 
     protected ParseResult load() {
@@ -97,9 +100,9 @@ public class Loader {
         expect((byte) 'S', "incorrect prism header");
         expect((byte) 'M', "incorrect prism header");
 
-        expect((byte) 0, "prism version does not match");
-        expect((byte) 19, "prism version does not match");
-        expect((byte) 0, "prism version does not match");
+        expect((byte) 0, "prism major version does not match");
+        expect((byte) 24, "prism minor version does not match");
+        expect((byte) 0, "prism patch version does not match");
 
         expect((byte) 1, "Loader.java requires no location fields in the serialized output");
 
@@ -113,10 +116,11 @@ public class Loader {
         <%- end -%>
 
         source.setStartLine(loadVarSInt());
+        source.setLineOffsets(loadLineOffsets());
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
         Nodes.Location dataLocation = loadOptionalLocation();
-        ParseResult.Error[] errors = loadSyntaxErrors();
+        ParseResult.Error[] errors = loadErrors();
         ParseResult.Warning[] warnings = loadWarnings();
 
         int constantPoolBufferOffset = buffer.getInt();
@@ -134,7 +138,7 @@ public class Loader {
         MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
         node.accept(visitor);
 
-        return new ParseResult(node, magicComments, dataLocation, errors, warnings);
+        return new ParseResult(node, magicComments, dataLocation, errors, warnings, source);
     }
 
     private byte[] loadEmbeddedString() {
@@ -159,6 +163,15 @@ public class Loader {
         }
     }
 
+    private int[] loadLineOffsets() {
+        int count = loadVarUInt();
+        int[] lineOffsets = new int[count];
+        for (int i = 0; i < count; i++) {
+            lineOffsets[i] = loadVarUInt();
+        }
+        return lineOffsets;
+    }
+
     private ParseResult.MagicComment[] loadMagicComments() {
         int count = loadVarUInt();
         ParseResult.MagicComment[] magicComments = new ParseResult.MagicComment[count];
@@ -174,17 +187,19 @@ public class Loader {
         return magicComments;
     }
 
-    private ParseResult.Error[] loadSyntaxErrors() {
+    private ParseResult.Error[] loadErrors() {
         int count = loadVarUInt();
         ParseResult.Error[] errors = new ParseResult.Error[count];
 
         // error messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
+            Nodes.ErrorType type = Nodes.ERROR_TYPES[buffer.get() & 0xFF];
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
+            ParseResult.ErrorLevel level = ParseResult.ERROR_LEVELS[buffer.get()];
 
-            ParseResult.Error error = new ParseResult.Error(message, location);
+            ParseResult.Error error = new ParseResult.Error(type, message, location, level);
             errors[i] = error;
         }
 
@@ -197,11 +212,13 @@ public class Loader {
 
         // warning messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
+            Nodes.WarningType type = Nodes.WARNING_TYPES[(buffer.get() & 0xFF) - <%= errors.length %>];
             byte[] bytes = loadEmbeddedString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
+            ParseResult.WarningLevel level = ParseResult.WARNING_LEVELS[buffer.get()];
 
-            ParseResult.Warning warning = new ParseResult.Warning(message, location);
+            ParseResult.Warning warning = new ParseResult.Warning(type, message, location, level);
             warnings[i] = warning;
         }
 
@@ -240,18 +257,6 @@ public class Loader {
             constants[i] = constantPool.get(buffer, loadVarUInt());
         }
         return constants;
-    }
-
-    private Nodes.Node[] loadNodes() {
-        int length = loadVarUInt();
-        if (length == 0) {
-            return Nodes.Node.EMPTY_ARRAY;
-        }
-        Nodes.Node[] nodes = new Nodes.Node[length];
-        for (int i = 0; i < length; i++) {
-            nodes[i] = loadNode();
-        }
-        return nodes;
     }
 
     private Nodes.Location loadLocation() {
@@ -296,30 +301,86 @@ public class Loader {
         return (short) flags;
     }
 
+    private static final BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
+
+    private Object loadInteger() {
+        boolean negative = buffer.get() != 0;
+
+        int wordsLength = loadVarUInt();
+        assert wordsLength > 0;
+
+        // Load the first word. If it's the only word, then return an int if it
+        // fits into one and a long otherwise.
+        int firstWord = loadVarUInt();
+        if (wordsLength == 1) {
+            if (firstWord < 0) {
+                if (negative && firstWord == Integer.MIN_VALUE) {
+                    return Integer.MIN_VALUE;
+                }
+
+                long words = Integer.toUnsignedLong(firstWord);
+                return negative ? -words : words;
+            }
+            return negative ? -firstWord : firstWord;
+        }
+
+        // Load the second word. If there are only two words, then return a long
+        // if it fits into one and a BigInteger otherwise.
+        int secondWord = loadVarUInt();
+        if (wordsLength == 2) {
+            long words = (((long) secondWord) << 32L) | Integer.toUnsignedLong(firstWord);
+            if (words < 0L) {
+                if (negative && words == Long.MIN_VALUE) {
+                    return Long.MIN_VALUE;
+                }
+
+                BigInteger result = BigInteger.valueOf(words).and(UNSIGNED_LONG_MASK);
+                return negative ? result.negate() : result;
+            }
+            return negative ? -words : words;
+        }
+
+        // Otherwise, load the remaining words and return a BigInt.
+        BigInteger result = BigInteger.valueOf(Integer.toUnsignedLong(firstWord));
+        result = result.or(BigInteger.valueOf(Integer.toUnsignedLong(secondWord)).shiftLeft(32));
+
+        for (int wordsIndex = 2; wordsIndex < wordsLength; wordsIndex++) {
+            result = result.or(BigInteger.valueOf(Integer.toUnsignedLong(loadVarUInt())).shiftLeft(wordsIndex * 32));
+        }
+
+        return negative ? result.negate() : result;
+    }
+
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarUInt();
         int length = loadVarUInt();
 
         switch (type) {
+            <%- array_types = [] -%>
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
             <%-
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
             params.concat node.semantic_fields.map { |field|
               case field
-              when Prism::NodeField then "#{field.java_cast}loadNode()"
-              when Prism::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
-              when Prism::StringField then "loadString()"
-              when Prism::NodeListField then "loadNodes()"
-              when Prism::ConstantField then "loadConstant()"
-              when Prism::OptionalConstantField then "loadOptionalConstant()"
-              when Prism::ConstantListField then "loadConstants()"
-              when Prism::LocationField then "loadLocation()"
-              when Prism::OptionalLocationField then "loadOptionalLocation()"
-              when Prism::UInt8Field then "buffer.get()"
-              when Prism::UInt32Field then "loadVarUInt()"
-              when Prism::FlagsField then "loadFlags()"
+              when Prism::Template::NodeField then "#{field.java_cast}loadNode()"
+              when Prism::Template::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
+              when Prism::Template::StringField then "loadString()"
+              when Prism::Template::NodeListField then
+                element_type = field.java_type.sub('[]', '')
+                array_types << element_type
+                "load#{element_type}s()"
+              when Prism::Template::ConstantField then "loadConstant()"
+              when Prism::Template::OptionalConstantField then "loadOptionalConstant()"
+              when Prism::Template::ConstantListField then "loadConstants()"
+              when Prism::Template::LocationField then "loadLocation()"
+              when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
+              when Prism::Template::UInt8Field then "buffer.get()"
+              when Prism::Template::UInt32Field then "loadVarUInt()"
+              when Prism::Template::FlagsField then "loadFlags()"
+              when Prism::Template::IntegerField then "loadInteger()"
+              when Prism::Template::DoubleField then "buffer.getDouble()"
               else raise
               end
             }
@@ -331,6 +392,26 @@ public class Loader {
                 throw new Error("Unknown node type: " + type);
         }
     }
+    <%- array_types.uniq.each do |type| -%>
+
+    private static final Nodes.<%= type %>[] EMPTY_<%= type %>_ARRAY = {};
+
+    private Nodes.<%= type %>[] load<%= type %>s() {
+        int length = loadVarUInt();
+        if (length == 0) {
+            return EMPTY_<%= type %>_ARRAY;
+        }
+        Nodes.<%= type %>[] nodes = new Nodes.<%= type %>[length];
+        for (int i = 0; i < length; i++) {
+            <%- if type == 'Node' -%>
+            nodes[i] = loadNode();
+            <%- else -%>
+            nodes[i] = (Nodes.<%= type %>) loadNode();
+            <%- end -%>
+        }
+        return nodes;
+    }
+    <%- end -%>
 
     private void expect(byte value, String error) {
         byte b = buffer.get();

@@ -35,6 +35,33 @@ export function parsePrism(prism, source, options = {}) {
   return result;
 }
 
+// Dump the command line options into a serialized format.
+function dumpCommandLineOptions(options) {
+  if (options.command_line === undefined) {
+    return 0;
+  }
+
+  const commandLine = options.command_line;
+  if (typeof commandLine !== "string") {
+    throw new Error("command_line must be a string");
+  }
+
+  let value = 0;
+  for (let index = 0; index < commandLine.length; index++) {
+    switch (commandLine[index]) {
+      case "a": value |= 1; break;
+      case "e": value |= 2; break;
+      case "l": value |= 4; break;
+      case "n": value |= 8; break;
+      case "p": value |= 16; break;
+      case "x": value |= 32; break;
+      default: throw new Error(`Unsupported command line flag '${commandLine[index]}'`);
+    }
+  }
+
+  return value;
+}
+
 // Converts the given options into a serialized options string.
 function dumpOptions(options) {
   const values = [];
@@ -68,10 +95,10 @@ function dumpOptions(options) {
   values.push(options.frozen_string_literal === undefined ? 0 : 1);
 
   template.push("C");
-  values.push(options.verbose === undefined ? 0 : 1);
+  values.push(dumpCommandLineOptions(options));
 
   template.push("C");
-  if (!options.version || options.version === "latest") {
+  if (!options.version || options.version === "latest" || options.version === "3.4.0") {
     values.push(0);
   } else if (options.version === "3.3.0") {
     values.push(1);

@@ -18,7 +18,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.2"
+        ruby-version: "3.3"
         bundler-cache: true
     - name: Lint
       run: bundle exec rake lint
@@ -30,7 +30,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.5"
+        ruby-version: "2.7.0"
     - name: Install necessary gems
       run: gem install rake rake-compiler
     - name: Generate templates
@@ -38,20 +38,23 @@ jobs:
       env:
         LANG: "C"
 
-  check_annotations:
+  typecheck:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.2"
+        ruby-version: "3.3"
         bundler-cache: true
-    - name: Check annotations
-      run: |
-        bundle exec rake compile
-        bundle exec rake check_annotations
-
+    - name: Check Sorbet
+      run: bundle exec rake typecheck:tapioca typecheck:sorbet
+    - name: Check Steep
+      run: bundle exec rake typecheck:steep
+    - name: Check field kinds
+      run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
   build:
     strategy:
       fail-fast: false
@@ -73,19 +76,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ruby, jruby, truffleruby]
+        target:
+          - { ruby: "head", gemfile: "3.4" }
+          - { ruby: "jruby", gemfile: "jruby" }
+          - { ruby: "truffleruby", gemfile: "truffleruby" }
     runs-on: ubuntu-latest
     env:
       PRISM_FFI_BACKEND: "true"
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     steps:
       - uses: actions/checkout@v4
-      # The Gemfile.lock is different with PRISM_FFI_BACKEND=true for CRuby
-      - run: rm Gemfile.lock
-        if: matrix.ruby == 'ruby'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ${{ matrix.target.ruby }}
           bundler-cache: true
       - name: Run Ruby tests
         run: bundle exec rake
@@ -191,7 +195,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libc6-dbg
     - name: Cache valgrind
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache-valgrind
       with:
         path: valgrind-3.20.0
@@ -235,16 +239,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.0", "3.1", "3.2", "head", "jruby", "truffleruby"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        exclude:
-        - { ruby: truffleruby, os: windows-latest }
-    runs-on: ${{ matrix.os }}
+        target:
+          - { ruby: "2.7", os: "ubuntu-latest", gemfile: "2.7" }
+          - { ruby: "3.0", os: "ubuntu-latest", gemfile: "3.0" }
+          - { ruby: "3.1", os: "ubuntu-latest", gemfile: "3.1" }
+          - { ruby: "3.2", os: "ubuntu-latest", gemfile: "3.2" }
+          - { ruby: "3.3", os: "ubuntu-latest", gemfile: "3.3" }
+          - { ruby: "head", os: "ubuntu-latest", gemfile: "3.4" }
+          - { ruby: "jruby", os: "ubuntu-latest", gemfile: "jruby" }
+          - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: "truffleruby" }
+
+          - { ruby: "2.7", os: "macos-latest", gemfile: "2.7" }
+          - { ruby: "3.0", os: "macos-latest", gemfile: "3.0" }
+          - { ruby: "3.1", os: "macos-latest", gemfile: "3.1" }
+          - { ruby: "3.2", os: "macos-latest", gemfile: "3.2" }
+          - { ruby: "3.3", os: "macos-latest", gemfile: "3.3" }
+          - { ruby: "head", os: "macos-latest", gemfile: "3.4" }
+          - { ruby: "jruby", os: "macos-latest", gemfile: "jruby" }
+          - { ruby: "truffleruby", os: "macos-latest", gemfile: "truffleruby" }
+
+          - { ruby: "2.7", os: "windows-latest", gemfile: "2.7" }
+          - { ruby: "3.0", os: "windows-latest", gemfile: "3.0" }
+          - { ruby: "3.1", os: "windows-latest", gemfile: "3.1" }
+          - { ruby: "3.2", os: "windows-latest", gemfile: "3.2" }
+          - { ruby: "3.3", os: "windows-latest", gemfile: "3.3" }
+          - { ruby: "head", os: "windows-latest", gemfile: "3.4" }
+          - { ruby: "jruby", os: "windows-latest", gemfile: "jruby" }
+    env:
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
+    runs-on: ${{ matrix.target.os }}
     steps:
     - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ matrix.target.ruby }}
     - uses: actions/download-artifact@v4
       with:
         name: gem-package
@@ -288,23 +316,3 @@ jobs:
       run: |
         scan-build bundle exec rake compile 2>&1 | tee /tmp/scan_build_output.log
         grep -q 'scan-build: No bugs found.' /tmp/scan_build_output.log
-
-  documentation:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.2"
-        bundler-cache: true
-    - name: Install doxygen and dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install doxygen graphviz
-    - name: Generate the templates
-      run: bundle exec rake templates
-    - name: Check ruby coverage
-      run: bundle exec rake rdoc:coverage
-    - name: Check C coverage
-      run: doxygen Doxyfile

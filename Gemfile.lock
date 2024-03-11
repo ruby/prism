@@ -1,40 +1,45 @@
 PATH
   remote: .
   specs:
-    prism (0.19.0)
+    prism (0.24.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    ffi (1.15.5)
+    ast (2.4.2)
+    benchmark-ips (2.13.0)
+    ffi (1.16.3)
     mini_portile2 (2.8.5)
-    nokogiri (1.15.4)
+    nokogiri (1.16.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    parser (3.3.0.5)
+      ast (~> 2.4.1)
+      racc
     power_assert (2.0.3)
     racc (1.7.3)
-    rake (13.0.6)
-    rake-compiler (1.2.5)
+    rake (13.1.0)
+    rake-compiler (1.2.7)
       rake
-    rbs (3.2.2)
-    ruby_memcheck (2.2.1)
+    ruby_memcheck (2.3.0)
       nokogiri
-    test-unit (3.6.1)
+    ruby_parser (3.21.0)
+      racc (~> 1.5)
+      sexp_processor (~> 4.16)
+    sexp_processor (4.17.1)
+    test-unit (3.6.2)
       power_assert
 
 PLATFORMS
   ruby
-  universal-java-17
-  universal-java-20
 
 DEPENDENCIES
+  benchmark-ips
   ffi
+  parser
   prism!
   rake
   rake-compiler
-  rbs
   ruby_memcheck
+  ruby_parser
   test-unit
-
-BUNDLED WITH
-   2.3.6

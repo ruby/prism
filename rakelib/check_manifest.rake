@@ -15,11 +15,14 @@ task check_manifest: :templates do
     build
     doc
     fuzz
+    gemfiles
     javascript
     java
+    java-wasm
     pkg
     rakelib
     rust
+    sorbet
     templates
     test
     top-100-gems
@@ -34,18 +37,22 @@ task check_manifest: :templates do
     .gitattributes
     .gitignore
     .gitmodules
+    .travis.yml
     *.iml
     Doxyfile
     Gemfile
     Gemfile.lock
     Makefile
     Rakefile
+    Steepfile
     config.log
     config.status
     configure.ac
     compile_commands.json
     include/prism/config.h
     lib/prism/prism.{so,bundle,jar}
+    sig/_*/*.rbs
+    sig/**/_*/*.rbs
     tags
   ]
 

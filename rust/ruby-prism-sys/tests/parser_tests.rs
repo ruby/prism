@@ -83,7 +83,10 @@ fn diagnostics_test() {
 
         let error = error_list.head as *const pm_diagnostic_t;
         let message = CStr::from_ptr((*error).message);
-        assert_eq!(message.to_string_lossy(), "cannot parse the expression");
+        assert_eq!(
+            message.to_string_lossy(),
+            "unexpected end of file, assuming it is closing the parent top level context"
+        );
 
         let location = {
             let start = (*error).location.start.offset_from(parser.start);
