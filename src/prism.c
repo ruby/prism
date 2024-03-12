@@ -1959,6 +1959,12 @@ pm_break_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argument
     return node;
 }
 
+// There are certain flags that we want to use internally but don't want to
+// expose because they are not relevant beyond parsing. Therefore we'll define
+// them here and not define them in config.yml/a header file.
+static const pm_node_flags_t PM_CALL_NODE_FLAGS_COMPARISON = 0x10;
+static const pm_node_flags_t PM_CALL_NODE_FLAGS_INDEX = 0x20;
+
 /**
  * Allocate and initialize a new CallNode node. This sets everything to NULL or
  * PM_TOKEN_NOT_PROVIDED as appropriate such that its values can be overridden
@@ -2004,7 +2010,12 @@ static pm_call_node_t *
 pm_call_node_aref_create(pm_parser_t *parser, pm_node_t *receiver, pm_arguments_t *arguments) {
     pm_assert_value_expression(parser, receiver);
 
-    pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
+    pm_node_flags_t flags = pm_call_node_ignore_visibility_flag(receiver);
+    if (arguments->block == NULL || PM_NODE_TYPE_P(arguments->block, PM_BLOCK_ARGUMENT_NODE)) {
+        flags |= PM_CALL_NODE_FLAGS_INDEX;
+    }
+
+    pm_call_node_t *node = pm_call_node_create(parser, flags);
 
     node->base.location.start = receiver->location.start;
     node->base.location.end = pm_arguments_end(arguments);
@@ -2026,11 +2037,11 @@ pm_call_node_aref_create(pm_parser_t *parser, pm_node_t *receiver, pm_arguments_
  * Allocate and initialize a new CallNode node from a binary expression.
  */
 static pm_call_node_t *
-pm_call_node_binary_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *operator, pm_node_t *argument) {
+pm_call_node_binary_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *operator, pm_node_t *argument, pm_node_flags_t flags) {
     pm_assert_value_expression(parser, receiver);
     pm_assert_value_expression(parser, argument);
 
-    pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
+    pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver) | flags);
 
     node->base.location.start = MIN(receiver->location.start, argument->location.start);
     node->base.location.end = MAX(receiver->location.end, argument->location.end);
@@ -2219,30 +2230,6 @@ pm_call_node_variable_call_create(pm_parser_t *parser, pm_token_t *message) {
 
     node->name = pm_parser_constant_id_token(parser, message);
     return node;
-}
-
-/**
- * Returns whether or not this call node is a "vcall" (a call to a method name
- * without a receiver that could also have been a local variable read).
- */
-static inline bool
-pm_call_node_variable_call_p(pm_call_node_t *node) {
-    return PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_VARIABLE_CALL);
-}
-
-/**
- * Returns whether or not this call is to the [] method in the index form without a block (as
- * opposed to `foo.[]` and `foo[] { }`).
- */
-static inline bool
-pm_call_node_index_p(pm_call_node_t *node) {
-    return (
-        (node->call_operator_loc.start == NULL) &&
-        (node->message_loc.start != NULL) &&
-        (node->message_loc.start[0] == '[') &&
-        (node->message_loc.end[-1] == ']') &&
-        (node->block == NULL || PM_NODE_TYPE_P(node->block, PM_BLOCK_ARGUMENT_NODE))
-    );
 }
 
 /**
@@ -4787,7 +4774,7 @@ pm_node_is_it(pm_parser_t *parser, pm_node_t *node) {
 
     // Check if it's a variable call
     pm_call_node_t *call_node = (pm_call_node_t *) node;
-    if (!pm_call_node_variable_call_p(call_node)) {
+    if (!PM_NODE_FLAG_P(call_node, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
         return false;
     }
 
@@ -8350,6 +8337,27 @@ escape_write_byte(pm_parser_t *parser, pm_buffer_t *buffer, pm_buffer_t *regular
 }
 
 /**
+ * Warn about using a space or a tab character in an escape, as opposed to using
+ * \\s or \\t. Note that we can quite copy the source because the warning
+ * message replaces \\c with \\C.
+ */
+static void
+escape_read_warn(pm_parser_t *parser, uint8_t flags, uint8_t flag, const char *type) {
+#define FLAG(value) ((value & PM_ESCAPE_FLAG_CONTROL) ? "\\C-" : (value & PM_ESCAPE_FLAG_META) ? "\\M-" : "")
+
+    PM_PARSER_WARN_TOKEN_FORMAT(
+        parser,
+        parser->current,
+        PM_WARN_INVALID_CHARACTER,
+        FLAG(flags),
+        FLAG(flag),
+        type
+    );
+
+#undef FLAG
+}
+
+/**
  * Read the value of an escape into the buffer.
  */
 static void
@@ -8550,6 +8558,16 @@ escape_read(pm_parser_t *parser, pm_buffer_t *buffer, pm_buffer_t *regular_expre
                     parser->current.end++;
                     escape_read(parser, buffer, regular_expression_buffer, flags | PM_ESCAPE_FLAG_CONTROL);
                     return;
+                case ' ':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags, PM_ESCAPE_FLAG_CONTROL, "\\s");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_CONTROL));
+                    return;
+                case '\t':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags, 0, "\\t");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_CONTROL));
+                    return;
                 default: {
                     if (!char_is_ascii_printable(peeked)) {
                         pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_CONTROL);
@@ -8590,6 +8608,16 @@ escape_read(pm_parser_t *parser, pm_buffer_t *buffer, pm_buffer_t *regular_expre
                     parser->current.end++;
                     escape_read(parser, buffer, regular_expression_buffer, flags | PM_ESCAPE_FLAG_CONTROL);
                     return;
+                case ' ':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags, PM_ESCAPE_FLAG_CONTROL, "\\s");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_CONTROL));
+                    return;
+                case '\t':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags, 0, "\\t");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_CONTROL));
+                    return;
                 default: {
                     if (!char_is_ascii_printable(peeked)) {
                         pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_CONTROL);
@@ -8616,24 +8644,35 @@ escape_read(pm_parser_t *parser, pm_buffer_t *buffer, pm_buffer_t *regular_expre
             }
 
             uint8_t peeked = peek(parser);
-            if (peeked == '\\') {
-                if (flags & PM_ESCAPE_FLAG_META) {
-                    pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_META_REPEAT);
+            switch (peeked) {
+                case '\\':
+                    if (flags & PM_ESCAPE_FLAG_META) {
+                        pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_META_REPEAT);
+                        return;
+                    }
+                    parser->current.end++;
+                    escape_read(parser, buffer, regular_expression_buffer, flags | PM_ESCAPE_FLAG_META);
                     return;
-                }
-                parser->current.end++;
-                escape_read(parser, buffer, regular_expression_buffer, flags | PM_ESCAPE_FLAG_META);
-                return;
-            }
+                case ' ':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags, PM_ESCAPE_FLAG_META, "\\s");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_META));
+                    return;
+                case '\t':
+                    parser->current.end++;
+                    escape_read_warn(parser, flags & ((uint8_t) ~PM_ESCAPE_FLAG_CONTROL), PM_ESCAPE_FLAG_META, "\\t");
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_META));
+                    return;
+                default:
+                    if (!char_is_ascii_printable(peeked)) {
+                        pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_META);
+                        return;
+                    }
 
-            if (!char_is_ascii_printable(peeked)) {
-                pm_parser_err_current(parser, PM_ERR_ESCAPE_INVALID_META);
-                return;
+                    parser->current.end++;
+                    escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_META));
+                    return;
             }
-
-            parser->current.end++;
-            escape_write_byte(parser, buffer, regular_expression_buffer, flags, escape_byte(peeked, flags | PM_ESCAPE_FLAG_META));
-            return;
         }
         case '\r': {
             if (peek_offset(parser, 1) == '\n') {
@@ -9239,6 +9278,7 @@ parser_lex(pm_parser_t *parser) {
                         if (match_eol_offset(parser, 1)) {
                             chomping = false;
                         } else {
+                            pm_parser_warn(parser, parser->current.end, parser->current.end + 1, PM_WARN_UNEXPECTED_CARRIAGE_RETURN);
                             parser->current.end++;
                             space_seen = true;
                         }
@@ -10296,16 +10336,43 @@ parser_lex(pm_parser_t *parser) {
                         // other options. We'll skip past it and return the next
                         // token after adding an appropriate error message.
                         if (!width) {
-                            pm_diagnostic_id_t diag_id;
                             if (*parser->current.start >= 0x80) {
-                                diag_id = PM_ERR_INVALID_MULTIBYTE_CHARACTER;
-                            } else if (char_is_ascii_printable(*parser->current.start) || (*parser->current.start == '\\')) {
-                                diag_id = PM_ERR_INVALID_PRINTABLE_CHARACTER;
+                                PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_INVALID_MULTIBYTE_CHARACTER, *parser->current.start);
+                            } else if (*parser->current.start == '\\') {
+                                switch (peek_at(parser, parser->current.start + 1)) {
+                                    case ' ':
+                                        parser->current.end++;
+                                        PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "escaped space");
+                                        break;
+                                    case '\f':
+                                        parser->current.end++;
+                                        PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "escaped form feed");
+                                        break;
+                                    case '\t':
+                                        parser->current.end++;
+                                        PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "escaped horizontal tab");
+                                        break;
+                                    case '\v':
+                                        parser->current.end++;
+                                        PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "escaped vertical tab");
+                                        break;
+                                    case '\r':
+                                        if (peek_at(parser, parser->current.start + 2) != '\n') {
+                                            parser->current.end++;
+                                            PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "escaped carriage return");
+                                            break;
+                                        }
+                                        /* fallthrough */
+                                    default:
+                                        PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_UNEXPECTED_TOKEN_IGNORE, "backslash");
+                                        break;
+                                }
+                            } else if (char_is_ascii_printable(*parser->current.start)) {
+                                PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_INVALID_PRINTABLE_CHARACTER, *parser->current.start);
                             } else {
-                                diag_id = PM_ERR_INVALID_CHARACTER;
+                                PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_INVALID_CHARACTER, *parser->current.start);
                             }
 
-                            PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, diag_id, *parser->current.start);
                             goto lex_next_token;
                         }
 
@@ -11810,7 +11877,8 @@ parse_target(pm_parser_t *parser, pm_node_t *target) {
             pm_call_node_t *call = (pm_call_node_t *) target;
 
             // If we have no arguments to the call node and we need this to be a
-            // target then this is either a method call or a local variable write.
+            // target then this is either a method call or a local variable
+            // write.
             if (
                 (call->message_loc.start != NULL) &&
                 (call->message_loc.end[-1] != '!') &&
@@ -11854,7 +11922,7 @@ parse_target(pm_parser_t *parser, pm_node_t *target) {
             // If there is no call operator and the message is "[]" then this is
             // an aref expression, and we can transform it into an aset
             // expression.
-            if (pm_call_node_index_p(call)) {
+            if (PM_NODE_FLAG_P(call, PM_CALL_NODE_FLAGS_INDEX)) {
                 return (pm_node_t *) pm_index_target_node_create(parser, call);
             }
         }
@@ -12014,7 +12082,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
             // If there is no call operator and the message is "[]" then this is
             // an aref expression, and we can transform it into an aset
             // expression.
-            if (pm_call_node_index_p(call)) {
+            if (PM_NODE_FLAG_P(call, PM_CALL_NODE_FLAGS_INDEX)) {
                 if (call->arguments == NULL) {
                     call->arguments = pm_arguments_node_create(parser);
                 }
@@ -17427,7 +17495,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             if (accept1(parser, PM_TOKEN_STAR_STAR)) {
                 pm_token_t exponent_operator = parser->previous;
                 pm_node_t *exponent = parse_expression(parser, pm_binding_powers[exponent_operator.type].right, false, PM_ERR_EXPECT_ARGUMENT);
-                node = (pm_node_t *) pm_call_node_binary_create(parser, node, &exponent_operator, exponent);
+                node = (pm_node_t *) pm_call_node_binary_create(parser, node, &exponent_operator, exponent, 0);
                 node = (pm_node_t *) pm_call_node_unary_create(parser, &operator, node, "-@");
             } else {
                 switch (PM_NODE_TYPE(node)) {
@@ -17785,7 +17853,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // local variable write. This _must_ happen before the value
                     // is parsed because it could be referenced in the value.
                     pm_call_node_t *call_node = (pm_call_node_t *) node;
-                    if (pm_call_node_variable_call_p(call_node)) {
+                    if (PM_NODE_FLAG_P(call_node, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_parser_local_add_location(parser, call_node->message_loc.start, call_node->message_loc.end);
                     }
                 }
@@ -17878,7 +17946,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (pm_call_node_variable_call_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_location_t *message_loc = &cast->message_loc;
                         pm_refute_numbered_parameter(parser, message_loc->start, message_loc->end);
 
@@ -17893,7 +17961,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If there is no call operator and the message is "[]" then
                     // this is an aref expression, and we can transform it into
                     // an aset expression.
-                    if (pm_call_node_index_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_INDEX)) {
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_AMPAMPEQ);
                         return (pm_node_t *) pm_index_and_write_node_create(parser, cast, &token, value);
                     }
@@ -17989,7 +18057,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (pm_call_node_variable_call_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_location_t *message_loc = &cast->message_loc;
                         pm_refute_numbered_parameter(parser, message_loc->start, message_loc->end);
 
@@ -18004,7 +18072,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If there is no call operator and the message is "[]" then
                     // this is an aref expression, and we can transform it into
                     // an aset expression.
-                    if (pm_call_node_index_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_INDEX)) {
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_PIPEPIPEEQ);
                         return (pm_node_t *) pm_index_or_write_node_create(parser, cast, &token, value);
                     }
@@ -18110,7 +18178,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (pm_call_node_variable_call_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_location_t *message_loc = &cast->message_loc;
                         pm_refute_numbered_parameter(parser, message_loc->start, message_loc->end);
 
@@ -18125,7 +18193,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // If there is no call operator and the message is "[]" then
                     // this is an aref expression, and we can transform it into
                     // an aset expression.
-                    if (pm_call_node_index_p(cast)) {
+                    if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_INDEX)) {
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
                         return (pm_node_t *) pm_index_operator_write_node_create(parser, cast, &token, value);
                     }
@@ -18182,7 +18250,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             pm_node_t *argument = parse_expression(parser, binding_power, false, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
 
             // By default, we're going to create a call node and then return it.
-            pm_call_node_t *call = pm_call_node_binary_create(parser, node, &token, argument);
+            pm_call_node_t *call = pm_call_node_binary_create(parser, node, &token, argument, 0);
             pm_node_t *result = (pm_node_t *) call;
 
             // If the receiver of this =~ is a regular expression node, then we
@@ -18247,10 +18315,6 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
         case PM_TOKEN_EQUAL_EQUAL:
         case PM_TOKEN_EQUAL_EQUAL_EQUAL:
         case PM_TOKEN_LESS_EQUAL_GREATER:
-        case PM_TOKEN_GREATER:
-        case PM_TOKEN_GREATER_EQUAL:
-        case PM_TOKEN_LESS:
-        case PM_TOKEN_LESS_EQUAL:
         case PM_TOKEN_CARET:
         case PM_TOKEN_PIPE:
         case PM_TOKEN_AMPERSAND:
@@ -18263,9 +18327,20 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
         case PM_TOKEN_STAR:
         case PM_TOKEN_STAR_STAR: {
             parser_lex(parser);
-
             pm_node_t *argument = parse_expression(parser, binding_power, false, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
-            return (pm_node_t *) pm_call_node_binary_create(parser, node, &token, argument);
+            return (pm_node_t *) pm_call_node_binary_create(parser, node, &token, argument, 0);
+        }
+        case PM_TOKEN_GREATER:
+        case PM_TOKEN_GREATER_EQUAL:
+        case PM_TOKEN_LESS:
+        case PM_TOKEN_LESS_EQUAL: {
+            if (PM_NODE_TYPE_P(node, PM_CALL_NODE) && PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_COMPARISON)) {
+                PM_PARSER_WARN_TOKEN_FORMAT_CONTENT(parser, parser->current, PM_WARN_COMPARISON_AFTER_COMPARISON);
+            }
+
+            parser_lex(parser);
+            pm_node_t *argument = parse_expression(parser, binding_power, false, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR);
+            return (pm_node_t *) pm_call_node_binary_create(parser, node, &token, argument, PM_CALL_NODE_FLAGS_COMPARISON);
         }
         case PM_TOKEN_AMPERSAND_DOT:
         case PM_TOKEN_DOT: {
@@ -18590,6 +18665,7 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
         current_binding_powers.binary
      ) {
         node = parse_expression_infix(parser, node, binding_power, current_binding_powers.right, accepts_command_call);
+
         if (current_binding_powers.nonassoc) {
             bool endless_range_p = PM_NODE_TYPE_P(node, PM_RANGE_NODE) && ((pm_range_node_t *) node)->right == NULL;
             pm_binding_power_t left = endless_range_p ? PM_BINDING_POWER_TERM : current_binding_powers.left;
@@ -18603,6 +18679,7 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
                 break;
             }
         }
+
         if (accepts_command_call) {
             // A command-style method call is only accepted on method chains.
             // Thus, we check whether the parsed node can continue method chains.
