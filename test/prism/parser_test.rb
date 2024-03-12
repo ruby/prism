@@ -75,14 +75,11 @@ module Prism
       "constants.txt",
       "endless_range_in_conditional.txt",
       "heredoc_with_comment.txt",
-      "heredoc_with_escaped_newline_at_start.txt",
       "heredocs_leading_whitespace.txt",
       "heredocs_nested.txt",
-      "heredocs_with_ignored_newlines_and_non_empty.txt",
       "indented_file_end.txt",
       "non_alphanumeric_methods.txt",
       "range_begin_open_inclusive.txt",
-      "single_quote_heredocs.txt",
       "strings.txt",
       "xstring.txt"
     ]
