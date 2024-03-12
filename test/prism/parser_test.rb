@@ -78,7 +78,7 @@ module Prism
       "indented_file_end.txt",
       "non_alphanumeric_methods.txt",
       "strings.txt",
-      "xstring.txt"
+      "xstring_with_backslash.txt"
     ]
 
     Dir["*.txt", base: base].each do |name|
