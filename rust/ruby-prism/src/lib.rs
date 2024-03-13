@@ -138,7 +138,7 @@ impl<'pr> ParseResult<'pr> {
     /// Returns whether we found a `frozen_string_literal` magic comment with a true value.
     #[must_use]
     pub fn frozen_string_literals(&self) -> bool {
-        unsafe { (*self.parser.as_ptr()).frozen_string_literal }
+        unsafe { (*self.parser.as_ptr()).frozen_string_literal == 1 }
     }
 
     /// Returns a slice of the source string that was parsed using the given
