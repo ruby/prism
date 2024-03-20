@@ -6,6 +6,7 @@ require "rake/clean"
 
 task compile: :make
 task compile_no_debug: :make_no_debug
+task compile_minimal: :make_minimal
 
 task default: [:compile, :test]
 
@@ -14,13 +15,10 @@ require_relative "templates/template"
 desc "Generate all ERB template based files"
 task templates: Prism::Template::TEMPLATES
 
-task make: [:templates] do
-  sh(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make")
-end
-
-task make_no_debug: [:templates] do
-  sh("#{RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make"} all-no-debug")
-end
+make = RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make"
+task(make: :templates) { sh(make) }
+task(make_no_debug: :templates) { sh("#{make} all-no-debug") }
+task(make_minimal: :templates) { sh("#{make} minimal") }
 
 # decorate the gem build task with prerequisites
 task build: [:check_manifest, :templates]

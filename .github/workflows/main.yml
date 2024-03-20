@@ -55,6 +55,7 @@ jobs:
       run: bundle exec rake typecheck:steep
     - name: Check field kinds
       run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
+
   build:
     strategy:
       fail-fast: false
@@ -94,7 +95,23 @@ jobs:
       - name: Run Ruby tests
         run: bundle exec rake
 
-  build-debug-mode:
+  build-without-assertions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Run Ruby tests
+      run: bundle exec rake compile_no_debug && bundle exec rake test
+
+  build-debug:
     strategy:
       fail-fast: false
       matrix:
@@ -110,14 +127,10 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
       env:
-        PRISM_DEBUG_MODE_BUILD: "1"
+        PRISM_BUILD_DEBUG: "1"
 
-  build-without-assertions:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
-    runs-on: ${{ matrix.os }}
+  build-minimal:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -126,7 +139,9 @@ jobs:
         ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_no_debug
+      run: bundle exec rake compile_minimal && bundle exec rake test
+      env:
+        PRISM_BUILD_MINIMAL: "1"
 
   build-java:
     runs-on: ubuntu-latest
