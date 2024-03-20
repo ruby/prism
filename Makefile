@@ -94,6 +94,9 @@ all-no-debug: DEBUG_FLAGS := -DNDEBUG=1
 all-no-debug: OPTFLAGS := -O3
 all-no-debug: all
 
+minimal: CFLAGS := $(CFLAGS) -DPRISM_EXCLUDE_SERIALIZATION -DPRISM_EXCLUDE_JSON -DPRISM_EXCLUDE_PACK -DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_ENCODING_EXCLUDE_FULL
+minimal: all
+
 run: Makefile $(STATIC_OBJECTS) $(HEADERS) test.c
 	$(ECHO) "compiling test.c"
 	$(Q) $(CC) $(CPPFLAGS) $(CFLAGS) $(STATIC_OBJECTS) test.c

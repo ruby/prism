@@ -33,8 +33,8 @@ namespace :test do
 
     desc "Run tests under valgrind"
     task :valgrind do
-      # Recompile with PRISM_DEBUG_MODE_BUILD=1
-      ENV["PRISM_DEBUG_MODE_BUILD"] = "1"
+      # Recompile with PRISM_BUILD_DEBUG=1
+      ENV["PRISM_BUILD_DEBUG"] = "1"
       Rake::Task["clobber"].invoke
       Rake::Task["test:valgrind_internal"].invoke
     end
