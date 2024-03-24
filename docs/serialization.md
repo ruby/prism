@@ -214,14 +214,14 @@ Command line flags are a bitset. By default every flag is `0`. It includes the f
 
 Scopes are ordered from the outermost scope to the innermost one.
 
-Each scope is layed out as follows:
+Each scope is laid out as follows:
 
 | # bytes | field                      |
 | ------- | -------------------------- |
 | `4`     | the number of locals       |
 | ...     | the locals                 |
 
-Each local is layed out as follows:
+Each local is laid out as follows:
 
 | # bytes | field                      |
 | ------- | -------------------------- |
