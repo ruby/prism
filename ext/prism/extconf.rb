@@ -6,9 +6,13 @@ if ARGV.delete("--help")
 
       Flags that are always valid:
 
-          --enable-debug-mode-build
-              Enable debug mode build.
-              You may also use set PRISM_BUILD_DEBUG environment variable.
+          --enable-build-debug
+              Enable debug build.
+              You may also set the PRISM_BUILD_DEBUG environment variable.
+
+          --enable-build-minimal
+              Enable minimal build.
+              You may also set the PRISM_BUILD_MINIMAL environment variable.
 
           --help
               Display this message.
@@ -16,7 +20,10 @@ if ARGV.delete("--help")
       Environment variables used:
 
           PRISM_BUILD_DEBUG
-              Equivalent to `--enable-debug-mode-build` when set, even if nil or blank.
+              Equivalent to `--enable-build-debug` when set, even if nil or blank.
+
+          PRISM_BUILD_MINIMAL
+              Equivalent to `--enable-build-minimal` when set, even if nil or blank.
 
   TEXT
   exit!(0)
@@ -71,13 +78,22 @@ unless find_header("prism/extension.h", File.expand_path("..", __dir__))
   raise "prism/extension.h is required"
 end
 
-# If `--enable-debug-mode-build` is passed to this script or the
+# If `--enable-build-debug` is passed to this script or the
 # `PRISM_BUILD_DEBUG` environment variable is defined, we'll build with the
 # `PRISM_BUILD_DEBUG` macro defined. This causes parse functions to
 # duplicate their input so that they have clearly set bounds, which is useful
 # for finding bugs that cause the parser to read off the end of the input.
-if enable_config("debug-mode-build", ENV["PRISM_BUILD_DEBUG"] || false)
+if enable_config("build-debug", ENV["PRISM_BUILD_DEBUG"] || false)
   append_cflags("-DPRISM_BUILD_DEBUG")
+end
+
+# If `--enable-build-minimal` is passed to this script or the
+# `PRISM_BUILD_MINIMAL` environment variable is defined, we'll build with the
+# set of defines that comprise the minimal set. This causes the parser to be
+# built with minimal features, necessary for stripping out functionality when
+# the size of the final built artifact is a concern.
+if enable_config("build-minimal", ENV["PRISM_BUILD_MINIMAL"] || false)
+  append_cflags("-DPRISM_BUILD_MINIMAL")
 end
 
 # By default, all symbols are hidden in the shared library.

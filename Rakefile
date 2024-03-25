@@ -4,11 +4,7 @@ require "bundler/gem_tasks"
 require "rake/extensiontask"
 require "rake/clean"
 
-task compile: :make
-task compile_no_debug: :make_no_debug
-task compile_minimal: :make_minimal
-
-task default: [:compile, :test]
+task default: %i[compile test]
 
 require_relative "templates/template"
 
@@ -19,6 +15,10 @@ make = RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make"
 task(make: :templates) { sh(make) }
 task(make_no_debug: :templates) { sh("#{make} all-no-debug") }
 task(make_minimal: :templates) { sh("#{make} minimal") }
+
+task compile: :make
+task compile_no_debug: %i[make_no_debug compile]
+task compile_minimal: %i[make_minimal compile]
 
 # decorate the gem build task with prerequisites
 task build: [:check_manifest, :templates]

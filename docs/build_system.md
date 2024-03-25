@@ -112,6 +112,7 @@ MAKEFLAGS="-j10" bundle exec rake compile
 ## Build options
 
 * `PRISM_BUILD_DEBUG` - Will cause all file reading to copy into its own allocation to allow easier tracking of reading off the end of the buffer. By default this is off.
+* `PRISM_BUILD_MINIMAL` - Define all of the `PRISM_EXCLUDE_*` flags at once.
 * `PRISM_ENCODING_EXCLUDE_FULL` - Will cause the library to exclude the full encoding API, and only include the minimal number of encodings to support parsing Ruby code without encoding comments. By default this is off.
 * `PRISM_EXPORT_SYMBOLS` - Will cause the shared library to export symbols. By default this is off.
 * `PRISM_EXCLUDE_JSON` - Will cause the library to exclude the JSON API. By default this is off.
