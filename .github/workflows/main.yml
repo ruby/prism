@@ -109,7 +109,7 @@ jobs:
         ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_no_debug && bundle exec rake test
+      run: bundle exec rake compile_no_debug test
 
   build-debug:
     strategy:
@@ -139,7 +139,7 @@ jobs:
         ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_minimal && bundle exec rake test
+      run: bundle exec rake compile_minimal test
       env:
         PRISM_BUILD_MINIMAL: "1"
 
