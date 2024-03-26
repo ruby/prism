@@ -10,7 +10,7 @@ ruby/ruby uses the Prism code to generate an AST from which it can generate inst
 
 1. Compute an AST
 
-Syncing over the Prism code allows ruby/ruby to compute the AST using Prism. It currently does this within [`iseq.c`](https://github.com/ruby/ruby/blob/master/iseq.c) using the `pm_parser_init` fuction.
+Syncing over the Prism code allows ruby/ruby to compute the AST using Prism. It currently does this within [`iseq.c`](https://github.com/ruby/ruby/blob/master/iseq.c) using the `pm_parser_init` function.
 
 2. Run a first pass of compilation
 
