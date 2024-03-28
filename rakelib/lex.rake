@@ -86,7 +86,10 @@ TARGETS = {
   ruby: {
     repo: "https://github.com/ruby/ruby",
     sha: "52837fcec2340048f9bdc2169cde17243c5e9d6d",
-    excludes: ["spec/ruby/command_line/fixtures/bad_syntax.rb"]
+    excludes: [
+      "spec/ruby/command_line/fixtures/bad_syntax.rb",
+      "tool/merger.rb"
+    ]
   },
   discourse: {
     repo: "https://github.com/discourse/discourse",
