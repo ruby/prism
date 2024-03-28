@@ -82,9 +82,6 @@ function dumpOptions(options) {
   values.push(options.line || 1);
 
   template.push("L");
-  values.push(options.offset || 0);
-
-  template.push("L");
   if (options.encoding) {
     const encoding = encoder.encode(options.encoding);
     values.push(encoding.length);

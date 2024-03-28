@@ -36,7 +36,6 @@ public class DummyTest {
         var packedOptions = ParsingOptions.serialize(
             new byte[] {},
             1,
-            0,
             new byte[] {},
             false,
             EnumSet.noneOf(ParsingOptions.CommandLine.class),
@@ -88,7 +87,6 @@ public class DummyTest {
         var packedOptions = ParsingOptions.serialize(
             new byte[] {},
             1,
-            0,
             new byte[] {},
             false,
             EnumSet.noneOf(ParsingOptions.CommandLine.class),

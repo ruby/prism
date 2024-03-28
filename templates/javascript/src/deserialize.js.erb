@@ -210,7 +210,7 @@ export class ParseResult {
   }
 }
 
-const errorLevels = ["fatal", "argument"];
+const errorLevels = ["syntax", "argument", "load"];
 const errorTypes = [
   <%- errors.each do |error| -%>
   "<%= error.name.downcase %>",
@@ -275,14 +275,14 @@ export function deserialize(source, array) {
   const dataLoc = buffer.readOptionalLocation();
 
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
-    type: errorTypes[buffer.readByte()],
+    type: errorTypes[buffer.readVarInt()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: errorLevels[buffer.readByte()]
   }));
 
   const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
-    type: warningTypes[buffer.readByte()],
+    type: warningTypes[buffer.readVarInt()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: warningLevels[buffer.readByte()]

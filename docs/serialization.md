@@ -55,16 +55,16 @@ The comment type is one of:
 
 | # bytes | field |
 | --- | --- |
-| `1` | type |
+| varuint | type |
 | string | error message (ASCII-only characters) |
 | location | the location in the source this error applies to |
-| `1` | the level of the error: `0` for `fatal` |
+| `1` | the level of the error: `0` for `fatal`, `1` for `argument`, `2` for `load` |
 
 ### warning
 
 | # bytes | field |
 | --- | --- |
-| `1` | type |
+| varuint | type |
 | string | warning message (ASCII-only characters) |
 | location | the location in the source this warning applies to |
 | `1` | the level of the warning: `0` for `default` and `1` for `verbose` |
@@ -194,7 +194,6 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `4`     | the length of the filepath |
 | ...     | the filepath bytes         |
 | `4`     | the line number            |
-| `4`     | the offset in the source   |
 | `4`     | the length the encoding    |
 | ...     | the encoding bytes         |
 | `1`     | frozen string literal      |
