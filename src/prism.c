@@ -12631,6 +12631,9 @@ pm_when_clause_static_literals_add(pm_parser_t *parser, pm_static_literals_t *li
     }
 }
 
+static pm_hash_node_t *
+pm_parse_hash(pm_parser_t *parser, pm_static_literals_t *literals);
+
 /**
  * Parse all of the elements of a hash. Return true if a double splat was found.
  */
@@ -12648,10 +12651,11 @@ parse_assocs(pm_parser_t *parser, pm_static_literals_t *literals, pm_node_t *nod
                 pm_token_t operator = parser->previous;
                 pm_node_t *value = NULL;
 
-                if (token_begins_expression_p(parser->current.type)) {
+                if (match1(parser, PM_TOKEN_BRACE_LEFT)) {
+                    value = (pm_node_t *) pm_parse_hash(parser, literals);
+                } else if (token_begins_expression_p(parser->current.type)) {
                     value = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, false, PM_ERR_EXPECT_EXPRESSION_AFTER_SPLAT_HASH);
-                }
-                else {
+                } else {
                     pm_parser_scope_forwarding_keywords_check(parser, &operator);
                 }
 
@@ -12740,6 +12744,28 @@ parse_assocs(pm_parser_t *parser, pm_static_literals_t *literals, pm_node_t *nod
     }
 
     return contains_keyword_splat;
+}
+
+/**
+ * Parse out a hash node with the given set of static literals.
+ */
+static pm_hash_node_t *
+pm_parse_hash(pm_parser_t *parser, pm_static_literals_t *literals) {
+    pm_accepts_block_stack_push(parser, true);
+    parser_lex(parser);
+
+    pm_hash_node_t *node = pm_hash_node_create(parser, &parser->previous);
+
+    if (!match2(parser, PM_TOKEN_BRACE_RIGHT, PM_TOKEN_EOF)) {
+        parse_assocs(parser, literals, (pm_node_t *) node);
+        accept1(parser, PM_TOKEN_NEWLINE);
+    }
+
+    pm_accepts_block_stack_pop(parser);
+    expect1(parser, PM_TOKEN_BRACE_RIGHT, PM_ERR_HASH_TERM);
+    pm_hash_node_closing_loc_set(node, &parser->previous);
+
+    return node;
 }
 
 /**
@@ -15846,20 +15872,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             return (pm_node_t *) pm_parentheses_node_create(parser, &opening, (pm_node_t *) statements, &parser->previous);
         }
         case PM_TOKEN_BRACE_LEFT: {
-            pm_accepts_block_stack_push(parser, true);
-            parser_lex(parser);
-
-            pm_hash_node_t *node = pm_hash_node_create(parser, &parser->previous);
             pm_static_literals_t literals = { 0 };
-
-            if (!match2(parser, PM_TOKEN_BRACE_RIGHT, PM_TOKEN_EOF)) {
-                parse_assocs(parser, &literals, (pm_node_t *) node);
-                accept1(parser, PM_TOKEN_NEWLINE);
-            }
-
-            pm_accepts_block_stack_pop(parser);
-            expect1(parser, PM_TOKEN_BRACE_RIGHT, PM_ERR_HASH_TERM);
-            pm_hash_node_closing_loc_set(node, &parser->previous);
+            pm_hash_node_t *node = pm_parse_hash(parser, &literals);
 
             pm_static_literals_free(&literals);
             return (pm_node_t *) node;
