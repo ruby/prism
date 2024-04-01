@@ -39,7 +39,7 @@ jobs:
           sudo apt-get install doxygen graphviz
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - name: Template source files
         run: bundle exec rake templates
       - name: Build with RDoc
