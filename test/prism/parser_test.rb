@@ -59,7 +59,6 @@ module Prism
       "regex_char_width.txt",
       "spanning_heredoc.txt",
       "spanning_heredoc_newlines.txt",
-      "tilde_heredocs.txt",
       "unescaping.txt"
     ]
 
@@ -75,6 +74,7 @@ module Prism
       "heredoc_with_comment.txt",
       "indented_file_end.txt",
       "strings.txt",
+      "tilde_heredocs.txt",
       "xstring_with_backslash.txt"
     ]
 
