@@ -13,7 +13,12 @@ namespace :seattlerb do
 
   desc "Import the seattlerb tests"
   task import: ["tmp/seattlerb", "test/prism/fixtures/seattlerb"] do
-    require "base64"
+    require "bundler/inline"
+    gemfile do
+      source "https://rubygems.org"
+      gem "minitest", require: "minitest/autorun"
+      gem "ruby_parser"
+    end
 
     # These files are not valid Ruby
     known_failures = %w[
@@ -40,7 +45,7 @@ namespace :seattlerb do
       "d3RmX2lfaGF0ZV95b3U=\n",
       "d3Rm\n",
       "em9tZ19zb21ldGltZXNfaV9oYXRlX3RoaXNfcHJvamVjdA==\n"
-    ].map { Base64.decode64(_1) }
+    ].map { _1.unpack1("m") }
 
     # The license is in the README
     cp "tmp/seattlerb/README.rdoc", "test/prism/fixtures/seattlerb/README.rdoc"
