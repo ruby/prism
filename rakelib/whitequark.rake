@@ -69,8 +69,13 @@ namespace :whitequark do
       end
     end
 
-    require "parser/current"
-    require "minitest/autorun"
+    require "bundler/inline"
+    gemfile do
+      source "https://rubygems.org"
+      gem "parser", require: "parser/current"
+      gem "minitest", require: "minitest/autorun"
+    end
+
     require_relative "../tmp/whitequark/test/test_parser"
 
     Minitest.after_run do
