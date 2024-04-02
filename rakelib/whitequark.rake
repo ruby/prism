@@ -85,9 +85,21 @@ namespace :whitequark do
 
       # These files are not valid Ruby
       known_failures = %w[
-        test/prism/fixtures/whitequark/range_endless.txt
+        test/prism/fixtures/whitequark/args_assocs_legacy.txt
+        test/prism/fixtures/whitequark/args_assocs.txt
+        test/prism/fixtures/whitequark/break_block.txt
+        test/prism/fixtures/whitequark/break.txt
+        test/prism/fixtures/whitequark/class_definition_in_while_cond.txt
         test/prism/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
+        test/prism/fixtures/whitequark/if_while_after_class__since_32.txt
+        test/prism/fixtures/whitequark/method_definition_in_while_cond.txt
+        test/prism/fixtures/whitequark/next_block.txt
+        test/prism/fixtures/whitequark/next.txt
         test/prism/fixtures/whitequark/pattern_match.txt
+        test/prism/fixtures/whitequark/range_endless.txt
+        test/prism/fixtures/whitequark/redo.txt
+        test/prism/fixtures/whitequark/retry.txt
+        test/prism/fixtures/whitequark/yield.txt
       ]
 
       # Remove all invalid Ruby files
