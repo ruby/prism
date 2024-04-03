@@ -257,6 +257,7 @@ module Prism
         ["unexpected ',', expecting end-of-input", 6..7],
         ["unexpected ',', ignoring it", 6..7],
         ["expected a matching `)`", 6..6],
+        ["Invalid next", 0..12],
         ["unexpected ')', expecting end-of-input", 12..13],
         ["unexpected ')', ignoring it", 12..13]
       ]
@@ -264,7 +265,8 @@ module Prism
 
     def test_next_1
       assert_errors expression("next 1,;"), "next 1,;", [
-        ["expected an argument", 6..7]
+        ["expected an argument", 6..7],
+        ["Invalid next", 0..7]
       ]
     end
 
@@ -273,6 +275,7 @@ module Prism
         ["unexpected ',', expecting end-of-input", 7..8],
         ["unexpected ',', ignoring it", 7..8],
         ["expected a matching `)`", 7..7],
+        ["Invalid break", 0..13],
         ["unexpected ')', expecting end-of-input", 13..14],
         ["unexpected ')', ignoring it", 13..14]
       ]
@@ -280,7 +283,8 @@ module Prism
 
     def test_break_1
       assert_errors expression("break 1,;"), "break 1,;", [
-        ["expected an argument", 7..8]
+        ["expected an argument", 7..8],
+        ["Invalid break", 0..8]
       ]
     end
 
@@ -1091,7 +1095,7 @@ module Prism
       )
 
       assert_errors expected, "class A; return; end", [
-        ["invalid `return` in a class or module body", 9..15]
+        ["Invalid return in class/module body", 9..15]
       ]
     end
 
@@ -1106,7 +1110,7 @@ module Prism
       )
 
       assert_errors expected, "module A; return; end", [
-        ["invalid `return` in a class or module body", 10..16]
+        ["Invalid return in class/module body", 10..16]
       ]
     end
 
@@ -1570,12 +1574,13 @@ module Prism
         1 => ^(unless 1; (return) else (return) end)
       RUBY
 
-      message = 'unexpected void value expression'
+      message = "unexpected void value expression"
       assert_errors expression(source), source, [
         [message, 7..13],
         [message, 35..40],
         [message, 51..55],
         [message, 66..70],
+        ["Invalid retry without rescue", 81..86],
         [message, 81..86],
         [message, 97..103],
         [message, 123..129],
@@ -2190,32 +2195,6 @@ module Prism
     end
 
     private
-
-    if RUBY_ENGINE == "ruby"
-      def check_syntax(source)
-        $VERBOSE, previous = nil, $VERBOSE
-
-        begin
-          RubyVM::InstructionSequence.compile(source)
-        ensure
-          $VERBOSE = previous
-        end
-      end
-
-      def assert_valid_syntax(source)
-        check_syntax(source)
-      end
-
-      def refute_valid_syntax(source)
-        assert_raise(SyntaxError) { check_syntax(source) }
-      end
-    else
-      def assert_valid_syntax(source)
-      end
-
-      def refute_valid_syntax(source)
-      end
-    end
 
     def assert_errors(expected, source, errors, check_valid_syntax: true)
       refute_valid_syntax(source) if check_valid_syntax

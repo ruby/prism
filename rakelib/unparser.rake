@@ -28,6 +28,8 @@ namespace :unparser do
     # These files are not valid Ruby
     known_failures = %w[
       test/prism/fixtures/unparser/corpus/literal/binary.txt
+      test/prism/fixtures/unparser/corpus/literal/control.txt
+      test/prism/fixtures/unparser/corpus/literal/yield.txt
     ]
 
     # Remove all invalid Ruby files

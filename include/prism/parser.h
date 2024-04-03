@@ -268,11 +268,29 @@ typedef enum {
     /** a begin statement */
     PM_CONTEXT_BEGIN,
 
+    /** an ensure statement with an explicit begin */
+    PM_CONTEXT_BEGIN_ENSURE,
+
+    /** a rescue else statement with an explicit begin */
+    PM_CONTEXT_BEGIN_ELSE,
+
+    /** a rescue statement with an explicit begin */
+    PM_CONTEXT_BEGIN_RESCUE,
+
     /** expressions in block arguments using braces */
     PM_CONTEXT_BLOCK_BRACES,
 
     /** expressions in block arguments using do..end */
     PM_CONTEXT_BLOCK_KEYWORDS,
+
+    /** an ensure statement within a do..end block */
+    PM_CONTEXT_BLOCK_ENSURE,
+
+    /** a rescue else statement within a do..end block */
+    PM_CONTEXT_BLOCK_ELSE,
+
+    /** a rescue statement within a do..end block */
+    PM_CONTEXT_BLOCK_RESCUE,
 
     /** a case when statements */
     PM_CONTEXT_CASE_WHEN,
@@ -283,11 +301,32 @@ typedef enum {
     /** a class declaration */
     PM_CONTEXT_CLASS,
 
+    /** an ensure statement within a class statement */
+    PM_CONTEXT_CLASS_ENSURE,
+
+    /** a rescue else statement within a class statement */
+    PM_CONTEXT_CLASS_ELSE,
+
+    /** a rescue statement within a class statement */
+    PM_CONTEXT_CLASS_RESCUE,
+
     /** a method definition */
     PM_CONTEXT_DEF,
 
+    /** an ensure statement within a method definition */
+    PM_CONTEXT_DEF_ENSURE,
+
+    /** a rescue else statement within a method definition */
+    PM_CONTEXT_DEF_ELSE,
+
+    /** a rescue statement within a method definition */
+    PM_CONTEXT_DEF_RESCUE,
+
     /** a method definition's parameters */
     PM_CONTEXT_DEF_PARAMS,
+
+    /** a defined? expression */
+    PM_CONTEXT_DEFINED,
 
     /** a method definition's default parameter */
     PM_CONTEXT_DEFAULT_PARAMS,
@@ -300,12 +339,6 @@ typedef enum {
 
     /** an interpolated expression */
     PM_CONTEXT_EMBEXPR,
-
-    /** an ensure statement */
-    PM_CONTEXT_ENSURE,
-
-    /** an ensure statement within a method definition */
-    PM_CONTEXT_ENSURE_DEF,
 
     /** a for loop */
     PM_CONTEXT_FOR,
@@ -322,11 +355,29 @@ typedef enum {
     /** a lambda expression with do..end */
     PM_CONTEXT_LAMBDA_DO_END,
 
+    /** an ensure statement within a lambda expression */
+    PM_CONTEXT_LAMBDA_ENSURE,
+
+    /** a rescue else statement within a lambda expression */
+    PM_CONTEXT_LAMBDA_ELSE,
+
+    /** a rescue statement within a lambda expression */
+    PM_CONTEXT_LAMBDA_RESCUE,
+
     /** the top level context */
     PM_CONTEXT_MAIN,
 
     /** a module declaration */
     PM_CONTEXT_MODULE,
+
+    /** an ensure statement within a module statement */
+    PM_CONTEXT_MODULE_ENSURE,
+
+    /** a rescue else statement within a module statement */
+    PM_CONTEXT_MODULE_ELSE,
+
+    /** a rescue statement within a module statement */
+    PM_CONTEXT_MODULE_RESCUE,
 
     /** a parenthesized expression */
     PM_CONTEXT_PARENS,
@@ -340,20 +391,20 @@ typedef enum {
     /** a BEGIN block */
     PM_CONTEXT_PREEXE,
 
-    /** a rescue else statement */
-    PM_CONTEXT_RESCUE_ELSE,
-
-    /** a rescue else statement within a method definition */
-    PM_CONTEXT_RESCUE_ELSE_DEF,
-
-    /** a rescue statement */
-    PM_CONTEXT_RESCUE,
-
-    /** a rescue statement within a method definition */
-    PM_CONTEXT_RESCUE_DEF,
-
     /** a singleton class definition */
     PM_CONTEXT_SCLASS,
+
+    /** an ensure statement with a singleton class */
+    PM_CONTEXT_SCLASS_ENSURE,
+
+    /** a rescue else statement with a singleton class */
+    PM_CONTEXT_SCLASS_ELSE,
+
+    /** a rescue statement with a singleton class */
+    PM_CONTEXT_SCLASS_RESCUE,
+
+    /** a ternary expression */
+    PM_CONTEXT_TERNARY,
 
     /** an unless statement */
     PM_CONTEXT_UNLESS,
@@ -715,6 +766,19 @@ struct pm_parser {
 
     /** The current parameter name id on parsing its default value. */
     pm_constant_id_t current_param_name;
+
+    /**
+     * When parsing block exits (e.g., break, next, redo), we need to validate
+     * that they are in correct contexts. For the most part we can do this by
+     * looking at our parent contexts. However, modifier while and until
+     * expressions can change that context to make block exits valid. In these
+     * cases, we need to keep track of the block exits and then validate them
+     * after the expression has been parsed.
+     *
+     * We use a pointer here because we don't want to keep a whole list attached
+     * since this will only be used in the context of begin/end expressions.
+     */
+    pm_node_list_t *current_block_exits;
 
     /** The version of prism that we should use to parse. */
     pm_options_version_t version;

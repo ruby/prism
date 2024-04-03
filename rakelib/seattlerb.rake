@@ -27,12 +27,18 @@ namespace :seattlerb do
       test/prism/fixtures/seattlerb/args_star__anon_solo.txt
       test/prism/fixtures/seattlerb/args_star__anon_trailing.txt
       test/prism/fixtures/seattlerb/begin_else_return_value.txt
+      test/prism/fixtures/seattlerb/block_break.txt
+      test/prism/fixtures/seattlerb/block_next.txt
       test/prism/fixtures/seattlerb/block_yield.txt
       test/prism/fixtures/seattlerb/bug_begin_else.txt
       test/prism/fixtures/seattlerb/bug170.txt
       test/prism/fixtures/seattlerb/call_block_arg_unnamed.txt
+      test/prism/fixtures/seattlerb/dasgn_icky2.txt
       test/prism/fixtures/seattlerb/iter_array_curly.txt
       test/prism/fixtures/seattlerb/magic_encoding_comment__bad.txt
+      test/prism/fixtures/seattlerb/yield_arg.txt
+      test/prism/fixtures/seattlerb/yield_call_assocs.txt
+      test/prism/fixtures/seattlerb/yield_empty_parens.txt
     ]
 
     # Cleaning up some file names
