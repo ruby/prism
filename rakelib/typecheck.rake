@@ -24,10 +24,12 @@ namespace :typecheck do
 
   desc "Typecheck with Sorbet"
   task sorbet: :templates do
-    polyfills = Dir["lib/prism/polyfill/**/*.rb"]
-    gem_rbis = Dir["sorbet/rbi/**/*.rbi"]
+    locals = {
+      polyfills: Dir["lib/prism/polyfill/**/*.rb"],
+      gem_rbis: Dir["sorbet/rbi/**/*.rbi"]
+    }
 
-    File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result(binding))
+    File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result_with_hash(locals))
       false:
         - ./lib/prism/debug.rb
         - ./lib/prism/lex_compat.rb
