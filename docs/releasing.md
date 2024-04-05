@@ -54,7 +54,7 @@ chruby ruby-3.2.3 && BUNDLE_GEMFILE=gemfiles/3.2/Gemfile bundle install
 chruby ruby-3.3.0 && BUNDLE_GEMFILE=gemfiles/3.3/Gemfile bundle install
 chruby ruby-3.4.0-dev && BUNDLE_GEMFILE=gemfiles/3.4/Gemfile bundle install
 chruby jruby-9.4.5.0 && BUNDLE_GEMFILE=gemfiles/jruby/Gemfile bundle install
-chruby truffleruby-23.1.2 && BUNDLE_GEMFILE=gemfiles/truffleruby/Gemfile bundle install
+chruby truffleruby-24.0.0 && BUNDLE_GEMFILE=gemfiles/truffleruby/Gemfile bundle install
 chruby ruby-3.4.0-dev && BUNDLE_GEMFILE=gemfiles/typecheck/Gemfile bundle install
 ```
 

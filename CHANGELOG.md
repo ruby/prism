@@ -6,6 +6,54 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.25.0] - 2024-04-05
+
+### Added
+
+- `Prism::Translation::Ripper` is now able to mirror all of the Ripper APIs.
+- `Prism::Location#leading_comments` and `Prism::Location#trailing_comments` is added.
+- `Prism::Comment#slice` is added.
+- Warn for writing literal values in conditional predicates.
+- Check for `_POSIX_MAPPED_FILES` before using `mmap`.
+- `Prism::ItParametersNode` is added, to support `-> { it }`.
+- Parse integer and float literal values onto the tree.
+- Warn on duplicated hash keys and duplicated when clauses.
+- Ship much improved `RBI` and `RBS` types.
+- Support for the `-p`, `-n`, `-a`, and `-l` command line switches.
+- Warn on integer literals in flip-flops.
+- Support BSD make.
+- Add `Prism::WhenNode#then_keyword_loc`.
+- Support custom allocation functions through the `PRISM_XALLOCATOR` define.
+- Warn for certain keywrods at the end of the line.
+- Provide `pm_visit_node`, a C visitor API.
+- `Prism::parse_stream` is added, which works for any Ruby `IO` object.
+- Provide flags for regular expression literals for their derived encoding.
+- Provide flags for whether or not an interpolated string literal is frozen.
+- Add `Prism::StringNode.mutable?` for when a string is explicitly mutable, to support delineating chilled strings.
+- Warn for incorrect character literal syntax.
+- Warn for chained comparison operators.
+- Warn for `**` interpreted as an argument prefix.
+- Warn for `&` interpreted as an argument prefix.
+- `Prism::ShareableConstantNode` added to support ractors.
+- Warn for frozen string literals found after tokens.
+- Support `PRISM_BUILD_MINIMAL` to provide only the minimal necessary functionality to reduce the binary size.
+- Handle CLRF inside heredocs, strings, and regular expressions.
+- Mark inner strings in interpolated strings as frozen.
+- Support the `-x` command line switch.
+- Error messages now much more closely mirror CRuby.
+- Provide syntax errors for invalid block exits (`break`, `next`, `retry`, and `yield`).
+- Warn on unused local variables.
+- Do not syntax error on default parameter values that only write to the parameter.
+
+### Changed
+
+- Many improvements to the compatibility with the `whitequark/parser` translation.
+- Accept newlines before pattern terminators `)` or `]`.
+- `Prism::Node#start_offset` and `Prism::Node#end_offset` are now much more efficient.
+- Read files using `fread` instead of `mmap` when we're going to keep around the source through the Ruby API.
+- Fix `Sexp#line_max` setting in the `seattlerb/ruby_parser` translation layer.
+- Allow spaces before the encoding comment.
+
 ## [0.24.0] - 2024-02-15
 
 ### Added
@@ -392,7 +440,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.24.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.25.0...HEAD
+[0.25.0]: https://github.com/ruby/prism/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/ruby/prism/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/ruby/prism/compare/v0.21.0...v0.22.0
