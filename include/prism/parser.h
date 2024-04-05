@@ -510,6 +510,43 @@ static const pm_shareable_constant_value_t PM_SCOPE_SHAREABLE_CONSTANT_EXPERIMEN
 static const pm_shareable_constant_value_t PM_SCOPE_SHAREABLE_CONSTANT_EXPERIMENTAL_COPY = 0x4;
 
 /**
+ * This tracks an individual local variable in a certain lexical context, as
+ * well as the number of times is it read.
+ */
+typedef struct {
+    /** The name of the local variable. */
+    pm_constant_id_t name;
+
+    /** The location of the local variable in the source. */
+    pm_location_t location;
+
+    /** The index of the local variable in the local table. */
+    uint32_t index;
+
+    /** The number of times the local variable is read. */
+    uint32_t reads;
+
+    /** The hash of the local variable. */
+    uint32_t hash;
+} pm_local_t;
+
+/**
+ * This is a set of local variables in a certain lexical context (method, class,
+ * module, etc.). We need to track how many times these variables are read in
+ * order to warn if they only get written.
+ */
+typedef struct pm_locals {
+    /** The number of local variables in the set. */
+    uint32_t size;
+
+    /** The capacity of the local variables set. */
+    uint32_t capacity;
+
+    /** The nullable allocated memory for the local variables in the set. */
+    pm_local_t *locals;
+} pm_locals_t;
+
+/**
  * This struct represents a node in a linked list of scopes. Some scopes can see
  * into their parent scopes, while others cannot.
  */
@@ -518,7 +555,7 @@ typedef struct pm_scope {
     struct pm_scope *previous;
 
     /** The IDs of the locals in the given scope. */
-    pm_constant_id_list_t locals;
+    pm_locals_t locals;
 
     /**
      * This is a bitfield that indicates the parameters that are being used in
@@ -766,9 +803,6 @@ struct pm_parser {
      * literals that do not push a new lexer mode.
      */
     const pm_encoding_t *explicit_encoding;
-
-    /** The current parameter name id on parsing its default value. */
-    pm_constant_id_t current_param_name;
 
     /**
      * When parsing block exits (e.g., break, next, redo), we need to validate
