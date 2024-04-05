@@ -11,8 +11,9 @@ GEM
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
+    racc (1.7.3)
     racc (1.7.3-java)
-    rake (13.1.0)
+    rake (13.2.1)
     rake-compiler (1.2.7)
       rake
     test-unit (3.6.2)
@@ -22,6 +23,7 @@ PLATFORMS
   universal-java-11
   universal-java-20
   universal-java-21
+  x86_64-linux
 
 DEPENDENCIES
   parser
