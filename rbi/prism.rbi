@@ -24,7 +24,7 @@ module Prism
 
   sig { params(source: String, filepath: T.nilable(String), line: T.nilable(Integer), offset: T.nilable(Integer), encoding: T.nilable(Encoding), frozen_string_literal: T.nilable(T::Boolean), verbose: T.nilable(T::Boolean), scopes: T.nilable(T::Array[T::Array[Symbol]])).returns(Prism::ParseResult[Prism::ProgramNode]) }
   def self.parse(source, filepath: nil, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
-  
+
   sig { params(filepath: String, line: T.nilable(Integer), offset: T.nilable(Integer), encoding: T.nilable(Encoding), frozen_string_literal: T.nilable(T::Boolean), verbose: T.nilable(T::Boolean), scopes: T.nilable(T::Array[T::Array[Symbol]])).returns(Prism::ParseResult[Prism::ProgramNode]) }
   def self.parse_file(filepath, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
 
@@ -47,7 +47,7 @@ module Prism
   def self.parse_success?(source, filepath: nil, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
 
   sig { params(source: String, filepath: T.nilable(String), line: T.nilable(Integer), offset: T.nilable(Integer), encoding: T.nilable(Encoding), frozen_string_literal: T.nilable(T::Boolean), verbose: T.nilable(T::Boolean), scopes: T.nilable(T::Array[T::Array[Symbol]])).returns(T::Boolean) }
-  def self.parse_failure?(source, offset: nil, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
+  def self.parse_failure?(source, filepath: nil, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
 
   sig { params(filepath: String, line: T.nilable(Integer), offset: T.nilable(Integer), encoding: T.nilable(Encoding), frozen_string_literal: T.nilable(T::Boolean), verbose: T.nilable(T::Boolean), scopes: T.nilable(T::Array[T::Array[Symbol]])).returns(T::Boolean) }
   def self.parse_file_success?(filepath, line: nil, offset: nil, encoding: nil, frozen_string_literal: nil, verbose: nil, scopes: nil); end
