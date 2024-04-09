@@ -399,7 +399,7 @@ module Prism
       case argv.first
       when "-e"
         argv.shift
-        Prism.parse(argv.shift)
+        Prism.parse(argv.shift, command_line: "e")
       when nil
         Prism.parse_file("test.rb")
       else
