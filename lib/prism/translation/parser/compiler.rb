@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "strscan"
 
 module Prism
   module Translation
@@ -1513,7 +1514,25 @@ module Prism
             else
               start_offset = node.content_loc.start_offset
 
-              [node.content.lines, node.unescaped.lines].transpose.map do |content_line, unescaped_line|
+              lines_before_escaping = []
+              scanner = StringScanner.new(node.content)
+
+              while (match = scanner.scan_until(/(?<!\\)\R/))
+                lines_before_escaping << match
+              end
+
+              unless scanner.eos?
+                lines_before_escaping << scanner.rest
+              end
+
+              # [node.content.lines, node.unescaped.lines].transpose.map do |content_line, unescaped_line|
+              # lines_before_escaping = node.content.split(/(?<!\\)\R/)
+              # lines_before_escaping[..-2].map! { |line| line << "\n"}
+
+              puts "lines_before_escaping: #{lines_before_escaping}"
+              puts "node.unescaped.lines: #{node.unescaped.lines}"
+
+              [lines_before_escaping, node.unescaped.lines].transpose.map do |content_line, unescaped_line|
                 end_offset = start_offset + content_line.length
                 offsets = srange_offsets(start_offset, end_offset)
                 start_offset = end_offset
