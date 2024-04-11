@@ -29,6 +29,7 @@ module Prism
     def trailing_comment: (comment) -> void
     def comments: () -> Array[comment]
     def copy: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
+    def chop: () -> Location
     def slice: () -> String
     def start_character_offset: () -> Integer
     def end_offset: () -> Integer
