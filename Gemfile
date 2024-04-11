@@ -14,6 +14,7 @@ platforms = %i[mri mswin mingw x64_mingw]
 gem "ffi", platform: platforms
 gem "parser", platform: platforms
 gem "ruby_parser", platform: platforms
+gem "debug", platforms: platforms
 gem "benchmark-ips"
 
 group :memcheck do

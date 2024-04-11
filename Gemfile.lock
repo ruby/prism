@@ -8,33 +8,46 @@ GEM
   specs:
     ast (2.4.2)
     benchmark-ips (2.13.0)
+    debug (1.9.2)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     ffi (1.16.3)
-    mini_portile2 (2.8.5)
-    nokogiri (1.16.2)
-      mini_portile2 (~> 2.8.2)
+    io-console (0.7.2)
+    irb (1.12.0)
+      rdoc
+      reline (>= 0.4.2)
+    nokogiri (1.15.6-arm64-darwin)
       racc (~> 1.4)
     parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
+    psych (5.1.2)
+      stringio
     racc (1.7.3)
     rake (13.1.0)
     rake-compiler (1.2.7)
       rake
+    rdoc (6.6.3.1)
+      psych (>= 4.0.0)
+    reline (0.5.1)
+      io-console (~> 0.5)
     ruby_memcheck (2.3.0)
       nokogiri
     ruby_parser (3.21.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     sexp_processor (4.17.1)
+    stringio (3.1.0)
     test-unit (3.6.2)
       power_assert
 
 PLATFORMS
-  ruby
+  arm64-darwin-21
 
 DEPENDENCIES
   benchmark-ips
+  debug
   ffi
   parser
   prism!
@@ -43,3 +56,6 @@ DEPENDENCIES
   ruby_memcheck
   ruby_parser
   test-unit
+
+BUNDLED WITH
+   2.3.27
