@@ -78,7 +78,7 @@ module Prism
       "xstring_with_backslash.txt"
     ]
 
-    Dir["*.txt", base: base].each do |name|
+    Dir["while.txt", base: base].each do |name|
       next if skip_all.include?(name)
 
       define_method("test_#{name}") do

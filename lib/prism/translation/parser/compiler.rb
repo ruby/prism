@@ -1680,6 +1680,7 @@ module Prism
               token(node.keyword_loc),
               visit(node.predicate),
               srange_find2(node, node.predicate.location.end_offset, (node.statements&.location || node.closing_loc).start_offset, [";", "do"]),
+              # srange_find(node.predicate.location.end_offset, (node.statements&.location || node.closing_loc).start_offset, [";", "do"]),
               visit(node.statements),
               token(node.closing_loc)
             )
@@ -1832,17 +1833,29 @@ module Prism
         end
         def srange_find2(node, start_offset, end_offset, tokens)
           # binding.irb
+          puts "node: #{node.inspect}"
           node&.child_nodes.each do |child_node|
             next unless child_node
-            # puts "child_node: #{child_node}"
+            puts "child_node: #{child_node}"
             tokens.each do |token|
-              # puts "token: #{token}"
-              # puts "child_node.slice: #{child_node.slice}"
-              if child_node.slice == token
-                return [token, Range.new(source_buffer, offset_cache[child_node.location.start_offset], offset_cache[child_node.location.end_offset])]
+              puts "token: #{token}"
+              puts "child_node.slice: #{child_node.slice}"
+              res = if child_node.slice == token
+                [token, Range.new(source_buffer, offset_cache[child_node.location.start_offset], offset_cache[child_node.location.end_offset])]
+                #puts "result: #{result}"
+                #return result
               end
+              puts "res: #{res}"
             end
           end
+
+          # tokens.find do |token|
+          #   next unless (index = source_buffer.source.byteslice(start_offset...end_offset).index(token))
+          #   offset = start_offset + index
+          #   res = [token, Range.new(source_buffer, offset_cache[offset], offset_cache[offset + token.length])]
+          #   puts "expected: #{res}"
+          #   return res
+          # end
         end
 
         # Transform a location into a token that the parser gem expects.
