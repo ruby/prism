@@ -1673,12 +1673,13 @@ module Prism
         # bar while foo
         # ^^^^^^^^^^^^^
         def visit_while_node(node)
+          # binding.irb
           if node.location.start_offset == node.keyword_loc.start_offset
             builder.loop(
               :while,
               token(node.keyword_loc),
               visit(node.predicate),
-              srange_find(node.predicate.location.end_offset, (node.statements&.location || node.closing_loc).start_offset, [";", "do"]),
+              srange_find2(node, node.predicate.location.end_offset, (node.statements&.location || node.closing_loc).start_offset, [";", "do"]),
               visit(node.statements),
               token(node.closing_loc)
             )
@@ -1822,10 +1823,25 @@ module Prism
         # given start offset and end offset. If the needle is not found, it
         # returns nil.
         def srange_find(start_offset, end_offset, tokens)
+          # binding.irb
           tokens.find do |token|
             next unless (index = source_buffer.source.byteslice(start_offset...end_offset).index(token))
             offset = start_offset + index
             return [token, Range.new(source_buffer, offset_cache[offset], offset_cache[offset + token.length])]
+          end
+        end
+        def srange_find2(node, start_offset, end_offset, tokens)
+          # binding.irb
+          node&.child_nodes.each do |child_node|
+            next unless child_node
+            # puts "child_node: #{child_node}"
+            tokens.each do |token|
+              # puts "token: #{token}"
+              # puts "child_node.slice: #{child_node.slice}"
+              if child_node.slice == token
+                return [token, Range.new(source_buffer, offset_cache[child_node.location.start_offset], offset_cache[child_node.location.end_offset])]
+              end
+            end
           end
         end
 
