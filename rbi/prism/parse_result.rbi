@@ -72,6 +72,9 @@ class Prism::Location
   sig { params(source: Prism::Source, start_offset: Integer, length: Integer).returns(Prism::Location) }
   def copy(source: self.source, start_offset: self.start_offset, length: self.length); end
 
+  sig { returns(Prism::Location) }
+  def chop; end
+
   sig { returns(String) }
   def inspect; end
 
