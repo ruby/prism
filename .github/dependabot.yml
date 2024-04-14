@@ -40,7 +40,7 @@ updates:
     directory: '/gemfiles/truffleruby'
     schedule:
       interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/typecheck'
-    schedule:
-      interval: 'weekly'
+  # - package-ecosystem: 'bundler'
+  #   directory: '/gemfiles/typecheck'
+  #   schedule:
+  #     interval: 'weekly'
