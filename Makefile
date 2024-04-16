@@ -6,7 +6,7 @@ Q1 = $(V:1=)
 Q = $(Q1:0=@)
 ECHO1 = $(V:1=@ :)
 ECHO = $(ECHO1:0=@ echo)
-FUZZ_OUTPUT_DIR = $(shell pwd)/fuzz/output
+FUZZ_OUTPUT_DIR = $(CURDIR)/fuzz/output
 
 SOEXT := $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
@@ -15,8 +15,8 @@ CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion 
 CC := cc
 WASI_SDK_PATH := /opt/wasi-sdk
 
-HEADERS := $(shell find include -name '*.h')
-SOURCES := $(shell find src -name '*.c')
+HEADERS := $(wildcard include/*.h include/*/*.h include/*/*/*.h')
+SOURCES := $(wildcard src/*.c src/*/*.c)
 SHARED_OBJECTS := $(subst src/,build/shared/,$(SOURCES:.c=.o))
 STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 
@@ -66,7 +66,7 @@ build/fuzz.heisenbug.%: $(SOURCES) fuzz/%.c fuzz/heisenbug.c
 
 fuzz-debug:
 	$(ECHO) "entering debug shell"
-	$(Q) docker run -it --rm -e HISTFILE=/prism/fuzz/output/.bash_history -v $(shell pwd):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz
+	$(Q) docker run -it --rm -e HISTFILE=/prism/fuzz/output/.bash_history -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz
 
 fuzz-docker-build: fuzz/docker/Dockerfile
 	$(ECHO) "building docker image"
@@ -76,10 +76,10 @@ fuzz-run-%: FORCE fuzz-docker-build
 	$(ECHO) "generating templates"
 	$(Q) bundle exec rake templates
 	$(ECHO) "running $* fuzzer"
-	$(Q) docker run --rm -v $(shell pwd):/prism prism/fuzz /bin/bash -c "FUZZ_FLAGS=\"$(FUZZ_FLAGS)\" make build/fuzz.$*"
+	$(Q) docker run --rm -v $(CURDIR):/prism prism/fuzz /bin/bash -c "FUZZ_FLAGS=\"$(FUZZ_FLAGS)\" make build/fuzz.$*"
 	$(ECHO) "starting AFL++ run"
 	$(Q) mkdir -p $(FUZZ_OUTPUT_DIR)/$*
-	$(Q) docker run -it --rm -v $(shell pwd):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz /bin/bash -c "./fuzz/$*.sh /fuzz_output/$*"
+	$(Q) docker run -it --rm -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz /bin/bash -c "./fuzz/$*.sh /fuzz_output/$*"
 FORCE:
 
 fuzz-clean:
