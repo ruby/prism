@@ -40,16 +40,21 @@ def generate_templates
   end
 end
 
+require "rbconfig"
+
 # Runs `make` in the root directory of the project. Note that this is the
 # `Makefile` for the overall project, not the `Makefile` that is being generated
 # by this script.`
 def make(target)
   Dir.chdir(File.expand_path("../..", __dir__)) do
-    system(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make", target, exception: true)
+    system(
+      RbConfig::CONFIG.slice(*%w[SOEXT CPPFLAGS CFLAGS CC AR ARFLAGS MAKEDIRS RMALL]), # env
+      RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make",
+      target,
+      exception: true
+    )
   end
 end
-
-require "rbconfig"
 
 # On non-CRuby we only need the shared library since we'll interface with it
 # through FFI, so we'll build only that and not the C extension. We also avoid
