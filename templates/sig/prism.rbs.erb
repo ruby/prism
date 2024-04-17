@@ -62,10 +62,10 @@ module Prism
   <%- end -%>
 
   interface _Stream
-    def gets(?Integer integer) -> String | nil
+    def gets: (?Integer integer) -> (String | nil)
   end
 
-  def self.parse_stream(
+  def self.parse_stream: (
     _Stream stream,
     ?filepath: String,
     ?line: Integer,

@@ -37,6 +37,9 @@ class Prism::Node
   sig { abstract.returns(T::Array[T.any(Prism::Node, Prism::Location)]) }
   def comment_targets; end
 
+  sig { abstract.returns(T::Array[Prism::Reflection::Field]) }
+  def fields; end
+
   sig { abstract.returns(Symbol) }
   def type; end
 
@@ -99,6 +102,9 @@ class Prism::<%= node.name -%> < Prism::Node
   <%- end -%>
   <%- end -%>
   <%- end -%>
+
+  sig { override.returns(T::Array[Prism::Reflection::Field]) }
+  def fields; end
 
   sig { params(inspector: T.untyped).returns(String) }
   def inspect(inspector = nil); end
