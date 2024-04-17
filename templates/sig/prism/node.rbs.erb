@@ -1,5 +1,12 @@
 module Prism
+  # Methods implemented on every subclass of a singleton of Node
+  interface _NodeSingleton
+    def type: () -> Symbol
+  end
+
   class Node
+    extend _NodeSingleton
+
     attr_reader location: Location
     attr_reader source: Source
 
@@ -10,6 +17,8 @@ module Prism
     def to_dot: () -> String
   end
 
+  type node_singleton = singleton(Node) & _NodeSingleton
+
   # Methods implemented by every subclass of Node
   interface _Node
     def accept: (_Visitor) -> void
@@ -17,7 +26,7 @@ module Prism
     def deconstruct: () -> Array[Prism::node?]
     def compact_child_nodes: () -> Array[Prism::node]
     def comment_targets: () -> Array[Prism::node | Location]
-
+    def fields: () -> Array[Prism::Reflection::Field]
     def inspect: (?untyped) -> String
     def type: () -> Symbol
   end

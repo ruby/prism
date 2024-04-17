@@ -16,6 +16,7 @@ A lot of code in prism's repository is templated from a single configuration fil
 * `lib/prism/dsl.rb` - for defining the DSL for the nodes in Ruby
 * `lib/prism/mutation_compiler.rb` - for defining the mutation compiler for the nodes in Ruby
 * `lib/prism/node.rb` - for defining the nodes in Ruby
+* `lib/prism/reflection.rb` - for defining the reflection API in Ruby
 * `lib/prism/serialize.rb` - for defining how to deserialize the nodes in Ruby
 * `lib/prism/visitor.rb` - for defining the visitor interface for the nodes in Ruby
 * `src/diagnostic.c` - for defining how to build diagnostics
