@@ -62,6 +62,12 @@ bundle exec rake cargo:build
 git commit -am "Bump to v$PRISM_VERSION"
 ```
 
+* Push up the changes:
+
+```sh
+git push
+```
+
 ## Publishing
 
 * Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
