@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    prism (0.25.0)
+    prism (0.26.0)
 
 GEM
   remote: https://rubygems.org/
@@ -43,3 +43,6 @@ DEPENDENCIES
   ruby_memcheck
   ruby_parser
   test-unit
+
+BUNDLED WITH
+   2.6.0.dev

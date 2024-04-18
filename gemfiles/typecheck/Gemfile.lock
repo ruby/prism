@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (0.25.0)
+    prism (0.26.0)
 
 GEM
   remote: https://rubygems.org/
@@ -51,7 +51,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rbi (0.1.9)
+    rbi (0.1.10)
       prism (>= 0.18.0, < 0.25)
       sorbet-runtime (>= 0.5.9204)
     rbs (3.4.4)

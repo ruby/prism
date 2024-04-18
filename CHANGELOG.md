@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.26.0] - 2024-04-18
+
+### Added
+
+- Add `Prism::Node::fields`, which returns a list of `Prism::Reflection::Field` objects representing the fields of the node class. This is useful in metaprogramming contexts.
+- `Prism::Location#chop`, for removing the last byte from a location.
+- The void statement warning is now implemented.
+- The unreachable statement warning is now implemented.
+- A syntax error has been added for block arguments on yields, e.g., `yield(&foo)`.
+
+### Changed
+
+- Better fidelity to `parser` when translating heredocs with interpolation.
+- Fixed `RBI` and `RBS` types for `Prism::parse_*` signatures.
+- Remove some incorrect warnings about unused local variables.
+- More closely match CRuby error messages for global variables.
+- Fix an issue with `parser` translation when line continuations are found in string literals.
+
 ## [0.25.0] - 2024-04-05
 
 ### Added
@@ -440,7 +458,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.25.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.26.0...HEAD
+[0.26.0]: https://github.com/ruby/prism/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/ruby/prism/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/ruby/prism/compare/v0.22.0...v0.23.0
