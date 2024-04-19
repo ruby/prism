@@ -2,7 +2,7 @@ class Prism::Node
   abstract!
 
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Prism::Location) }
   def location; end

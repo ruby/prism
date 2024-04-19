@@ -2,13 +2,13 @@
 
 class Prism::Source
   sig { returns(String) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Integer) }
-  attr_reader :start_line
+  def start_line; end
 
   sig { returns(T::Array[Integer]) }
-  attr_reader :offsets
+  def offsets; end
 
   sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).void }
   def initialize(source, start_line = 1, offsets = []); end
@@ -43,13 +43,13 @@ end
 
 class Prism::Location
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Integer) }
-  attr_reader :start_offset
+  def start_offset; end
 
   sig { returns(Integer) }
-  attr_reader :length
+  def length; end
 
   sig { params(source: Prism::Source, start_offset: Integer, length: Integer).void }
   def initialize(source, start_offset, length); end
@@ -140,7 +140,7 @@ class Prism::Comment
   abstract!
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { params(location: Prism::Location).void }
   def initialize(location); end
@@ -173,10 +173,10 @@ end
 
 class Prism::MagicComment
   sig { returns(Prism::Location) }
-  attr_reader :key_loc
+  def key_loc; end
 
   sig { returns(Prism::Location) }
-  attr_reader :value_loc
+  def value_loc; end
 
   sig { params(key_loc: Prism::Location, value_loc: Prism::Location).void }
   def initialize(key_loc, value_loc); end
@@ -196,16 +196,16 @@ end
 
 class Prism::ParseError
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :message
+  def message; end
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { returns(Symbol) }
-  attr_reader :level
+  def level; end
 
   sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
   def initialize(type, message, location, level); end
@@ -219,16 +219,16 @@ end
 
 class Prism::ParseWarning
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :message
+  def message; end
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { returns(Symbol) }
-  attr_reader :level
+  def level; end
 
   sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
   def initialize(type, message, location, level); end
@@ -244,25 +244,25 @@ class Prism::ParseResult
   Value = type_member
 
   sig { returns(Value) }
-  attr_reader :value
+  def value; end
 
   sig { returns(T::Array[Prism::Comment]) }
-  attr_reader :comments
+  def comments; end
 
   sig { returns(T::Array[Prism::MagicComment]) }
-  attr_reader :magic_comments
+  def magic_comments; end
 
   sig { returns(T.nilable(Prism::Location)) }
-  attr_reader :data_loc
+  def data_loc; end
 
   sig { returns(T::Array[Prism::ParseError]) }
-  attr_reader :errors
+  def errors; end
 
   sig { returns(T::Array[Prism::ParseWarning]) }
-  attr_reader :warnings
+  def warnings; end
 
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { params(value: Value, comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
   def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
@@ -282,13 +282,13 @@ end
 
 class Prism::Token
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :value
+  def value; end
 
   sig { params(source: Prism::Source, type: Symbol, value: String, location: T.any(Integer, Prism::Location)).void }
   def initialize(source, type, value, location); end
