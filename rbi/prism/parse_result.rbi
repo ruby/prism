@@ -240,11 +240,9 @@ class Prism::ParseWarning
   def inspect; end
 end
 
-class Prism::ParseResult
-  Value = type_member
-
-  sig { returns(Value) }
-  def value; end
+class Prism::Result
+  sig { params(comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(comments, magic_comments, data_loc, errors, warnings, source); end
 
   sig { returns(T::Array[Prism::Comment]) }
   def comments; end
@@ -264,9 +262,6 @@ class Prism::ParseResult
   sig { returns(Prism::Source) }
   def source; end
 
-  sig { params(value: Value, comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
-  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
-
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
 
@@ -278,6 +273,39 @@ class Prism::ParseResult
 
   sig { returns(T::Boolean) }
   def failure?; end
+end
+
+class Prism::ParseResult < Prism::Result
+  sig { params(value: Prism::ProgramNode, comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns(Prism::ProgramNode) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+end
+
+class Prism::LexResult < Prism::Result
+  sig { params(value: T::Array[T.untyped], comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns(T::Array[T.untyped]) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+end
+
+class Prism::ParseLexResult < Prism::Result
+  sig { params(value: [Prism::ProgramNode, T::Array[T.untyped]], comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns([Prism::ProgramNode, T::Array[T.untyped]]) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
 end
 
 class Prism::Token
