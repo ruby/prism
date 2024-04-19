@@ -5,7 +5,7 @@ end
 
 class Prism::Reflection::Field
   sig { returns(Symbol) }
-  attr_reader :name
+  def name; end
 
   sig { params(name: Symbol).void }
   def initialize(name); end
@@ -46,7 +46,7 @@ end
 
 class Prism::Reflection::FlagsField < Prism::Reflection::Field
   sig { returns(T::Array[Symbol]) }
-  attr_reader :flags
+  def flags; end
 
   sig { params(name: Symbol, flags: T::Array[Symbol]).void }
   def initialize(name, flags); end
