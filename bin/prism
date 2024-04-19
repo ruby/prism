@@ -284,7 +284,7 @@ module Prism
       parser_parse(Parser::Ruby33.new, buffer)
 
       puts "Prism:"
-      parser_parse(Prism::Translation::Parser33.new, buffer)
+      parser_parse(Prism::Translation::Parser34.new, buffer)
     end
 
     # bin/prism ripper [source]
