@@ -5,10 +5,10 @@ module Prism
   # Methods taking a Ruby source code string:
   <%-
     {
-      parse: "ParseResult[ProgramNode]",
-      lex: "ParseResult[Array[[Token, Integer]]]",
-      lex_compat: "ParseResult[Array[[[Integer, Integer], Symbol, String, untyped]]]",
-      parse_lex: "ParseResult[[ProgramNode, Array[[Token, Integer]]]]",
+      parse: "ParseResult",
+      lex: "LexResult",
+      lex_compat: "LexCompat::Result",
+      parse_lex: "ParseLexResult",
       dump: "String",
       parse_comments: "Array[comment]",
       parse_success?: "bool",
@@ -31,7 +31,7 @@ module Prism
   def self.load: (
     String source,
     String serialized
-  ) -> ParseResult[ProgramNode]
+  ) -> ParseResult
 
   def self.lex_ripper: (
     String source
@@ -40,9 +40,9 @@ module Prism
   # Methods taking a path to a Ruby file:
   <%-
     {
-      parse_file: "ParseResult[ProgramNode]",
-      lex_file: "ParseResult[Array[[Token, Integer]]]",
-      parse_lex_file: "ParseResult[[ProgramNode, Array[[Token, Integer]]]]",
+      parse_file: "ParseResult",
+      lex_file: "LexResult",
+      parse_lex_file: "ParseLexResult",
       dump_file: "String",
       parse_file_comments: "Array[comment]",
       parse_file_success?: "bool",
@@ -74,5 +74,5 @@ module Prism
     ?frozen_string_literal: bool,
     ?verbose: bool,
     ?scopes: Array[Array[Symbol]]
-  ) -> ParseResult[ProgramNode]
+  ) -> ParseResult
 end

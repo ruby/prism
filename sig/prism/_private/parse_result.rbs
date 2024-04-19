@@ -11,7 +11,7 @@ module Prism
     def source!: () -> Source
   end
 
-  class ParseResult[out T]
+  class ParseResult
     def attach_comments!: () -> void
     def mark_newlines!: () -> untyped
 
@@ -39,9 +39,9 @@ module Prism
         def initialize: (Location) -> void
       end
 
-      attr_reader parse_result: ParseResult[Prism::node]
+      attr_reader parse_result: ParseResult
 
-      def initialize: (ParseResult[Prism::node]) -> void
+      def initialize: (ParseResult) -> void
       def attach!: () -> void
 
       private
