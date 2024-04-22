@@ -40,15 +40,34 @@ def generate_templates
   end
 end
 
+# We're going to need to run `make` using prism's `Makefile`. We want to match
+# up as much of the configuration to the configuration that built the current
+# version of Ruby as possible.
 require "rbconfig"
+env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
+
+# It's possible that the Ruby that is being run wasn't actually compiled on this
+# machine, in which case the configuration might be incorrect. In this case
+# we'll need to do some additional checks and potentially fall back to defaults.
+if env.key?("CC") && !File.exist?(env["CC"])
+  env.delete("CC")
+  env.delete("CFLAGS")
+  env.delete("CPPFLAGS")
+end
+
+if env.key?("AR") && !File.exist?(env["AR"])
+  env.delete("AR")
+  env.delete("ARFLAGS")
+end
 
 # Runs `make` in the root directory of the project. Note that this is the
 # `Makefile` for the overall project, not the `Makefile` that is being generated
 # by this script.`
-def make(target)
+def make(env, target)
+  puts "Running make #{target} with #{env.inspect}"
   Dir.chdir(File.expand_path("../..", __dir__)) do
     system(
-      RbConfig::CONFIG.slice(*%w[SOEXT CPPFLAGS CFLAGS CC AR ARFLAGS MAKEDIRS RMALL]), # env
+      env,
       RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make",
       target,
       exception: true
@@ -62,7 +81,7 @@ end
 # but we want to use the native toolchain here since libprism is run natively.
 if RUBY_ENGINE != "ruby"
   generate_templates
-  make("build/libprism.#{RbConfig::CONFIG["SOEXT"]}")
+  make(env, "build/libprism.#{RbConfig::CONFIG["SOEXT"]}")
   File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
   return
 end
@@ -110,7 +129,7 @@ append_cflags("-fvisibility=hidden")
 archive_target = "build/libprism.a"
 archive_path = File.expand_path("../../#{archive_target}", __dir__)
 
-make(archive_target) unless File.exist?(archive_path)
+make(env, archive_target) unless File.exist?(archive_path)
 $LOCAL_LIBS << " #{archive_path}"
 
 # Finally, we'll create the `Makefile` that is going to be used to configure and
