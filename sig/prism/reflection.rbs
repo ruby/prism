@@ -33,22 +33,16 @@ module Prism
     class OptionalLocationField < Field
     end
 
-    class UInt8Field < Field
+    class IntegerField < Field
     end
 
-    class UInt32Field < Field
+    class FloatField < Field
     end
 
     class FlagsField < Field
       attr_reader flags: Array[Symbol]
 
       def initialize: (Symbol name, Array[Symbol] flags) -> void
-    end
-
-    class IntegerField < Field
-    end
-
-    class DoubleField < Field
     end
 
     def self.fields_for: (node_singleton node) -> Array[Field]

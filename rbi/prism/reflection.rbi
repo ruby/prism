@@ -4,11 +4,11 @@ module Prism::Reflection
 end
 
 class Prism::Reflection::Field
-  sig { returns(Symbol) }
-  def name; end
-
   sig { params(name: Symbol).void }
   def initialize(name); end
+
+  sig { returns(Symbol) }
+  def name; end
 end
 
 class Prism::Reflection::NodeField < Prism::Reflection::Field
@@ -38,24 +38,18 @@ end
 class Prism::Reflection::OptionalLocationField < Prism::Reflection::Field
 end
 
-class Prism::Reflection::UInt8Field < Prism::Reflection::Field
-end
-
-class Prism::Reflection::UInt32Field < Prism::Reflection::Field
-end
-
-class Prism::Reflection::FlagsField < Prism::Reflection::Field
-  sig { returns(T::Array[Symbol]) }
-  def flags; end
-
-  sig { params(name: Symbol, flags: T::Array[Symbol]).void }
-  def initialize(name, flags); end
-end
-
 class Prism::Reflection::IntegerField < Prism::Reflection::Field
 end
 
-class Prism::Reflection::DoubleField < Prism::Reflection::Field
+class Prism::Reflection::FloatField < Prism::Reflection::Field
+end
+
+class Prism::Reflection::FlagsField < Prism::Reflection::Field
+  sig { params(name: Symbol, flags: T::Array[Symbol]).void }
+  def initialize(name, flags); end
+
+  sig { returns(T::Array[Symbol]) }
+  def flags; end
 end
 
 module Prism::Reflection
