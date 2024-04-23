@@ -26,12 +26,12 @@ if RDoc::VERSION <= "6.5.0"
   )
 end
 
-RDoc::Task.new do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.main = "README.md"
   rdoc.markup = "markdown"
 
   rdoc.rdoc_dir = "doc/rb"
-  rdoc.options << "--all"
+  rdoc.options.push("--all", "-x", "lib/prism/translation/ripper/shim.rb")
 
   rdoc.rdoc_files.include(
     "docs/*.md",
@@ -42,5 +42,8 @@ RDoc::Task.new do |rdoc|
     "CONTRIBUTING.md",
     "LICENSE.md",
     "README.md",
+    *Prism::Template::TEMPLATES.grep(/\.(?:c|h|rb)$/)
   )
 end
+
+Rake::Task["rdoc"].prerequisites.unshift("templates")
