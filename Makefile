@@ -13,6 +13,7 @@ SOEXT ?= $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 CPPFLAGS := -Iinclude $(CPPFLAGS)
 CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden $(CFLAGS)
 CC ?= cc
+AR ?= ar
 WASI_SDK_PATH := /opt/wasi-sdk
 
 MAKEDIRS ?= mkdir -p
@@ -31,11 +32,11 @@ wasm: javascript/src/prism.wasm
 java-wasm: java-wasm/src/test/resources/prism.wasm
 
 build/libprism.$(SOEXT): $(SHARED_OBJECTS)
-	$(ECHO) "linking $@"
+	$(ECHO) "linking $@ with $(CC)"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
 
 build/libprism.a: $(STATIC_OBJECTS)
-	$(ECHO) "building $@"
+	$(ECHO) "building $@ with $(AR)"
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS) $(Q1:0=>/dev/null)
 
 javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
