@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.27.0] - 2024-04-23
+
+### Added
+
+- Implemented `===` for each of the nodes, which will check if equality but ignore the specific ranges of locations.
+
+### Changed
+
+- Fix translation of `ItParametersNode` for parser translation.
+- Fix translation of `dstr` for ruby_parser translation.
+- Do not allow omitted hash values whose keys end with `!` or `?`.
+- Split up `Prism::ParseResult` into `Prism::Result` with subclasses `Prism::ParseResult`, `Prism::LexResult`, `Prism::ParseLexResult`, and `Prism::LexCompat::Result`.
+- Change reflection classes to have only a single `IntegerField` class and rename `DoubleField` to `FloatField`.
+- Fall back to default `AR` and `CC` in `Makefile`.
+- Use GC-able symbols for the syntax tree to avoid adding to the global symbol table.
+- Fix a bug with karatsuba_multiply that would result in a stack overflow.
+- Fix parser translation when looking for tokens with `srange_find`.
+
 ## [0.26.0] - 2024-04-18
 
 ### Added
@@ -458,7 +476,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.26.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/ruby/prism/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/ruby/prism/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/ruby/prism/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
