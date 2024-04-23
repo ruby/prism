@@ -1492,13 +1492,44 @@ nodes:
     fields:
       - name: parent
         type: node?
+        comment: |
+          The left-hand node of the path, if present. Can be `nil` or any kind of a node returning a non-void value. Will be `nil` when the constant lookup is at the root of the module tree.
+
+              Foo::Bar
+              ^^^
+
+              self::Test
+              ^^^^
+
+              a.b::C
+              ^^^
       - name: child
         type: node
         kind:
           - ConstantReadNode
           - MissingNode
+        comment: |
+          The right-hand node of the path. Always a `ConstantReadNode` in a
+          valid Ruby syntax tree.
+
+              ::Foo
+                ^^^
+
+              self::Test
+                    ^^^^
+
+              a.b::C
+                   ^
       - name: delimiter_loc
         type: location
+        comment: |
+          The location of the `::` delimiter.
+
+              ::Foo
+              ^^
+
+              One::Two
+                 ^^
     comment: |
       Represents accessing a constant through a path of `::` operators.
 
