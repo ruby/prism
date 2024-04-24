@@ -27,7 +27,7 @@ module Prism
     def compact_child_nodes: () -> Array[Prism::node]
     def comment_targets: () -> Array[Prism::node | Location]
     def fields: () -> Array[Prism::Reflection::Field]
-    def inspect: (?untyped) -> String
+    def inspect: () -> String
     def type: () -> Symbol
   end
 
@@ -42,7 +42,7 @@ module Prism
     include _Node
 
     <%- node.fields.each do |field| -%>
-    <%= "private " if field.is_a?(Prism::Template::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
+    attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
     def initialize: (<%= ["Source source", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }, "Location location"].join(", ") %>) -> void
