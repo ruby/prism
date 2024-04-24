@@ -43,8 +43,8 @@ class Prism::Node
   sig { abstract.returns(Symbol) }
   def type; end
 
-  sig { abstract.params(inspector: Prism::NodeInspector).returns(String) }
-  def inspect(inspector = Prism::NodeInspector.new); end
+  sig { abstract.returns(String) }
+  def inspect; end
 end
 <%- nodes.each do |node| -%>
 
@@ -106,8 +106,8 @@ class Prism::<%= node.name -%> < Prism::Node
   sig { override.returns(T::Array[Prism::Reflection::Field]) }
   def fields; end
 
-  sig { params(inspector: T.untyped).returns(String) }
-  def inspect(inspector = nil); end
+  sig { override.returns(String) }
+  def inspect; end
 
   sig { override.returns(Symbol) }
   def type; end
