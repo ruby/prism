@@ -257,9 +257,10 @@ module Prism
               case field["type"]
               when "uint8"                                             then 1
               when "uint32", "constant", "constant?"                   then 4
-              when "node", "node?"                                     then 8
+              when "node", "node?", "double"                           then 8
               when "location", "location?"                             then 16
               when "node[]", "string", "token", "token?", "constant[]" then 24
+              when "integer"                                           then 32
               when "flags"                                             then 0
               else raise "Unknown type: #{field["type"]}"
               end
