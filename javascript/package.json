@@ -4,7 +4,7 @@
   "description": "Prism Ruby parser",
   "type": "module",
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "src/index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run type",
     "test": "node test.js",
