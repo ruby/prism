@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "bundler/gem_tasks"
-require "rake/extensiontask"
 require "rake/clean"
 
 task default: %i[compile test]
@@ -27,6 +26,8 @@ task build: [:check_manifest, :templates]
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created
 
 if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
+  require "rake/extensiontask"
+
   Rake::ExtensionTask.new(:compile) do |ext|
     ext.name = "prism"
     ext.ext_dir = "ext/prism"
@@ -34,7 +35,7 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     ext.gem_spec = Gem::Specification.load("prism.gemspec")
   end
 elsif RUBY_ENGINE == "jruby"
-  require 'rake/javaextensiontask'
+  require "rake/javaextensiontask"
 
   # This compiles java to make sure any templating changes produces valid code.
   Rake::JavaExtensionTask.new(:compile) do |ext|
