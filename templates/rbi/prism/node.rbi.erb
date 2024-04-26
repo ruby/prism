@@ -16,6 +16,9 @@ class Prism::Node
   sig { returns(String) }
   def slice; end
 
+  sig { returns(String) }
+  def slice_lines; end
+
   sig { params(q: T.untyped).void }
   def pretty_print(q); end
 
