@@ -906,6 +906,18 @@ module Prism
           end
         end
 
+        # -> { it }
+        #      ^^
+        def visit_it_local_variable_read_node(node)
+          s(node, :call, nil, :it)
+        end
+
+        # -> { it }
+        # ^^^^^^^^^
+        def visit_it_parameters_node(node)
+          0
+        end
+
         # foo(bar: baz)
         #     ^^^^^^^^
         def visit_keyword_hash_node(node)
@@ -923,18 +935,19 @@ module Prism
 
         # -> {}
         def visit_lambda_node(node)
-          parameters =
-            case node.parameters
+          parameters = node.parameters
+          s_params =
+            case parameters
             when nil, NumberedParametersNode
               s(node, :args)
             else
-              visit(node.parameters)
+              visit(parameters)
             end
 
           if node.body.nil?
-            s(node, :iter, s(node, :lambda), parameters)
+            s(node, :iter, s(node, :lambda), s_params)
           else
-            s(node, :iter, s(node, :lambda), parameters, visit(node.body))
+            s(node, :iter, s(node, :lambda), s_params, visit(node.body))
           end
         end
 
@@ -950,9 +963,6 @@ module Prism
 
         # foo = 1
         # ^^^^^^^
-        #
-        # foo, bar = 1
-        # ^^^  ^^^
         def visit_local_variable_write_node(node)
           s(node, :lasgn, node.name, visit_write_value(node.value))
         end
@@ -1094,7 +1104,7 @@ module Prism
         # -> { _1 + _2 }
         # ^^^^^^^^^^^^^^
         def visit_numbered_parameters_node(node)
-          raise "Cannot visit numbered parameters directly"
+          0
         end
 
         # $1
@@ -1487,18 +1497,13 @@ module Prism
           if block.nil?
             sexp
           else
-            parameters =
-              case block.parameters
-              when nil, NumberedParametersNode
-                0
-              else
-                visit(block.parameters)
-              end
+            parameters = block.parameters
+            s_params = parameters.nil? ? 0 : visit(parameters)
 
             if block.body.nil?
-              s(node, :iter, sexp, parameters)
+              s(node, :iter, sexp, s_params)
             else
-              s(node, :iter, sexp, parameters, visit(block.body))
+              s(node, :iter, sexp, s_params, visit(block.body))
             end
           end
         end

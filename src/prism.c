@@ -690,7 +690,8 @@ pm_parser_scope_push(pm_parser_t *parser, bool closed) {
         .parameters = PM_SCOPE_PARAMETERS_NONE,
         .numbered_parameters = PM_SCOPE_NUMBERED_PARAMETERS_NONE,
         .shareable_constant = (closed || parser->current_scope == NULL) ? PM_SCOPE_SHAREABLE_CONSTANT_NONE : parser->current_scope->shareable_constant,
-        .closed = closed
+        .closed = closed,
+        .it_parameter_reads = 0
     };
 
     parser->current_scope = scope;
@@ -5251,6 +5252,93 @@ pm_interpolated_xstring_node_closing_set(pm_interpolated_x_string_node_t *node, 
 }
 
 /**
+ * Allocate and initialize a new ItLocalVariableReadNode node.
+ */
+static pm_it_local_variable_read_node_t *
+pm_it_local_variable_read_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
+    pm_it_local_variable_read_node_t *node = PM_ALLOC_NODE(parser, pm_it_local_variable_read_node_t);
+
+    *node = (pm_it_local_variable_read_node_t) {
+        {
+            .type = PM_IT_LOCAL_VARIABLE_READ_NODE,
+            .location = { .start = start, .end = end }
+        }
+    };
+
+    return node;
+}
+
+/**
+ * Returns true if it is possible for there to be an it implicit local variable
+ * in the current context, based on the parser options and the scope.
+ */
+static inline bool
+pm_parser_it_node_possible_p(pm_parser_t *parser) {
+    return (
+        (parser->version != PM_OPTIONS_VERSION_CRUBY_3_3_0) &&
+        !parser->current_scope->closed &&
+        (parser->current_scope->numbered_parameters != PM_SCOPE_NUMBERED_PARAMETERS_DISALLOWED)
+    );
+}
+
+/**
+ * Returns true if the given source slice comprise the "it" implicit local
+ * variable.
+ */
+static inline bool
+pm_parser_it_location_p(const uint8_t *start, const uint8_t *end) {
+    return ((start != NULL) && (end - start) == 2 && (start[0] == 'i') && (start[1] == 't'));
+}
+
+/**
+ * Potentially allocate, initialize, and return a new ItLocalVariableReadNode
+ * node if it is allowed in the current context based on the given start and end
+ * location. If it is not, then return NULL.
+ */
+static pm_it_local_variable_read_node_t *
+pm_parser_it_location_check(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
+    if (parser->current_scope->parameters & PM_SCOPE_PARAMETERS_ORDINARY) {
+        pm_parser_err(parser, start, end, PM_ERR_IT_NOT_ALLOWED_ORDINARY);
+        return NULL;
+    } else if (parser->current_scope->parameters & PM_SCOPE_PARAMETERS_NUMBERED) {
+        pm_parser_err(parser, start, end, PM_ERR_IT_NOT_ALLOWED_NUMBERED);
+        return NULL;
+    } else {
+        parser->current_scope->it_parameter_reads++;
+        parser->current_scope->parameters |= PM_SCOPE_PARAMETERS_IT;
+        return pm_it_local_variable_read_node_create(parser, start, end);
+    }
+}
+
+/**
+ * Potentially allocate, initialize, and return a new ItLocalVariableReadNode
+ * node if it is allowed in the current context based on the given node. If it
+ * is not, then return the original node.
+ */
+static pm_node_t *
+pm_parser_it_node_check(pm_parser_t *parser, pm_node_t *node) {
+    if (
+        pm_parser_it_node_possible_p(parser) &&
+        PM_NODE_TYPE_P(node, PM_CALL_NODE) &&
+        PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_VARIABLE_CALL)
+    ) {
+        const uint8_t *start = ((pm_call_node_t *) node)->message_loc.start;
+        const uint8_t *end = ((pm_call_node_t *) node)->message_loc.end;
+
+        if (pm_parser_it_location_p(start, end)) {
+            pm_it_local_variable_read_node_t *read = pm_parser_it_location_check(parser, start, end);
+
+            if (read != NULL) {
+                pm_node_destroy(parser, node);
+                return (pm_node_t *) read;
+            }
+        }
+    }
+
+    return node;
+}
+
+/**
  * Allocate and initialize a new ItParametersNode node.
  */
 static pm_it_parameters_node_t *
@@ -5552,36 +5640,6 @@ pm_local_variable_write_node_create(pm_parser_t *parser, pm_constant_id_t name, 
     };
 
     return node;
-}
-
-/**
- * Returns true if the given bounds comprise `it`.
- */
-static inline bool
-pm_token_is_it(const uint8_t *start, const uint8_t *end) {
-    return (end - start == 2) && (start[0] == 'i') && (start[1] == 't');
-}
-
-/**
- * Returns true if the given node is `it` default parameter.
- */
-static inline bool
-pm_node_is_it(pm_parser_t *parser, pm_node_t *node) {
-    // Check if it's a local variable reference
-    if (node->type != PM_CALL_NODE) {
-        return false;
-    }
-
-    // Check if it's a variable call
-    pm_call_node_t *call_node = (pm_call_node_t *) node;
-    if (!PM_NODE_FLAG_P(call_node, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
-        return false;
-    }
-
-    // Check if it's called `it`
-    pm_constant_id_t id = ((pm_call_node_t *)node)->name;
-    pm_constant_t *constant = pm_constant_pool_id_to_constant(&parser->constant_pool, id);
-    return pm_token_is_it(constant->start, constant->start + constant->length);
 }
 
 /**
@@ -7655,51 +7713,6 @@ pm_parser_local_add_constant(pm_parser_t *parser, const char *start, size_t leng
     pm_constant_id_t constant_id = pm_parser_constant_id_constant(parser, start, length);
     if (constant_id != 0) pm_parser_local_add(parser, constant_id, parser->start, parser->start, 1);
     return constant_id;
-}
-
-/**
- * Create a local variable read that is reading the implicit 'it' variable.
- */
-static pm_local_variable_read_node_t *
-pm_local_variable_read_node_create_it(pm_parser_t *parser, const pm_token_t *name) {
-    if (parser->current_scope->parameters & PM_SCOPE_PARAMETERS_ORDINARY) {
-        pm_parser_err_token(parser, name, PM_ERR_IT_NOT_ALLOWED_ORDINARY);
-        return NULL;
-    }
-
-    if (parser->current_scope->parameters & PM_SCOPE_PARAMETERS_NUMBERED) {
-        pm_parser_err_token(parser, name, PM_ERR_IT_NOT_ALLOWED_NUMBERED);
-        return NULL;
-    }
-
-    parser->current_scope->parameters |= PM_SCOPE_PARAMETERS_IT;
-
-    pm_constant_id_t name_id = pm_parser_constant_id_constant(parser, "0it", 3);
-    pm_parser_local_add(parser, name_id, name->start, name->end, 0);
-
-    return pm_local_variable_read_node_create_constant_id(parser, name, name_id, 0, false);
-}
-
-/**
- * Convert a `it` variable call node to a node for `it` default parameter.
- */
-static pm_node_t *
-pm_node_check_it(pm_parser_t *parser, pm_node_t *node) {
-    if (
-        (parser->version != PM_OPTIONS_VERSION_CRUBY_3_3_0) &&
-        !parser->current_scope->closed &&
-        (parser->current_scope->numbered_parameters != PM_SCOPE_NUMBERED_PARAMETERS_DISALLOWED) &&
-        pm_node_is_it(parser, node)
-    ) {
-        pm_local_variable_read_node_t *read = pm_local_variable_read_node_create_it(parser, &parser->previous);
-
-        if (read != NULL) {
-            pm_node_destroy(parser, node);
-            node = (pm_node_t *) read;
-        }
-    }
-
-    return node;
 }
 
 /**
@@ -12808,6 +12821,17 @@ parse_target(pm_parser_t *parser, pm_node_t *target) {
             assert(sizeof(pm_global_variable_target_node_t) == sizeof(pm_global_variable_read_node_t));
             target->type = PM_GLOBAL_VARIABLE_TARGET_NODE;
             return target;
+        case PM_IT_LOCAL_VARIABLE_READ_NODE: {
+            if (--parser->current_scope->it_parameter_reads == 0) {
+                parser->current_scope->parameters &= (uint8_t) ~PM_SCOPE_PARAMETERS_IT;
+            }
+
+            pm_constant_id_t name = pm_parser_local_add_constant(parser, "it", 2);
+            pm_local_variable_target_node_t *node = pm_local_variable_target_node_create(parser, &target->location, name, 0);
+
+            pm_node_destroy(parser, target);
+            return (pm_node_t *) node;
+        }
         case PM_LOCAL_VARIABLE_READ_NODE: {
             pm_refute_numbered_parameter(parser, target->location.start, target->location.end);
 
@@ -12958,6 +12982,17 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
             /* fallthrough */
         case PM_GLOBAL_VARIABLE_READ_NODE: {
             pm_global_variable_write_node_t *node = pm_global_variable_write_node_create(parser, target, operator, value);
+            pm_node_destroy(parser, target);
+            return (pm_node_t *) node;
+        }
+        case PM_IT_LOCAL_VARIABLE_READ_NODE: {
+            if (--parser->current_scope->it_parameter_reads == 0) {
+                parser->current_scope->parameters &= (uint8_t) ~PM_SCOPE_PARAMETERS_IT;
+            }
+
+            pm_constant_id_t name = pm_parser_local_add_constant(parser, "it", 2);
+            pm_local_variable_write_node_t *node = pm_local_variable_write_node_create(parser, name, 0, value, &target->location, operator);
+
             pm_node_destroy(parser, target);
             return (pm_node_t *) node;
         }
@@ -14945,7 +14980,7 @@ parse_conditional(pm_parser_t *parser, pm_context_t context) {
 #define PM_CASE_WRITABLE PM_CLASS_VARIABLE_READ_NODE: case PM_CONSTANT_PATH_NODE: \
     case PM_CONSTANT_READ_NODE: case PM_GLOBAL_VARIABLE_READ_NODE: case PM_LOCAL_VARIABLE_READ_NODE: \
     case PM_INSTANCE_VARIABLE_READ_NODE: case PM_MULTI_TARGET_NODE: case PM_BACK_REFERENCE_READ_NODE: \
-    case PM_NUMBERED_REFERENCE_READ_NODE
+    case PM_NUMBERED_REFERENCE_READ_NODE: case PM_IT_LOCAL_VARIABLE_READ_NODE
 
 // Assert here that the flags are the same so that we can safely switch the type
 // of the node without having to move the flags.
@@ -15438,7 +15473,7 @@ parse_variable_call(pm_parser_t *parser) {
     }
 
     pm_call_node_t *node = pm_call_node_variable_call_create(parser, &parser->previous);
-    pm_node_flag_set((pm_node_t *)node, flags);
+    pm_node_flag_set((pm_node_t *) node, flags);
 
     return (pm_node_t *) node;
 }
@@ -16087,15 +16122,16 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                     pm_node_t *variable = (pm_node_t *) parse_variable(parser);
 
                     if (variable == NULL) {
-                        if (
-                            (parser->version != PM_OPTIONS_VERSION_CRUBY_3_3_0) &&
-                            !parser->current_scope->closed &&
-                            (parser->current_scope->numbered_parameters != PM_SCOPE_NUMBERED_PARAMETERS_DISALLOWED) &&
-                            pm_token_is_it(parser->previous.start, parser->previous.end)
-                        ) {
-                            pm_local_variable_read_node_t *read = pm_local_variable_read_node_create_it(parser, &parser->previous);
-                            if (read == NULL) read = pm_local_variable_read_node_create(parser, &parser->previous, 0);
-                            variable = (pm_node_t *) read;
+                        if (pm_parser_it_node_possible_p(parser) && pm_parser_it_location_p(parser->previous.start, parser->previous.end)) {
+                            variable = (pm_node_t *) pm_parser_it_location_check(parser, parser->previous.start, parser->previous.end);
+
+                            // If the read is NULL, then we have an error. We'll
+                            // pretend like it's a valid local variable for the
+                            // purpose of filling in the tree, but we know that
+                            // the check already added an error.
+                            if (variable == NULL) {
+                                variable = (pm_node_t *) pm_local_variable_read_node_create(parser, &parser->previous, 0);
+                            }
                         } else {
                             PM_PARSER_ERR_TOKEN_FORMAT_CONTENT(parser, parser->previous, PM_ERR_NO_LOCAL_VARIABLE);
                             variable = (pm_node_t *) pm_local_variable_read_node_missing_create(parser, &parser->previous, 0);
@@ -17217,7 +17253,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 if (parse_arguments_list(parser, &arguments, true, accepts_command_call)) {
                     // Since we found arguments, we need to turn off the
                     // variable call bit in the flags.
-                    pm_node_flag_unset((pm_node_t *)call, PM_CALL_NODE_FLAGS_VARIABLE_CALL);
+                    pm_node_flag_unset((pm_node_t *) call, PM_CALL_NODE_FLAGS_VARIABLE_CALL);
 
                     call->opening_loc = arguments.opening_loc;
                     call->arguments = arguments.arguments;
@@ -17257,30 +17293,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             if ((binding_power == PM_BINDING_POWER_STATEMENT) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX);
             } else {
-                // Check if `it` is not going to be assigned.
-                switch (parser->current.type) {
-                    case PM_TOKEN_AMPERSAND_AMPERSAND_EQUAL:
-                    case PM_TOKEN_AMPERSAND_EQUAL:
-                    case PM_TOKEN_CARET_EQUAL:
-                    case PM_TOKEN_EQUAL:
-                    case PM_TOKEN_GREATER_GREATER_EQUAL:
-                    case PM_TOKEN_LESS_LESS_EQUAL:
-                    case PM_TOKEN_MINUS_EQUAL:
-                    case PM_TOKEN_PARENTHESIS_RIGHT:
-                    case PM_TOKEN_PERCENT_EQUAL:
-                    case PM_TOKEN_PIPE_EQUAL:
-                    case PM_TOKEN_PIPE_PIPE_EQUAL:
-                    case PM_TOKEN_PLUS_EQUAL:
-                    case PM_TOKEN_SLASH_EQUAL:
-                    case PM_TOKEN_STAR_EQUAL:
-                    case PM_TOKEN_STAR_STAR_EQUAL:
-                        break;
-                    default:
-                        // Once we know it's neither a method call nor an
-                        // assignment, we can finally create `it` default
-                        // parameter.
-                        node = pm_node_check_it(parser, node);
-                }
+                node = pm_parser_it_node_check(parser, node);
             }
 
             return node;
@@ -17950,7 +17963,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
                     if (match2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON)) {
                         receiver = parse_variable_call(parser);
-                        receiver = pm_node_check_it(parser, receiver);
+                        receiver = pm_parser_it_node_check(parser, receiver);
 
                         pm_parser_scope_push(parser, true);
                         lex_state_set(parser, PM_LEX_STATE_FNAME);

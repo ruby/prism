@@ -301,8 +301,6 @@ module Prism
 
       puts "Prism:"
       pp prism
-
-      puts "Output is #{ripper == prism ? "" : "not "}identical"
     end
 
     # bin/prism rubyparser [source]
@@ -311,7 +309,7 @@ module Prism
       source, filepath = read_source(argv)
 
       ruby_parser = RubyParser.new.parse(source, filepath)
-      prism = Prism::Translation::RubyParser.parse(source, filepath)
+      prism = Prism::Translation::RubyParser.new.parse(source, filepath)
 
       puts "RubyParser:"
       pp ruby_parser

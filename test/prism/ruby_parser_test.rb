@@ -113,17 +113,19 @@ module Prism
 
     def assert_parse_file(base, name, allowed_failure)
       filepath = File.join(base, name)
-      expected = ::RubyParser.new.parse(File.read(filepath), filepath)
-      actual = Prism::Translation::RubyParser.parse_file(filepath)
+      source = File.read(filepath)
+
+      expected = ::RubyParser.new.parse(source, filepath)
+      actual = Prism::Translation::RubyParser.new.parse(source, filepath)
 
       if !allowed_failure
-        assert_equal_nodes expected, actual
+        assert_equal_nodes expected, actual, expected, actual
       elsif expected == actual
         puts "#{name} now passes"
       end
     end
 
-    def assert_equal_nodes(left, right)
+    def assert_equal_nodes(original_left, original_right, left, right)
       return if left == right
 
       if left.is_a?(Sexp) && right.is_a?(Sexp)
@@ -134,10 +136,10 @@ module Prism
         elsif left.length != right.length
           assert_equal "(#{left.inspect} length=#{left.length})", "(#{right.inspect} length=#{right.length})"
         else
-          left.zip(right).each { |l, r| assert_equal_nodes(l, r) }
+          left.zip(right).each { |l, r| assert_equal_nodes(original_left, original_right, l, r) }
         end
       else
-        assert_equal left, right
+        assert_equal original_left, original_right
       end
     end
   end

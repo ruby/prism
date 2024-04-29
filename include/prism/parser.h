@@ -596,6 +596,32 @@ typedef struct pm_scope {
      * If closed is true, then the scope cannot see into its parent.
      */
     bool closed;
+
+    /**
+     * The implicit "it" local variable represents the first parameter to the
+     * block. Effectively it is the same as "_1". Parsing it, however, is a bit
+     * more complicated. Where "_1" is not a valid local variable or method
+     * name, "it" is. In this case we need to know the kind of expression it is
+     * in to know if it is an implicit local variable read or not.
+     *
+     * For example, if you have `-> { it }`, then the "it" here is an implicit
+     * local variable read. But `-> { it = 1 }` is writing a regular local
+     * variable, and any references to `it` from then on are regular local
+     * variable reads. This gets more complicated when you have indirect writes
+     * like `-> { (_, it) = 1 }`. In this case, `it` is a new local variable,
+     * not a local variable read from the parameters.
+     *
+     * To determine which it is, we always parse "it" as an implicit read, and
+     * increment this counter on the scope. If it is part of a write, then we
+     * convert it into the correct local variable write (or target) and
+     * decrement this counter. If, at the end of the scope, the counter is
+     * nonzero, then we know that we have an implicit read and we will create
+     * an ItParametersNode for the scope.
+     *
+     * Note that it is highly doubtful that we need a full 32-bit integer to
+     * track this, but for the sake of completeness we will use one.
+     */
+    uint32_t it_parameter_reads;
 } pm_scope_t;
 
 static const uint8_t PM_SCOPE_PARAMETERS_NONE = 0x0;
