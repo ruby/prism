@@ -16,6 +16,9 @@ class Prism::Source
   sig { returns(Encoding) }
   def encoding; end
 
+  sig { returns(T::Array[Integer]) }
+  def lines; end
+
   sig { params(byte_offset: Integer, length: Integer).returns(String) }
   def slice(byte_offset, length); end
 
@@ -77,6 +80,9 @@ class Prism::Location
 
   sig { returns(String) }
   def inspect; end
+
+  sig { returns(T::Array[String]) }
+  def source_lines; end
 
   sig { returns(String) }
   def slice; end

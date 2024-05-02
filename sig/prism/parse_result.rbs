@@ -6,6 +6,7 @@ module Prism
 
     def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
     def encoding: () -> Encoding
+    def lines: () -> Array[String]
     def slice: (Integer byte_offset, Integer length) -> String
     def line: (Integer byte_offset) -> Integer
     def line_start: (Integer byte_offset) -> Integer
@@ -31,6 +32,7 @@ module Prism
     def comments: () -> Array[comment]
     def copy: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
     def chop: () -> Location
+    def source_lines: () -> Array[String]
     def slice: () -> String
     def slice_lines: () -> String
     def start_character_offset: () -> Integer
