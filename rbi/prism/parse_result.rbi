@@ -41,6 +41,20 @@ class Prism::Source
   def code_units_column(byte_offset, encoding); end
 end
 
+class Prism::ASCIISource < Source
+  sig { params(byte_offset: Integer).returns(Integer) }
+  def character_offset(byte_offset); end
+
+  sig { params(byte_offset: Integer).returns(Integer) }
+  def character_column(byte_offset); end
+
+  sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
+  def code_units_offset(byte_offset, encoding); end
+
+  sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
+  def code_units_column(byte_offset, encoding); end
+end
+
 class Prism::Location
   sig { returns(Prism::Source) }
   def source; end
