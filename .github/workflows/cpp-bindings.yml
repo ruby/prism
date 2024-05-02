@@ -1,0 +1,33 @@
+name: C++ bindings
+
+on:
+  push:
+    paths:
+      - ".github/workflows/cpp-bindings.yml"
+      - "include/"
+      - "src/"
+      - "cpp/"
+      - "*akefile*"
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: test
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+          bundler-cache: true
+      - name: Compile prism
+        run: bundle exec rake compile
+      - name: Compile C++
+        run: g++ -o ./cpp_test cpp/test.cpp build/static/*.o build/static/util/*.o -Iinclude
+      - name: Run C++
+        run: ./cpp_test
