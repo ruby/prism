@@ -13,6 +13,12 @@ class Prism::Node
   sig { returns(Integer) }
   def end_offset; end
 
+  sig { returns(T::Array[String]) }
+  def source_lines; end
+
+  sig { returns(T::Array[String]) }
+  def script_lines; end
+
   sig { returns(String) }
   def slice; end
 
