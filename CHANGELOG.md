@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.28.0] - 2024-05-03
+
+### Added
+
+- Nested hashes will now warn for duplicated keys, as in: `{ foo: 1, **{ foo: 2 } }`.
+- `Prism::ReturnNode` now has a flag on it to indicate if it is redundant.
+- `Prism::Location#slice_lines` and `Prism::Node#slice_lines` are now provided to slice the source code of a node including the content before the node on the same line that it starts on and the content after the node on the same line that it ends on.
+- Symbols with invalid byte sequences now give errors.
+- You can now pass `"3.3.1"` to the `version:` parameter on all `Prism.*` APIs.
+- `Prism::Source#lines`, `Prism::Location#source_lines`, `Prism::Node#source_lines`, and `Prism::Node#script_lines` are now provided, which will all return the source code of the source as an array of strings.
+- `Prism::ASCIISource` is now provided, which is a subclass of `Prism::Source` but specialized to increase performance when the source is entirely ASCII.
+- Prism now provides errors when parsing Ruby 3.4+ syntax for index expressions with keywords or blocks.
+- Prism now provides an error when `**nil` is used after other keyword parameters.
+- Prism now provides errors when safe navigation is used in call target expressions, e.g., `foo&.bar, = 1`.
+- `Prism::Node#tunnel` is now provided, which returns an array of nodes starting at the current node that contain a given line and column.
+
+### Changed
+
+- All translation layers now assume an eval context, which means they will not return errors for invalid jumps like `yield`.
+- `Prism::Node#inspect` now uses a queue instead of recursion to avoid stack overflows.
+- Prism now more closely mirrors CRuby interpolation semantics, which means you could potentially have a static literal string that directly interpolates another static literal string.
+- The shipped RBI sorbet types no longer use generics.
+- `Prism::ConstantPathNode#child` and `Prism::ConstantTargetNode#child` are now deprecated, replaced by two new fields on these nodes: `name` and `name_loc`.
+
 ## [0.27.0] - 2024-04-23
 
 ### Added
@@ -476,7 +500,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.27.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.28.0...HEAD
+[0.28.0]: https://github.com/ruby/prism/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/ruby/prism/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/ruby/prism/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/ruby/prism/compare/v0.24.0...v0.25.0
