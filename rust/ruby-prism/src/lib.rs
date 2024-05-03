@@ -812,7 +812,7 @@ end
                     if let Some(parent) = cpath.parent() {
                         self.push_scope(parent);
                     }
-                    self.push_scope(cpath.child());
+                    self.scopes.push(cpath.name().unwrap());
                 } else {
                     panic!("Wrong node kind!");
                 }
