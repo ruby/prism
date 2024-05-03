@@ -44,7 +44,7 @@ class Prism::Source
   def code_units_column(byte_offset, encoding); end
 end
 
-class Prism::ASCIISource < Source
+class Prism::ASCIISource < Prism::Source
   sig { params(byte_offset: Integer).returns(Integer) }
   def character_offset(byte_offset); end
 
@@ -154,6 +154,9 @@ class Prism::Location
 
   sig { params(other: Prism::Location).returns(Prism::Location) }
   def join(other); end
+
+  sig { params(string: String).returns(Prism::Location) }
+  def adjoin(string); end
 end
 
 class Prism::Comment

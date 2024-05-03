@@ -55,6 +55,7 @@ module Prism
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def pretty_print: (untyped q) -> untyped
     def join: (Location other) -> Location
+    def adjoin: (String string) -> Location
   end
 
   class Comment
