@@ -15,6 +15,7 @@ module Prism
     def compile_alternation_pattern_node: (AlternationPatternNode) -> Proc
     def compile_constant_path_node: (ConstantPathNode) -> Proc
     def compile_constant_read_node: (ConstantReadNode) -> Proc
+    def compile_constant_name: (Prism::node, Symbol) -> Proc
     def compile_hash_pattern_node: (HashPatternNode) -> Proc
     def compile_nil_node: (NilNode) -> Proc
     def compile_regular_expression_node: (RegularExpressionNode) -> Proc

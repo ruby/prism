@@ -31,6 +31,9 @@ class Prism::Node
   sig { returns(String) }
   def to_dot; end
 
+  sig { params(line: Integer, column: Integer).returns(T::Array[Prism::Node]) }
+  def tunnel(line, column); end
+
   sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
 

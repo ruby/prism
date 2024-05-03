@@ -18,6 +18,7 @@ module Prism
     def slice_lines: () -> String
     def pretty_print: (untyped q) -> untyped
     def to_dot: () -> String
+    def tunnel: (Integer line, Integer column) -> Array[Prism::node]
   end
 
   type node_singleton = singleton(Node) & _NodeSingleton
