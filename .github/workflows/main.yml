@@ -38,23 +38,23 @@ jobs:
       env:
         LANG: "C"
 
-  # typecheck:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Set up Ruby
-  #     uses: ruby/setup-ruby@v1
-  #     with:
-  #       ruby-version: "3.3"
-  #       bundler-cache: true
-  #   - name: Check Sorbet
-  #     run: bundle exec rake typecheck:tapioca typecheck:sorbet
-  #   - name: Check Steep
-  #     run: bundle exec rake typecheck:steep
-  #   - name: Check field kinds
-  #     run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
+  typecheck:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.3"
+        bundler-cache: true
+    - name: Check Sorbet
+      run: bundle exec rake typecheck:tapioca typecheck:sorbet
+    - name: Check Steep
+      run: bundle exec rake typecheck:steep
+    - name: Check field kinds
+      run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
 
   build:
     strategy:
