@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rbconfig"
+
 if ARGV.delete("--help")
   print(<<~TEXT)
     USAGE: ruby #{$PROGRAM_NAME} [options]
@@ -40,26 +42,6 @@ def generate_templates
   end
 end
 
-# We're going to need to run `make` using prism's `Makefile`. We want to match
-# up as much of the configuration to the configuration that built the current
-# version of Ruby as possible.
-require "rbconfig"
-env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
-
-# It's possible that the Ruby that is being run wasn't actually compiled on this
-# machine, in which case the configuration might be incorrect. In this case
-# we'll need to do some additional checks and potentially fall back to defaults.
-if env.key?("CC") && !File.exist?(env["CC"])
-  env.delete("CC")
-  env.delete("CFLAGS")
-  env.delete("CPPFLAGS")
-end
-
-if env.key?("AR") && !File.exist?(env["AR"])
-  env.delete("AR")
-  env.delete("ARFLAGS")
-end
-
 # Runs `make` in the root directory of the project. Note that this is the
 # `Makefile` for the overall project, not the `Makefile` that is being generated
 # by this script.`
@@ -77,13 +59,35 @@ end
 
 # On non-CRuby we only need the shared library since we'll interface with it
 # through FFI, so we'll build only that and not the C extension. We also avoid
-# `require "mkmf"` as that prepends the LLVM toolchain to PATH on TruffleRuby,
-# but we want to use the native toolchain here since libprism is run natively.
+# `require "mkmf"` as that prepends the GraalVM LLVM toolchain to PATH on TruffleRuby < 24.0,
+# but we want to use the system toolchain here since libprism is run natively.
 if RUBY_ENGINE != "ruby"
   generate_templates
-  make(env, "build/libprism.#{RbConfig::CONFIG["SOEXT"]}")
+  soext = RbConfig::CONFIG["SOEXT"]
+  # Pass SOEXT to avoid an extra subprocess just to query that
+  make({ "SOEXT" => soext }, "build/libprism.#{soext}")
   File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
   return
+end
+
+# We're going to need to run `make` using prism's `Makefile`.
+# We want to use the same toolchain (compiler, flags, etc) to compile libprism.a and
+# the C extension since they will be linked together.
+# The C extension uses RbConfig, which contains values from the toolchain that built the running Ruby.
+env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
+
+# It's possible that the Ruby that is being run wasn't actually compiled on this
+# machine, in which case parts of RbConfig might be incorrect. In this case
+# we'll need to do some additional checks and potentially fall back to defaults.
+if env.key?("CC") && !File.exist?(env["CC"])
+  env.delete("CC")
+  env.delete("CFLAGS")
+  env.delete("CPPFLAGS")
+end
+
+if env.key?("AR") && !File.exist?(env["AR"])
+  env.delete("AR")
+  env.delete("ARFLAGS")
 end
 
 require "mkmf"
