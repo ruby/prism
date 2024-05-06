@@ -23,7 +23,7 @@ GEM
       rake
     rbs (3.4.4)
       abbrev
-    ruby_memcheck (2.3.0)
+    ruby_memcheck (3.0.0)
       nokogiri
     test-unit (3.6.2)
       power_assert

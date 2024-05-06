@@ -107,6 +107,8 @@ module Prism
             exception: true,
             chdir: File.expand_path("../", __dir__)
           )
+        rescue RuntimeError => error
+          warn("\e[31;m#{ruby_version} (#{gemfile}): #{error.message}\e[m")
         end
       end
     end
