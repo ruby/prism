@@ -214,7 +214,7 @@ module Prism
 
     # bin/prism locals [source]
     def locals(argv)
-      source, filepath = read_source(argv)
+      source, _ = read_source(argv)
 
       puts "CRuby:"
       p Debug.cruby_locals(source)
@@ -293,7 +293,7 @@ module Prism
     # bin/prism ripper [source]
     def ripper(argv)
       require "ripper"
-      source, filepath = read_source(argv)
+      source, _ = read_source(argv)
 
       ripper = Ripper.sexp_raw(source)
       prism = Prism::Translation::Ripper.sexp_raw(source)
