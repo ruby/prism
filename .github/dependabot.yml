@@ -9,38 +9,15 @@ updates:
     schedule:
       interval: 'weekly'
   - package-ecosystem: 'bundler'
-    directory: '/gemfiles/2.7'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/3.0'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/3.1'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/3.2'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/3.3'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/3.4'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/jruby'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/truffleruby'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'bundler'
-    directory: '/gemfiles/typecheck'
+    directories:
+      - '/gemfiles/2.7'
+      - '/gemfiles/3.0'
+      - '/gemfiles/3.1'
+      - '/gemfiles/3.2'
+      - '/gemfiles/3.3'
+      - '/gemfiles/3.4'
+      - '/gemfiles/jruby'
+      - '/gemfiles/truffleruby'
+      - '/gemfiles/typecheck'
     schedule:
       interval: 'weekly'
