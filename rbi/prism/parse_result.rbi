@@ -16,7 +16,7 @@ class Prism::Source
   sig { returns(Encoding) }
   def encoding; end
 
-  sig { returns(T::Array[Integer]) }
+  sig { returns(T::Array[String]) }
   def lines; end
 
   sig { params(byte_offset: Integer, length: Integer).returns(String) }

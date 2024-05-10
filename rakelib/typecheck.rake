@@ -37,7 +37,6 @@ namespace :typecheck do
         - ./lib/prism/parse_result.rb
         - ./lib/prism/visitor.rb
         - ./lib/prism/translation/ripper.rb
-        - ./lib/prism/translation/ripper/ripper_compiler.rb
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
         - ./lib/prism/inspect_visitor.rb
