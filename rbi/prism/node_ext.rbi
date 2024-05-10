@@ -100,3 +100,8 @@ class Prism::ParametersNode < Prism::Node
   sig { returns(T::Array[T.any([Symbol, Symbol], [Symbol])]) }
   def signature; end
 end
+
+class Prism::CallNode < Prism::Node
+  sig { returns(T.nilable(Prism::Location)) }
+  def full_message_loc; end
+end

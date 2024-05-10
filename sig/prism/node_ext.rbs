@@ -75,4 +75,8 @@ module Prism
   class ParametersNode < Node
     def signature: () -> Array[[Symbol, Symbol] | [Symbol]]
   end
+
+  class CallNode < Node
+    def full_message_loc: () -> Location?
+  end
 end
