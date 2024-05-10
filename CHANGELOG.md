@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.29.0] - 2024-05-10
+
+### Added
+
+- Added `Prism::CallNode#full_message_loc`, which gives the location including the `=` if there is one.
+- A warning for when `# shareable_constant_value` is not used on its own line.
+- An error for invalid implicit local variable writes.
+- Implicit hash patterns in array patterns are disallowed.
+- We now validate that Unicode escape sequences are not surrogates.
+
+### Changed
+
+- All fields named `operator` have been renamed to `binary_operator` for `*OperatorWriteNode` nodes. This is to make it easier to provide C++ support. In the Ruby API, the old fields are aliased to the new fields with a deprecation warning.
+- Many updated error messages to more closely match CRuby.
+- We ensure keyword parameters do not end in `!` or `?`.
+- Fixed some escaping in string literals with control sequences and hex escapes.
+- Fix a bug with RBS types when used outside the `ruby/prism` codebase.
+
 ## [0.28.0] - 2024-05-03
 
 ### Added
@@ -500,7 +518,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.28.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/ruby/prism/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/ruby/prism/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/ruby/prism/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/ruby/prism/compare/v0.25.0...v0.26.0
