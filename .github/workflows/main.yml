@@ -215,16 +215,16 @@ jobs:
       uses: actions/cache@v4
       id: cache-valgrind
       with:
-        path: valgrind-3.20.0
-        key: ${{ runner.os }}-valgrind-3.20.0
+        path: valgrind-3.23.0
+        key: ${{ runner.os }}-valgrind-3.23.0
     - name: Download valgrind
       if: steps.cache-valgrind.outputs.cache-hit != 'true'
       run: |
-        wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
-        tar xf valgrind-3.20.0.tar.bz2
+        wget https://sourceware.org/pub/valgrind/valgrind-3.23.0.tar.bz2
+        tar xf valgrind-3.23.0.tar.bz2
     - name: Install valgrind
       run: |
-        cd valgrind-3.20.0
+        cd valgrind-3.23.0
         ./configure
         make
         sudo make install
