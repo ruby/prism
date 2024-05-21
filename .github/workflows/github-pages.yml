@@ -33,10 +33,10 @@ jobs:
         with:
           ruby-version: "3.2"
           bundler-cache: true
-    - name: Set up Rust
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: "1.71.1"
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.71.1"
       - name: Install doxygen and dependencies
         run: |
           sudo apt-get update
