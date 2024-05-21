@@ -34,6 +34,14 @@ main {
   }
 }
 
+@media only screen and (max-width: 900px) {
+  main {
+    grid-template-rows: repeat(1fr);
+    grid-template-columns: 1fr;
+    height: 72vh;
+  }
+}
+
 @media only screen and (max-width: 600px) {
   main {
     margin: 2vh 5vw;
@@ -50,10 +58,6 @@ main {
   text-decoration: none;
   transition: background-color 100ms ease;
   vertical-align: middle;
-}
-
-.reference:first-child {
-  grid-column: span 2;
 }
 
 .reference > img {

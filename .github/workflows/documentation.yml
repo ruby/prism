@@ -20,6 +20,10 @@ jobs:
       with:
         ruby-version: "3.3"
         bundler-cache: true
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: "1.71.1"
     - name: Install doxygen and dependencies
       run: |
         sudo apt-get update
@@ -33,3 +37,8 @@ jobs:
     - name: Check Java coverage
       run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
       working-directory: java
+    - name: Generate Rust documentation
+      run: |
+        bundle exec rake cargo:build
+        cargo doc --no-deps --target-dir ../doc/rust
+      working-directory: rust
