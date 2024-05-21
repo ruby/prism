@@ -33,6 +33,10 @@ jobs:
         with:
           ruby-version: "3.2"
           bundler-cache: true
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: "1.71.1"
       - name: Install doxygen and dependencies
         run: |
           sudo apt-get update
@@ -49,6 +53,11 @@ jobs:
       - name: Build with JavaDoc
         run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
         working-directory: java
+      - name: Build with rustdoc
+        run: |
+          bundle exec rake cargo:build
+          cargo doc --no-deps --target-dir ../doc/rust
+        working-directory: rust
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
