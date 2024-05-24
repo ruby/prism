@@ -15,7 +15,6 @@ module Prism
       when "encoding"   then encoding(argv)
       when "lex"        then lex(argv)
       when "locals"     then locals(argv)
-      when "memsize"    then memsize
       when "parse"      then parse(argv)
       when "parser"     then parser(argv)
       when "ripper"     then ripper(argv)
@@ -30,7 +29,6 @@ module Prism
             bin/prism encoding [encoding]
             bin/prism lex [source]
             bin/prism locals [source]
-            bin/prism memsize
             bin/prism parse [source]
             bin/prism parser [source]
             bin/prism ripper [source]
@@ -243,35 +241,6 @@ module Prism
           puts "#{key}:"
           pp value
         end
-      end
-    end
-
-    # bin/prism memsize
-    def memsize
-      require "yaml"
-
-      filepath = File.expand_path("../config.yml", __dir__)
-      results =
-        YAML.load_file(filepath).fetch("nodes").map do |node|
-          [
-            node["name"],
-            node.fetch("fields", []).sum do |field|
-              case field["type"]
-              when "uint8"                                             then 1
-              when "uint32", "constant", "constant?"                   then 4
-              when "node", "node?", "double"                           then 8
-              when "location", "location?"                             then 16
-              when "node[]", "string", "token", "token?", "constant[]" then 24
-              when "integer"                                           then 32
-              when "flags"                                             then 0
-              else raise "Unknown type: #{field["type"]}"
-              end
-            end
-          ]
-        end
-
-      results.sort_by(&:last).reverse_each do |name, size|
-        puts "#{name}: #{size}"
       end
     end
 
