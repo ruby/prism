@@ -10,10 +10,6 @@ The discussions page on the GitHub repository are open. If you have a question o
 
 If you want to contribute code, please first open or contribute to a discussion. A lot of the project is in flux, and we want to make sure that you are contributing to the right place. Once you have a discussion going, you can open a pull request with your changes. We will review your code and get it merged in.
 
-### Ruby Features
-
-Pattern matching and endless method definitions should be avoided as long as the latest TruffleRuby release does not support it.
-
 ## Tests
 
 We could always use more tests! One of the biggest challenges of this project is building up a big test suite. If you want to contribute tests, feel free to open a pull request. These will get merged in as soon as possible.
