@@ -28,6 +28,12 @@ module Prism
   sig { params(filepath: String, command_line: T.nilable(String), encoding: T.nilable(T.any(String, Encoding)), frozen_string_literal: T.nilable(T::Boolean), line: T.nilable(Integer), scopes: T.nilable(T::Array[T::Array[Symbol]]), version: T.nilable(String)).returns(Prism::ParseResult) }
   def self.parse_file(filepath, command_line: nil, encoding: nil, frozen_string_literal: nil, line: nil, scopes: nil, version: nil); end
 
+  sig { params(source: String, command_line: T.nilable(String), encoding: T.nilable(T.any(String, Encoding)), filepath: T.nilable(String), frozen_string_literal: T.nilable(T::Boolean), line: T.nilable(Integer), scopes: T.nilable(T::Array[T::Array[Symbol]]), version: T.nilable(String)).void }
+  def self.profile(source, command_line: nil, encoding: nil, filepath: nil, frozen_string_literal: nil, line: nil, scopes: nil, version: nil); end
+
+  sig { params(filepath: String, command_line: T.nilable(String), encoding: T.nilable(T.any(String, Encoding)), frozen_string_literal: T.nilable(T::Boolean), line: T.nilable(Integer), scopes: T.nilable(T::Array[T::Array[Symbol]]), version: T.nilable(String)).void }
+  def self.profile_file(filepath, command_line: nil, encoding: nil, frozen_string_literal: nil, line: nil, scopes: nil, version: nil); end
+
   sig { params(stream: T.any(IO, StringIO), command_line: T.nilable(String), encoding: T.nilable(T.any(String, Encoding)), filepath: T.nilable(String), frozen_string_literal: T.nilable(T::Boolean), line: T.nilable(Integer), scopes: T.nilable(T::Array[T::Array[Symbol]]), version: T.nilable(String)).returns(Prism::ParseResult) }
   def self.parse_stream(stream, command_line: nil, encoding: nil, filepath: nil, frozen_string_literal: nil, line: nil, scopes: nil, version: nil); end
 
