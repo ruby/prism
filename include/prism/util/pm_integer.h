@@ -82,15 +82,7 @@ typedef enum {
  * @param start The start of the string.
  * @param end The end of the string.
  */
-PRISM_EXPORTED_FUNCTION void pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end);
-
-/**
- * Return the memory size of the integer.
- *
- * @param integer The integer to get the memory size of.
- * @return The size of the memory associated with the integer.
- */
-size_t pm_integer_memsize(const pm_integer_t *integer);
+void pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end);
 
 /**
  * Compare two integers. This function returns -1 if the left integer is less
