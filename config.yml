@@ -1914,7 +1914,7 @@ nodes:
         comment: |
           The location of the `do` keyword, if present.
           for i in a do end
-                      ^^
+                     ^^
       - name: end_keyword_loc
         type: location
         comment: |
