@@ -1884,12 +1884,14 @@ nodes:
           The index variable for `for` loops.
 
             for i in a end
+                ^
       - name: collection
         type: node
         comment: |
           The collection to iterate over.
 
             for i in a end
+                     ^
       - name: statements
         type: node?
         kind: StatementsNode
