@@ -3620,10 +3620,11 @@ nodes:
                          ^^^^
       - name: then_keyword_loc
         type: location?
-        comment: |
+        comment:
           The location of the `then` keyword, if present.
-          unless cond then bar end
-          ^^^^
+
+              unless cond then bar end
+                          ^^^^
       - name: statements
         type: node?
         kind: StatementsNode
