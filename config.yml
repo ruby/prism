@@ -3626,7 +3626,7 @@ nodes:
           The location of the `then` keyword, if present.
 
             unless cond then bar end
-            ^^^^
+                        ^^^^
       - name: statements
         type: node?
         kind: StatementsNode
