@@ -1933,8 +1933,8 @@ nodes:
     comment: |
       Represents the use of the `for` keyword.
 
-            for i in a end
-            ^^^^^^^^^^^^^^
+          for i in a end
+          ^^^^^^^^^^^^^^
   - name: ForwardingArgumentsNode
     comment: |
       Represents forwarding all arguments to this method to another method.
