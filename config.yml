@@ -1881,7 +1881,7 @@ nodes:
       - name: index
         type: node
         comment: |
-          The index variable for `for` loops.
+          The index expression for `for` loops.
 
               for i in a end
                   ^
