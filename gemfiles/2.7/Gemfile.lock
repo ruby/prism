@@ -12,7 +12,7 @@ GEM
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
-    racc (1.7.3)
+    racc (1.8.0)
     rake (13.2.1)
     rake-compiler (1.2.7)
       rake
