@@ -201,12 +201,11 @@ impl<'pr> ParseResult<'pr> {
     /// Returns an optional location of the __END__ marker and the rest of the content of the file.
     #[must_use]
     pub fn data_loc(&self) -> Option<Location<'_>> {
-        let root = self.source.as_ptr();
         let location = unsafe { &(*self.parser.as_ptr()).data_loc };
-        if location.start >= root {
-            Some(Location::new(self.parser, location))
-        } else {
+        if location.start.is_null() {
             None
+        } else {
+            Some(Location::new(self.parser, location))
         }
     }
 
