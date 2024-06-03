@@ -7,7 +7,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    ffi (1.16.3)
+    ffi (1.17.0)
     parser (3.3.2.0)
       ast (~> 2.4.1)
       racc
