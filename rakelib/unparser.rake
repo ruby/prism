@@ -40,5 +40,6 @@ namespace :unparser do
   task :clean do
     rm_rf "tmp/unparser"
     rm_rf "test/prism/fixtures/unparser"
+    rm_rf "test/prism/snapshots/unparser"
   end
 end
