@@ -69,13 +69,11 @@ namespace :typecheck do
       --suppress-error-code=7001
     CONFIG
 
-    Process.wait(fork do
-      exec "#{::Gem::Specification.find_by_name("sorbet-static").full_gem_path}/libexec/sorbet"
-    end)
+    exec "#{::Gem::Specification.find_by_name("sorbet-static").full_gem_path}/libexec/sorbet"
   end
 
   desc "Typecheck with Steep"
   task steep: :templates do
-    Process.wait(fork { exec Gem.bin_path("steep", "steep"), "check" })
+    exec Gem.bin_path("steep", "steep"), "check"
   end
 end
