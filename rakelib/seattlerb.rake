@@ -98,5 +98,6 @@ namespace :seattlerb do
   task :clean do
     rm_rf "tmp/seattlerb"
     rm_rf "test/prism/fixtures/seattlerb"
+    rm_rf "test/prism/snapshots/seattlerb"
   end
 end
