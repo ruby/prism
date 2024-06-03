@@ -90,7 +90,7 @@ GEM
       strscan (>= 1.0.0)
       terminal-table (>= 2, < 4)
     strscan (3.1.0)
-    tapioca (0.14.2)
+    tapioca (0.14.3)
       bundler (>= 2.2.25)
       netrc (>= 0.11.0)
       parallel (>= 1.21.0)
