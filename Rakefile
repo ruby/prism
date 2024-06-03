@@ -59,3 +59,17 @@ Prism::Template::TEMPLATES.each do |filepath|
     Prism::Template.render(t.name)
   end
 end
+
+namespace :build do
+  task :dev_version_set do
+    filepath = File.expand_path("prism.gemspec", __dir__)
+    File.write(filepath, File.read(filepath).sub(/spec\.version = ".+?"/, %Q{spec.version = "9999.9.9"}))
+  end
+
+  task :dev_version_clear do
+    sh "git checkout -- prism.gemspec Gemfile.lock"
+  end
+
+  desc "Build a development version of the gem"
+  task dev: ["build:dev_version_set", "build", "build:dev_version_clear"]
+end
