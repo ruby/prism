@@ -92,7 +92,6 @@ namespace :whitequark do
         test/prism/fixtures/whitequark/class_definition_in_while_cond.txt
         test/prism/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
         test/prism/fixtures/whitequark/if_while_after_class__since_32.txt
-        test/prism/fixtures/whitequark/method_definition_in_while_cond.txt
         test/prism/fixtures/whitequark/next_block.txt
         test/prism/fixtures/whitequark/next.txt
         test/prism/fixtures/whitequark/pattern_match.txt
@@ -111,5 +110,6 @@ namespace :whitequark do
   task :clean do
     rm_rf "tmp/whitequark"
     rm_rf "test/prism/fixtures/whitequark"
+    rm_rf "test/prism/snapshots/whitequark"
   end
 end
