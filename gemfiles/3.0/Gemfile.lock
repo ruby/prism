@@ -8,12 +8,12 @@ GEM
   specs:
     abbrev (0.1.2)
     ast (2.4.2)
-    ffi (1.16.3)
-    mini_portile2 (2.8.6)
+    ffi (1.17.0)
+    mini_portile2 (2.8.7)
     nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    parser (3.3.1.0)
+    parser (3.3.2.0)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
