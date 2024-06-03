@@ -244,7 +244,8 @@ jobs:
       with:
         ruby-version: head
         bundler-cache: true
-    - run: bundle exec rake build
+    - run: bundle config --local frozen false
+    - run: bundle exec rake build:dev
     - uses: actions/upload-artifact@v4
       with:
         name: gem-package
