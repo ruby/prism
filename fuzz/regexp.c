@@ -1,8 +1,11 @@
 #include <prism.h>
 
 void
+regexp_name_callback(const pm_string_t *name, void *data) {
+    // Do nothing
+}
+
+void
 harness(const uint8_t *input, size_t size) {
-    pm_string_list_t capture_list = { 0 };
-    pm_regexp_named_capture_group_names(input, size, &capture_list, false, PM_ENCODING_UTF_8_ENTRY);
-    pm_string_list_free(&capture_list);
+    pm_regexp_parse(input, size, false, PM_ENCODING_UTF_8_ENTRY, regexp_name_callback, NULL);
 }
