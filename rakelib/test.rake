@@ -26,6 +26,7 @@ end
 
 namespace :test do
   if have_memcheck
+    RubyMemcheck.config(use_only_ruby_free_at_exit: false)
     RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
 
     # Hide test:valgrind_internal from rake -T
