@@ -24,6 +24,7 @@ task check_manifest: :templates do
     rakelib
     rust
     sorbet
+    suppressions
     templates
     test
     top-100-gems
