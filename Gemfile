@@ -8,14 +8,9 @@ gem "rake"
 gem "rake-compiler"
 gem "test-unit"
 
-# Some gems we don't want to install on JRuby or TruffleRuby.
-platforms = %i[mri mswin mingw x64_mingw]
-
-gem "ffi", platform: platforms
-gem "parser", platform: platforms
-gem "ruby_parser", platform: platforms
 gem "benchmark-ips"
-
-group :memcheck do
-  gem "ruby_memcheck", platform: platforms
-end
+gem "ffi"
+gem "onigmo", platform: %i[mri mswin mingw x64_mingw]
+gem "parser"
+gem "ruby_memcheck", platform: %i[mri mswin mingw x64_mingw]
+gem "ruby_parser"
