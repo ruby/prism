@@ -13,6 +13,7 @@ GEM
     nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    onigmo (0.1.0)
     parser (3.3.2.0)
       ast (~> 2.4.1)
       racc
@@ -33,6 +34,7 @@ PLATFORMS
 
 DEPENDENCIES
   ffi
+  onigmo
   parser
   prism!
   rake
