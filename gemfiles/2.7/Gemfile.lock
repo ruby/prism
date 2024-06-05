@@ -8,6 +8,7 @@ GEM
   specs:
     ast (2.4.2)
     ffi (1.16.3)
+    onigmo (0.1.0)
     parser (3.3.2.0)
       ast (~> 2.4.1)
       racc
@@ -25,6 +26,7 @@ PLATFORMS
 
 DEPENDENCIES
   ffi
+  onigmo
   parser
   prism!
   rake
