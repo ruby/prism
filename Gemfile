@@ -16,4 +16,4 @@ platforms :mri, :mswin, :mingw, :x64_mingw do
   gem "ruby_parser"
 end  
 
-gem "onigmo", platforms: [:mri]
+gem "onigmo", platforms: :ruby
