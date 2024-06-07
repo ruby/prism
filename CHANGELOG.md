@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.30.0] - 2024-06-07
+
+### Added
+
+- More correctly raise mixed encoding errors.
+- Implement ambiguous binary operator warning.
+- Fix up regexp escapes with control and meta characters.
+- Fix up support for the `it` implicit local variable.
+- Heredoc identifiers now properly disallow CLRF.
+- Errors added for void value expressions in begin clauses.
+- Many updates to more closely match the `parser` gem in parser translation.
+- Many errors added for invalid regular expressions.
+
+### Changed
+
+- Handle parser translation missing the `parser` gem.
+- Handle ruby_parser translation missing the `ruby_parser` gem.
+- Various error messages have been updated to more closely match CRuby.
+- `RationalNode` now has a `numerator` and `denominator` field instead of a `numeric` field. For the Ruby API we provide a `RationalNode#numeric` method for backwards-compatibility.
+
 ## [0.29.0] - 2024-05-10
 
 ### Added
@@ -518,7 +538,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.29.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.30.0...HEAD
+[0.30.0]: https://github.com/ruby/prism/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/ruby/prism/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/ruby/prism/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/ruby/prism/compare/v0.26.0...v0.27.0
