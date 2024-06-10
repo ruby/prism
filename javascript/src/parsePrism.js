@@ -106,6 +106,9 @@ function dumpOptions(options) {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
   }
 
+  template.push("C");
+  values.push(options.encoding === false ? 1 : 0);
+
   template.push("L");
   if (options.scopes) {
     const scopes = options.scopes;

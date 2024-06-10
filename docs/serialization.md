@@ -199,6 +199,7 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `1`     | frozen string literal      |
 | `1`     | command line flags         |
 | `1`     | syntax version, see [pm_options_version_t](https://github.com/ruby/prism/blob/main/include/prism/options.h) for valid values |
+| `1`     | whether or not the encoding is locked (should almost always be false) |
 | `4`     | the number of scopes       |
 | ...     | the scopes                 |
 
