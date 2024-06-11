@@ -2,6 +2,8 @@
 
 namespace :typecheck do
   task tapioca: :templates do
+    Rake::Task["compile:prism"].invoke
+
     # Yard crashes parsing steep, which is all run because of tapioca. So to
     # avoid this, we're going to monkey patch yard to ignore these kinds of
     # crashes so tapioca can keep running.
