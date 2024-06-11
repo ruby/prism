@@ -6,9 +6,9 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    abbrev (0.1.2)
     ast (2.4.2)
     ffi (1.17.0)
+    logger (1.6.0)
     mini_portile2 (2.8.7)
     nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
@@ -22,8 +22,8 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.7)
       rake
-    rbs (3.4.4)
-      abbrev
+    rbs (3.5.1)
+      logger
     ruby_memcheck (3.0.0)
       nokogiri
     test-unit (3.6.2)
