@@ -8,7 +8,7 @@ config = lambda do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
-Rake::TestTask.new(:test, &config)
+Rake::TestTask.new(test: :compile, &config)
 
 # If we're on JRuby or TruffleRuby, we don't want to bother to configure
 # memcheck or debug tests.
