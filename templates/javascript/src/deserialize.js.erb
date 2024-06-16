@@ -41,7 +41,7 @@ class SerializationBuffer {
   }
 
   readString(length) {
-    return new TextDecoder().decode(this.readBytes(length));
+    return this.decodeString(this.readBytes(length));
   }
 
   // Read a 32-bit unsigned integer in little-endian format.
@@ -92,7 +92,7 @@ class SerializationBuffer {
       case 1: {
         const startOffset = this.readVarInt();
         const length = this.readVarInt();
-        return new TextDecoder().decode(this.source.slice(startOffset, startOffset + length));
+        return this.decodeString(this.source.slice(startOffset, startOffset + length));
       }
       case 2:
         return this.readString(this.readVarInt());
@@ -121,6 +121,34 @@ class SerializationBuffer {
     }
 
     return view.getFloat64(0, LITTLE_ENDIAN);
+  }
+
+  decodeString(bytes) {
+    try {
+      return this.utf8Decoder.decode(bytes);
+    } catch (e) {
+      if (e.code === "ERR_ENCODING_INVALID_ENCODED_DATA") {
+        return this.asciiDecoder.decode(bytes);
+      }
+
+      throw e;
+    }
+  }
+
+  get utf8Decoder() {
+    if (!this._utf8Decoder) {
+      this._utf8Decoder = new TextDecoder("utf8", {fatal: true});
+    }
+
+    return this._utf8Decoder;
+  }
+
+  get asciiDecoder() {
+    if (!this._asciiDecoder) {
+      this._asciiDecoder = new TextDecoder("ascii");
+    }
+
+    return this._asciiDecoder;
   }
 }
 
