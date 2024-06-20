@@ -1493,6 +1493,17 @@ module Prism
       ]
     end
 
+    def test_optional_block_parameters_with_unary_operator
+      [
+        ["foo { |a = +b| }", ["unexpected '+'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = -b| }", ["unexpected '-'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = !b| }", ["unexpected '!'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = ~b| }", ["unexpected '~'; unary calls are not allowed in this context", 11..12]],
+      ].each do |source, *errors|
+        assert_errors expression(source), source, errors
+      end
+    end
+
     def test_repeated_parameter_name_in_destructured_params
       source = "def f(a, (b, (a))); end"
 
