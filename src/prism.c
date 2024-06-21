@@ -18342,6 +18342,14 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 }
             }
 
+            if (match1(parser, PM_TOKEN_KEYWORD_WHILE_MODIFIER)) {
+                parser->current_context->context = PM_CONTEXT_WHILE;
+            }
+
+            if (match1(parser, PM_TOKEN_KEYWORD_UNTIL_MODIFIER)) {
+                parser->current_context->context = PM_CONTEXT_UNTIL;
+            }
+
             switch (keyword.type) {
                 case PM_TOKEN_KEYWORD_BREAK: {
                     pm_node_t *node = (pm_node_t *) pm_break_node_create(parser, &keyword, arguments.arguments);

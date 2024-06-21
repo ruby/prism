@@ -27,3 +27,7 @@ foo { |a| break } == 42
 while _ && break; end
 
 until _ && break; end
+
+break while false
+
+break until false

@@ -1,8 +1,8 @@
-@ ProgramNode (location: (1,0)-(29,21))
+@ ProgramNode (location: (1,0)-(33,17))
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(29,21))
-    └── body: (length: 13)
+    @ StatementsNode (location: (1,0)-(33,17))
+    └── body: (length: 15)
         ├── @ CallNode (location: (1,0)-(1,13))
         │   ├── flags: ignore_visibility
         │   ├── receiver: ∅
@@ -422,26 +422,50 @@
         │   │   │   └── keyword_loc: (27,11)-(27,16) = "break"
         │   │   └── operator_loc: (27,8)-(27,10) = "&&"
         │   └── statements: ∅
-        └── @ UntilNode (location: (29,0)-(29,21))
+        ├── @ UntilNode (location: (29,0)-(29,21))
+        │   ├── flags: ∅
+        │   ├── keyword_loc: (29,0)-(29,5) = "until"
+        │   ├── closing_loc: (29,18)-(29,21) = "end"
+        │   ├── predicate:
+        │   │   @ AndNode (location: (29,6)-(29,16))
+        │   │   ├── left:
+        │   │   │   @ CallNode (location: (29,6)-(29,7))
+        │   │   │   ├── flags: variable_call, ignore_visibility
+        │   │   │   ├── receiver: ∅
+        │   │   │   ├── call_operator_loc: ∅
+        │   │   │   ├── name: :_
+        │   │   │   ├── message_loc: (29,6)-(29,7) = "_"
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── arguments: ∅
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── block: ∅
+        │   │   ├── right:
+        │   │   │   @ BreakNode (location: (29,11)-(29,16))
+        │   │   │   ├── arguments: ∅
+        │   │   │   └── keyword_loc: (29,11)-(29,16) = "break"
+        │   │   └── operator_loc: (29,8)-(29,10) = "&&"
+        │   └── statements: ∅
+        ├── @ WhileNode (location: (31,0)-(31,17))
+        │   ├── flags: ∅
+        │   ├── keyword_loc: (31,6)-(31,11) = "while"
+        │   ├── closing_loc: ∅
+        │   ├── predicate:
+        │   │   @ FalseNode (location: (31,12)-(31,17))
+        │   └── statements:
+        │       @ StatementsNode (location: (31,0)-(31,5))
+        │       └── body: (length: 1)
+        │           └── @ BreakNode (location: (31,0)-(31,5))
+        │               ├── arguments: ∅
+        │               └── keyword_loc: (31,0)-(31,5) = "break"
+        └── @ UntilNode (location: (33,0)-(33,17))
             ├── flags: ∅
-            ├── keyword_loc: (29,0)-(29,5) = "until"
-            ├── closing_loc: (29,18)-(29,21) = "end"
+            ├── keyword_loc: (33,6)-(33,11) = "until"
+            ├── closing_loc: ∅
             ├── predicate:
-            │   @ AndNode (location: (29,6)-(29,16))
-            │   ├── left:
-            │   │   @ CallNode (location: (29,6)-(29,7))
-            │   │   ├── flags: variable_call, ignore_visibility
-            │   │   ├── receiver: ∅
-            │   │   ├── call_operator_loc: ∅
-            │   │   ├── name: :_
-            │   │   ├── message_loc: (29,6)-(29,7) = "_"
-            │   │   ├── opening_loc: ∅
-            │   │   ├── arguments: ∅
-            │   │   ├── closing_loc: ∅
-            │   │   └── block: ∅
-            │   ├── right:
-            │   │   @ BreakNode (location: (29,11)-(29,16))
-            │   │   ├── arguments: ∅
-            │   │   └── keyword_loc: (29,11)-(29,16) = "break"
-            │   └── operator_loc: (29,8)-(29,10) = "&&"
-            └── statements: ∅
+            │   @ FalseNode (location: (33,12)-(33,17))
+            └── statements:
+                @ StatementsNode (location: (33,0)-(33,5))
+                └── body: (length: 1)
+                    └── @ BreakNode (location: (33,0)-(33,5))
+                        ├── arguments: ∅
+                        └── keyword_loc: (33,0)-(33,5) = "break"
