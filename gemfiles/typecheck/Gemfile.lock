@@ -74,7 +74,7 @@ GEM
       prism (>= 0.19.0)
       sorbet-static-and-runtime (>= 0.5.10187)
       thor (>= 0.19.2)
-    steep (1.7.1)
+    steep (1.8.0.dev.1)
       activesupport (>= 5.1)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)
