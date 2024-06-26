@@ -7,6 +7,7 @@
 #define PRISM_PARSER_H
 
 #include "prism/defines.h"
+#include "prism/allocator.h"
 #include "prism/ast.h"
 #include "prism/encoding.h"
 #include "prism/options.h"
@@ -625,6 +626,9 @@ typedef uint32_t pm_state_stack_t;
  * it's considering.
  */
 struct pm_parser {
+    /** The allocator used to allocate nodes and their fields. */
+    pm_allocator_t allocator;
+
     /** The current state of the lexer. */
     pm_lex_state_t lex_state;
 
