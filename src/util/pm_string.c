@@ -312,13 +312,13 @@ pm_string_file_init(pm_string_t *string, const char *filepath) {
  * copy over the previous source.
  */
 void
-pm_string_ensure_owned(pm_string_t *string) {
+pm_string_ensure_owned(pm_allocator_t *allocator, pm_string_t *string) {
     if (string->type == PM_STRING_OWNED) return;
 
     size_t length = pm_string_length(string);
     const uint8_t *source = pm_string_source(string);
 
-    uint8_t *memory = xmalloc(length);
+    uint8_t *memory = pm_allocator_arena_alloc(allocator, length, 1);
     if (!memory) return;
 
     pm_string_owned_init(string, memory, length);

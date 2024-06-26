@@ -110,9 +110,9 @@ void pm_allocator_free(pm_allocator_t *allocator) {
         // should free it. Otherwise we assume it was embedded into another
         // struct or allocated on the stack.
         if (top_level) {
-            xfree(previous->start);
+            free(previous->start);
         } else {
-            xfree(previous);
+            free(previous);
         }
 
         top_level = false;

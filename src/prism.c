@@ -7009,13 +7009,34 @@ pm_string_node_create(pm_parser_t *parser, const pm_token_t *opening, const pm_t
 }
 
 /**
+ * Move contents of parser->current_string into the parser's arena allocator
+ * for a pm_string_t that will be on a node.
+ */
+static pm_string_t
+pm_flush_current_string(pm_parser_t *parser)
+{
+    pm_string_t current_string = parser->current_string;
+    if (current_string.type == PM_STRING_OWNED) {
+        size_t len = pm_string_length(&parser->current_string);
+        if (len > 0) {
+            uint8_t *new_source = pm_allocator_arena_alloc(&parser->allocator, len, 1);
+            memcpy(new_source, pm_string_source(&parser->current_string), len);
+            pm_string_owned_init(&current_string, new_source, len);
+        }
+    }
+    pm_string_free(&parser->current_string);
+    parser->current_string = PM_STRING_EMPTY;
+    return current_string;
+}
+
+/**
  * Allocate a new StringNode node and create it using the current string on the
  * parser.
  */
 static pm_string_node_t *
 pm_string_node_create_current_string(pm_parser_t *parser, const pm_token_t *opening, const pm_token_t *content, const pm_token_t *closing) {
-    pm_string_node_t *node = pm_string_node_create_unescaped(parser, opening, content, closing, &parser->current_string);
-    parser->current_string = PM_STRING_EMPTY;
+    pm_string_t current_string = pm_flush_current_string(parser);
+    pm_string_node_t *node = pm_string_node_create_unescaped(parser, opening, content, closing, &current_string);
     return node;
 }
 
@@ -7301,8 +7322,8 @@ pm_symbol_node_create(pm_parser_t *parser, const pm_token_t *opening, const pm_t
  */
 static pm_symbol_node_t *
 pm_symbol_node_create_current_string(pm_parser_t *parser, const pm_token_t *opening, const pm_token_t *value, const pm_token_t *closing) {
-    pm_symbol_node_t *node = pm_symbol_node_create_unescaped(parser, opening, value, closing, &parser->current_string, parse_symbol_encoding(parser, value, &parser->current_string, false));
-    parser->current_string = PM_STRING_EMPTY;
+    pm_string_t current_string = pm_flush_current_string(parser);
+    pm_symbol_node_t *node = pm_symbol_node_create_unescaped(parser, opening, value, closing, &current_string, parse_symbol_encoding(parser, value, &current_string, false));
     return node;
 }
 
@@ -16373,10 +16394,10 @@ parse_method_definition_name(pm_parser_t *parser) {
 }
 
 static void
-parse_heredoc_dedent_string(pm_string_t *string, size_t common_whitespace) {
+parse_heredoc_dedent_string(pm_parser_t *parser, pm_string_t *string, size_t common_whitespace) {
     // Get a reference to the string struct that is being held by the string
     // node. This is the value we're going to actually manipulate.
-    pm_string_ensure_owned(string);
+    pm_string_ensure_owned(&parser->allocator, string);
 
     // Now get the bounds of the existing string. We'll use this as a
     // destination to move bytes into. We'll also use it for bounds checking
@@ -16437,7 +16458,7 @@ parse_heredoc_dedent(pm_parser_t *parser, pm_node_list_t *nodes, size_t common_w
 
         pm_string_node_t *string_node = ((pm_string_node_t *) node);
         if (dedent_next) {
-            parse_heredoc_dedent_string(&string_node->unescaped, common_whitespace);
+            parse_heredoc_dedent_string(parser, &string_node->unescaped, common_whitespace);
         }
 
         if (string_node->unescaped.length == 0) {
@@ -18194,7 +18215,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             }
 
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
 
             pm_void_statements_check(parser, statements, true);
             return (pm_node_t *) pm_parentheses_node_create(parser, &opening, (pm_node_t *) statements, &parser->previous);
@@ -18499,7 +18519,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 }
 
                 if (lex_mode.indent == PM_HEREDOC_INDENT_TILDE && (common_whitespace != (size_t) -1) && (common_whitespace != 0)) {
-                    parse_heredoc_dedent_string(&cast->unescaped, common_whitespace);
+                    parse_heredoc_dedent_string(parser, &cast->unescaped, common_whitespace);
                 }
 
                 node = (pm_node_t *) cast;
@@ -18908,7 +18928,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             }
 
             flush_block_exits(parser, previous_block_exits);
-            pm_node_list_free(&current_block_exits);
 
             return (pm_node_t *) pm_pre_execution_node_create(parser, &keyword, &opening, statements, &parser->previous);
         }
@@ -19033,13 +19052,9 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 pm_do_loop_stack_pop(parser);
 
                 flush_block_exits(parser, previous_block_exits);
-                pm_node_list_free(&current_block_exits);
 
                 return (pm_node_t *) pm_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous);
             }
-
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
             pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, false, false, PM_ERR_CLASS_NAME, (uint16_t) (depth + 1));
             pm_token_t name = parser->previous;
@@ -19387,7 +19402,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_constant_id_t name_id = pm_parser_constant_id_location(parser, name.start, parse_operator_symbol_name(&name));
 
             flush_block_exits(parser, previous_block_exits);
-            pm_node_list_free(&current_block_exits);
 
             return (pm_node_t *) pm_def_node_create(
                 parser,
@@ -20155,7 +20169,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 // expression at least has something in it. We'll need to check if the
                 // following token is the end (in which case we can return a plain
                 // regular expression) or if it's not then it has interpolation.
-                pm_string_t unescaped = parser->current_string;
+                pm_string_t unescaped = pm_flush_current_string(parser);
                 pm_token_t content = parser->current;
                 bool ascii_only = parser->current_regular_expression_ascii_only;
                 parser_lex(parser);
@@ -20206,7 +20220,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_node_t *part;
             while (!match2(parser, PM_TOKEN_REGEXP_END, PM_TOKEN_EOF)) {
                 if ((part = parse_string_part(parser, (uint16_t) (depth + 1))) != NULL) {
-                    pm_interpolated_regular_expression_node_append(interpolated, part);
                     pm_interpolated_regular_expression_node_append(parser, interpolated, part);
                 }
             }
@@ -20252,7 +20265,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 // at least has something in it. We'll need to check if the
                 // following token is the end (in which case we can return a
                 // plain string) or if it's not then it has interpolation.
-                pm_string_t unescaped = parser->current_string;
+                pm_string_t unescaped = pm_flush_current_string(parser);;
                 pm_token_t content = parser->current;
                 parser_lex(parser);
 
@@ -21951,7 +21964,6 @@ parse_program(pm_parser_t *parser) {
         statements = wrap_statements(parser, statements);
     } else {
         flush_block_exits(parser, previous_block_exits);
-        pm_node_list_free(&current_block_exits);
     }
 
     return (pm_node_t *) pm_program_node_create(parser, &locals, statements);
