@@ -2864,12 +2864,6 @@ pm_call_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
     };
 
     pm_call_write_read_name_init(parser, &node->read_name, &node->write_name);
-
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
-
     return node;
 }
 
@@ -2925,11 +2919,6 @@ pm_index_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, cons
         .value = value
     };
 
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
-
     return node;
 }
 
@@ -2961,11 +2950,6 @@ pm_call_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target, 
     };
 
     pm_call_write_read_name_init(parser, &node->read_name, &node->write_name);
-
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
 
     return node;
 }
@@ -2999,11 +2983,6 @@ pm_index_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target,
         .value = value
     };
 
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
-
     return node;
 }
 
@@ -3035,11 +3014,6 @@ pm_call_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const 
     };
 
     pm_call_write_read_name_init(parser, &node->read_name, &node->write_name);
-
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
 
     return node;
 }
@@ -3073,11 +3047,6 @@ pm_index_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
         .value = value
     };
 
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
-
     return node;
 }
 
@@ -3100,11 +3069,6 @@ pm_call_target_node_create(pm_parser_t *parser, pm_call_node_t *target) {
         .name = target->name,
         .message_loc = target->message_loc
     };
-
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
 
     return node;
 }
@@ -3132,11 +3096,6 @@ pm_index_target_node_create(pm_parser_t *parser, pm_call_node_t *target) {
         .closing_loc = target->closing_loc,
         .block = target->block
     };
-
-    // Here we're going to free the target, since it is no longer necessary.
-    // However, we don't want to call `pm_node_destroy` because we want to keep
-    // around all of its children since we just reused them.
-    // xfree(target);
 
     return node;
 }
@@ -5957,10 +5916,6 @@ pm_multi_write_node_create(pm_parser_t *parser, pm_multi_target_node_t *target, 
         .value = value
     };
 
-    // Explicitly do not call pm_node_destroy here because we want to keep
-    // around all of the information within the MultiWriteNode node.
-    // xfree(target);
-
     return node;
 }
 
@@ -7338,11 +7293,6 @@ pm_string_node_to_symbol_node(pm_parser_t *parser, pm_string_node_t *node, const
     pm_token_t content = { .type = PM_TOKEN_IDENTIFIER, .start = node->content_loc.start, .end = node->content_loc.end };
     pm_node_flag_set((pm_node_t *) new_node, parse_symbol_encoding(parser, &content, &node->unescaped, true));
 
-    // We are explicitly _not_ using pm_node_destroy here because we don't want
-    // to trash the unescaped string. We could instead copy the string if we
-    // know that it is owned, but we're taking the fast path for now.
-    // xfree(node);
-
     return new_node;
 }
 
@@ -7374,11 +7324,6 @@ pm_symbol_node_to_string_node(pm_parser_t *parser, pm_symbol_node_t *node) {
         .closing_loc = node->closing_loc,
         .unescaped = node->unescaped
     };
-
-    // We are explicitly _not_ using pm_node_destroy here because we don't want
-    // to trash the unescaped string. We could instead copy the string if we
-    // know that it is owned, but we're taking the fast path for now.
-    // xfree(node);
 
     return new_node;
 }
@@ -16057,7 +16002,8 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
             // In that case we need to switch to an interpolated string to
             // be able to contain all of the parts.
             if (match1(parser, PM_TOKEN_STRING_CONTENT)) {
-                pm_allocator_t parts_allocator = pm_allocator_scratch(sizeof(pm_node_t *) * 4);
+                pm_allocator_t parts_allocator;
+                pm_allocator_init(&parts_allocator, sizeof(pm_node_t *) * 4);
                 pm_node_list_t parts = { 0 };
 
                 pm_token_t delimiters = not_provided(parser);
@@ -16117,7 +16063,8 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
             } else {
                 // If we get here, then we have interpolation so we'll need
                 // to create a string or symbol node with interpolation.
-                pm_allocator_t parts_allocator = pm_allocator_scratch(sizeof(pm_node_t *) * 8);
+                pm_allocator_t parts_allocator;
+                pm_allocator_init(&parts_allocator, sizeof(pm_node_t *) * 8);
                 pm_node_list_t parts = { 0 };
                 pm_token_t string_opening = not_provided(parser);
                 pm_token_t string_closing = not_provided(parser);
@@ -16148,7 +16095,8 @@ parse_strings(pm_parser_t *parser, pm_node_t *current) {
             // If we get here, then the first part of the string is not plain
             // string content, in which case we need to parse the string as an
             // interpolated string.
-            pm_allocator_t parts_allocator = pm_allocator_scratch(sizeof(pm_node_t *) * 8);
+            pm_allocator_t parts_allocator;
+            pm_allocator_init(&parts_allocator, sizeof(pm_node_t *) * 8);
             pm_node_list_t parts = { 0 };
             pm_node_t *part;
 
@@ -16601,8 +16549,6 @@ parse_pattern_hash(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_node
     }
 
     pm_hash_pattern_node_t *node = pm_hash_pattern_node_node_list_create(parser, &assocs, rest);
-    xfree(assocs.nodes);
-
     pm_static_literals_free(&keys);
     return node;
 }
@@ -17055,8 +17001,6 @@ parse_pattern(pm_parser_t *parser, pm_constant_id_list_t *captures, uint8_t flag
         } else {
             node = (pm_node_t *) pm_array_pattern_node_node_list_create(parser, &nodes);
         }
-
-        xfree(nodes.nodes);
     } else if (leading_rest) {
         // Otherwise, if we parsed a single splat pattern, then we know we have an
         // array pattern, so we can go ahead and create that node.
@@ -17920,7 +17864,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 // If we get here, then we have multiple parts in the heredoc,
                 // so we'll need to create an interpolated string node to hold
                 // them all.
-                pm_allocator_t parts_allocator = pm_allocator_scratch(sizeof(pm_node_t *) * 8);
+                pm_allocator_t parts_allocator;
+                pm_allocator_init(&parts_allocator, sizeof(pm_node_t *) * 8);
                 pm_node_list_t parts = { 0 };
                 pm_node_list_append(&parts_allocator, &parts, part);
 
@@ -19189,7 +19134,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                             pm_interpolated_symbol_node_append(parser, interpolated, first_string);
                             pm_interpolated_symbol_node_append(parser, interpolated, second_string);
 
-                            xfree(current);
                             current = (pm_node_t *) interpolated;
                         } else {
                             assert(false && "unreachable");
@@ -21554,6 +21498,9 @@ pm_parser_free(pm_parser_t *parser) {
     while (parser->lex_modes.index >= PM_LEX_STACK_SIZE) {
         lex_mode_pop(parser);
     }
+
+    pm_allocator_free(&parser->block_exits_allocator);
+    pm_allocator_free(&parser->allocator);
 }
 
 /**

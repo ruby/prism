@@ -25,16 +25,6 @@ pm_allocator_init(pm_allocator_t *allocator, size_t capacity) {
 }
 
 /**
- * Retrieve a scratch allocator with the given capacity.
- */
-pm_allocator_t
-pm_allocator_scratch(size_t capacity) {
-    pm_allocator_t scratch = { 0 };
-    pm_allocator_init(&scratch, capacity);
-    return scratch;
-}
-
-/**
  * Allocate memory from the given allocator.
  */
 void *
@@ -58,14 +48,14 @@ pm_allocator_arena_alloc(pm_allocator_t *allocator, size_t size, size_t alignmen
         // up just this node in the linked list to fit the allocation.
         if (size > next_capacity) next_capacity = size;
 
-        char *next_allocator_memory = xmalloc(sizeof(pm_allocator_page_t) + next_capacity);
-        if (next_allocator_memory == NULL) {
+        char *memory = xmalloc(sizeof(pm_allocator_page_t) + next_capacity);
+        if (memory == NULL) {
             fprintf(stderr, "[pm_allocator_arena_alloc] failed to allocate memory\n");
             abort();
         }
 
-        pm_allocator_page_t *next_allocator_page = (pm_allocator_page_t *) next_allocator_memory;
-        char *start = next_allocator_memory + sizeof(pm_allocator_page_t);
+        pm_allocator_page_t *next_allocator_page = (pm_allocator_page_t *) memory;
+        char *start = memory + sizeof(pm_allocator_page_t);
 
         // Assume the alignment is correct because malloc should give us back
         // the most relaxed alignment possible.
@@ -82,7 +72,7 @@ pm_allocator_arena_alloc(pm_allocator_t *allocator, size_t size, size_t alignmen
         allocator->tail = next_allocator_page;
 
         result = allocator->tail->start;
-        next = next_allocator_page->current + size;
+        next = result + size;
     }
 
     allocator->tail->current = next;
@@ -114,10 +104,8 @@ pm_allocator_current(pm_allocator_t *allocator) {
 }
 
 static void
-pm_allocator_page_free(pm_allocator_page_t *current) {
+pm_allocator_page_free(pm_allocator_page_t *current, bool top_level) {
     while (current != NULL) {
-        if (current->end != current->start) xfree(current->start);
-
         pm_allocator_page_t *previous = current;
         current = current->next;
 
@@ -125,9 +113,13 @@ pm_allocator_page_free(pm_allocator_page_t *current) {
         // allocator itself, then it came from pm_allocator_arena_alloc, so we
         // should free it. Otherwise we assume it was embedded into another
         // struct or allocated on the stack.
-        if (previous->start == ((char *) previous + sizeof(pm_allocator_t))) {
+        if (top_level) {
+            xfree(previous->start);
+        } else {
             xfree(previous);
         }
+
+        top_level = false;
     }
 }
 
@@ -141,7 +133,7 @@ pm_allocator_reset(pm_allocator_t *allocator, void *current) {
     for (pm_allocator_page_t *current = &allocator->head; current != NULL; current = current->next) {
         if (needle >= current->start && needle <= current->end) {
             current->current = needle;
-            pm_allocator_page_free(current->next);
+            pm_allocator_page_free(current->next, false);
             return;
         }
     }
@@ -153,5 +145,5 @@ pm_allocator_reset(pm_allocator_t *allocator, void *current) {
  * Frees the internal memory associated with the allocator.
  */
 void pm_allocator_free(pm_allocator_t *allocator) {
-    pm_allocator_page_free(&allocator->head);
+    pm_allocator_page_free(&allocator->head, true);
 }
