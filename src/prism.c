@@ -4196,11 +4196,11 @@ pm_float_node_rational_create(pm_parser_t *parser, const pm_token_t *token) {
 
     memcpy(digits, start, (unsigned long) (point - start));
     memcpy(digits + (point - start), point + 1, (unsigned long) (end - point - 1));
-    pm_integer_parse(&node->numerator, PM_INTEGER_BASE_DEFAULT, digits, digits + length - 1);
+    pm_integer_parse(&parser->allocator, &node->numerator, PM_INTEGER_BASE_DEFAULT, digits, digits + length - 1);
 
     digits[0] = '1';
     if (end - point > 1) memset(digits + 1, '0', (size_t) (end - point - 1));
-    pm_integer_parse(&node->denominator, PM_INTEGER_BASE_DEFAULT, digits, digits + (end - point));
+    pm_integer_parse(&parser->allocator, &node->denominator, PM_INTEGER_BASE_DEFAULT, digits, digits + (end - point));
     free(digits);
 
     pm_integers_reduce(&node->numerator, &node->denominator);
@@ -4839,7 +4839,7 @@ pm_integer_node_create(pm_parser_t *parser, pm_node_flags_t base, const pm_token
         default: assert(false && "unreachable"); break;
     }
 
-    pm_integer_parse(&node->value, integer_base, token->start, token->end);
+    pm_integer_parse(&parser->allocator, &node->value, integer_base, token->start, token->end);
     return node;
 }
 
@@ -4898,7 +4898,7 @@ pm_integer_node_rational_create(pm_parser_t *parser, pm_node_flags_t base, const
         default: assert(false && "unreachable"); break;
     }
 
-    pm_integer_parse(&node->numerator, integer_base, token->start, token->end - 1);
+    pm_integer_parse(&parser->allocator, &node->numerator, integer_base, token->start, token->end - 1);
 
     return node;
 }
