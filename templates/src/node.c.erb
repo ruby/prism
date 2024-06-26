@@ -112,7 +112,7 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
                 pm_node_destroy(parser, (pm_node_t *)cast-><%= field.name %>);
             }
             <%- when Prism::Template::StringField -%>
-            pm_string_free(&cast-><%= field.name %>);
+            (void)cast;
             <%- when Prism::Template::NodeListField -%>
             pm_node_list_destroy(parser, &cast-><%= field.name %>);
             <%- else -%>
