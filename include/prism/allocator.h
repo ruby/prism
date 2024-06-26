@@ -39,16 +39,6 @@ void * pm_allocator_arena_alloc(pm_allocator_t *allocator, size_t size, size_t a
 void * pm_allocator_arena_calloc(pm_allocator_t *allocator, size_t count, size_t size, size_t alignment);
 
 /**
- * Retrieve a pointer to the next slot that would be allocated.
- */
-void * pm_allocator_current(pm_allocator_t *allocator);
-
-/**
- * Reset the allocator back to the given slot.
- */
-void pm_allocator_reset(pm_allocator_t *allocator, void *current);
-
-/**
  * Frees the internal memory associated with the allocator.
  */
 void pm_allocator_free(pm_allocator_t *allocator);

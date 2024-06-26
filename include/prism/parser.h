@@ -651,6 +651,7 @@ struct pm_parser {
      * but the node can be found through another parse.
      */
     uint32_t node_id;
+
     /** The allocator used to allocate nodes and their fields. */
     pm_allocator_t allocator;
 

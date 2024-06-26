@@ -15668,7 +15668,6 @@ parse_predicate(pm_parser_t *parser, pm_binding_power_t binding_power, pm_contex
 
 static inline pm_node_t *
 parse_conditional(pm_parser_t *parser, pm_context_t context, size_t opening_newline_index, bool if_after_else, uint16_t depth) {
-    void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
     pm_node_list_t current_block_exits = { 0 };
     pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
@@ -15794,8 +15793,6 @@ parse_conditional(pm_parser_t *parser, pm_context_t context, size_t opening_newl
     }
 
     pop_block_exits(parser, previous_block_exits);
-    pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
     return parent;
 }
 
@@ -18012,7 +18009,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
         case PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES: {
             pm_token_t opening = parser->current;
 
-            void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
             pm_node_list_t current_block_exits = { 0 };
             pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
@@ -18025,8 +18021,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
 
                 pop_block_exits(parser, previous_block_exits);
-                pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
                 return (pm_node_t *) pm_parentheses_node_create(parser, &opening, NULL, &parser->previous);
             }
 
@@ -18057,7 +18051,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 pm_accepts_block_stack_pop(parser);
 
                 pop_block_exits(parser, previous_block_exits);
-                pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
 
                 if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) || PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
                     // If we have a single statement and are ending on a right
@@ -18647,7 +18640,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_token_t case_keyword = parser->previous;
             pm_node_t *predicate = NULL;
 
-            void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
             pm_node_list_t current_block_exits = { 0 };
             pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
@@ -18668,8 +18660,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 parser_lex(parser);
 
                 pop_block_exits(parser, previous_block_exits);
-                pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
                 pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
                 return (pm_node_t *) pm_case_node_create(parser, &case_keyword, predicate, &parser->previous);
             }
@@ -18859,8 +18849,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             }
 
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
             return node;
         }
         case PM_TOKEN_KEYWORD_BEGIN: {
@@ -18870,7 +18858,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_token_t begin_keyword = parser->previous;
             accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
 
-            void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
             pm_node_list_t current_block_exits = { 0 };
             pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
             pm_statements_node_t *begin_statements = NULL;
@@ -18890,8 +18877,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_begin_node_end_keyword_set(begin_node, &parser->previous);
 
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
             return (pm_node_t *) begin_node;
         }
         case PM_TOKEN_KEYWORD_BEGIN_UPCASE: {
@@ -19046,10 +19031,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 return (pm_node_t *) pm_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous);
             }
 
-            // FIXME: (chris_c) Is this needed?
-            // void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
-            // pm_node_list_t current_block_exits = { 0 };
-            // pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+            pm_node_list_t current_block_exits = { 0 };
+            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
             pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, false, false, PM_ERR_CLASS_NAME, (uint16_t) (depth + 1));
             pm_token_t name = parser->previous;
@@ -19112,8 +19095,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             }
 
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
             return (pm_node_t *) pm_class_node_create(parser, &locals, &class_keyword, constant_path, &name, &inheritance_operator, superclass, statements, &parser->previous);
         }
         case PM_TOKEN_KEYWORD_DEF: {
@@ -19612,7 +19593,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             return parse_conditional(parser, PM_CONTEXT_UNLESS, opening_newline_index, false, (uint16_t) (depth + 1));
         }
         case PM_TOKEN_KEYWORD_MODULE: {
-            void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
             pm_node_list_t current_block_exits = { 0 };
             pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
@@ -19627,8 +19607,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             // the name of the module, then we'll handle that here.
             if (PM_NODE_TYPE_P(constant_path, PM_MISSING_NODE)) {
                 pop_block_exits(parser, previous_block_exits);
-                pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
                 pm_token_t missing = (pm_token_t) { .type = PM_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
                 return (pm_node_t *) pm_module_node_create(parser, NULL, &module_keyword, constant_path, &missing, NULL, &missing);
             }
@@ -19676,8 +19654,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             }
 
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
             return (pm_node_t *) pm_module_node_create(parser, &locals, &module_keyword, constant_path, &name, statements, &parser->previous);
         }
         case PM_TOKEN_KEYWORD_NIL:
@@ -21446,7 +21422,6 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
         case PM_TOKEN_QUESTION_MARK: {
             context_push(parser, PM_CONTEXT_TERNARY);
 
-            void *block_exits_current = pm_allocator_current(&parser->block_exits_allocator);
             pm_node_list_t current_block_exits = { 0 };
             pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
 
@@ -21467,8 +21442,6 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
 
                 context_pop(parser);
                 pop_block_exits(parser, previous_block_exits);
-                pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
                 return (pm_node_t *) pm_if_node_ternary_create(parser, node, &qmark, true_expression, &colon, false_expression);
             }
 
@@ -21480,8 +21453,6 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
 
             context_pop(parser);
             pop_block_exits(parser, previous_block_exits);
-            pm_allocator_reset(&parser->block_exits_allocator, block_exits_current);
-
             return (pm_node_t *) pm_if_node_ternary_create(parser, node, &qmark, true_expression, &colon, false_expression);
         }
         case PM_TOKEN_COLON_COLON: {
