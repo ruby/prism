@@ -11,24 +11,29 @@ static void
 pm_node_list_grow(pm_allocator_t *allocator, pm_node_list_t *list, size_t size) {
     size_t requested_size = list->size + size;
 
-    // If the requested size caused overflow, return false.
-    if (requested_size < list->size) return false;
+    // If the requested size caused overflow, fail.
+    assert(requested_size - size == list->size);
 
-    // If the requested size is within the existing capacity, return true.
-    if (requested_size < list->capacity) return true;
+    // If the requested size is within the existing capacity, return.
+    if (requested_size < list->capacity) return;
 
     // Otherwise, reallocate the list to be twice as large as it was before.
-    size_t next_capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+    size_t next_capacity;
+    if (list->capacity == 0) {
+        next_capacity = 4;
+    } else {
+        next_capacity = list->capacity * 2;
 
-    // If multiplying by 2 caused overflow, return false.
-    if (next_capacity < list->capacity) return false;
+        // If multiplying by 2 caused overflow, fail.
+        assert(next_capacity / 2 == list->capacity);
+    }
 
     // If we didn't get enough by doubling, keep doubling until we do.
     while (requested_size > next_capacity) {
         size_t double_capacity = next_capacity * 2;
 
         // Ensure we didn't overflow by multiplying by 2.
-        if (double_capacity < next_capacity) return false;
+        assert(double_capacity / 2 == next_capacity);
         next_capacity = double_capacity;
     }
 

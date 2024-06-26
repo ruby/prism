@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 typedef struct pm_allocator_page {
-    struct pm_allocator *next;
+    struct pm_allocator_page *next;
     char *start;
     char *current;
     char *end;
