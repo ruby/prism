@@ -569,6 +569,12 @@ typedef struct pm_scope {
     /** A pointer to the previous scope in the linked list. */
     struct pm_scope *previous;
 
+    /**
+     * This allocator is responsible for allocating the space for the list of
+     * the locals and the list of implicit parameters in the scope.
+     */
+    pm_allocator_t allocator;
+
     /** The IDs of the locals in the given scope. */
     pm_locals_t locals;
 
@@ -628,6 +634,9 @@ typedef uint32_t pm_state_stack_t;
 struct pm_parser {
     /** The allocator used to allocate nodes and their fields. */
     pm_allocator_t allocator;
+
+    /** The allocator used to allocate lists of block exits. */
+    pm_allocator_t block_exits_allocator;
 
     /** The current state of the lexer. */
     pm_lex_state_t lex_state;

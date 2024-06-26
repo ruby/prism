@@ -7,6 +7,7 @@
 #define PRISM_NODE_H
 
 #include "prism/defines.h"
+#include "prism/allocator.h"
 #include "prism/parser.h"
 #include "prism/util/pm_buffer.h"
 
@@ -23,7 +24,7 @@
  * @param list The list to append to.
  * @param node The node to append.
  */
-void pm_node_list_append(pm_node_list_t *list, pm_node_t *node);
+void pm_node_list_append(pm_allocator_t *allocator, pm_node_list_t *list, pm_node_t *node);
 
 /**
  * Prepend a new node onto the beginning of the node list.
@@ -31,7 +32,7 @@ void pm_node_list_append(pm_node_list_t *list, pm_node_t *node);
  * @param list The list to prepend to.
  * @param node The node to prepend.
  */
-void pm_node_list_prepend(pm_node_list_t *list, pm_node_t *node);
+void pm_node_list_prepend(pm_allocator_t *allocator, pm_node_list_t *list, pm_node_t *node);
 
 /**
  * Concatenate the given node list onto the end of the other node list.
@@ -39,14 +40,7 @@ void pm_node_list_prepend(pm_node_list_t *list, pm_node_t *node);
  * @param list The list to concatenate onto.
  * @param other The list to concatenate.
  */
-void pm_node_list_concat(pm_node_list_t *list, pm_node_list_t *other);
-
-/**
- * Free the internal memory associated with the given node list.
- *
- * @param list The list to free.
- */
-void pm_node_list_free(pm_node_list_t *list);
+void pm_node_list_concat(pm_allocator_t *allocator, pm_node_list_t *list, pm_node_list_t *other);
 
 /**
  * Deallocate a node and all of its children.
