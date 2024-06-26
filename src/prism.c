@@ -936,8 +936,15 @@ pm_locals_reads(pm_locals_t *locals, pm_constant_id_t name) {
  * written but not read in certain contexts.
  */
 static void
-pm_locals_order(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, pm_locals_t *locals, pm_constant_id_list_t *list, bool toplevel) {
-    pm_constant_id_list_init_capacity(list, locals->size);
+pm_locals_order(pm_parser_t *parser, pm_locals_t *locals, pm_constant_id_list_t *list, bool toplevel) {
+    // If there were no locals in the scope, then zero out the memory for the
+    // constant id list and immediately return.
+    if (locals->size == 0) {
+        *list = (pm_constant_id_list_t) { 0 };
+        return;
+    }
+
+    pm_constant_id_list_init_capacity(&parser->allocator, list, locals->size);
 
     // If we're still below the threshold for switching to a hash, then we only
     // need to loop over the locals until we hit the size because the locals are

@@ -105,6 +105,7 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             <%- node.fields.each do |field| -%>
             <%- case field -%>
             <%- when Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField -%>
+            <%#<%- when Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::FlagsField, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField, Prism::Template::ConstantListField -%>%>
             <%- when Prism::Template::NodeField -%>
             pm_node_destroy(parser, (pm_node_t *)cast-><%= field.name %>);
             <%- when Prism::Template::OptionalNodeField -%>
@@ -115,8 +116,6 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             pm_string_free(&cast-><%= field.name %>);
             <%- when Prism::Template::NodeListField -%>
             pm_node_list_destroy(parser, &cast-><%= field.name %>);
-            <%- when Prism::Template::ConstantListField -%>
-            pm_constant_id_list_free(&cast-><%= field.name %>);
             <%- when Prism::Template::IntegerField -%>
             pm_integer_free(&cast-><%= field.name %>);
             <%- else -%>
@@ -131,7 +130,6 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             assert(false && "unreachable");
             break;
     }
-    // xfree(node);
 }
 
 /**
