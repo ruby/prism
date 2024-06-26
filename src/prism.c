@@ -1904,22 +1904,8 @@ pm_statements_node_body_append(pm_parser_t *parser, pm_statements_node_t *node, 
 static size_t
 pm_statements_node_body_length(pm_statements_node_t *node);
 
-/**
- * This function is here to allow us a place to extend in the future when we
- * implement our own arena allocation.
- */
-static inline void *
-pm_node_alloc(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, size_t size) {
-    void *memory = xcalloc(1, size);
-    if (memory == NULL) {
-        fprintf(stderr, "Failed to allocate %d bytes\n", (int) size);
-        abort();
-    }
-    return memory;
-}
-
-#define PM_NODE_ALLOC(parser, type) (type *) pm_node_alloc(parser, sizeof(type))
 #define PM_NODE_IDENTIFY(parser) (++parser->node_id)
+#define PM_NODE_ALLOC(parser, type) (type *) pm_allocator_calloc(&parser->allocator, 1, sizeof(type), sizeof(void *))
 
 /**
  * Allocate a new MissingNode node.
@@ -22110,6 +22096,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
 
     *parser = (pm_parser_t) {
         .node_id = 0,
+        .allocator = { 0 },
         .lex_state = PM_LEX_STATE_BEG,
         .enclosure_nesting = 0,
         .lambda_enclosure_nesting = -1,
@@ -22160,6 +22147,9 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .current_regular_expression_ascii_only = false,
         .warn_mismatched_indentation = true
     };
+
+    // TODO: find a better starting size
+    pm_allocator_init(&parser->allocator, 4096);
 
     // Initialize the constant pool. We're going to completely guess as to the
     // number of constants that we'll need based on the size of the input. The
