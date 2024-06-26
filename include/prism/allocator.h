@@ -29,11 +29,6 @@ typedef struct pm_allocator {
 void pm_allocator_init(pm_allocator_t *allocator, size_t capacity);
 
 /**
- * Retrieve a scratch allocator with the given capacity.
- */
-pm_allocator_t pm_allocator_scratch(size_t capacity);
-
-/**
  * Allocate memory from the given allocator.
  */
 void * pm_allocator_arena_alloc(pm_allocator_t *allocator, size_t size, size_t alignment);
