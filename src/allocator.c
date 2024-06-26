@@ -96,16 +96,12 @@ pm_allocator_arena_calloc(pm_allocator_t *allocator, size_t count, size_t size, 
 }
 
 /**
- * Retrieve a pointer to the next slot that would be allocated.
+ * Frees the internal memory associated with the allocator.
  */
-void *
-pm_allocator_current(pm_allocator_t *allocator) {
-    return allocator->tail->current;
-}
+void pm_allocator_free(pm_allocator_t *allocator) {
+    bool top_level = true;
 
-static void
-pm_allocator_page_free(pm_allocator_page_t *current, bool top_level) {
-    while (current != NULL) {
+    for (pm_allocator_page_t *current = &allocator->head; current != NULL;) {
         pm_allocator_page_t *previous = current;
         current = current->next;
 
@@ -121,29 +117,4 @@ pm_allocator_page_free(pm_allocator_page_t *current, bool top_level) {
 
         top_level = false;
     }
-}
-
-/**
- * Reset the allocator back to the given slot.
- */
-void
-pm_allocator_reset(pm_allocator_t *allocator, void *current) {
-    char *needle = current;
-
-    for (pm_allocator_page_t *current = &allocator->head; current != NULL; current = current->next) {
-        if (needle >= current->start && needle <= current->end) {
-            current->current = needle;
-            pm_allocator_page_free(current->next, false);
-            return;
-        }
-    }
-
-    assert(false && "[pm_allocator_reset] could not find reset point");
-}
-
-/**
- * Frees the internal memory associated with the allocator.
- */
-void pm_allocator_free(pm_allocator_t *allocator) {
-    pm_allocator_page_free(&allocator->head, true);
 }
