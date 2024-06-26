@@ -368,14 +368,17 @@ module Prism
 
     # Parse the source code indicated by the command-line arguments.
     def parse_source(argv)
+      command_line = +""
+      command_line << argv.shift[1] while argv.first&.match?(/^-[alnpx]$/)
+
       case argv.first
       when "-e"
-        argv.shift
-        Prism.parse(argv.shift, command_line: "e")
+        command_line << argv.shift[1]
+        Prism.parse(argv.shift, command_line: command_line)
       when nil
-        Prism.parse_file("test.rb")
+        Prism.parse_file("test.rb", command_line: command_line)
       else
-        Prism.parse_file(argv.shift)
+        Prism.parse_file(argv.shift, command_line: command_line)
       end
     end
 
