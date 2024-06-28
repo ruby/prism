@@ -13,6 +13,7 @@ def jstype(field)
   when Prism::Template::NodeField then field.ruby_type
   when Prism::Template::OptionalNodeField then "#{field.ruby_type} | null"
   when Prism::Template::NodeListField then "Node[]"
+  when Prism::Template::EncodedStringField then "EncodedString"
   when Prism::Template::StringField then "string"
   when Prism::Template::ConstantField then "string"
   when Prism::Template::OptionalConstantField then "string | null"
@@ -42,6 +43,12 @@ const <%= flag.name %> = {
  * A location in the source code.
  *
  * @typedef {{ startOffset: number, length: number }} Location
+ */
+
+/**
+ * A string with associated encoding information.
+ *
+ * @typedef {{ encoding: string, validEncoding: boolean, value: string }} EncodedString
  */
 
 /**

@@ -22,10 +22,15 @@ const LITTLE_ENDIAN = (() => {
 })();
 
 class SerializationBuffer {
+  FORCED_UTF8_ENCODING_FLAG = 1;
+  FORCED_BINARY_ENCODING_FLAG = 2;
+
   constructor(source, array) {
     this.source = source;
     this.array = array;
     this.index = 0;
+    this.fileEncoding = "utf-8";
+    this.decoders = new Map();
   }
 
   readByte() {
@@ -40,8 +45,8 @@ class SerializationBuffer {
     return result;
   }
 
-  readString(length) {
-    return this.decodeString(this.readBytes(length));
+  readString(length, flags) {
+    return this.decodeString(this.readBytes(length), flags).value;
   }
 
   // Read a 32-bit unsigned integer in little-endian format.
@@ -85,17 +90,18 @@ class SerializationBuffer {
     }
   }
 
-  readStringField() {
+  readStringField(flags) {
+    if (flags === undefined) flags = 0;
     const type = this.readByte();
 
     switch (type) {
       case 1: {
         const startOffset = this.readVarInt();
         const length = this.readVarInt();
-        return this.decodeString(this.source.slice(startOffset, startOffset + length));
+        return this.decodeString(this.source.slice(startOffset, startOffset + length), flags);
       }
       case 2:
-        return this.readString(this.readVarInt());
+        return this.decodeString(this.readBytes(this.readVarInt()), flags);
       default:
         throw new Error(`Unknown serialized string type: ${type}`);
     }
@@ -123,24 +129,46 @@ class SerializationBuffer {
     return view.getFloat64(0, LITTLE_ENDIAN);
   }
 
-  decodeString(bytes) {
-    try {
-      return this.utf8Decoder.decode(bytes);
-    } catch (e) {
-      if (e.code === "ERR_ENCODING_INVALID_ENCODED_DATA") {
-        return this.asciiDecoder.decode(bytes);
-      }
+  decodeString(bytes, flags) {
+    if (flags & this.FORCED_BINARY_ENCODING_FLAG) {
+      // just use raw bytes
+      return {
+        encoding: "ascii",
+        validEncoding: true,
+        value: this.asciiDecoder.decode(bytes)
+      };
+    } else {
+      const encoding = flags & this.FORCED_UTF8_ENCODING_FLAG ? "utf-8" : this.fileEncoding.toLowerCase();
+      const decoder = this.getDecoder(encoding);
 
-      throw e;
+      try {
+        // decode with encoding
+        return {
+          encoding,
+          validEncoding: true,
+          value: decoder.decode(bytes)
+        };
+      } catch(e) {
+        // just use raw bytes, capture what the encoding should be, set flag saying valid_encoding? is false
+        if (e.code === "ERR_ENCODING_INVALID_ENCODED_DATA") {
+          return {
+            encoding,
+            validEncoding: false,
+            value: this.asciiDecoder.decode(bytes)
+          };
+        }
+
+        throw e;
+      }
     }
   }
 
-  get utf8Decoder() {
-    if (!this._utf8Decoder) {
-      this._utf8Decoder = new TextDecoder("utf8", {fatal: true});
+  getDecoder(encoding) {
+    if (!this.decoders.has(encoding)) {
+      this.decoders.set(encoding, new TextDecoder(encoding, {fatal: true}));
     }
 
-    return this._utf8Decoder;
+    return this.decoders.get(encoding);
   }
 
   get asciiDecoder() {
@@ -276,8 +304,8 @@ export function deserialize(source, array) {
     throw new Error("Invalid serialization (location fields must be included but are not)");
   }
 
-  // Skip past the encoding, it means nothing to us in JavaScript.
-  buffer.readString(buffer.readVarInt());
+  // Read the file's encoding.
+  buffer.fileEncoding = buffer.readString(buffer.readVarInt());
 
   // Skip past the start line, as we don't support that option yet in
   // JavaScript.
@@ -327,28 +355,39 @@ export function deserialize(source, array) {
 
     switch (type) {
       <%- nodes.each.with_index(1) do |node, index| -%>
-      case <%= index %>:
+      <%- use_string_flags_local = false -%>
+      case <%= index %>: {
+        <%- first_field = node.fields[0] -%>
+        <%- if first_field&.name == "flags" && %w(StringFlags SymbolFlags).include?(first_field&.kind) -%>
+        const stringFlags = buffer.readVarInt();
+        <%- use_string_flags_local = true -%>
+        <%- end -%>
         <%- if node.needs_serialized_length? -%>
         buffer.readUint32();
         <%- end -%>
-        return new nodes.<%= node.name %>(<%= (node.fields.map { |field|
-          case field
-          when Prism::Template::NodeField then "readRequiredNode()"
-          when Prism::Template::OptionalNodeField then "readOptionalNode()"
-          when Prism::Template::StringField then "buffer.readStringField()"
-          when Prism::Template::NodeListField then "Array.from({ length: buffer.readVarInt() }, readRequiredNode)"
-          when Prism::Template::ConstantField then "readRequiredConstant()"
-          when Prism::Template::OptionalConstantField then "readOptionalConstant()"
-          when Prism::Template::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
-          when Prism::Template::LocationField then "buffer.readLocation()"
-          when Prism::Template::OptionalLocationField then "buffer.readOptionalLocation()"
-          when Prism::Template::UInt8Field then "buffer.readByte()"
-          when Prism::Template::UInt32Field, Prism::Template::FlagsField then "buffer.readVarInt()"
-          when Prism::Template::IntegerField then "readInteger()"
-          when Prism::Template::DoubleField then "buffer.readDouble()"
-          else raise
+        return new nodes.<%= node.name %>(<%= (node.fields.map.with_index { |field, index|
+          if index == 0 && field.name == "flags" && field.kind == "StringFlags"
+            "stringFlags"
+          else
+            case field
+            when Prism::Template::NodeField then "readRequiredNode()"
+            when Prism::Template::OptionalNodeField then "readOptionalNode()"
+            when Prism::Template::StringField then use_string_flags_local ? "buffer.readStringField(stringFlags)" : "buffer.readStringField()"
+            when Prism::Template::NodeListField then "Array.from({ length: buffer.readVarInt() }, readRequiredNode)"
+            when Prism::Template::ConstantField then "readRequiredConstant()"
+            when Prism::Template::OptionalConstantField then "readOptionalConstant()"
+            when Prism::Template::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
+            when Prism::Template::LocationField then "buffer.readLocation()"
+            when Prism::Template::OptionalLocationField then "buffer.readOptionalLocation()"
+            when Prism::Template::UInt8Field then "buffer.readByte()"
+            when Prism::Template::UInt32Field, Prism::Template::FlagsField then "buffer.readVarInt()"
+            when Prism::Template::IntegerField then "readInteger()"
+            when Prism::Template::DoubleField then "buffer.readDouble()"
+            else raise
+            end
           end
         } + ["location"]).join(", ") -%>);
+      }
       <%- end -%>
       default:
         throw new Error(`Unknown node type: ${type}`);

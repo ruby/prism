@@ -2494,7 +2494,7 @@ nodes:
       - name: closing_loc
         type: location
       - name: unescaped
-        type: string
+        type: encodedstring
     comment: |
       Represents a regular expression literal used in the predicate of a conditional to implicitly match against the last line read by an IO object.
 
@@ -2958,7 +2958,7 @@ nodes:
       - name: closing_loc
         type: location
       - name: unescaped
-        type: string
+        type: encodedstring
     comment: |
       Represents a regular expression literal with no interpolation.
 
@@ -3127,7 +3127,7 @@ nodes:
         type: flags
         kind: StringFlags
       - name: filepath
-        type: string
+        type: encodedstring
     comment: |
       Represents the use of the `__FILE__` keyword.
 
@@ -3171,7 +3171,7 @@ nodes:
       - name: closing_loc
         type: location?
       - name: unescaped
-        type: string
+        type: encodedstring
     comment: |
       Represents a string literal, a string contained within a `%w` list, or plain string content within an interpolated string.
 
@@ -3216,7 +3216,7 @@ nodes:
       - name: closing_loc
         type: location?
       - name: unescaped
-        type: string
+        type: encodedstring
     comment: |
       Represents a symbol literal or a symbol contained within a `%i` list.
 
@@ -3346,7 +3346,7 @@ nodes:
       - name: closing_loc
         type: location
       - name: unescaped
-        type: string
+        type: encodedstring
     comment: |
       Represents an xstring literal with no interpolation.
 

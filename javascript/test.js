@@ -27,7 +27,84 @@ test("node[]", () => {
 
 test("string", () => {
   const result = parse('"foo"');
-  assert(result.value.statements.body[0].unescaped === "foo");
+  const node = result.value.statements.body[0];
+
+  assert(!node.isForcedUtf8Encoding())
+  assert(!node.isForcedBinaryEncoding())
+
+  assert(node.unescaped.value === "foo");
+  assert(node.unescaped.encoding === "utf-8");
+  assert(node.unescaped.validEncoding);
+});
+
+test("forced utf-8 string using \\u syntax", () => {
+  const result = parse('# encoding: utf-8\n"\\u{9E7F}"');
+  const node = result.value.statements.body[0];
+  const str = node.unescaped;
+
+  assert(node.isForcedUtf8Encoding());
+  assert(!node.isForcedBinaryEncoding());
+
+  assert(str.value === "鹿");
+  assert(str.encoding === "utf-8");
+  assert(str.validEncoding);
+});
+
+test("forced utf-8 string with invalid byte sequence", () => {
+  const result = parse('# encoding: utf-8\n"\\xFF\\xFF\\xFF"');
+  const node = result.value.statements.body[0];
+  const str = node.unescaped;
+
+  assert(node.isForcedUtf8Encoding());
+  assert(!node.isForcedBinaryEncoding());
+
+  assert(str.value === "ÿÿÿ");
+  assert(str.encoding === "utf-8");
+  assert(!str.validEncoding);
+});
+
+test("ascii string with embedded utf-8 character", () => {
+  // # encoding: ascii\n"鹿"'
+  // # encoding: ascii\n"é¹¿"'
+  const ascii_str = new Buffer.from([35, 32, 101, 110, 99, 111, 100, 105, 110, 103, 58, 32, 97, 115, 99, 105, 105, 10, 34, 233, 185, 191, 34]);
+  const result = parse(ascii_str);
+  const node = result.value.statements.body[0];
+  const str = node.unescaped;
+
+  assert(!node.isForcedUtf8Encoding());
+  assert(!node.isForcedBinaryEncoding());
+
+  assert(str.value === "é¹¿");
+  assert(str.encoding === "us-ascii");
+  assert(str.validEncoding);
+});
+
+test("forced binary string", () => {
+  const result = parse('# encoding: ascii\n"\\xFF\\xFF\\xFF"');
+  const node = result.value.statements.body[0];
+  const str = node.unescaped;
+
+  assert(!node.isForcedUtf8Encoding());
+  assert(node.isForcedBinaryEncoding());
+
+  assert(str.value === "ÿÿÿ");
+  assert(str.encoding === "ascii");
+  assert(str.validEncoding);
+});
+
+test("forced binary string with Unicode character", () => {
+  // # encoding: us-ascii\n"\\xFFé¹¿\\xFF"
+  const ascii_str = Buffer.from([35, 32, 101, 110, 99, 111, 100, 105, 110, 103, 58, 32, 97, 115, 99, 105, 105, 10, 34, 92, 120, 70, 70, 233, 185, 191, 92, 120, 70, 70, 34]);
+  const result = parse(ascii_str);
+  const node = result.value.statements.body[0];
+  const str = node.unescaped;
+
+  assert(!node.isForcedUtf8Encoding());
+  assert(node.isForcedBinaryEncoding());
+
+  assert(str.value === "ÿé¹¿ÿ");
+  assert(str.encoding === "ascii");
+  assert(str.validEncoding);
 });
 
 test("constant", () => {
