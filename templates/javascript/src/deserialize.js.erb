@@ -149,7 +149,7 @@ class SerializationBuffer {
           value: decoder.decode(bytes)
         };
       } catch(e) {
-        // just use raw bytes, capture what the encoding should be, set flag saying valid_encoding? is false
+        // just use raw bytes, capture what the encoding should be, set flag saying encoding is invalid
         if (e.code === "ERR_ENCODING_INVALID_ENCODED_DATA") {
           return {
             encoding,
