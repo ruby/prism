@@ -72,10 +72,10 @@ test("ascii string with embedded utf-8 character", () => {
   const str = node.unescaped;
 
   assert(!node.isForcedUtf8Encoding());
-  assert(!node.isForcedBinaryEncoding());
+  assert(node.isForcedBinaryEncoding());
 
   assert(str.value === "é¹¿");
-  assert(str.encoding === "us-ascii");
+  assert(str.encoding === "ascii");
   assert(str.validEncoding);
 });
 
