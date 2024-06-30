@@ -13,6 +13,7 @@ task check_manifest: :templates do
     autom4te.cache
     bin
     build
+    cpp
     doc
     fuzz
     gemfiles
@@ -22,7 +23,9 @@ task check_manifest: :templates do
     pkg
     rakelib
     rust
+    sample
     sorbet
+    suppressions
     templates
     test
     top-100-gems

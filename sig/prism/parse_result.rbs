@@ -6,11 +6,20 @@ module Prism
 
     def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
     def encoding: () -> Encoding
+    def lines: () -> Array[String]
     def slice: (Integer byte_offset, Integer length) -> String
     def line: (Integer byte_offset) -> Integer
     def line_start: (Integer byte_offset) -> Integer
+    def line_end: (Integer byte_offset) -> Integer
     def line_offset: (Integer byte_offset) -> Integer
     def column: (Integer byte_offset) -> Integer
+    def character_offset: (Integer byte_offset) -> Integer
+    def character_column: (Integer byte_offset) -> Integer
+    def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
+    def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
+  end
+
+  class ASCIISource < Source
     def character_offset: (Integer byte_offset) -> Integer
     def character_column: (Integer byte_offset) -> Integer
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
@@ -29,7 +38,10 @@ module Prism
     def trailing_comment: (comment) -> void
     def comments: () -> Array[comment]
     def copy: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
+    def chop: () -> Location
+    def source_lines: () -> Array[String]
     def slice: () -> String
+    def slice_lines: () -> String
     def start_character_offset: () -> Integer
     def end_offset: () -> Integer
     def end_character_offset: () -> Integer
@@ -40,16 +52,17 @@ module Prism
     def start_character_column: () -> Integer
     def end_column: () -> Integer
     def end_character_column: () -> Integer
-    def deconstruct_keys: (Array[Symbol] keys) -> { start_offset: Integer, end_offset: Integer }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def pretty_print: (untyped q) -> untyped
     def join: (Location other) -> Location
+    def adjoin: (String string) -> Location
   end
 
   class Comment
     attr_reader location: Location
 
     def initialize: (Location location) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { location: Location }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
   end
 
   interface _Comment
@@ -75,7 +88,7 @@ module Prism
     def key: () -> String
     def value: () -> String
 
-    def deconstruct_keys: (Array[Symbol] keys) -> { key_loc: Location, value_loc: Location }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
   end
 
   class ParseError
@@ -85,7 +98,7 @@ module Prism
     attr_reader level: Symbol
 
     def initialize: (Symbol type, String message, Location location, Symbol level) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
   end
 
   class ParseWarning
@@ -95,11 +108,10 @@ module Prism
     attr_reader level: Symbol
 
     def initialize: (Symbol type, String message, Location location, Symbol level) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { message: String, location: Location, level: Symbol }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
   end
 
-  class ParseResult[out T]
-    attr_reader value: T
+  class Result
     attr_reader comments: Array[comment]
     attr_reader magic_comments: Array[MagicComment]
     attr_reader data_loc: Location?
@@ -107,10 +119,31 @@ module Prism
     attr_reader warnings: Array[ParseWarning]
     attr_reader source: Source
 
-    def initialize: (T value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { value: T, comments: Array[comment], magic_comments: Array[MagicComment], data_loc: Location?, errors: Array[ParseError], warnings: Array[ParseWarning] }
+    def initialize: (Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def success?: () -> bool
     def failure?: () -> bool
+  end
+
+  class ParseResult < Result
+    attr_reader value: ProgramNode
+
+    def initialize: (ProgramNode value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+  end
+
+  class LexResult < Result
+    attr_reader value: Array[[Token, Integer]]
+
+    def initialize: (Array[[Token, Integer]] value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+  end
+
+  class ParseLexResult < Result
+    attr_reader value: [ProgramNode, Array[[Token, Integer]]]
+
+    def initialize: ([ProgramNode, Array[[Token, Integer]]] value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
   end
 
   class Token
@@ -120,7 +153,7 @@ module Prism
     attr_reader location: Location
 
     def initialize: (Source source, Symbol type, String value, Location location) -> void
-    def deconstruct_keys: (Array[Symbol] keys) -> { type: Symbol, value: String, location: Location }
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def pretty_print: (untyped q) -> untyped
     def ==: (untyped other) -> bool
   end

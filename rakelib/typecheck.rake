@@ -2,6 +2,8 @@
 
 namespace :typecheck do
   task tapioca: :templates do
+    Rake::Task["compile:prism"].invoke
+
     # Yard crashes parsing steep, which is all run because of tapioca. So to
     # avoid this, we're going to monkey patch yard to ignore these kinds of
     # crashes so tapioca can keep running.
@@ -24,20 +26,21 @@ namespace :typecheck do
 
   desc "Typecheck with Sorbet"
   task sorbet: :templates do
-    polyfills = Dir["lib/prism/polyfill/**/*.rb"]
-    gem_rbis = Dir["sorbet/rbi/**/*.rbi"]
+    locals = {
+      polyfills: Dir["lib/prism/polyfill/**/*.rb"],
+      gem_rbis: Dir["sorbet/rbi/**/*.rbi"]
+    }
 
-    File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result(binding))
+    File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result_with_hash(locals))
       false:
-        - ./lib/prism/debug.rb
         - ./lib/prism/lex_compat.rb
         - ./lib/prism/node_ext.rb
         - ./lib/prism/parse_result.rb
         - ./lib/prism/visitor.rb
         - ./lib/prism/translation/ripper.rb
-        - ./lib/prism/translation/ripper/ripper_compiler.rb
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
+        - ./lib/prism/inspect_visitor.rb
         # We want to treat all polyfill files as "typed: false"
       <% polyfills.each do |file| -%>
         - ./<%= file %>
@@ -68,13 +71,11 @@ namespace :typecheck do
       --suppress-error-code=7001
     CONFIG
 
-    Process.wait(fork do
-      exec "#{::Gem::Specification.find_by_name("sorbet-static").full_gem_path}/libexec/sorbet"
-    end)
+    exec "#{::Gem::Specification.find_by_name("sorbet-static").full_gem_path}/libexec/sorbet"
   end
 
   desc "Typecheck with Steep"
   task steep: :templates do
-    Process.wait(fork { exec Gem.bin_path("steep", "steep"), "check" })
+    exec Gem.bin_path("steep", "steep"), "check"
   end
 end

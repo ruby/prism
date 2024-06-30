@@ -7,9 +7,10 @@ ruby "~> 3.2.0"
 gemspec path: "../.."
 
 gem "ffi"
+gem "onigmo", platforms: :ruby
 gem "parser"
-gem "rake"
 gem "rake-compiler"
+gem "rake"
 gem "rbs"
 gem "ruby_memcheck"
 gem "test-unit"

@@ -2,19 +2,22 @@
 
 class Prism::Source
   sig { returns(String) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Integer) }
-  attr_reader :start_line
+  def start_line; end
 
   sig { returns(T::Array[Integer]) }
-  attr_reader :offsets
+  def offsets; end
 
   sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).void }
   def initialize(source, start_line = 1, offsets = []); end
 
   sig { returns(Encoding) }
   def encoding; end
+
+  sig { returns(T::Array[String]) }
+  def lines; end
 
   sig { params(byte_offset: Integer, length: Integer).returns(String) }
   def slice(byte_offset, length); end
@@ -41,15 +44,29 @@ class Prism::Source
   def code_units_column(byte_offset, encoding); end
 end
 
+class Prism::ASCIISource < Prism::Source
+  sig { params(byte_offset: Integer).returns(Integer) }
+  def character_offset(byte_offset); end
+
+  sig { params(byte_offset: Integer).returns(Integer) }
+  def character_column(byte_offset); end
+
+  sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
+  def code_units_offset(byte_offset, encoding); end
+
+  sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
+  def code_units_column(byte_offset, encoding); end
+end
+
 class Prism::Location
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Integer) }
-  attr_reader :start_offset
+  def start_offset; end
 
   sig { returns(Integer) }
-  attr_reader :length
+  def length; end
 
   sig { params(source: Prism::Source, start_offset: Integer, length: Integer).void }
   def initialize(source, start_offset, length); end
@@ -72,8 +89,14 @@ class Prism::Location
   sig { params(source: Prism::Source, start_offset: Integer, length: Integer).returns(Prism::Location) }
   def copy(source: self.source, start_offset: self.start_offset, length: self.length); end
 
+  sig { returns(Prism::Location) }
+  def chop; end
+
   sig { returns(String) }
   def inspect; end
+
+  sig { returns(T::Array[String]) }
+  def source_lines; end
 
   sig { returns(String) }
   def slice; end
@@ -131,13 +154,16 @@ class Prism::Location
 
   sig { params(other: Prism::Location).returns(Prism::Location) }
   def join(other); end
+
+  sig { params(string: String).returns(Prism::Location) }
+  def adjoin(string); end
 end
 
 class Prism::Comment
   abstract!
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { params(location: Prism::Location).void }
   def initialize(location); end
@@ -170,10 +196,10 @@ end
 
 class Prism::MagicComment
   sig { returns(Prism::Location) }
-  attr_reader :key_loc
+  def key_loc; end
 
   sig { returns(Prism::Location) }
-  attr_reader :value_loc
+  def value_loc; end
 
   sig { params(key_loc: Prism::Location, value_loc: Prism::Location).void }
   def initialize(key_loc, value_loc); end
@@ -193,16 +219,16 @@ end
 
 class Prism::ParseError
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :message
+  def message; end
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { returns(Symbol) }
-  attr_reader :level
+  def level; end
 
   sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
   def initialize(type, message, location, level); end
@@ -216,16 +242,16 @@ end
 
 class Prism::ParseWarning
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :message
+  def message; end
 
   sig { returns(Prism::Location) }
-  attr_reader :location
+  def location; end
 
   sig { returns(Symbol) }
-  attr_reader :level
+  def level; end
 
   sig { params(type: Symbol, message: String, location: Prism::Location, level: Symbol).void }
   def initialize(type, message, location, level); end
@@ -237,32 +263,27 @@ class Prism::ParseWarning
   def inspect; end
 end
 
-class Prism::ParseResult
-  Value = type_member
-
-  sig { returns(Value) }
-  attr_reader :value
+class Prism::Result
+  sig { params(comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(comments, magic_comments, data_loc, errors, warnings, source); end
 
   sig { returns(T::Array[Prism::Comment]) }
-  attr_reader :comments
+  def comments; end
 
   sig { returns(T::Array[Prism::MagicComment]) }
-  attr_reader :magic_comments
+  def magic_comments; end
 
   sig { returns(T.nilable(Prism::Location)) }
-  attr_reader :data_loc
+  def data_loc; end
 
   sig { returns(T::Array[Prism::ParseError]) }
-  attr_reader :errors
+  def errors; end
 
   sig { returns(T::Array[Prism::ParseWarning]) }
-  attr_reader :warnings
+  def warnings; end
 
   sig { returns(Prism::Source) }
-  attr_reader :source
-
-  sig { params(value: Value, comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
-  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+  def source; end
 
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
@@ -277,15 +298,48 @@ class Prism::ParseResult
   def failure?; end
 end
 
+class Prism::ParseResult < Prism::Result
+  sig { params(value: Prism::ProgramNode, comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns(Prism::ProgramNode) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+end
+
+class Prism::LexResult < Prism::Result
+  sig { params(value: T::Array[T.untyped], comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns(T::Array[T.untyped]) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+end
+
+class Prism::ParseLexResult < Prism::Result
+  sig { params(value: [Prism::ProgramNode, T::Array[T.untyped]], comments: T::Array[Prism::Comment], magic_comments: T::Array[Prism::MagicComment], data_loc: T.nilable(Prism::Location), errors: T::Array[Prism::ParseError], warnings: T::Array[Prism::ParseWarning], source: Prism::Source).void }
+  def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+
+  sig { returns([Prism::ProgramNode, T::Array[T.untyped]]) }
+  def value; end
+
+  sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+  def deconstruct_keys(keys); end
+end
+
 class Prism::Token
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Symbol) }
-  attr_reader :type
+  def type; end
 
   sig { returns(String) }
-  attr_reader :value
+  def value; end
 
   sig { params(source: Prism::Source, type: Symbol, value: String, location: T.any(Integer, Prism::Location)).void }
   def initialize(source, type, value, location); end

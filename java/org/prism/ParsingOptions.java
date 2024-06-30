@@ -13,7 +13,7 @@ public abstract class ParsingOptions {
      */
     public enum SyntaxVersion {
         LATEST(0),
-        V3_3_0(1);
+        V3_3(1);
 
         private final int value;
 
@@ -39,15 +39,15 @@ public abstract class ParsingOptions {
      *
      * @param filepath the name of the file that is currently being parsed
      * @param line the line within the file that the parser starts on. This value is 1-indexed
-     * @param offset the offset within the file that the parser starts on. This value is 0-indexed
      * @param encoding the name of the encoding that the source file is in
      * @param frozenStringLiteral whether the frozen string literal option has been set
      * @param commandLine the set of flags that were set on the command line
      * @param version code of Ruby version which syntax will be used to parse
+     * @param encodingLocked whether the encoding is locked (should almost always be false)
      * @param scopes scopes surrounding the code that is being parsed with local variable names defined in every scope
      *            ordered from the outermost scope to the innermost one
      */
-    public static byte[] serialize(byte[] filepath, int line, int offset, byte[] encoding, boolean frozenStringLiteral, EnumSet<CommandLine> commandLine, SyntaxVersion version, byte[][][] scopes) {
+    public static byte[] serialize(byte[] filepath, int line, byte[] encoding, boolean frozenStringLiteral, EnumSet<CommandLine> commandLine, SyntaxVersion version, boolean encodingLocked, byte[][][] scopes) {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         // filepath
@@ -56,9 +56,6 @@ public abstract class ParsingOptions {
 
         // line
         write(output, serializeInt(line));
-
-        // offset
-        write(output, serializeInt(offset));
 
         // encoding
         write(output, serializeInt(encoding.length));
@@ -73,10 +70,14 @@ public abstract class ParsingOptions {
         // version
         output.write(version.getValue());
 
+        // encodingLocked
+        output.write(encodingLocked ? 1 : 0);
+
         // scopes
 
         // number of scopes
         write(output, serializeInt(scopes.length));
+
         // local variables in each scope
         for (byte[][] scope : scopes) {
             // number of locals
@@ -100,7 +101,8 @@ public abstract class ParsingOptions {
     private static <T extends Enum<T>> byte serializeEnumSet(EnumSet<T> set) {
         byte result = 0;
         for (T value : set) {
-            result |= 1 << value.ordinal();
+            assert (1 << value.ordinal()) <= Byte.MAX_VALUE;
+            result |= (byte) (1 << value.ordinal());
         }
         return result;
     }

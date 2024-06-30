@@ -26,6 +26,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <locale.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -97,6 +98,11 @@ typedef char * (pm_parse_stream_fgets_t)(char *string, int size, void *stream);
  * @return The AST representing the source.
  */
 PRISM_EXPORTED_FUNCTION pm_node_t * pm_parse_stream(pm_parser_t *parser, pm_buffer_t *buffer, void *stream, pm_parse_stream_fgets_t *fgets, const pm_options_t *options);
+
+// We optionally support serializing to a binary string. For systems that don't
+// want or need this functionality, it can be turned off with the
+// PRISM_EXCLUDE_SERIALIZATION define.
+#ifndef PRISM_EXCLUDE_SERIALIZATION
 
 /**
  * Parse and serialize the AST represented by the source that is read out of the
@@ -185,6 +191,8 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_lex(pm_buffer_t *buffer, const uint8_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse_lex(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
+#endif
+
 /**
  * Parse the source and return true if it parses without errors or warnings.
  *
@@ -211,14 +219,9 @@ PRISM_EXPORTED_FUNCTION const char * pm_token_type_name(pm_token_type_t token_ty
  */
 const char * pm_token_type_human(pm_token_type_t token_type);
 
-/**
- * Format the errors on the parser into the given buffer.
- *
- * @param parser The parser to format the errors for.
- * @param buffer The buffer to format the errors into.
- * @param colorize Whether or not to colorize the errors with ANSI escape sequences.
- */
-PRISM_EXPORTED_FUNCTION void pm_parser_errors_format(const pm_parser_t *parser, pm_buffer_t *buffer, bool colorize);
+// We optionally support dumping to JSON. For systems that don't want or need
+// this functionality, it can be turned off with the PRISM_EXCLUDE_JSON define.
+#ifndef PRISM_EXCLUDE_JSON
 
 /**
  * Dump JSON to the given buffer.
@@ -228,6 +231,8 @@ PRISM_EXPORTED_FUNCTION void pm_parser_errors_format(const pm_parser_t *parser, 
  * @param node The node to serialize.
  */
 PRISM_EXPORTED_FUNCTION void pm_dump_json(pm_buffer_t *buffer, const pm_parser_t *parser, const pm_node_t *node);
+
+#endif
 
 /**
  * @mainpage

@@ -469,18 +469,16 @@
         │   ├── target:
         │   │   @ ConstantPathNode (location: (18,0)-(18,5))
         │   │   ├── parent: ∅
-        │   │   ├── child:
-        │   │   │   @ ConstantReadNode (location: (18,2)-(18,5))
-        │   │   │   └── name: :Foo
-        │   │   └── delimiter_loc: (18,0)-(18,2) = "::"
+        │   │   ├── name: :Foo
+        │   │   ├── delimiter_loc: (18,0)-(18,2) = "::"
+        │   │   └── name_loc: (18,2)-(18,5) = "Foo"
         │   ├── operator_loc: (18,6)-(18,7) = "="
         │   └── value:
         │       @ ConstantPathNode (location: (18,8)-(18,13))
         │       ├── parent: ∅
-        │       ├── child:
-        │       │   @ ConstantReadNode (location: (18,10)-(18,13))
-        │       │   └── name: :Bar
-        │       └── delimiter_loc: (18,8)-(18,10) = "::"
+        │       ├── name: :Bar
+        │       ├── delimiter_loc: (18,8)-(18,10) = "::"
+        │       └── name_loc: (18,10)-(18,13) = "Bar"
         ├── @ ClassVariableWriteNode (location: (19,0)-(19,7))
         │   ├── name: :@@a
         │   ├── name_loc: (19,0)-(19,3) = "@@a"
@@ -513,14 +511,12 @@
         │   │   │   ├── parent:
         │   │   │   │   @ ConstantReadNode (location: (22,0)-(22,4))
         │   │   │   │   └── name: :Name
-        │   │   │   ├── child:
-        │   │   │   │   @ ConstantReadNode (location: (22,6)-(22,12))
-        │   │   │   │   └── name: :Spaced
-        │   │   │   └── delimiter_loc: (22,4)-(22,6) = "::"
-        │   │   ├── child:
-        │   │   │   @ ConstantReadNode (location: (22,14)-(22,19))
-        │   │   │   └── name: :CONST
-        │   │   └── delimiter_loc: (22,12)-(22,14) = "::"
+        │   │   │   ├── name: :Spaced
+        │   │   │   ├── delimiter_loc: (22,4)-(22,6) = "::"
+        │   │   │   └── name_loc: (22,6)-(22,12) = "Spaced"
+        │   │   ├── name: :CONST
+        │   │   ├── delimiter_loc: (22,12)-(22,14) = "::"
+        │   │   └── name_loc: (22,14)-(22,19) = "CONST"
         │   ├── operator_loc: (22,20)-(22,21) = "="
         │   └── value:
         │       @ IntegerNode (location: (22,22)-(22,23))
@@ -910,10 +906,11 @@
         │   ├── name_loc: (39,0)-(39,1) = "x"
         │   ├── value:
         │   │   @ InterpolatedStringNode (location: (39,4)-(39,14))
+        │   │   ├── flags: ∅
         │   │   ├── opening_loc: (39,4)-(39,14) = "<<-HEREDOC"
         │   │   ├── parts: (length: 3)
         │   │   │   ├── @ StringNode (location: (40,0)-(40,2))
-        │   │   │   │   ├── flags: ∅
+        │   │   │   │   ├── flags: frozen
         │   │   │   │   ├── opening_loc: ∅
         │   │   │   │   ├── content_loc: (40,0)-(40,2) = "  "
         │   │   │   │   ├── closing_loc: ∅
@@ -923,7 +920,7 @@
         │   │   │   │   ├── statements: ∅
         │   │   │   │   └── closing_loc: (40,4)-(40,5) = "}"
         │   │   │   └── @ StringNode (location: (40,5)-(41,0))
-        │   │   │       ├── flags: ∅
+        │   │   │       ├── flags: frozen
         │   │   │       ├── opening_loc: ∅
         │   │   │       ├── content_loc: (40,5)-(41,0) = "\n"
         │   │   │       ├── closing_loc: ∅
@@ -945,10 +942,11 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (42,4)-(42,14))
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (42,4)-(42,14) = "<<-HEREDOC"
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (43,0)-(43,2))
-        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── flags: frozen
         │   │           │   │   ├── opening_loc: ∅
         │   │           │   │   ├── content_loc: (43,0)-(43,2) = "  "
         │   │           │   │   ├── closing_loc: ∅
@@ -958,7 +956,7 @@
         │   │           │   │   ├── statements: ∅
         │   │           │   │   └── closing_loc: (43,4)-(43,5) = "}"
         │   │           │   └── @ StringNode (location: (43,5)-(44,0))
-        │   │           │       ├── flags: ∅
+        │   │           │       ├── flags: frozen
         │   │           │       ├── opening_loc: ∅
         │   │           │       ├── content_loc: (43,5)-(44,0) = "\n"
         │   │           │       ├── closing_loc: ∅
@@ -981,10 +979,11 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (45,6)-(45,16))
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (45,6)-(45,16) = "<<-HEREDOC"
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (46,0)-(46,2))
-        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── flags: frozen
         │   │           │   │   ├── opening_loc: ∅
         │   │           │   │   ├── content_loc: (46,0)-(46,2) = "  "
         │   │           │   │   ├── closing_loc: ∅
@@ -994,7 +993,7 @@
         │   │           │   │   ├── statements: ∅
         │   │           │   │   └── closing_loc: (46,4)-(46,5) = "}"
         │   │           │   └── @ StringNode (location: (46,5)-(47,0))
-        │   │           │       ├── flags: ∅
+        │   │           │       ├── flags: frozen
         │   │           │       ├── opening_loc: ∅
         │   │           │       ├── content_loc: (46,5)-(47,0) = "\n"
         │   │           │       ├── closing_loc: ∅
@@ -1015,10 +1014,11 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (48,2)-(48,12))
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (48,2)-(48,12) = "<<-HEREDOC"
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (49,0)-(49,2))
-        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── flags: frozen
         │   │           │   │   ├── opening_loc: ∅
         │   │           │   │   ├── content_loc: (49,0)-(49,2) = "  "
         │   │           │   │   ├── closing_loc: ∅
@@ -1028,7 +1028,7 @@
         │   │           │   │   ├── statements: ∅
         │   │           │   │   └── closing_loc: (49,4)-(49,5) = "}"
         │   │           │   └── @ StringNode (location: (49,5)-(50,0))
-        │   │           │       ├── flags: ∅
+        │   │           │       ├── flags: frozen
         │   │           │       ├── opening_loc: ∅
         │   │           │       ├── content_loc: (49,5)-(50,0) = "\n"
         │   │           │       ├── closing_loc: ∅
@@ -1054,10 +1054,11 @@
             ├── operator_loc: (51,3)-(51,6) = "||="
             └── value:
                 @ InterpolatedStringNode (location: (51,7)-(51,17))
+                ├── flags: ∅
                 ├── opening_loc: (51,7)-(51,17) = "<<-HEREDOC"
                 ├── parts: (length: 3)
                 │   ├── @ StringNode (location: (52,0)-(52,2))
-                │   │   ├── flags: ∅
+                │   │   ├── flags: frozen
                 │   │   ├── opening_loc: ∅
                 │   │   ├── content_loc: (52,0)-(52,2) = "  "
                 │   │   ├── closing_loc: ∅
@@ -1067,7 +1068,7 @@
                 │   │   ├── statements: ∅
                 │   │   └── closing_loc: (52,4)-(52,5) = "}"
                 │   └── @ StringNode (location: (52,5)-(53,0))
-                │       ├── flags: ∅
+                │       ├── flags: frozen
                 │       ├── opening_loc: ∅
                 │       ├── content_loc: (52,5)-(53,0) = "\n"
                 │       ├── closing_loc: ∅

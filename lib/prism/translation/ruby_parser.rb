@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-require "ruby_parser"
+begin
+  require "ruby_parser"
+rescue LoadError
+  warn(%q{Error: Unable to load ruby_parser. Add `gem "ruby_parser"` to your Gemfile.})
+  exit(1)
+end
 
 module Prism
   module Translation
@@ -192,19 +197,19 @@ module Prism
 
           if node.opening == "("
             result.line = node.opening_loc.start_line
-            result.max_line = node.closing_loc.end_line
+            result.line_max = node.closing_loc.end_line
             shadow_loc = false
           end
 
           if node.locals.any?
             shadow = s(node, :shadow).concat(visit_all(node.locals))
             shadow.line = node.locals.first.location.start_line
-            shadow.max_line = node.locals.last.location.end_line
+            shadow.line_max = node.locals.last.location.end_line
             result << shadow
 
             if shadow_loc
               result.line = shadow.line
-              result.max_line = shadow.max_line
+              result.line_max = shadow.line_max
             end
           end
 
@@ -271,9 +276,9 @@ module Prism
         # ^^^^^^^^^^^^^^^
         def visit_call_operator_write_node(node)
           if op_asgn?(node)
-            s(node, op_asgn_type(node, :op_asgn), visit(node.receiver), visit_write_value(node.value), node.read_name, node.operator)
+            s(node, op_asgn_type(node, :op_asgn), visit(node.receiver), visit_write_value(node.value), node.read_name, node.binary_operator)
           else
-            s(node, op_asgn_type(node, :op_asgn2), visit(node.receiver), node.write_name, node.operator, visit_write_value(node.value))
+            s(node, op_asgn_type(node, :op_asgn2), visit(node.receiver), node.write_name, node.binary_operator, visit_write_value(node.value))
           end
         end
 
@@ -372,7 +377,7 @@ module Prism
         # @@foo += bar
         # ^^^^^^^^^^^^
         def visit_class_variable_operator_write_node(node)
-          s(node, class_variable_write_type, node.name, s(node, :call, s(node, :cvar, node.name), node.operator, visit_write_value(node.value)))
+          s(node, class_variable_write_type, node.name, s(node, :call, s(node, :cvar, node.name), node.binary_operator, visit_write_value(node.value)))
         end
 
         # @@foo &&= bar
@@ -417,7 +422,7 @@ module Prism
         # Foo += bar
         # ^^^^^^^^^^^
         def visit_constant_operator_write_node(node)
-          s(node, :cdecl, node.name, s(node, :call, s(node, :const, node.name), node.operator, visit_write_value(node.value)))
+          s(node, :cdecl, node.name, s(node, :call, s(node, :const, node.name), node.binary_operator, visit_write_value(node.value)))
         end
 
         # Foo &&= bar
@@ -442,9 +447,9 @@ module Prism
         # ^^^^^^^^
         def visit_constant_path_node(node)
           if node.parent.nil?
-            s(node, :colon3, node.child.name)
+            s(node, :colon3, node.name)
           else
-            s(node, :colon2, visit(node.parent), node.child.name)
+            s(node, :colon2, visit(node.parent), node.name)
           end
         end
 
@@ -460,7 +465,7 @@ module Prism
         # Foo::Bar += baz
         # ^^^^^^^^^^^^^^^
         def visit_constant_path_operator_write_node(node)
-          s(node, :op_asgn, visit(node.target), node.operator, visit_write_value(node.value))
+          s(node, :op_asgn, visit(node.target), node.binary_operator, visit_write_value(node.value))
         end
 
         # Foo::Bar &&= baz
@@ -480,9 +485,9 @@ module Prism
         def visit_constant_path_target_node(node)
           inner =
             if node.parent.nil?
-              s(node, :colon3, node.child.name)
+              s(node, :colon3, node.name)
             else
-              s(node, :colon2, visit(node.parent), node.child.name)
+              s(node, :colon2, visit(node.parent), node.name)
             end
 
           s(node, :const, inner)
@@ -627,7 +632,7 @@ module Prism
         # $foo += bar
         # ^^^^^^^^^^^
         def visit_global_variable_operator_write_node(node)
-          s(node, :gasgn, node.name, s(node, :call, s(node, :gvar, node.name), node.operator, visit(node.value)))
+          s(node, :gasgn, node.name, s(node, :call, s(node, :gvar, node.name), node.binary_operator, visit(node.value)))
         end
 
         # $foo &&= bar
@@ -719,7 +724,7 @@ module Prism
             arglist << visit(node.block) if !node.block.nil?
           end
 
-          s(node, :op_asgn1, visit(node.receiver), arglist, node.operator, visit_write_value(node.value))
+          s(node, :op_asgn1, visit(node.receiver), arglist, node.binary_operator, visit_write_value(node.value))
         end
 
         # foo[bar] &&= baz
@@ -775,7 +780,7 @@ module Prism
         # @foo += bar
         # ^^^^^^^^^^^
         def visit_instance_variable_operator_write_node(node)
-          s(node, :iasgn, node.name, s(node, :call, s(node, :ivar, node.name), node.operator, visit_write_value(node.value)))
+          s(node, :iasgn, node.name, s(node, :call, s(node, :ivar, node.name), node.binary_operator, visit_write_value(node.value)))
         end
 
         # @foo &&= bar
@@ -805,17 +810,29 @@ module Prism
         # if /foo #{bar}/ then end
         #    ^^^^^^^^^^^^
         def visit_interpolated_match_last_line_node(node)
-          s(node, :match, s(node, :dregx).concat(visit_interpolated_parts(node.parts)))
+          parts = visit_interpolated_parts(node.parts)
+          regexp =
+            if parts.length == 1
+              s(node, :lit, Regexp.new(parts.first, node.options))
+            else
+              s(node, :dregx).concat(parts).tap do |result|
+                options = node.options
+                result << options if options != 0
+              end
+            end
+
+          s(node, :match, regexp)
         end
 
         # /foo #{bar}/
         # ^^^^^^^^^^^^
         def visit_interpolated_regular_expression_node(node)
-          if node.parts.all? { |part| part.is_a?(StringNode) || (part.is_a?(EmbeddedStatementsNode) && part.statements&.body&.length == 1 && part.statements.body.first.is_a?(StringNode)) }
-            unescaped = node.parts.map { |part| part.is_a?(StringNode) ? part.unescaped : part.statements.body.first.unescaped }.join
-            s(node, :lit, Regexp.new(unescaped, node.options))
+          parts = visit_interpolated_parts(node.parts)
+
+          if parts.length == 1
+            s(node, :lit, Regexp.new(parts.first, node.options))
           else
-            s(node, :dregx).concat(visit_interpolated_parts(node.parts)).tap do |result|
+            s(node, :dregx).concat(parts).tap do |result|
               options = node.options
               result << options if options != 0
             end
@@ -825,47 +842,86 @@ module Prism
         # "foo #{bar}"
         # ^^^^^^^^^^^^
         def visit_interpolated_string_node(node)
-          if (node.parts.all? { |part| part.is_a?(StringNode) || (part.is_a?(EmbeddedStatementsNode) && part.statements&.body&.length == 1 && part.statements.body.first.is_a?(StringNode)) }) ||
-             (node.opening.nil? && node.parts.all? { |part| part.is_a?(StringNode) && !part.opening_loc.nil? })
-             unescaped = node.parts.map { |part| part.is_a?(StringNode) ? part.unescaped : part.statements.body.first.unescaped }.join
-            s(node, :str, unescaped)
-          else
-            s(node, :dstr).concat(visit_interpolated_parts(node.parts))
-          end
+          parts = visit_interpolated_parts(node.parts)
+          parts.length == 1 ? s(node, :str, parts.first) : s(node, :dstr).concat(parts)
         end
 
         # :"foo #{bar}"
         # ^^^^^^^^^^^^^
         def visit_interpolated_symbol_node(node)
-          if node.parts.all? { |part| part.is_a?(StringNode) || (part.is_a?(EmbeddedStatementsNode) && part.statements&.body&.length == 1 && part.statements.body.first.is_a?(StringNode)) }
-            unescaped = node.parts.map { |part| part.is_a?(StringNode) ? part.unescaped : part.statements.body.first.unescaped }.join
-            s(node, :lit, unescaped.to_sym)
-          else
-            s(node, :dsym).concat(visit_interpolated_parts(node.parts))
-          end
+          parts = visit_interpolated_parts(node.parts)
+          parts.length == 1 ? s(node, :lit, parts.first.to_sym) : s(node, :dsym).concat(parts)
         end
 
         # `foo #{bar}`
         # ^^^^^^^^^^^^
         def visit_interpolated_x_string_node(node)
-          children = visit_interpolated_parts(node.parts)
-          s(node.heredoc? ? node.parts.first : node, :dxstr).concat(children)
+          source = node.heredoc? ? node.parts.first : node
+          parts = visit_interpolated_parts(node.parts)
+          parts.length == 1 ? s(source, :xstr, parts.first) : s(source, :dxstr).concat(parts)
         end
 
         # Visit the interpolated content of the string-like node.
         private def visit_interpolated_parts(parts)
-          parts.each_with_object([]).with_index do |(part, results), index|
-            if index == 0
-              if part.is_a?(StringNode)
-                results << part.unescaped
+          visited = []
+          parts.each do |part|
+            result = visit(part)
+
+            if result[0] == :evstr && result[1]
+              if result[1][0] == :str
+                visited << result[1]
+              elsif result[1][0] == :dstr
+                visited.concat(result[1][1..-1])
               else
-                results << ""
-                results << visit(part)
+                visited << result
               end
+            elsif result[0] == :dstr
+              visited.concat(result[1..-1])
             else
-              results << visit(part)
+              visited << result
             end
           end
+
+          state = :beginning #: :beginning | :string_content | :interpolated_content
+
+          visited.each_with_object([]) do |result, results|
+            case state
+            when :beginning
+              if result.is_a?(String)
+                results << result
+                state = :string_content
+              elsif result.is_a?(Array) && result[0] == :str
+                results << result[1]
+                state = :string_content
+              else
+                results << ""
+                results << result
+                state = :interpolated_content
+              end
+            when :string_content
+              if result.is_a?(String)
+                results[0] << result
+              elsif result.is_a?(Array) && result[0] == :str
+                results[0] << result[1]
+              else
+                results << result
+                state = :interpolated_content
+              end
+            when :interpolated_content
+              if result.is_a?(Array) && result[0] == :str && results[-1][0] == :str && (results[-1].line_max == result.line)
+                results[-1][1] << result[1]
+                results[-1].line_max = result.line_max
+              else
+                results << result
+              end
+            end
+          end
+        end
+
+        # -> { it }
+        #      ^^
+        def visit_it_local_variable_read_node(node)
+          s(node, :call, nil, :it)
         end
 
         # foo(bar: baz)
@@ -922,7 +978,7 @@ module Prism
         # foo += bar
         # ^^^^^^^^^^
         def visit_local_variable_operator_write_node(node)
-          s(node, :lasgn, node.name, s(node, :call, s(node, :lvar, node.name), node.operator, visit_write_value(node.value)))
+          s(node, :lasgn, node.name, s(node, :call, s(node, :lvar, node.name), node.binary_operator, visit_write_value(node.value)))
         end
 
         # foo &&= bar
@@ -1297,7 +1353,7 @@ module Prism
         # __FILE__
         # ^^^^^^^^
         def visit_source_file_node(node)
-          s(node, :str, file)
+          s(node, :str, node.filepath)
         end
 
         # __LINE__
@@ -1412,7 +1468,7 @@ module Prism
 
           if node.heredoc?
             result.line = node.content_loc.start_line
-            result.max_line = node.content_loc.end_line
+            result.line_max = node.content_loc.end_line
           end
 
           result
@@ -1439,7 +1495,7 @@ module Prism
           result = Sexp.new(*arguments)
           result.file = file
           result.line = node.location.start_line
-          result.max_line = node.location.end_line
+          result.line_max = node.location.end_line
           result
         end
 
@@ -1498,13 +1554,13 @@ module Prism
       # Parse the given source and translate it into the seattlerb/ruby_parser
       # gem's Sexp format.
       def parse(source, filepath = "(string)")
-        translate(Prism.parse(source), filepath)
+        translate(Prism.parse(source, filepath: filepath, scopes: [[]]), filepath)
       end
 
       # Parse the given file and translate it into the seattlerb/ruby_parser
       # gem's Sexp format.
       def parse_file(filepath)
-        translate(Prism.parse_file(filepath), filepath)
+        translate(Prism.parse_file(filepath, scopes: [[]]), filepath)
       end
 
       class << self

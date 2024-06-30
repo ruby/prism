@@ -48,7 +48,7 @@ big_add(pm_integer_t *destination, pm_integer_t *left, pm_integer_t *right, uint
 
 /**
  * Internal use for karatsuba_multiply. Calculates `a - b - c` with the given
- * base. Assume a, b, c, a - b - c all to be poitive.
+ * base. Assume a, b, c, a - b - c all to be positive.
  * Return pm_integer_t with values allocated. Not normalized.
  */
 static void
@@ -135,11 +135,18 @@ karatsuba_multiply(pm_integer_t *destination, pm_integer_t *left, pm_integer_t *
     }
 
     if (left_length * 2 <= right_length) {
-        uint32_t *values = (uint32_t*) xcalloc(left_length + right_length, sizeof(uint32_t));
+        uint32_t *values = (uint32_t *) xcalloc(left_length + right_length, sizeof(uint32_t));
 
         for (size_t start_offset = 0; start_offset < right_length; start_offset += left_length) {
             size_t end_offset = start_offset + left_length;
             if (end_offset > right_length) end_offset = right_length;
+
+            pm_integer_t sliced_left = {
+                .value = 0,
+                .length = left_length,
+                .values = left_values,
+                .negative = false
+            };
 
             pm_integer_t sliced_right = {
                 .value = 0,
@@ -149,7 +156,7 @@ karatsuba_multiply(pm_integer_t *destination, pm_integer_t *left, pm_integer_t *
             };
 
             pm_integer_t product;
-            karatsuba_multiply(&product, left, &sliced_right, base);
+            karatsuba_multiply(&product, &sliced_left, &sliced_right, base);
 
             uint32_t carry = 0;
             for (size_t index = 0; index < product.length; index++) {
@@ -172,21 +179,21 @@ karatsuba_multiply(pm_integer_t *destination, pm_integer_t *left, pm_integer_t *
     pm_integer_t y0 = { 0, half, right_values, false };
     pm_integer_t y1 = { 0, right_length - half, right_values + half, false };
 
-    pm_integer_t z0;
+    pm_integer_t z0 = { 0 };
     karatsuba_multiply(&z0, &x0, &y0, base);
 
-    pm_integer_t z2;
+    pm_integer_t z2 = { 0 };
     karatsuba_multiply(&z2, &x1, &y1, base);
 
     // For simplicity to avoid considering negative values,
     // use `z1 = (x0 + x1) * (y0 + y1) - z0 - z2` instead of original karatsuba algorithm.
-    pm_integer_t x01;
+    pm_integer_t x01 = { 0 };
     big_add(&x01, &x0, &x1, base);
 
-    pm_integer_t y01;
+    pm_integer_t y01 = { 0 };
     big_add(&y01, &y0, &y1, base);
 
-    pm_integer_t xy;
+    pm_integer_t xy = { 0 };
     karatsuba_multiply(&xy, &x01, &y01, base);
 
     pm_integer_t z1;
@@ -194,7 +201,11 @@ karatsuba_multiply(pm_integer_t *destination, pm_integer_t *left, pm_integer_t *
 
     size_t length = left_length + right_length;
     uint32_t *values = (uint32_t*) xcalloc(length, sizeof(uint32_t));
+
+    assert(z0.values != NULL);
     memcpy(values, z0.values, sizeof(uint32_t) * z0.length);
+
+    assert(z2.values != NULL);
     memcpy(values + 2 * half, z2.values, sizeof(uint32_t) * z2.length);
 
     uint32_t carry = 0;
@@ -326,6 +337,8 @@ pm_integer_convert_base(pm_integer_t *destination, const pm_integer_t *source, u
     INTEGER_EXTRACT(source, source_length, source_values)
 
     size_t bigints_length = (source_length + 1) / 2;
+    assert(bigints_length > 0);
+
     pm_integer_t *bigints = (pm_integer_t *) xcalloc(bigints_length, sizeof(pm_integer_t));
     if (bigints == NULL) return;
 
@@ -345,13 +358,13 @@ pm_integer_convert_base(pm_integer_t *destination, const pm_integer_t *source, u
         base = next_base;
 
         size_t next_length = (bigints_length + 1) / 2;
-        pm_integer_t *next_bigints = (pm_integer_t *) xmalloc(sizeof(pm_integer_t) * next_length);
+        pm_integer_t *next_bigints = (pm_integer_t *) xcalloc(next_length, sizeof(pm_integer_t));
 
         for (size_t bigints_index = 0; bigints_index < bigints_length; bigints_index += 2) {
             if (bigints_index + 1 == bigints_length) {
                 next_bigints[bigints_index / 2] = bigints[bigints_index];
             } else {
-                pm_integer_t multiplied;
+                pm_integer_t multiplied = { 0 };
                 karatsuba_multiply(&multiplied, &base, &bigints[bigints_index + 1], base_to);
 
                 big_add(&next_bigints[bigints_index / 2], &bigints[bigints_index], &multiplied, base_to);
@@ -458,15 +471,18 @@ pm_integer_parse_big(pm_integer_t *integer, uint32_t multiplier, const uint8_t *
  * has already been validated, as internal validation checks are not performed
  * here.
  */
-PRISM_EXPORTED_FUNCTION void
+void
 pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end) {
-    // Ignore unary +. Unary + is parsed differently and will not end up here.
+    // Ignore unary +. Unary - is parsed differently and will not end up here.
     // Instead, it will modify the parsed integer later.
     if (*start == '+') start++;
 
     // Determine the multiplier from the base, and skip past any prefixes.
     uint32_t multiplier = 10;
     switch (base) {
+        case PM_INTEGER_BASE_DEFAULT:
+            while (*start == '0') start++; // 01 -> 1
+            break;
         case PM_INTEGER_BASE_BINARY:
             start += 2; // 0b
             multiplier = 2;
@@ -521,14 +537,6 @@ pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *s
 }
 
 /**
- * Return the memory size of the integer.
- */
-size_t
-pm_integer_memsize(const pm_integer_t *integer) {
-    return sizeof(pm_integer_t) + integer->length * sizeof(uint32_t);
-}
-
-/**
  * Compare two integers. This function returns -1 if the left integer is less
  * than the right integer, 0 if they are equal, and 1 if the left integer is
  * greater than the right integer.
@@ -560,6 +568,39 @@ pm_integer_compare(const pm_integer_t *left, const pm_integer_t *right) {
 }
 
 /**
+ * Reduce a ratio of integers to its simplest form.
+ */
+void pm_integers_reduce(pm_integer_t *numerator, pm_integer_t *denominator) {
+    // If either the numerator or denominator do not fit into a 32-bit integer,
+    // then this function is a no-op. In the future, we may consider reducing
+    // even the larger numbers, but for now we're going to keep it simple.
+    if (
+        // If the numerator doesn't fit into a 32-bit integer, return early.
+        numerator->length != 0 ||
+        // If the denominator doesn't fit into a 32-bit integer, return early.
+        denominator->length != 0 ||
+        // If the numerator is 0, then return early.
+        numerator->value == 0 ||
+        // If the denominator is 1, then return early.
+        denominator->value == 1
+    ) return;
+
+    // Find the greatest common divisor of the numerator and denominator.
+    uint32_t divisor = numerator->value;
+    uint32_t remainder = denominator->value;
+
+    while (remainder != 0) {
+        uint32_t temporary = remainder;
+        remainder = divisor % remainder;
+        divisor = temporary;
+    }
+
+    // Divide the numerator and denominator by the greatest common divisor.
+    numerator->value /= divisor;
+    denominator->value /= divisor;
+}
+
+/**
  * Convert an integer to a decimal string.
  */
 PRISM_EXPORTED_FUNCTION void
@@ -584,7 +625,7 @@ pm_integer_string(pm_buffer_t *buffer, const pm_integer_t *integer) {
     }
 
     // Otherwise, first we'll convert the base from 1<<32 to 10**9.
-    pm_integer_t converted;
+    pm_integer_t converted = { 0 };
     pm_integer_convert_base(&converted, integer, (uint64_t) 1 << 32, 1000000000);
 
     if (converted.values == NULL) {

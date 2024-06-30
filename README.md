@@ -40,6 +40,7 @@ The repository contains the infrastructure for both a shared library (libprism) 
 ├── rust
 │   ├── ruby-prism        Rustified crate for the shared library
 │   └── ruby-prism-sys    FFI binding for Rust
+├── sample                Sample code that uses the Ruby API for documentation
 ├── sig                   RBS type signatures for the Ruby library
 ├── src
 │   ├── util              various utility files

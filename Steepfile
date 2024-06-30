@@ -8,10 +8,10 @@ target :lib do
   check "lib"
 
   # TODO: Type-checking these files is still WIP
-  ignore "lib/prism/debug.rb"
   ignore "lib/prism/desugar_compiler.rb"
   ignore "lib/prism/lex_compat.rb"
   ignore "lib/prism/serialize.rb"
   ignore "lib/prism/ffi.rb"
+  ignore "lib/prism/polyfill/byteindex.rb"
   ignore "lib/prism/translation"
 end

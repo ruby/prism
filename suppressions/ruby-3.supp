@@ -1,0 +1,10 @@
+{
+  Ripper not freeing strterm in all cases (https://bugs.ruby-lang.org/issues/20521)
+  Memcheck:Leak
+  ...
+  fun:new_strterm
+  fun:parse_percent
+  ...
+  fun:ripper_parse
+  ...
+}

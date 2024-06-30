@@ -26,6 +26,7 @@ end
 
 namespace :test do
   if have_memcheck
+    RubyMemcheck.config(use_only_ruby_free_at_exit: false)
     RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
 
     # Hide test:valgrind_internal from rake -T
@@ -33,8 +34,8 @@ namespace :test do
 
     desc "Run tests under valgrind"
     task :valgrind do
-      # Recompile with PRISM_DEBUG_MODE_BUILD=1
-      ENV["PRISM_DEBUG_MODE_BUILD"] = "1"
+      # Recompile with PRISM_BUILD_DEBUG=1
+      ENV["PRISM_BUILD_DEBUG"] = "1"
       Rake::Task["clobber"].invoke
       Rake::Task["test:valgrind_internal"].invoke
     end

@@ -200,8 +200,8 @@ module Prism
 
   class << self
     # Mirror the Prism.dump API by using the serialization API.
-    def dump(code, **options)
-      LibRubyParser::PrismString.with_string(code) { |string| dump_common(string, options) }
+    def dump(source, **options)
+      LibRubyParser::PrismString.with_string(source) { |string| dump_common(string, options) }
     end
 
     # Mirror the Prism.dump_file API by using the serialization API.
@@ -286,10 +286,41 @@ module Prism
       LibRubyParser::PrismString.with_string(code) { |string| parse_file_success_common(string, options) }
     end
 
+    # Mirror the Prism.parse_failure? API by using the serialization API.
+    def parse_failure?(code, **options)
+      !parse_success?(code, **options)
+    end
+
     # Mirror the Prism.parse_file_success? API by using the serialization API.
     def parse_file_success?(filepath, **options)
       options[:filepath] = filepath
       LibRubyParser::PrismString.with_file(filepath) { |string| parse_file_success_common(string, options) }
+    end
+
+    # Mirror the Prism.parse_file_failure? API by using the serialization API.
+    def parse_file_failure?(filepath, **options)
+      !parse_file_success?(filepath, **options)
+    end
+
+    # Mirror the Prism.profile API by using the serialization API.
+    def profile(source, **options)
+      LibRubyParser::PrismString.with_string(source) do |string|
+        LibRubyParser::PrismBuffer.with do |buffer|
+          LibRubyParser.pm_serialize_parse(buffer.pointer, string.pointer, string.length, dump_options(options))
+          nil
+        end
+      end
+    end
+
+    # Mirror the Prism.profile_file API by using the serialization API.
+    def profile_file(filepath, **options)
+      LibRubyParser::PrismString.with_file(filepath) do |string|
+        LibRubyParser::PrismBuffer.with do |buffer|
+          options[:filepath] = filepath
+          LibRubyParser.pm_serialize_parse(buffer.pointer, string.pointer, string.length, dump_options(options))
+          nil
+        end
+      end
     end
 
     private
@@ -307,7 +338,7 @@ module Prism
         buffer.read
       end
 
-      Serialize.load_tokens(Source.new(code), serialized)
+      Serialize.load_tokens(Source.for(code), serialized)
     end
 
     def parse_common(string, code, options) # :nodoc:
@@ -319,7 +350,7 @@ module Prism
       LibRubyParser::PrismBuffer.with do |buffer|
         LibRubyParser.pm_serialize_parse_comments(buffer.pointer, string.pointer, string.length, dump_options(options))
 
-        source = Source.new(code)
+        source = Source.for(code)
         loader = Serialize::Loader.new(source, buffer.read)
 
         loader.load_header
@@ -333,14 +364,14 @@ module Prism
       LibRubyParser::PrismBuffer.with do |buffer|
         LibRubyParser.pm_serialize_parse_lex(buffer.pointer, string.pointer, string.length, dump_options(options))
 
-        source = Source.new(code)
+        source = Source.for(code)
         loader = Serialize::Loader.new(source, buffer.read)
 
         tokens = loader.load_tokens
         node, comments, magic_comments, data_loc, errors, warnings = loader.load_nodes
         tokens.each { |token,| token.value.force_encoding(loader.encoding) }
 
-        ParseResult.new([node, tokens], comments, magic_comments, data_loc, errors, warnings, source)
+        ParseLexResult.new([node, tokens], comments, magic_comments, data_loc, errors, warnings, source)
       end
     end
 
@@ -383,11 +414,8 @@ module Prism
       values << options.fetch(:line, 1)
 
       template << "L"
-      values << options.fetch(:offset, 0)
-
-      template << "L"
       if (encoding = options[:encoding])
-        name = encoding.name
+        name = encoding.is_a?(Encoding) ? encoding.name : encoding
         values.push(name.bytesize, name.b)
         template << "A*"
       else
@@ -401,7 +429,10 @@ module Prism
       values << dump_options_command_line(options)
 
       template << "C"
-      values << { nil => 0, "3.3.0" => 1, "3.4.0" => 0, "latest" => 0 }.fetch(options[:version])
+      values << { nil => 0, "3.3.0" => 1, "3.3.1" => 1, "3.4.0" => 0, "latest" => 0 }.fetch(options[:version])
+
+      template << "C"
+      values << (options[:encoding] == false ? 1 : 0)
 
       template << "L"
       if (scopes = options[:scopes])

@@ -3,6 +3,20 @@
 # Here we are reopening the prism module to provide methods on nodes that aren't
 # templated and are meant as convenience methods.
 module Prism
+  class Node
+    def deprecated(*replacements) # :nodoc:
+      location = caller_locations(1, 1)
+      location = location[0].label if location
+      suggest = replacements.map { |replacement| "#{self.class}##{replacement}" }
+
+      warn(<<~MSG, category: :deprecated)
+        [deprecation]: #{self.class}##{location} is deprecated and will be \
+        removed in the next major version. Use #{suggest.join("/")} instead.
+        #{(caller(1, 3) || []).join("\n")}
+      MSG
+    end
+  end
+
   module RegularExpressionOptions # :nodoc:
     # Returns a numeric value that represents the flags that were used to create
     # the regular expression.
@@ -55,6 +69,7 @@ module Prism
     def to_interpolated
       InterpolatedStringNode.new(
         source,
+        frozen? ? InterpolatedStringNodeFlags::FROZEN : 0,
         opening_loc,
         [copy(opening_loc: nil, closing_loc: nil, location: content_loc)],
         closing_loc,
@@ -91,7 +106,19 @@ module Prism
   class RationalNode < Node
     # Returns the value of the node as a Ruby Rational.
     def value
-      Rational(numeric.is_a?(IntegerNode) ? numeric.value : slice.chomp("r"))
+      Rational(numerator, denominator)
+    end
+
+    # Returns the value of the node as an IntegerNode or a FloatNode. This
+    # method is deprecated in favor of #value or #numerator/#denominator.
+    def numeric
+      deprecated("value", "numerator", "denominator")
+
+      if denominator == 1
+        IntegerNode.new(source, flags, numerator, location.chop)
+      else
+        FloatNode.new(source, numerator.to_f / denominator, location.chop)
+      end
     end
   end
 
@@ -142,11 +169,12 @@ module Prism
       current = self #: node?
 
       while current.is_a?(ConstantPathNode)
-        child = current.child
-        if child.is_a?(MissingNode)
+        name = current.name
+        if name.nil?
           raise MissingNodesInConstantPathError, "Constant path contains missing nodes. Cannot compute full name"
         end
-        parts.unshift(child.name)
+
+        parts.unshift(name)
         current = current.parent
       end
 
@@ -160,6 +188,14 @@ module Prism
     # Returns the full name of this constant path. For example: "Foo::Bar"
     def full_name
       full_name_parts.join("::")
+    end
+
+    # Previously, we had a child node on this class that contained either a
+    # constant read or a missing node. To not cause a breaking change, we
+    # continue to supply that API.
+    def child
+      deprecated("name", "name_loc")
+      name ? ConstantReadNode.new(source, name, name_loc) : MissingNode.new(source, location)
     end
   end
 
@@ -178,16 +214,24 @@ module Prism
           raise ConstantPathNode::DynamicPartsInConstantPathError, "Constant target path contains dynamic parts. Cannot compute full name"
         end
 
-      if child.is_a?(MissingNode)
+      if name.nil?
         raise ConstantPathNode::MissingNodesInConstantPathError, "Constant target path contains missing nodes. Cannot compute full name"
       end
 
-      parts.push(child.name)
+      parts.push(name)
     end
 
     # Returns the full name of this constant path. For example: "Foo::Bar"
     def full_name
       full_name_parts.join("::")
+    end
+
+    # Previously, we had a child node on this class that contained either a
+    # constant read or a missing node. To not cause a breaking change, we
+    # continue to supply that API.
+    def child
+      deprecated("name", "name_loc")
+      name ? ConstantReadNode.new(source, name, name_loc) : MissingNode.new(source, location)
     end
   end
 
@@ -220,9 +264,10 @@ module Prism
       end
 
       posts.each do |param|
-        if param.is_a?(MultiTargetNode)
+        case param
+        when MultiTargetNode
           names << [:req]
-        elsif param.is_a?(NoKeywordsParameterNode)
+        when NoKeywordsParameterNode, KeywordRestParameterNode, ForwardingParameterNode
           # Invalid syntax, e.g. "def f(**nil, ...)" moves the NoKeywordsParameterNode to posts
           raise "Invalid syntax"
         else
@@ -254,6 +299,149 @@ module Prism
 
       names << [:block, block.name || :&] if block
       names
+    end
+  end
+
+  class CallNode < Node
+    # When a call node has the attribute_write flag set, it means that the call
+    # is using the attribute write syntax. This is either a method call to []=
+    # or a method call to a method that ends with =. Either way, the = sign is
+    # present in the source.
+    #
+    # Prism returns the message_loc _without_ the = sign attached, because there
+    # can be any amount of space between the message and the = sign. However,
+    # sometimes you want the location of the full message including the inner
+    # space and the = sign. This method provides that.
+    def full_message_loc
+      attribute_write? ? message_loc&.adjoin("=") : message_loc
+    end
+  end
+
+  class CallOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class ClassVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class ConstantOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class ConstantPathOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class GlobalVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class IndexOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class InstanceVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
+    end
+  end
+
+  class LocalVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    def operator
+      deprecated("binary_operator")
+      binary_operator
+    end
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    def operator_loc
+      deprecated("binary_operator_loc")
+      binary_operator_loc
     end
   end
 end

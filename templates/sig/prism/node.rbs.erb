@@ -1,14 +1,29 @@
 module Prism
+  # Methods implemented on every subclass of a singleton of Node
+  interface _NodeSingleton
+    def type: () -> Symbol
+  end
+
   class Node
+    extend _NodeSingleton
+
     attr_reader location: Location
     attr_reader source: Source
 
     def start_offset: () -> Integer
     def end_offset: () -> Integer
+    def source_lines: () -> Array[String]
+    alias script_lines source_lines
     def slice: () -> String
+    def slice_lines: () -> String
     def pretty_print: (untyped q) -> untyped
     def to_dot: () -> String
+    def tunnel: (Integer line, Integer column) -> Array[Prism::node]
+    def deprecated: (*String) -> void
+    def newline!: (Array[untyped]) -> void
   end
+
+  type node_singleton = singleton(Node) & _NodeSingleton
 
   # Methods implemented by every subclass of Node
   interface _Node
@@ -17,8 +32,8 @@ module Prism
     def deconstruct: () -> Array[Prism::node?]
     def compact_child_nodes: () -> Array[Prism::node]
     def comment_targets: () -> Array[Prism::node | Location]
-
-    def inspect: (?untyped) -> String
+    def fields: () -> Array[Prism::Reflection::Field]
+    def inspect: () -> String
     def type: () -> Symbol
   end
 
@@ -33,7 +48,7 @@ module Prism
     include _Node
 
     <%- node.fields.each do |field| -%>
-    <%= "private " if field.is_a?(Prism::Template::FlagsField) %>attr_reader <%= field.name %>: <%= field.rbs_class %>
+    attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
     def initialize: (<%= ["Source source", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }, "Location location"].join(", ") %>) -> void

@@ -85,7 +85,7 @@ fn diagnostics_test() {
         let message = CStr::from_ptr((*error).message);
         assert_eq!(
             message.to_string_lossy(),
-            "unexpected end of file, assuming it is closing the parent top level context"
+            "unexpected end-of-input, assuming it is closing the parent top level context"
         );
 
         let location = {

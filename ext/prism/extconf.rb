@@ -1,22 +1,31 @@
 # frozen_string_literal: true
 
+require "rbconfig"
+
 if ARGV.delete("--help")
   print(<<~TEXT)
     USAGE: ruby #{$PROGRAM_NAME} [options]
 
       Flags that are always valid:
 
-          --enable-debug-mode-build
-              Enable debug mode build.
-              You may also use set PRISM_DEBUG_MODE_BUILD environment variable.
+          --enable-build-debug
+              Enable debug build.
+              You may also set the PRISM_BUILD_DEBUG environment variable.
+
+          --enable-build-minimal
+              Enable minimal build.
+              You may also set the PRISM_BUILD_MINIMAL environment variable.
 
           --help
               Display this message.
 
       Environment variables used:
 
-          PRISM_DEBUG_MODE_BUILD
-              Equivalent to `--enable-debug-mode-build` when set, even if nil or blank.
+          PRISM_BUILD_DEBUG
+              Equivalent to `--enable-build-debug` when set, even if nil or blank.
+
+          PRISM_BUILD_MINIMAL
+              Equivalent to `--enable-build-minimal` when set, even if nil or blank.
 
   TEXT
   exit!(0)
@@ -36,23 +45,49 @@ end
 # Runs `make` in the root directory of the project. Note that this is the
 # `Makefile` for the overall project, not the `Makefile` that is being generated
 # by this script.`
-def make(target)
+def make(env, target)
+  puts "Running make #{target} with #{env.inspect}"
   Dir.chdir(File.expand_path("../..", __dir__)) do
-    system(RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make", target, exception: true)
+    system(
+      env,
+      RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make",
+      target,
+      exception: true
+    )
   end
 end
 
-require "rbconfig"
-
 # On non-CRuby we only need the shared library since we'll interface with it
 # through FFI, so we'll build only that and not the C extension. We also avoid
-# `require "mkmf"` as that prepends the LLVM toolchain to PATH on TruffleRuby,
-# but we want to use the native toolchain here since libprism is run natively.
+# `require "mkmf"` as that prepends the GraalVM LLVM toolchain to PATH on TruffleRuby < 24.0,
+# but we want to use the system toolchain here since libprism is run natively.
 if RUBY_ENGINE != "ruby"
   generate_templates
-  make("build/libprism.#{RbConfig::CONFIG["SOEXT"]}")
+  soext = RbConfig::CONFIG["SOEXT"]
+  # Pass SOEXT to avoid an extra subprocess just to query that
+  make({ "SOEXT" => soext }, "build/libprism.#{soext}")
   File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
   return
+end
+
+# We're going to need to run `make` using prism's `Makefile`.
+# We want to use the same toolchain (compiler, flags, etc) to compile libprism.a and
+# the C extension since they will be linked together.
+# The C extension uses RbConfig, which contains values from the toolchain that built the running Ruby.
+env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
+
+# It's possible that the Ruby that is being run wasn't actually compiled on this
+# machine, in which case parts of RbConfig might be incorrect. In this case
+# we'll need to do some additional checks and potentially fall back to defaults.
+if env.key?("CC") && !File.exist?(env["CC"])
+  env.delete("CC")
+  env.delete("CFLAGS")
+  env.delete("CPPFLAGS")
+end
+
+if env.key?("AR") && !File.exist?(env["AR"])
+  env.delete("AR")
+  env.delete("ARFLAGS")
 end
 
 require "mkmf"
@@ -71,13 +106,22 @@ unless find_header("prism/extension.h", File.expand_path("..", __dir__))
   raise "prism/extension.h is required"
 end
 
-# If `--enable-debug-mode-build` is passed to this script or the
-# `PRISM_DEBUG_MODE_BUILD` environment variable is defined, we'll build with the
-# `PRISM_DEBUG_MODE_BUILD` macro defined. This causes parse functions to
+# If `--enable-build-debug` is passed to this script or the
+# `PRISM_BUILD_DEBUG` environment variable is defined, we'll build with the
+# `PRISM_BUILD_DEBUG` macro defined. This causes parse functions to
 # duplicate their input so that they have clearly set bounds, which is useful
 # for finding bugs that cause the parser to read off the end of the input.
-if enable_config("debug-mode-build", ENV["PRISM_DEBUG_MODE_BUILD"] || false)
-  append_cflags("-DPRISM_DEBUG_MODE_BUILD")
+if enable_config("build-debug", ENV["PRISM_BUILD_DEBUG"] || false)
+  append_cflags("-DPRISM_BUILD_DEBUG")
+end
+
+# If `--enable-build-minimal` is passed to this script or the
+# `PRISM_BUILD_MINIMAL` environment variable is defined, we'll build with the
+# set of defines that comprise the minimal set. This causes the parser to be
+# built with minimal features, necessary for stripping out functionality when
+# the size of the final built artifact is a concern.
+if enable_config("build-minimal", ENV["PRISM_BUILD_MINIMAL"] || false)
+  append_cflags("-DPRISM_BUILD_MINIMAL")
 end
 
 # By default, all symbols are hidden in the shared library.
@@ -89,7 +133,7 @@ append_cflags("-fvisibility=hidden")
 archive_target = "build/libprism.a"
 archive_path = File.expand_path("../../#{archive_target}", __dir__)
 
-make(archive_target) unless File.exist?(archive_path)
+make(env, archive_target) unless File.exist?(archive_path)
 $LOCAL_LIBS << " #{archive_path}"
 
 # Finally, we'll create the `Makefile` that is going to be used to configure and

@@ -52,6 +52,14 @@ typedef struct {
 void pm_constant_id_list_init(pm_constant_id_list_t *list);
 
 /**
+ * Initialize a list of constant ids with a given capacity.
+ *
+ * @param list The list to initialize.
+ * @param capacity The initial capacity of the list.
+ */
+void pm_constant_id_list_init_capacity(pm_constant_id_list_t *list, size_t capacity);
+
+/**
  * Append a constant id to a list of constant ids. Returns false if any
  * potential reallocations fail.
  *
@@ -62,6 +70,15 @@ void pm_constant_id_list_init(pm_constant_id_list_t *list);
 bool pm_constant_id_list_append(pm_constant_id_list_t *list, pm_constant_id_t id);
 
 /**
+ * Insert a constant id into a list of constant ids at the specified index.
+ *
+ * @param list The list to insert into.
+ * @param index The index at which to insert.
+ * @param id The id to insert.
+ */
+void pm_constant_id_list_insert(pm_constant_id_list_t *list, size_t index, pm_constant_id_t id);
+
+/**
  * Checks if the current constant id list includes the given constant id.
  *
  * @param list The list to check.
@@ -69,14 +86,6 @@ bool pm_constant_id_list_append(pm_constant_id_list_t *list, pm_constant_id_t id
  * @return Whether the list includes the given id.
  */
 bool pm_constant_id_list_includes(pm_constant_id_list_t *list, pm_constant_id_t id);
-
-/**
- * Get the memory size of a list of constant ids.
- *
- * @param list The list to get the memory size of.
- * @return The memory size of the list.
- */
-size_t pm_constant_id_list_memsize(pm_constant_id_list_t *list);
 
 /**
  * Free the memory associated with a list of constant ids.

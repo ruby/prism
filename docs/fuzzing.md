@@ -26,7 +26,7 @@ fuzz
 There are currently three fuzzing targets
 
 - `pm_serialize_parse` (parse)
-- `pm_regexp_named_capture_group_names` (regexp)
+- `pm_regexp_parse` (regexp)
 
 Respectively, fuzzing can be performed with
 

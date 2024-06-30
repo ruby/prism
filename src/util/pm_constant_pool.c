@@ -11,6 +11,18 @@ pm_constant_id_list_init(pm_constant_id_list_t *list) {
 }
 
 /**
+ * Initialize a list of constant ids with a given capacity.
+ */
+void
+pm_constant_id_list_init_capacity(pm_constant_id_list_t *list, size_t capacity) {
+    list->ids = xcalloc(capacity, sizeof(pm_constant_id_t));
+    if (list->ids == NULL) abort();
+
+    list->size = 0;
+    list->capacity = capacity;
+}
+
+/**
  * Append a constant id to a list of constant ids. Returns false if any
  * potential reallocations fail.
  */
@@ -27,6 +39,18 @@ pm_constant_id_list_append(pm_constant_id_list_t *list, pm_constant_id_t id) {
 }
 
 /**
+ * Insert a constant id into a list of constant ids at the specified index.
+ */
+void
+pm_constant_id_list_insert(pm_constant_id_list_t *list, size_t index, pm_constant_id_t id) {
+    assert(index < list->capacity);
+    assert(list->ids[index] == PM_CONSTANT_ID_UNSET);
+
+    list->ids[index] = id;
+    list->size++;
+}
+
+/**
  * Checks if the current constant id list includes the given constant id.
  */
 bool
@@ -35,14 +59,6 @@ pm_constant_id_list_includes(pm_constant_id_list_t *list, pm_constant_id_t id) {
         if (list->ids[index] == id) return true;
     }
     return false;
-}
-
-/**
- * Get the memory size of a list of constant ids.
- */
-size_t
-pm_constant_id_list_memsize(pm_constant_id_list_t *list) {
-    return sizeof(pm_constant_id_list_t) + (list->capacity * sizeof(pm_constant_id_t));
 }
 
 /**

@@ -6,6 +6,152 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.30.0] - 2024-06-07
+
+### Added
+
+- More correctly raise mixed encoding errors.
+- Implement ambiguous binary operator warning.
+- Fix up regexp escapes with control and meta characters.
+- Fix up support for the `it` implicit local variable.
+- Heredoc identifiers now properly disallow CLRF.
+- Errors added for void value expressions in begin clauses.
+- Many updates to more closely match the `parser` gem in parser translation.
+- Many errors added for invalid regular expressions.
+
+### Changed
+
+- Handle parser translation missing the `parser` gem.
+- Handle ruby_parser translation missing the `ruby_parser` gem.
+- Various error messages have been updated to more closely match CRuby.
+- `RationalNode` now has a `numerator` and `denominator` field instead of a `numeric` field. For the Ruby API we provide a `RationalNode#numeric` method for backwards-compatibility.
+
+## [0.29.0] - 2024-05-10
+
+### Added
+
+- Added `Prism::CallNode#full_message_loc`, which gives the location including the `=` if there is one.
+- A warning for when `# shareable_constant_value` is not used on its own line.
+- An error for invalid implicit local variable writes.
+- Implicit hash patterns in array patterns are disallowed.
+- We now validate that Unicode escape sequences are not surrogates.
+
+### Changed
+
+- All fields named `operator` have been renamed to `binary_operator` for `*OperatorWriteNode` nodes. This is to make it easier to provide C++ support. In the Ruby API, the old fields are aliased to the new fields with a deprecation warning.
+- Many updated error messages to more closely match CRuby.
+- We ensure keyword parameters do not end in `!` or `?`.
+- Fixed some escaping in string literals with control sequences and hex escapes.
+- Fix a bug with RBS types when used outside the `ruby/prism` codebase.
+
+## [0.28.0] - 2024-05-03
+
+### Added
+
+- Nested hashes will now warn for duplicated keys, as in: `{ foo: 1, **{ foo: 2 } }`.
+- `Prism::ReturnNode` now has a flag on it to indicate if it is redundant.
+- `Prism::Location#slice_lines` and `Prism::Node#slice_lines` are now provided to slice the source code of a node including the content before the node on the same line that it starts on and the content after the node on the same line that it ends on.
+- Symbols with invalid byte sequences now give errors.
+- You can now pass `"3.3.1"` to the `version:` parameter on all `Prism.*` APIs.
+- `Prism::Source#lines`, `Prism::Location#source_lines`, `Prism::Node#source_lines`, and `Prism::Node#script_lines` are now provided, which will all return the source code of the source as an array of strings.
+- `Prism::ASCIISource` is now provided, which is a subclass of `Prism::Source` but specialized to increase performance when the source is entirely ASCII.
+- Prism now provides errors when parsing Ruby 3.4+ syntax for index expressions with keywords or blocks.
+- Prism now provides an error when `**nil` is used after other keyword parameters.
+- Prism now provides errors when safe navigation is used in call target expressions, e.g., `foo&.bar, = 1`.
+- `Prism::Node#tunnel` is now provided, which returns an array of nodes starting at the current node that contain a given line and column.
+
+### Changed
+
+- All translation layers now assume an eval context, which means they will not return errors for invalid jumps like `yield`.
+- `Prism::Node#inspect` now uses a queue instead of recursion to avoid stack overflows.
+- Prism now more closely mirrors CRuby interpolation semantics, which means you could potentially have a static literal string that directly interpolates another static literal string.
+- The shipped RBI sorbet types no longer use generics.
+- `Prism::ConstantPathNode#child` and `Prism::ConstantTargetNode#child` are now deprecated, replaced by two new fields on these nodes: `name` and `name_loc`.
+
+## [0.27.0] - 2024-04-23
+
+### Added
+
+- Implemented `===` for each of the nodes, which will check if equality but ignore the specific ranges of locations.
+
+### Changed
+
+- Fix translation of `ItParametersNode` for parser translation.
+- Fix translation of `dstr` for ruby_parser translation.
+- Do not allow omitted hash values whose keys end with `!` or `?`.
+- Split up `Prism::ParseResult` into `Prism::Result` with subclasses `Prism::ParseResult`, `Prism::LexResult`, `Prism::ParseLexResult`, and `Prism::LexCompat::Result`.
+- Change reflection classes to have only a single `IntegerField` class and rename `DoubleField` to `FloatField`.
+- Fall back to default `AR` and `CC` in `Makefile`.
+- Use GC-able symbols for the syntax tree to avoid adding to the global symbol table.
+- Fix a bug with karatsuba_multiply that would result in a stack overflow.
+- Fix parser translation when looking for tokens with `srange_find`.
+
+## [0.26.0] - 2024-04-18
+
+### Added
+
+- Add `Prism::Node::fields`, which returns a list of `Prism::Reflection::Field` objects representing the fields of the node class. This is useful in metaprogramming contexts.
+- `Prism::Location#chop`, for removing the last byte from a location.
+- The void statement warning is now implemented.
+- The unreachable statement warning is now implemented.
+- A syntax error has been added for block arguments on yields, e.g., `yield(&foo)`.
+
+### Changed
+
+- Better fidelity to `parser` when translating heredocs with interpolation.
+- Fixed `RBI` and `RBS` types for `Prism::parse_*` signatures.
+- Remove some incorrect warnings about unused local variables.
+- More closely match CRuby error messages for global variables.
+- Fix an issue with `parser` translation when line continuations are found in string literals.
+
+## [0.25.0] - 2024-04-05
+
+### Added
+
+- `Prism::Translation::Ripper` is now able to mirror all of the Ripper APIs.
+- `Prism::Location#leading_comments` and `Prism::Location#trailing_comments` is added.
+- `Prism::Comment#slice` is added.
+- Warn for writing literal values in conditional predicates.
+- Check for `_POSIX_MAPPED_FILES` before using `mmap`.
+- `Prism::ItParametersNode` is added, to support `-> { it }`.
+- Parse integer and float literal values onto the tree.
+- Warn on duplicated hash keys and duplicated when clauses.
+- Ship much improved `RBI` and `RBS` types.
+- Support for the `-p`, `-n`, `-a`, and `-l` command line switches.
+- Warn on integer literals in flip-flops.
+- Support BSD make.
+- Add `Prism::WhenNode#then_keyword_loc`.
+- Support custom allocation functions through the `PRISM_XALLOCATOR` define.
+- Warn for certain keywrods at the end of the line.
+- Provide `pm_visit_node`, a C visitor API.
+- `Prism::parse_stream` is added, which works for any Ruby `IO` object.
+- Provide flags for regular expression literals for their derived encoding.
+- Provide flags for whether or not an interpolated string literal is frozen.
+- Add `Prism::StringNode.mutable?` for when a string is explicitly mutable, to support delineating chilled strings.
+- Warn for incorrect character literal syntax.
+- Warn for chained comparison operators.
+- Warn for `**` interpreted as an argument prefix.
+- Warn for `&` interpreted as an argument prefix.
+- `Prism::ShareableConstantNode` added to support ractors.
+- Warn for frozen string literals found after tokens.
+- Support `PRISM_BUILD_MINIMAL` to provide only the minimal necessary functionality to reduce the binary size.
+- Handle CLRF inside heredocs, strings, and regular expressions.
+- Mark inner strings in interpolated strings as frozen.
+- Support the `-x` command line switch.
+- Error messages now much more closely mirror CRuby.
+- Provide syntax errors for invalid block exits (`break`, `next`, `retry`, and `yield`).
+- Warn on unused local variables.
+- Do not syntax error on default parameter values that only write to the parameter.
+
+### Changed
+
+- Many improvements to the compatibility with the `whitequark/parser` translation.
+- Accept newlines before pattern terminators `)` or `]`.
+- `Prism::Node#start_offset` and `Prism::Node#end_offset` are now much more efficient.
+- Read files using `fread` instead of `mmap` when we're going to keep around the source through the Ruby API.
+- Fix `Sexp#line_max` setting in the `seattlerb/ruby_parser` translation layer.
+- Allow spaces before the encoding comment.
+
 ## [0.24.0] - 2024-02-15
 
 ### Added
@@ -392,7 +538,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.24.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v0.30.0...HEAD
+[0.30.0]: https://github.com/ruby/prism/compare/v0.29.0...v0.30.0
+[0.29.0]: https://github.com/ruby/prism/compare/v0.28.0...v0.29.0
+[0.28.0]: https://github.com/ruby/prism/compare/v0.27.0...v0.28.0
+[0.27.0]: https://github.com/ruby/prism/compare/v0.26.0...v0.27.0
+[0.26.0]: https://github.com/ruby/prism/compare/v0.25.0...v0.26.0
+[0.25.0]: https://github.com/ruby/prism/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/ruby/prism/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/ruby/prism/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/ruby/prism/compare/v0.21.0...v0.22.0

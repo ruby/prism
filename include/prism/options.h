@@ -49,8 +49,8 @@ typedef enum {
     /** The current version of prism. */
     PM_OPTIONS_VERSION_LATEST = 0,
 
-    /** The vendored version of prism in CRuby 3.3.0. */
-    PM_OPTIONS_VERSION_CRUBY_3_3_0 = 1
+    /** The vendored version of prism in CRuby 3.3.x. */
+    PM_OPTIONS_VERSION_CRUBY_3_3 = 1
 } pm_options_version_t;
 
 /**
@@ -65,12 +65,6 @@ typedef struct {
      * 1-indexed.
      */
     int32_t line;
-
-    /**
-     * The offset within the file that the parse starts on. This value is
-     * 0-indexed.
-     */
-    uint32_t offset;
 
     /**
      * The name of the encoding that the source file is in. Note that this must
@@ -109,6 +103,13 @@ typedef struct {
     *  - PM_OPTIONS_FROZEN_STRING_LITERAL_UNSET
     */
     int8_t frozen_string_literal;
+
+    /**
+     * Whether or not the encoding magic comments should be respected. This is a
+     * niche use-case where you want to parse a file with a specific encoding
+     * but ignore any encoding magic comments at the top of the file.
+     */
+    bool encoding_locked;
 } pm_options_t;
 
 /**
@@ -165,20 +166,20 @@ PRISM_EXPORTED_FUNCTION void pm_options_filepath_set(pm_options_t *options, cons
 PRISM_EXPORTED_FUNCTION void pm_options_line_set(pm_options_t *options, int32_t line);
 
 /**
- * Set the offset option on the given options struct.
- *
- * @param options The options struct to set the offset on.
- * @param offset The offset to set.
- */
-PRISM_EXPORTED_FUNCTION void pm_options_offset_set(pm_options_t *options, uint32_t offset);
-
-/**
  * Set the encoding option on the given options struct.
  *
  * @param options The options struct to set the encoding on.
  * @param encoding The encoding to set.
  */
 PRISM_EXPORTED_FUNCTION void pm_options_encoding_set(pm_options_t *options, const char *encoding);
+
+/**
+ * Set the encoding_locked option on the given options struct.
+ *
+ * @param options The options struct to set the encoding_locked value on.
+ * @param encoding_locked The encoding_locked value to set.
+ */
+PRISM_EXPORTED_FUNCTION void pm_options_encoding_locked_set(pm_options_t *options, bool encoding_locked);
 
 /**
  * Set the frozen string literal option on the given options struct.
@@ -267,7 +268,6 @@ PRISM_EXPORTED_FUNCTION void pm_options_free(pm_options_t *options);
  * | `4`     | the length of the filepath |
  * | ...     | the filepath bytes         |
  * | `4`     | the line number            |
- * | `4`     | the offset                 |
  * | `4`     | the length the encoding    |
  * | ...     | the encoding bytes         |
  * | `1`     | frozen string literal      |
@@ -286,14 +286,14 @@ PRISM_EXPORTED_FUNCTION void pm_options_free(pm_options_t *options);
  * | `0`   | use the latest version of prism |
  * | `1`   | use the version of prism that is vendored in CRuby 3.3.0 |
  *
- * Each scope is layed out as follows:
+ * Each scope is laid out as follows:
  *
  * | # bytes | field                      |
  * | ------- | -------------------------- |
  * | `4`     | the number of locals       |
  * | ...     | the locals                 |
  *
- * Each local is layed out as follows:
+ * Each local is laid out as follows:
  *
  * | # bytes | field                      |
  * | ------- | -------------------------- |

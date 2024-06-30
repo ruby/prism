@@ -9,12 +9,12 @@ module Prism
     def run(argv)
       case argv.shift
       when "benchmark"  then benchmark(argv)
+      when "bundle"     then bundle(argv)
       when "console"    then console
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
       when "lex"        then lex(argv)
       when "locals"     then locals(argv)
-      when "memsize"    then memsize
       when "parse"      then parse(argv)
       when "parser"     then parser(argv)
       when "ripper"     then ripper(argv)
@@ -23,12 +23,12 @@ module Prism
         puts <<~TXT
           Usage:
             bin/prism benchmark [source_file]
+            bin/prism bundle [...]
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
             bin/prism lex [source]
             bin/prism locals [source]
-            bin/prism memsize
             bin/prism parse [source]
             bin/prism parser [source]
             bin/prism ripper [source]
@@ -83,6 +83,31 @@ module Prism
         end
 
         x.compare!
+      end
+    end
+
+    # bin/prism bundle [...]
+    def bundle(argv)
+      [
+        ["2.7.8", ["2.7"]],
+        ["3.0.6", ["3.0"]],
+        ["3.1.4", ["3.1"]],
+        ["3.2.3", ["3.2"]],
+        ["3.3.0", ["3.3"]],
+        ["3.4.0-dev", ["3.4", "typecheck"]],
+        ["jruby-9.4.5.0", ["jruby"]],
+        ["truffleruby-24.0.0", ["truffleruby"]]
+      ].each do |ruby_version, gemfiles|
+        gemfiles.each do |gemfile|
+          system(
+            { "BUNDLE_GEMFILE" => File.expand_path("../gemfiles/#{gemfile}/Gemfile", __dir__) },
+            "chruby-exec", ruby_version, "--", "bundle", *argv,
+            exception: true,
+            chdir: File.expand_path("../", __dir__)
+          )
+        rescue RuntimeError => error
+          warn("\e[31;m#{ruby_version} (#{gemfile}): #{error.message}\e[m")
+        end
       end
     end
 
@@ -187,7 +212,7 @@ module Prism
 
     # bin/prism locals [source]
     def locals(argv)
-      source, filepath = read_source(argv)
+      source, _ = read_source(argv)
 
       puts "CRuby:"
       p Debug.cruby_locals(source)
@@ -219,53 +244,25 @@ module Prism
       end
     end
 
-    # bin/prism memsize
-    def memsize
-      require "yaml"
-
-      filepath = File.expand_path("../config.yml", __dir__)
-      results =
-        YAML.load_file(filepath).fetch("nodes").map do |node|
-          [
-            node["name"],
-            node.fetch("fields", []).sum do |field|
-              case field["type"]
-              when "uint8"                                             then 1
-              when "uint32", "constant", "constant?"                   then 4
-              when "node", "node?"                                     then 8
-              when "location", "location?"                             then 16
-              when "node[]", "string", "token", "token?", "constant[]" then 24
-              when "flags"                                             then 0
-              else raise "Unknown type: #{field["type"]}"
-              end
-            end
-          ]
-        end
-
-      results.sort_by(&:last).reverse_each do |name, size|
-        puts "#{name}: #{size}"
-      end
-    end
-
     # bin/prism parser [source]
     def parser(argv)
-      require "parser/ruby33"
+      require "parser/ruby34"
       source, filepath = read_source(argv)
 
       buffer = Parser::Source::Buffer.new(filepath, 1)
       buffer.source = source
 
       puts "Parser:"
-      parser_parse(Parser::Ruby33.new, buffer)
+      parser_parse(Parser::Ruby34.new, buffer)
 
       puts "Prism:"
-      parser_parse(Prism::Translation::Parser33.new, buffer)
+      parser_parse(Prism::Translation::Parser34.new, buffer)
     end
 
     # bin/prism ripper [source]
     def ripper(argv)
       require "ripper"
-      source, filepath = read_source(argv)
+      source, _ = read_source(argv)
 
       ripper = Ripper.sexp_raw(source)
       prism = Prism::Translation::Ripper.sexp_raw(source)
@@ -371,14 +368,17 @@ module Prism
 
     # Parse the source code indicated by the command-line arguments.
     def parse_source(argv)
+      command_line = +""
+      command_line << argv.shift[1] while argv.first&.match?(/^-[alnpx]$/)
+
       case argv.first
       when "-e"
-        argv.shift
-        Prism.parse(argv.shift)
+        command_line << argv.shift[1]
+        Prism.parse(argv.shift, command_line: command_line)
       when nil
-        Prism.parse_file("test.rb")
+        Prism.parse_file("test.rb", command_line: command_line)
       else
-        Prism.parse_file(argv.shift)
+        Prism.parse_file(argv.shift, command_line: command_line)
       end
     end
 

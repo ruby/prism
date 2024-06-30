@@ -26,7 +26,7 @@ module Prism
       )
 
       assert_errors expected, "module Parent module end", [
-        ["expected a constant name after `module`", 14..20],
+        ["unexpected constant path after `module`; class/module name must be CONSTANT", 14..20],
         ["unexpected 'end', assuming it is closing the parent module definition", 21..24]
       ]
     end
@@ -99,38 +99,43 @@ module Prism
       )
 
       assert_errors expected, "BEGIN { 1 + }", [
-        ["expected an expression after the operator", 10..11],
+        ["unexpected '}'; expected an expression after the operator", 12..13],
         ["unexpected '}', assuming it is closing the parent 'BEGIN' block", 12..13]
       ]
     end
 
     def test_unterminated_embdoc
-      assert_errors expression("1"), "1\n=begin\n", [
-        ["could not find a terminator for the embedded document", 2..9]
-      ]
+      message = "embedded document meets end of file"
+      assert_error_messages "=begin", [message]
+      assert_error_messages "=begin\n", [message]
+
+      refute_error_messages "=begin\n=end"
+      refute_error_messages "=begin\n=end\0"
+      refute_error_messages "=begin\n=end\C-d"
+      refute_error_messages "=begin\n=end\C-z"
     end
 
     def test_unterminated_i_list
       assert_errors expression("%i["), "%i[", [
-        ["expected a closing delimiter for the `%i` list", 0..3]
+        ["unterminated list; expected a closing delimiter for the `%i`", 0..3]
       ]
     end
 
     def test_unterminated_w_list
       assert_errors expression("%w["), "%w[", [
-        ["expected a closing delimiter for the `%w` list", 0..3]
+        ["unterminated list; expected a closing delimiter for the `%w`", 0..3]
       ]
     end
 
     def test_unterminated_W_list
       assert_errors expression("%W["), "%W[", [
-        ["expected a closing delimiter for the `%W` list", 0..3]
+        ["unterminated list; expected a closing delimiter for the `%W`", 0..3]
       ]
     end
 
     def test_unterminated_regular_expression
       assert_errors expression("/hello"), "/hello", [
-        ["expected a closing delimiter for the regular expression", 0..1]
+        ["unterminated regexp meets end of file; expected a closing delimiter", 0..1]
       ]
     end
 
@@ -138,7 +143,7 @@ module Prism
       source = "<<-END + /b\nEND\n"
 
       assert_errors expression(source), source, [
-        ["expected a closing delimiter for the regular expression", 9..10]
+        ["unterminated regexp meets end of file; expected a closing delimiter", 9..10]
       ]
     end
 
@@ -177,21 +182,20 @@ module Prism
 
     def test_incomplete_instance_var_string
       assert_errors expression('%@#@@#'), '%@#@@#', [
-        ["'@#' is not allowed as an instance variable name", 4..5],
+        ["'@' without identifiers is not allowed as an instance variable name", 4..5],
         ["unexpected instance variable, expecting end-of-input", 4..5]
       ]
     end
 
     def test_unterminated_s_symbol
       assert_errors expression("%s[abc"), "%s[abc", [
-        ["expected a closing delimiter for the dynamic symbol", 0..3]
+        ["unterminated quoted string; expected a closing delimiter for the dynamic symbol", 0..3]
       ]
     end
 
     def test_unterminated_parenthesized_expression
       assert_errors expression('(1 + 2'), '(1 + 2', [
-        ["unexpected end of file, expecting end-of-input", 6..6],
-        ["unexpected end of file, assuming it is closing the parent top level context", 6..6],
+        ["unexpected end-of-input, assuming it is closing the parent top level context", 6..6],
         ["expected a matching `)`", 6..6]
       ]
     end
@@ -204,21 +208,21 @@ module Prism
 
     def test_unterminated_argument_expression
       assert_errors expression('a %'), 'a %', [
-        ["invalid `%` token", 2..3],
-        ["expected an expression after the operator", 2..3],
-        ["unexpected end of file, assuming it is closing the parent top level context", 3..3]
+        ["unterminated quoted string meets end of file", 2..3],
+        ["unexpected end-of-input; expected an expression after the operator", 3..3],
+        ["unexpected end-of-input, assuming it is closing the parent top level context", 3..3]
       ]
     end
 
     def test_unterminated_interpolated_symbol
       assert_error_messages ":\"#", [
-        "expected a closing delimiter for the interpolated symbol"
+        "unterminated symbol; expected a closing delimiter for the interpolated symbol"
       ]
     end
 
     def test_cr_without_lf_in_percent_expression
       assert_errors expression("%\r"), "%\r", [
-        ["invalid `%` token", 0..2],
+        ["unterminated string meets end of file", 2..2],
       ]
     end
 
@@ -258,13 +262,15 @@ module Prism
         ["unexpected ',', ignoring it", 6..7],
         ["expected a matching `)`", 6..6],
         ["unexpected ')', expecting end-of-input", 12..13],
-        ["unexpected ')', ignoring it", 12..13]
+        ["unexpected ')', ignoring it", 12..13],
+        ["Invalid next", 0..12]
       ]
     end
 
     def test_next_1
       assert_errors expression("next 1,;"), "next 1,;", [
-        ["expected an argument", 6..7]
+        ["expected an argument", 6..7],
+        ["Invalid next", 0..7]
       ]
     end
 
@@ -274,26 +280,28 @@ module Prism
         ["unexpected ',', ignoring it", 7..8],
         ["expected a matching `)`", 7..7],
         ["unexpected ')', expecting end-of-input", 13..14],
-        ["unexpected ')', ignoring it", 13..14]
+        ["unexpected ')', ignoring it", 13..14],
+        ["Invalid break", 0..13]
       ]
     end
 
     def test_break_1
       assert_errors expression("break 1,;"), "break 1,;", [
-        ["expected an argument", 7..8]
+        ["expected an argument", 7..8],
+        ["Invalid break", 0..8]
       ]
     end
 
     def test_argument_forwarding_when_parent_is_not_forwarding
       assert_errors expression('def a(x, y, z); b(...); end'), 'def a(x, y, z); b(...); end', [
-        ["unexpected `...` when the parent method is not forwarding", 18..21]
+        ["unexpected ... when the parent method is not forwarding", 18..21]
       ]
     end
 
     def test_argument_forwarding_only_effects_its_own_internals
       assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'),
         'def a(...); b(...); end; def c(x, y, z); b(...); end', [
-          ["unexpected `...` when the parent method is not forwarding", 43..46]
+          ["unexpected ... when the parent method is not forwarding", 43..46]
         ]
     end
 
@@ -325,14 +333,14 @@ module Prism
 
     def test_aliasing_global_variable_with_global_number_variable
       assert_errors expression("alias $a $1"), "alias $a $1", [
-        ["invalid argument being passed to `alias`; expected a bare word, symbol, constant, or global variable", 9..11]
+        ["invalid argument being passed to `alias`; can't make alias for the number variables", 9..11]
       ]
     end
 
     def test_def_with_expression_receiver_and_no_identifier
       assert_errors expression("def (a); end"), "def (a); end", [
         ["expected a `.` or `::` after the receiver in a method definition", 7..7],
-        ["expected a method name", 7..7]
+        ["unexpected ';'; expected a method name", 7..8]
       ]
     end
 
@@ -356,7 +364,7 @@ module Prism
       assert_error_messages "x.each { x end", [
         "unexpected 'end', expecting end-of-input",
         "unexpected 'end', ignoring it",
-        "unexpected end of file, assuming it is closing the parent top level context",
+        "unexpected end-of-input, assuming it is closing the parent top level context",
         "expected a block beginning with `{` to end with `}`"
       ]
     end
@@ -369,10 +377,13 @@ module Prism
         :a,
         Location(),
         Location(),
-        ArgumentsNode(1, [
-          KeywordHashNode(0, [AssocSplatNode(expression("kwargs"), Location())]),
-          SplatNode(Location(), expression("args"))
-        ]),
+        ArgumentsNode(
+          ArgumentsNodeFlags::CONTAINS_KEYWORDS | ArgumentsNodeFlags::CONTAINS_KEYWORD_SPLAT,
+          [
+            KeywordHashNode(0, [AssocSplatNode(expression("kwargs"), Location())]),
+            SplatNode(Location(), expression("args"))
+          ]
+        ),
         Location(),
         nil
       )
@@ -402,7 +413,7 @@ module Prism
 
     def test_arguments_binding_power_for_and
       assert_error_messages "foo(*bar and baz)", [
-        "expected a `)` to close the arguments",
+        "unexpected 'and'; expected a `)` to close the arguments",
         "unexpected ')', expecting end-of-input",
         "unexpected ')', ignoring it"
       ]
@@ -416,7 +427,7 @@ module Prism
         :a,
         Location(),
         Location(),
-        ArgumentsNode(0, [
+        ArgumentsNode(ArgumentsNodeFlags::CONTAINS_KEYWORDS, [
           KeywordHashNode(1, [
             AssocNode(
               SymbolNode(SymbolFlags::FORCED_US_ASCII_ENCODING, nil, Location(), Location(), "foo"),
@@ -452,7 +463,7 @@ module Prism
       )
 
       assert_errors expected, "def foo;module A;end;end", [
-        ["unexpected module definition in a method definition", 8..14]
+        ["unexpected module definition in method body", 8..14]
       ]
     end
 
@@ -490,7 +501,7 @@ module Prism
         Location()
       )
 
-      assert_errors expected, <<~RUBY, [["unexpected module definition in a method definition", 21..27]]
+      assert_errors expected, <<~RUBY, [["unexpected module definition in method body", 21..27]]
         def foo
           bar do
             module Foo;end
@@ -505,7 +516,7 @@ module Prism
         def foo;rescue;module A;end;end
         def foo;ensure;module A;end;end
       RUBY
-      message = "unexpected module definition in a method definition"
+      message = "unexpected module definition in method body"
       assert_errors expression(source), source, [
         [message, 14..20],
         [message, 47..53],
@@ -541,7 +552,7 @@ module Prism
       )
 
       assert_errors expected, "def foo;class A;end;end", [
-        ["unexpected class definition in a method definition", 8..13]
+        ["unexpected class definition in method body", 8..13]
       ]
     end
 
@@ -551,7 +562,7 @@ module Prism
         def foo;rescue;class A;end;end
         def foo;ensure;class A;end;end
       RUBY
-      message = "unexpected class definition in a method definition"
+      message = "unexpected class definition in method body"
       assert_errors expression(source), source, [
         [message, 14..19],
         [message, 46..51],
@@ -681,13 +692,13 @@ module Prism
       expected = StringNode(StringFlags::FORCED_UTF8_ENCODING, Location(), Location(), nil, "\u0001\u0002")
 
       assert_errors expected, '?\u{0001 0002}', [
-        ["invalid Unicode escape sequence; multiple codepoints are not allowed in a character literal", 9..12]
+        ["invalid Unicode escape sequence; Multiple codepoints at single character literal are disallowed", 9..12]
       ]
     end
 
     def test_invalid_hex_escape
       assert_errors expression('"\\xx"'), '"\\xx"', [
-        ["invalid hexadecimal escape sequence", 1..3],
+        ["invalid hex escape sequence", 1..3],
       ]
     end
 
@@ -704,12 +715,13 @@ module Prism
 
       assert_errors expected, '"\u{000z}"', [
         ["invalid Unicode escape sequence", 7..7],
+        ["unterminated Unicode escape", 7..7]
       ]
     end
 
     def test_unterminated_unicode_brackets_should_be_a_syntax_error
       assert_errors expression('?\\u{3'), '?\\u{3', [
-        ["invalid Unicode escape sequence; needs closing `}`", 1..5],
+        ["unterminated Unicode escape", 1..5],
       ]
     end
 
@@ -852,7 +864,7 @@ module Prism
         :foo,
         Location(),
         nil,
-        ParametersNode([], [], nil, [], [], ForwardingParameterNode(), nil),
+        ParametersNode([], [], nil, [ForwardingParameterNode()], [], ForwardingParameterNode(), nil),
         nil,
         [],
         Location(),
@@ -1050,7 +1062,7 @@ module Prism
       )
 
       assert_errors expected, "->(...) {}", [
-        ["unexpected `...` when the parent method is not forwarding", 3..6]
+        ["unexpected ... when the parent method is not forwarding", 3..6]
       ]
     end
 
@@ -1074,7 +1086,7 @@ module Prism
       )
 
       assert_errors expected, "a {|...|}", [
-        ["unexpected `...` when the parent method is not forwarding", 4..7]
+        ["unexpected ... when the parent method is not forwarding", 4..7]
       ]
     end
 
@@ -1085,13 +1097,13 @@ module Prism
         ConstantReadNode(:A),
         nil,
         nil,
-        StatementsNode([ReturnNode(Location(), nil)]),
+        StatementsNode([ReturnNode(0, Location(), nil)]),
         Location(),
         :A
       )
 
       assert_errors expected, "class A; return; end", [
-        ["invalid `return` in a class or module body", 15..16]
+        ["Invalid return in class/module body", 9..15]
       ]
     end
 
@@ -1100,13 +1112,13 @@ module Prism
         [],
         Location(),
         ConstantReadNode(:A),
-        StatementsNode([ReturnNode(Location(), nil)]),
+        StatementsNode([ReturnNode(0, Location(), nil)]),
         Location(),
         :A
       )
 
       assert_errors expected, "module A; return; end", [
-        ["invalid `return` in a class or module body", 16..17]
+        ["Invalid return in class/module body", 10..16]
       ]
     end
 
@@ -1130,28 +1142,24 @@ module Prism
     end
 
     def test_duplicated_parameter_names
-      # For some reason, Ripper reports no error for Ruby 3.0 when you have
-      # duplicated parameter names for positional parameters.
-      unless RUBY_VERSION < "3.1.0"
-        expected = DefNode(
-          :foo,
-          Location(),
-          nil,
-          ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b), RequiredParameterNode(ParameterFlags::REPEATED_PARAMETER, :a)], [], nil, [], [], nil, nil),
-          nil,
-          [:a, :b],
-          Location(),
-          nil,
-          Location(),
-          Location(),
-          nil,
-          Location()
-        )
+      expected = DefNode(
+        :foo,
+        Location(),
+        nil,
+        ParametersNode([RequiredParameterNode(0, :a), RequiredParameterNode(0, :b), RequiredParameterNode(ParameterFlags::REPEATED_PARAMETER, :a)], [], nil, [], [], nil, nil),
+        nil,
+        [:a, :b],
+        Location(),
+        nil,
+        Location(),
+        Location(),
+        nil,
+        Location()
+      )
 
-        assert_errors expected, "def foo(a,b,a);end", [
-          ["repeated parameter name", 12..13]
-        ]
-      end
+      assert_errors expected, "def foo(a,b,a);end", [
+        ["duplicated argument name", 12..13]
+      ]
 
       expected = DefNode(
         :foo,
@@ -1169,7 +1177,7 @@ module Prism
       )
 
       assert_errors expected, "def foo(a,b,*a);end", [
-        ["repeated parameter name", 13..14]
+        ["duplicated argument name", 13..14]
       ]
 
       expected = DefNode(
@@ -1188,7 +1196,7 @@ module Prism
       )
 
       assert_errors expected, "def foo(a,b,**a);end", [
-        ["repeated parameter name", 14..15]
+        ["duplicated argument name", 14..15]
       ]
 
       expected = DefNode(
@@ -1207,7 +1215,7 @@ module Prism
       )
 
       assert_errors expected, "def foo(a,b,&a);end", [
-        ["repeated parameter name", 13..14]
+        ["duplicated argument name", 13..14]
       ]
 
       expected = DefNode(
@@ -1233,13 +1241,12 @@ module Prism
       expected = CallNode(0, receiver, Location(), :foo, Location(), nil, nil, nil, nil)
 
       assert_errors expected, "<<~FOO.foo\n", [
-        ["could not find a terminator for the heredoc", 11..11]
+        ["unterminated heredoc; can't find string \"FOO\" anywhere before EOF", 3..6]
       ]
     end
 
     def test_invalid_message_name
-      result = Prism.parse("+.@foo,+=foo")
-      assert_equal :"", result.value.statements.body.first.write_name
+      assert_equal :"", Prism.parse_statement("+.@foo,+=foo").write_name
     end
 
     def test_invalid_operator_write_fcall
@@ -1257,9 +1264,10 @@ module Prism
     end
 
     def test_unterminated_global_variable
-      assert_errors expression("$"), "$", [
-        ["'$' is not allowed as a global variable name", 0..1]
-      ]
+      message = "'$' without identifiers is not allowed as a global variable name"
+
+      assert_errors expression("$"), "$", [[message, 0..1]]
+      assert_errors expression("$ "), "$ ", [[message, 0..1]]
     end
 
     def test_invalid_global_variable_write
@@ -1347,14 +1355,14 @@ module Prism
 
     if RUBY_VERSION >= "3.0"
       def test_writing_numbered_parameter
-        assert_errors expression("-> { _1 = 0 }"), "-> { _1 = 0 }", [
-          ["_1 is reserved for numbered parameters", 5..7]
+        assert_error_messages "-> { _1 = 0 }", [
+          "_1 is reserved for numbered parameters"
         ]
       end
 
       def test_targeting_numbered_parameter
-        assert_errors expression("-> { _1, = 0 }"), "-> { _1, = 0 }", [
-          ["_1 is reserved for numbered parameters", 5..7]
+        assert_error_messages "-> { _1, = 0 }", [
+          "_1 is reserved for numbered parameters"
         ]
       end
 
@@ -1368,14 +1376,13 @@ module Prism
 
     def test_double_scope_numbered_parameters
       source = "-> { _1 + -> { _2 } }"
-      errors = [["numbered parameter is already used in outer scope", 15..17]]
+      errors = [["numbered parameter is already used in outer block", 15..17]]
 
-      assert_errors expression(source), source, errors, compare_ripper: false
+      assert_errors expression(source), source, errors
     end
 
     def test_invalid_number_underscores
       error_messages = ["invalid underscore placement in number"]
-
       assert_error_messages "1__1", error_messages
       assert_error_messages "0b1__1", error_messages
       assert_error_messages "0o1__1", error_messages
@@ -1383,6 +1390,7 @@ module Prism
       assert_error_messages "0d1__1", error_messages
       assert_error_messages "0x1__1", error_messages
 
+      error_messages = ["trailing '_' in number"]
       assert_error_messages "1_1_", error_messages
       assert_error_messages "0b1_1_", error_messages
       assert_error_messages "0o1_1_", error_messages
@@ -1392,7 +1400,7 @@ module Prism
     end
 
     def test_alnum_delimiters
-      error_messages = ["invalid `%` token"]
+      error_messages = ["unknown type of %string"]
 
       assert_error_messages "%qXfooX", error_messages
       assert_error_messages "%QXfooX", error_messages
@@ -1436,13 +1444,13 @@ module Prism
         ["unexpected name for a parameter", 8..10],
         ["unexpected name for a parameter", 11..13]
       ]
-      assert_errors expression(source), source, errors, compare_ripper: false
+      assert_errors expression(source), source, errors
     end
 
     def test_class_name
       source = "class 0.X end"
       assert_errors expression(source), source, [
-        ["expected a constant name after `class`", 6..9],
+        ["unexpected constant path after `class`; class/module name must be CONSTANT", 6..9],
       ]
     end
 
@@ -1457,7 +1465,7 @@ module Prism
     def test_forwarding_arg_after_keyword_rest
       source = "def f(**,...);end"
       assert_errors expression(source), source, [
-        ["unexpected `...` in parameters", 9..12],
+        ["unexpected parameter order", 9..12]
       ]
     end
 
@@ -1473,8 +1481,7 @@ module Prism
 
       assert_errors expression(source), source, [
         ["expected a `do` keyword or a `{` to open the lambda block", 3..3],
-        ["unexpected end of file, expecting end-of-input", 7..7],
-        ["unexpected end of file, assuming it is closing the parent top level context", 7..7],
+        ["unexpected end-of-input, assuming it is closing the parent top level context", 7..7],
         ["expected a lambda block beginning with `do` to end with `end`", 7..7]
       ]
     end
@@ -1482,17 +1489,27 @@ module Prism
     def test_shadow_args_in_block
       source = "tap{|a;a|}"
       assert_errors expression(source), source, [
-        ["repeated parameter name", 7..8],
+        ["duplicated argument name", 7..8],
       ]
+    end
+
+    def test_optional_block_parameters_with_unary_operator
+      [
+        ["foo { |a = +b| }", ["unexpected '+'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = -b| }", ["unexpected '-'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = !b| }", ["unexpected '!'; unary calls are not allowed in this context", 11..12]],
+        ["foo { |a = ~b| }", ["unexpected '~'; unary calls are not allowed in this context", 11..12]],
+      ].each do |source, *errors|
+        assert_errors expression(source), source, errors
+      end
     end
 
     def test_repeated_parameter_name_in_destructured_params
       source = "def f(a, (b, (a))); end"
-      # In Ruby 3.0.x, `Ripper.sexp_raw` does not return `nil` for this case.
-      compare_ripper = RUBY_ENGINE == "ruby" && (RUBY_VERSION.split('.').map { |x| x.to_i } <=> [3, 1]) >= 1
+
       assert_errors expression(source), source, [
-        ["repeated parameter name", 14..15],
-      ], compare_ripper: compare_ripper
+        ["duplicated argument name", 14..15],
+      ]
     end
 
     def test_assign_to_numbered_parameter
@@ -1533,7 +1550,7 @@ module Prism
 
       assert_errors expression(source), source, [
         ["expected a predicate expression for the `while` statement", 22..22],
-        ["unexpected end of file, assuming it is closing the parent top level context", 22..22],
+        ["unexpected end-of-input, assuming it is closing the parent top level context", 22..22],
         ["expected an `end` to close the `while` statement", 22..22]
       ]
     end
@@ -1574,17 +1591,19 @@ module Prism
         1 => ^(if 1; (return) else (return) end)
         1 => ^(unless 1; (return) else (return) end)
       RUBY
-      message = 'unexpected void value expression'
+
+      message = "unexpected void value expression"
       assert_errors expression(source), source, [
         [message, 7..13],
         [message, 35..40],
         [message, 51..55],
         [message, 66..70],
+        ["Invalid retry without rescue", 81..86],
         [message, 81..86],
         [message, 97..103],
         [message, 123..129],
         [message, 168..174],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_statement
@@ -1607,6 +1626,7 @@ module Prism
         for x in (return)
         end
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 4..10],
@@ -1617,7 +1637,42 @@ module Prism
         [message, 110..116],
         [message, 132..138],
         [message, 154..160],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
+    end
+
+    def test_void_value_expression_in_begin_statement
+      source = <<~RUBY
+        x = return 1
+        x = return, 1
+        x = 1, return
+        x, y = return
+        x = begin return ensure end
+        x = begin ensure return end
+        x = begin return ensure return end
+        x = begin return; rescue; return end
+        x = begin return; rescue; return; else return end
+        x = begin; return; rescue; retry; end
+      RUBY
+
+      message = 'unexpected void value expression'
+      assert_errors expression(source), source, [
+        [message, 4..12],
+        [message, 17..23],
+        [message, 34..40],
+        [message, 48..54],
+        [message, 65..71],
+        [message, 100..106],
+        [message, 121..127],
+        [message, 156..162],
+        [message, 222..228],
+        [message, 244..250],
+      ]
+
+      refute_error_messages("x = begin return; rescue; end")
+      refute_error_messages("x = begin return; rescue; return; else end")
+      refute_error_messages("x = begin; rescue; retry; end")
+      refute_error_messages("x = begin 1; rescue; retry; ensure; end")
+      refute_error_messages("x = begin 1; rescue; return; end")
     end
 
     def test_void_value_expression_in_def
@@ -1629,12 +1684,13 @@ module Prism
         def x(a: return)
         end
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 5..11],
         [message, 29..35],
         [message, 50..56],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_assignment
@@ -1644,13 +1700,14 @@ module Prism
         a, b = return, 1
         a, b = 1, *return
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 4..10],
         [message, 18..24],
         [message, 32..38],
         [message, 53..59],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_modifier
@@ -1662,6 +1719,7 @@ module Prism
         (return) => a
         (return) in a
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 6..12],
@@ -1670,7 +1728,7 @@ module Prism
         [message, 58..64],
         [message, 67..73],
         [message, 81..87]
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_expression
@@ -1685,6 +1743,7 @@ module Prism
         ((return)..)
         ((return)...)
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 1..7],
@@ -1696,7 +1755,7 @@ module Prism
         [message, 85..91],
         [message, 96..102],
         [message, 109..115]
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_array
@@ -1709,6 +1768,7 @@ module Prism
         [ *return ]
         [ **return ]
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 1..7],
@@ -1718,7 +1778,7 @@ module Prism
         [message, 58..64],
         [message, 70..76],
         [message, 83..89],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_hash
@@ -1728,13 +1788,14 @@ module Prism
         { a: return }
         { **return }
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 2..8],
         [message, 23..29],
         [message, 37..43],
         [message, 50..56],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_call
@@ -1745,6 +1806,7 @@ module Prism
         (return)[1] = 2
         (return)::foo
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 1..7],
@@ -1752,7 +1814,7 @@ module Prism
         [message, 27..33],
         [message, 39..45],
         [message, 55..61],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_constant_path
@@ -1760,11 +1822,12 @@ module Prism
         (return)::A
         class (return)::A; end
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 1..7],
         [message, 19..25],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_arguments
@@ -1778,6 +1841,7 @@ module Prism
         foo(:a => return)
         foo(a: return)
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 4..10],
@@ -1788,7 +1852,7 @@ module Prism
         [message, 71..77],
         [message, 94..100],
         [message, 109..115],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_unary_call
@@ -1796,11 +1860,12 @@ module Prism
         +(return)
         not return
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 2..8],
         [message, 14..20],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_void_value_expression_in_binary_call
@@ -1812,13 +1877,14 @@ module Prism
         1 or (return)
         (return) or 1
       RUBY
+
       message = 'unexpected void value expression'
       assert_errors expression(source), source, [
         [message, 5..11],
         [message, 14..20],
         [message, 42..48],
         [message, 71..77],
-      ], compare_ripper: false # Ripper does not check 'void value expression'.
+      ]
     end
 
     def test_trailing_comma_in_calls
@@ -1920,10 +1986,10 @@ module Prism
       RUBY
 
       assert_errors expression(source), source, [
-        ["unexpected '..', expecting end-of-input", 3..5],
-        ["unexpected '..', ignoring it", 3..5],
-        ["unexpected '..', expecting end-of-input", 10..12],
-        ["unexpected '..', ignoring it", 10..12]
+        ["unexpected range operator; .. and ... are non-associative and cannot be chained", 3..5],
+        ["unexpected range operator; .. and ... are non-associative and cannot be chained", 10..12],
+        ["unexpected .., expecting end-of-input", 10..12],
+        ["unexpected .., ignoring it", 10..12]
       ]
     end
 
@@ -1934,13 +2000,21 @@ module Prism
         proc { |foo = foo| }
         proc { |foo: foo| }
       RUBY
-      message = 'parameter default value references itself'
-      assert_errors expression(source), source, [
-        [message, 14..17],
-        [message, 37..40],
-        [message, 61..64],
-        [message, 81..84],
-      ], compare_ripper: false # Ripper does not check 'circular reference'.
+
+      assert_errors(
+        expression(source),
+        source,
+        [
+          ["circular argument reference - bar", 8..11],
+          ["circular argument reference - bar", 32..35],
+          ["circular argument reference - foo", 55..58],
+          ["circular argument reference - foo", 76..79]
+        ],
+        check_valid_syntax: false,
+        version: "3.3.0"
+      )
+
+      refute_error_messages("def foo(bar: bar = 1); end")
     end
 
     def test_command_calls
@@ -1976,8 +2050,9 @@ module Prism
         begin; rescue a b; end
         begin; rescue a b => c; end
       RUBY
+
       sources.each do |source|
-        assert_nil Ripper.sexp_raw(source)
+        refute_valid_syntax(source)
         assert_false(Prism.parse(source).success?)
       end
     end
@@ -1993,8 +2068,9 @@ module Prism
         1.. % 2
         1.. ** 2
       RUBY
+
       sources.each do |source|
-        assert_nil Ripper.sexp_raw(source)
+        refute_valid_syntax(source)
         assert_false(Prism.parse(source).success?)
       end
     end
@@ -2049,22 +2125,36 @@ module Prism
     def test_block_arg_and_block
       source = 'foo(&1) { }'
       assert_errors expression(source), source, [
-        ['multiple block arguments; only one block is allowed', 8..11]
-      ], compare_ripper: false # Ripper does not check 'both block arg and actual block given'.
+        ["both block arg and actual block given; only one block is allowed", 8..11]
+      ]
     end
 
     def test_forwarding_arg_and_block
       source = 'def foo(...) = foo(...) { }'
       assert_errors expression(source), source, [
-        ['both a block argument and a forwarding argument; only one block is allowed', 24..27]
-      ], compare_ripper: false # Ripper does not check 'both block arg and actual block given'.
+        ['both block arg and actual block given; only one block is allowed', 24..27]
+      ]
     end
 
     def test_it_with_ordinary_parameter
       source = "proc { || it }"
       errors = [["`it` is not allowed when an ordinary parameter is defined", 10..12]]
 
-      assert_errors expression(source), source, errors, compare_ripper: false
+      assert_errors expression(source), source, errors, check_valid_syntax: RUBY_VERSION >= "3.4.0"
+    end
+
+    def test_regular_expression_with_unknown_regexp_options
+      source = "/foo/AZaz"
+      errors = [["unknown regexp options - AZaz", 4..9]]
+
+      assert_errors expression(source), source, errors
+    end
+
+    def test_interpolated_regular_expression_with_unknown_regexp_options
+      source = "/\#{foo}/AZaz"
+      errors = [["unknown regexp options - AZaz", 7..12]]
+
+      assert_errors expression(source), source, errors
     end
 
     def test_singleton_method_for_literals
@@ -2110,7 +2200,7 @@ module Prism
         ["cannot define singleton method for literals", 380..388],
         ["cannot define singleton method for literals", 404..407]
       ]
-      assert_errors expression(source), source, errors, compare_ripper: false
+      assert_errors expression(source), source, errors
     end
 
     def test_assignment_to_literal_in_conditionals
@@ -2143,23 +2233,53 @@ module Prism
       ] * source.lines.count
     end
 
+    def test_duplicate_pattern_capture
+      source = <<~RUBY
+        case (); in [a, a]; end
+        case (); in [a, *a]; end
+        case (); in {a: a, b: a}; end
+        case (); in {a: a, **a}; end
+        case (); in [a, {a:}]; end
+        case (); in [a, {a: {a: {a: [a]}}}]; end
+        case (); in a => a; end
+        case (); in [A => a, {a: b => a}]; end
+      RUBY
+
+      assert_error_messages source, Array.new(source.lines.length, "duplicated variable name")
+      refute_error_messages "case (); in [_a, _a]; end"
+    end
+
+    def test_duplicate_pattern_hash_key
+      assert_error_messages "case (); in {a:, a:}; end", ["duplicated key name", "duplicated variable name"]
+      assert_error_messages "case (); in {a:1, a:2}; end", ["duplicated key name"]
+      refute_error_messages "case (); in [{a:1}, {a:2}]; end"
+    end
+
+    def test_unexpected_block
+      assert_error_messages "def foo = yield(&:+)", ["block argument should not be given"]
+    end
+
     private
 
-    def assert_errors(expected, source, errors, compare_ripper: RUBY_ENGINE == "ruby")
-      # Ripper behaves differently on JRuby/TruffleRuby, so only check this on CRuby
-      assert_nil Ripper.sexp_raw(source) if compare_ripper
+    def assert_errors(expected, source, errors, check_valid_syntax: true, **options)
+      refute_valid_syntax(source) if check_valid_syntax
 
-      result = Prism.parse(source)
+      result = Prism.parse(source, **options)
       node = result.value.statements.body.last
 
       assert_equal_nodes(expected, node, compare_location: false)
       assert_equal(errors, result.errors.map { |e| [e.message, e.location.start_offset..e.location.end_offset] })
     end
 
-    def assert_error_messages(source, errors, compare_ripper: RUBY_ENGINE == "ruby")
-      assert_nil Ripper.sexp_raw(source) if compare_ripper
+    def assert_error_messages(source, errors)
+      refute_valid_syntax(source)
       result = Prism.parse(source)
       assert_equal(errors, result.errors.map(&:message))
+    end
+
+    def refute_error_messages(source)
+      assert_valid_syntax(source)
+      assert Prism.parse_success?(source), "Expected #{source.inspect} to parse successfully"
     end
 
     def assert_warning_messages(source, warnings)

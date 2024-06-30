@@ -55,6 +55,7 @@ jobs:
       run: bundle exec rake typecheck:steep
     - name: Check field kinds
       run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
+
   build:
     strategy:
       fail-fast: false
@@ -71,6 +72,8 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
       shell: bash
+      env:
+        TESTOPTS: "-v"
 
   build-ffi:
     strategy:
@@ -94,7 +97,23 @@ jobs:
       - name: Run Ruby tests
         run: bundle exec rake
 
-  build-debug-mode:
+  build-without-assertions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Run Ruby tests
+      run: bundle exec rake compile_no_debug test
+
+  build-debug:
     strategy:
       fail-fast: false
       matrix:
@@ -110,14 +129,10 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
       env:
-        PRISM_DEBUG_MODE_BUILD: "1"
+        PRISM_BUILD_DEBUG: "1"
 
-  build-without-assertions:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
-    runs-on: ${{ matrix.os }}
+  build-minimal:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -126,7 +141,9 @@ jobs:
         ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_no_debug
+      run: bundle exec rake compile_minimal test
+      env:
+        PRISM_BUILD_MINIMAL: "1"
 
   build-java:
     runs-on: ubuntu-latest
@@ -198,16 +215,16 @@ jobs:
       uses: actions/cache@v4
       id: cache-valgrind
       with:
-        path: valgrind-3.20.0
-        key: ${{ runner.os }}-valgrind-3.20.0
+        path: valgrind-3.23.0
+        key: ${{ runner.os }}-valgrind-3.23.0
     - name: Download valgrind
       if: steps.cache-valgrind.outputs.cache-hit != 'true'
       run: |
-        wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
-        tar xf valgrind-3.20.0.tar.bz2
+        wget https://sourceware.org/pub/valgrind/valgrind-3.23.0.tar.bz2
+        tar xf valgrind-3.23.0.tar.bz2
     - name: Install valgrind
       run: |
-        cd valgrind-3.20.0
+        cd valgrind-3.23.0
         ./configure
         make
         sudo make install
@@ -227,7 +244,8 @@ jobs:
       with:
         ruby-version: head
         bundler-cache: true
-    - run: bundle exec rake build
+    - run: bundle config --local frozen false
+    - run: bundle exec rake build:dev
     - uses: actions/upload-artifact@v4
       with:
         name: gem-package

@@ -13,7 +13,12 @@ namespace :seattlerb do
 
   desc "Import the seattlerb tests"
   task import: ["tmp/seattlerb", "test/prism/fixtures/seattlerb"] do
-    require "base64"
+    require "bundler/inline"
+    gemfile do
+      source "https://rubygems.org"
+      gem "minitest", require: "minitest/autorun"
+      gem "ruby_parser"
+    end
 
     # These files are not valid Ruby
     known_failures = %w[
@@ -22,12 +27,18 @@ namespace :seattlerb do
       test/prism/fixtures/seattlerb/args_star__anon_solo.txt
       test/prism/fixtures/seattlerb/args_star__anon_trailing.txt
       test/prism/fixtures/seattlerb/begin_else_return_value.txt
+      test/prism/fixtures/seattlerb/block_break.txt
+      test/prism/fixtures/seattlerb/block_next.txt
       test/prism/fixtures/seattlerb/block_yield.txt
       test/prism/fixtures/seattlerb/bug_begin_else.txt
       test/prism/fixtures/seattlerb/bug170.txt
       test/prism/fixtures/seattlerb/call_block_arg_unnamed.txt
+      test/prism/fixtures/seattlerb/dasgn_icky2.txt
       test/prism/fixtures/seattlerb/iter_array_curly.txt
       test/prism/fixtures/seattlerb/magic_encoding_comment__bad.txt
+      test/prism/fixtures/seattlerb/yield_arg.txt
+      test/prism/fixtures/seattlerb/yield_call_assocs.txt
+      test/prism/fixtures/seattlerb/yield_empty_parens.txt
     ]
 
     # Cleaning up some file names
@@ -40,7 +51,7 @@ namespace :seattlerb do
       "d3RmX2lfaGF0ZV95b3U=\n",
       "d3Rm\n",
       "em9tZ19zb21ldGltZXNfaV9oYXRlX3RoaXNfcHJvamVjdA==\n"
-    ].map { Base64.decode64(_1) }
+    ].map { _1.unpack1("m") }
 
     # The license is in the README
     cp "tmp/seattlerb/README.rdoc", "test/prism/fixtures/seattlerb/README.rdoc"
@@ -87,5 +98,6 @@ namespace :seattlerb do
   task :clean do
     rm_rf "tmp/seattlerb"
     rm_rf "test/prism/fixtures/seattlerb"
+    rm_rf "test/prism/snapshots/seattlerb"
   end
 end

@@ -19,31 +19,31 @@ module Prism
     # The main known difference is that we may omit dispatching some events in
     # some cases. This impacts the following events:
     #
-    # * on_assign_error
-    # * on_comma
-    # * on_ignored_nl
-    # * on_ignored_sp
-    # * on_kw
-    # * on_label_end
-    # * on_lbrace
-    # * on_lbracket
-    # * on_lparen
-    # * on_nl
-    # * on_op
-    # * on_operator_ambiguous
-    # * on_rbrace
-    # * on_rbracket
-    # * on_rparen
-    # * on_semicolon
-    # * on_sp
-    # * on_symbeg
-    # * on_tstring_beg
-    # * on_tstring_end
+    # - on_assign_error
+    # - on_comma
+    # - on_ignored_nl
+    # - on_ignored_sp
+    # - on_kw
+    # - on_label_end
+    # - on_lbrace
+    # - on_lbracket
+    # - on_lparen
+    # - on_nl
+    # - on_op
+    # - on_operator_ambiguous
+    # - on_rbrace
+    # - on_rbracket
+    # - on_rparen
+    # - on_semicolon
+    # - on_sp
+    # - on_symbeg
+    # - on_tstring_beg
+    # - on_tstring_end
     #
     class Ripper < Compiler
       # Parses the given Ruby program read from +src+.
       # +src+ must be a String or an IO or a object with a #gets method.
-      def Ripper.parse(src, filename = "(ripper)", lineno = 1)
+      def self.parse(src, filename = "(ripper)", lineno = 1)
         new(src, filename, lineno).parse
       end
 
@@ -54,22 +54,22 @@ module Prism
       # By default, this method does not handle syntax errors in +src+,
       # use the +raise_errors+ keyword to raise a SyntaxError for an error in +src+.
       #
-      #   require 'ripper'
-      #   require 'pp'
+      #     require "ripper"
+      #     require "pp"
       #
-      #   pp Ripper.lex("def m(a) nil end")
-      #   #=> [[[1,  0], :on_kw,     "def", FNAME    ],
-      #        [[1,  3], :on_sp,     " ",   FNAME    ],
-      #        [[1,  4], :on_ident,  "m",   ENDFN    ],
-      #        [[1,  5], :on_lparen, "(",   BEG|LABEL],
-      #        [[1,  6], :on_ident,  "a",   ARG      ],
-      #        [[1,  7], :on_rparen, ")",   ENDFN    ],
-      #        [[1,  8], :on_sp,     " ",   BEG      ],
-      #        [[1,  9], :on_kw,     "nil", END      ],
-      #        [[1, 12], :on_sp,     " ",   END      ],
-      #        [[1, 13], :on_kw,     "end", END      ]]
+      #     pp Ripper.lex("def m(a) nil end")
+      #     #=> [[[1,  0], :on_kw,     "def", FNAME    ],
+      #          [[1,  3], :on_sp,     " ",   FNAME    ],
+      #          [[1,  4], :on_ident,  "m",   ENDFN    ],
+      #          [[1,  5], :on_lparen, "(",   BEG|LABEL],
+      #          [[1,  6], :on_ident,  "a",   ARG      ],
+      #          [[1,  7], :on_rparen, ")",   ENDFN    ],
+      #          [[1,  8], :on_sp,     " ",   BEG      ],
+      #          [[1,  9], :on_kw,     "nil", END      ],
+      #          [[1, 12], :on_sp,     " ",   END      ],
+      #          [[1, 13], :on_kw,     "end", END      ]]
       #
-      def Ripper.lex(src, filename = "-", lineno = 1, raise_errors: false)
+      def self.lex(src, filename = "-", lineno = 1, raise_errors: false)
         result = Prism.lex_compat(src, filepath: filename, line: lineno)
 
         if result.failure? && raise_errors
@@ -368,17 +368,17 @@ module Prism
       # returning +nil+ in such cases. Use the +raise_errors+ keyword
       # to raise a SyntaxError for an error in +src+.
       #
-      #   require "ripper"
-      #   require "pp"
+      #     require "ripper"
+      #     require "pp"
       #
-      #   pp Ripper.sexp("def m(a) nil end")
-      #     #=> [:program,
-      #          [[:def,
-      #           [:@ident, "m", [1, 4]],
-      #           [:paren, [:params, [[:@ident, "a", [1, 6]]], nil, nil, nil, nil, nil, nil]],
-      #           [:bodystmt, [[:var_ref, [:@kw, "nil", [1, 9]]]], nil, nil, nil]]]]
+      #     pp Ripper.sexp("def m(a) nil end")
+      #       #=> [:program,
+      #            [[:def,
+      #             [:@ident, "m", [1, 4]],
+      #             [:paren, [:params, [[:@ident, "a", [1, 6]]], nil, nil, nil, nil, nil, nil]],
+      #             [:bodystmt, [[:var_ref, [:@kw, "nil", [1, 9]]]], nil, nil, nil]]]]
       #
-      def Ripper.sexp(src, filename = "-", lineno = 1, raise_errors: false)
+      def self.sexp(src, filename = "-", lineno = 1, raise_errors: false)
         builder = SexpBuilderPP.new(src, filename, lineno)
         sexp = builder.parse
         if builder.error?
@@ -397,23 +397,23 @@ module Prism
       # returning +nil+ in such cases. Use the +raise_errors+ keyword
       # to raise a SyntaxError for an error in +src+.
       #
-      #   require 'ripper'
-      #   require 'pp'
+      #     require "ripper"
+      #     require "pp"
       #
-      #   pp Ripper.sexp_raw("def m(a) nil end")
-      #     #=> [:program,
-      #          [:stmts_add,
-      #           [:stmts_new],
-      #           [:def,
-      #            [:@ident, "m", [1, 4]],
-      #            [:paren, [:params, [[:@ident, "a", [1, 6]]], nil, nil, nil]],
-      #            [:bodystmt,
-      #             [:stmts_add, [:stmts_new], [:var_ref, [:@kw, "nil", [1, 9]]]],
-      #             nil,
-      #             nil,
-      #             nil]]]]
+      #     pp Ripper.sexp_raw("def m(a) nil end")
+      #       #=> [:program,
+      #            [:stmts_add,
+      #             [:stmts_new],
+      #             [:def,
+      #              [:@ident, "m", [1, 4]],
+      #              [:paren, [:params, [[:@ident, "a", [1, 6]]], nil, nil, nil]],
+      #              [:bodystmt,
+      #               [:stmts_add, [:stmts_new], [:var_ref, [:@kw, "nil", [1, 9]]]],
+      #               nil,
+      #               nil,
+      #               nil]]]]
       #
-      def Ripper.sexp_raw(src, filename = "-", lineno = 1, raise_errors: false)
+      def self.sexp_raw(src, filename = "-", lineno = 1, raise_errors: false)
         builder = SexpBuilder.new(src, filename, lineno)
         sexp = builder.parse
         if builder.error?
@@ -1181,8 +1181,8 @@ module Prism
         bounds(node.location)
         target = on_field(receiver, call_operator, message)
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -1339,8 +1339,8 @@ module Prism
         bounds(node.name_loc)
         target = on_var_field(on_cvar(node.name.to_s))
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -1409,8 +1409,8 @@ module Prism
         bounds(node.name_loc)
         target = on_var_field(on_const(node.name.to_s))
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -1456,16 +1456,16 @@ module Prism
       # ^^^^^^^^
       def visit_constant_path_node(node)
         if node.parent.nil?
-          bounds(node.child.location)
-          child = on_const(node.child.name.to_s)
+          bounds(node.name_loc)
+          child = on_const(node.name.to_s)
 
           bounds(node.location)
           on_top_const_ref(child)
         else
           parent = visit(node.parent)
 
-          bounds(node.child.location)
-          child = on_const(node.child.name.to_s)
+          bounds(node.name_loc)
+          child = on_const(node.name.to_s)
 
           bounds(node.location)
           on_const_path_ref(parent, child)
@@ -1488,16 +1488,16 @@ module Prism
       # Visit a constant path that is part of a write node.
       private def visit_constant_path_write_node_target(node)
         if node.parent.nil?
-          bounds(node.child.location)
-          child = on_const(node.child.name.to_s)
+          bounds(node.name_loc)
+          child = on_const(node.name.to_s)
 
           bounds(node.location)
           on_top_const_field(child)
         else
           parent = visit(node.parent)
 
-          bounds(node.child.location)
-          child = on_const(node.child.name.to_s)
+          bounds(node.name_loc)
+          child = on_const(node.name.to_s)
 
           bounds(node.location)
           on_const_path_field(parent, child)
@@ -1510,8 +1510,8 @@ module Prism
         target = visit_constant_path_write_node_target(node.target)
         value = visit(node.value)
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -1802,8 +1802,8 @@ module Prism
         bounds(node.name_loc)
         target = on_var_field(on_gvar(node.name.to_s))
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -1983,8 +1983,8 @@ module Prism
         bounds(node.location)
         target = on_aref_field(receiver, arguments)
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -2059,8 +2059,8 @@ module Prism
         bounds(node.name_loc)
         target = on_var_field(on_ivar(node.name.to_s))
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -2218,6 +2218,13 @@ module Prism
       end
 
       # -> { it }
+      #      ^^
+      def visit_it_local_variable_read_node(node)
+        bounds(node.location)
+        on_vcall(on_ident(node.slice))
+      end
+
+      # -> { it }
       # ^^^^^^^^^
       def visit_it_parameters_node(node)
       end
@@ -2312,12 +2319,7 @@ module Prism
       # ^^^
       def visit_local_variable_read_node(node)
         bounds(node.location)
-
-        if node.name == :"0it"
-          on_vcall(on_ident(node.slice))
-        else
-          on_var_ref(on_ident(node.slice))
-        end
+        on_var_ref(on_ident(node.slice))
       end
 
       # foo = 1
@@ -2337,8 +2339,8 @@ module Prism
         bounds(node.name_loc)
         target = on_var_field(on_ident(node.name_loc.slice))
 
-        bounds(node.operator_loc)
-        operator = on_op("#{node.operator}=")
+        bounds(node.binary_operator_loc)
+        operator = on_op("#{node.binary_operator}=")
         value = visit_write_value(node.value)
 
         bounds(node.location)
@@ -3267,7 +3269,11 @@ module Prism
 
       # Lazily initialize the parse result.
       def result
-        @result ||= Prism.parse(source)
+        @result ||=
+          begin
+            scopes = RUBY_VERSION >= "3.3.0" ? [] : [[]]
+            Prism.parse(source, scopes: scopes)
+          end
       end
 
       ##########################################################################

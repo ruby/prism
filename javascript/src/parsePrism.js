@@ -82,9 +82,6 @@ function dumpOptions(options) {
   values.push(options.line || 1);
 
   template.push("L");
-  values.push(options.offset || 0);
-
-  template.push("L");
   if (options.encoding) {
     const encoding = encoder.encode(options.encoding);
     values.push(encoding.length);
@@ -108,6 +105,9 @@ function dumpOptions(options) {
   } else {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
   }
+
+  template.push("C");
+  values.push(options.encoding === false ? 1 : 0);
 
   template.push("L");
   if (options.scopes) {

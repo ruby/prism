@@ -1,27 +1,28 @@
 PATH
   remote: .
   specs:
-    prism (0.24.0)
+    prism (0.30.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
     benchmark-ips (2.13.0)
-    ffi (1.16.3)
-    mini_portile2 (2.8.5)
-    nokogiri (1.16.2)
+    ffi (1.17.0)
+    mini_portile2 (2.8.7)
+    nokogiri (1.16.6)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    parser (3.3.0.5)
+    onigmo (0.1.0)
+    parser (3.3.3.0)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
-    racc (1.7.3)
-    rake (13.1.0)
+    racc (1.8.0)
+    rake (13.2.1)
     rake-compiler (1.2.7)
       rake
-    ruby_memcheck (2.3.0)
+    ruby_memcheck (3.0.0)
       nokogiri
     ruby_parser (3.21.0)
       racc (~> 1.5)
@@ -36,6 +37,7 @@ PLATFORMS
 DEPENDENCIES
   benchmark-ips
   ffi
+  onigmo
   parser
   prism!
   rake
@@ -43,3 +45,6 @@ DEPENDENCIES
   ruby_memcheck
   ruby_parser
   test-unit
+
+BUNDLED WITH
+   2.6.0.dev

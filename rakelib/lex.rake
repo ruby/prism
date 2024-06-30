@@ -86,7 +86,16 @@ TARGETS = {
   ruby: {
     repo: "https://github.com/ruby/ruby",
     sha: "52837fcec2340048f9bdc2169cde17243c5e9d6d",
-    excludes: ["spec/ruby/command_line/fixtures/bad_syntax.rb"]
+    excludes: [
+      # Contains an invalid break
+      "sample/trick2018/01-kinaba/entry.rb",
+
+      # Contains invalid syntax
+      "spec/ruby/command_line/fixtures/bad_syntax.rb",
+
+      # Requires an implicit -x, which ripper does not respect
+      "tool/merger.rb",
+    ]
   },
   discourse: {
     repo: "https://github.com/discourse/discourse",

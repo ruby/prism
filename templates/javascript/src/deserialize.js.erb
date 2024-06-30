@@ -1,7 +1,7 @@
 import * as nodes from "./nodes.js";
 
 const MAJOR_VERSION = 0;
-const MINOR_VERSION = 24;
+const MINOR_VERSION = 30;
 const PATCH_VERSION = 0;
 
 // The DataView getFloat64 function takes an optional second argument that
@@ -266,7 +266,7 @@ export class ParseResult {
   }
 }
 
-const errorLevels = ["fatal", "argument"];
+const errorLevels = ["syntax", "argument", "load"];
 const errorTypes = [
   <%- errors.each do |error| -%>
   "<%= error.name.downcase %>",
@@ -331,14 +331,14 @@ export function deserialize(source, array) {
   const dataLoc = buffer.readOptionalLocation();
 
   const errors = Array.from({ length: buffer.readVarInt() }, () => ({
-    type: errorTypes[buffer.readByte()],
+    type: errorTypes[buffer.readVarInt()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: errorLevels[buffer.readByte()]
   }));
 
   const warnings = Array.from({ length: buffer.readVarInt() }, () => ({
-    type: warningTypes[buffer.readByte()],
+    type: warningTypes[buffer.readVarInt()],
     message: buffer.readString(buffer.readVarInt()),
     location: buffer.readLocation(),
     level: warningLevels[buffer.readByte()]

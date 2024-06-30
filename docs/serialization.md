@@ -55,16 +55,16 @@ The comment type is one of:
 
 | # bytes | field |
 | --- | --- |
-| `1` | type |
+| varuint | type |
 | string | error message (ASCII-only characters) |
 | location | the location in the source this error applies to |
-| `1` | the level of the error: `0` for `fatal` |
+| `1` | the level of the error: `0` for `fatal`, `1` for `argument`, `2` for `load` |
 
 ### warning
 
 | # bytes | field |
 | --- | --- |
-| `1` | type |
+| varuint | type |
 | string | warning message (ASCII-only characters) |
 | location | the location in the source this warning applies to |
 | `1` | the level of the warning: `0` for `default` and `1` for `verbose` |
@@ -194,12 +194,12 @@ The final argument to `pm_serialize_parse` is an optional string that controls t
 | `4`     | the length of the filepath |
 | ...     | the filepath bytes         |
 | `4`     | the line number            |
-| `4`     | the offset in the source   |
 | `4`     | the length the encoding    |
 | ...     | the encoding bytes         |
 | `1`     | frozen string literal      |
 | `1`     | command line flags         |
 | `1`     | syntax version, see [pm_options_version_t](https://github.com/ruby/prism/blob/main/include/prism/options.h) for valid values |
+| `1`     | whether or not the encoding is locked (should almost always be false) |
 | `4`     | the number of scopes       |
 | ...     | the scopes                 |
 
@@ -214,14 +214,14 @@ Command line flags are a bitset. By default every flag is `0`. It includes the f
 
 Scopes are ordered from the outermost scope to the innermost one.
 
-Each scope is layed out as follows:
+Each scope is laid out as follows:
 
 | # bytes | field                      |
 | ------- | -------------------------- |
 | `4`     | the number of locals       |
 | ...     | the locals                 |
 
-Each local is layed out as follows:
+Each local is laid out as follows:
 
 | # bytes | field                      |
 | ------- | -------------------------- |

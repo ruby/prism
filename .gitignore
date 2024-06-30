@@ -6,6 +6,7 @@
 /doc/c/
 /doc/java/
 /doc/rb/
+/doc/rust/
 /pkg/
 /spec/reports/
 /top-100-gems/
@@ -45,8 +46,10 @@ out.svg
 /lib/prism/dispatcher.rb
 /lib/prism/dot_visitor.rb
 /lib/prism/dsl.rb
+/lib/prism/inspect_visitor.rb
 /lib/prism/mutation_compiler.rb
 /lib/prism/node.rb
+/lib/prism/reflection.rb
 /lib/prism/serialize.rb
 /lib/prism/visitor.rb
 /sorbet/

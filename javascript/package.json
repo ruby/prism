@@ -1,10 +1,10 @@
 {
   "name": "@ruby/prism",
-  "version": "0.24.0",
+  "version": "0.30.0",
   "description": "Prism Ruby parser",
   "type": "module",
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "src/index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run type",
     "test": "node test.js",

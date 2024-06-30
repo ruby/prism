@@ -2,7 +2,7 @@ class Prism::Node
   abstract!
 
   sig { returns(Prism::Source) }
-  attr_reader :source
+  def source; end
 
   sig { returns(Prism::Location) }
   def location; end
@@ -13,14 +13,26 @@ class Prism::Node
   sig { returns(Integer) }
   def end_offset; end
 
+  sig { returns(T::Array[String]) }
+  def source_lines; end
+
+  sig { returns(T::Array[String]) }
+  def script_lines; end
+
   sig { returns(String) }
   def slice; end
+
+  sig { returns(String) }
+  def slice_lines; end
 
   sig { params(q: T.untyped).void }
   def pretty_print(q); end
 
   sig { returns(String) }
   def to_dot; end
+
+  sig { params(line: Integer, column: Integer).returns(T::Array[Prism::Node]) }
+  def tunnel(line, column); end
 
   sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
@@ -37,11 +49,14 @@ class Prism::Node
   sig { abstract.returns(T::Array[T.any(Prism::Node, Prism::Location)]) }
   def comment_targets; end
 
+  sig { abstract.returns(T::Array[Prism::Reflection::Field]) }
+  def fields; end
+
   sig { abstract.returns(Symbol) }
   def type; end
 
-  sig { abstract.params(inspector: Prism::NodeInspector).returns(String) }
-  def inspect(inspector = Prism::NodeInspector.new); end
+  sig { abstract.returns(String) }
+  def inspect; end
 end
 <%- nodes.each do |node| -%>
 
@@ -100,8 +115,11 @@ class Prism::<%= node.name -%> < Prism::Node
   <%- end -%>
   <%- end -%>
 
-  sig { params(inspector: T.untyped).returns(String) }
-  def inspect(inspector = nil); end
+  sig { override.returns(T::Array[Prism::Reflection::Field]) }
+  def fields; end
+
+  sig { override.returns(String) }
+  def inspect; end
 
   sig { override.returns(Symbol) }
   def type; end
