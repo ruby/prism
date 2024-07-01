@@ -24,7 +24,8 @@ GEM
     csv (3.3.0)
     drb (2.2.1)
     erubi (1.13.0)
-    ffi (1.17.0)
+    ffi (1.17.0-arm64-darwin)
+    ffi (1.17.0-x86_64-linux-gnu)
     fileutils (1.7.2)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
@@ -89,7 +90,7 @@ GEM
       strscan (>= 1.0.0)
       terminal-table (>= 2, < 4)
     strscan (3.1.0)
-    tapioca (0.14.4)
+    tapioca (0.15.0)
       bundler (>= 2.2.25)
       netrc (>= 0.11.0)
       parallel (>= 1.21.0)
@@ -107,9 +108,9 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     yard (0.9.36)
-    yard-sorbet (0.8.1)
-      sorbet-runtime (>= 0.5)
-      yard (>= 0.9)
+    yard-sorbet (0.9.0)
+      sorbet-runtime
+      yard
 
 PLATFORMS
   arm64-darwin-23
