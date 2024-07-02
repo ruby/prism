@@ -64,6 +64,15 @@ end
 #<%= line %>
 <%- end -%>
 class Prism::<%= node.name -%> < Prism::Node
+  sig{ returns(Integer) }
+  def flags; end
+  <%- if (node_flags = node.flags) -%>
+  <%- node_flags.values.each do |value| -%>
+
+  sig { returns(T::Boolean) }
+  def <%= value.name.downcase %>?; end
+  <%- end -%>
+
   <%- node.fields.each do |field| -%>
   sig { returns(<%= field.rbi_class %>) }
   def <%= field.name %>; end
@@ -106,11 +115,6 @@ class Prism::<%= node.name -%> < Prism::Node
 
   sig { returns(T.nilable(String)) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::Template::FlagsField -%>
-  <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
-
-  sig { returns(T::Boolean) }
-  def <%= value.name.downcase %>?; end
   <%- end -%>
   <%- end -%>
   <%- end -%>

@@ -362,6 +362,7 @@ public class Loader {
             case <%= index + 1 %>:
             <%-
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
+            params << "loadFlags()"
             params.concat node.semantic_fields.map { |field|
               case field
               when Prism::Template::NodeField then "#{field.java_cast}loadNode()"
@@ -378,7 +379,6 @@ public class Loader {
               when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
               when Prism::Template::UInt8Field then "buffer.get()"
               when Prism::Template::UInt32Field then "loadVarUInt()"
-              when Prism::Template::FlagsField then "loadFlags()"
               when Prism::Template::IntegerField then "loadInteger()"
               when Prism::Template::DoubleField then "buffer.getDouble()"
               else raise
