@@ -13,6 +13,7 @@ module Prism
       when "console"    then console
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
+      when "error"      then error(argv)
       when "lex"        then lex(argv)
       when "locals"     then locals(argv)
       when "parse"      then parse(argv)
@@ -27,6 +28,7 @@ module Prism
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
+            bin/prism error [name] [source]
             bin/prism lex [source]
             bin/prism locals [source]
             bin/prism parse [source]
@@ -155,6 +157,29 @@ module Prism
 
       lookup_table(found)
       unicode_lists(found) if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
+    end
+
+    # bin/prism error [name] [source]
+    def error(argv)
+      name = argv.shift
+      source, _ = read_source(argv)
+
+      result = Prism.parse(source)
+      raise "Expected #{source.inspect} to have errors" if result.success?
+
+      filepath = File.expand_path("../test/prism/errors/#{name}.txt", __dir__)
+
+      if File.file?(filepath)
+        counter = 1
+
+        begin
+          current = "#{File.dirname(filepath)}/#{File.basename(filepath, ".txt")}_#{counter += 1}.txt"
+        end while File.file?(current)
+
+        filepath = current
+      end
+
+      File.write(filepath, result.errors_format)
     end
 
     # bin/prism lex [source]
