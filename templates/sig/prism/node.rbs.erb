@@ -47,6 +47,14 @@ module Prism
   class <%= node.name -%> < Node
     include _Node
 
+    attr_reader :flags
+    <%- if (node_flags = node.flags) -%>
+    <%- node_flags.values.each do |value| -%>
+
+    def <%= value.name.downcase %>?: () -> bool
+    <%- end -%>
+    <%- end -%>
+
     <%- node.fields.each do |field| -%>
     attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
@@ -64,10 +72,6 @@ module Prism
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String?
-    <%- when Prism::Template::FlagsField -%>
-    <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
-    def <%= value.name.downcase %>?: () -> bool
-    <%- end -%>
     <%- end -%>
     <%- end -%>
     def type: () -> :<%= node.human %>

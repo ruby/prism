@@ -117,6 +117,7 @@ Each node is structured like the following table:
 | --- | --- |
 | `1` | node type |
 | location | node location |
+| varuint | node flags |
 
 Every field on the node is then appended to the serialized string. The fields can be determined by referencing `config.yml`. Depending on the type of field, it could take a couple of different forms, described below:
 

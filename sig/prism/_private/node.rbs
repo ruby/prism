@@ -1,8 +1,8 @@
 module Prism
   class Node
-    @newline: bool
+    @newline_flag: bool
 
-    def newline?: () -> bool
-    def set_newline_flag: (Array[bool]) -> void
+    def newline_flag?: () -> bool
+    def newline_flag!: (Array[bool] lines) -> void
   end
 end
