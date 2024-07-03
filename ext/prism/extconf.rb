@@ -50,7 +50,7 @@ def make(env, target)
   Dir.chdir(File.expand_path("../..", __dir__)) do
     system(
       env,
-      RUBY_PLATFORM.include?("openbsd") ? "gmake" : "make",
+      RUBY_PLATFORM.match?(/openbsd|freebsd/) ? "gmake" : "make",
       target,
       exception: true
     )
