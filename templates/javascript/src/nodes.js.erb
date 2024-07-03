@@ -32,7 +32,7 @@ import * as visitors from "./visitor.js"
  * <%= flag.comment %>
  */
 const <%= flag.name %> = {
-<%- flag.values.each_with_index do |value, index| -%>
+<%- flag.values.each.with_index(2) do |value, index| -%>
   <%= value.name %>: 1 << <%= index %>,
 <%- end -%>
 };
@@ -82,10 +82,12 @@ export class <%= node.name -%> {
   /**
    * Construct a new <%= node.name %>.
    *
+   * @param {number} nodeID
+   * @param {Location} location
+   * @param {number} flags
    <%- node.fields.each do |field| -%>
    * @param {<%= jstype(field) %>} <%= prop(field) %>
    <%- end -%>
-   * @param {Location} location
    */
   constructor(<%= ["nodeID", "location", "flags", *node.fields.map { |field| prop(field) }].join(", ") %>) {
     this.nodeID = nodeID;

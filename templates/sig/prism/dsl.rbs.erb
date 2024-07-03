@@ -1,13 +1,31 @@
 module Prism
   module DSL
+    def source: (String string) -> Source
+
+    def location: (?source: Source, ?start_offset: Integer, ?length: Integer) -> Location
+    <%- nodes.each do |node| -%>
+    <%-
+    params = [
+      ["source", "Source"],
+      ["node_id", "Integer"],
+      ["location", "Location"],
+      ["flags", "Integer"]
+    ].concat(node.fields.map { |field| [field.name, field.rbs_class] })
+    -%>
+
+    def <%= node.human %>: (<%= params.map { |(name, type)| "?#{name}: #{type}" }.join(", ") %>) -> <%= node.name %>
+    <%- end -%>
+    <%- flags.each do |flag| -%>
+
+    def <%= flag.human.chomp("s") %>: (Symbol name) -> Integer
+    <%- end -%>
+
     private
 
-    # Create a new Location object
-    def Location: (?Source source, ?Integer start_offset, ?Integer length) -> Location
-    <%- nodes.each do |node| -%>
+    def default_source: () -> Source
 
-    # Create a new <%= node.name %> node
-    def <%= node.name %>: (<%= (node.fields.map { |field| "#{field.rbs_class} #{field.name}" } + ["?Source source", "?Location location"]).join(", ") %>) -> <%= node.name %>
-    <%- end -%>
+    def default_location: () -> Location
+
+    def default_node: (Source source, Location location) -> node
   end
 end
