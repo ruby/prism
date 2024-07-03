@@ -95,12 +95,14 @@ public abstract class Nodes {
         public final int nodeId;
         public final int startOffset;
         public final int length;
+        protected final short flags;
         private boolean newLineFlag = false;
 
-        public Node(int nodeId, int startOffset, int length) {
+        public Node(int nodeId, int startOffset, int length, short flags) {
             this.nodeId = nodeId;
             this.startOffset = startOffset;
             this.length = length;
+            this.flags = flags;
         }
 
         public final int endOffset() {
@@ -228,11 +230,10 @@ public abstract class Nodes {
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
         public <%= node.name -%>(<%= params.join(", ") %>) {
-            super(nodeId, startOffset, length);
+            super(nodeId, startOffset, length, flags);
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
         <%- end -%>
-            this.flags = flags;
         <%- node.semantic_fields.each do |field| -%>
             this.<%= field.name %> = <%= field.name %>;
         <%- end -%>
@@ -242,7 +243,7 @@ public abstract class Nodes {
         <%- node_flags.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
-            return <%= node_flags.name %>.is<%= value.camelcase %>(this.<%= node_flags.name %>);
+            return <%= node_flags.name %>.is<%= value.camelcase %>(flags);
         }
         <%- end -%>
         <%- end -%>
@@ -353,7 +354,7 @@ public abstract class Nodes {
                 builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
             <%- when Prism::Template::Flags -%>
-            builder.append(this.flags);
+            builder.append(flags);
             builder.append('\n');
             <%- when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField, Prism::Template::DoubleField -%>
             builder.append(this.<%= field.name %>);

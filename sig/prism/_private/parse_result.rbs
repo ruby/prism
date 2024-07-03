@@ -49,6 +49,13 @@ module Prism
       def nearest_targets: (Prism::node, comment) -> (untyped | ::Array[untyped])
     end
 
+    class Errors
+      attr_reader parse_result: ParseResult
+
+      def initialize: (ParseResult parse_result) -> void
+      def format: () -> String
+    end
+
     class Newlines < Visitor
       @newline_marked: Array[bool]
 

@@ -17,6 +17,8 @@ module Prism
     def character_column: (Integer byte_offset) -> Integer
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
+
+    def self.for: (String source) -> Source
   end
 
   class ASCIISource < Source
