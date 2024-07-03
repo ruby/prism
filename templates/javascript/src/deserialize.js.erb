@@ -295,6 +295,7 @@ export function deserialize(source, array) {
 
   function readRequiredNode() {
     const type = buffer.readByte();
+    const nodeID = buffer.readVarInt();
     const location = buffer.readLocation();
 
     switch (type) {
@@ -303,7 +304,7 @@ export function deserialize(source, array) {
         <%- if node.needs_serialized_length? -%>
         buffer.readUint32();
         <%- end -%>
-        return new nodes.<%= node.name %>(<%= ["location", "buffer.readVarInt()", *node.fields.map { |field|
+        return new nodes.<%= node.name %>(<%= ["nodeID", "location", "buffer.readVarInt()", *node.fields.map { |field|
           case field
           when Prism::Template::NodeField then "readRequiredNode()"
           when Prism::Template::OptionalNodeField then "readOptionalNode()"

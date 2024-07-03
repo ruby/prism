@@ -58,6 +58,16 @@ const <%= flag.name %> = {
  */
 export class <%= node.name -%> {
   /**
+   * @type {Integer}
+   */
+  nodeID;
+
+  /**
+   * @type {Location}
+   */
+  location;
+
+  /**
    * @type number
    */
   #flags;
@@ -70,11 +80,6 @@ export class <%= node.name -%> {
 
   <%- end -%>
   /**
-   * @type {Location}
-   */
-  location;
-
-  /**
    * Construct a new <%= node.name %>.
    *
    <%- node.fields.each do |field| -%>
@@ -82,7 +87,8 @@ export class <%= node.name -%> {
    <%- end -%>
    * @param {Location} location
    */
-  constructor(<%= ["location", "flags", *node.fields.map { |field| prop(field) }].join(", ") %>) {
+  constructor(<%= ["nodeID", "location", "flags", *node.fields.map { |field| prop(field) }].join(", ") %>) {
+    this.nodeID = nodeID;
     this.location = location;
     this.#flags = flags;
     <%- node.fields.each do |field| -%>

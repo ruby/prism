@@ -116,6 +116,7 @@ Each node is structured like the following table:
 | # bytes | field |
 | --- | --- |
 | `1` | node type |
+| varuint | node identifier |
 | location | node location |
 | varuint | node flags |
 
