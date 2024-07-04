@@ -25,6 +25,10 @@ class SerializationBuffer {
   FORCED_UTF8_ENCODING_FLAG = 1;
   FORCED_BINARY_ENCODING_FLAG = 2;
 
+  DECODER_MAP = new Map([
+    ["ascii-8bit", "ascii"]
+  ]);
+
   constructor(source, array) {
     this.source = source;
     this.array = array;
@@ -164,6 +168,8 @@ class SerializationBuffer {
   }
 
   getDecoder(encoding) {
+    encoding = this.DECODER_MAP.get(encoding) || encoding;
+
     if (!this.decoders.has(encoding)) {
       this.decoders.set(encoding, new TextDecoder(encoding, {fatal: true}));
     }
@@ -366,7 +372,7 @@ export function deserialize(source, array) {
         buffer.readUint32();
         <%- end -%>
         return new nodes.<%= node.name %>(<%= (node.fields.map.with_index { |field, index|
-          if index == 0 && field.name == "flags" && field.kind == "StringFlags"
+          if index == 0 && field.name == "flags" && %w(StringFlags SymbolFlags).include?(first_field&.kind)
             "stringFlags"
           else
             case field
