@@ -500,9 +500,6 @@ module Prism::DSL
   def regular_expression_flag(name); end
 
   sig { params(name: Symbol).returns(Integer) }
-  def return_node_flag(name); end
-
-  sig { params(name: Symbol).returns(Integer) }
   def shareable_constant_node_flag(name); end
 
   sig { params(name: Symbol).returns(Integer) }
