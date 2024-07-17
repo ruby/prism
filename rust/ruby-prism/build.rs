@@ -51,6 +51,7 @@ enum NodeFieldType {
 #[serde(untagged)]
 enum NodeFieldKind {
     Concrete(String),
+    #[allow(dead_code)]
     Union(Vec<String>),
 }
 
@@ -304,8 +305,13 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::String => {
-                writeln!(file, "    pub const fn {}(&self) -> &str {{", field.name)?;
-                writeln!(file, "        \"\"")?;
+                writeln!(file, "    pub fn {}(&self) -> &str {{", field.name)?;
+                writeln!(file, "        unsafe {{")?;
+                writeln!(file, "            let source = (*self.pointer).{}.source;", field.name)?;
+                writeln!(file, "            let length = (*self.pointer).{}.length;", field.name)?;
+                writeln!(file, "            let slice = std::slice::from_raw_parts(source, length);")?;
+                writeln!(file, "            std::str::from_utf8_unchecked(slice)")?;
+                writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Constant => {
