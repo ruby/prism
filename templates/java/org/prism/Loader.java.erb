@@ -353,7 +353,6 @@ public class Loader {
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        loadVarUInt(); // skip over node_id
         int startOffset = loadVarUInt();
         int length = loadVarUInt();
 
