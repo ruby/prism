@@ -94,13 +94,11 @@ public abstract class Nodes {
 
         public final int startOffset;
         public final int length;
-        protected final short flags;
         private boolean newLineFlag = false;
 
-        public Node(int startOffset, int length, short flags) {
+        public Node(int startOffset, int length) {
             this.startOffset = startOffset;
             this.length = length;
-            this.flags = flags;
         }
 
         public final int endOffset() {
@@ -202,6 +200,9 @@ public abstract class Nodes {
         <%- if node.needs_serialized_length? -%>
         public final int serializedLength;
         <%- end -%>
+        <%- if node.flags -%>
+        public final short flags;
+        <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
         <%- if field.comment -%>
         /**
@@ -224,13 +225,16 @@ public abstract class Nodes {
         <%-
           params = ["int startOffset", "int length"]
           params << "int serializedLength" if node.needs_serialized_length?
-          params << "short flags"
+          params << "short flags" if node.flags
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
         public <%= node.name -%>(<%= params.join(", ") %>) {
-            super(startOffset, length, flags);
+            super(startOffset, length);
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
+        <%- end -%>
+        <%- if node.flags -%>
+            this.flags = flags;
         <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
             this.<%= field.name %> = <%= field.name %>;

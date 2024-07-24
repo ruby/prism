@@ -363,7 +363,7 @@ public class Loader {
             <%-
             params = ["startOffset", "length"]
             params << "buffer.getInt()" if node.needs_serialized_length?
-            params << "loadFlags()"
+            params << "loadFlags()" if node.flags
             params.concat node.semantic_fields.map { |field|
               case field
               when Prism::Template::NodeField then "#{field.java_cast}loadNode()"
