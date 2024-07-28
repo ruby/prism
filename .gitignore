@@ -65,6 +65,7 @@ out.svg
 /sig/prism/node.rbs
 /sig/prism/visitor.rbs
 /sig/prism/_private/dot_visitor.rbs
+/rbi/prism/dsl.rbi
 /rbi/prism/node.rbi
 /rbi/prism/visitor.rbi
 

@@ -7,8 +7,13 @@ module Prism
   class Node
     extend _NodeSingleton
 
-    attr_reader location: Location
     attr_reader source: Source
+    attr_reader node_id: Integer
+    attr_reader location: Location
+    attr_reader flags: Integer
+
+    def newline?: () -> bool
+    def static_literal?: () -> bool
 
     def start_offset: () -> Integer
     def end_offset: () -> Integer
@@ -19,6 +24,7 @@ module Prism
     def pretty_print: (untyped q) -> untyped
     def to_dot: () -> String
     def tunnel: (Integer line, Integer column) -> Array[Prism::node]
+    def breadth_first_search: () { (Prism::node) -> bool } -> Prism::node?
     def deprecated: (*String) -> void
     def newline!: (Array[untyped]) -> void
   end
@@ -46,14 +52,20 @@ module Prism
   <%- end -%>
   class <%= node.name -%> < Node
     include _Node
+    <%- if (node_flags = node.flags) -%>
+    <%- node_flags.values.each do |value| -%>
+
+    def <%= value.name.downcase %>?: () -> bool
+    <%- end -%>
+    <%- end -%>
 
     <%- node.fields.each do |field| -%>
     attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
 
-    def initialize: (<%= ["Source source", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }, "Location location"].join(", ") %>) -> void
-    def copy: (<%= (node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" } + ["?location: Location"]).join(", ") %>) -> <%= node.name %>
-    def deconstruct_keys: (Array[Symbol] keys) -> { <%= (node.fields.map { |field| "#{field.name}: #{field.rbs_class}" } + ["location: Location"]).join(", ") %> }
+    def initialize: (<%= ["Source source", "Integer node_id", "Location location", "Integer flags", *node.fields.map { |field| "#{field.rbs_class} #{field.name}" }].join(", ") %>) -> void
+    def copy: (<%= (["?node_id: Integer", "?location: Location", "?flags: Integer"] + node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" }).join(", ") %>) -> <%= node.name %>
+    def deconstruct_keys: (Array[Symbol] keys) -> { <%= (["node_id: Integer", "location: Location"] + node.fields.map { |field| "#{field.name}: #{field.rbs_class}" }).join(", ") %> }
     <%- node.fields.each do |field| -%>
     <%- case field -%>
     <%- when Prism::Template::LocationField -%>
@@ -64,10 +76,6 @@ module Prism
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String?
-    <%- when Prism::Template::FlagsField -%>
-    <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
-    def <%= value.name.downcase %>?: () -> bool
-    <%- end -%>
     <%- end -%>
     <%- end -%>
     def type: () -> :<%= node.human %>
@@ -85,4 +93,10 @@ module Prism
     <%- end -%>
   end
   <%- end -%>
+
+  # The flags that are common to all nodes.
+  module NodeFlags
+    NEWLINE: Integer
+    STATIC_LITERAL: Integer
+  end
 end

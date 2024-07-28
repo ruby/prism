@@ -4,8 +4,20 @@ class Prism::Node
   sig { returns(Prism::Source) }
   def source; end
 
+  sig { returns(Integer) }
+  def node_id; end
+
   sig { returns(Prism::Location) }
   def location; end
+
+  sig{ returns(Integer) }
+  def flags; end
+
+  sig { returns(T::Boolean) }
+  def newline?; end
+
+  sig { returns(T::Boolean) }
+  def static_literal?; end
 
   sig { returns(Integer) }
   def start_offset; end
@@ -33,6 +45,9 @@ class Prism::Node
 
   sig { params(line: Integer, column: Integer).returns(T::Array[Prism::Node]) }
   def tunnel(line, column); end
+
+  sig { params(block: T.proc.params(node: Prism::Node).returns(T::Boolean)).returns(T.nilable(Prism::Node)) }
+  def breadth_first_search(&block); end
 
   sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
@@ -64,13 +79,20 @@ end
 #<%= line %>
 <%- end -%>
 class Prism::<%= node.name -%> < Prism::Node
+  <%- if (node_flags = node.flags) -%>
+  <%- node_flags.values.each do |value| -%>
+
+  sig { returns(T::Boolean) }
+  def <%= value.name.downcase %>?; end
+  <%- end -%>
+
   <%- node.fields.each do |field| -%>
   sig { returns(<%= field.rbi_class %>) }
   def <%= field.name %>; end
 
   <%- end -%>
-  sig { params(<%= ["source: Prism::Source", *node.fields.map { |field| "#{field.name}: #{field.rbi_class}" }, "location: Prism::Location"].join(", ") %>).void }
-  def initialize(<%= ["source", *node.fields.map(&:name), "location"].join(", ") %>); end
+  sig { params(<%= ["source: Prism::Source", "node_id: Integer", "location: Prism::Location", "flags: Integer", *node.fields.map { |field| "#{field.name}: #{field.rbi_class}" }].join(", ") %>).void }
+  def initialize(<%= ["source", "node_id", "location", "flags", *node.fields.map(&:name)].join(", ") %>); end
 
   sig { override.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
@@ -87,8 +109,8 @@ class Prism::<%= node.name -%> < Prism::Node
   sig { override.returns(T::Array[T.any(Prism::Node, Prism::Location)]) }
   def comment_targets; end
 
-  sig { params(<%= (node.fields.map { |field| "#{field.name}: #{field.rbi_class}" } + ["location: Prism::Location"]).join(", ") %>).returns(Prism::<%= node.name %>) }
-  def copy(<%= (node.fields.map(&:name) + ["location"]).map { |field| "#{field}: self.#{field}" }.join(", ") %>); end
+  sig { params(<%= (["node_id: Integer", "location: Prism::Location", "flags: Integer"] + node.fields.map { |field| "#{field.name}: #{field.rbi_class}" }).join(", ") %>).returns(Prism::<%= node.name %>) }
+  def copy(<%= (["node_id", "location", "flags"] + node.fields.map(&:name)).map { |field| "#{field}: self.#{field}" }.join(", ") %>); end
 
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
@@ -106,11 +128,6 @@ class Prism::<%= node.name -%> < Prism::Node
 
   sig { returns(T.nilable(String)) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::Template::FlagsField -%>
-  <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
-
-  sig { returns(T::Boolean) }
-  def <%= value.name.downcase %>?; end
   <%- end -%>
   <%- end -%>
   <%- end -%>
@@ -135,3 +152,14 @@ module Prism::<%= flag.name %>
   <%- end -%>
 end
 <%- end -%>
+
+# The flags that are common to all nodes.
+module Prism::NodeFlags
+  # A flag to indicate that the node is a candidate to emit a :line event
+  # through tracepoint when compiled.
+  NEWLINE = T.let(1, Integer)
+
+  # A flag to indicate that the value that the node represents is a value that
+  # can be determined at parse-time.
+  STATIC_LITERAL = T.let(2, Integer)
+end

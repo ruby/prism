@@ -19,7 +19,7 @@ def jstype(field)
   when Prism::Template::ConstantListField then "string[]"
   when Prism::Template::LocationField then "Location"
   when Prism::Template::OptionalLocationField then "Location | null"
-  when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::FlagsField, Prism::Template::IntegerField, Prism::Template::DoubleField then "number"
+  when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField, Prism::Template::DoubleField then "number"
   else raise
   end
 end
@@ -32,7 +32,7 @@ import * as visitors from "./visitor.js"
  * <%= flag.comment %>
  */
 const <%= flag.name %> = {
-<%- flag.values.each_with_index do |value, index| -%>
+<%- flag.values.each.with_index(2) do |value, index| -%>
   <%= value.name %>: 1 << <%= index %>,
 <%- end -%>
 };
@@ -63,39 +63,48 @@ const <%= flag.name %> = {
 <%- end -%>
  */
 export class <%= node.name -%> {
-  <%- node.fields.each do |field| -%>
   /**
-   * @type <%= jstype(field) %>
+   * @type {Integer}
    */
-  <%= field.is_a?(Prism::Template::FlagsField) ? "#flags" : prop(field) %>;
+  nodeID;
 
-  <%- end -%>
   /**
    * @type {Location}
    */
   location;
 
   /**
+   * @type number
+   */
+  #flags;
+
+  <%- node.fields.each do |field| -%>
+  /**
+   * @type <%= jstype(field) %>
+   */
+  <%= prop(field) %>;
+
+  <%- end -%>
+  /**
    * Construct a new <%= node.name %>.
    *
+   * @param {number} nodeID
+   * @param {Location} location
+   * @param {number} flags
    <%- node.fields.each do |field| -%>
    * @param {<%= jstype(field) %>} <%= prop(field) %>
    <%- end -%>
-   * @param {Location} location
    */
-  constructor(<%= (node.fields.map { |field| prop(field) } + ["location"]).join(", ") %>) {
-    <%- node.fields.each do |field| -%>
-    <%- if field.is_a?(Prism::Template::FlagsField) -%>
+  constructor(<%= ["nodeID", "location", "flags", *node.fields.map { |field| prop(field) }].join(", ") %>) {
+    this.nodeID = nodeID;
+    this.location = location;
     this.#flags = flags;
-    <%- else -%>
+    <%- node.fields.each do |field| -%>
     this.<%= prop(field) %> = <%= prop(field) %>;
     <%- end -%>
-    <%- end -%>
-    this.location = location;
   }
-  <%- if (flags_field = node.fields.find { |field| field.is_a?(Prism::Template::FlagsField) }) -%>
-  <%- flag = flags.find { |flag| flag.name == flags_field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag } -%>
-  <%- flag.values.each do |value| -%>
+  <%- if (node_flags = node.flags) -%>
+  <%- node_flags.values.each do |value| -%>
 
   /**
    * True if this node has the <%= value.name %> flag.
@@ -103,7 +112,7 @@ export class <%= node.name -%> {
    * @returns {boolean}
    */
   is<%= value.camelcase %>() {
-    return (this.#flags & <%= flag.name %>.<%= value.name %>) !== 0;
+    return (this.#flags & <%= node_flags.name %>.<%= value.name %>) !== 0;
   }
   <%- end -%>
   <%- end -%>
@@ -173,16 +182,15 @@ export class <%= node.name -%> {
   toJSON() {
     return {
       type: "<%= node.name %>",
-      <%- node.fields.each do |field| -%>
-      <%- if field.is_a?(Prism::Template::FlagsField) -%>
+      location: this.location,
       flags: this.#flags,
-      <%- elsif field.name == "arguments" -%>
+      <%- node.fields.each do |field| -%>
+      <%- if field.name == "arguments" -%>
       arguments: this.<%= prop(field) %>,
       <%- else -%>
       <%= prop(field) %>: this.<%= prop(field) %>,
       <%- end -%>
       <%- end -%>
-      location: this.location
     };
   }
 }

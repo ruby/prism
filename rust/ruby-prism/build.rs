@@ -40,9 +40,6 @@ enum NodeFieldType {
     #[serde(rename = "uint32")]
     UInt32,
 
-    #[serde(rename = "flags")]
-    Flags,
-
     #[serde(rename = "integer")]
     Integer,
 
@@ -84,6 +81,8 @@ struct Flags {
 #[derive(Debug, Deserialize)]
 struct Node {
     name: String,
+
+    flags: Option<String>,
 
     #[serde(default)]
     fields: Vec<NodeField>,
@@ -235,6 +234,28 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
     writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
     writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
+    writeln!(file)?;
+    writeln!(file, "    /// Returns the flags of this node.")?;
+    writeln!(file, "    #[must_use]")?;
+    writeln!(file, "    pub fn flags(&self) -> pm_node_flags_t {{")?;
+    writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
+    writeln!(file, "    }}")?;
+
+    if let Some(kind) = &node.flags {
+        let our_flags = flags.iter().filter(|f| &f.name == kind).collect::<Vec<_>>();
+        assert!(our_flags.len() == 1);
+
+        for flag in our_flags {
+            for value in &flag.values {
+                writeln!(file)?;
+                writeln!(file, "    /// {}", value.comment)?;
+                writeln!(file, "    #[must_use]")?;
+                writeln!(file, "    pub fn {}(&self) -> bool {{", accessor_func_name(&value.name))?;
+                writeln!(file, "        (self.flags() & {}) != 0", enum_const_name(&flag.name, &value.name))?;
+                writeln!(file, "    }}")?;
+            }
+        }
+    }
 
     for field in &node.fields {
         writeln!(file)?;
@@ -283,8 +304,12 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::String => {
-                writeln!(file, "    pub const fn {}(&self) -> &str {{", field.name)?;
-                writeln!(file, "        \"\"")?;
+                writeln!(file, "    pub fn {}(&self) -> &[u8] {{", field.name)?;
+                writeln!(file, "        unsafe {{")?;
+                writeln!(file, "            let source = (*self.pointer).{}.source;", field.name)?;
+                writeln!(file, "            let length = (*self.pointer).{}.length;", field.name)?;
+                writeln!(file, "            std::slice::from_raw_parts(source, length)")?;
+                writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Constant => {
@@ -334,27 +359,6 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    pub fn {}(&self) -> u32 {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                 writeln!(file, "    }}")?;
-            },
-            NodeFieldType::Flags => {
-                let Some(NodeFieldKind::Concrete(kind)) = &field.kind else {
-                    panic!("Flag fields must have a concrete kind");
-                };
-                let our_flags = flags.iter().filter(|f| &f.name == kind).collect::<Vec<_>>();
-                assert!(our_flags.len() == 1);
-
-                writeln!(file, "    fn {}(&self) -> pm_node_flags_t {{", field.name)?;
-                writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
-                writeln!(file, "    }}")?;
-
-                for flag in our_flags {
-                    for value in &flag.values {
-                        writeln!(file, "    /// {}", value.comment)?;
-                        writeln!(file, "    #[must_use]")?;
-                        writeln!(file, "    pub fn {}(&self) -> bool {{", accessor_func_name(&value.name))?;
-                        writeln!(file, "        (self.{}() & {}) != 0", field.name, enum_const_name(&flag.name, &value.name))?;
-                        writeln!(file, "    }}")?;
-                    }
-                }
             },
             NodeFieldType::Integer => {
                 writeln!(file, "    pub fn {}(&self) -> Integer<'pr> {{", field.name)?;

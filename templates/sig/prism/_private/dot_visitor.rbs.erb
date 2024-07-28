@@ -39,7 +39,7 @@ module Prism
     def location_inspect: (Location location) -> String
 
     <%- flags.each do |flag| -%>
-    def <%= flag.human %>_inspect: (<%= nodes.map { |node| node.name if node.fields.any? { |field| field.is_a?(Prism::Template::FlagsField) && field.kind == flag.name } }.compact.join(" | ") %> node) -> String
+    def <%= flag.human %>_inspect: (<%= nodes.filter_map { |node| node.name if node.flags == flag }.join(" | ") %> node) -> String
     <%- end -%>
   end
 end

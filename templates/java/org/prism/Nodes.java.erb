@@ -200,6 +200,9 @@ public abstract class Nodes {
         <%- if node.needs_serialized_length? -%>
         public final int serializedLength;
         <%- end -%>
+        <%- if node.flags -%>
+        public final short flags;
+        <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
         <%- if field.comment -%>
         /**
@@ -210,35 +213,39 @@ public abstract class Nodes {
          * </pre>
          */
         <%- end -%>
-        <%- if field.class.name.include?('Optional') -%>
+        <%- if field.class.name.include?("Optional") -%>
         @Nullable
         <%- end -%>
         <%- if field.respond_to?(:union_kind) && field.union_kind -%>
-        @UnionType({ <%= field.union_kind.map { |t| "#{t}.class" }.join(', ') %> })
+        @UnionType({ <%= field.union_kind.map { |t| "#{t}.class" }.join(", ") %> })
         <%- end -%>
         public final <%= field.java_type %> <%= field.name %>;
         <%- end -%>
 
         <%-
-          params = node.needs_serialized_length? ? ["int serializedLength"] : []
-          params.concat node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" }
-          params.concat ["int startOffset", "int length"]
+          params = ["int startOffset", "int length"]
+          params << "int serializedLength" if node.needs_serialized_length?
+          params << "short flags" if node.flags
+          params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
-        public <%=node.name -%>(<%= params.join(", ") %>) {
+        public <%= node.name -%>(<%= params.join(", ") %>) {
             super(startOffset, length);
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
+        <%- end -%>
+        <%- if node.flags -%>
+            this.flags = flags;
         <%- end -%>
         <%- node.semantic_fields.each do |field| -%>
             this.<%= field.name %> = <%= field.name %>;
         <%- end -%>
         }
         <%# methods for flags -%>
-        <%- node.semantic_fields.grep(Prism::Template::FlagsField).each do |field| -%>
-        <%- flags.find { |flag| flag.name == field.kind }.tap { |flag| raise "Expected to find #{field.kind}" unless flag }.values.each do |value| -%>
+        <%- if (node_flags = node.flags) -%>
+        <%- node_flags.values.each do |value| -%>
 
         public boolean is<%= value.camelcase %>() {
-            return <%= field.kind %>.is<%= value.camelcase %>(this.<%= field.name %>);
+            return <%= node_flags.name %>.is<%= value.camelcase %>(flags);
         }
         <%- end -%>
         <%- end -%>
@@ -321,7 +328,7 @@ public abstract class Nodes {
             <%- if node.fields.any?(Prism::Template::NodeListField) or node.fields.any?(Prism::Template::ConstantListField) -%>
             String nextNextIndent = nextIndent + "  ";
             <%- end -%>
-            <%- node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::OptionalLocationField).each do |field| -%>
+            <%- [*node.flags, *node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::OptionalLocationField)].each do |field| -%>
             builder.append(nextIndent);
             builder.append("<%= field.name %>: ");
             <%- case field -%>
@@ -348,7 +355,10 @@ public abstract class Nodes {
             for (<%= string_type %> constant : this.<%= field.name %>) {
                 builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
             }
-            <%- when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::FlagsField, Prism::Template::IntegerField, Prism::Template::DoubleField -%>
+            <%- when Prism::Template::Flags -%>
+            builder.append(flags);
+            builder.append('\n');
+            <%- when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField, Prism::Template::DoubleField -%>
             builder.append(this.<%= field.name %>);
             builder.append('\n');
             <%- else -%>

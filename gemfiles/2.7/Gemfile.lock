@@ -9,7 +9,7 @@ GEM
     ast (2.4.2)
     ffi (1.16.3)
     onigmo (0.1.0)
-    parser (3.3.3.0)
+    parser (3.3.4.0)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
