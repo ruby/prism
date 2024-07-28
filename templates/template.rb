@@ -289,9 +289,6 @@ module Prism
       end
     end
 
-    class EncodedStringField < StringField
-    end
-
     # This represents a field on a node that is a location.
     class LocationField < Field
       def semantic_field?
@@ -466,21 +463,20 @@ module Prism
 
       def field_type_for(name)
         case name
-        when "node"          then NodeField
-        when "node?"         then OptionalNodeField
-        when "node[]"        then NodeListField
-        when "string"        then StringField
-        when "encodedstring" then EncodedStringField
-        when "constant"      then ConstantField
-        when "constant?"     then OptionalConstantField
-        when "constant[]"    then ConstantListField
-        when "location"      then LocationField
-        when "location?"     then OptionalLocationField
-        when "uint8"         then UInt8Field
-        when "uint32"        then UInt32Field
-        when "flags"         then FlagsField
-        when "integer"       then IntegerField
-        when "double"        then DoubleField
+        when "node"       then NodeField
+        when "node?"      then OptionalNodeField
+        when "node[]"     then NodeListField
+        when "string"     then StringField
+        when "constant"   then ConstantField
+        when "constant?"  then OptionalConstantField
+        when "constant[]" then ConstantListField
+        when "location"   then LocationField
+        when "location?"  then OptionalLocationField
+        when "uint8"      then UInt8Field
+        when "uint32"     then UInt32Field
+        when "flags"      then FlagsField
+        when "integer"    then IntegerField
+        when "double"     then DoubleField
         else raise("Unknown field type: #{name.inspect}")
         end
       end

@@ -13,8 +13,7 @@ def jstype(field)
   when Prism::Template::NodeField then field.ruby_type
   when Prism::Template::OptionalNodeField then "#{field.ruby_type} | null"
   when Prism::Template::NodeListField then "Node[]"
-  when Prism::Template::EncodedStringField then "EncodedString"
-  when Prism::Template::StringField then "string"
+  when Prism::Template::StringField then "RubyString"
   when Prism::Template::ConstantField then "string"
   when Prism::Template::OptionalConstantField then "string | null"
   when Prism::Template::ConstantListField then "string[]"
@@ -46,9 +45,9 @@ const <%= flag.name %> = {
  */
 
 /**
- * A string with associated encoding information.
+ * An encoded Ruby string.
  *
- * @typedef {{ encoding: string, validEncoding: boolean, value: string }} EncodedString
+ * @typedef {{ value: string, encoding: string, validEncoding: boolean }} RubyString
  */
 
 /**

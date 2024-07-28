@@ -19,9 +19,6 @@ enum NodeFieldType {
     #[serde(rename = "string")]
     String,
 
-    #[serde(rename = "encodedstring")]
-    EncodedString,
-
     #[serde(rename = "constant")]
     Constant,
 
@@ -285,7 +282,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "        NodeList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeFieldType::String | NodeFieldType::EncodedString => {
+            NodeFieldType::String => {
                 writeln!(file, "    pub const fn {}(&self) -> &str {{", field.name)?;
                 writeln!(file, "        \"\"")?;
                 writeln!(file, "    }}")?;
@@ -761,7 +758,7 @@ impl TryInto<i32> for Integer<'_> {{
         let length = unsafe {{ (*self.pointer).length }};
 
         if length == 0 {{
-            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value|
+            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value| 
                 if negative {{
                     Ok(-value)
                 }} else {{
