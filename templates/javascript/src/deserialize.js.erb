@@ -22,8 +22,8 @@ const LITTLE_ENDIAN = (() => {
 })();
 
 class SerializationBuffer {
-  FORCED_UTF8_ENCODING_FLAG = 1;
-  FORCED_BINARY_ENCODING_FLAG = 2;
+  FORCED_UTF8_ENCODING_FLAG = 1 << 2;
+  FORCED_BINARY_ENCODING_FLAG = 1 << 3;
 
   DECODER_MAP = new Map([
     ["ascii-8bit", "ascii"]
@@ -134,7 +134,10 @@ class SerializationBuffer {
   }
 
   decodeString(bytes, flags) {
-    if (flags & this.FORCED_BINARY_ENCODING_FLAG) {
+    const forcedBin = (flags & this.FORCED_BINARY_ENCODING_FLAG) !== 0;
+    const forcedUtf8 = (flags & this.FORCED_UTF8_ENCODING_FLAG) !== 0;
+
+    if (forcedBin) {
       // just use raw bytes
       return {
         encoding: "ascii",
@@ -142,7 +145,7 @@ class SerializationBuffer {
         value: this.asciiDecoder.decode(bytes)
       };
     } else {
-      const encoding = flags & this.FORCED_UTF8_ENCODING_FLAG ? "utf-8" : this.fileEncoding.toLowerCase();
+      const encoding = forcedUtf8 ? "utf-8" : this.fileEncoding.toLowerCase();
       const decoder = this.getDecoder(encoding);
 
       try {
