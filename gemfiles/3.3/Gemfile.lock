@@ -10,7 +10,7 @@ GEM
     ffi (1.17.0)
     logger (1.6.0)
     mini_portile2 (2.8.7)
-    nokogiri (1.16.6)
+    nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
