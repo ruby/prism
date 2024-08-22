@@ -7,6 +7,15 @@ matrix:
     - arch: arm64
     - arch: ppc64le
     - arch: s390x
+  allow_failures:
+    # Allow failures due to the following infra errors.
+    # The jobs are not starting.
+    - arch: arm64
+    # No output has been received in the last 10m0s, this potentially indicates
+    # a stalled build or something wrong with the build itself.
+    # https://app.travis-ci.com/github/ruby/prism/builds/271968231
+    - arch: ppc64le
+    - arch: s390x
   fast_finish: true
 
 before_install:
