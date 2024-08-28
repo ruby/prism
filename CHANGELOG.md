@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.0.0] - 2024-08-28
+
+### Added
+
+- Add `Node#breadth_first_search`.
+- Add `Node#node_id`.
+- Add `ArgumentsNode#contains_splat?`.
+- Passing the special value `false` for the `encoding` option tells Prism to ignore magic encoding comments.
+- Expose flags on every node type (allows checking static literal and newline).
+- Implement mismatched indentation warning.
+- Add C API for receiving a callback when parsing shebangs with additional flags.
+
+### Changed
+
+- **BREAKING**: Some fields are renamed that had illogical names. The previous names all now emit deprecation warnings.
+  - `CaseMatchNode#consequent` was renamed to `CaseMatchNode#else_clause`
+  - `CaseNode#consequent` was renamed to `CaseNode#else_clause`
+  - `IfNode#consequent` was renamed to `IfNode#subsequent`
+  - `RescueNode#consequent` was renamed to `RescueNode#subsequent`
+  - `UnlessNode#consequent` was renamed to `UnlessNode#else_clause`
+- Block exits are now allowed in loop predicates (e.g., `while _ && break do end`).
+- Multi-writes are now disallowed when not at the statement level.
+- Ensure that range operators are non-associative.
+- (JavaScript) Correctly deserialize encoded strings.
+- Properly support parsing regular expressions in extended mode.
+- Use gmake on FreeBSD.
+- Parsing streams now handles NUL bytes in the middle of the stream.
+- Properly detect invalid returns.
+
 ## [0.30.0] - 2024-06-07
 
 ### Added
@@ -538,7 +567,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v0.30.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/ruby/prism/compare/v0.30.0...v1.0.0
 [0.30.0]: https://github.com/ruby/prism/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/ruby/prism/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/ruby/prism/compare/v0.27.0...v0.28.0
