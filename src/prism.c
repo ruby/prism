@@ -1304,9 +1304,10 @@ pm_void_statement_check(pm_parser_t *parser, const pm_node_t *node) {
  * a "void" statement.
  */
 static void
-pm_void_statements_check(pm_parser_t *parser, const pm_statements_node_t *node) {
+pm_void_statements_check(pm_parser_t *parser, const pm_statements_node_t *node, bool last_value) {
     assert(node->body.size > 0);
-    for (size_t index = 0; index < node->body.size - 1; index++) {
+    const size_t size = node->body.size - (last_value ? 1 : 0);
+    for (size_t index = 0; index < size; index++) {
         pm_void_statement_check(parser, node->body.nodes[index]);
     }
 }
@@ -2286,7 +2287,10 @@ pm_assoc_node_create(pm_parser_t *parser, pm_node_t *key, const pm_token_t *oper
     // If the key and value of this assoc node are both static literals, then
     // we can mark this node as a static literal.
     pm_node_flags_t flags = 0;
-    if (value && !PM_NODE_TYPE_P(value, PM_ARRAY_NODE) && !PM_NODE_TYPE_P(value, PM_HASH_NODE) && !PM_NODE_TYPE_P(value, PM_RANGE_NODE)) {
+    if (value &&
+            !PM_NODE_TYPE_P(key, PM_ARRAY_NODE) && !PM_NODE_TYPE_P(key, PM_HASH_NODE) && !PM_NODE_TYPE_P(key, PM_RANGE_NODE) &&
+            !PM_NODE_TYPE_P(value, PM_ARRAY_NODE) && !PM_NODE_TYPE_P(value, PM_HASH_NODE) && !PM_NODE_TYPE_P(value, PM_RANGE_NODE)
+       ) {
         flags = key->flags & value->flags & PM_NODE_FLAG_STATIC_LITERAL;
     }
 
@@ -5242,7 +5246,7 @@ pm_interpolated_string_node_append(pm_interpolated_string_node_t *node, pm_node_
 
     switch (PM_NODE_TYPE(part)) {
         case PM_STRING_NODE:
-            pm_node_flag_set(part, PM_NODE_FLAG_STATIC_LITERAL | PM_STRING_FLAGS_FROZEN);
+            part->flags = (pm_node_flags_t) ((part->flags | PM_NODE_FLAG_STATIC_LITERAL | PM_STRING_FLAGS_FROZEN) & ~PM_STRING_FLAGS_MUTABLE);
             break;
         case PM_INTERPOLATED_STRING_NODE:
             if (PM_NODE_FLAG_P(part, PM_NODE_FLAG_STATIC_LITERAL)) {
@@ -5266,7 +5270,7 @@ pm_interpolated_string_node_append(pm_interpolated_string_node_t *node, pm_node_
                 // If the embedded statement is a string, then we can make that
                 // string as frozen and static literal, and not touch the static
                 // literal status of this string.
-                pm_node_flag_set(embedded, PM_NODE_FLAG_STATIC_LITERAL | PM_STRING_FLAGS_FROZEN);
+                embedded->flags = (pm_node_flags_t) ((embedded->flags | PM_NODE_FLAG_STATIC_LITERAL | PM_STRING_FLAGS_FROZEN) & ~PM_STRING_FLAGS_MUTABLE);
 
                 if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL)) {
                     MUTABLE_FLAGS(node);
@@ -13862,7 +13866,16 @@ parse_statements(pm_parser_t *parser, pm_context_t context) {
     }
 
     context_pop(parser);
-    pm_void_statements_check(parser, statements);
+    bool last_value = true;
+    switch (context) {
+        case PM_CONTEXT_BEGIN_ENSURE:
+        case PM_CONTEXT_DEF_ENSURE:
+            last_value = false;
+            break;
+        default:
+            break;
+    }
+    pm_void_statements_check(parser, statements, last_value);
 
     return statements;
 }
@@ -18056,7 +18069,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pop_block_exits(parser, previous_block_exits);
             pm_node_list_free(&current_block_exits);
 
-            pm_void_statements_check(parser, statements);
+            pm_void_statements_check(parser, statements, true);
             return (pm_node_t *) pm_parentheses_node_create(parser, &opening, (pm_node_t *) statements, &parser->previous);
         }
         case PM_TOKEN_BRACE_LEFT: {
