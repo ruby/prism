@@ -134,6 +134,7 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
 * [smart_todo](https://github.com/Shopify/smart_todo/pull/69)
 * [sorbet-eraser](https://github.com/kddnewton/sorbet-eraser/pull/25)
 * [synvert](https://github.com/xinminlabs/synvert-core-ruby)
+* [typeprof](https://github.com/ruby/typeprof)
 
 ### Applications
 
