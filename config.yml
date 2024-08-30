@@ -323,85 +323,85 @@ tokens:
   - name: NOT_PROVIDED
     comment: "a token that was not present but it is okay"
   - name: AMPERSAND
-    comment: "&"
+    comment: "<code>&amp;</code>"
   - name: AMPERSAND_AMPERSAND
-    comment: "&&"
+    comment: "<code>&amp;&amp;</code>"
   - name: AMPERSAND_AMPERSAND_EQUAL
-    comment: "&&="
+    comment: "<code>&amp;&amp;=</code>"
   - name: AMPERSAND_DOT
-    comment: "&."
+    comment: "<code>&amp;.</code>"
   - name: AMPERSAND_EQUAL
-    comment: "&="
+    comment: "<code>&amp;=</code>"
   - name: BACKTICK
-    comment: "`"
+    comment: "<code>`</code>"
   - name: BACK_REFERENCE
     comment: "a back reference"
   - name: BANG
-    comment: "! or !@"
+    comment: "`!` or `!@`"
   - name: BANG_EQUAL
-    comment: "!="
+    comment: "`!=`"
   - name: BANG_TILDE
-    comment: "!~"
+    comment: "`!~`"
   - name: BRACE_LEFT
-    comment: "{"
+    comment: "`{`"
   - name: BRACE_RIGHT
-    comment: "}"
+    comment: "`}`"
   - name: BRACKET_LEFT
-    comment: "["
+    comment: "`[`"
   - name: BRACKET_LEFT_ARRAY
-    comment: "[ for the beginning of an array"
+    comment: "`[` for the beginning of an array"
   - name: BRACKET_LEFT_RIGHT
-    comment: "[]"
+    comment: "`[]`"
   - name: BRACKET_LEFT_RIGHT_EQUAL
-    comment: "[]="
+    comment: "`[]=`"
   - name: BRACKET_RIGHT
-    comment: "]"
+    comment: "`]`"
   - name: CARET
-    comment: "^"
+    comment: "`^`"
   - name: CARET_EQUAL
-    comment: "^="
+    comment: "`^=`"
   - name: CHARACTER_LITERAL
     comment: "a character literal"
   - name: CLASS_VARIABLE
     comment: "a class variable"
   - name: COLON
-    comment: ":"
+    comment: "`:`"
   - name: COLON_COLON
-    comment: "::"
+    comment: "`::`"
   - name: COMMA
-    comment: ","
+    comment: "`,`"
   - name: COMMENT
     comment: "a comment"
   - name: CONSTANT
     comment: "a constant"
   - name: DOT
-    comment: "the . call operator"
+    comment: "the `.` call operator"
   - name: DOT_DOT
-    comment: "the .. range operator"
+    comment: "the `..` range operator"
   - name: DOT_DOT_DOT
-    comment: "the ... range operator or forwarding parameter"
+    comment: "the `...` range operator or forwarding parameter"
   - name: EMBDOC_BEGIN
-    comment: "=begin"
+    comment: "`=begin`"
   - name: EMBDOC_END
-    comment: "=end"
+    comment: "`=end`"
   - name: EMBDOC_LINE
     comment: "a line inside of embedded documentation"
   - name: EMBEXPR_BEGIN
-    comment: "#{"
+    comment: "`#{`"
   - name: EMBEXPR_END
-    comment: "}"
+    comment: "`}`"
   - name: EMBVAR
-    comment: "#"
+    comment: "`#`"
   - name: EQUAL
-    comment: "="
+    comment: "`=`"
   - name: EQUAL_EQUAL
-    comment: "=="
+    comment: "`==`"
   - name: EQUAL_EQUAL_EQUAL
-    comment: "==="
+    comment: "`===`"
   - name: EQUAL_GREATER
-    comment: "=>"
+    comment: "`=>`"
   - name: EQUAL_TILDE
-    comment: "=~"
+    comment: "`=~`"
   - name: FLOAT
     comment: "a floating point number"
   - name: FLOAT_IMAGINARY
@@ -413,13 +413,13 @@ tokens:
   - name: GLOBAL_VARIABLE
     comment: "a global variable"
   - name: GREATER
-    comment: ">"
+    comment: "`>`"
   - name: GREATER_EQUAL
-    comment: ">="
+    comment: "`>=`"
   - name: GREATER_GREATER
-    comment: ">>"
+    comment: "`>>`"
   - name: GREATER_GREATER_EQUAL
-    comment: ">>="
+    comment: "`>>=`"
   - name: HEREDOC_END
     comment: "the end of a heredoc"
   - name: HEREDOC_START
@@ -439,179 +439,179 @@ tokens:
   - name: INTEGER_RATIONAL_IMAGINARY
     comment: "an integer with a rational and imaginary suffix"
   - name: KEYWORD_ALIAS
-    comment: "alias"
+    comment: "`alias`"
   - name: KEYWORD_AND
-    comment: "and"
+    comment: "`and`"
   - name: KEYWORD_BEGIN
-    comment: "begin"
+    comment: "`begin`"
   - name: KEYWORD_BEGIN_UPCASE
-    comment: "BEGIN"
+    comment: "`BEGIN`"
   - name: KEYWORD_BREAK
-    comment: "break"
+    comment: "`break`"
   - name: KEYWORD_CASE
-    comment: "case"
+    comment: "`case`"
   - name: KEYWORD_CLASS
-    comment: "class"
+    comment: "`class`"
   - name: KEYWORD_DEF
-    comment: "def"
+    comment: "`def`"
   - name: KEYWORD_DEFINED
-    comment: "defined?"
+    comment: "`defined?`"
   - name: KEYWORD_DO
-    comment: "do"
+    comment: "`do`"
   - name: KEYWORD_DO_LOOP
-    comment: "do keyword for a predicate in a while, until, or for loop"
+    comment: "`do` keyword for a predicate in a `while`, `until`, or `for` loop"
   - name: KEYWORD_ELSE
-    comment: "else"
+    comment: "`else`"
   - name: KEYWORD_ELSIF
-    comment: "elsif"
+    comment: "`elsif`"
   - name: KEYWORD_END
-    comment: "end"
+    comment: "`end`"
   - name: KEYWORD_END_UPCASE
-    comment: "END"
+    comment: "`END`"
   - name: KEYWORD_ENSURE
-    comment: "ensure"
+    comment: "`ensure`"
   - name: KEYWORD_FALSE
-    comment: "false"
+    comment: "`false`"
   - name: KEYWORD_FOR
-    comment: "for"
+    comment: "`for`"
   - name: KEYWORD_IF
-    comment: "if"
+    comment: "`if`"
   - name: KEYWORD_IF_MODIFIER
-    comment: "if in the modifier form"
+    comment: "`if` in the modifier form"
   - name: KEYWORD_IN
-    comment: "in"
+    comment: "`in`"
   - name: KEYWORD_MODULE
-    comment: "module"
+    comment: "`module`"
   - name: KEYWORD_NEXT
-    comment: "next"
+    comment: "`next`"
   - name: KEYWORD_NIL
-    comment: "nil"
+    comment: "`nil`"
   - name: KEYWORD_NOT
-    comment: "not"
+    comment: "`not`"
   - name: KEYWORD_OR
-    comment: "or"
+    comment: "`or`"
   - name: KEYWORD_REDO
-    comment: "redo"
+    comment: "`redo`"
   - name: KEYWORD_RESCUE
-    comment: "rescue"
+    comment: "`rescue`"
   - name: KEYWORD_RESCUE_MODIFIER
-    comment: "rescue in the modifier form"
+    comment: "`rescue` in the modifier form"
   - name: KEYWORD_RETRY
-    comment: "retry"
+    comment: "`retry`"
   - name: KEYWORD_RETURN
-    comment: "return"
+    comment: "`return`"
   - name: KEYWORD_SELF
-    comment: "self"
+    comment: "`self`"
   - name: KEYWORD_SUPER
-    comment: "super"
+    comment: "`super`"
   - name: KEYWORD_THEN
-    comment: "then"
+    comment: "`then`"
   - name: KEYWORD_TRUE
-    comment: "true"
+    comment: "`true`"
   - name: KEYWORD_UNDEF
-    comment: "undef"
+    comment: "`undef`"
   - name: KEYWORD_UNLESS
-    comment: "unless"
+    comment: "`unless`"
   - name: KEYWORD_UNLESS_MODIFIER
-    comment: "unless in the modifier form"
+    comment: "`unless` in the modifier form"
   - name: KEYWORD_UNTIL
-    comment: "until"
+    comment: "`until`"
   - name: KEYWORD_UNTIL_MODIFIER
-    comment: "until in the modifier form"
+    comment: "`until` in the modifier form"
   - name: KEYWORD_WHEN
-    comment: "when"
+    comment: "`when`"
   - name: KEYWORD_WHILE
-    comment: "while"
+    comment: "`while`"
   - name: KEYWORD_WHILE_MODIFIER
-    comment: "while in the modifier form"
+    comment: "`while` in the modifier form"
   - name: KEYWORD_YIELD
-    comment: "yield"
+    comment: "`yield`"
   - name: KEYWORD___ENCODING__
-    comment: "__ENCODING__"
+    comment: "`__ENCODING__`"
   - name: KEYWORD___FILE__
-    comment: "__FILE__"
+    comment: "`__FILE__`"
   - name: KEYWORD___LINE__
-    comment: "__LINE__"
+    comment: "`__LINE__`"
   - name: LABEL
     comment: "a label"
   - name: LABEL_END
     comment: "the end of a label"
   - name: LAMBDA_BEGIN
-    comment: "{"
+    comment: "`{`"
   - name: LESS
-    comment: "<"
+    comment: "`<`"
   - name: LESS_EQUAL
-    comment: "<="
+    comment: "`<=`"
   - name: LESS_EQUAL_GREATER
-    comment: "<=>"
+    comment: "`<=>`"
   - name: LESS_LESS
-    comment: "<<"
+    comment: "`<<`"
   - name: LESS_LESS_EQUAL
-    comment: "<<="
+    comment: "`<<=`"
   - name: METHOD_NAME
     comment: "a method name"
   - name: MINUS
-    comment: "-"
+    comment: "`-`"
   - name: MINUS_EQUAL
-    comment: "-="
+    comment: "`-=`"
   - name: MINUS_GREATER
-    comment: "->"
+    comment: "`->`"
   - name: NEWLINE
     comment: "a newline character outside of other tokens"
   - name: NUMBERED_REFERENCE
     comment: "a numbered reference to a capture group in the previous regular expression match"
   - name: PARENTHESIS_LEFT
-    comment: "("
+    comment: "`(`"
   - name: PARENTHESIS_LEFT_PARENTHESES
-    comment: "( for a parentheses node"
+    comment: "`(` for a parentheses node"
   - name: PARENTHESIS_RIGHT
-    comment: ")"
+    comment: "`)`"
   - name: PERCENT
     comment: "%"
   - name: PERCENT_EQUAL
-    comment: "%="
+    comment: "`%=`"
   - name: PERCENT_LOWER_I
-    comment: "%i"
+    comment: "`%i`"
   - name: PERCENT_LOWER_W
-    comment: "%w"
+    comment: "`%w`"
   - name: PERCENT_LOWER_X
-    comment: "%x"
+    comment: "`%x`"
   - name: PERCENT_UPPER_I
-    comment: "%I"
+    comment: "`%I`"
   - name: PERCENT_UPPER_W
-    comment: "%W"
+    comment: "`%W`"
   - name: PIPE
-    comment: "|"
+    comment: "`|`"
   - name: PIPE_EQUAL
-    comment: "|="
+    comment: "`|=`"
   - name: PIPE_PIPE
-    comment: "||"
+    comment: "`||`"
   - name: PIPE_PIPE_EQUAL
-    comment: "||="
+    comment: "`||=`"
   - name: PLUS
-    comment: "+"
+    comment: "`+`"
   - name: PLUS_EQUAL
-    comment: "+="
+    comment: "`+=`"
   - name: QUESTION_MARK
-    comment: "?"
+    comment: "`?`"
   - name: REGEXP_BEGIN
     comment: "the beginning of a regular expression"
   - name: REGEXP_END
     comment: "the end of a regular expression"
   - name: SEMICOLON
-    comment: ";"
+    comment: "`;`"
   - name: SLASH
-    comment: "/"
+    comment: "`/`"
   - name: SLASH_EQUAL
-    comment: "/="
+    comment: "`/=`"
   - name: STAR
-    comment: "*"
+    comment: "`*`"
   - name: STAR_EQUAL
-    comment: "*="
+    comment: "`*=`"
   - name: STAR_STAR
-    comment: "**"
+    comment: "`**`"
   - name: STAR_STAR_EQUAL
-    comment: "**="
+    comment: "`**=`"
   - name: STRING_BEGIN
     comment: "the beginning of a string"
   - name: STRING_CONTENT
@@ -621,25 +621,25 @@ tokens:
   - name: SYMBOL_BEGIN
     comment: "the beginning of a symbol"
   - name: TILDE
-    comment: "~ or ~@"
+    comment: "`~` or `~@`"
   - name: UAMPERSAND
-    comment: "unary &"
+    comment: "unary `&`"
   - name: UCOLON_COLON
-    comment: "unary ::"
+    comment: "unary `::`"
   - name: UDOT_DOT
-    comment: "unary .. operator"
+    comment: "unary `..` operator"
   - name: UDOT_DOT_DOT
-    comment: "unary ... operator"
+    comment: "unary `...` operator"
   - name: UMINUS
-    comment: "-@"
+    comment: "`-@`"
   - name: UMINUS_NUM
-    comment: "-@ for a number"
+    comment: "`-@` for a number"
   - name: UPLUS
-    comment: "+@"
+    comment: "`+@`"
   - name: USTAR
-    comment: "unary *"
+    comment: "unary `*`"
   - name: USTAR_STAR
-    comment: "unary **"
+    comment: "unary `**`"
   - name: WORDS_SEP
     comment: "a separator between words in a list"
   - name: __END__
@@ -664,7 +664,7 @@ flags:
   - name: CallNodeFlags
     values:
       - name: SAFE_NAVIGATION
-        comment: "&. operator"
+        comment: "<code>&amp;.<code> operator"
       - name: VARIABLE_CALL
         comment: "a call that could have been a local variable"
       - name: ATTRIBUTE_WRITE
@@ -682,20 +682,20 @@ flags:
   - name: IntegerBaseFlags
     values:
       - name: BINARY
-        comment: "0b prefix"
+        comment: "`0b` prefix"
       - name: DECIMAL
-        comment: "0d or no prefix"
+        comment: "`0d` or no prefix"
       - name: OCTAL
-        comment: "0o or 0 prefix"
+        comment: "`0o` or `0` prefix"
       - name: HEXADECIMAL
-        comment: "0x prefix"
+        comment: "`0x` prefix"
     comment: Flags for integer nodes that correspond to the base of the integer.
   - name: InterpolatedStringNodeFlags
     values:
       - name: FROZEN
-        comment: "frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`"
+        comment: "frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`; only for adjacent string literals like: <code>'a' 'b'</code>"
       - name: MUTABLE
-        comment: "mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`"
+        comment: "mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`; only for adjacent string literals like: <code>'a' 'b'</code>"
     comment: Flags for interpolated string nodes that indicated mutability if they are also marked as literals.
   - name: KeywordHashNodeFlags
     values:
@@ -720,21 +720,21 @@ flags:
   - name: RegularExpressionFlags
     values:
       - name: IGNORE_CASE
-        comment: "i - ignores the case of characters when matching"
+        comment: "`i` - ignores the case of characters when matching"
       - name: EXTENDED
-        comment: "x - ignores whitespace and allows comments in regular expressions"
+        comment: "`x` - ignores whitespace and allows comments in regular expressions"
       - name: MULTI_LINE
-        comment: "m - allows $ to match the end of lines within strings"
+        comment: "`m` - allows $ to match the end of lines within strings"
       - name: ONCE
-        comment: "o - only interpolates values into the regular expression once"
+        comment: "`o` - only interpolates values into the regular expression once"
       - name: EUC_JP
-        comment: "e - forces the EUC-JP encoding"
+        comment: "`e` - forces the EUC-JP encoding"
       - name: ASCII_8BIT
-        comment: "n - forces the ASCII-8BIT encoding"
+        comment: "`n` - forces the ASCII-8BIT encoding"
       - name: WINDOWS_31J
-        comment: "s - forces the Windows-31J encoding"
+        comment: "`s` - forces the Windows-31J encoding"
       - name: UTF_8
-        comment: "u - forces the UTF-8 encoding"
+        comment: "`u` - forces the UTF-8 encoding"
       - name: FORCED_UTF8_ENCODING
         comment: "internal bytes forced the encoding to UTF-8"
       - name: FORCED_BINARY_ENCODING
