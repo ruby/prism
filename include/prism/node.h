@@ -13,6 +13,7 @@
 /**
  * Loop through each node in the node list, writing each node to the given
  * pm_node_t pointer.
+ * \public \related pm_node_list
  */
 #define PM_NODE_LIST_FOREACH(list, index, node) \
     for (size_t index = 0; index < (list)->size && ((node) = (list)->nodes[index]); index++)
@@ -22,6 +23,7 @@
  *
  * @param list The list to append to.
  * @param node The node to append.
+ * \private \memberof pm_node_list
  */
 void pm_node_list_append(pm_node_list_t *list, pm_node_t *node);
 
@@ -30,6 +32,7 @@ void pm_node_list_append(pm_node_list_t *list, pm_node_t *node);
  *
  * @param list The list to prepend to.
  * @param node The node to prepend.
+ * \private \memberof pm_node_list
  */
 void pm_node_list_prepend(pm_node_list_t *list, pm_node_t *node);
 
@@ -38,6 +41,7 @@ void pm_node_list_prepend(pm_node_list_t *list, pm_node_t *node);
  *
  * @param list The list to concatenate onto.
  * @param other The list to concatenate.
+ * \private \memberof pm_node_list
  */
 void pm_node_list_concat(pm_node_list_t *list, pm_node_list_t *other);
 
@@ -45,6 +49,7 @@ void pm_node_list_concat(pm_node_list_t *list, pm_node_list_t *other);
  * Free the internal memory associated with the given node list.
  *
  * @param list The list to free.
+ * \private \memberof pm_node_list
  */
 void pm_node_list_free(pm_node_list_t *list);
 
@@ -53,6 +58,7 @@ void pm_node_list_free(pm_node_list_t *list);
  *
  * @param parser The parser that owns the node.
  * @param node The node to deallocate.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION void pm_node_destroy(pm_parser_t *parser, struct pm_node *node);
 
@@ -61,6 +67,7 @@ PRISM_EXPORTED_FUNCTION void pm_node_destroy(pm_parser_t *parser, struct pm_node
  *
  * @param node_type The node type to convert to a string.
  * @return A string representation of the given node type.
+ * \public \memberof pm_node
  */
 PRISM_EXPORTED_FUNCTION const char * pm_node_type_to_str(pm_node_type_t node_type);
 
@@ -112,6 +119,7 @@ PRISM_EXPORTED_FUNCTION const char * pm_node_type_to_str(pm_node_type_t node_typ
  * @param node The root node to start visiting from.
  * @param visitor The callback to call for each node in the subtree.
  * @param data An opaque pointer that is passed to the visitor callback.
+ * \public \related pm_node
  */
 PRISM_EXPORTED_FUNCTION void pm_visit_node(const pm_node_t *node, bool (*visitor)(const pm_node_t *node, void *data), void *data);
 
@@ -123,6 +131,7 @@ PRISM_EXPORTED_FUNCTION void pm_visit_node(const pm_node_t *node, bool (*visitor
  * @param node The node to visit the children of.
  * @param visitor The callback to call for each child node.
  * @param data An opaque pointer that is passed to the visitor callback.
+ * \public \related pm_node
  */
 PRISM_EXPORTED_FUNCTION void pm_visit_child_nodes(const pm_node_t *node, bool (*visitor)(const pm_node_t *node, void *data), void *data);
 

@@ -26,6 +26,7 @@ void pm_prettyprint(void);
  * @param output_buffer The buffer to write the pretty-printed AST to.
  * @param parser The parser that parsed the AST.
  * @param node The root node of the AST to pretty-print.
+ * \public \memberof pm_node
  */
 PRISM_EXPORTED_FUNCTION void pm_prettyprint(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm_node_t *node);
 
