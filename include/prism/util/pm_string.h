@@ -34,19 +34,19 @@ typedef struct {
     /** The length of the string in bytes of memory. */
     size_t length;
 
-    /** The type of the string. This field determines how the string should be freed. */
-    enum {
+    /** The type of the string, which determines how the string should be freed. */
+    enum pm_string_type {
         /** This string is a constant string, and should not be freed. */
         PM_STRING_CONSTANT,
 
         /** This is a slice of another string, and should not be freed. */
         PM_STRING_SHARED,
 
-        /** This string owns its memory, and should be freed using `pm_string_free`. */
+        /** This string owns its memory, and should be freed using \ref pm_string_free "<code>pm_string_free()</code>". */
         PM_STRING_OWNED,
 
 #ifdef PRISM_HAS_MMAP
-        /** This string is a memory-mapped file, and should be freed using `pm_string_free`. */
+        /** This string is a memory-mapped file, and should be freed using \ref pm_string_free "<code>pm_string_free()</code>". */
         PM_STRING_MAPPED
 #endif
     } type;
