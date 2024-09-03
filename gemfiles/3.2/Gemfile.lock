@@ -8,7 +8,7 @@ GEM
   specs:
     ast (2.4.2)
     ffi (1.17.0)
-    logger (1.6.0)
+    logger (1.6.1)
     mini_portile2 (2.8.7)
     nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
