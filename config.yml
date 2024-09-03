@@ -329,7 +329,7 @@ tokens:
   - name: AMPERSAND_AMPERSAND_EQUAL
     comment: "<code>&amp;&amp;=</code>"
   - name: AMPERSAND_DOT
-    comment: "<code>&amp;.</code>"
+    comment: "&amp;\\."
   - name: AMPERSAND_EQUAL
     comment: "<code>&amp;=</code>"
   - name: BACKTICK
@@ -375,7 +375,7 @@ tokens:
   - name: CONSTANT
     comment: "a constant"
   - name: DOT
-    comment: "the `.` call operator"
+    comment: "the \\. call operator"
   - name: DOT_DOT
     comment: "the `..` range operator"
   - name: DOT_DOT_DOT
@@ -664,7 +664,7 @@ flags:
   - name: CallNodeFlags
     values:
       - name: SAFE_NAVIGATION
-        comment: "<code>&amp;.<code> operator"
+        comment: "The &amp; \\. operator"
       - name: VARIABLE_CALL
         comment: "a call that could have been a local variable"
       - name: ATTRIBUTE_WRITE
