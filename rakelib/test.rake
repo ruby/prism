@@ -10,37 +10,7 @@ end
 
 Rake::TestTask.new(:test, &config)
 
-# If we're on JRuby or TruffleRuby, we don't want to bother to configure
-# memcheck or debug tests.
-return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
-
-# Don't bother trying to configure memcheck on old versions of Ruby.
-return if RUBY_VERSION < "3.0"
-
-begin
-  require "ruby_memcheck"
-  have_memcheck = true
-rescue LoadError
-  have_memcheck = false
-end
-
 namespace :test do
-  if have_memcheck
-    RubyMemcheck.config(use_only_ruby_free_at_exit: false)
-    RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
-
-    # Hide test:valgrind_internal from rake -T
-    Rake::Task["test:valgrind_internal"].clear_comments
-
-    desc "Run tests under valgrind"
-    task :valgrind do
-      # Recompile with PRISM_BUILD_DEBUG=1
-      ENV["PRISM_BUILD_DEBUG"] = "1"
-      Rake::Task["clobber"].invoke
-      Rake::Task["test:valgrind_internal"].invoke
-    end
-  end
-
   class GdbTestTask < Rake::TestTask
     def ruby(*args, **options, &block)
       command = "gdb --args #{RUBY} #{args.join(" ")}"
@@ -66,5 +36,35 @@ namespace :test do
         sh("cargo test")
       end
     end
+  end
+end
+
+# If we're on JRuby or TruffleRuby, we don't want to bother to configure
+# memcheck or debug tests.
+return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
+
+# Don't bother trying to configure memcheck on old versions of Ruby.
+return if RUBY_VERSION < "3.0"
+
+# Only attempt to configure memcheck if the gem is installed.
+begin
+  require "ruby_memcheck"
+rescue LoadError
+  return
+end
+
+namespace :test do
+  RubyMemcheck.config(use_only_ruby_free_at_exit: false)
+  RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
+
+  # Hide test:valgrind_internal from rake -T
+  Rake::Task["test:valgrind_internal"].clear_comments
+
+  desc "Run tests under valgrind"
+  task :valgrind do
+    # Recompile with PRISM_BUILD_DEBUG=1
+    ENV["PRISM_BUILD_DEBUG"] = "1"
+    Rake::Task["clobber"].invoke
+    Rake::Task["test:valgrind_internal"].invoke
   end
 end
