@@ -144,7 +144,7 @@ public abstract class Nodes {
         <%- group.values.each_with_index do |value, index| -%>
 
         // <%= value.comment %>
-        public static final short <%= value.name %> = 1 << <%= index %>;
+        public static final short <%= value.name %> = 1 << <%= index + 2 %>;
         <%- end -%>
 
         <%- group.values.each do |value| -%>
