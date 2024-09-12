@@ -32,8 +32,8 @@ import * as visitors from "./visitor.js"
  * <%= flag.comment %>
  */
 const <%= flag.name %> = {
-<%- flag.values.each.with_index(2) do |value, index| -%>
-  <%= value.name %>: 1 << <%= index %>,
+<%- flag.values.each_with_index do |value, index| -%>
+  <%= value.name %>: 1 << <%= index + 2 %>,
 <%- end -%>
 };
 <%- end -%>
