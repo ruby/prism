@@ -33,7 +33,7 @@ import * as visitors from "./visitor.js"
  */
 const <%= flag.name %> = {
 <%- flag.values.each_with_index do |value, index| -%>
-  <%= value.name %>: 1 << <%= index + 2 %>,
+  <%= value.name %>: 1 << <%= index + Prism::Template::COMMON_FLAGS_COUNT %>,
 <%- end -%>
 };
 <%- end -%>

@@ -144,7 +144,7 @@ public abstract class Nodes {
         <%- flag.values.each_with_index do |value, index| -%>
 
         // <%= value.comment %>
-        public static final short <%= value.name %> = 1 << <%= index + 2 %>;
+        public static final short <%= value.name %> = 1 << <%= index + Prism::Template::COMMON_FLAGS_COUNT %>;
         <%- end -%>
 
         <%- flag.values.each do |value| -%>
