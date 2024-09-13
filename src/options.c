@@ -100,6 +100,14 @@ pm_options_version_set(pm_options_t *options, const char *version, size_t length
     }
 }
 
+/**
+ * Set the main script option on the given options struct.
+ */
+PRISM_EXPORTED_FUNCTION void
+pm_options_main_script_set(pm_options_t *options, bool main_script) {
+    options->main_script = main_script;
+}
+
 // For some reason, GCC analyzer thinks we're leaking allocated scopes and
 // locals here, even though we definitely aren't. This is a false positive.
 // Ideally we wouldn't need to suppress this.
@@ -233,6 +241,7 @@ pm_options_read(pm_options_t *options, const char *data) {
     options->command_line = (uint8_t) *data++;
     options->version = (pm_options_version_t) *data++;
     options->encoding_locked = ((uint8_t) *data++) > 0;
+    options->main_script = ((uint8_t) *data++) > 0;
 
     uint32_t scopes_count = pm_options_read_u32(data);
     data += 4;

@@ -44,10 +44,11 @@ public abstract class ParsingOptions {
      * @param commandLine the set of flags that were set on the command line
      * @param version code of Ruby version which syntax will be used to parse
      * @param encodingLocked whether the encoding is locked (should almost always be false)
+     * @param mainScript whether the file is the main script
      * @param scopes scopes surrounding the code that is being parsed with local variable names defined in every scope
      *            ordered from the outermost scope to the innermost one
      */
-    public static byte[] serialize(byte[] filepath, int line, byte[] encoding, boolean frozenStringLiteral, EnumSet<CommandLine> commandLine, SyntaxVersion version, boolean encodingLocked, byte[][][] scopes) {
+    public static byte[] serialize(byte[] filepath, int line, byte[] encoding, boolean frozenStringLiteral, EnumSet<CommandLine> commandLine, SyntaxVersion version, boolean encodingLocked, boolean mainScript, byte[][][] scopes) {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         // filepath
@@ -72,6 +73,9 @@ public abstract class ParsingOptions {
 
         // encodingLocked
         output.write(encodingLocked ? 1 : 0);
+
+        // mainScript
+        output.write(mainScript ? 1 : 0);
 
         // scopes
 
