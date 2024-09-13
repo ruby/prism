@@ -135,19 +135,19 @@ public abstract class Nodes {
         protected abstract String toString(String indent);
     }
 <%# FLAGS -%>
-    <%- flags.each do |group| -%>
+    <%- flags.each do |flag| -%>
 
     /**
-     * <%= Prism::Template::JavaDoc.escape(group.comment) %>
+     * <%= Prism::Template::JavaDoc.escape(flag.comment) %>
      */
-    public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
-        <%- group.values.each_with_index do |value, index| -%>
+    public static final class <%= flag.name %> implements Comparable<<%= flag.name %>> {
+        <%- flag.values.each_with_index do |value, index| -%>
 
         // <%= value.comment %>
-        public static final short <%= value.name %> = 1 << <%= index %>;
+        public static final short <%= value.name %> = 1 << <%= index + Prism::Template::COMMON_FLAGS_COUNT %>;
         <%- end -%>
 
-        <%- group.values.each do |value| -%>
+        <%- flag.values.each do |value| -%>
         public static boolean is<%= value.camelcase %>(short flags) {
             return (flags & <%= value.name %>) != 0;
         }
@@ -155,7 +155,7 @@ public abstract class Nodes {
         <%- end -%>
         private final short flags;
 
-        public <%= group.name %>(short flags) {
+        public <%= flag.name %>(short flags) {
             this.flags = flags;
         }
 
@@ -166,19 +166,19 @@ public abstract class Nodes {
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof <%= group.name %>)) {
+            if (!(other instanceof <%= flag.name %>)) {
                 return false;
             }
 
-            return flags == ((<%= group.name %>) other).flags;
+            return flags == ((<%= flag.name %>) other).flags;
         }
 
         @Override
-        public int compareTo(<%= group.name %> other) {
+        public int compareTo(<%= flag.name %> other) {
             return flags - other.flags;
         }
 
-        <%- group.values.each do |value| -%>
+        <%- flag.values.each do |value| -%>
         public boolean is<%= value.camelcase %>() {
             return (flags & <%= value.name %>) != 0;
         }

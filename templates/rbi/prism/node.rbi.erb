@@ -148,7 +148,7 @@ end
 module Prism::<%= flag.name %>
   <%- flag.values.each_with_index do |value, index| -%>
   # <%= value.comment %>
-  <%= value.name %> = T.let(1 << <%= index %>, Integer)
+  <%= value.name %> = T.let(1 << <%= index + Prism::Template::COMMON_FLAGS_COUNT %>, Integer)
   <%- end -%>
 end
 <%- end -%>
