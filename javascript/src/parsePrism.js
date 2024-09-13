@@ -92,7 +92,7 @@ function dumpOptions(options) {
   }
 
   template.push("C");
-  values.push(options.frozen_string_literal === undefined ? 0 : 1);
+  values.push((options.frozen_string_literal === undefined || options.frozen_string_literal === false || options.frozen_string_literal === null) ? 0 : 1);
 
   template.push("C");
   values.push(dumpCommandLineOptions(options));
@@ -108,6 +108,9 @@ function dumpOptions(options) {
 
   template.push("C");
   values.push(options.encoding === false ? 1 : 0);
+
+  template.push("C");
+  values.push((options.main_script === undefined || options.main_script === false || options.main_script === null) ? 0 : 1);
 
   template.push("L");
   if (options.scopes) {
