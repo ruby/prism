@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(183,37))
+@ ProgramNode (location: (1,0)-(188,3))
 ├── flags: ∅
 ├── locals: [:a, :c, :foo]
 └── statements:
-    @ StatementsNode (location: (1,0)-(183,37))
+    @ StatementsNode (location: (1,0)-(188,3))
     ├── flags: ∅
-    └── body: (length: 69)
+    └── body: (length: 70)
         ├── @ DefNode (location: (1,0)-(2,3))
         │   ├── flags: newline
         │   ├── name: :foo
@@ -2187,59 +2187,126 @@
         │   ├── rparen_loc: (181,37)-(181,38) = ")"
         │   ├── equal_loc: (181,39)-(181,40) = "="
         │   └── end_keyword_loc: ∅
-        └── @ DefNode (location: (183,0)-(183,37))
+        ├── @ DefNode (location: (183,0)-(183,37))
+        │   ├── flags: newline
+        │   ├── name: :foo
+        │   ├── name_loc: (183,21)-(183,24) = "foo"
+        │   ├── receiver:
+        │   │   @ ParenthesesNode (location: (183,4)-(183,20))
+        │   │   ├── flags: ∅
+        │   │   ├── body:
+        │   │   │   @ ClassNode (location: (183,5)-(183,19))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── locals: []
+        │   │   │   ├── class_keyword_loc: (183,5)-(183,10) = "class"
+        │   │   │   ├── constant_path:
+        │   │   │   │   @ ConstantReadNode (location: (183,11)-(183,14))
+        │   │   │   │   ├── flags: ∅
+        │   │   │   │   └── name: :Foo
+        │   │   │   ├── inheritance_operator_loc: ∅
+        │   │   │   ├── superclass: ∅
+        │   │   │   ├── body: ∅
+        │   │   │   ├── end_keyword_loc: (183,16)-(183,19) = "end"
+        │   │   │   └── name: :Foo
+        │   │   ├── opening_loc: (183,4)-(183,5) = "("
+        │   │   └── closing_loc: (183,19)-(183,20) = ")"
+        │   ├── parameters:
+        │   │   @ ParametersNode (location: (183,25)-(183,32))
+        │   │   ├── flags: ∅
+        │   │   ├── requireds: (length: 0)
+        │   │   ├── optionals: (length: 1)
+        │   │   │   └── @ OptionalParameterNode (location: (183,25)-(183,32))
+        │   │   │       ├── flags: ∅
+        │   │   │       ├── name: :bar
+        │   │   │       ├── name_loc: (183,25)-(183,28) = "bar"
+        │   │   │       ├── operator_loc: (183,29)-(183,30) = "="
+        │   │   │       └── value:
+        │   │   │           @ IntegerNode (location: (183,31)-(183,32))
+        │   │   │           ├── flags: static_literal, decimal
+        │   │   │           └── value: 1
+        │   │   ├── rest: ∅
+        │   │   ├── posts: (length: 0)
+        │   │   ├── keywords: (length: 0)
+        │   │   ├── keyword_rest: ∅
+        │   │   └── block: ∅
+        │   ├── body:
+        │   │   @ StatementsNode (location: (183,36)-(183,37))
+        │   │   ├── flags: ∅
+        │   │   └── body: (length: 1)
+        │   │       └── @ IntegerNode (location: (183,36)-(183,37))
+        │   │           ├── flags: static_literal, decimal
+        │   │           └── value: 2
+        │   ├── locals: [:bar]
+        │   ├── def_keyword_loc: (183,0)-(183,3) = "def"
+        │   ├── operator_loc: (183,20)-(183,21) = "."
+        │   ├── lparen_loc: (183,24)-(183,25) = "("
+        │   ├── rparen_loc: (183,32)-(183,33) = ")"
+        │   ├── equal_loc: (183,34)-(183,35) = "="
+        │   └── end_keyword_loc: ∅
+        └── @ ModuleNode (location: (185,0)-(188,3))
             ├── flags: newline
-            ├── name: :foo
-            ├── name_loc: (183,21)-(183,24) = "foo"
-            ├── receiver:
-            │   @ ParenthesesNode (location: (183,4)-(183,20))
+            ├── locals: []
+            ├── module_keyword_loc: (185,0)-(185,6) = "module"
+            ├── constant_path:
+            │   @ ConstantReadNode (location: (185,7)-(185,10))
             │   ├── flags: ∅
-            │   ├── body:
-            │   │   @ ClassNode (location: (183,5)-(183,19))
-            │   │   ├── flags: ∅
-            │   │   ├── locals: []
-            │   │   ├── class_keyword_loc: (183,5)-(183,10) = "class"
-            │   │   ├── constant_path:
-            │   │   │   @ ConstantReadNode (location: (183,11)-(183,14))
-            │   │   │   ├── flags: ∅
-            │   │   │   └── name: :Foo
-            │   │   ├── inheritance_operator_loc: ∅
-            │   │   ├── superclass: ∅
-            │   │   ├── body: ∅
-            │   │   ├── end_keyword_loc: (183,16)-(183,19) = "end"
-            │   │   └── name: :Foo
-            │   ├── opening_loc: (183,4)-(183,5) = "("
-            │   └── closing_loc: (183,19)-(183,20) = ")"
-            ├── parameters:
-            │   @ ParametersNode (location: (183,25)-(183,32))
-            │   ├── flags: ∅
-            │   ├── requireds: (length: 0)
-            │   ├── optionals: (length: 1)
-            │   │   └── @ OptionalParameterNode (location: (183,25)-(183,32))
-            │   │       ├── flags: ∅
-            │   │       ├── name: :bar
-            │   │       ├── name_loc: (183,25)-(183,28) = "bar"
-            │   │       ├── operator_loc: (183,29)-(183,30) = "="
-            │   │       └── value:
-            │   │           @ IntegerNode (location: (183,31)-(183,32))
-            │   │           ├── flags: static_literal, decimal
-            │   │           └── value: 1
-            │   ├── rest: ∅
-            │   ├── posts: (length: 0)
-            │   ├── keywords: (length: 0)
-            │   ├── keyword_rest: ∅
-            │   └── block: ∅
+            │   └── name: :Foo
             ├── body:
-            │   @ StatementsNode (location: (183,36)-(183,37))
+            │   @ StatementsNode (location: (186,2)-(187,5))
             │   ├── flags: ∅
             │   └── body: (length: 1)
-            │       └── @ IntegerNode (location: (183,36)-(183,37))
-            │           ├── flags: static_literal, decimal
-            │           └── value: 2
-            ├── locals: [:bar]
-            ├── def_keyword_loc: (183,0)-(183,3) = "def"
-            ├── operator_loc: (183,20)-(183,21) = "."
-            ├── lparen_loc: (183,24)-(183,25) = "("
-            ├── rparen_loc: (183,32)-(183,33) = ")"
-            ├── equal_loc: (183,34)-(183,35) = "="
-            └── end_keyword_loc: ∅
+            │       └── @ DefNode (location: (186,2)-(187,5))
+            │           ├── flags: newline
+            │           ├── name: :clone
+            │           ├── name_loc: (186,6)-(186,11) = "clone"
+            │           ├── receiver: ∅
+            │           ├── parameters:
+            │           │   @ ParametersNode (location: (186,12)-(186,39))
+            │           │   ├── flags: ∅
+            │           │   ├── requireds: (length: 0)
+            │           │   ├── optionals: (length: 1)
+            │           │   │   └── @ OptionalParameterNode (location: (186,12)-(186,39))
+            │           │   │       ├── flags: ∅
+            │           │   │       ├── name: :opts
+            │           │   │       ├── name_loc: (186,12)-(186,16) = "opts"
+            │           │   │       ├── operator_loc: (186,17)-(186,18) = "="
+            │           │   │       └── value:
+            │           │   │           @ OrNode (location: (186,19)-(186,39))
+            │           │   │           ├── flags: ∅
+            │           │   │           ├── left:
+            │           │   │           │   @ NilNode (location: (186,19)-(186,22))
+            │           │   │           │   └── flags: static_literal
+            │           │   │           ├── right:
+            │           │   │           │   @ ParenthesesNode (location: (186,26)-(186,39))
+            │           │   │           │   ├── flags: ∅
+            │           │   │           │   ├── body:
+            │           │   │           │   │   @ StatementsNode (location: (186,27)-(186,38))
+            │           │   │           │   │   ├── flags: ∅
+            │           │   │           │   │   └── body: (length: 1)
+            │           │   │           │   │       └── @ ReturnNode (location: (186,27)-(186,38))
+            │           │   │           │   │           ├── flags: newline
+            │           │   │           │   │           ├── keyword_loc: (186,27)-(186,33) = "return"
+            │           │   │           │   │           └── arguments:
+            │           │   │           │   │               @ ArgumentsNode (location: (186,34)-(186,38))
+            │           │   │           │   │               ├── flags: ∅
+            │           │   │           │   │               └── arguments: (length: 1)
+            │           │   │           │   │                   └── @ SelfNode (location: (186,34)-(186,38))
+            │           │   │           │   │                       └── flags: ∅
+            │           │   │           │   ├── opening_loc: (186,26)-(186,27) = "("
+            │           │   │           │   └── closing_loc: (186,38)-(186,39) = ")"
+            │           │   │           └── operator_loc: (186,23)-(186,25) = "||"
+            │           │   ├── rest: ∅
+            │           │   ├── posts: (length: 0)
+            │           │   ├── keywords: (length: 0)
+            │           │   ├── keyword_rest: ∅
+            │           │   └── block: ∅
+            │           ├── body: ∅
+            │           ├── locals: [:opts]
+            │           ├── def_keyword_loc: (186,2)-(186,5) = "def"
+            │           ├── operator_loc: ∅
+            │           ├── lparen_loc: (186,11)-(186,12) = "("
+            │           ├── rparen_loc: (186,39)-(186,40) = ")"
+            │           ├── equal_loc: ∅
+            │           └── end_keyword_loc: (187,2)-(187,5) = "end"
+            ├── end_keyword_loc: (188,0)-(188,3) = "end"
+            └── name: :Foo
