@@ -62,6 +62,11 @@ function dumpCommandLineOptions(options) {
   return value;
 }
 
+// Convert a boolean value into a serialized byte.
+function dumpBooleanOption(value) {
+  return (value === undefined || value === false || value === null) ? 0 : 1;
+}
+
 // Converts the given options into a serialized options string.
 function dumpOptions(options) {
   const values = [];
@@ -92,7 +97,7 @@ function dumpOptions(options) {
   }
 
   template.push("C");
-  values.push((options.frozen_string_literal === undefined || options.frozen_string_literal === false || options.frozen_string_literal === null) ? 0 : 1);
+  values.push(dumpBooleanOption(options.frozen_string_literal));
 
   template.push("C");
   values.push(dumpCommandLineOptions(options));
@@ -110,7 +115,10 @@ function dumpOptions(options) {
   values.push(options.encoding === false ? 1 : 0);
 
   template.push("C");
-  values.push((options.main_script === undefined || options.main_script === false || options.main_script === null) ? 0 : 1);
+  values.push(dumpBooleanOption(options.main_script));
+
+  template.push("C");
+  values.push(dumpBooleanOption(options.partial_script));
 
   template.push("L");
   if (options.scopes) {
