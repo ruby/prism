@@ -103,9 +103,9 @@ function dumpOptions(options) {
   values.push(dumpCommandLineOptions(options));
 
   template.push("C");
-  if (!options.version || options.version === "latest" || options.version === "3.4.0") {
+  if (!options.version || options.version === "latest" || options.version.match(/^3\.4(\.\d+)?$/)) {
     values.push(0);
-  } else if (options.version === "3.3.0") {
+  } else if (options.version.match(/^3\.3(\.\d+)?$/)) {
     values.push(1);
   } else {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
