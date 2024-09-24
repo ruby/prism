@@ -8,7 +8,7 @@ namespace :cargo do
     prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism-sys")))
     prism_sys_vendor_dir = prism_sys_dir.join("vendor/prism-#{gemspec.version}")
 
-    rm_rf(prism_sys_vendor_dir)
+    rm_rf(prism_sys_dir.join("vendor"))
     mkdir_p(prism_sys_vendor_dir)
     cp_r("./include", prism_sys_vendor_dir.join("include"))
     cp_r("./src", prism_sys_vendor_dir.join("src"))
@@ -16,7 +16,7 @@ namespace :cargo do
     prism_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism")))
     prism_vendor_dir = prism_dir.join("vendor/prism-#{gemspec.version}")
 
-    rm_rf(prism_vendor_dir)
+    rm_rf(prism_dir.join("vendor"))
     mkdir_p(prism_vendor_dir)
     cp(File.expand_path("../config.yml", __dir__), prism_vendor_dir.join("config.yml"))
 
