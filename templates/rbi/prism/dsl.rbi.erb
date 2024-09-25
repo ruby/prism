@@ -14,10 +14,10 @@ module Prism::DSL
   ].concat(node.fields.map { |field|
     case field
     when Prism::Template::NodeField
-      if !field.kind?
+      kind = field.specific_kind || field.union_kind&.first
+      if kind.nil?
         [field.name, "default_node(source, location)", field.rbi_class]
       else
-        kind = field.specific_kind || field.union_kind.first
         [field.name, %Q{#{kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}(source: source)}, field.rbi_class]
       end
     when Prism::Template::OptionalNodeField

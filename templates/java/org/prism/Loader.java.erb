@@ -127,16 +127,21 @@ public class Loader {
         int constantPoolLength = loadVarUInt();
         this.constantPool = new ConstantPool(this, source.bytes, constantPoolBufferOffset, constantPoolLength);
 
-        Nodes.Node node = loadNode();
+        Nodes.Node node;
+        if (errors.length == 0) {
+            node = loadNode();
 
-        int left = constantPoolBufferOffset - buffer.position();
-        if (left != 0) {
-            throw new Error("Expected to consume all bytes while deserializing but there were " + left + " bytes left");
+            int left = constantPoolBufferOffset - buffer.position();
+            if (left != 0) {
+                throw new Error("Expected to consume all bytes while deserializing but there were " + left + " bytes left");
+            }
+
+            boolean[] newlineMarked = new boolean[1 + source.getLineCount()];
+            MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
+            node.accept(visitor);
+        } else {
+            node = null;
         }
-
-        boolean[] newlineMarked = new boolean[1 + source.getLineCount()];
-        MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
-        node.accept(visitor);
 
         return new ParseResult(node, magicComments, dataLocation, errors, warnings, source);
     }

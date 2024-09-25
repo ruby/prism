@@ -12,7 +12,10 @@ Constants in Ruby begin with an upper-case letter. This is followed by any numbe
 
 Most expressions in CRuby are non-void. This means the expression they represent resolves to a value. For example, `1 + 2` is a non-void expression, because it resolves to a method call. Even things like `class Foo; end` is a non-void expression, because it returns the last evaluated expression in the body of the class (or `nil`).
 
-Certain nodes, however, are void expressions, and cannot be combined to form larger expressions. For example, `BEGIN {}`, `END {}`, `alias foo bar`, and `undef foo`.
+Certain nodes, however, are void expressions, and cannot be combined to form larger expressions.
+* `BEGIN {}`, `END {}`, `alias foo bar`, and `undef foo` can only be at a statement position.
+* The "jumps": `return`, `break`, `next`, `redo`, `retry` are void expressions.
+* `value => pattern` is also considered a void expression.
 
 ## Identifiers
 

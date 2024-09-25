@@ -48,10 +48,26 @@ enum NodeFieldType {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+struct OnErrorType {
+    #[serde(rename = "on error")]
+    kind: String,
+}
+
+#[derive(Debug, Deserialize)]
 #[serde(untagged)]
+#[allow(dead_code)]
+enum UnionKind {
+    OnSuccess(String),
+    OnError(OnErrorType),
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+#[allow(dead_code)]
 enum NodeFieldKind {
     Concrete(String),
-    Union(Vec<String>),
+    Union(Vec<UnionKind>),
 }
 
 #[derive(Debug, Deserialize)]
@@ -124,6 +140,13 @@ fn struct_name(name: &str) -> String {
     }
 
     result
+}
+
+fn kind_to_type(kind: &String) -> String {
+    match kind.as_str() {
+        "non-void expression" | "pattern expression" | "Node" => String::new(),
+        _ => kind.to_string(),
+    }
 }
 
 /// Returns the name of the C type from the given node name.
@@ -263,30 +286,34 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
         writeln!(file, "    #[must_use]")?;
 
         match field.field_type {
-            NodeFieldType::Node => {
-                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
+            NodeFieldType::Node => match &field.kind {
+                Some(NodeFieldKind::Concrete(raw_kind)) if !kind_to_type(raw_kind).is_empty() => {
+                    let kind = kind_to_type(raw_kind);
                     writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", field.name, kind)?;
-                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
+                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(&kind), field.name)?;
                     writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
                     writeln!(file, "    }}")?;
-                } else {
+                },
+                _ => {
                     writeln!(file, "    pub fn {}(&self) -> Node<'pr> {{", field.name)?;
                     writeln!(file, "        let node: *mut pm_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        Node::new(self.parser, node)")?;
                     writeln!(file, "    }}")?;
-                }
+                },
             },
-            NodeFieldType::OptionalNode => {
-                if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
+            NodeFieldType::OptionalNode => match &field.kind {
+                Some(NodeFieldKind::Concrete(raw_kind)) if !kind_to_type(raw_kind).is_empty() => {
+                    let kind = kind_to_type(raw_kind);
                     writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", field.name, kind)?;
-                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
+                    writeln!(file, "        let node: *mut pm{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(&kind), field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
                     writeln!(file, "            Some({} {{ parser: self.parser, pointer: node, marker: PhantomData }})", kind)?;
                     writeln!(file, "        }}")?;
                     writeln!(file, "    }}")?;
-                } else {
+                },
+                _ => {
                     writeln!(file, "    pub fn {}(&self) -> Option<Node<'pr>> {{", field.name)?;
                     writeln!(file, "        let node: *mut pm_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
@@ -295,7 +322,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                     writeln!(file, "            Some(Node::new(self.parser, node))")?;
                     writeln!(file, "        }}")?;
                     writeln!(file, "    }}")?;
-                }
+                },
             },
             NodeFieldType::NodeList => {
                 writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", field.name)?;
@@ -473,16 +500,18 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
             for field in &node.fields {
                 match field.field_type {
                     NodeFieldType::Node => {
-                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
-                            writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(kind), field.name)?;
+                        if let Some(NodeFieldKind::Concrete(raw_kind)) = &field.kind {
+                            let kind = kind_to_type(raw_kind);
+                            writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(&kind), field.name)?;
                         } else {
                             writeln!(file, "    visitor.visit(&node.{}());", field.name)?;
                         }
                     },
                     NodeFieldType::OptionalNode => {
-                        if let Some(NodeFieldKind::Concrete(kind)) = &field.kind {
+                        if let Some(NodeFieldKind::Concrete(raw_kind)) = &field.kind {
+                            let kind = kind_to_type(raw_kind);
                             writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
-                            writeln!(file, "        visitor.visit{}(&node);", struct_name(kind))?;
+                            writeln!(file, "        visitor.visit{}(&node);", struct_name(&kind))?;
                             writeln!(file, "    }}")?;
                         } else {
                             writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
@@ -762,7 +791,7 @@ impl TryInto<i32> for Integer<'_> {{
         let length = unsafe {{ (*self.pointer).length }};
 
         if length == 0 {{
-            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value| 
+            i32::try_from(unsafe {{ (*self.pointer).value }}).map_or(Err(()), |value|
                 if negative {{
                     Ok(-value)
                 }} else {{

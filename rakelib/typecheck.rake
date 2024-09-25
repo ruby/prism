@@ -59,6 +59,7 @@ namespace :typecheck do
       --ignore=test/
       --ignore=rakelib/
       --ignore=Rakefile
+      --ignore=top-100-gems/
       # Treat all files as "typed: true" by default
       --typed=true
       # Use the typed-override file to revert some files to "typed: false"
