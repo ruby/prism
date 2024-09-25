@@ -162,22 +162,31 @@ module Prism
     # bin/prism error [name] [source]
     def error(argv)
       name = argv.shift
-      source, _ = read_source(argv)
+
+      source = nil
+      filepath = File.expand_path("../test/prism/errors/#{name}.txt", __dir__)
+
+      if argv.empty?
+        raise "Expected #{filepath} to exist" unless File.file?(filepath)
+
+        source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
+        source = source.lines.grep_v(/^\s*\^/).join.gsub(/\n*\z/, "")
+      else
+        if File.file?(filepath)
+          counter = 1
+
+          begin
+            current = "#{File.dirname(filepath)}/#{File.basename(filepath, ".txt")}_#{counter += 1}.txt"
+          end while File.file?(current)
+
+          filepath = current
+        end
+
+        source, _ = read_source(argv)
+      end
 
       result = Prism.parse(source)
       raise "Expected #{source.inspect} to have errors" if result.success?
-
-      filepath = File.expand_path("../test/prism/errors/#{name}.txt", __dir__)
-
-      if File.file?(filepath)
-        counter = 1
-
-        begin
-          current = "#{File.dirname(filepath)}/#{File.basename(filepath, ".txt")}_#{counter += 1}.txt"
-        end while File.file?(current)
-
-        filepath = current
-      end
 
       File.write(filepath, result.errors_format)
     end
