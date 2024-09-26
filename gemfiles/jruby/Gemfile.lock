@@ -20,8 +20,10 @@ GEM
 
 PLATFORMS
   universal-java-11
+  universal-java-17
   universal-java-20
   universal-java-21
+  universal-java-22
 
 DEPENDENCIES
   parser
