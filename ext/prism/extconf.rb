@@ -51,6 +51,7 @@ def make(env, target)
     system(
       env,
       RUBY_PLATFORM.match?(/openbsd|freebsd/) ? "gmake" : "make",
+      "--no-builtin-variables", # don't let GNU make implicit variables override variable fallbacks in the Makefile
       target,
       exception: true
     )
@@ -76,21 +77,21 @@ end
 # The C extension uses RbConfig, which contains values from the toolchain that built the running Ruby.
 env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
 
+require "mkmf"
+
 # It's possible that the Ruby that is being run wasn't actually compiled on this
 # machine, in which case parts of RbConfig might be incorrect. In this case
 # we'll need to do some additional checks and potentially fall back to defaults.
-if env.key?("CC") && !File.exist?(env["CC"])
+if env.key?("CC") && !find_executable(env["CC"])
   env.delete("CC")
   env.delete("CFLAGS")
   env.delete("CPPFLAGS")
 end
 
-if env.key?("AR") && !File.exist?(env["AR"])
+if env.key?("AR") && !find_executable(env["AR"])
   env.delete("AR")
   env.delete("ARFLAGS")
 end
-
-require "mkmf"
 
 # First, ensure that we can find the header for the prism library.
 generate_templates # Templates should be generated before find_header.
