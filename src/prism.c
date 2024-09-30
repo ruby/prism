@@ -19452,9 +19452,10 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 do_keyword = parser->previous;
             } else {
                 do_keyword = not_provided(parser);
+                if (!match2(parser, PM_TOKEN_SEMICOLON, PM_TOKEN_NEWLINE)) {
+                    PM_PARSER_ERR_TOKEN_FORMAT(parser, parser->current, PM_ERR_EXPECT_FOR_DELIMITER, pm_token_type_human(parser->current.type));
+                }
             }
-
-            accept2(parser, PM_TOKEN_SEMICOLON, PM_TOKEN_NEWLINE);
 
             pm_statements_node_t *statements = NULL;
             if (!match1(parser, PM_TOKEN_KEYWORD_END)) {
