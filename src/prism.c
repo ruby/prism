@@ -21629,6 +21629,13 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
                 return node;
             }
             break;
+        case PM_SYMBOL_NODE:
+            // If we have a symbol node that is being parsed as a label, then we
+            // need to immediately return, because there should never be an
+            // infix operator following this node.
+            if (pm_symbol_node_label_p(node)) {
+                return node;
+            }
         default:
             break;
     }
