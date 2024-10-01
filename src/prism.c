@@ -14783,7 +14783,7 @@ parse_parameters(
             }
             default:
                 if (parser->previous.type == PM_TOKEN_COMMA) {
-                    if (allows_trailing_comma) {
+                    if (allows_trailing_comma && order >= PM_PARAMETERS_ORDER_NAMED) {
                         // If we get here, then we have a trailing comma in a
                         // block parameter list.
                         pm_node_t *param = (pm_node_t *) pm_implicit_rest_node_create(parser, &parser->previous);
