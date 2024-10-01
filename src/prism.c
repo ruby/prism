@@ -21642,6 +21642,13 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
         node = parse_expression_infix(parser, node, binding_power, current_binding_powers.right, accepts_command_call, (uint16_t) (depth + 1));
 
         switch (PM_NODE_TYPE(node)) {
+            case PM_MULTI_WRITE_NODE:
+                // Multi-write nodes are statements, and cannot be followed by
+                // operators except modifiers.
+                if (pm_binding_powers[parser->current.type].left > PM_BINDING_POWER_MODIFIER) {
+                    return node;
+                }
+                break;
             case PM_CLASS_VARIABLE_WRITE_NODE:
             case PM_CONSTANT_PATH_WRITE_NODE:
             case PM_CONSTANT_WRITE_NODE:
