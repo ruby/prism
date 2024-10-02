@@ -98,7 +98,7 @@ module Prism
         ["3.3.0", ["3.3"]],
         ["3.4.0-dev", ["3.4", "typecheck"]],
         ["jruby-9.4.5.0", ["jruby"]],
-        ["truffleruby-24.0.0", ["truffleruby"]]
+        ["truffleruby-24.1.0", ["truffleruby"]]
       ].each do |ruby_version, gemfiles|
         gemfiles.each do |gemfile|
           system(
