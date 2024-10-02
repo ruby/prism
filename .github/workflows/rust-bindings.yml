@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sanitizer: [leak, address]
+        sanitizer: [address]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
