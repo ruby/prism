@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-10-02
+
+### Added
+
+- Explicitly type each child node field in the Ruby API.
+- Add the `main_script` option to the parse APIs, which controls whether or not shebangs are considered.
+- Add the `partial_script` options to the parse APIs, which controls whether or not jumps that would otherwise be considered invalid are allowed. This is useful for parsing things like ERB sources, where you know it will be evaluated in a different context. Note that this functionality is replacing the previous idiom of passing in a list of scopes to indicate an `eval` context, because that behavior has changed upstream in `ruby/ruby`.
+- Add `ArgumentsNode#contains_multiple_splats?`.
+- Add `ArgumentsNode#contains_forwarding?`.
+- Accept all valid Ruby versions for the `version` option on parse APIs.
+- Accept version shorthands like `"3.3"` and `"3.4"` for the `version` option on parse APIs.
+- Support a max depth to protect against malicious payloads without hitting the stack limit.
+
+### Changed
+
+- Fix some token incompatibilities in the `parser` translation.
+- Fix up parsing tempfiles on Windows.
+- Fix up handling UTF-8 characters in file paths on Windows.
+- Do not warn for a `\r` at the end of a shebang on Windows.
+- Properly handle erroring for parsing a directory on Windows.
+- When a numbered reference is out of range, warn instead of raise.
+- Allow returns in default parameter values.
+- Reject many more invalid syntax patterns.
+
 ## [1.0.0] - 2024-08-28
 
 ### Added
@@ -567,7 +591,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/ruby/prism/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ruby/prism/compare/v0.30.0...v1.0.0
 [0.30.0]: https://github.com/ruby/prism/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/ruby/prism/compare/v0.28.0...v0.29.0

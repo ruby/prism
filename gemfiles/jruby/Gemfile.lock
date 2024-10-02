@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (1.0.0)
+    prism (1.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -24,6 +24,7 @@ PLATFORMS
   universal-java-20
   universal-java-21
   universal-java-22
+  universal-java-23
 
 DEPENDENCIES
   parser
