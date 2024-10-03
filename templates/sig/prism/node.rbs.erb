@@ -53,8 +53,8 @@ module Prism
   class <%= node.name -%> < Node
     include _Node
     <%- if (node_flags = node.flags) -%>
-    <%- node_flags.values.each do |value| -%>
 
+    <%- node_flags.values.each do |value| -%>
     def <%= value.name.downcase %>?: () -> bool
     <%- end -%>
     <%- end -%>
