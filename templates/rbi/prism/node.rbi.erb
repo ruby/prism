@@ -81,11 +81,11 @@ end
 class Prism::<%= node.name -%> < Prism::Node
   <%- if (node_flags = node.flags) -%>
   <%- node_flags.values.each do |value| -%>
-
   sig { returns(T::Boolean) }
   def <%= value.name.downcase %>?; end
-  <%- end -%>
 
+  <%- end -%>
+  <%- end -%>
   <%- node.fields.each do |field| -%>
   sig { returns(<%= field.rbi_class %>) }
   def <%= field.name %>; end
@@ -128,7 +128,6 @@ class Prism::<%= node.name -%> < Prism::Node
 
   sig { returns(T.nilable(String)) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- end -%>
   <%- end -%>
   <%- end -%>
 
