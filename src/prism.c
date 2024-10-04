@@ -17942,6 +17942,13 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     break;
                 }
 
+                // Handle the case where we have a new line before the comma.
+                if ((parser->previous.type == PM_TOKEN_NEWLINE) && match1(parser, PM_TOKEN_COMMA)) {
+                    pm_parser_err_current(parser, PM_ERR_ARRAY_COMMA_AFTER_NEWLINE);
+                    accept1(parser, PM_TOKEN_COMMA);
+                    break;
+                }
+
                 // Ensure that we have a comma between elements in the array.
                 if ((pm_array_node_size(array) != 0) && !accept1(parser, PM_TOKEN_COMMA)) {
                     const uint8_t *location = parser->previous.end;
