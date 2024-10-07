@@ -17,12 +17,12 @@ GEM
     parser (3.3.5.0)
       ast (~> 2.4.1)
       racc
-    power_assert (2.0.3)
+    power_assert (2.0.4)
     racc (1.8.1)
     rake (13.2.1)
-    rake-compiler (1.2.7)
+    rake-compiler (1.2.8)
       rake
-    rbs (3.6.0)
+    rbs (3.6.1)
       logger
     ruby_memcheck (3.0.0)
       nokogiri
