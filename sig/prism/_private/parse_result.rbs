@@ -5,6 +5,18 @@ module Prism
     def find_line: (Integer) -> Integer
   end
 
+  class CodeUnitsCache
+    class UTF16Counter
+      def initialize: (String source, Encoding encoding) -> void
+      def count: (Integer byte_offset, Integer byte_length) -> Integer
+    end
+
+    class LengthCounter
+      def initialize: (String source, Encoding encoding) -> void
+      def count: (Integer byte_offset, Integer byte_length) -> Integer
+    end
+  end
+
   class Location
     private
 

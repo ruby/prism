@@ -40,8 +40,19 @@ class Prism::Source
   sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
   def code_units_offset(byte_offset, encoding); end
 
+  sig { params(encoding: Encoding).returns(T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))) }
+  def code_units_cache(encoding); end
+
   sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
   def code_units_column(byte_offset, encoding); end
+end
+
+class Prism::CodeUnitsCache
+  sig { params(source: String, encoding: Encoding).void }
+  def initialize(source, encoding); end
+
+  sig { params(byte_offset: Integer).returns(Integer) }
+  def [](byte_offset); end
 end
 
 class Prism::ASCIISource < Prism::Source
@@ -53,6 +64,9 @@ class Prism::ASCIISource < Prism::Source
 
   sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
   def code_units_offset(byte_offset, encoding); end
+
+  sig { params(encoding: Encoding).returns(T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))) }
+  def code_units_cache(encoding); end
 
   sig { params(byte_offset: Integer, encoding: Encoding).returns(Integer) }
   def code_units_column(byte_offset, encoding); end
@@ -107,6 +121,9 @@ class Prism::Location
   sig { params(encoding: Encoding).returns(Integer) }
   def start_code_units_offset(encoding = Encoding::UTF_16LE); end
 
+  sig { params(cache: T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))).returns(Integer) }
+  def cached_start_code_units_offset(cache); end
+
   sig { returns(Integer) }
   def end_offset; end
 
@@ -115,6 +132,9 @@ class Prism::Location
 
   sig { params(encoding: Encoding).returns(Integer) }
   def end_code_units_offset(encoding = Encoding::UTF_16LE); end
+
+  sig { params(cache: T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))).returns(Integer) }
+  def cached_end_code_units_offset(cache); end
 
   sig { returns(Integer) }
   def start_line; end
@@ -134,6 +154,9 @@ class Prism::Location
   sig { params(encoding: Encoding).returns(Integer) }
   def start_code_units_column(encoding = Encoding::UTF_16LE); end
 
+  sig { params(cache: T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))).returns(Integer) }
+  def cached_start_code_units_column(cache); end
+
   sig { returns(Integer) }
   def end_column; end
 
@@ -142,6 +165,9 @@ class Prism::Location
 
   sig { params(encoding: Encoding).returns(Integer) }
   def end_code_units_column(encoding = Encoding::UTF_16LE); end
+
+  sig { params(cache: T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))).returns(Integer) }
+  def cached_end_code_units_column(cache); end
 
   sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
   def deconstruct_keys(keys); end
@@ -296,6 +322,9 @@ class Prism::Result
 
   sig { returns(T::Boolean) }
   def failure?; end
+
+  sig { params(encoding: Encoding).returns(T.any(Prism::CodeUnitsCache, T.proc.params(byte_offset: Integer).returns(Integer))) }
+  def code_units_cache(encoding); end
 end
 
 class Prism::ParseResult < Prism::Result
