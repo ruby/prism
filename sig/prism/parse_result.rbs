@@ -1,4 +1,8 @@
 module Prism
+  interface _CodeUnitsCache
+    def []: (Integer byte_offset) -> Integer
+  end
+
   class Source
     attr_reader source: String
     attr_reader start_line: Integer
@@ -16,15 +20,22 @@ module Prism
     def character_offset: (Integer byte_offset) -> Integer
     def character_column: (Integer byte_offset) -> Integer
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
+    def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
 
     def self.for: (String source) -> Source
+  end
+
+  class CodeUnitsCache
+    def initialize: (String source, Encoding encoding) -> void
+    def []: (Integer byte_offset) -> Integer
   end
 
   class ASCIISource < Source
     def character_offset: (Integer byte_offset) -> Integer
     def character_column: (Integer byte_offset) -> Integer
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
+    def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
   end
 
@@ -45,15 +56,23 @@ module Prism
     def slice: () -> String
     def slice_lines: () -> String
     def start_character_offset: () -> Integer
+    def start_code_units_offset: (Encoding encoding) -> Integer
+    def cached_start_code_units_offset: (_CodeUnitsCache cache) -> Integer
     def end_offset: () -> Integer
     def end_character_offset: () -> Integer
+    def end_code_units_offset: (Encoding encoding) -> Integer
+    def cached_end_code_units_offset: (_CodeUnitsCache cache) -> Integer
     def start_line: () -> Integer
     def start_line_slice: () -> String
     def end_line: () -> Integer
     def start_column: () -> Integer
     def start_character_column: () -> Integer
+    def start_code_units_column: (Encoding encoding) -> Integer
+    def cached_start_code_units_column: (_CodeUnitsCache cache) -> Integer
     def end_column: () -> Integer
     def end_character_column: () -> Integer
+    def end_code_units_column: (Encoding encoding) -> Integer
+    def cached_end_code_units_column: (_CodeUnitsCache cache) -> Integer
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def pretty_print: (untyped q) -> untyped
     def join: (Location other) -> Location
@@ -125,6 +144,7 @@ module Prism
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def success?: () -> bool
     def failure?: () -> bool
+    def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
   end
 
   class ParseResult < Result
