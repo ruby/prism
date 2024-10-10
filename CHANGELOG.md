@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.2.0] - 2024-10-10
+
+### Added
+
+- Introduce `Prism::CodeUnitsCache`.
+
+### Changed
+
+- Properly handle lexing global variables that begin with `$-`.
+- Properly reject invalid multi writes within parentheses.
+- Fix unary `*` binding power.
+- Set `contains_keywords` flag for implicit `gets` calls when `-p` is used.
+- Properly reject invalid non-associative operator patterns.
+- Do not warn about unused variables declared on negative lines.
+
 ## [1.1.0] - 2024-10-02
 
 ### Added
@@ -591,7 +606,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ruby/prism/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ruby/prism/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ruby/prism/compare/v0.30.0...v1.0.0
 [0.30.0]: https://github.com/ruby/prism/compare/v0.29.0...v0.30.0
