@@ -1,0 +1,7 @@
+module Prism
+  class StringQuery
+    def self.local?: (String string) -> bool
+    def self.constant?: (String string) -> bool
+    def self.method_name?: (String string) -> bool
+  end
+end
