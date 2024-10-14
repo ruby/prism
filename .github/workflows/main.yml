@@ -236,6 +236,21 @@ jobs:
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
 
+  asan:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: asan
+        bundler-cache: true
+    - name: Run Ruby tests with ASAN
+      run: bundle exec rake
+      env:
+        ASAN_OPTIONS: detect_leaks=1
+        RUBY_FREE_AT_EXIT: 1
+
   gem-package:
     runs-on: ubuntu-latest
     steps:
