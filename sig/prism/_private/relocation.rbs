@@ -1,0 +1,12 @@
+module Prism
+  module Relocation
+    class Entry
+      def reify!: (entry_values values) -> void
+    end
+
+    class Repository
+      def enter: (Integer node_id, Symbol field_name) -> Entry
+      def reify!: () -> void
+    end
+  end
+end
