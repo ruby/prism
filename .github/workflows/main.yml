@@ -204,30 +204,13 @@ jobs:
       run: bundle exec rake serialized_size:topgems
 
   memcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-    - name: Install libc6-dbg
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libc6-dbg
-    - name: Cache valgrind
-      uses: actions/cache@v4
-      id: cache-valgrind
-      with:
-        path: valgrind-3.23.0
-        key: ${{ runner.os }}-valgrind-3.23.0
-    - name: Download valgrind
-      if: steps.cache-valgrind.outputs.cache-hit != 'true'
-      run: |
-        wget https://sourceware.org/pub/valgrind/valgrind-3.23.0.tar.bz2
-        tar xf valgrind-3.23.0.tar.bz2
     - name: Install valgrind
       run: |
-        cd valgrind-3.23.0
-        ./configure
-        make
-        sudo make install
+        sudo apt-get update
+        sudo apt-get install -y valgrind
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
