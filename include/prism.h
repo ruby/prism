@@ -53,6 +53,7 @@ PRISM_EXPORTED_FUNCTION const char * pm_version(void);
  * @param source The source to parse.
  * @param size The size of the source.
  * @param options The optional options to use when parsing.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION void pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm_options_t *options);
 
@@ -62,6 +63,7 @@ PRISM_EXPORTED_FUNCTION void pm_parser_init(pm_parser_t *parser, const uint8_t *
  *
  * @param parser The parser to register the callback with.
  * @param callback The callback to register.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION void pm_parser_register_encoding_changed_callback(pm_parser_t *parser, pm_encoding_changed_callback_t callback);
 
@@ -69,6 +71,7 @@ PRISM_EXPORTED_FUNCTION void pm_parser_register_encoding_changed_callback(pm_par
  * Free any memory associated with the given parser.
  *
  * @param parser The parser to free.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION void pm_parser_free(pm_parser_t *parser);
 
@@ -77,13 +80,15 @@ PRISM_EXPORTED_FUNCTION void pm_parser_free(pm_parser_t *parser);
  *
  * @param parser The parser to use.
  * @return The AST representing the source.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION pm_node_t * pm_parse(pm_parser_t *parser);
 
 /**
- * This function is used in pm_parse_stream to retrieve a line of input from a
+ * This function is used in pm_parse_stream() to retrieve a line of input from a
  * stream. It closely mirrors that of fgets so that fgets can be used as the
  * default implementation.
+ * \public \memberof pm_parser
  */
 typedef char * (pm_parse_stream_fgets_t)(char *string, int size, void *stream);
 
@@ -96,6 +101,7 @@ typedef char * (pm_parse_stream_fgets_t)(char *string, int size, void *stream);
  * @param fgets The function to use to read from the stream.
  * @param options The optional options to use when parsing.
  * @return The AST representing the source.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION pm_node_t * pm_parse_stream(pm_parser_t *parser, pm_buffer_t *buffer, void *stream, pm_parse_stream_fgets_t *fgets, const pm_options_t *options);
 
@@ -112,6 +118,7 @@ PRISM_EXPORTED_FUNCTION pm_node_t * pm_parse_stream(pm_parser_t *parser, pm_buff
  * @param stream The stream to parse.
  * @param fgets The function to use to read from the stream.
  * @param data The optional data to pass to the parser.
+ * \public \relatedalso pm_buffer_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse_stream(pm_buffer_t *buffer, void *stream, pm_parse_stream_fgets_t *fgets, const char *data);
 
@@ -121,6 +128,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_parse_stream(pm_buffer_t *buffer, void
  * @param parser The parser to serialize.
  * @param list The list of comments to serialize.
  * @param buffer The buffer to serialize to.
+ * \public \memberof pm_buffer_t
  */
 void pm_serialize_comment_list(pm_parser_t *parser, pm_list_t *list, pm_buffer_t *buffer);
 
@@ -129,6 +137,7 @@ void pm_serialize_comment_list(pm_parser_t *parser, pm_list_t *list, pm_buffer_t
  *
  * @param encoding The encoding to serialize.
  * @param buffer The buffer to serialize to.
+ * \public \memberof pm_buffer_t
  */
 void pm_serialize_encoding(const pm_encoding_t *encoding, pm_buffer_t *buffer);
 
@@ -138,6 +147,7 @@ void pm_serialize_encoding(const pm_encoding_t *encoding, pm_buffer_t *buffer);
  * @param parser The parser to serialize.
  * @param node The node to serialize.
  * @param buffer The buffer to serialize to.
+ * \public \memberof pm_buffer_t
  */
 void pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer);
 
@@ -147,6 +157,7 @@ void pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buf
  * @param parser The parser to serialize.
  * @param node The node to serialize.
  * @param buffer The buffer to serialize to.
+ * \public \memberof pm_node
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer);
 
@@ -157,6 +168,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize(pm_parser_t *parser, pm_node_t *node, 
  * @param source The source to parse.
  * @param size The size of the source.
  * @param data The optional data to pass to the parser.
+ * \public \memberof pm_buffer_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
@@ -167,6 +179,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_parse(pm_buffer_t *buffer, const uint8
  * @param source The source to parse.
  * @param size The size of the source.
  * @param data The optional data to pass to the parser.
+ * \public \relatedalso pm_buffer_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse_comments(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
@@ -177,6 +190,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_parse_comments(pm_buffer_t *buffer, co
  * @param size The size of the source.
  * @param buffer The buffer to serialize to.
  * @param data The optional data to pass to the lexer.
+ * \public \relatedalso pm_buffer_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_lex(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
@@ -188,6 +202,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_lex(pm_buffer_t *buffer, const uint8_t
  * @param source The source to parse.
  * @param size The size of the source.
  * @param data The optional data to pass to the parser.
+ * \public \relatedalso pm_buffer_t
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse_lex(pm_buffer_t *buffer, const uint8_t *source, size_t size, const char *data);
 
@@ -200,6 +215,7 @@ PRISM_EXPORTED_FUNCTION void pm_serialize_parse_lex(pm_buffer_t *buffer, const u
  * @param size The size of the source.
  * @param data The optional data to pass to the parser.
  * @return True if the source parses without errors or warnings.
+ * \public \memberof pm_parser
  */
 PRISM_EXPORTED_FUNCTION bool pm_parse_success_p(const uint8_t *source, size_t size, const char *data);
 
@@ -229,6 +245,7 @@ const char * pm_token_type_human(pm_token_type_t token_type);
  * @param buffer The buffer to serialize to.
  * @param parser The parser that parsed the node.
  * @param node The node to serialize.
+ * \public \memberof pm_node
  */
 PRISM_EXPORTED_FUNCTION void pm_dump_json(pm_buffer_t *buffer, const pm_parser_t *parser, const pm_node_t *node);
 
