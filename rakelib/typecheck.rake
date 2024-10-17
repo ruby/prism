@@ -41,6 +41,7 @@ namespace :typecheck do
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
         - ./lib/prism/inspect_visitor.rb
+        - ./sample/prism/multiplex_constants.rb
         # We want to treat all polyfill files as "typed: false"
       <% polyfills.each do |file| -%>
         - ./<%= file %>
