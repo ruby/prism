@@ -1,0 +1,28 @@
+language: ruby
+
+dist: jammy
+
+matrix:
+  include:
+    - arch: arm64
+    - arch: ppc64le
+    - arch: s390x
+  allow_failures:
+    # Allow failures due to the following infra errors.
+    # The jobs are not starting.
+    - arch: arm64
+    # No output has been received in the last 10m0s, this potentially indicates
+    # a stalled build or something wrong with the build itself.
+    # https://app.travis-ci.com/github/ruby/prism/builds/271968231
+    - arch: ppc64le
+    - arch: s390x
+  fast_finish: true
+
+before_install:
+  - sudo apt update -yq
+  - sudo apt -yq install gcc-11
+  - gcc-11 --version
+
+before_script:
+  # Enable the verbose option in mkmf.rb to print the compiling commands.
+  - export MAKEFLAGS="V=1 CC=gcc-11"
