@@ -1,13 +1,14 @@
 package org.prism;
 
-import com.dylibso.chicory.runtime.HostImports;
-import com.dylibso.chicory.runtime.Module;
+import com.dylibso.chicory.runtime.ImportValues;
+import com.dylibso.chicory.runtime.Instance;
+import com.dylibso.chicory.wasi.WasiOptions;
+import com.dylibso.chicory.wasi.WasiPreview1;
+import com.dylibso.chicory.wasm.Parser;
 import com.dylibso.chicory.wasm.types.Value;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +18,11 @@ public class DummyTest {
 
     @Test
     public void test1() {
-        var wasmPrism = Module.builder("prism.wasm").build().instantiate();
+        WasiOptions wasiOpts = WasiOptions.builder().build();
+        WasiPreview1 wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
+        var wasmPrism = Instance.builder(Parser.parse(DummyTest.class.getResourceAsStream("/prism.wasm")))
+            .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
+            .build();
         var memory = wasmPrism.memory();
         var calloc = wasmPrism.export("calloc");
         var pmSerializeParse = wasmPrism.export("pm_serialize_parse");
@@ -30,8 +35,8 @@ public class DummyTest {
         var source = "1 + 1";
         var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
 
-        var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
-        memory.writeString(sourcePointer[0].asInt(), source);
+        var sourcePointer = calloc.apply(1, source.length());
+        memory.writeString((int) sourcePointer[0], source);
 
         var packedOptions = ParsingOptions.serialize(
             new byte[] {},
@@ -46,18 +51,18 @@ public class DummyTest {
             new byte[][][] {}
         );
 
-        var optionsPointer = calloc.apply(Value.i32(1), Value.i32(packedOptions.length));
-        memory.write(optionsPointer[0].asInt(), packedOptions);
+        var optionsPointer = calloc.apply(1, packedOptions.length);
+        memory.write((int) optionsPointer[0], packedOptions);
 
-        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], Value.i32(1));
+        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], 1);
         pmBufferInit.apply(bufferPointer);
 
         pmSerializeParse.apply(
-                bufferPointer[0], sourcePointer[0], Value.i32(source.length()), optionsPointer[0]);
+                bufferPointer[0], sourcePointer[0], source.length(), optionsPointer[0]);
 
         var result = memory.readBytes(
-                pmBufferValue.apply(bufferPointer[0])[0].asInt(),
-                pmBufferLength.apply(bufferPointer[0])[0].asInt());
+            (int) pmBufferValue.apply(bufferPointer[0])[0],
+            (int) pmBufferLength.apply(bufferPointer[0])[0]);
 
         System.out.println("RESULT: " + new String(result));
 
@@ -71,7 +76,11 @@ public class DummyTest {
 
     @Test
     public void test2() {
-        var wasmPrism = Module.builder("prism.wasm").build().instantiate();
+        WasiOptions wasiOpts = WasiOptions.builder().build();
+        WasiPreview1 wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
+        var wasmPrism = Instance.builder(Parser.parse(DummyTest.class.getResourceAsStream("/prism.wasm")))
+            .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
+            .build();
         var memory = wasmPrism.memory();
         var calloc = wasmPrism.export("calloc");
         var pmSerializeParse = wasmPrism.export("pm_serialize_parse");
@@ -84,8 +93,8 @@ public class DummyTest {
         var source = "puts \"h\ne\nl\nl\no\n\"";
         var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
 
-        var sourcePointer = calloc.apply(Value.i32(1), Value.i32(source.length()));
-        memory.writeString(sourcePointer[0].asInt(), source);
+        var sourcePointer = calloc.apply(1, source.length());
+        memory.writeString((int) sourcePointer[0], source);
 
         var packedOptions = ParsingOptions.serialize(
             new byte[] {},
@@ -100,18 +109,18 @@ public class DummyTest {
             new byte[][][] {}
         );
 
-        var optionsPointer = calloc.apply(Value.i32(1), Value.i32(packedOptions.length));
-        memory.write(optionsPointer[0].asInt(), packedOptions);
+        var optionsPointer = calloc.apply(1, packedOptions.length);
+        memory.write((int) optionsPointer[0], packedOptions);
 
-        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], Value.i32(1));
+        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], 1);
         pmBufferInit.apply(bufferPointer);
 
         pmSerializeParse.apply(
-                bufferPointer[0], sourcePointer[0], Value.i32(source.length()), optionsPointer[0]);
+                bufferPointer[0], sourcePointer[0], source.length(), optionsPointer[0]);
 
         var result = memory.readBytes(
-                pmBufferValue.apply(bufferPointer[0])[0].asInt(),
-                pmBufferLength.apply(bufferPointer[0])[0].asInt());
+            (int) pmBufferValue.apply(bufferPointer[0])[0],
+            (int) pmBufferLength.apply(bufferPointer[0])[0]);
 
         System.out.println("RESULT: " + new String(result));
 
