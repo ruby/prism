@@ -7,10 +7,11 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    parser (3.3.5.0)
+    parser (3.3.5.1)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.4)
+    racc (1.8.1)
     racc (1.8.1-java)
     rake (13.2.1)
     rake-compiler (1.2.8)
@@ -25,6 +26,7 @@ PLATFORMS
   universal-java-21
   universal-java-22
   universal-java-23
+  x86_64-linux
 
 DEPENDENCIES
   parser
