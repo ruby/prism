@@ -14,7 +14,7 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
-    parser (3.3.5.0)
+    parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.4)
@@ -47,4 +47,4 @@ RUBY VERSION
    ruby 3.3.0p0
 
 BUNDLED WITH
-   2.5.3
+   2.5.16
