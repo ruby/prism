@@ -18,16 +18,21 @@ GEM
       ast (~> 2.4.1)
       racc
     power_assert (2.0.3)
+    psych (5.2.0)
+      stringio
     racc (1.8.0)
     rake (13.2.1)
     rake-compiler (1.2.7)
       rake
+    rdoc (6.8.1)
+      psych (>= 4.0.0)
     ruby_memcheck (3.0.0)
       nokogiri
     ruby_parser (3.21.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     sexp_processor (4.17.1)
+    stringio (3.1.2)
     test-unit (3.6.2)
       power_assert
 
@@ -42,6 +47,7 @@ DEPENDENCIES
   prism!
   rake
   rake-compiler
+  rdoc
   ruby_memcheck
   ruby_parser
   test-unit
