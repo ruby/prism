@@ -14,6 +14,7 @@ platforms :mri, :mswin, :mingw, :x64_mingw do
   gem "parser"
   gem "ruby_memcheck"
   gem "ruby_parser"
-end  
+  gem "rdoc"
+end
 
 gem "onigmo", platforms: :ruby
