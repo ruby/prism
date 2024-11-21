@@ -93,18 +93,22 @@ pm_node_list_destroy(pm_parser_t *parser, pm_node_list_t *list) {
  * using the parser argument, but it's there to allow for the future possibility
  * of pre-allocating larger memory pools.
  */
+<%- ignored_node_fields_for_destroy = [
+  Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field,
+  Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField, Prism::Template::ConstantListField,
+  Prism::Template::IntegerField] -%>
 PRISM_EXPORTED_FUNCTION void
 pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         <%- nodes.each do |node| -%>
 #line <%= __LINE__ + 1 %> "prism/templates/src/<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
-            <%- if node.fields.any? { |field| ![Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField, Prism::Template::IntegerField].include?(field.class) } -%>
+            <%- if node.fields.any? { |field| !ignored_node_fields_for_destroy.include?(field.class) } -%>
             pm_<%= node.human %>_t *cast = (pm_<%= node.human %>_t *) node;
             <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field -%>
-            <%- when Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField, Prism::Template::ConstantListField, Prism::Template::IntegerField -%>
+            <%- when *ignored_node_fields_for_destroy -%>
             <%- when Prism::Template::NodeField -%>
             pm_node_destroy(parser, (pm_node_t *)cast-><%= field.name %>);
             <%- when Prism::Template::OptionalNodeField -%>
