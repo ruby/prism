@@ -26,7 +26,7 @@ GEM
       logger
     ruby_memcheck (3.0.0)
       nokogiri
-    test-unit (3.6.2)
+    test-unit (3.6.4)
       power_assert
 
 PLATFORMS
