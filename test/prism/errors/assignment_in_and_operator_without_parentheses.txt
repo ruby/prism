@@ -1,0 +1,4 @@
+1 and a = p 2
+            ^ expected a `do` keyword or a `{` to open the lambda block
+            ^ expected a `(` to start a required parameter
+

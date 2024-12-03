@@ -20895,6 +20895,23 @@ parse_regular_expression_named_captures(pm_parser_t *parser, const pm_string_t *
     }
 }
 
+static void
+validate_local_variable_assignment_with_call(pm_parser_t *parser, pm_node_t *node) {
+    if (PM_NODE_TYPE_P(node, PM_LOCAL_VARIABLE_WRITE_NODE)) {
+        pm_local_variable_write_node_t* cast = (pm_local_variable_write_node_t *)node;
+        if (PM_NODE_TYPE_P(cast->value, PM_CALL_NODE)) {
+            pm_call_node_t *call_node = (pm_call_node_t *)cast->value;
+            if (call_node->arguments != NULL) {
+                if (call_node->opening_loc.start == NULL) {
+                    pm_node_t *arguments = (pm_node_t *)call_node->arguments;
+                    PM_PARSER_ERR_NODE_FORMAT_CONTENT(parser, arguments, PM_ERR_LAMBDA_OPEN);
+                    PM_PARSER_ERR_NODE_FORMAT_CONTENT(parser, arguments, PM_ERR_EXPECT_LPAREN_REQ_PARAMETER);
+                }
+            }
+        }
+    }
+}
+
 static inline pm_node_t *
 parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t previous_binding_power, pm_binding_power_t binding_power, bool accepts_command_call, uint16_t depth) {
     pm_token_t token = parser->current;
@@ -21317,6 +21334,8 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_node_t *right = parse_expression(parser, binding_power, parser->previous.type == PM_TOKEN_KEYWORD_AND, false, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR, (uint16_t) (depth + 1));
+            validate_local_variable_assignment_with_call(parser, node);
+            validate_local_variable_assignment_with_call(parser, right);
             return (pm_node_t *) pm_and_node_create(parser, node, &token, right);
         }
         case PM_TOKEN_KEYWORD_OR:
@@ -21324,6 +21343,8 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_node_t *right = parse_expression(parser, binding_power, parser->previous.type == PM_TOKEN_KEYWORD_OR, false, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR, (uint16_t) (depth + 1));
+            validate_local_variable_assignment_with_call(parser, node);
+            validate_local_variable_assignment_with_call(parser, right);
             return (pm_node_t *) pm_or_node_create(parser, node, &token, right);
         }
         case PM_TOKEN_EQUAL_TILDE: {
@@ -21542,6 +21563,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_node_t *predicate = parse_value_expression(parser, binding_power, true, false, PM_ERR_CONDITIONAL_IF_PREDICATE, (uint16_t) (depth + 1));
+            validate_local_variable_assignment_with_call(parser, predicate);
             return (pm_node_t *) pm_if_node_modifier_create(parser, node, &keyword, predicate);
         }
         case PM_TOKEN_KEYWORD_UNLESS_MODIFIER: {
@@ -21549,6 +21571,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_node_t *predicate = parse_value_expression(parser, binding_power, true, false, PM_ERR_CONDITIONAL_UNLESS_PREDICATE, (uint16_t) (depth + 1));
+            validate_local_variable_assignment_with_call(parser, predicate);
             return (pm_node_t *) pm_unless_node_modifier_create(parser, node, &keyword, predicate);
         }
         case PM_TOKEN_KEYWORD_UNTIL_MODIFIER: {
