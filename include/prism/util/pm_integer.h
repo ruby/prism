@@ -7,6 +7,7 @@
 #define PRISM_NUMBER_H
 
 #include "prism/defines.h"
+#include "prism/allocator.h"
 #include "prism/util/pm_buffer.h"
 
 #include <assert.h>
@@ -77,12 +78,13 @@ typedef enum {
  * has already been validated, as internal validation checks are not performed
  * here.
  *
+ * @param allocator The allocator to use to allocate memory for the integer.
  * @param integer The integer to parse into.
  * @param base The base of the integer.
  * @param start The start of the string.
  * @param end The end of the string.
  */
-void pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end);
+void pm_integer_parse(pm_allocator_t *allocator, pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end);
 
 /**
  * Compare two integers. This function returns -1 if the left integer is less

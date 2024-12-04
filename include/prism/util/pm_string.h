@@ -7,6 +7,7 @@
 #define PRISM_STRING_H
 
 #include "prism/defines.h"
+#include "prism/allocator.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -150,7 +151,7 @@ PRISM_EXPORTED_FUNCTION pm_string_init_result_t pm_string_file_init(pm_string_t 
  *
  * @param string The string to ensure is owned.
  */
-void pm_string_ensure_owned(pm_string_t *string);
+void pm_string_ensure_owned(pm_allocator_t *allocator, pm_string_t *string);
 
 /**
  * Compare the underlying lengths and bytes of two strings. Returns 0 if the
