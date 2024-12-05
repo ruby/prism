@@ -133,18 +133,21 @@ append_cflags("-fvisibility=hidden")
 archive_target = "build/libprism.a"
 archive_path = File.expand_path("../../#{archive_target}", __dir__)
 
-make(env, archive_target) unless File.exist?(archive_path)
-$LOCAL_LIBS << " #{archive_path}"
+def src_list(path)
+  srcdir = path.dup
+  RbConfig.expand(srcdir) # mutates srcdir :-/
+  Dir[File.join(srcdir, "*.{#{SRC_EXT.join(%q{,})}}")]
+end
+
+def add_libprism_source(path)
+  $VPATH << path
+  src_list path
+end
+
+$srcs = src_list("$(srcdir)") +
+  add_libprism_source("$(srcdir)/../../src") +
+  add_libprism_source("$(srcdir)/../../src/util")
 
 # Finally, we'll create the `Makefile` that is going to be used to configure and
 # build the C extension.
 create_makefile("prism/prism")
-
-# Now that the `Makefile` for the C extension is built, we'll append on an extra
-# rule that dictates that the extension should be rebuilt if the archive is
-# updated.
-File.open("Makefile", "a") do |mf|
-  mf.puts
-  mf.puts("# Automatically rebuild the extension if libprism.a changed")
-  mf.puts("$(TARGET_SO): $(LOCAL_LIBS)")
-end
