@@ -70,26 +70,6 @@ if RUBY_ENGINE != "ruby"
   return
 end
 
-# We're going to need to run `make` using prism's `Makefile`.
-# We want to use the same toolchain (compiler, flags, etc) to compile libprism.a and
-# the C extension since they will be linked together.
-# The C extension uses RbConfig, which contains values from the toolchain that built the running Ruby.
-env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
-
-# It's possible that the Ruby that is being run wasn't actually compiled on this
-# machine, in which case parts of RbConfig might be incorrect. In this case
-# we'll need to do some additional checks and potentially fall back to defaults.
-if env.key?("CC") && !File.exist?(env["CC"])
-  env.delete("CC")
-  env.delete("CFLAGS")
-  env.delete("CPPFLAGS")
-end
-
-if env.key?("AR") && !File.exist?(env["AR"])
-  env.delete("AR")
-  env.delete("ARFLAGS")
-end
-
 require "mkmf"
 
 # First, ensure that we can find the header for the prism library.
