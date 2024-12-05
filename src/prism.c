@@ -12401,7 +12401,7 @@ parser_lex(pm_parser_t *parser) {
                         breakpoint++;
                         parser->current.end = breakpoint;
                         pm_token_buffer_escape(parser, &token_buffer);
-                        token_buffer.cursor = breakpoint;
+                        token_buffer.cursor = breakpoint + 2;
 
                         /* fallthrough */
                     case '\n':
