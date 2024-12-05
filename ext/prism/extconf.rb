@@ -70,26 +70,6 @@ if RUBY_ENGINE != "ruby"
   return
 end
 
-# We're going to need to run `make` using prism's `Makefile`.
-# We want to use the same toolchain (compiler, flags, etc) to compile libprism.a and
-# the C extension since they will be linked together.
-# The C extension uses RbConfig, which contains values from the toolchain that built the running Ruby.
-env = RbConfig::CONFIG.slice("SOEXT", "CPPFLAGS", "CFLAGS", "CC", "AR", "ARFLAGS", "MAKEDIRS", "RMALL")
-
-# It's possible that the Ruby that is being run wasn't actually compiled on this
-# machine, in which case parts of RbConfig might be incorrect. In this case
-# we'll need to do some additional checks and potentially fall back to defaults.
-if env.key?("CC") && !File.exist?(env["CC"])
-  env.delete("CC")
-  env.delete("CFLAGS")
-  env.delete("CPPFLAGS")
-end
-
-if env.key?("AR") && !File.exist?(env["AR"])
-  env.delete("AR")
-  env.delete("ARFLAGS")
-end
-
 require "mkmf"
 
 # First, ensure that we can find the header for the prism library.
@@ -133,18 +113,21 @@ append_cflags("-fvisibility=hidden")
 archive_target = "build/libprism.a"
 archive_path = File.expand_path("../../#{archive_target}", __dir__)
 
-make(env, archive_target) unless File.exist?(archive_path)
-$LOCAL_LIBS << " #{archive_path}"
+def src_list(path)
+  srcdir = path.dup
+  RbConfig.expand(srcdir) # mutates srcdir :-/
+  Dir[File.join(srcdir, "*.{#{SRC_EXT.join(%q{,})}}")]
+end
+
+def add_libprism_source(path)
+  $VPATH << path
+  src_list path
+end
+
+$srcs = src_list("$(srcdir)") +
+  add_libprism_source("$(srcdir)/../../src") +
+  add_libprism_source("$(srcdir)/../../src/util")
 
 # Finally, we'll create the `Makefile` that is going to be used to configure and
 # build the C extension.
 create_makefile("prism/prism")
-
-# Now that the `Makefile` for the C extension is built, we'll append on an extra
-# rule that dictates that the extension should be rebuilt if the archive is
-# updated.
-File.open("Makefile", "a") do |mf|
-  mf.puts
-  mf.puts("# Automatically rebuild the extension if libprism.a changed")
-  mf.puts("$(TARGET_SO): $(LOCAL_LIBS)")
-end
