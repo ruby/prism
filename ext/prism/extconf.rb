@@ -107,12 +107,6 @@ end
 # By default, all symbols are hidden in the shared library.
 append_cflags("-fvisibility=hidden")
 
-# We need to link against the libprism.a archive, which is built by the
-# project's `Makefile`. We'll build it if it doesn't exist yet, and then add it
-# to `mkmf`'s list of local libraries.
-archive_target = "build/libprism.a"
-archive_path = File.expand_path("../../#{archive_target}", __dir__)
-
 def src_list(path)
   srcdir = path.dup
   RbConfig.expand(srcdir) # mutates srcdir :-/
