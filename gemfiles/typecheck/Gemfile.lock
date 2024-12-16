@@ -100,7 +100,7 @@ GEM
       yard-sorbet
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
-    test-unit (3.6.4)
+    test-unit (3.6.5)
       power_assert
     thor (1.3.2)
     tzinfo (2.0.6)
