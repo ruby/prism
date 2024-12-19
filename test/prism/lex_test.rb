@@ -74,6 +74,13 @@ module Prism
       end
     end
 
+    def test_lex_it_in_block
+      # `it` should be treated as a local so we have an "ambiguous regex"
+      # situation below
+      code = "i=2; 42.tap { it /1/i }"
+      assert_equal 2, Prism.lex(code).value.map(&:first).map(&:type).count(:SLASH)
+    end
+
     private
 
     def assert_lex(fixture)
