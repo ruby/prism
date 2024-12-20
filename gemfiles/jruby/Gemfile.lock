@@ -16,7 +16,7 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.8)
       rake
-    test-unit (3.6.4)
+    test-unit (3.6.7)
       power_assert
 
 PLATFORMS
