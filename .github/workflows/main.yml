@@ -25,16 +25,17 @@ jobs:
 
   template:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/2.7/Gemfile
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: "2.7.0"
-    - name: Install necessary gems
-      run: gem install rake rake-compiler
+        bundler-cache: true
     - name: Generate templates
-      run: rake templates
+      run: bundle exec rake templates
       env:
         LANG: "C"
 
