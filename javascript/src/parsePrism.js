@@ -103,10 +103,12 @@ function dumpOptions(options) {
   values.push(dumpCommandLineOptions(options));
 
   template.push("C");
-  if (!options.version || options.version === "latest" || options.version.match(/^3\.4(\.\d+)?$/)) {
+  if (!options.version || options.version === "latest" || options.version.match(/^3\.5(\.\d+)?$/)) {
     values.push(0);
   } else if (options.version.match(/^3\.3(\.\d+)?$/)) {
     values.push(1);
+  } else if (options.version.match(/^3\.4(\.\d+)?$/)) {
+    values.push(2);
   } else {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
   }

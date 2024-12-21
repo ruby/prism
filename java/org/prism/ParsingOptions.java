@@ -13,7 +13,8 @@ public abstract class ParsingOptions {
      */
     public enum SyntaxVersion {
         LATEST(0),
-        V3_3(1);
+        V3_3(1),
+        V3_4(2);
 
         private final int value;
 
