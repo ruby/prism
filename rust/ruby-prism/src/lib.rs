@@ -250,8 +250,74 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
     }
 }
 
+/// A struct for attaching comments to their nearest nodes in the syntax tree
+pub struct CommentAttacher<'pr> {
+    parser: NonNull<pm_parser_t>,
+    marker: PhantomData<&'pr pm_parser_t>,
+}
+
+impl<'pr> CommentAttacher<'pr> {
+    fn new(parser: NonNull<pm_parser_t>) -> Self {
+        Self {
+            parser,
+            marker: PhantomData,
+        }
+    }
+
+    /// Find the nearest targets (preceding, enclosing, following) for a comment
+    fn nearest_targets(&self, node: &Node<'pr>, comment: &Comment<'pr>) 
+        -> (Option<Location<'pr>>, Option<Location<'pr>>, Option<Location<'pr>>) 
+    {
+        let mut preceding = None;
+        let mut enclosing = None;
+        let mut following = None;
+        
+        let mut targets = self.collect_targets(node);
+        
+        targets.sort_by_key(|target| target.start_offset());
+        
+        let comment_start = comment.location().start_offset();
+        let comment_end = comment.location().end_offset();
+
+        for target in targets {
+            let target_start = target.start_offset();
+            let target_end = target.end_offset();
+
+            if target_end <= comment_start {
+                preceding = Some(target);
+            } else if target_start <= comment_start && comment_end <= target_end {
+                enclosing = Some(target);
+            } else if comment_end <= target_start {
+                following = Some(target);
+                break;
+            }
+        }
+
+        (preceding, enclosing, following)
+    }
+
+    /// Collect all possible targets (nodes and locations) from a node
+    fn collect_targets(&self, node: &Node<'pr>) -> Vec<Location<'pr>> {
+        let mut targets = Vec::new();
+        targets.push(node.location());
+        
+        match node {
+            Node::ProgramNode { parser, pointer, marker } => {
+                let statement_node = node.as_program_node().unwrap().statements();
+                statement_node.body().iter().for_each(|stmt| {
+                    targets.extend(self.collect_targets(&stmt));
+                });
+            }
+            _ => {}
+        }
+        targets
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::CommentAttacher;
+
     use super::parse;
 
     #[test]
@@ -857,4 +923,47 @@ end
         extractor.push_scope(node.as_program_node().unwrap().statements().body().iter().next().unwrap());
         assert_eq!(3, extractor.scopes.len());
     }
+
+    #[test]
+    fn test_nearest_targets() {
+        let source = r"
+        class Foo
+        end
+        class Middle
+            # Middle class
+        end
+        class Bar
+        end
+        ";
+        let result = parse(source.as_bytes());
+        let attacher = CommentAttacher::new(result.parser);
+        
+        let comment = result.comments().next().unwrap();
+        let program_node = result.node();
+
+        let class_node1 = program_node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let class_node2 = program_node.as_program_node().unwrap().statements().body().iter().nth(1).unwrap();
+        let class_node3 = program_node.as_program_node().unwrap().statements().body().iter().nth(2).unwrap();
+            
+        let (preceding, enclosing, following) = attacher.nearest_targets(&program_node, &comment);
+        
+        // There are preceding, enclosing, and following targets
+        assert!(preceding.is_some());
+        assert!(enclosing.is_some());
+        assert!(following.is_some());
+        
+        // Verify the preceding target's location matches the first class node
+        let preceding_loc = preceding.unwrap();
+        assert_eq!(preceding_loc.start_offset(), class_node1.location().start_offset());
+
+        // Verify the enclosing target's location matches the middle class node
+        let enclosing_loc = enclosing.unwrap();
+        assert_eq!(enclosing_loc.start_offset(), class_node2.location().start_offset());
+
+        // Verify the following target's location matches the last class node
+        let following_loc = following.unwrap();
+        assert_eq!(following_loc.start_offset(), class_node3.location().start_offset());
+    }
 }
+
+
