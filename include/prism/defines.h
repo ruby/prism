@@ -250,6 +250,8 @@
     #define PRISM_FALLTHROUGH __attribute__((fallthrough));
 #elif defined(_MSC_VER)
     #define PRISM_FALLTHROUGH __fallthrough;
+#else
+    #define PRISM_FALLTHROUGH
 #endif
 
 #endif
