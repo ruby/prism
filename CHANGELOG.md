@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.3.0] - 2024-12-21
+
+### Added
+
+- Introduce `Prism::StringQuery`.
+- Introduce `Prism::Relocation`.
+- Track `do` keyword for `WhileNode` and `UntilNode`.
+- Change the way the gem is built to rely on `mkmf` instead of `make`.
+- Lots more documentation on node fields.
+
+### Changed
+
+- Properly add an error for `def @foo; end`.
+- Properly add an error for `foo(**, *)`.
+- Fix up regression in string parsing in `RubyParser` translation.
+- Reject invalid dot method call after match expression.
+- Reject invalid operator after match expression.
+- Fix up %-literals delimited by newlines.
+- Properly add an error for `-> { _1; -> { _1 } }`.
+- Reject blocks and keywords in index writes.
+
 ## [1.2.0] - 2024-10-10
 
 ### Added
@@ -606,7 +627,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.2.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ruby/prism/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ruby/prism/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ruby/prism/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ruby/prism/compare/v0.30.0...v1.0.0
