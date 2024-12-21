@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(29,1))
+@ ProgramNode (location: (1,0)-(32,4))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(29,1))
+    @ StatementsNode (location: (1,0)-(32,4))
     ├── flags: ∅
-    └── body: (length: 8)
+    └── body: (length: 9)
         ├── @ StringNode (location: (1,0)-(2,6))
         │   ├── flags: newline
         │   ├── opening_loc: (1,0)-(1,1) = "\""
@@ -81,9 +81,15 @@
         │   ├── content_loc: (23,1)-(25,0) = "\nfoo\\\\\\\\\n"
         │   ├── closing_loc: (25,0)-(25,1) = "\""
         │   └── unescaped: "\nfoo\\\\\n"
-        └── @ StringNode (location: (27,0)-(29,1))
+        ├── @ StringNode (location: (27,0)-(29,1))
+        │   ├── flags: newline
+        │   ├── opening_loc: (27,0)-(27,1) = "\""
+        │   ├── content_loc: (27,1)-(29,0) = "\nfoo\\\\\\\\\\\n"
+        │   ├── closing_loc: (29,0)-(29,1) = "\""
+        │   └── unescaped: "\nfoo\\\\"
+        └── @ StringNode (location: (31,0)-(32,4))
             ├── flags: newline
-            ├── opening_loc: (27,0)-(27,1) = "\""
-            ├── content_loc: (27,1)-(29,0) = "\nfoo\\\\\\\\\\\n"
-            ├── closing_loc: (29,0)-(29,1) = "\""
-            └── unescaped: "\nfoo\\\\"
+            ├── opening_loc: (31,0)-(31,1) = "\""
+            ├── content_loc: (31,1)-(32,3) = "\n’"
+            ├── closing_loc: (32,3)-(32,4) = "\""
+            └── unescaped: "\n’"
