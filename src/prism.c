@@ -11874,7 +11874,8 @@ parser_lex(pm_parser_t *parser) {
                         !(last_state & (PM_LEX_STATE_DOT | PM_LEX_STATE_FNAME)) &&
                         (type == PM_TOKEN_IDENTIFIER) &&
                         ((pm_parser_local_depth(parser, &parser->current) != -1) ||
-                         pm_token_is_numbered_parameter(parser->current.start, parser->current.end))
+                         pm_token_is_numbered_parameter(parser->current.start, parser->current.end) ||
+                         pm_token_is_it(parser->current.start, parser->current.end))
                     ) {
                         lex_state_set(parser, PM_LEX_STATE_END | PM_LEX_STATE_LABEL);
                     }
