@@ -302,18 +302,25 @@ module Prism
               if token.type == :HEREDOC_START
                 heredoc_identifier_stack.push(value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier])
               end
-              if ["\"", "'"].include?(value) && (next_token = lexed[index][0]) && next_token.type == :STRING_END
+              next_token = lexed[index][0]
+              next_next_token = lexed[index + 1][0]
+              basic_quotes = ["\"", "'"].include?(value)
+
+              if basic_quotes && next_token&.type == :STRING_END
                 next_location = token.location.join(next_token.location)
                 type = :tSTRING
                 value = ""
                 location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                 index += 1
-              elsif ["\"", "'"].include?(value) && (next_token = lexed[index][0]) && next_token.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && (next_next_token = lexed[index + 1][0]) && next_next_token.type == :STRING_END
-                next_location = token.location.join(next_next_token.location)
-                type = :tSTRING
-                value = next_token.value.gsub("\\\\", "\\")
-                location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
-                index += 2
+              elsif basic_quotes && next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
+                # the parser gem doesn't simplify strings when its value ends in a newline
+                unless (string_value = next_token.value).end_with?("\n")
+                  next_location = token.location.join(next_next_token.location)
+                  value = string_value.gsub("\\\\", "\\")
+                  type = :tSTRING
+                  location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                  index += 2
+                end
               elsif value.start_with?("<<")
                 quote = value[2] == "-" || value[2] == "~" ? value[3] : value[2]
                 if quote == "`"
