@@ -200,7 +200,10 @@ module Prism
           :tEQL, :tLPAREN, :tLPAREN2, :tLSHFT, :tNL, :tOP_ASGN, :tOROP, :tPIPE, :tSEMI, :tSTRING_DBEG, :tUMINUS, :tUPLUS
         ]
 
-        private_constant :TYPES, :EXPR_BEG, :EXPR_LABEL, :LAMBDA_TOKEN_TYPES, :LPAREN_CONVERSION_TOKEN_TYPES
+        # Heredocs are complex and require us to keep track of a bit of info to refer to later
+        HeredocData = Struct.new(:identifier, :common_whitespace, keyword_init: true)
+
+        private_constant :TYPES, :EXPR_BEG, :EXPR_LABEL, :LAMBDA_TOKEN_TYPES, :LPAREN_CONVERSION_TOKEN_TYPES, :HeredocData
 
         # The Parser::Source::Buffer that the tokens were lexed from.
         attr_reader :source_buffer
@@ -230,7 +233,7 @@ module Prism
           index = 0
           length = lexed.length
 
-          heredoc_identifier_stack = []
+          heredoc_stack = Array.new
 
           while index < length
             token, state = lexed[index]
@@ -299,9 +302,6 @@ module Prism
             when :tSPACE
               value = nil
             when :tSTRING_BEG
-              if token.type == :HEREDOC_START
-                heredoc_identifier_stack.push(value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier])
-              end
               next_token = lexed[index][0]
               next_next_token = lexed[index + 1][0]
               basic_quotes = ["\"", "'"].include?(value)
@@ -321,17 +321,39 @@ module Prism
                   location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                   index += 2
                 end
-              elsif value.start_with?("<<")
+              elsif token.type == :HEREDOC_START
                 quote = value[2] == "-" || value[2] == "~" ? value[3] : value[2]
+                heredoc_type = value[2] == "-" || value[2] == "~" ? value[2] : ""
+                heredoc = HeredocData.new(
+                  identifier: value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier],
+                  common_whitespace: 0,
+                )
+
                 if quote == "`"
                   type = :tXSTRING_BEG
                   value = "<<`"
                 else
+                  # The parser gem trims whitespace from squiggly heredocs. We must record
+                  # the most common whitespace to later remove.
+                  if heredoc_type == "~"
+                    heredoc.common_whitespace = calculate_heredoc_whitespace(index)
+                  end
+
                   value = "<<#{quote == "'" || quote == "\"" ? quote : "\""}"
                 end
+
+                heredoc_stack.push(heredoc)
               end
             when :tSTRING_CONTENT
-              unless (lines = token.value.lines).one?
+              if (lines = token.value.lines).one?
+                # Heredoc interpolation can have multiple STRING_CONTENT nodes on the same line.
+                is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
+                # The parser gem only removes indentation when the heredoc is not nested
+                not_nested = heredoc_stack.size == 1
+                if is_first_token_on_line && not_nested && (heredoc = heredoc_stack[0]).common_whitespace > 0
+                  value = trim_heredoc_whitespace(value, heredoc)
+                end
+              else
                 start_offset = offset_cache[token.location.start_offset]
                 lines.map do |line|
                   newline = line.end_with?("\r\n") ? "\r\n" : "\n"
@@ -361,7 +383,7 @@ module Prism
             when :tSTRING_END
               if token.type == :HEREDOC_END && value.end_with?("\n")
                 newline_length = value.end_with?("\r\n") ? 2 : 1
-                value = heredoc_identifier_stack.pop
+                value = heredoc_stack.pop.identifier
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - newline_length])
               elsif token.type == :REGEXP_END
                 value = value[0]
@@ -442,6 +464,65 @@ module Prism
           end
         rescue ArgumentError
           0r
+        end
+
+        # Wonky heredoc tab/spaces rules.
+        # https://github.com/ruby/prism/blob/v1.3.0/src/prism.c#L10548-L10558
+        def calculate_heredoc_whitespace(heredoc_token_index)
+          next_token_index = heredoc_token_index
+          nesting_level = 0
+          previous_line = -1
+          result = Float::MAX
+
+          while (lexed[next_token_index] && next_token = lexed[next_token_index][0])
+            next_token_index += 1
+            next_next_token = lexed[next_token_index] && lexed[next_token_index][0]
+
+            # String content inside nested heredocs and interpolation is ignored
+            if next_token.type == :HEREDOC_START || next_token.type == :EMBEXPR_BEGIN
+              nesting_level += 1
+            elsif next_token.type == :HEREDOC_END || next_token.type == :EMBEXPR_END
+              nesting_level -= 1
+              # When we encountered the matching heredoc end, we can exit
+              break if nesting_level == -1
+            elsif next_token.type == :STRING_CONTENT && nesting_level == 0
+              common_whitespace = 0
+              next_token.value[/^\s*/].each_char do |char|
+                if char == "\t"
+                  common_whitespace = (common_whitespace / 8 + 1) * 8;
+                else
+                  common_whitespace += 1
+                end
+              end
+
+              is_first_token_on_line = next_token.location.start_line != previous_line
+              # Whitespace is significant if followed by interpolation
+              whitespace_only = common_whitespace == next_token.value.length && next_next_token&.location&.start_line != next_token.location.start_line
+              if is_first_token_on_line && !whitespace_only && common_whitespace < result
+                result = common_whitespace
+                previous_line = next_token.location.start_line
+              end
+            end
+          end
+          result
+        end
+
+        # Wonky heredoc tab/spaces rules.
+        # https://github.com/ruby/prism/blob/v1.3.0/src/prism.c#L16528-L16545
+        def trim_heredoc_whitespace(string, heredoc)
+          trimmed_whitespace = 0
+          trimmed_characters = 0
+          while (string[trimmed_characters] == "\t" || string[trimmed_characters] == " ") && trimmed_whitespace < heredoc.common_whitespace
+            if string[trimmed_characters] == "\t"
+              trimmed_whitespace = (trimmed_whitespace / 8 + 1) * 8;
+              break if trimmed_whitespace > heredoc.common_whitespace
+            else
+              trimmed_whitespace += 1
+            end
+            trimmed_characters += 1
+          end
+
+          string[trimmed_characters..]
         end
       end
     end
