@@ -384,6 +384,10 @@ module Prism
               if (next_token = lexed[index][0]) && next_token.type != :STRING_CONTENT && next_token.type != :STRING_END
                 type = :tBACK_REF2
               end
+            when :tSYMBOLS_BEG, :tQSYMBOLS_BEG, :tWORDS_BEG, :tQWORDS_BEG
+              if (next_token = lexed[index][0]) && next_token.type == :WORDS_SEP
+                index += 1
+              end
             end
 
             tokens << [type, [value, location]]
