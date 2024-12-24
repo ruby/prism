@@ -200,7 +200,10 @@ module Prism
           :tEQL, :tLPAREN, :tLPAREN2, :tLSHFT, :tNL, :tOP_ASGN, :tOROP, :tPIPE, :tSEMI, :tSTRING_DBEG, :tUMINUS, :tUPLUS
         ]
 
-        private_constant :TYPES, :EXPR_BEG, :EXPR_LABEL, :LAMBDA_TOKEN_TYPES, :LPAREN_CONVERSION_TOKEN_TYPES
+        # Heredocs are complex and require us to keep track of a bit of info to refer to later
+        HeredocData = Struct.new(:identifier, :common_whitespace, keyword_init: true)
+
+        private_constant :TYPES, :EXPR_BEG, :EXPR_LABEL, :LAMBDA_TOKEN_TYPES, :LPAREN_CONVERSION_TOKEN_TYPES, :HeredocData
 
         # The Parser::Source::Buffer that the tokens were lexed from.
         attr_reader :source_buffer
@@ -230,7 +233,8 @@ module Prism
           index = 0
           length = lexed.length
 
-          heredoc_identifier_stack = []
+          heredoc_stack = Array.new
+          quote_stack = Array.new
 
           while index < length
             token, state = lexed[index]
@@ -299,9 +303,6 @@ module Prism
             when :tSPACE
               value = nil
             when :tSTRING_BEG
-              if token.type == :HEREDOC_START
-                heredoc_identifier_stack.push(value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier])
-              end
               next_token = lexed[index][0]
               next_next_token = lexed[index + 1][0]
               basic_quotes = ["\"", "'"].include?(value)
@@ -312,47 +313,90 @@ module Prism
                 value = ""
                 location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                 index += 1
-              elsif basic_quotes && next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
-                # the parser gem doesn't simplify strings when its value ends in a newline
-                unless (string_value = next_token.value).end_with?("\n")
-                  next_location = token.location.join(next_next_token.location)
-                  value = string_value.gsub("\\\\", "\\")
-                  type = :tSTRING
-                  location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
-                  index += 2
+              elsif value.start_with?("'", '"', "%")
+                if next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
+                  # the parser gem doesn't simplify strings when its value ends in a newline
+                  if !(string_value = next_token.value).end_with?("\n") && basic_quotes
+                    next_location = token.location.join(next_next_token.location)
+                    value = unescape_string(string_value, value)
+                    type = :tSTRING
+                    location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                    index += 2
+                    tokens << [type, [value, location]]
+
+                    next
+                  end
                 end
-              elsif value.start_with?("<<")
+
+                quote_stack.push(value)
+              elsif token.type == :HEREDOC_START
                 quote = value[2] == "-" || value[2] == "~" ? value[3] : value[2]
+                heredoc_type = value[2] == "-" || value[2] == "~" ? value[2] : ""
+                heredoc = HeredocData.new(
+                  identifier: value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier],
+                  common_whitespace: 0,
+                )
+
                 if quote == "`"
                   type = :tXSTRING_BEG
-                  value = "<<`"
-                else
-                  value = "<<#{quote == "'" || quote == "\"" ? quote : "\""}"
                 end
+
+                # The parser gem trims whitespace from squiggly heredocs. We must record
+                # the most common whitespace to later remove.
+                if heredoc_type == "~" || heredoc_type == "`"
+                  heredoc.common_whitespace = calculate_heredoc_whitespace(index)
+                end
+
+                if quote == "'" || quote == '"' || quote == "`"
+                  value = "<<#{quote}"
+                else
+                  value = '<<"'
+                end
+
+                heredoc_stack.push(heredoc)
+                quote_stack.push(value)
               end
             when :tSTRING_CONTENT
-              unless (lines = token.value.lines).one?
+              if (lines = token.value.lines).one?
+                # Heredoc interpolation can have multiple STRING_CONTENT nodes on the same line.
+                is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
+                # The parser gem only removes indentation when the heredoc is not nested
+                not_nested = heredoc_stack.size == 1
+                if is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
+                  value = trim_heredoc_whitespace(value, current_heredoc)
+                end
+
+                value = unescape_string(value, quote_stack.last)
+              else
+                # When the parser gem encounters a line continuation inside of a multiline string,
+                # it emits a single string node. The backslash (and remaining newline) is removed.
+                current_line = +""
+                adjustment = 0
                 start_offset = offset_cache[token.location.start_offset]
-                lines.map do |line|
-                  newline = line.end_with?("\r\n") ? "\r\n" : "\n"
+                emit = false
+
+                lines.each.with_index do |line, index|
                   chomped_line = line.chomp
-                  if match = chomped_line.match(/(?<backslashes>\\+)\z/)
-                    adjustment = match[:backslashes].size / 2
-                    adjusted_line = chomped_line.delete_suffix("\\" * adjustment)
-                    if match[:backslashes].size.odd?
-                      adjusted_line.delete_suffix!("\\")
-                      adjustment += 2
-                    else
-                      adjusted_line << newline
-                    end
+
+                  # When the line ends with an odd number of backslashes, it must be a line continuation.
+                  if chomped_line[/\\{1,}\z/]&.length&.odd?
+                    chomped_line.delete_suffix!("\\")
+                    current_line << chomped_line
+                    adjustment += 2
+                    # If the string ends with a line continuation emit the remainder
+                    emit = index == lines.count - 1
                   else
-                    adjusted_line = line
-                    adjustment = 0
+                    current_line << line
+                    emit = true
                   end
 
-                  end_offset = start_offset + adjusted_line.bytesize + adjustment
-                  tokens << [:tSTRING_CONTENT, [adjusted_line, Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])]]
-                  start_offset = end_offset
+                  if emit
+                    end_offset = start_offset + current_line.bytesize + adjustment
+                    tokens << [:tSTRING_CONTENT, [unescape_string(current_line, quote_stack.last), Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])]]
+                    start_offset = end_offset
+                    current_line = +""
+                    adjustment = 0
+                  end
                 end
                 next
               end
@@ -361,12 +405,14 @@ module Prism
             when :tSTRING_END
               if token.type == :HEREDOC_END && value.end_with?("\n")
                 newline_length = value.end_with?("\r\n") ? 2 : 1
-                value = heredoc_identifier_stack.pop
+                value = heredoc_stack.pop.identifier
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - newline_length])
               elsif token.type == :REGEXP_END
                 value = value[0]
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])
               end
+
+              quote_stack.pop
             when :tSYMBEG
               if (next_token = lexed[index][0]) && next_token.type != :STRING_CONTENT && next_token.type != :EMBEXPR_BEGIN && next_token.type != :EMBVAR && next_token.type != :STRING_END
                 next_location = token.location.join(next_token.location)
@@ -375,6 +421,8 @@ module Prism
                 value = { "~@" => "~", "!@" => "!" }.fetch(value, value)
                 location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                 index += 1
+              else
+                quote_stack.push(value)
               end
             when :tFID
               if !tokens.empty? && tokens.dig(-1, 0) == :kDEF
@@ -384,10 +432,15 @@ module Prism
               if (next_token = lexed[index][0]) && next_token.type != :STRING_CONTENT && next_token.type != :STRING_END
                 type = :tBACK_REF2
               end
+              quote_stack.push(value)
             when :tSYMBOLS_BEG, :tQSYMBOLS_BEG, :tWORDS_BEG, :tQWORDS_BEG
               if (next_token = lexed[index][0]) && next_token.type == :WORDS_SEP
                 index += 1
               end
+
+              quote_stack.push(value)
+            when :tREGEXP_BEG
+              quote_stack.push(value)
             end
 
             tokens << [type, [value, location]]
@@ -442,6 +495,103 @@ module Prism
           end
         rescue ArgumentError
           0r
+        end
+
+        # Wonky heredoc tab/spaces rules.
+        # https://github.com/ruby/prism/blob/v1.3.0/src/prism.c#L10548-L10558
+        def calculate_heredoc_whitespace(heredoc_token_index)
+          next_token_index = heredoc_token_index
+          nesting_level = 0
+          previous_line = -1
+          result = Float::MAX
+
+          while (lexed[next_token_index] && next_token = lexed[next_token_index][0])
+            next_token_index += 1
+            next_next_token = lexed[next_token_index] && lexed[next_token_index][0]
+
+            # String content inside nested heredocs and interpolation is ignored
+            if next_token.type == :HEREDOC_START || next_token.type == :EMBEXPR_BEGIN
+              nesting_level += 1
+            elsif next_token.type == :HEREDOC_END || next_token.type == :EMBEXPR_END
+              nesting_level -= 1
+              # When we encountered the matching heredoc end, we can exit
+              break if nesting_level == -1
+            elsif next_token.type == :STRING_CONTENT && nesting_level == 0
+              common_whitespace = 0
+              next_token.value[/^\s*/].each_char do |char|
+                if char == "\t"
+                  common_whitespace = (common_whitespace / 8 + 1) * 8;
+                else
+                  common_whitespace += 1
+                end
+              end
+
+              is_first_token_on_line = next_token.location.start_line != previous_line
+              # Whitespace is significant if followed by interpolation
+              whitespace_only = common_whitespace == next_token.value.length && next_next_token&.location&.start_line != next_token.location.start_line
+              if is_first_token_on_line && !whitespace_only && common_whitespace < result
+                result = common_whitespace
+                previous_line = next_token.location.start_line
+              end
+            end
+          end
+          result
+        end
+
+        # Wonky heredoc tab/spaces rules.
+        # https://github.com/ruby/prism/blob/v1.3.0/src/prism.c#L16528-L16545
+        def trim_heredoc_whitespace(string, heredoc)
+          trimmed_whitespace = 0
+          trimmed_characters = 0
+          while (string[trimmed_characters] == "\t" || string[trimmed_characters] == " ") && trimmed_whitespace < heredoc.common_whitespace
+            if string[trimmed_characters] == "\t"
+              trimmed_whitespace = (trimmed_whitespace / 8 + 1) * 8;
+              break if trimmed_whitespace > heredoc.common_whitespace
+            else
+              trimmed_whitespace += 1
+            end
+            trimmed_characters += 1
+          end
+
+          string[trimmed_characters..]
+        end
+
+        # Escape sequences that have special and should appear unescaped in the resulting string.
+        ESCAPES = {
+          "a" => "\a", "b" => "\b", "e" => "\e", "f" => "\f",
+          "n" => "\n", "r" => "\r", "s" => "\s", "t" => "\t",
+          "v" => "\v", "\\\\" => "\\"
+        }.freeze
+        private_constant :ESCAPES
+
+        # When one of these delimiters is encountered, then the other
+        # one is allowed to be escaped as well.
+        DELIMITER_SYMETRY = { "[" => "\\\\]", "(" => ")", "{" => "}", "<" => ">" }.freeze
+        private_constant :DELIMITER_SYMETRY
+
+        # TODO: Does not handle "\u1234" and other longer-form escapes.
+        def unescape_string(string, quote)
+          # In single-quoted heredocs, everything is taken literally.
+          return string if quote == "<<'"
+
+          # TODO: Implement regexp escaping
+          return string if quote == "/" || quote.start_with?("%r")
+
+          if quote == "'" || quote.start_with?("%q") || quote.start_with?("%w") || quote.start_with?("%i")
+            if quote == "'"
+              delimiter = "'"
+            else
+              delimiter = quote[2]
+            end
+
+            string.gsub(/\\([\\#{delimiter}#{DELIMITER_SYMETRY[delimiter]}])/, '\1')
+          else
+            # When double-quoted, escape sequences can be written literally. For example, "\\n" becomes "\n",
+            # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
+            string.gsub(/\\./) do |match|
+              ESCAPES[match[1]] || match[1]
+            end
+          end
         end
       end
     end
