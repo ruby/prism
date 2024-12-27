@@ -22,7 +22,7 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.8)
       rake
-    rbs (3.7.0)
+    rbs (3.8.0)
       logger
     ruby_memcheck (3.0.0)
       nokogiri
