@@ -16,6 +16,7 @@ updates:
       - '/gemfiles/3.2'
       - '/gemfiles/3.3'
       - '/gemfiles/3.4'
+      - '/gemfiles/3.5'
       - '/gemfiles/jruby'
       - '/gemfiles/truffleruby'
       - '/gemfiles/typecheck'
