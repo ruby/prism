@@ -10,7 +10,7 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
-    power_assert (2.0.4)
+    power_assert (2.0.5)
     racc (1.8.1)
     racc (1.8.1-java)
     rake (13.2.1)
