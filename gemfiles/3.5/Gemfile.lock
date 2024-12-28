@@ -10,19 +10,19 @@ GEM
     ffi (1.17.0)
     logger (1.6.4)
     mini_portile2 (2.8.8)
-    nokogiri (1.17.2)
+    nokogiri (1.18.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
-    power_assert (2.0.4)
+    power_assert (2.0.5)
     racc (1.8.1)
     rake (13.2.1)
     rake-compiler (1.2.8)
       rake
-    rbs (3.7.0)
+    rbs (3.8.1)
       logger
     ruby_memcheck (3.0.0)
       nokogiri
@@ -47,4 +47,4 @@ RUBY VERSION
    ruby 3.5.0.dev
 
 BUNDLED WITH
-   2.6.2
+   2.7.0.dev
