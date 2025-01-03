@@ -14,6 +14,8 @@ module Prism
     # https://bugs.ruby-lang.org/issues/19539
     except << "heredocs_leading_whitespace.txt" if RUBY_VERSION < "3.3.0"
 
+    except << "leading_logical.txt" if RUBY_VERSION < "3.5.0"
+
     Fixture.each(except: except) do |fixture|
       define_method(fixture.test_name) { assert_valid_syntax(fixture.read) }
     end
