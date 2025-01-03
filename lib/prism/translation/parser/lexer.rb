@@ -201,7 +201,7 @@ module Prism
         ]
 
         # Heredocs are complex and require us to keep track of a bit of info to refer to later
-        HeredocData = Struct.new(:identifier, :common_whitespace, :quote, keyword_init: true)
+        HeredocData = Struct.new(:identifier, :common_whitespace, keyword_init: true)
 
         private_constant :TYPES, :EXPR_BEG, :EXPR_LABEL, :LAMBDA_TOKEN_TYPES, :LPAREN_CONVERSION_TOKEN_TYPES, :HeredocData
 
@@ -234,6 +234,7 @@ module Prism
           length = lexed.length
 
           heredoc_stack = Array.new
+          quote_stack = Array.new
 
           while index < length
             token, state = lexed[index]
@@ -312,22 +313,28 @@ module Prism
                 value = ""
                 location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                 index += 1
-              elsif basic_quotes && next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
-                # the parser gem doesn't simplify strings when its value ends in a newline
-                unless (string_value = next_token.value).end_with?("\n")
-                  next_location = token.location.join(next_next_token.location)
-                  value = unescape_string(string_value)
-                  type = :tSTRING
-                  location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
-                  index += 2
+              elsif value.start_with?("'", '"', "%")
+                if next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
+                  # the parser gem doesn't simplify strings when its value ends in a newline
+                  if !(string_value = next_token.value).end_with?("\n") && basic_quotes
+                    next_location = token.location.join(next_next_token.location)
+                    value = unescape_string(string_value, value)
+                    type = :tSTRING
+                    location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                    index += 2
+                    tokens << [type, [value, location]]
+
+                    next
+                  end
                 end
+
+                quote_stack.push(value)
               elsif token.type == :HEREDOC_START
                 quote = value[2] == "-" || value[2] == "~" ? value[3] : value[2]
                 heredoc_type = value[2] == "-" || value[2] == "~" ? value[2] : ""
                 heredoc = HeredocData.new(
                   identifier: value.match(/<<[-~]?["'`]?(?<heredoc_identifier>.*?)["'`]?\z/)[:heredoc_identifier],
                   common_whitespace: 0,
-                  quote: quote,
                 )
 
                 if quote == "`"
@@ -347,6 +354,7 @@ module Prism
                 end
 
                 heredoc_stack.push(heredoc)
+                quote_stack.push(value)
               end
             when :tSTRING_CONTENT
               if (lines = token.value.lines).one?
@@ -354,13 +362,11 @@ module Prism
                 is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
                 # The parser gem only removes indentation when the heredoc is not nested
                 not_nested = heredoc_stack.size == 1
-                current_heredoc = heredoc_stack.last
-                if is_first_token_on_line && not_nested && current_heredoc.common_whitespace > 0
-                  value = trim_heredoc_whitespace(value, heredoc)
+                if is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
+                  value = trim_heredoc_whitespace(value, current_heredoc)
                 end
-                if current_heredoc
-                  value = unescape_heredoc(value, heredoc)
-                end
+
+                value = unescape_string(value, quote_stack.last)
               else
                 # When the parser gem encounters a line continuation inside of a multiline string,
                 # it emits a single string node. The backslash (and remaining newline) is removed.
@@ -386,7 +392,7 @@ module Prism
 
                   if emit
                     end_offset = start_offset + current_line.bytesize + adjustment
-                    tokens << [:tSTRING_CONTENT, [unescape_string(current_line), Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])]]
+                    tokens << [:tSTRING_CONTENT, [unescape_string(current_line, quote_stack.last), Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])]]
                     start_offset = end_offset
                     current_line = +""
                     adjustment = 0
@@ -405,6 +411,8 @@ module Prism
                 value = value[0]
                 location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])
               end
+
+              quote_stack.pop
             when :tSYMBEG
               if (next_token = lexed[index][0]) && next_token.type != :STRING_CONTENT && next_token.type != :EMBEXPR_BEGIN && next_token.type != :EMBVAR && next_token.type != :STRING_END
                 next_location = token.location.join(next_token.location)
@@ -413,6 +421,8 @@ module Prism
                 value = { "~@" => "~", "!@" => "!" }.fetch(value, value)
                 location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
                 index += 1
+              else
+                quote_stack.push(value)
               end
             when :tFID
               if !tokens.empty? && tokens.dig(-1, 0) == :kDEF
@@ -422,10 +432,15 @@ module Prism
               if (next_token = lexed[index][0]) && next_token.type != :STRING_CONTENT && next_token.type != :STRING_END
                 type = :tBACK_REF2
               end
+              quote_stack.push(value)
             when :tSYMBOLS_BEG, :tQSYMBOLS_BEG, :tWORDS_BEG, :tQWORDS_BEG
               if (next_token = lexed[index][0]) && next_token.type == :WORDS_SEP
                 index += 1
               end
+
+              quote_stack.push(value)
+            when :tREGEXP_BEG
+              quote_stack.push(value)
             end
 
             tokens << [type, [value, location]]
@@ -541,11 +556,6 @@ module Prism
           string[trimmed_characters..]
         end
 
-        # Naive string escaping handling. Should be closer to the "unescape_heredoc" method
-        def unescape_string(string)
-          string.gsub("\\\\", "\\")
-        end
-
         # Escape sequences that have special and should appear unescaped in the resulting string.
         ESCAPES = {
           "a" => "\a", "b" => "\b", "e" => "\e", "f" => "\f",
@@ -554,15 +564,34 @@ module Prism
         }.freeze
         private_constant :ESCAPES
 
-        # TODO: Does not handle "\u1234" and other longer-form escapes.
-        def unescape_heredoc(string, heredoc)
-          # In single-quoted heredocs, everything is taken literally.
-          return string if heredoc.quote == "'"
+        # When one of these delimiters is encountered, then the other
+        # one is allowed to be escaped as well.
+        DELIMITER_SYMETRY = { "[" => "]", "(" => ")", "{" => "}", "<" => ">" }.freeze
+        private_constant :DELIMITER_SYMETRY
 
-          # When double-quoted, escape sequences can be written literally. For example, "\\n" becomes "\n",
-          # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
-          string.gsub(/\\./) do |match|
-            ESCAPES[match[1]] || match[1]
+        # TODO: Does not handle "\u1234" and other longer-form escapes.
+        def unescape_string(string, quote)
+          # In single-quoted heredocs, everything is taken literally.
+          return string if quote == "<<'"
+
+          # TODO: Implement regexp escaping
+          return string if quote == "/" || quote.start_with?("%r")
+
+          if quote == "'" || quote.start_with?("%q") || quote.start_with?("%w") || quote.start_with?("%i")
+            if quote == "'"
+              delimiter = "'"
+            else
+              delimiter = quote[2]
+            end
+
+            delimiters = Regexp.escape("#{delimiter}#{DELIMITER_SYMETRY[delimiter]}")
+            string.gsub(/\\([\\#{delimiters}])/, '\1')
+          else
+            # When double-quoted, escape sequences can be written literally. For example, "\\n" becomes "\n",
+            # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
+            string.gsub(/\\./) do |match|
+              ESCAPES[match[1]] || match[1]
+            end
           end
         end
       end
