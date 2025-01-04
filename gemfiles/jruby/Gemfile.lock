@@ -14,7 +14,7 @@ GEM
     racc (1.8.1)
     racc (1.8.1-java)
     rake (13.2.1)
-    rake-compiler (1.2.8)
+    rake-compiler (1.2.9)
       rake
     test-unit (3.6.7)
       power_assert
