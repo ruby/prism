@@ -48,7 +48,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.3"
+        ruby-version: "3.4"
         bundler-cache: true
     - name: Check Sorbet
       run: bundle exec rake typecheck:tapioca typecheck:sorbet
