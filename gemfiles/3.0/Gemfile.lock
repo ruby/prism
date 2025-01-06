@@ -9,8 +9,8 @@ GEM
     ast (2.4.2)
     ffi (1.17.0)
     logger (1.6.1)
-    mini_portile2 (2.8.7)
-    nokogiri (1.16.7)
+    mini_portile2 (2.8.8)
+    nokogiri (1.17.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
@@ -24,7 +24,7 @@ GEM
       rake
     rbs (3.6.1)
       logger
-    ruby_memcheck (3.0.0)
+    ruby_memcheck (3.0.1)
       nokogiri
     test-unit (3.6.7)
       power_assert
