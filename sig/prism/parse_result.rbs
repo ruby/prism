@@ -84,6 +84,7 @@ module Prism
 
     def initialize: (Location location) -> void
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+    def slice: () -> String
   end
 
   interface _Comment
