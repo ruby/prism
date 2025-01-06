@@ -38,7 +38,7 @@ namespace :whitequark do
       # This object is going to collect all of the examples from the parser gem
       # into a hash that we can use to generate our own tests.
       COLLECTED = Hash.new { |hash, key| hash[key] = [] }
-      ALL_VERSIONS = %w[3.1 3.2]
+      ALL_VERSIONS = %w[3.1 3.2 3.3]
 
       private
 
@@ -60,10 +60,10 @@ namespace :whitequark do
       def assert_parses(_ast, code, _source_maps = "", versions = ALL_VERSIONS)
         # We're going to skip any examples that are for older Ruby versions
         # that we do not support.
-        return if (versions & %w[3.1 3.2]).empty?
+        return if (versions & ALL_VERSIONS).empty?
 
-        entry = caller.find { _1.include?("test_parser.rb") }
-        _, name = *entry.match(/\d+:in `(?:block in )?(?:test_|assert_parses_)?(.+)'/)
+        entry = caller_locations.find { _1.base_label.start_with?("test_") }
+        name = entry.base_label.delete_prefix("test_")
 
         COLLECTED[name] << code
       end
@@ -94,7 +94,8 @@ namespace :whitequark do
         test/prism/fixtures/whitequark/if_while_after_class__since_32.txt
         test/prism/fixtures/whitequark/next_block.txt
         test/prism/fixtures/whitequark/next.txt
-        test/prism/fixtures/whitequark/pattern_match.txt
+        test/prism/fixtures/whitequark/pattern_matching_pin_variable.txt
+        test/prism/fixtures/whitequark/pattern_matching_hash_with_string_keys.txt
         test/prism/fixtures/whitequark/range_endless.txt
         test/prism/fixtures/whitequark/redo.txt
         test/prism/fixtures/whitequark/retry.txt
