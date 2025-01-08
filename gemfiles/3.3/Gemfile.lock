@@ -7,7 +7,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    ffi (1.17.1)
     logger (1.6.4)
     mini_portile2 (2.8.8)
     nokogiri (1.18.1)
@@ -33,7 +32,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ffi
   onigmo
   parser
   prism!

@@ -2,8 +2,6 @@
 
 source "https://rubygems.org"
 
-# gemspec path: "../.."
-
 gem "minitest"
 gem "parser"
 gem "rake-compiler"
