@@ -6,7 +6,6 @@ ruby "~> 3.0.0"
 
 gemspec path: "../.."
 
-gem "ffi"
 gem "onigmo", platforms: :ruby
 gem "parser"
 gem "rake-compiler"
