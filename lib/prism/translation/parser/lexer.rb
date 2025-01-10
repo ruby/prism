@@ -377,12 +377,20 @@ module Prism
 
                 lines.each.with_index do |line, index|
                   chomped_line = line.chomp
+                  backslash_count = chomped_line[/\\{1,}\z/]&.length || 0
+                  is_interpolation = interpolation?(quote_stack.last)
+                  is_percent_array = percent_array?(quote_stack.last)
 
-                  # When the line ends with an odd number of backslashes, it must be a line continuation.
-                  if chomped_line[/\\{1,}\z/]&.length&.odd?
-                    chomped_line.delete_suffix!("\\")
-                    current_line << chomped_line
-                    adjustment += 2
+                  if backslash_count.odd? && (is_interpolation || is_percent_array)
+                    if is_percent_array
+                      # Remove the last backslash, keep potential newlines
+                      current_line << line.sub(/(\\)(\r?\n)\z/, '\2')
+                      adjustment += 1
+                    else
+                      chomped_line.delete_suffix!("\\")
+                      current_line << chomped_line
+                      adjustment += 2
+                    end
                     # If the string ends with a line continuation emit the remainder
                     emit = index == lines.count - 1
                   else
@@ -577,7 +585,13 @@ module Prism
           # TODO: Implement regexp escaping
           return string if quote == "/" || quote.start_with?("%r")
 
-          if quote == "'" || quote.start_with?("%q") || quote.start_with?("%w") || quote.start_with?("%i")
+          if interpolation?(quote)
+            # In interpolation, escape sequences can be written literally. For example, "\\n" becomes "\n",
+            # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
+            string.gsub(/\\./) do |match|
+              ESCAPES[match[1]] || match[1]
+            end
+          else
             if quote == "'"
               delimiter = "'"
             else
@@ -586,13 +600,17 @@ module Prism
 
             delimiters = Regexp.escape("#{delimiter}#{DELIMITER_SYMETRY[delimiter]}")
             string.gsub(/\\([\\#{delimiters}])/, '\1')
-          else
-            # When double-quoted, escape sequences can be written literally. For example, "\\n" becomes "\n",
-            # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
-            string.gsub(/\\./) do |match|
-              ESCAPES[match[1]] || match[1]
-            end
           end
+        end
+
+        # Determine if characters preceeded by a backslash should be escaped or not
+        def interpolation?(quote)
+          quote != "'" && !quote.start_with?("%q", "%w", "%i")
+        end
+
+        # Determine if the string is part of a %-style array.
+        def percent_array?(quote)
+          quote.start_with?("%w", "%W", "%i", "%I")
         end
       end
     end
