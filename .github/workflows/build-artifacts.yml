@@ -28,12 +28,17 @@ jobs:
     - name: Build library
       run: bundle exec rake compile
 
+    - name: Package files
+      run: |
+        mkdir dist
+        cp -r include dist/
+        cp build/libprism.a dist/
+        tar -czf prism-${{ matrix.os }}.tar.gz -C dist .
+
     - name: Upload to release
       if: github.event_name == 'release'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       uses: softprops/action-gh-release@v2
       with:
-        files: |
-          build/libprism.so
-          build/libprism.dylib
+        files: prism-${{ matrix.os }}.tar.gz
