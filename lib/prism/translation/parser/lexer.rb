@@ -197,7 +197,7 @@ module Prism
         # The following token types are listed as those classified as `tLPAREN`.
         LPAREN_CONVERSION_TOKEN_TYPES = [
           :kBREAK, :kCASE, :tDIVIDE, :kFOR, :kIF, :kNEXT, :kRETURN, :kUNTIL, :kWHILE, :tAMPER, :tANDOP, :tBANG, :tCOMMA, :tDOT2, :tDOT3,
-          :tEQL, :tLPAREN, :tLPAREN2, :tLSHFT, :tNL, :tOP_ASGN, :tOROP, :tPIPE, :tSEMI, :tSTRING_DBEG, :tUMINUS, :tUPLUS
+          :tEQL, :tLPAREN, :tLPAREN2, :tLPAREN_ARG, :tLSHFT, :tNL, :tOP_ASGN, :tOROP, :tPIPE, :tSEMI, :tSTRING_DBEG, :tUMINUS, :tUPLUS
         ]
 
         # Heredocs are complex and require us to keep track of a bit of info to refer to later
