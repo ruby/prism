@@ -238,8 +238,8 @@ module Prism
           index = 0
           length = lexed.length
 
-          heredoc_stack = Array.new
-          quote_stack = Array.new
+          heredoc_stack = []
+          quote_stack = []
 
           # The parser gem emits the newline tokens for comments out of order. This saves
           # that token location to emit at a later time to properly line everything up.
