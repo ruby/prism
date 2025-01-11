@@ -243,7 +243,7 @@ module Prism
 
             type = TYPES.fetch(token.type)
             value = token.value
-            location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset])
+            location = range(token.location.start_offset, token.location.end_offset)
 
             case type
             when :kDO
@@ -266,12 +266,12 @@ module Prism
 
                 if start_index != index
                   value += next_token.value
-                  location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[lexed[index][0].location.end_offset])
+                  location = range(token.location.start_offset, lexed[index][0].location.end_offset)
                   index += 1
                 end
               else
                 value.chomp!
-                location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - 1])
+                location = range(token.location.start_offset, token.location.end_offset - 1)
               end
             when :tNL
               value = nil
@@ -281,8 +281,8 @@ module Prism
               value = parse_complex(value)
             when :tINTEGER
               if value.start_with?("+")
-                tokens << [:tUNARY_NUM, ["+", Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])]]
-                location = Range.new(source_buffer, offset_cache[token.location.start_offset + 1], offset_cache[token.location.end_offset])
+                tokens << [:tUNARY_NUM, ["+", range(token.location.start_offset, token.location.start_offset + 1)]]
+                location = range(token.location.start_offset + 1, token.location.end_offset)
               end
 
               value = parse_integer(value)
@@ -311,7 +311,7 @@ module Prism
                 next_location = token.location.join(next_token.location)
                 type = :tSTRING
                 value = ""
-                location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                location = range(next_location.start_offset, next_location.end_offset)
                 index += 1
               elsif value.start_with?("'", '"', "%")
                 if next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
@@ -320,7 +320,7 @@ module Prism
                     next_location = token.location.join(next_next_token.location)
                     value = unescape_string(string_value, value)
                     type = :tSTRING
-                    location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                    location = range(next_location.start_offset, next_location.end_offset)
                     index += 2
                     tokens << [type, [value, location]]
 
@@ -392,7 +392,7 @@ module Prism
 
                   if emit
                     end_offset = start_offset + current_line.bytesize + adjustment
-                    tokens << [:tSTRING_CONTENT, [unescape_string(current_line, quote_stack.last), Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])]]
+                    tokens << [:tSTRING_CONTENT, [unescape_string(current_line, quote_stack.last), range(start_offset, end_offset)]]
                     start_offset = end_offset
                     current_line = +""
                     adjustment = 0
@@ -406,10 +406,10 @@ module Prism
               if token.type == :HEREDOC_END && value.end_with?("\n")
                 newline_length = value.end_with?("\r\n") ? 2 : 1
                 value = heredoc_stack.pop.identifier
-                location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.end_offset - newline_length])
+                location = range(token.location.start_offset, token.location.end_offset - newline_length)
               elsif token.type == :REGEXP_END
                 value = value[0]
-                location = Range.new(source_buffer, offset_cache[token.location.start_offset], offset_cache[token.location.start_offset + 1])
+                location = range(token.location.start_offset, token.location.start_offset + 1)
               end
 
               quote_stack.pop
@@ -419,7 +419,7 @@ module Prism
                 type = :tSYMBOL
                 value = next_token.value
                 value = { "~@" => "~", "!@" => "!" }.fetch(value, value)
-                location = Range.new(source_buffer, offset_cache[next_location.start_offset], offset_cache[next_location.end_offset])
+                location = range(next_location.start_offset, next_location.end_offset)
                 index += 1
               else
                 quote_stack.push(value)
@@ -446,7 +446,7 @@ module Prism
             tokens << [type, [value, location]]
 
             if token.type == :REGEXP_END
-              tokens << [:tREGEXP_OPT, [token.value[1..], Range.new(source_buffer, offset_cache[token.location.start_offset + 1], offset_cache[token.location.end_offset])]]
+              tokens << [:tREGEXP_OPT, [token.value[1..], range(token.location.start_offset + 1, token.location.end_offset)]]
             end
           end
 
@@ -454,6 +454,11 @@ module Prism
         end
 
         private
+
+        # Creates a new parser range, taking prisms byte offsets into account
+        def range(start_offset, end_offset)
+          Range.new(source_buffer, offset_cache[start_offset], offset_cache[end_offset])
+        end
 
         # Parse an integer from the string representation.
         def parse_integer(value)
