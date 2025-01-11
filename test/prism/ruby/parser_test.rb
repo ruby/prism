@@ -82,7 +82,6 @@ module Prism
     # output expected by the parser gem, so we'll skip them for now.
     skip_tokens = [
       "dash_heredocs.txt",
-      "dos_endings.txt",
       "embdoc_no_newline_at_end.txt",
       "heredocs_with_ignored_newlines.txt",
       "methods.txt",
