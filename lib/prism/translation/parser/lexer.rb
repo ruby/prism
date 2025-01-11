@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "strscan"
+
 module Prism
   module Translation
     class Parser
@@ -265,6 +267,8 @@ module Prism
               end
             when :tCHARACTER
               value.delete_prefix!("?")
+              # Character literals behave similar to double-quoted strings. We can use the same escaping mechanism.
+              value = unescape_string(value, "?")
             when :tCOMMENT
               if token.type == :EMBDOC_BEGIN
 
@@ -606,7 +610,7 @@ module Prism
         ESCAPES = {
           "a" => "\a", "b" => "\b", "e" => "\e", "f" => "\f",
           "n" => "\n", "r" => "\r", "s" => "\s", "t" => "\t",
-          "v" => "\v", "\\\\" => "\\"
+          "v" => "\v", "\\" => "\\"
         }.freeze
         private_constant :ESCAPES
 
@@ -615,7 +619,7 @@ module Prism
         DELIMITER_SYMETRY = { "[" => "]", "(" => ")", "{" => "}", "<" => ">" }.freeze
         private_constant :DELIMITER_SYMETRY
 
-        # TODO: Does not handle "\u1234" and other longer-form escapes.
+        # Apply Ruby string escaping rules
         def unescape_string(string, quote)
           # In single-quoted heredocs, everything is taken literally.
           return string if quote == "<<'"
@@ -623,12 +627,54 @@ module Prism
           # TODO: Implement regexp escaping
           return string if quote == "/" || quote.start_with?("%r")
 
+          # OPTIMIZATION: Assume that few strings need escaping to speed up the common case.
+          return string unless string.include?("\\")
+
           if interpolation?(quote)
-            # In interpolation, escape sequences can be written literally. For example, "\\n" becomes "\n",
-            # and "\\\\n" becomes "\\n". Unknown escapes sequences, like "\\o" simply become "o".
-            string.gsub(/\\./) do |match|
-              ESCAPES[match[1]] || match[1]
+            # Appending individual escape sequences may force the string out of its intended
+            # encoding. Start out with binary and force it back later.
+            result = "".b
+
+            scanner = StringScanner.new(string)
+            while (skipped = scanner.skip_until(/\\/))
+              # Append what was just skipped over, excluding the found backslash.
+              result << string.byteslice(scanner.pos - skipped, skipped - 1)
+
+              # Simple single-character escape sequences like \n
+              if (replacement = ESCAPES[scanner.peek(1)])
+                result << replacement
+                scanner.pos += 1
+              elsif (octal = scanner.check(/[0-7]{1,3}/))
+                # \nnn
+                # NOTE: When Ruby 3.4 is required, this can become result.append_as_bytes(chr)
+                result << octal.to_i(8).chr.b
+                scanner.pos += octal.bytesize
+              elsif (hex = scanner.check(/x([0-9a-fA-F]{1,2})/))
+                # \xnn
+                result << hex[1..].to_i(16).chr.b
+                scanner.pos += hex.bytesize
+              elsif (unicode = scanner.check(/u([0-9a-fA-F]{4})/))
+                # \unnnn
+                result << unicode[1..].hex.chr(Encoding::UTF_8).b
+                scanner.pos += unicode.bytesize
+              elsif scanner.peek(3) == "u{}"
+                # https://github.com/whitequark/parser/issues/856
+                scanner.pos += 3
+              elsif (unicode_parts = scanner.check(/u{.*}/))
+                # \u{nnnn ...}
+                unicode_parts[2..-2].split.each do |unicode|
+                  result << unicode.hex.chr(Encoding::UTF_8).b
+                end
+                scanner.pos += unicode_parts.bytesize
+              end
             end
+
+            # Add remainging chars
+            result << string.byteslice(scanner.pos..)
+
+            result.force_encoding(source_buffer.source.encoding)
+
+            result
           else
             if quote == "'"
               delimiter = "'"
