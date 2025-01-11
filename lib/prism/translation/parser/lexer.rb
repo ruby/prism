@@ -200,6 +200,11 @@ module Prism
           :tEQL, :tLPAREN, :tLPAREN2, :tLPAREN_ARG, :tLSHFT, :tNL, :tOP_ASGN, :tOROP, :tPIPE, :tSEMI, :tSTRING_DBEG, :tUMINUS, :tUPLUS
         ]
 
+        # Types of tokens that are allowed to continue a method call with comments in-between.
+        # For these, the parser gem doesn't emit a newline token after the last comment.
+        COMMENT_CONTINUATION_TYPES = [:COMMENT, :AMPERSAND_DOT, :DOT]
+        private_constant :COMMENT_CONTINUATION_TYPES
+
         # Heredocs are complex and require us to keep track of a bit of info to refer to later
         HeredocData = Struct.new(:identifier, :common_whitespace, keyword_init: true)
 
@@ -233,8 +238,13 @@ module Prism
           index = 0
           length = lexed.length
 
-          heredoc_stack = Array.new
-          quote_stack = Array.new
+          heredoc_stack = []
+          quote_stack = []
+
+          # The parser gem emits the newline tokens for comments out of order. This saves
+          # that token location to emit at a later time to properly line everything up.
+          # https://github.com/whitequark/parser/issues/1025
+          comment_newline_location = nil
 
           while index < length
             token, state = lexed[index]
@@ -257,23 +267,46 @@ module Prism
               value.delete_prefix!("?")
             when :tCOMMENT
               if token.type == :EMBDOC_BEGIN
-                start_index = index
 
                 while !((next_token = lexed[index][0]) && next_token.type == :EMBDOC_END) && (index < length - 1)
                   value += next_token.value
                   index += 1
                 end
 
-                if start_index != index
-                  value += next_token.value
-                  location = range(token.location.start_offset, lexed[index][0].location.end_offset)
-                  index += 1
-                end
+                value += next_token.value
+                location = range(token.location.start_offset, lexed[index][0].location.end_offset)
+                index += 1
               else
                 value.chomp!
                 location = range(token.location.start_offset, token.location.end_offset - 1)
+
+                prev_token = lexed[index - 2][0]
+                next_token = lexed[index][0]
+
+                is_inline_comment = prev_token.location.start_line == token.location.start_line
+                if is_inline_comment && !COMMENT_CONTINUATION_TYPES.include?(next_token&.type)
+                  tokens << [:tCOMMENT, [value, location]]
+
+                  nl_location = range(token.location.end_offset - 1, token.location.end_offset)
+                  tokens << [:tNL, [nil, nl_location]]
+                  next
+                elsif is_inline_comment && next_token&.type == :COMMENT
+                  comment_newline_location = range(token.location.end_offset - 1, token.location.end_offset)
+                elsif comment_newline_location && !COMMENT_CONTINUATION_TYPES.include?(next_token&.type)
+                  tokens << [:tCOMMENT, [value, location]]
+                  tokens << [:tNL, [nil, comment_newline_location]]
+                  comment_newline_location = nil
+                  next
+                end
               end
             when :tNL
+              next_token = next_token = lexed[index][0]
+              # Newlines after comments are emitted out of order.
+              if next_token&.type == :COMMENT
+                comment_newline_location = location
+                next
+              end
+
               value = nil
             when :tFLOAT
               value = parse_float(value)
