@@ -69,6 +69,19 @@ b\nar
 
 %w[foo\ bar baz]
 
+%w[foo\ bar\\ baz\\\
+ bat]
+
+%w[foo     bar]
+
+%w[
+  a   
+  b   c  
+ d   
+]
+
+%W[f\u{006f 006f}]
+
 %W[a b#{c}d e]
 
 %W[a b c]

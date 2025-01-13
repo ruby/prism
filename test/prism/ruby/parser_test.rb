@@ -97,7 +97,6 @@ module Prism
       "embdoc_no_newline_at_end.txt",
       "heredocs_with_ignored_newlines.txt",
       "methods.txt",
-      "strings.txt",
       "seattlerb/bug169.txt",
       "seattlerb/case_in.txt",
       "seattlerb/difficult4__leading_dots2.txt",
