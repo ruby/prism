@@ -23,7 +23,7 @@ jobs:
         bundler-cache: true
 
     - name: Build library
-      run: bundle exec rake compile
+      run: bundle exec rake templates
 
     - name: Package libprism source
       run: |
