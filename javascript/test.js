@@ -5,6 +5,10 @@ import * as nodes from "./src/nodes.js";
 
 const parse = await loadPrism();
 
+function statement(result) {
+  return result.value.statements.body[0];
+}
+
 test("node", () => {
   const result = parse("foo");
   assert(result.value instanceof nodes.ProgramNode);
@@ -12,12 +16,12 @@ test("node", () => {
 
 test("node? present", () => {
   const result = parse("foo.bar");
-  assert(result.value.statements.body[0].receiver instanceof nodes.CallNode);
+  assert(statement(result).receiver instanceof nodes.CallNode);
 });
 
 test("node? absent", () => {
   const result = parse("foo");
-  assert(result.value.statements.body[0].receiver === null);
+  assert(statement(result).receiver === null);
 });
 
 test("node[]", () => {
@@ -27,7 +31,7 @@ test("node[]", () => {
 
 test("string", () => {
   const result = parse('"foo"');
-  const node = result.value.statements.body[0];
+  const node = statement(result);
 
   assert(!node.isForcedUtf8Encoding())
   assert(!node.isForcedBinaryEncoding())
@@ -39,7 +43,7 @@ test("string", () => {
 
 test("forced utf-8 string using \\u syntax", () => {
   const result = parse('# encoding: utf-8\n"\\u{9E7F}"');
-  const node = result.value.statements.body[0];
+  const node = statement(result);
   const str = node.unescaped;
 
   assert(node.isForcedUtf8Encoding());
@@ -52,7 +56,7 @@ test("forced utf-8 string using \\u syntax", () => {
 
 test("forced utf-8 string with invalid byte sequence", () => {
   const result = parse('# encoding: utf-8\n"\\xFF\\xFF\\xFF"');
-  const node = result.value.statements.body[0];
+  const node = statement(result);
   const str = node.unescaped;
 
   assert(node.isForcedUtf8Encoding());
@@ -68,7 +72,7 @@ test("ascii string with embedded utf-8 character", () => {
   // # encoding: ascii\n"é¹¿"'
   const ascii_str = new Buffer.from([35, 32, 101, 110, 99, 111, 100, 105, 110, 103, 58, 32, 97, 115, 99, 105, 105, 10, 34, 233, 185, 191, 34]);
   const result = parse(ascii_str);
-  const node = result.value.statements.body[0];
+  const node = statement(result);
   const str = node.unescaped;
 
   assert(!node.isForcedUtf8Encoding());
@@ -81,7 +85,7 @@ test("ascii string with embedded utf-8 character", () => {
 
 test("forced binary string", () => {
   const result = parse('# encoding: ascii\n"\\xFF\\xFF\\xFF"');
-  const node = result.value.statements.body[0];
+  const node = statement(result);
   const str = node.unescaped;
 
   assert(!node.isForcedUtf8Encoding());
@@ -96,7 +100,7 @@ test("forced binary string with Unicode character", () => {
   // # encoding: us-ascii\n"\\xFFé¹¿\\xFF"
   const ascii_str = Buffer.from([35, 32, 101, 110, 99, 111, 100, 105, 110, 103, 58, 32, 97, 115, 99, 105, 105, 10, 34, 92, 120, 70, 70, 233, 185, 191, 92, 120, 70, 70, 34]);
   const result = parse(ascii_str);
-  const node = result.value.statements.body[0];
+  const node = statement(result);
   const str = node.unescaped;
 
   assert(!node.isForcedUtf8Encoding());
@@ -114,12 +118,12 @@ test("constant", () => {
 
 test("constant? present", () => {
   const result = parse("def foo(*bar); end");
-  assert(result.value.statements.body[0].parameters.rest.name === "bar");
+  assert(statement(result).parameters.rest.name === "bar");
 });
 
 test("constant? absent", () => {
   const result = parse("def foo(*); end");
-  assert(result.value.statements.body[0].parameters.rest.name === null);
+  assert(statement(result).parameters.rest.name === null);
 });
 
 test("constant[]", async() => {
@@ -134,27 +138,27 @@ test("location", () => {
 
 test("location? present", () => {
   const result = parse("def foo = bar");
-  assert(result.value.statements.body[0].equalLoc !== null);
+  assert(statement(result).equalLoc !== null);
 });
 
 test("location? absent", () => {
   const result = parse("def foo; bar; end");
-  assert(result.value.statements.body[0].equalLoc === null);
+  assert(statement(result).equalLoc === null);
 });
 
 test("uint8", () => {
   const result = parse("-> { _3 }");
-  assert(result.value.statements.body[0].parameters.maximum === 3);
+  assert(statement(result).parameters.maximum === 3);
 });
 
 test("uint32", () => {
   const result = parse("foo = 1");
-  assert(result.value.statements.body[0].depth === 0);
+  assert(statement(result).depth === 0);
 });
 
 test("flags", () => {
   const result = parse("/foo/mi");
-  const regexp = result.value.statements.body[0];
+  const regexp = statement(result);
 
   assert(regexp.isIgnoreCase());
   assert(regexp.isMultiLine());
@@ -163,25 +167,44 @@ test("flags", () => {
 
 test("integer (decimal)", () => {
   const result = parse("10");
-  assert(result.value.statements.body[0].value == 10);
+  assert(statement(result).value === 10);
 });
 
 test("integer (hex)", () => {
   const result = parse("0xA");
-  assert(result.value.statements.body[0].value == 10);
+  assert(statement(result).value === 10);
 });
 
 test("integer (2 nodes)", () => {
   const result = parse("4294967296");
-  assert(result.value.statements.body[0].value == 4294967296n);
+  assert(statement(result).value === 4294967296n);
 });
 
 test("integer (3 nodes)", () => {
   const result = parse("18446744073709552000");
-  assert(result.value.statements.body[0].value == 18446744073709552000n);
+  assert(statement(result).value === 18446744073709552000n);
 });
 
 test("double", () => {
   const result = parse("1.0");
-  assert(result.value.statements.body[0].value == 1.0);
+  assert(statement(result).value === 1.0);
+});
+
+test("scopes", () => {
+  let result;
+
+  result = parse("foo");
+  assert(statement(result) instanceof nodes.CallNode);
+
+  result = parse("foo", { scopes: [["foo"]] });
+  assert(statement(result) instanceof nodes.LocalVariableReadNode);
+
+  result = parse("foo", { scopes: [{ locals: ["foo"] }] });
+  assert(statement(result) instanceof nodes.LocalVariableReadNode);
+
+  result = parse("foo(*)");
+  assert(result.errors.length > 0);
+
+  result = parse("foo(*)", { scopes: [{ forwarding: ["*"] }] });
+  assert(result.errors.length === 0);
 });

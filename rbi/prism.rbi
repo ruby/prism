@@ -60,4 +60,7 @@ module Prism
 
   sig { params(filepath: String, command_line: T.nilable(String), encoding: T.nilable(T.any(FalseClass, Encoding)), freeze: T.nilable(T::Boolean), frozen_string_literal: T.nilable(T::Boolean), line: T.nilable(Integer), main_script: T.nilable(T::Boolean), partial_script: T.nilable(T::Boolean), scopes: T.nilable(T::Array[T::Array[Symbol]]), version: T.nilable(String)).returns(T::Boolean) }
   def self.parse_file_failure?(filepath, command_line: nil, encoding: nil, freeze: nil, frozen_string_literal: nil, line: nil, main_script: nil, partial_script: nil, scopes: nil, version: nil); end
+
+  sig { params(locals: T::Array[Symbol], forwarding: T::Array[Symbol]).returns(Prism::Scope) }
+  def self.scope(locals: [], forwarding: []); end
 end

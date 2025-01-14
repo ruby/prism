@@ -182,4 +182,11 @@ module Prism
     def pretty_print: (untyped q) -> untyped
     def ==: (untyped other) -> bool
   end
+
+  class Scope
+    attr_reader locals: Array[Symbol]
+    attr_reader forwarding: Array[Symbol]
+
+    def initialize: (Array[Symbol] locals, Array[Symbol] forwarding) -> void
+  end
 end

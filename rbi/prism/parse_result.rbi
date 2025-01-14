@@ -391,3 +391,14 @@ class Prism::Token
   sig { params(other: T.untyped).returns(T::Boolean) }
   def ==(other); end
 end
+
+class Prism::Scope
+  sig { returns(T::Array[Symbol]) }
+  def locals; end
+
+  sig { returns(T::Array[Symbol]) }
+  def forwarding; end
+
+  sig { params(locals: T::Array[Symbol], forwarding: T::Array[Symbol]).void }
+  def initialize(locals, forwarding); end
+end
