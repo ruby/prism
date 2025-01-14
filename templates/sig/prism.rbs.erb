@@ -84,4 +84,6 @@ module Prism
     ?scopes: Array[Array[Symbol]],
     ?verbose: bool
   ) -> ParseResult
+
+  def self.scope: (?locals: Array[Symbol], ?forwarding: Array[Symbol]) -> Scope
 end

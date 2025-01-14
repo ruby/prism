@@ -11,7 +11,9 @@ export * from "./nodes.js";
 /**
  * Load the prism wasm module and return a parse function.
  *
- * @returns {Promise<(source: string) => ParseResult>}
+ * @typedef {import("./parsePrism.js").Options} Options
+ *
+ * @returns {Promise<(source: string, options?: Options) => ParseResult>}
  */
 export async function loadPrism() {
   const wasm = await WebAssembly.compile(await readFile(fileURLToPath(new URL("prism.wasm", import.meta.url))));
@@ -20,7 +22,7 @@ export async function loadPrism() {
   const instance = await WebAssembly.instantiate(wasm, wasi.getImportObject());
   wasi.initialize(instance);
 
-  return function (source) {
-    return parsePrism(instance.exports, source);
+  return function (source, options = {}) {
+    return parsePrism(instance.exports, source, options);
   }
 }

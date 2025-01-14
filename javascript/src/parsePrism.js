@@ -3,9 +3,26 @@ import { ParseResult, deserialize } from "./deserialize.js";
 /**
  * Parse the given source code.
  *
+ * @typedef {{
+ *   locals?: string[],
+ *   forwarding?: string[]
+ * }} Scope
+ *
+ * @typedef {{
+ *   filepath?: string,
+ *   line?: number,
+ *   encoding?: string | false,
+ *   frozen_string_literal?: boolean,
+ *   command_line?: string,
+ *   version?: string,
+ *   main_script?: boolean,
+ *   partial_script?: boolean,
+ *   scopes?: (string[] | Scope)[]
+ * }} Options<C>
+ *
  * @param {WebAssembly.Exports} prism
  * @param {string} source
- * @param {Object} options
+ * @param {Options} options
  * @returns {ParseResult}
  */
 export function parsePrism(prism, source, options = {}) {
@@ -35,7 +52,12 @@ export function parsePrism(prism, source, options = {}) {
   return result;
 }
 
-// Dump the command line options into a serialized format.
+/**
+ * Dump the command line options into a serialized format.
+ *
+ * @param {Options} options
+ * @returns {number}
+ */
 function dumpCommandLineOptions(options) {
   if (options.command_line === undefined) {
     return 0;
@@ -62,15 +84,30 @@ function dumpCommandLineOptions(options) {
   return value;
 }
 
-// Convert a boolean value into a serialized byte.
+/**
+ * Convert a boolean value into a serialized byte.
+ *
+ * @param {boolean} value
+ * @returns {number}
+ */
 function dumpBooleanOption(value) {
   return (value === undefined || value === false || value === null) ? 0 : 1;
 }
 
-// Converts the given options into a serialized options string.
+/** 
+ * Converts the given options into a serialized options string.
+ *
+ * @param {Options} options
+ * @returns {Uint8Array}
+ */
 function dumpOptions(options) {
-  const values = [];
+  /** @type {PackTemplate} */
   const template = [];
+
+  /** @type {PackValues} */
+  const values = [];
+
+  /** @type {TextEncoder} */
   const encoder = new TextEncoder();
 
   template.push("L")
@@ -131,16 +168,37 @@ function dumpOptions(options) {
     values.push(scopes.length);
 
     for (const scope of scopes) {
-      template.push("L");
-      values.push(scope.length);
+      let locals;
+      let forwarding = 0;
 
-      for (const local of scope) {
-        const name = local.name;
+      if (Array.isArray(scope)) {
+        locals = scope;
+      } else {
+        locals = scope.locals || [];
+
+        for (const forward of (scope.forwarding || [])) {
+          switch (forward) {
+            case "*": forwarding |= 0x1; break;
+            case "**": forwarding |= 0x2; break;
+            case "&": forwarding |= 0x4; break;
+            case "...": forwarding |= 0x8; break;
+            default: throw new Error(`invalid forwarding value: ${forward}`);
+          }
+        }
+      }
+
+      template.push("L");
+      values.push(locals.length);
+
+      template.push("C");
+      values.push(forwarding);
+
+      for (const local of locals) {
         template.push("L");
-        values.push(name.length);
+        values.push(local.length);
 
         template.push("A")
-        values.push(encoder.encode(name));
+        values.push(encoder.encode(local));
       }
     }
   } else {
@@ -150,40 +208,17 @@ function dumpOptions(options) {
   return pack(values, template);
 }
 
-function totalSizeOf(values, template) {
-  let size = 0;
-
-  for (let i = 0; i < values.length; i ++) {
-    size += sizeOf(values, template, i);
-  }
-
-  return size;
-}
-
-function sizeOf(values, template, index) {
-  switch (template[index]) {
-    // arbitrary binary string
-    case "A":
-      return values[index].length;
-
-    // l: signed 32-bit integer, L: unsigned 32-bit integer
-    case "l":
-    case "L":
-      return 4;
-
-    // 8-bit unsigned integer
-    case "C":
-      return 1;
-  }
-}
-
-// platform-agnostic implementation of Node's os.endianness()
-function endianness() {
-  const arr = new Uint8Array(4);
-  new Uint32Array(arr.buffer)[0] = 0xffcc0011;
-  return arr[0] === 0xff ? "BE" : "LE";
-}
-
+/**
+ * Pack the given values using the given template. This function matches a
+ * subset of the functionality from Ruby's Array#pack method.
+ *
+ * @typedef {(number | string)[]} PackValues
+ * @typedef {string[]} PackTemplate
+ *
+ * @param {PackValues} values 
+ * @param {PackTemplate} template 
+ * @returns {Uint8Array}
+ */
 function pack(values, template) {
   const littleEndian = endianness() === "LE";
   const buffer = new ArrayBuffer(totalSizeOf(values, template));
@@ -216,4 +251,58 @@ function pack(values, template) {
   }
 
   return new Uint8Array(buffer);
+}
+
+/**
+ * Returns the total size of the given values in bytes.
+ *
+ * @param {PackValues} values
+ * @param {PackTemplate} template
+ * @returns {number}
+ */
+function totalSizeOf(values, template) {
+  let size = 0;
+
+  for (let i = 0; i < values.length; i ++) {
+    size += sizeOf(values, template, i);
+  }
+
+  return size;
+}
+
+/**
+ * Returns the size of the given value inside the list of values at the
+ * specified index in bytes.
+ * 
+ * @param {PackValues} values 
+ * @param {PackTemplate} template 
+ * @param {number} index 
+ * @returns {number}
+ */
+function sizeOf(values, template, index) {
+  switch (template[index]) {
+    // arbitrary binary string
+    case "A":
+      return values[index].length;
+
+    // l: signed 32-bit integer, L: unsigned 32-bit integer
+    case "l":
+    case "L":
+      return 4;
+
+    // 8-bit unsigned integer
+    case "C":
+      return 1;
+  }
+}
+
+/**
+ * Platform-agnostic implementation of Node's os.endianness().
+ *
+ * @returns {"BE" | "LE"}
+ */
+function endianness() {
+  const arr = new Uint8Array(4);
+  new Uint32Array(arr.buffer)[0] = 0xffcc0011;
+  return arr[0] === 0xff ? "BE" : "LE";
 }
