@@ -122,6 +122,9 @@ function dumpOptions(options) {
   template.push("C");
   values.push(dumpBooleanOption(options.partial_script));
 
+  template.push("C");
+  values.push(0);
+
   template.push("L");
   if (options.scopes) {
     const scopes = options.scopes;

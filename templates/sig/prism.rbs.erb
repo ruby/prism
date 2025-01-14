@@ -21,6 +21,7 @@ module Prism
     String source,
     ?encoding: Encoding | false,
     ?filepath: String,
+    ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,
@@ -32,7 +33,8 @@ module Prism
 
   def self.load: (
     String source,
-    String serialized
+    String serialized,
+    ?bool freeze
   ) -> ParseResult
 
   def self.lex_ripper: (
@@ -56,6 +58,7 @@ module Prism
   def self.<%= method %>: (
     String filepath,
     ?encoding: Encoding | false,
+    ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,
@@ -73,6 +76,7 @@ module Prism
     _Stream stream,
     ?encoding: Encoding | false,
     ?filepath: String,
+    ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,

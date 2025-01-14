@@ -82,6 +82,9 @@ public abstract class ParsingOptions {
         // partialScript
         output.write(partialScript ? 1 : 0);
 
+        // freeze
+        output.write(0);
+
         // scopes
 
         // number of scopes

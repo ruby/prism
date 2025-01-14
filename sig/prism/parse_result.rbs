@@ -9,6 +9,8 @@ module Prism
     attr_reader offsets: Array[Integer]
 
     def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
+    def replace_start_line: (Integer start_line) -> void
+    def replace_offsets: (Array[Integer] offsets) -> void
     def encoding: () -> Encoding
     def lines: () -> Array[String]
     def slice: (Integer byte_offset, Integer length) -> String
