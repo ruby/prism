@@ -339,6 +339,7 @@ module Prism
             when :tRATIONAL
               value = parse_rational(value)
             when :tSPACE
+              location = range(token.location.start_offset, token.location.start_offset + percent_array_leading_whitespace(value))
               value = nil
             when :tSTRING_BEG
               next_token = lexed[index][0]
@@ -395,12 +396,16 @@ module Prism
                 quote_stack.push(value)
               end
             when :tSTRING_CONTENT
+              is_percent_array = percent_array?(quote_stack.last)
+
               if (lines = token.value.lines).one?
                 # Heredoc interpolation can have multiple STRING_CONTENT nodes on the same line.
                 is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
                 # The parser gem only removes indentation when the heredoc is not nested
                 not_nested = heredoc_stack.size == 1
-                if is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
+                if is_percent_array
+                  value = percent_array_unescape(value)
+                elsif is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
                   value = trim_heredoc_whitespace(value, current_heredoc)
                 end
 
@@ -417,12 +422,10 @@ module Prism
                   chomped_line = line.chomp
                   backslash_count = chomped_line[/\\{1,}\z/]&.length || 0
                   is_interpolation = interpolation?(quote_stack.last)
-                  is_percent_array = percent_array?(quote_stack.last)
 
                   if backslash_count.odd? && (is_interpolation || is_percent_array)
                     if is_percent_array
-                      # Remove the last backslash, keep potential newlines
-                      current_line << line.sub(/(\\)(\r?\n)\z/, '\2')
+                      current_line << percent_array_unescape(line)
                       adjustment += 1
                     else
                       chomped_line.delete_suffix!("\\")
@@ -699,6 +702,27 @@ module Prism
             delimiters = Regexp.escape("#{delimiter}#{DELIMITER_SYMETRY[delimiter]}")
             string.gsub(/\\([\\#{delimiters}])/, '\1')
           end
+        end
+
+        # In a percent array, certain whitespace can be preceeded with a backslash,
+        # causing the following characters to be part of the previous element.
+        def percent_array_unescape(string)
+          string.gsub(/(\\)+[ \f\n\r\t\v]/) do |full_match|
+            full_match.delete_prefix!("\\") if Regexp.last_match[1].length.odd?
+            full_match
+          end
+        end
+
+        # For %-arrays whitespace, the parser gem only considers whitespace before the newline.
+        def percent_array_leading_whitespace(string)
+          return 1 if string.start_with?("\n")
+
+          leading_whitespace = 0
+          string.each_char do |c|
+            break if c == "\n"
+            leading_whitespace += 1
+          end
+          leading_whitespace
         end
 
         # Determine if characters preceeded by a backslash should be escaped or not

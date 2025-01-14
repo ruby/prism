@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(119,15))
+@ ProgramNode (location: (1,0)-(132,15))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(119,15))
+    @ StatementsNode (location: (1,0)-(132,15))
     ├── flags: ∅
-    └── body: (length: 54)
+    └── body: (length: 58)
         ├── @ StringNode (location: (1,0)-(1,6))
         │   ├── flags: newline
         │   ├── opening_loc: (1,0)-(1,2) = "%%"
@@ -341,267 +341,347 @@
         │   │       └── unescaped: "baz"
         │   ├── opening_loc: (70,0)-(70,3) = "%w["
         │   └── closing_loc: (70,15)-(70,16) = "]"
-        ├── @ ArrayNode (location: (72,0)-(72,14))
+        ├── @ ArrayNode (location: (72,0)-(73,5))
         │   ├── flags: newline
         │   ├── elements: (length: 3)
-        │   │   ├── @ StringNode (location: (72,3)-(72,4))
+        │   │   ├── @ StringNode (location: (72,3)-(72,13))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (72,3)-(72,4) = "a"
+        │   │   │   ├── content_loc: (72,3)-(72,13) = "foo\\ bar\\\\"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "foo bar\\"
+        │   │   ├── @ StringNode (location: (72,14)-(73,0))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (72,14)-(73,0) = "baz\\\\\\\n"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "baz\\\n"
+        │   │   └── @ StringNode (location: (73,1)-(73,4))
+        │   │       ├── flags: ∅
+        │   │       ├── opening_loc: ∅
+        │   │       ├── content_loc: (73,1)-(73,4) = "bat"
+        │   │       ├── closing_loc: ∅
+        │   │       └── unescaped: "bat"
+        │   ├── opening_loc: (72,0)-(72,3) = "%w["
+        │   └── closing_loc: (73,4)-(73,5) = "]"
+        ├── @ ArrayNode (location: (75,0)-(75,15))
+        │   ├── flags: newline
+        │   ├── elements: (length: 2)
+        │   │   ├── @ StringNode (location: (75,3)-(75,6))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (75,3)-(75,6) = "foo"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "foo"
+        │   │   └── @ StringNode (location: (75,11)-(75,14))
+        │   │       ├── flags: ∅
+        │   │       ├── opening_loc: ∅
+        │   │       ├── content_loc: (75,11)-(75,14) = "bar"
+        │   │       ├── closing_loc: ∅
+        │   │       └── unescaped: "bar"
+        │   ├── opening_loc: (75,0)-(75,3) = "%w["
+        │   └── closing_loc: (75,14)-(75,15) = "]"
+        ├── @ ArrayNode (location: (77,0)-(81,1))
+        │   ├── flags: newline
+        │   ├── elements: (length: 4)
+        │   │   ├── @ StringNode (location: (78,2)-(78,3))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (78,2)-(78,3) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
-        │   │   ├── @ InterpolatedStringNode (location: (72,5)-(72,11))
+        │   │   ├── @ StringNode (location: (79,2)-(79,3))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (79,2)-(79,3) = "b"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "b"
+        │   │   ├── @ StringNode (location: (79,6)-(79,7))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (79,6)-(79,7) = "c"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "c"
+        │   │   └── @ StringNode (location: (80,1)-(80,2))
+        │   │       ├── flags: ∅
+        │   │       ├── opening_loc: ∅
+        │   │       ├── content_loc: (80,1)-(80,2) = "d"
+        │   │       ├── closing_loc: ∅
+        │   │       └── unescaped: "d"
+        │   ├── opening_loc: (77,0)-(77,3) = "%w["
+        │   └── closing_loc: (81,0)-(81,1) = "]"
+        ├── @ ArrayNode (location: (83,0)-(83,18))
+        │   ├── flags: newline
+        │   ├── elements: (length: 1)
+        │   │   └── @ StringNode (location: (83,3)-(83,17))
+        │   │       ├── flags: ∅
+        │   │       ├── opening_loc: ∅
+        │   │       ├── content_loc: (83,3)-(83,17) = "f\\u{006f 006f}"
+        │   │       ├── closing_loc: ∅
+        │   │       └── unescaped: "foo"
+        │   ├── opening_loc: (83,0)-(83,3) = "%W["
+        │   └── closing_loc: (83,17)-(83,18) = "]"
+        ├── @ ArrayNode (location: (85,0)-(85,14))
+        │   ├── flags: newline
+        │   ├── elements: (length: 3)
+        │   │   ├── @ StringNode (location: (85,3)-(85,4))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (85,3)-(85,4) = "a"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "a"
+        │   │   ├── @ InterpolatedStringNode (location: (85,5)-(85,11))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
         │   │   │   ├── parts: (length: 3)
-        │   │   │   │   ├── @ StringNode (location: (72,5)-(72,6))
+        │   │   │   │   ├── @ StringNode (location: (85,5)-(85,6))
         │   │   │   │   │   ├── flags: static_literal, frozen
         │   │   │   │   │   ├── opening_loc: ∅
-        │   │   │   │   │   ├── content_loc: (72,5)-(72,6) = "b"
+        │   │   │   │   │   ├── content_loc: (85,5)-(85,6) = "b"
         │   │   │   │   │   ├── closing_loc: ∅
         │   │   │   │   │   └── unescaped: "b"
-        │   │   │   │   ├── @ EmbeddedStatementsNode (location: (72,6)-(72,10))
+        │   │   │   │   ├── @ EmbeddedStatementsNode (location: (85,6)-(85,10))
         │   │   │   │   │   ├── flags: ∅
-        │   │   │   │   │   ├── opening_loc: (72,6)-(72,8) = "\#{"
+        │   │   │   │   │   ├── opening_loc: (85,6)-(85,8) = "\#{"
         │   │   │   │   │   ├── statements:
-        │   │   │   │   │   │   @ StatementsNode (location: (72,8)-(72,9))
+        │   │   │   │   │   │   @ StatementsNode (location: (85,8)-(85,9))
         │   │   │   │   │   │   ├── flags: ∅
         │   │   │   │   │   │   └── body: (length: 1)
-        │   │   │   │   │   │       └── @ CallNode (location: (72,8)-(72,9))
+        │   │   │   │   │   │       └── @ CallNode (location: (85,8)-(85,9))
         │   │   │   │   │   │           ├── flags: variable_call, ignore_visibility
         │   │   │   │   │   │           ├── receiver: ∅
         │   │   │   │   │   │           ├── call_operator_loc: ∅
         │   │   │   │   │   │           ├── name: :c
-        │   │   │   │   │   │           ├── message_loc: (72,8)-(72,9) = "c"
+        │   │   │   │   │   │           ├── message_loc: (85,8)-(85,9) = "c"
         │   │   │   │   │   │           ├── opening_loc: ∅
         │   │   │   │   │   │           ├── arguments: ∅
         │   │   │   │   │   │           ├── closing_loc: ∅
         │   │   │   │   │   │           └── block: ∅
-        │   │   │   │   │   └── closing_loc: (72,9)-(72,10) = "}"
-        │   │   │   │   └── @ StringNode (location: (72,10)-(72,11))
+        │   │   │   │   │   └── closing_loc: (85,9)-(85,10) = "}"
+        │   │   │   │   └── @ StringNode (location: (85,10)-(85,11))
         │   │   │   │       ├── flags: static_literal, frozen
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (72,10)-(72,11) = "d"
+        │   │   │   │       ├── content_loc: (85,10)-(85,11) = "d"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "d"
         │   │   │   └── closing_loc: ∅
-        │   │   └── @ StringNode (location: (72,12)-(72,13))
+        │   │   └── @ StringNode (location: (85,12)-(85,13))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (72,12)-(72,13) = "e"
+        │   │       ├── content_loc: (85,12)-(85,13) = "e"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "e"
-        │   ├── opening_loc: (72,0)-(72,3) = "%W["
-        │   └── closing_loc: (72,13)-(72,14) = "]"
-        ├── @ ArrayNode (location: (74,0)-(74,9))
+        │   ├── opening_loc: (85,0)-(85,3) = "%W["
+        │   └── closing_loc: (85,13)-(85,14) = "]"
+        ├── @ ArrayNode (location: (87,0)-(87,9))
         │   ├── flags: newline
         │   ├── elements: (length: 3)
-        │   │   ├── @ StringNode (location: (74,3)-(74,4))
+        │   │   ├── @ StringNode (location: (87,3)-(87,4))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (74,3)-(74,4) = "a"
+        │   │   │   ├── content_loc: (87,3)-(87,4) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
-        │   │   ├── @ StringNode (location: (74,5)-(74,6))
+        │   │   ├── @ StringNode (location: (87,5)-(87,6))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (74,5)-(74,6) = "b"
+        │   │   │   ├── content_loc: (87,5)-(87,6) = "b"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "b"
-        │   │   └── @ StringNode (location: (74,7)-(74,8))
+        │   │   └── @ StringNode (location: (87,7)-(87,8))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (74,7)-(74,8) = "c"
+        │   │       ├── content_loc: (87,7)-(87,8) = "c"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "c"
-        │   ├── opening_loc: (74,0)-(74,3) = "%W["
-        │   └── closing_loc: (74,8)-(74,9) = "]"
-        ├── @ ArrayNode (location: (76,0)-(80,1))
+        │   ├── opening_loc: (87,0)-(87,3) = "%W["
+        │   └── closing_loc: (87,8)-(87,9) = "]"
+        ├── @ ArrayNode (location: (89,0)-(93,1))
         │   ├── flags: newline
         │   ├── elements: (length: 3)
-        │   │   ├── @ StringNode (location: (77,2)-(77,3))
+        │   │   ├── @ StringNode (location: (90,2)-(90,3))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (77,2)-(77,3) = "a"
+        │   │   │   ├── content_loc: (90,2)-(90,3) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
-        │   │   ├── @ StringNode (location: (78,2)-(78,3))
+        │   │   ├── @ StringNode (location: (91,2)-(91,3))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (78,2)-(78,3) = "b"
+        │   │   │   ├── content_loc: (91,2)-(91,3) = "b"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "b"
-        │   │   └── @ StringNode (location: (79,2)-(79,3))
+        │   │   └── @ StringNode (location: (92,2)-(92,3))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (79,2)-(79,3) = "c"
+        │   │       ├── content_loc: (92,2)-(92,3) = "c"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "c"
-        │   ├── opening_loc: (76,0)-(76,3) = "%w["
-        │   └── closing_loc: (80,0)-(80,1) = "]"
-        ├── @ StringNode (location: (82,0)-(82,15))
-        │   ├── flags: newline
-        │   ├── opening_loc: (82,0)-(82,1) = "'"
-        │   ├── content_loc: (82,1)-(82,14) = "\\' foo \\' bar"
-        │   ├── closing_loc: (82,14)-(82,15) = "'"
-        │   └── unescaped: "' foo ' bar"
-        ├── @ StringNode (location: (84,0)-(84,15))
-        │   ├── flags: newline
-        │   ├── opening_loc: (84,0)-(84,1) = "'"
-        │   ├── content_loc: (84,1)-(84,14) = "\\\\ foo \\\\ bar"
-        │   ├── closing_loc: (84,14)-(84,15) = "'"
-        │   └── unescaped: "\\ foo \\ bar"
-        ├── @ StringNode (location: (86,0)-(89,1))
-        │   ├── flags: newline
-        │   ├── opening_loc: (86,0)-(86,1) = "'"
-        │   ├── content_loc: (86,1)-(89,0) = "foo\\\nbar\\\\\nbaz\n"
-        │   ├── closing_loc: (89,0)-(89,1) = "'"
-        │   └── unescaped: "foo\\\nbar\\\nbaz\n"
-        ├── @ InterpolatedStringNode (location: (91,0)-(91,7))
-        │   ├── flags: newline
-        │   ├── opening_loc: (91,0)-(91,1) = "\""
-        │   ├── parts: (length: 1)
-        │   │   └── @ EmbeddedVariableNode (location: (91,1)-(91,6))
-        │   │       ├── flags: ∅
-        │   │       ├── operator_loc: (91,1)-(91,2) = "#"
-        │   │       └── variable:
-        │   │           @ GlobalVariableReadNode (location: (91,2)-(91,6))
-        │   │           ├── flags: ∅
-        │   │           └── name: :$foo
-        │   └── closing_loc: (91,6)-(91,7) = "\""
-        ├── @ InterpolatedStringNode (location: (93,0)-(93,7))
-        │   ├── flags: newline
-        │   ├── opening_loc: (93,0)-(93,1) = "\""
-        │   ├── parts: (length: 1)
-        │   │   └── @ EmbeddedVariableNode (location: (93,1)-(93,6))
-        │   │       ├── flags: ∅
-        │   │       ├── operator_loc: (93,1)-(93,2) = "#"
-        │   │       └── variable:
-        │   │           @ InstanceVariableReadNode (location: (93,2)-(93,6))
-        │   │           ├── flags: ∅
-        │   │           └── name: :@foo
-        │   └── closing_loc: (93,6)-(93,7) = "\""
+        │   ├── opening_loc: (89,0)-(89,3) = "%w["
+        │   └── closing_loc: (93,0)-(93,1) = "]"
         ├── @ StringNode (location: (95,0)-(95,15))
         │   ├── flags: newline
-        │   ├── opening_loc: (95,0)-(95,1) = "\""
-        │   ├── content_loc: (95,1)-(95,14) = "\\x7 \\x23 \\x61"
-        │   ├── closing_loc: (95,14)-(95,15) = "\""
-        │   └── unescaped: "\a # a"
-        ├── @ StringNode (location: (97,0)-(97,13))
+        │   ├── opening_loc: (95,0)-(95,1) = "'"
+        │   ├── content_loc: (95,1)-(95,14) = "\\' foo \\' bar"
+        │   ├── closing_loc: (95,14)-(95,15) = "'"
+        │   └── unescaped: "' foo ' bar"
+        ├── @ StringNode (location: (97,0)-(97,15))
         │   ├── flags: newline
-        │   ├── opening_loc: (97,0)-(97,1) = "\""
-        │   ├── content_loc: (97,1)-(97,12) = "\\7 \\43 \\141"
-        │   ├── closing_loc: (97,12)-(97,13) = "\""
+        │   ├── opening_loc: (97,0)-(97,1) = "'"
+        │   ├── content_loc: (97,1)-(97,14) = "\\\\ foo \\\\ bar"
+        │   ├── closing_loc: (97,14)-(97,15) = "'"
+        │   └── unescaped: "\\ foo \\ bar"
+        ├── @ StringNode (location: (99,0)-(102,1))
+        │   ├── flags: newline
+        │   ├── opening_loc: (99,0)-(99,1) = "'"
+        │   ├── content_loc: (99,1)-(102,0) = "foo\\\nbar\\\\\nbaz\n"
+        │   ├── closing_loc: (102,0)-(102,1) = "'"
+        │   └── unescaped: "foo\\\nbar\\\nbaz\n"
+        ├── @ InterpolatedStringNode (location: (104,0)-(104,7))
+        │   ├── flags: newline
+        │   ├── opening_loc: (104,0)-(104,1) = "\""
+        │   ├── parts: (length: 1)
+        │   │   └── @ EmbeddedVariableNode (location: (104,1)-(104,6))
+        │   │       ├── flags: ∅
+        │   │       ├── operator_loc: (104,1)-(104,2) = "#"
+        │   │       └── variable:
+        │   │           @ GlobalVariableReadNode (location: (104,2)-(104,6))
+        │   │           ├── flags: ∅
+        │   │           └── name: :$foo
+        │   └── closing_loc: (104,6)-(104,7) = "\""
+        ├── @ InterpolatedStringNode (location: (106,0)-(106,7))
+        │   ├── flags: newline
+        │   ├── opening_loc: (106,0)-(106,1) = "\""
+        │   ├── parts: (length: 1)
+        │   │   └── @ EmbeddedVariableNode (location: (106,1)-(106,6))
+        │   │       ├── flags: ∅
+        │   │       ├── operator_loc: (106,1)-(106,2) = "#"
+        │   │       └── variable:
+        │   │           @ InstanceVariableReadNode (location: (106,2)-(106,6))
+        │   │           ├── flags: ∅
+        │   │           └── name: :@foo
+        │   └── closing_loc: (106,6)-(106,7) = "\""
+        ├── @ StringNode (location: (108,0)-(108,15))
+        │   ├── flags: newline
+        │   ├── opening_loc: (108,0)-(108,1) = "\""
+        │   ├── content_loc: (108,1)-(108,14) = "\\x7 \\x23 \\x61"
+        │   ├── closing_loc: (108,14)-(108,15) = "\""
         │   └── unescaped: "\a # a"
-        ├── @ StringNode (location: (99,0)-(99,17))
+        ├── @ StringNode (location: (110,0)-(110,13))
+        │   ├── flags: newline
+        │   ├── opening_loc: (110,0)-(110,1) = "\""
+        │   ├── content_loc: (110,1)-(110,12) = "\\7 \\43 \\141"
+        │   ├── closing_loc: (110,12)-(110,13) = "\""
+        │   └── unescaped: "\a # a"
+        ├── @ StringNode (location: (112,0)-(112,17))
         │   ├── flags: newline, forced_utf8_encoding
-        │   ├── opening_loc: (99,0)-(99,1) = "\""
-        │   ├── content_loc: (99,1)-(99,16) = "ち\\xE3\\x81\\xFF"
-        │   ├── closing_loc: (99,16)-(99,17) = "\""
+        │   ├── opening_loc: (112,0)-(112,1) = "\""
+        │   ├── content_loc: (112,1)-(112,16) = "ち\\xE3\\x81\\xFF"
+        │   ├── closing_loc: (112,16)-(112,17) = "\""
         │   └── unescaped: "ち\xE3\x81\xFF"
-        ├── @ StringNode (location: (101,0)-(101,6))
+        ├── @ StringNode (location: (114,0)-(114,6))
         │   ├── flags: newline
-        │   ├── opening_loc: (101,0)-(101,2) = "%["
-        │   ├── content_loc: (101,2)-(101,5) = "abc"
-        │   ├── closing_loc: (101,5)-(101,6) = "]"
+        │   ├── opening_loc: (114,0)-(114,2) = "%["
+        │   ├── content_loc: (114,2)-(114,5) = "abc"
+        │   ├── closing_loc: (114,5)-(114,6) = "]"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (103,0)-(103,6))
+        ├── @ StringNode (location: (116,0)-(116,6))
         │   ├── flags: newline
-        │   ├── opening_loc: (103,0)-(103,2) = "%("
-        │   ├── content_loc: (103,2)-(103,5) = "abc"
-        │   ├── closing_loc: (103,5)-(103,6) = ")"
+        │   ├── opening_loc: (116,0)-(116,2) = "%("
+        │   ├── content_loc: (116,2)-(116,5) = "abc"
+        │   ├── closing_loc: (116,5)-(116,6) = ")"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (105,0)-(105,6))
+        ├── @ StringNode (location: (118,0)-(118,6))
         │   ├── flags: newline
-        │   ├── opening_loc: (105,0)-(105,2) = "%@"
-        │   ├── content_loc: (105,2)-(105,5) = "abc"
-        │   ├── closing_loc: (105,5)-(105,6) = "@"
+        │   ├── opening_loc: (118,0)-(118,2) = "%@"
+        │   ├── content_loc: (118,2)-(118,5) = "abc"
+        │   ├── closing_loc: (118,5)-(118,6) = "@"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (107,0)-(107,6))
+        ├── @ StringNode (location: (120,0)-(120,6))
         │   ├── flags: newline
-        │   ├── opening_loc: (107,0)-(107,2) = "%$"
-        │   ├── content_loc: (107,2)-(107,5) = "abc"
-        │   ├── closing_loc: (107,5)-(107,6) = "$"
+        │   ├── opening_loc: (120,0)-(120,2) = "%$"
+        │   ├── content_loc: (120,2)-(120,5) = "abc"
+        │   ├── closing_loc: (120,5)-(120,6) = "$"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (109,0)-(109,2))
+        ├── @ StringNode (location: (122,0)-(122,2))
         │   ├── flags: newline
-        │   ├── opening_loc: (109,0)-(109,1) = "?"
-        │   ├── content_loc: (109,1)-(109,2) = "a"
+        │   ├── opening_loc: (122,0)-(122,1) = "?"
+        │   ├── content_loc: (122,1)-(122,2) = "a"
         │   ├── closing_loc: ∅
         │   └── unescaped: "a"
-        ├── @ InterpolatedStringNode (location: (111,0)-(111,6))
+        ├── @ InterpolatedStringNode (location: (124,0)-(124,6))
         │   ├── flags: newline, static_literal
         │   ├── opening_loc: ∅
         │   ├── parts: (length: 2)
-        │   │   ├── @ StringNode (location: (111,0)-(111,2))
+        │   │   ├── @ StringNode (location: (124,0)-(124,2))
         │   │   │   ├── flags: static_literal, frozen
-        │   │   │   ├── opening_loc: (111,0)-(111,1) = "?"
-        │   │   │   ├── content_loc: (111,1)-(111,2) = "a"
+        │   │   │   ├── opening_loc: (124,0)-(124,1) = "?"
+        │   │   │   ├── content_loc: (124,1)-(124,2) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
-        │   │   └── @ StringNode (location: (111,3)-(111,6))
+        │   │   └── @ StringNode (location: (124,3)-(124,6))
         │   │       ├── flags: static_literal, frozen
-        │   │       ├── opening_loc: (111,3)-(111,4) = "\""
-        │   │       ├── content_loc: (111,4)-(111,5) = "a"
-        │   │       ├── closing_loc: (111,5)-(111,6) = "\""
+        │   │       ├── opening_loc: (124,3)-(124,4) = "\""
+        │   │       ├── content_loc: (124,4)-(124,5) = "a"
+        │   │       ├── closing_loc: (124,5)-(124,6) = "\""
         │   │       └── unescaped: "a"
         │   └── closing_loc: ∅
-        ├── @ StringNode (location: (113,0)-(113,7))
+        ├── @ StringNode (location: (126,0)-(126,7))
         │   ├── flags: newline
-        │   ├── opening_loc: (113,0)-(113,3) = "%Q{"
-        │   ├── content_loc: (113,3)-(113,6) = "abc"
-        │   ├── closing_loc: (113,6)-(113,7) = "}"
+        │   ├── opening_loc: (126,0)-(126,3) = "%Q{"
+        │   ├── content_loc: (126,3)-(126,6) = "abc"
+        │   ├── closing_loc: (126,6)-(126,7) = "}"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (115,0)-(115,5))
+        ├── @ StringNode (location: (128,0)-(128,5))
         │   ├── flags: newline
-        │   ├── opening_loc: (115,0)-(115,2) = "%^"
-        │   ├── content_loc: (115,2)-(115,4) = "\#$"
-        │   ├── closing_loc: (115,4)-(115,5) = "^"
+        │   ├── opening_loc: (128,0)-(128,2) = "%^"
+        │   ├── content_loc: (128,2)-(128,4) = "\#$"
+        │   ├── closing_loc: (128,4)-(128,5) = "^"
         │   └── unescaped: "\#$"
-        ├── @ StringNode (location: (117,0)-(117,4))
+        ├── @ StringNode (location: (130,0)-(130,4))
         │   ├── flags: newline
-        │   ├── opening_loc: (117,0)-(117,2) = "%@"
-        │   ├── content_loc: (117,2)-(117,3) = "#"
-        │   ├── closing_loc: (117,3)-(117,4) = "@"
+        │   ├── opening_loc: (130,0)-(130,2) = "%@"
+        │   ├── content_loc: (130,2)-(130,3) = "#"
+        │   ├── closing_loc: (130,3)-(130,4) = "@"
         │   └── unescaped: "#"
-        └── @ InterpolatedStringNode (location: (119,0)-(119,15))
+        └── @ InterpolatedStringNode (location: (132,0)-(132,15))
             ├── flags: newline
-            ├── opening_loc: (119,0)-(119,1) = "\""
+            ├── opening_loc: (132,0)-(132,1) = "\""
             ├── parts: (length: 2)
-            │   ├── @ EmbeddedStatementsNode (location: (119,1)-(119,12))
+            │   ├── @ EmbeddedStatementsNode (location: (132,1)-(132,12))
             │   │   ├── flags: ∅
-            │   │   ├── opening_loc: (119,1)-(119,3) = "\#{"
+            │   │   ├── opening_loc: (132,1)-(132,3) = "\#{"
             │   │   ├── statements:
-            │   │   │   @ StatementsNode (location: (119,3)-(119,11))
+            │   │   │   @ StatementsNode (location: (132,3)-(132,11))
             │   │   │   ├── flags: ∅
             │   │   │   └── body: (length: 1)
-            │   │   │       └── @ InterpolatedStringNode (location: (119,3)-(119,11))
+            │   │   │       └── @ InterpolatedStringNode (location: (132,3)-(132,11))
             │   │   │           ├── flags: ∅
-            │   │   │           ├── opening_loc: (119,3)-(119,4) = "\""
+            │   │   │           ├── opening_loc: (132,3)-(132,4) = "\""
             │   │   │           ├── parts: (length: 2)
-            │   │   │           │   ├── @ EmbeddedStatementsNode (location: (119,4)-(119,8))
+            │   │   │           │   ├── @ EmbeddedStatementsNode (location: (132,4)-(132,8))
             │   │   │           │   │   ├── flags: ∅
-            │   │   │           │   │   ├── opening_loc: (119,4)-(119,6) = "\#{"
+            │   │   │           │   │   ├── opening_loc: (132,4)-(132,6) = "\#{"
             │   │   │           │   │   ├── statements:
-            │   │   │           │   │   │   @ StatementsNode (location: (119,6)-(119,7))
+            │   │   │           │   │   │   @ StatementsNode (location: (132,6)-(132,7))
             │   │   │           │   │   │   ├── flags: ∅
             │   │   │           │   │   │   └── body: (length: 1)
-            │   │   │           │   │   │       └── @ ConstantReadNode (location: (119,6)-(119,7))
+            │   │   │           │   │   │       └── @ ConstantReadNode (location: (132,6)-(132,7))
             │   │   │           │   │   │           ├── flags: ∅
             │   │   │           │   │   │           └── name: :B
-            │   │   │           │   │   └── closing_loc: (119,7)-(119,8) = "}"
-            │   │   │           │   └── @ StringNode (location: (119,8)-(119,10))
+            │   │   │           │   │   └── closing_loc: (132,7)-(132,8) = "}"
+            │   │   │           │   └── @ StringNode (location: (132,8)-(132,10))
             │   │   │           │       ├── flags: static_literal, frozen
             │   │   │           │       ├── opening_loc: ∅
-            │   │   │           │       ├── content_loc: (119,8)-(119,10) = " C"
+            │   │   │           │       ├── content_loc: (132,8)-(132,10) = " C"
             │   │   │           │       ├── closing_loc: ∅
             │   │   │           │       └── unescaped: " C"
-            │   │   │           └── closing_loc: (119,10)-(119,11) = "\""
-            │   │   └── closing_loc: (119,11)-(119,12) = "}"
-            │   └── @ StringNode (location: (119,12)-(119,14))
+            │   │   │           └── closing_loc: (132,10)-(132,11) = "\""
+            │   │   └── closing_loc: (132,11)-(132,12) = "}"
+            │   └── @ StringNode (location: (132,12)-(132,14))
             │       ├── flags: static_literal, frozen
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (119,12)-(119,14) = " D"
+            │       ├── content_loc: (132,12)-(132,14) = " D"
             │       ├── closing_loc: ∅
             │       └── unescaped: " D"
-            └── closing_loc: (119,14)-(119,15) = "\""
+            └── closing_loc: (132,14)-(132,15) = "\""
