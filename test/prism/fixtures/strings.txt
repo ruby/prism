@@ -72,6 +72,21 @@ b\nar
 %w[foo\ bar\\ baz\\\
  bat]
 
+%W[#{foo}\
+bar
+baz #{bat}
+]
+
+%w(foo\n)
+
+%w(foo\
+)
+
+%w(foo \n)
+
+%W(foo\
+bar)
+
 %w[foo     bar]
 
 %w[
