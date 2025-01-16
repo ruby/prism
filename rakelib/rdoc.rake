@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-require "rdoc/task"
+begin
+  require "rdoc/task"
+rescue LoadError
+  # RDoc is not available
+  return
+end
 
 if RDoc::VERSION <= "6.5.0"
   # RDoc 6.5.0 and earlier did not create an rdoc:coverage task. This patches it
