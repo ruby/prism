@@ -353,11 +353,15 @@ module Prism
                 location = range(next_location.start_offset, next_location.end_offset)
                 index += 1
               elsif value.start_with?("'", '"', "%")
-                if next_token&.type == :STRING_CONTENT && next_token.value.lines.count <= 1 && next_next_token&.type == :STRING_END
-                  # the parser gem doesn't simplify strings when its value ends in a newline
-                  if !(string_value = next_token.value).end_with?("\n") && basic_quotes
+                if next_token&.type == :STRING_CONTENT && next_next_token&.type == :STRING_END
+                  string_value = next_token.value
+                  if simplify_string?(string_value, value)
                     next_location = token.location.join(next_next_token.location)
-                    value = unescape_string(string_value, value)
+                    if percent_array?(value)
+                      value = percent_array_unescape(string_value)
+                    else
+                      value = unescape_string(string_value, value)
+                    end
                     type = :tSTRING
                     location = range(next_location.start_offset, next_location.end_offset)
                     index += 2
@@ -399,17 +403,31 @@ module Prism
               is_percent_array = percent_array?(quote_stack.last)
 
               if (lines = token.value.lines).one?
-                # Heredoc interpolation can have multiple STRING_CONTENT nodes on the same line.
-                is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
-                # The parser gem only removes indentation when the heredoc is not nested
-                not_nested = heredoc_stack.size == 1
-                if is_percent_array
-                  value = percent_array_unescape(value)
-                elsif is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
-                  value = trim_heredoc_whitespace(value, current_heredoc)
-                end
+                # Prism usually emits a single token for strings with line continuations.
+                # For squiggly heredocs they are not joined so we do that manually here.
+                current_string = +""
+                current_length = 0
+                start_offset = token.location.start_offset
+                while token.type == :STRING_CONTENT
+                  current_length += token.value.bytesize
+                  # Heredoc interpolation can have multiple STRING_CONTENT nodes on the same line.
+                  is_first_token_on_line = lexed[index - 1] && token.location.start_line != lexed[index - 2][0].location&.start_line
+                  # The parser gem only removes indentation when the heredoc is not nested
+                  not_nested = heredoc_stack.size == 1
+                  if is_percent_array
+                    value = percent_array_unescape(token.value)
+                  elsif is_first_token_on_line && not_nested && (current_heredoc = heredoc_stack.last).common_whitespace > 0
+                    value = trim_heredoc_whitespace(token.value, current_heredoc)
+                  end
 
-                value = unescape_string(value, quote_stack.last)
+                  current_string << unescape_string(value, quote_stack.last)
+                  if (backslash_count = token.value[/(\\{1,})\n/, 1]&.length).nil? || backslash_count.even? || !interpolation?(quote_stack.last)
+                    tokens << [:tSTRING_CONTENT, [current_string, range(start_offset, start_offset + current_length)]]
+                    break
+                  end
+                  token = lexed[index][0]
+                  index += 1
+                end
               else
                 # When the parser gem encounters a line continuation inside of a multiline string,
                 # it emits a single string node. The backslash (and remaining newline) is removed.
@@ -447,8 +465,8 @@ module Prism
                     adjustment = 0
                   end
                 end
-                next
               end
+              next
             when :tSTRING_DVAR
               value = nil
             when :tSTRING_END
@@ -571,12 +589,13 @@ module Prism
           while (lexed[next_token_index] && next_token = lexed[next_token_index][0])
             next_token_index += 1
             next_next_token = lexed[next_token_index] && lexed[next_token_index][0]
+            first_token_on_line = next_token.location.start_column == 0
 
             # String content inside nested heredocs and interpolation is ignored
             if next_token.type == :HEREDOC_START || next_token.type == :EMBEXPR_BEGIN
               # When interpolation is the first token of a line there is no string
               # content to check against. There will be no common whitespace.
-              if nesting_level == 0 && next_token.location.start_column == 0
+              if nesting_level == 0 && first_token_on_line
                 result = 0
               end
               nesting_level += 1
@@ -584,7 +603,7 @@ module Prism
               nesting_level -= 1
               # When we encountered the matching heredoc end, we can exit
               break if nesting_level == -1
-            elsif next_token.type == :STRING_CONTENT && nesting_level == 0
+            elsif next_token.type == :STRING_CONTENT && nesting_level == 0 && first_token_on_line
               common_whitespace = 0
               next_token.value[/^\s*/].each_char do |char|
                 if char == "\t"
@@ -674,8 +693,11 @@ module Prism
               # Append what was just skipped over, excluding the found backslash.
               result.append_as_bytes(string.byteslice(scanner.pos - skipped, skipped - 1))
 
-              # Simple single-character escape sequences like \n
-              if (replacement = ESCAPES[scanner.peek(1)])
+              if scanner.peek(1) == "\n"
+                # Line continuation
+                scanner.pos += 1
+              elsif (replacement = ESCAPES[scanner.peek(1)])
+                # Simple single-character escape sequences like \n
                 result.append_as_bytes(replacement)
                 scanner.pos += 1
               elsif (octal = scanner.check(/[0-7]{1,3}/))
@@ -714,6 +736,23 @@ module Prism
           end
         end
 
+        # Certain strings are merged into a single string token.
+        def simplify_string?(value, quote)
+          case quote
+          when "'"
+            # Only simplify 'foo'
+            !value.include?("\n")
+          when '"'
+            # Simplify when every line ends with a line continuation, or it is the last line
+            value.lines.all? do |line|
+              !line.end_with?("\n") || line[/(\\*)$/, 1]&.length&.odd?
+            end
+          else
+            # %q and similar are never simplified
+            false
+          end
+        end
+
         # In a percent array, certain whitespace can be preceeded with a backslash,
         # causing the following characters to be part of the previous element.
         def percent_array_unescape(string)
@@ -737,7 +776,7 @@ module Prism
 
         # Determine if characters preceeded by a backslash should be escaped or not
         def interpolation?(quote)
-          quote != "'" && !quote.start_with?("%q", "%w", "%i")
+          !quote.end_with?("'") && !quote.start_with?("%q", "%w", "%i", "%s")
         end
 
         # Regexp allow interpolation but are handled differently during unescaping
