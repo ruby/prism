@@ -692,44 +692,12 @@ module Prism
             while (skipped = scanner.skip_until(/\\/))
               # Append what was just skipped over, excluding the found backslash.
               result.append_as_bytes(string.byteslice(scanner.pos - skipped, skipped - 1))
-
-              if scanner.peek(1) == "\n"
-                # Line continuation
-                scanner.pos += 1
-              elsif (replacement = ESCAPES[scanner.peek(1)])
-                # Simple single-character escape sequences like \n
-                result.append_as_bytes(replacement)
-                scanner.pos += 1
-              elsif (octal = scanner.check(/[0-7]{1,3}/))
-                # \nnn
-                result.append_as_bytes(octal.to_i(8).chr)
-                scanner.pos += octal.bytesize
-              elsif (hex = scanner.check(/x([0-9a-fA-F]{1,2})/))
-                # \xnn
-                result.append_as_bytes(hex[1..].to_i(16).chr)
-                scanner.pos += hex.bytesize
-              elsif (unicode = scanner.check(/u([0-9a-fA-F]{4})/))
-                # \unnnn
-                result.append_as_bytes(unicode[1..].hex.chr(Encoding::UTF_8))
-                scanner.pos += unicode.bytesize
-              elsif scanner.peek(3) == "u{}"
-                # https://github.com/whitequark/parser/issues/856
-                scanner.pos += 3
-              elsif (unicode_parts = scanner.check(/u{.*}/))
-                # \u{nnnn ...}
-                unicode_parts[2..-2].split.each do |unicode|
-                  result.append_as_bytes(unicode.hex.chr(Encoding::UTF_8))
-                end
-                scanner.pos += unicode_parts.bytesize
-              end
+              escape_read(result, scanner, false, false)
             end
 
-            # Add remainging chars
+            # Add remaining chars
             result.append_as_bytes(string.byteslice(scanner.pos..))
-
             result.force_encoding(source_buffer.source.encoding)
-
-            result
           else
             delimiters = Regexp.escape("#{delimiter}#{DELIMITER_SYMETRY[delimiter]}")
             string.gsub(/\\([\\#{delimiters}])/, '\1')
@@ -750,6 +718,54 @@ module Prism
           else
             # %q and similar are never simplified
             false
+          end
+        end
+
+        # Escape a byte value, given the control and meta flags.
+        def escape_build(value, control, meta)
+          value &= 0x9f if control
+          value |= 0x80 if meta
+          value.chr
+        end
+
+        # Read an escape out of the string scanner, given the control and meta
+        # flags, and push the unescaped value into the result.
+        def escape_read(result, scanner, control, meta)
+          if scanner.skip("\n")
+            # Line continuation
+          elsif (value = ESCAPES[scanner.peek(1)])
+            # Simple single-character escape sequences like \n
+            result.append_as_bytes(value)
+            scanner.pos += 1
+          elsif (value = scanner.scan(/[0-7]{1,3}/))
+            # \nnn
+            result.append_as_bytes(escape_build(value.to_i(8), control, meta))
+          elsif (value = scanner.scan(/x[0-9a-fA-F]{1,2}/))
+            # \xnn
+            result.append_as_bytes(escape_build(value[1..].to_i(16), control, meta))
+          elsif (value = scanner.scan(/u[0-9a-fA-F]{4}/))
+            # \unnnn
+            result.append_as_bytes(value[1..].hex.chr(Encoding::UTF_8))
+          elsif scanner.skip("u{}")
+            # https://github.com/whitequark/parser/issues/856
+          elsif (value = scanner.scan(/u{.*?}/))
+            # \u{nnnn ...}
+            value[2..-2].split.each do |unicode|
+              result.append_as_bytes(unicode.hex.chr(Encoding::UTF_8))
+            end
+          elsif (value = scanner.scan(/c\\?(?=[[:print:]])|C-\\?(?=[[:print:]])/))
+            # \cx or \C-x where x is an ASCII printable character
+            escape_read(result, scanner, true, meta)
+          elsif (value = scanner.scan(/M-\\?(?=[[:print:]])/))
+            # \M-x where x is an ASCII printable character
+            escape_read(result, scanner, control, true)
+          elsif (byte = scanner.get_byte)
+            # Something else after an escape.
+            if control && byte == "?"
+              result.append_as_bytes(escape_build(0x7f, false, meta))
+            else
+              result.append_as_bytes(escape_build(byte.ord, control, meta))
+            end
           end
         end
 
