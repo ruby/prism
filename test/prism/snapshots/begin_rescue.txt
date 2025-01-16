@@ -29,6 +29,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (1,18)-(1,19))
         │   │   │   ├── flags: ∅
@@ -89,6 +90,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (3,18)-(3,19))
         │   │   │   ├── flags: ∅
@@ -251,6 +253,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (19,0)-(19,1))
         │   │   │   ├── flags: ∅
@@ -272,6 +275,7 @@
         │   │       ├── exceptions: (length: 0)
         │   │       ├── operator_loc: ∅
         │   │       ├── reference: ∅
+        │   │       ├── then_keyword_loc: ∅
         │   │       ├── statements:
         │   │       │   @ StatementsNode (location: (21,0)-(21,1))
         │   │       │   ├── flags: ∅
@@ -293,6 +297,7 @@
         │   │           ├── exceptions: (length: 0)
         │   │           ├── operator_loc: ∅
         │   │           ├── reference: ∅
+        │   │           ├── then_keyword_loc: ∅
         │   │           ├── statements:
         │   │           │   @ StatementsNode (location: (23,0)-(23,1))
         │   │           │   ├── flags: ∅
@@ -342,6 +347,7 @@
         │   │   │   ├── flags: ∅
         │   │   │   ├── name: :ex
         │   │   │   └── depth: 0
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (29,2)-(29,3))
         │   │   │   ├── flags: ∅
@@ -373,6 +379,7 @@
         │   │       │   ├── flags: ∅
         │   │       │   ├── name: :ex
         │   │       │   └── depth: 0
+        │   │       ├── then_keyword_loc: ∅
         │   │       ├── statements:
         │   │       │   @ StatementsNode (location: (31,2)-(31,3))
         │   │       │   ├── flags: ∅
@@ -422,6 +429,7 @@
         │   │   │   ├── flags: ∅
         │   │   │   ├── name: :ex
         │   │   │   └── depth: 0
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (37,2)-(37,3))
         │   │   │   ├── flags: ∅
@@ -488,6 +496,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (47,0)-(47,1))
         │   │   │   ├── flags: ∅
@@ -530,6 +539,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (50,15)-(50,16))
         │   │   │   ├── flags: ∅
@@ -572,6 +582,7 @@
         │   │   ├── exceptions: (length: 0)
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (54,0)-(54,1))
         │   │   │   ├── flags: ∅
@@ -617,6 +628,7 @@
         │   │   │       └── name: :Exception
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (59,0)-(59,1))
         │   │   │   ├── flags: ∅
@@ -665,6 +677,7 @@
         │   │   │       └── name: :CustomException
         │   │   ├── operator_loc: ∅
         │   │   ├── reference: ∅
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (65,0)-(65,1))
         │   │   │   ├── flags: ∅
@@ -717,6 +730,7 @@
         │   │   │   ├── flags: ∅
         │   │   │   ├── name: :ex
         │   │   │   └── depth: 0
+        │   │   ├── then_keyword_loc: ∅
         │   │   ├── statements:
         │   │   │   @ StatementsNode (location: (71,2)-(71,3))
         │   │   │   ├── flags: ∅
@@ -766,6 +780,7 @@
             │   │   ├── flags: ∅
             │   │   ├── name: :ex
             │   │   └── depth: 0
+            │   ├── then_keyword_loc: ∅
             │   ├── statements:
             │   │   @ StatementsNode (location: (77,2)-(77,3))
             │   │   ├── flags: ∅
