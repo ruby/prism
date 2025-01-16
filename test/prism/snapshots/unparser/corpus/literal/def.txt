@@ -36,6 +36,7 @@
         │   │   │   ├── exceptions: (length: 0)
         │   │   │   ├── operator_loc: ∅
         │   │   │   ├── reference: ∅
+        │   │   │   ├── then_keyword_loc: ∅
         │   │   │   ├── statements:
         │   │   │   │   @ StatementsNode (location: (4,2)-(4,3))
         │   │   │   │   ├── flags: ∅
@@ -143,6 +144,7 @@
         │   │   │   ├── exceptions: (length: 0)
         │   │   │   ├── operator_loc: ∅
         │   │   │   ├── reference: ∅
+        │   │   │   ├── then_keyword_loc: ∅
         │   │   │   ├── statements:
         │   │   │   │   @ StatementsNode (location: (14,2)-(14,3))
         │   │   │   │   ├── flags: ∅
@@ -307,6 +309,7 @@
         │   │   │   ├── exceptions: (length: 0)
         │   │   │   ├── operator_loc: ∅
         │   │   │   ├── reference: ∅
+        │   │   │   ├── then_keyword_loc: ∅
         │   │   │   ├── statements:
         │   │   │   │   @ StatementsNode (location: (34,2)-(34,5))
         │   │   │   │   ├── flags: ∅
@@ -434,6 +437,7 @@
         │   │   │   ├── exceptions: (length: 0)
         │   │   │   ├── operator_loc: ∅
         │   │   │   ├── reference: ∅
+        │   │   │   ├── then_keyword_loc: ∅
         │   │   │   ├── statements:
         │   │   │   │   @ StatementsNode (location: (48,2)-(48,5))
         │   │   │   │   ├── flags: ∅
