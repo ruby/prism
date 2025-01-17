@@ -167,7 +167,7 @@ module Prism
         ignore_warnings { Prism::Translation::Parser33.new.tokenize(buffer) }
 
       if expected_ast == actual_ast
-        if !compare_asts
+        if !compare_asts && !Fixture.custom_base_path?
           puts "#{fixture.path} is now passing"
         end
 
@@ -178,7 +178,7 @@ module Prism
         rescue Test::Unit::AssertionFailedError
           raise if compare_tokens
         else
-          puts "#{fixture.path} is now passing" if !compare_tokens
+          puts "#{fixture.path} is now passing" if !compare_tokens && !Fixture.custom_base_path?
         end
 
         assert_equal_comments(expected_comments, actual_comments) if compare_comments
