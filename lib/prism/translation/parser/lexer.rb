@@ -725,7 +725,7 @@ module Prism
         def escape_build(value, control, meta)
           value &= 0x9f if control
           value |= 0x80 if meta
-          value.chr
+          value
         end
 
         # Read an escape out of the string scanner, given the control and meta
