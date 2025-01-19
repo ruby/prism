@@ -56,20 +56,20 @@
         │   │       │           └── value: 1
         │   │       └── closing_loc: (5,8)-(5,9) = "}"
         │   └── closing_loc: (5,9)-(5,10) = "\""
-        ├── @ StringNode (location: (7,0)-(10,1))
-        │   ├── flags: newline
-        │   ├── opening_loc: (7,0)-(7,1) = "\""
-        │   ├── content_loc: (7,1)-(10,0) = "\nfoo\\\nb\\nar\n"
+        ├── @ SymbolNode (location: (7,0)-(10,1))
+        │   ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   ├── opening_loc: (7,0)-(7,2) = ":\""
+        │   ├── value_loc: (7,2)-(10,0) = "\nfoo\\\nb\\nar\n"
         │   ├── closing_loc: (10,0)-(10,1) = "\""
         │   └── unescaped: "\nfoob\nar\n"
-        ├── @ InterpolatedStringNode (location: (12,0)-(16,1))
+        ├── @ InterpolatedSymbolNode (location: (12,0)-(16,1))
         │   ├── flags: newline
-        │   ├── opening_loc: (12,0)-(12,1) = "\""
+        │   ├── opening_loc: (12,0)-(12,2) = ":\""
         │   ├── parts: (length: 3)
-        │   │   ├── @ StringNode (location: (12,1)-(15,0))
+        │   │   ├── @ StringNode (location: (12,2)-(15,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (12,1)-(15,0) = "\nfoo\\\nb\\nar\n"
+        │   │   │   ├── content_loc: (12,2)-(15,0) = "\nfoo\\\nb\\nar\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\nfoob\nar\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (15,0)-(15,3))
