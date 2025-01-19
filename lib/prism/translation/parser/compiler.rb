@@ -1119,7 +1119,7 @@ module Prism
         def visit_interpolated_symbol_node(node)
           builder.symbol_compose(
             token(node.opening_loc),
-            visit_all(node.parts),
+            string_nodes_from_interpolation(node, node.opening),
             token(node.closing_loc)
           )
         end
