@@ -45,6 +45,10 @@ foo\
 b\nar
 "
 
+"foo
+\nbar\n\n
+a\nb\n\nc\n"
+
 %q{abc}
 
 %s[abc]
