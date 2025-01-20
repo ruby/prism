@@ -1119,7 +1119,7 @@ module Prism
         def visit_interpolated_symbol_node(node)
           builder.symbol_compose(
             token(node.opening_loc),
-            visit_all(node.parts),
+            string_nodes_from_interpolation(node, node.opening),
             token(node.closing_loc)
           )
         end
@@ -2146,7 +2146,9 @@ module Prism
                 escaped_lengths << lines.sum(&:bytesize)
                 unescaped_lines_count = lines.sum do |line|
                   next 0 if regex # Will always be preserved as is
-                  line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd?}
+                  count = line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd? }
+                  count -= 1 if !line.end_with?("\n") && count > 0
+                  count
                 end
                 extra = 1
                 extra = lines.count if percent_array # Account for line continuations in percent arrays

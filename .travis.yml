@@ -4,7 +4,6 @@ dist: jammy
 
 matrix:
   include:
-    - arch: arm64
     - arch: ppc64le
     - arch: s390x
   fast_finish: true

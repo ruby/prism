@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(38,4))
+@ ProgramNode (location: (1,0)-(42,4))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(38,4))
+    @ StatementsNode (location: (1,0)-(42,4))
     ├── flags: ∅
-    └── body: (length: 10)
+    └── body: (length: 11)
         ├── @ StringNode (location: (1,0)-(2,6))
         │   ├── flags: newline
         │   ├── opening_loc: (1,0)-(1,1) = "\""
@@ -109,9 +109,53 @@
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "\n"
         │   └── closing_loc: (35,0)-(35,1) = "\""
-        └── @ StringNode (location: (37,0)-(38,4))
+        ├── @ InterpolatedStringNode (location: (37,0)-(39,15))
+        │   ├── flags: newline
+        │   ├── opening_loc: (37,0)-(37,1) = "\""
+        │   ├── parts: (length: 7)
+        │   │   ├── @ StringNode (location: (37,1)-(38,2))
+        │   │   │   ├── flags: static_literal, frozen
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (37,1)-(38,2) = "foo\n\\n"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "foo\n\n"
+        │   │   ├── @ EmbeddedStatementsNode (location: (38,2)-(38,5))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: (38,2)-(38,4) = "\#{"
+        │   │   │   ├── statements: ∅
+        │   │   │   └── closing_loc: (38,4)-(38,5) = "}"
+        │   │   ├── @ StringNode (location: (38,5)-(38,12))
+        │   │   │   ├── flags: static_literal, frozen
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (38,5)-(38,12) = "bar\\n\\n"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "bar\n\n"
+        │   │   ├── @ EmbeddedStatementsNode (location: (38,12)-(38,15))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: (38,12)-(38,14) = "\#{"
+        │   │   │   ├── statements: ∅
+        │   │   │   └── closing_loc: (38,14)-(38,15) = "}"
+        │   │   ├── @ StringNode (location: (38,15)-(39,6))
+        │   │   │   ├── flags: static_literal, frozen
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── content_loc: (38,15)-(39,6) = "\na\\nb\\n"
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   └── unescaped: "\na\nb\n"
+        │   │   ├── @ EmbeddedStatementsNode (location: (39,6)-(39,9))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── opening_loc: (39,6)-(39,8) = "\#{"
+        │   │   │   ├── statements: ∅
+        │   │   │   └── closing_loc: (39,8)-(39,9) = "}"
+        │   │   └── @ StringNode (location: (39,9)-(39,14))
+        │   │       ├── flags: static_literal, frozen
+        │   │       ├── opening_loc: ∅
+        │   │       ├── content_loc: (39,9)-(39,14) = "\\nc\\n"
+        │   │       ├── closing_loc: ∅
+        │   │       └── unescaped: "\nc\n"
+        │   └── closing_loc: (39,14)-(39,15) = "\""
+        └── @ StringNode (location: (41,0)-(42,4))
             ├── flags: newline
-            ├── opening_loc: (37,0)-(37,1) = "\""
-            ├── content_loc: (37,1)-(38,3) = "\n’"
-            ├── closing_loc: (38,3)-(38,4) = "\""
+            ├── opening_loc: (41,0)-(41,1) = "\""
+            ├── content_loc: (41,1)-(42,3) = "\n’"
+            ├── closing_loc: (42,3)-(42,4) = "\""
             └── unescaped: "\n’"
