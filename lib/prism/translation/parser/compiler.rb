@@ -1100,7 +1100,7 @@ module Prism
         def visit_interpolated_regular_expression_node(node)
           builder.regexp_compose(
             token(node.opening_loc),
-            visit_all(node.parts),
+            string_nodes_from_interpolation(node, node.opening),
             [node.closing[0], srange_offsets(node.closing_loc.start_offset, node.closing_loc.start_offset + 1)],
             builder.regexp_options([node.closing[1..], srange_offsets(node.closing_loc.start_offset + 1, node.closing_loc.end_offset)])
           )
@@ -2119,6 +2119,7 @@ module Prism
           unescaped = unescaped.lines
           escaped = escaped.lines
           percent_array = opening&.start_with?("%w", "%W", "%i", "%I")
+          regex = opening == "/" || opening&.start_with?("%r")
 
           # Non-interpolating strings
           if opening&.end_with?("'") || opening&.start_with?("%q", "%s", "%w", "%i")
@@ -2153,11 +2154,18 @@ module Prism
               .chunk_while { |before, after| before[/(\\*)\r?\n$/, 1]&.length&.odd? || false }
               .each do |lines|
                 escaped_lengths << lines.sum(&:bytesize)
-                unescaped_lines_count = lines.sum do |line|
-                  count = line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd? }
-                  count -= 1 if !line.end_with?("\n") && count > 0
-                  count
-                end
+
+                unescaped_lines_count =
+                  if regex
+                    0 # Will always be preserved as is
+                  else
+                    lines.sum do |line|
+                      count = line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd? }
+                      count -= 1 if !line.end_with?("\n") && count > 0
+                      count
+                    end
+                  end
+
                 extra = 1
                 extra = lines.count if percent_array # Account for line continuations in percent arrays
 
