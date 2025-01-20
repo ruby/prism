@@ -7,33 +7,35 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    benchmark-ips (2.13.0)
-    ffi (1.17.0)
-    mini_portile2 (2.8.7)
-    nokogiri (1.16.6)
+    benchmark-ips (2.14.0)
+    date (3.4.1)
+    ffi (1.17.1)
+    mini_portile2 (2.8.8)
+    nokogiri (1.18.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
-    parser (3.3.3.0)
+    parser (3.3.7.0)
       ast (~> 2.4.1)
       racc
-    power_assert (2.0.3)
-    psych (5.2.0)
+    power_assert (2.0.5)
+    psych (5.2.3)
+      date
       stringio
-    racc (1.8.0)
+    racc (1.8.1)
     rake (13.2.1)
-    rake-compiler (1.2.7)
+    rake-compiler (1.2.9)
       rake
-    rdoc (6.8.1)
+    rdoc (6.11.0)
       psych (>= 4.0.0)
-    ruby_memcheck (3.0.0)
+    ruby_memcheck (3.0.1)
       nokogiri
-    ruby_parser (3.21.0)
+    ruby_parser (3.21.1)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
-    sexp_processor (4.17.1)
+    sexp_processor (4.17.3)
     stringio (3.1.2)
-    test-unit (3.6.2)
+    test-unit (3.6.7)
       power_assert
 
 PLATFORMS
@@ -53,4 +55,4 @@ DEPENDENCIES
   test-unit
 
 BUNDLED WITH
-   2.6.1
+   2.5.16
