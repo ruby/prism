@@ -2144,12 +2144,18 @@ module Prism
               .chunk_while { |before, after| before[/(\\*)\r?\n$/, 1]&.length&.odd? || false }
               .each do |lines|
                 escaped_lengths << lines.sum(&:bytesize)
-                unescaped_lines_count = lines.sum do |line|
-                  next 0 if regex # Will always be preserved as is
-                  count = line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd? }
-                  count -= 1 if !line.end_with?("\n") && count > 0
-                  count
-                end
+
+                unescaped_lines_count =
+                  if regex
+                    0 # Will always be preserved as is
+                  else
+                    lines.sum do |line|
+                      count = line.scan(/(\\*)n/).count { |(backslashes)| backslashes&.length&.odd? }
+                      count -= 1 if !line.end_with?("\n") && count > 0
+                      count
+                    end
+                  end
+
                 extra = 1
                 extra = lines.count if percent_array # Account for line continuations in percent arrays
 
