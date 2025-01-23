@@ -331,7 +331,7 @@ pm_integer_normalize(pm_integer_t *integer) {
  * In practice, it converts 10**9 to 1<<32 or 1<<32 to 10**9.
  */
 static void
-pm_integer_convert_base(pm_integer_t *destination, const pm_integer_t *source, uint64_t base_from, uint64_t base_to) {
+pm_integer_convert_base(pm_allocator_t *allocator, pm_integer_t *destination, const pm_integer_t *source, uint64_t base_from, uint64_t base_to) {
     size_t source_length;
     const uint32_t *source_values;
     INTEGER_EXTRACT(source, source_length, source_values)
@@ -383,6 +383,16 @@ pm_integer_convert_base(pm_integer_t *destination, const pm_integer_t *source, u
     destination->negative = source->negative;
     pm_integer_normalize(destination);
 
+    // If we need to, copy the allocated memory out of the heap and into the
+    // allocator.
+    if (destination->length != 0) {
+        size_t size = destination->length * sizeof(uint32_t);
+        uint32_t *values = pm_allocator_arena_alloc(allocator, size, sizeof(uint32_t));
+        memcpy(values, destination->values, size);
+        xfree(destination->values);
+        destination->values = values;
+    }
+
     xfree(bigints);
     pm_integer_free(&base);
 }
@@ -393,12 +403,12 @@ pm_integer_convert_base(pm_integer_t *destination, const pm_integer_t *source, u
  * Convert digits to integer with the given power-of-two base.
  */
 static void
-pm_integer_parse_powof2(pm_integer_t *integer, uint32_t base, const uint8_t *digits, size_t digits_length) {
+pm_integer_parse_powof2(pm_allocator_t *allocator, pm_integer_t *integer, uint32_t base, const uint8_t *digits, size_t digits_length) {
     size_t bit = 1;
     while (base > (uint32_t) (1 << bit)) bit++;
 
     size_t length = (digits_length * bit + 31) / 32;
-    uint32_t *values = (uint32_t *) xcalloc(length, sizeof(uint32_t));
+    uint32_t *values = pm_allocator_arena_calloc(allocator, length, sizeof(uint32_t), sizeof(uint32_t));
 
     for (size_t digit_index = 0; digit_index < digits_length; digit_index++) {
         size_t bit_position = bit * (digits_length - digit_index - 1);
@@ -420,7 +430,7 @@ pm_integer_parse_powof2(pm_integer_t *integer, uint32_t base, const uint8_t *dig
  * Convert decimal digits to pm_integer_t.
  */
 static void
-pm_integer_parse_decimal(pm_integer_t *integer, const uint8_t *digits, size_t digits_length) {
+pm_integer_parse_decimal(pm_allocator_t *allocator, pm_integer_t *integer, const uint8_t *digits, size_t digits_length) {
     const size_t batch = 9;
     size_t length = (digits_length + batch - 1) / batch;
 
@@ -438,7 +448,7 @@ pm_integer_parse_decimal(pm_integer_t *integer, const uint8_t *digits, size_t di
     }
 
     // Convert base from 10**9 to 1<<32.
-    pm_integer_convert_base(integer, &((pm_integer_t) { .length = length, .values = values,  .value = 0, .negative = false }), 1000000000, ((uint64_t) 1 << 32));
+    pm_integer_convert_base(allocator, integer, &((pm_integer_t) { .length = length, .values = values, .value = 0, .negative = false }), 1000000000, ((uint64_t) 1 << 32));
     xfree(values);
 }
 
@@ -446,7 +456,7 @@ pm_integer_parse_decimal(pm_integer_t *integer, const uint8_t *digits, size_t di
  * Parse a large integer from a string that does not fit into uint32_t.
  */
 static void
-pm_integer_parse_big(pm_integer_t *integer, uint32_t multiplier, const uint8_t *start, const uint8_t *end) {
+pm_integer_parse_big(pm_allocator_t *allocator, pm_integer_t *integer, uint32_t multiplier, const uint8_t *start, const uint8_t *end) {
     // Allocate an array to store digits.
     uint8_t *digits = xmalloc(sizeof(uint8_t) * (size_t) (end - start));
     size_t digits_length = 0;
@@ -458,9 +468,9 @@ pm_integer_parse_big(pm_integer_t *integer, uint32_t multiplier, const uint8_t *
 
     // Construct pm_integer_t from the digits.
     if (multiplier == 10) {
-        pm_integer_parse_decimal(integer, digits, digits_length);
+        pm_integer_parse_decimal(allocator, integer, digits, digits_length);
     } else {
-        pm_integer_parse_powof2(integer, multiplier, digits, digits_length);
+        pm_integer_parse_powof2(allocator, integer, multiplier, digits, digits_length);
     }
 
     xfree(digits);
@@ -472,7 +482,7 @@ pm_integer_parse_big(pm_integer_t *integer, uint32_t multiplier, const uint8_t *
  * here.
  */
 void
-pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end) {
+pm_integer_parse(pm_allocator_t *allocator, pm_integer_t *integer, pm_integer_base_t base, const uint8_t *start, const uint8_t *end) {
     // Ignore unary +. Unary - is parsed differently and will not end up here.
     // Instead, it will modify the parsed integer later.
     if (*start == '+') start++;
@@ -528,7 +538,7 @@ pm_integer_parse(pm_integer_t *integer, pm_integer_base_t base, const uint8_t *s
         if (value > UINT32_MAX) {
             // If the integer is too large to fit into a single uint32_t, then
             // we'll parse it as a big integer.
-            pm_integer_parse_big(integer, multiplier, start, end);
+            pm_integer_parse_big(allocator, integer, multiplier, start, end);
             return;
         }
     }
@@ -625,12 +635,15 @@ pm_integer_string(pm_buffer_t *buffer, const pm_integer_t *integer) {
     }
 
     // Otherwise, first we'll convert the base from 1<<32 to 10**9.
+    pm_allocator_t allocator;
+    pm_allocator_init(&allocator, 1024);
+
     pm_integer_t converted = { 0 };
-    pm_integer_convert_base(&converted, integer, (uint64_t) 1 << 32, 1000000000);
+    pm_integer_convert_base(&allocator, &converted, integer, (uint64_t) 1 << 32, 1000000000);
 
     if (converted.values == NULL) {
         pm_buffer_append_format(buffer, "%" PRIu32, converted.value);
-        pm_integer_free(&converted);
+        pm_allocator_free(&allocator);
         return;
     }
 
@@ -655,7 +668,7 @@ pm_integer_string(pm_buffer_t *buffer, const pm_integer_t *integer) {
     // Finally, append the string to the buffer and free the digits.
     pm_buffer_append_string(buffer, digits + start_offset, digits_length - start_offset);
     xfree(digits);
-    pm_integer_free(&converted);
+    pm_allocator_free(&allocator);
 }
 
 /**

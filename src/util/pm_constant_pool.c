@@ -14,10 +14,8 @@ pm_constant_id_list_init(pm_constant_id_list_t *list) {
  * Initialize a list of constant ids with a given capacity.
  */
 void
-pm_constant_id_list_init_capacity(pm_constant_id_list_t *list, size_t capacity) {
-    list->ids = xcalloc(capacity, sizeof(pm_constant_id_t));
-    if (list->ids == NULL) abort();
-
+pm_constant_id_list_init_capacity(pm_allocator_t *allocator, pm_constant_id_list_t *list, size_t capacity) {
+    list->ids = pm_allocator_arena_calloc(allocator, capacity, sizeof(pm_constant_id_t), sizeof(pm_constant_id_t));
     list->size = 0;
     list->capacity = capacity;
 }
