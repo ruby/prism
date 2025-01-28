@@ -4,10 +4,18 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    groups:
+      single-pr:
+        patterns:
+          - "*"
   - package-ecosystem: 'maven'
     directory: '/java-wasm'
     schedule:
       interval: 'weekly'
+    groups:
+      single-pr:
+        patterns:
+          - "*"
   - package-ecosystem: 'bundler'
     directories:
       - '/gemfiles/2.7'
@@ -22,3 +30,7 @@ updates:
       - '/gemfiles/typecheck'
     schedule:
       interval: 'weekly'
+    groups:
+      single-pr:
+        patterns:
+          - "*"
