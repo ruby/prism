@@ -45,7 +45,7 @@ jobs:
         run: mvn -B install
         working-directory: java-wasm
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: prism.wasm
           path: java-wasm/src/test/resources/prism.wasm
