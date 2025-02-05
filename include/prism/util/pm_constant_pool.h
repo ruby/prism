@@ -11,6 +11,7 @@
 #define PRISM_CONSTANT_POOL_H
 
 #include "prism/defines.h"
+#include "prism/allocator.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -54,10 +55,11 @@ void pm_constant_id_list_init(pm_constant_id_list_t *list);
 /**
  * Initialize a list of constant ids with a given capacity.
  *
+ * @param allocator The allocator to use to allocate space for the list.
  * @param list The list to initialize.
  * @param capacity The initial capacity of the list.
  */
-void pm_constant_id_list_init_capacity(pm_constant_id_list_t *list, size_t capacity);
+void pm_constant_id_list_init_capacity(pm_allocator_t *allocator, pm_constant_id_list_t *list, size_t capacity);
 
 /**
  * Append a constant id to a list of constant ids. Returns false if any
