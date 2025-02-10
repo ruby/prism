@@ -19,7 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_node_destroy, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 /// A diagnostic message that came back from the parser.
 #[derive(Debug)]
@@ -76,6 +76,35 @@ impl<'pr> Comment<'pr> {
     }
 }
 
+/// A magic comment that was found during parsing.
+#[derive(Debug)]
+pub struct MagicComment<'pr> {
+    comment: NonNull<pm_magic_comment_t>,
+    marker: PhantomData<&'pr pm_magic_comment_t>,
+}
+
+impl<'pr> MagicComment<'pr> {
+    /// Returns the text of the comment's key.
+    #[must_use]
+    pub fn key(&self) -> &[u8] {
+        unsafe {
+            let start = self.comment.as_ref().key_start;
+            let len = self.comment.as_ref().key_length as usize;
+            std::slice::from_raw_parts(start, len)
+        }
+    }
+
+    /// Returns the text of the comment's value.
+    #[must_use]
+    pub fn value(&self) -> &[u8] {
+        unsafe {
+            let start = self.comment.as_ref().value_start;
+            let len = self.comment.as_ref().value_length as usize;
+            std::slice::from_raw_parts(start, len)
+        }
+    }
+}
+
 /// A struct created by the `errors` or `warnings` methods on `ParseResult`. It
 /// can be used to iterate over the diagnostics in the parse result.
 pub struct Diagnostics<'pr> {
@@ -113,6 +142,27 @@ impl<'pr> Iterator for Comments<'pr> {
         if let Some(comment) = NonNull::new(self.comment) {
             let current = Comment { comment, parser: self.parser, marker: PhantomData };
             self.comment = unsafe { comment.as_ref().node.next.cast::<pm_comment_t>() };
+            Some(current)
+        } else {
+            None
+        }
+    }
+}
+
+/// A struct created by the `magic_comments` method on `ParseResult`. It can be used
+/// to iterate over the magic comments in the parse result.
+pub struct MagicComments<'pr> {
+    comment: *mut pm_magic_comment_t,
+    marker: PhantomData<&'pr pm_magic_comment_t>,
+}
+
+impl<'pr> Iterator for MagicComments<'pr> {
+    type Item = MagicComment<'pr>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(comment) = NonNull::new(self.comment) {
+            let current = MagicComment { comment, marker: PhantomData };
+            self.comment = unsafe { comment.as_ref().node.next.cast::<pm_magic_comment_t>() };
             Some(current)
         } else {
             None
@@ -198,6 +248,19 @@ impl<'pr> ParseResult<'pr> {
         }
     }
 
+    /// Returns an iterator that can be used to iterate over the magic comments in the
+    /// parse result.
+    #[must_use]
+    pub fn magic_comments(&self) -> MagicComments<'_> {
+        unsafe {
+            let list = &mut (*self.parser.as_ptr()).magic_comment_list;
+            MagicComments {
+                comment: list.head.cast::<pm_magic_comment_t>(),
+                marker: PhantomData,
+            }
+        }
+    }
+
     /// Returns an optional location of the __END__ marker and the rest of the content of the file.
     #[must_use]
     pub fn data_loc(&self) -> Option<Location<'_>> {
@@ -263,6 +326,26 @@ mod tests {
             let text = std::str::from_utf8(comment.text()).unwrap();
             assert!(text.starts_with("# comment"));
         }
+    }
+
+    #[test]
+    fn magic_comments_test() {
+        use crate::MagicComment;
+
+        let source = "# typed: ignore\n# typed:true\n#typed: strict\n";
+        let result = parse(source.as_ref());
+
+        let comments: Vec<MagicComment<'_>> = result.magic_comments().collect();
+        assert_eq!(3, comments.len());
+
+        assert_eq!(b"typed", comments[0].key());
+        assert_eq!(b"ignore", comments[0].value());
+
+        assert_eq!(b"typed", comments[1].key());
+        assert_eq!(b"true", comments[1].value());
+
+        assert_eq!(b"typed", comments[2].key());
+        assert_eq!(b"strict", comments[2].value());
     }
 
     #[test]
