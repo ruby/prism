@@ -31,6 +31,11 @@ module Prism
         end
       end
 
+      # Create the parser with our custom builder class
+      def initialize(builder = Parser::Builder.new)
+        super
+      end
+
       Racc_debug_parser = false # :nodoc:
 
       def version # :nodoc:
@@ -313,6 +318,7 @@ module Prism
         end
       end
 
+      require_relative "parser/builder"
       require_relative "parser/compiler"
       require_relative "parser/lexer"
 
