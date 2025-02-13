@@ -97,7 +97,7 @@ impl bindgen::callbacks::ParseCallbacks for Callbacks {
 /// This method only generates code in memory here--it doesn't write it to file.
 ///
 fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
-    bindgen::Builder::default()
+    let mut builder = bindgen::Builder::default()
         .derive_default(true)
         .generate_block(true)
         .generate_comments(true)
@@ -128,6 +128,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Enums
         .rustified_non_exhaustive_enum("pm_comment_type_t")
         .rustified_non_exhaustive_enum(r"pm_\w+_flags")
+        .rustified_non_exhaustive_enum("pm_options_version_t")
         .rustified_non_exhaustive_enum("pm_node_type")
         .rustified_non_exhaustive_enum("pm_pack_encoding")
         .rustified_non_exhaustive_enum("pm_pack_endian")
@@ -138,22 +139,39 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .rustified_non_exhaustive_enum("pm_pack_type")
         .rustified_non_exhaustive_enum("pm_pack_variant")
         // Functions
+        .allowlist_function("pm_buffer_free")
+        .allowlist_function("pm_buffer_init")
+        .allowlist_function("pm_buffer_length")
+        .allowlist_function("pm_buffer_value")
         .allowlist_function("pm_list_empty_p")
         .allowlist_function("pm_list_free")
         .allowlist_function("pm_node_destroy")
+        .allowlist_function("pm_options_free")
+        .allowlist_function("pm_options_read")
         .allowlist_function("pm_pack_parse")
         .allowlist_function("pm_parse")
         .allowlist_function("pm_parser_free")
         .allowlist_function("pm_parser_init")
+        .allowlist_function("pm_prettyprint")
+        .allowlist_function("pm_serialize_parse")
+        .allowlist_function("pm_serialize")
         .allowlist_function("pm_size_to_native")
+        .allowlist_function("pm_string_ensure_owned")
         .allowlist_function("pm_string_free")
         .allowlist_function("pm_string_length")
+        .allowlist_function("pm_string_shared_init")
         .allowlist_function("pm_string_source")
         .allowlist_function("pm_version")
         // Vars
         .allowlist_var(r"^pm_encoding\S+")
-        .generate()
-        .expect("Unable to generate prism bindings")
+        .allowlist_var(r"^PM_OPTIONS_COMMAND\S+");
+
+    if let Ok(target) = std::env::var("TARGET") {
+        if target.contains("wasm") {
+            builder = builder.clang_arg("-fvisibility=default");
+        }
+    }
+    builder.generate().expect("Unable to generate prism bindings")
 }
 
 /// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into
