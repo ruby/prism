@@ -28,11 +28,11 @@ jobs:
 
       - name: Set up WASI-SDK
         run: |
-          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz
-          tar xvf wasi-sdk-20.0-linux.tar.gz
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-x86_64-linux.tar.gz
+          tar xvf wasi-sdk-25.0-x86_64-linux.tar.gz
 
       - name: Build the project
-        run: make wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-20.0
+        run: make wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
 
       - uses: actions/upload-artifact@v4
         with:

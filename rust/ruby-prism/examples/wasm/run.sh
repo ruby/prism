@@ -2,7 +2,7 @@
 
 set -e
 
-WASI_SDK_VERSION_MAJOR="20"
+WASI_SDK_VERSION_MAJOR="25"
 WASI_SDK_VERSION="$WASI_SDK_VERSION_MAJOR.0"
 TMPDIR="$(pwd)/tmp"
 WASI_SDK_PATH="${TMPDIR}/wasi-sdk-${WASI_SDK_VERSION}"
@@ -22,10 +22,10 @@ download_wasi_sdk() {
 
   if [ "$(uname)" == "Darwin" ]; then
     echo "Downloading wasi-sdk for macOS" >&2
-    curl -sLo "${WASI_SDK_TAR}" "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION_MAJOR}/wasi-sdk-${WASI_SDK_VERSION}-macos.tar.gz" >&2
+    curl -sLo "${WASI_SDK_TAR}" "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION_MAJOR}/wasi-sdk-${WASI_SDK_VERSION}-x86_64-macos.tar.gz" >&2
   elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Downloading wasi-sdk for Linux" >&2
-    curl -sLo "${WASI_SDK_TAR}" "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION_MAJOR}/wasi-sdk-${WASI_SDK_VERSION}-linux.tar.gz" >&2
+    curl -sLo "${WASI_SDK_TAR}" "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION_MAJOR}/wasi-sdk-${WASI_SDK_VERSION}-x86_64-linux.tar.gz" >&2
   else
     echo "Unsupported platform" >&2
     exit 1
