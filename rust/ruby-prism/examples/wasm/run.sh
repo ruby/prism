@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 WASI_SDK_VERSION_MAJOR="25"
 WASI_SDK_VERSION="$WASI_SDK_VERSION_MAJOR.0"
@@ -33,6 +33,15 @@ download_wasi_sdk() {
 
   tar -xzf "${WASI_SDK_TAR}" -C "${TMPDIR}" >&2
   echo "WASI SDK downloaded to ${TMPDIR}" >&2
+
+  if [ "$(uname)" == "Darwin" ]; then
+    mv ${TMPDIR}/wasi-sdk-${WASI_SDK_VERSION}-x86_64-macos ${WASI_SDK_PATH}
+  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    mv ${TMPDIR}/wasi-sdk-${WASI_SDK_VERSION}-x86_64-linux ${WASI_SDK_PATH}
+  else
+    echo "Unsupported platform" >&2
+    exit 1
+  fi
 }
 
 build_wasm() {
