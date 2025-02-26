@@ -1157,7 +1157,7 @@ module Prism
         # -> { it }
         # ^^^^^^^^^
         def visit_it_parameters_node(node)
-          builder.args(nil, [], nil, false)
+          builder.itarg
         end
 
         # foo(bar: baz)
