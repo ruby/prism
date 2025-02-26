@@ -1,0 +1,7 @@
+-> do it + 42 end
+
+-> { it + 42 }
+
+m do it + 42 end
+
+m { it + 42 }

@@ -45,7 +45,11 @@ module Prism
       "whitequark/pattern_matching_single_match.txt",
       "whitequark/ruby_bug_12402.txt",
       "whitequark/ruby_bug_14690.txt",
-      "whitequark/space_args_block.txt"
+      "whitequark/space_args_block.txt",
+
+      # Please remove this once the Parser gem supports the `it` block parameter syntax:
+      # https://github.com/whitequark/parser/issues/962
+      "whitequark/it_arg_after_34.txt"
     ]
 
     # https://github.com/seattlerb/ruby_parser/issues/344
