@@ -19,7 +19,10 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{
+    pm_buffer_free, pm_buffer_init, pm_buffer_length, pm_buffer_t, pm_buffer_value, pm_comment_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_options_free, pm_options_read, pm_options_t,
+    pm_options_version_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_serialize, pm_serialize_parse,
+};
 
 /// A range in the source file.
 pub struct Location<'pr> {
@@ -428,6 +431,8 @@ pub struct ParseResult<'pr> {
     source: &'pr [u8],
     parser: NonNull<pm_parser_t>,
     node: NonNull<pm_node_t>,
+    options_string: Vec<u8>,
+    options: NonNull<pm_options_t>,
 }
 
 impl<'pr> ParseResult<'pr> {
@@ -529,6 +534,16 @@ impl<'pr> ParseResult<'pr> {
     pub fn node(&self) -> Node<'_> {
         Node::new(self.parser, self.node.as_ptr())
     }
+
+    /// Returns the serialized representation of the parse result.
+    #[must_use]
+    pub fn serialize(&self) -> Vec<u8> {
+        let mut buffer = Buffer::default();
+        unsafe {
+            pm_serialize(self.parser.as_ptr(), self.node.as_ptr(), &mut buffer.buffer);
+        }
+        buffer.value().into()
+    }
 }
 
 impl<'pr> Drop for ParseResult<'pr> {
@@ -537,7 +552,173 @@ impl<'pr> Drop for ParseResult<'pr> {
             pm_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
             pm_parser_free(self.parser.as_ptr());
             drop(Box::from_raw(self.parser.as_ptr()));
+
+            pm_options_free(self.options.as_ptr());
+            drop(Box::from_raw(self.options.as_ptr()));
         }
+    }
+}
+
+/**
+ * A scope of locals surrounding the code that is being parsed.
+ */
+#[derive(Debug, Default, Clone)]
+pub struct OptionsScope {
+    /** Flags for the set of forwarding parameters in this scope. */
+    pub forwarding_flags: u8,
+    /** The names of the locals in the scope. */
+    pub locals: Vec<String>,
+}
+
+/// The options that can be passed to the parser.
+#[allow(clippy::struct_excessive_bools)]
+#[derive(Debug, Clone)]
+pub struct Options {
+    /** The name of the file that is currently being parsed. */
+    pub filepath: String,
+    /**
+     * The line within the file that the parse starts on. This value is
+     * 1-indexed.
+     */
+    pub line: i32,
+    /**
+     * The name of the encoding that the source file is in. Note that this must
+     * correspond to a name that can be found with Encoding.find in Ruby.
+     */
+    pub encoding: String,
+    /**
+     * Whether or not the frozen string literal option has been set.
+     * May be:
+     *  - PM_OPTIONS_FROZEN_STRING_LITERAL_DISABLED
+     *  - PM_OPTIONS_FROZEN_STRING_LITERAL_ENABLED
+     *  - PM_OPTIONS_FROZEN_STRING_LITERAL_UNSET
+     */
+    pub frozen_string_literal: Option<bool>,
+    /** A bitset of the various options that were set on the command line. */
+    pub command_line: u8,
+    /**
+     * The version of prism that we should be parsing with. This is used to
+     * allow consumers to specify which behavior they want in case they need to
+     * parse exactly as a specific version of CRuby.
+     */
+    pub version: pm_options_version_t,
+    /**
+     * Whether or not the encoding magic comments should be respected. This is a
+     * niche use-case where you want to parse a file with a specific encoding
+     * but ignore any encoding magic comments at the top of the file.
+     */
+    pub encoding_locked: bool,
+    /**
+     * When the file being parsed is the main script, the shebang will be
+     * considered for command-line flags (or for implicit -x). The caller needs
+     * to pass this information to the parser so that it can behave correctly.
+     */
+    pub main_script: bool,
+    /**
+     * When the file being parsed is considered a "partial" script, jumps will
+     * not be marked as errors if they are not contained within loops/blocks.
+     * This is used in the case that you're parsing a script that you know will
+     * be embedded inside another script later, but you do not have that context
+     * yet. For example, when parsing an ERB template that will be evaluated
+     * inside another script.
+     */
+    pub partial_script: bool,
+    /**
+     * Whether or not the parser should freeze the nodes that it creates. This
+     * makes it possible to have a deeply frozen AST that is safe to share
+     * between concurrency primitives.
+     */
+    pub freeze: bool,
+    /**
+     * The scopes surrounding the code that is being parsed. For most parses
+     * this will be empty, but for evals it will be the locals that are in scope
+     * surrounding the eval. Scopes are ordered from the outermost scope to the
+     * innermost one.
+     */
+    pub scopes: Vec<OptionsScope>,
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            filepath: String::new(),
+            line: 1,
+            encoding: String::new(),
+            frozen_string_literal: None,
+            command_line: 0,
+            version: pm_options_version_t::PM_OPTIONS_VERSION_LATEST,
+            encoding_locked: false,
+            main_script: true,
+            partial_script: false,
+            freeze: false,
+            scopes: Vec::new(),
+        }
+    }
+}
+
+impl Options {
+    #[allow(clippy::cast_possible_truncation)]
+    fn to_binary_string(&self) -> Vec<u8> {
+        let mut output = Vec::new();
+
+        output.extend((self.filepath.len() as u32).to_ne_bytes());
+        output.extend(self.filepath.as_bytes());
+        output.extend(self.line.to_ne_bytes());
+        output.extend((self.encoding.len() as u32).to_ne_bytes());
+        output.extend(self.encoding.as_bytes());
+        output.extend(self.frozen_string_literal.map_or_else(|| 0i8, |frozen| if frozen { 1 } else { -1 }).to_ne_bytes());
+        output.push(self.command_line);
+        output.extend((self.version as u8).to_ne_bytes());
+        output.push(self.encoding_locked.into());
+        output.push(self.main_script.into());
+        output.push(self.partial_script.into());
+        output.push(self.freeze.into());
+        output.extend((self.scopes.len() as u32).to_ne_bytes());
+        for scope in &self.scopes {
+            output.extend((scope.locals.len() as u32).to_ne_bytes());
+            output.extend(scope.forwarding_flags.to_ne_bytes());
+            for local in &scope.locals {
+                output.extend((local.len() as u32).to_ne_bytes());
+                output.extend(local.as_bytes());
+            }
+        }
+        output
+    }
+}
+
+struct Buffer {
+    buffer: pm_buffer_t,
+}
+
+impl Default for Buffer {
+    fn default() -> Self {
+        let buffer = unsafe {
+            let mut uninit = MaybeUninit::<pm_buffer_t>::uninit();
+            let initialized = pm_buffer_init(uninit.as_mut_ptr());
+            assert!(initialized);
+            uninit.assume_init()
+        };
+        Self { buffer }
+    }
+}
+
+impl Buffer {
+    fn length(&self) -> usize {
+        unsafe { pm_buffer_length(&self.buffer) }
+    }
+
+    fn value(&self) -> &[u8] {
+        unsafe {
+            let value = pm_buffer_value(&self.buffer);
+            let value = value.cast::<u8>().cast_const();
+            std::slice::from_raw_parts(value, self.length())
+        }
+    }
+}
+
+impl Drop for Buffer {
+    fn drop(&mut self) {
+        unsafe { pm_buffer_free(&mut self.buffer) }
     }
 }
 
@@ -549,11 +730,27 @@ impl<'pr> Drop for ParseResult<'pr> {
 ///
 #[must_use]
 pub fn parse(source: &[u8]) -> ParseResult<'_> {
+    parse_with_options(source, &Options::default())
+}
+
+/// Parses the given source string and returns a parse result.
+///
+/// # Panics
+///
+/// Panics if the parser fails to initialize.
+///
+#[must_use]
+pub fn parse_with_options<'pr>(source: &'pr [u8], options: &Options) -> ParseResult<'pr> {
+    let options_string = options.to_binary_string();
     unsafe {
         let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
         let uninit = Box::into_raw(uninit);
 
-        pm_parser_init((*uninit).as_mut_ptr(), source.as_ptr(), source.len(), std::ptr::null());
+        let options = Box::into_raw(Box::new(MaybeUninit::<pm_options_t>::zeroed()));
+        pm_options_read((*options).as_mut_ptr(), options_string.as_ptr().cast());
+        let options = NonNull::new((*options).assume_init_mut()).unwrap();
+
+        pm_parser_init((*uninit).as_mut_ptr(), source.as_ptr(), source.len(), options.as_ptr());
 
         let parser = (*uninit).assume_init_mut();
         let parser = NonNull::new_unchecked(parser);
@@ -561,13 +758,28 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
         let node = pm_parse(parser.as_ptr());
         let node = NonNull::new_unchecked(node);
 
-        ParseResult { source, parser, node }
+        ParseResult { source, parser, node, options_string, options }
     }
+}
+
+/// Serializes the given source string and returns a parse result.
+///
+/// # Panics
+///
+/// Panics if the parser fails to initialize.
+#[must_use]
+pub fn serialize_parse(source: &[u8], options: &Options) -> Vec<u8> {
+    let mut buffer = Buffer::default();
+    let opts = options.to_binary_string();
+    unsafe {
+        pm_serialize_parse(&mut buffer.buffer, source.as_ptr(), source.len(), opts.as_ptr().cast());
+    }
+    buffer.value().into()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::parse;
+    use super::{parse, parse_with_options, serialize_parse};
 
     #[test]
     fn comments_test() {
@@ -1155,6 +1367,28 @@ end
         let value: f64 = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_float_node().unwrap().value();
 
         assert!((value - 1.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn serialize_parse_test() {
+        let source = r#"__FILE__"#;
+        let options = crate::Options { filepath: "test.rb".to_string(), ..Default::default() };
+        let bytes = serialize_parse(source.as_ref(), &options);
+
+        let result = parse_with_options(source.as_bytes(), &options);
+
+        assert_eq!(bytes, result.serialize());
+
+        let expected = r#"@ ProgramNode (location: (1,0)-(1,8))
++-- locals: []
++-- statements:
+    @ StatementsNode (location: (1,0)-(1,8))
+    +-- body: (length: 1)
+        +-- @ SourceFileNode (location: (1,0)-(1,8))
+            +-- StringFlags: nil
+            +-- filepath: "test.rb"
+"#;
+        assert_eq!(expected, result.node().pretty_print().as_str());
     }
 
     #[test]
