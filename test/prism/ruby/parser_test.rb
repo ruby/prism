@@ -6,6 +6,8 @@ begin
   verbose, $VERBOSE = $VERBOSE, nil
   require "parser/ruby33"
   require "prism/translation/parser33"
+  require "parser/ruby34"
+  require "prism/translation/parser34"
 rescue LoadError
   # In CRuby's CI, we're not going to test against the parser gem because we
   # don't want to have to install it. So in this case we'll just skip this test.
@@ -55,6 +57,12 @@ Parser::AST::Node.prepend(
 
 module Prism
   class ParserTest < TestCase
+    IT_BLOCK_PARAMETER_FIXTURES = [
+      'whitequark/it_arg_after_34.txt'
+    ]
+
+    RUBY34_FIXTURES = IT_BLOCK_PARAMETER_FIXTURES
+
     # These files contain code that is being parsed incorrectly by the parser
     # gem, and therefore we don't want to compare against our translation.
     skip_incorrect = [
@@ -86,6 +94,10 @@ module Prism
       # Regex with \c escape
       "unescaping.txt",
       "seattlerb/regexp_esc_C_slash.txt",
+
+      # Please remove this once the Parser gem supports the `it` block parameter syntax:
+      # https://github.com/whitequark/parser/issues/962
+      "whitequark/it_arg_after_34.txt"
     ]
 
     # These files are either failing to parse or failing to translate, so we'll
@@ -150,7 +162,13 @@ module Prism
       buffer = Parser::Source::Buffer.new(fixture.path, 1)
       buffer.source = fixture.read
 
-      parser = Parser::Ruby33.new
+      whitequark_parser, translation_parser = if RUBY34_FIXTURES.include?(fixture.path)
+        [Parser::Ruby34, Prism::Translation::Parser34]
+      else
+        [Parser::Ruby33, Prism::Translation::Parser33]
+      end
+
+      parser = whitequark_parser.new
       parser.diagnostics.consumer = ->(*) {}
       parser.diagnostics.all_errors_are_fatal = true
 
@@ -161,8 +179,7 @@ module Prism
           return
         end
 
-      actual_ast, actual_comments, actual_tokens =
-        ignore_warnings { Prism::Translation::Parser33.new.tokenize(buffer) }
+      actual_ast, actual_comments, actual_tokens = ignore_warnings { translation_parser.new.tokenize(buffer) }
 
       if expected_ast == actual_ast
         if !compare_asts && !Fixture.custom_base_path?
@@ -183,6 +200,8 @@ module Prism
       elsif compare_asts
         assert_equal expected_ast, actual_ast, -> { assert_equal_asts_message(expected_ast, actual_ast) }
       end
+
+      assert_prism_only_node(fixture.path, actual_ast)
     end
 
     def assert_equal_asts_message(expected_ast, actual_ast)
@@ -241,6 +260,12 @@ module Prism
         "expected: #{expected_comments.inspect}\n" \
         "actual: #{actual_comments.inspect}"
       }
+    end
+
+    def assert_prism_only_node(actual_ast, fixture_path)
+      if IT_BLOCK_PARAMETER_FIXTURES.include?(fixture_path)
+        assert_equal :itblock, actual_ast.children.first.type
+      end
     end
   end
 end
