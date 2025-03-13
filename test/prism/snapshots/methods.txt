@@ -2206,7 +2206,7 @@
         │   │   │       ├── operator_loc: (183,12)-(183,13) = "="
         │   │   │       └── value:
         │   │   │           @ ParenthesesNode (location: (183,14)-(183,37))
-        │   │   │           ├── flags: ∅
+        │   │   │           ├── flags: multiple_statements
         │   │   │           ├── body:
         │   │   │           │   @ StatementsNode (location: (183,15)-(183,36))
         │   │   │           │   ├── flags: ∅
