@@ -44,6 +44,8 @@ module Prism
     #
     # def register: (Listener, *Symbol) -> void
     def register(listener, *events)
+      events = listener.public_methods.grep(/^on_.*_(enter|leave)$/) if events.empty?
+
       events.each { |event| (listeners[event] ||= []) << listener }
     end
 
