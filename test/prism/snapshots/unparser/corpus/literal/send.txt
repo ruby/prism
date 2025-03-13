@@ -177,7 +177,7 @@
         │   │   ├── flags: ∅
         │   │   ├── predicate:
         │   │   │   @ ParenthesesNode (location: (16,5)-(17,10))
-        │   │   │   ├── flags: ∅
+        │   │   │   ├── flags: multiple_statements
         │   │   │   ├── body:
         │   │   │   │   @ StatementsNode (location: (16,6)-(17,9))
         │   │   │   │   ├── flags: ∅
