@@ -383,7 +383,7 @@
         │   │   └── closing_loc: ∅
         │   └── operator_loc: (43,4)-(43,5) = "="
         ├── @ ParenthesesNode (location: (45,0)-(45,9))
-        │   ├── flags: newline
+        │   ├── flags: newline, multiple_statements
         │   ├── body:
         │   │   @ StatementsNode (location: (45,1)-(45,8))
         │   │   ├── flags: ∅
