@@ -40,7 +40,7 @@ ruby -pi -e 'gsub(/^ruby-prism-sys = \{ version = ".+?"/, %Q{ruby-prism-sys = \{
 * Update the `Gemfile.lock` file:
 
 ```sh
-chruby ruby-3.4.0-dev
+chruby ruby-3.5.0-dev
 bundle install
 ```
 
