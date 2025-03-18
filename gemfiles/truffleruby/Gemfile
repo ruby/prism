@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "~> 3.2.2", engine: "truffleruby", engine_version: "~> 24.1.0"
+ruby "~> 3.3.5", engine: "truffleruby", engine_version: "~> 24.2.0"
 
 gemspec path: "../.."
 
