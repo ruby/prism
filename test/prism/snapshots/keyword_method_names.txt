@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(29,3))
+@ ProgramNode (location: (1,0)-(20,3))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(29,3))
+    @ StatementsNode (location: (1,0)-(20,3))
     ├── flags: ∅
-    └── body: (length: 10)
+    └── body: (length: 7)
         ├── @ DefNode (location: (1,0)-(2,3))
         │   ├── flags: newline
         │   ├── name: :def
@@ -112,80 +112,31 @@
         │   ├── rparen_loc: (12,14)-(12,15) = ")"
         │   ├── equal_loc: ∅
         │   └── end_keyword_loc: (13,0)-(13,3) = "end"
-        ├── @ DefNode (location: (15,0)-(16,3))
+        ├── @ StringNode (location: (15,0)-(15,6))
         │   ├── flags: newline
-        │   ├── name: :a
-        │   ├── name_loc: (15,17)-(15,18) = "a"
-        │   ├── receiver:
-        │   │   @ SourceEncodingNode (location: (15,4)-(15,16))
-        │   │   └── flags: static_literal
-        │   ├── parameters: ∅
-        │   ├── body: ∅
-        │   ├── locals: []
-        │   ├── def_keyword_loc: (15,0)-(15,3) = "def"
-        │   ├── operator_loc: (15,16)-(15,17) = "."
-        │   ├── lparen_loc: ∅
-        │   ├── rparen_loc: ∅
-        │   ├── equal_loc: ∅
-        │   └── end_keyword_loc: (16,0)-(16,3) = "end"
-        ├── @ StringNode (location: (18,0)-(18,6))
-        │   ├── flags: newline
-        │   ├── opening_loc: (18,0)-(18,2) = "%{"
-        │   ├── content_loc: (18,2)-(18,5) = "abc"
-        │   ├── closing_loc: (18,5)-(18,6) = "}"
+        │   ├── opening_loc: (15,0)-(15,2) = "%{"
+        │   ├── content_loc: (15,2)-(15,5) = "abc"
+        │   ├── closing_loc: (15,5)-(15,6) = "}"
         │   └── unescaped: "abc"
-        ├── @ StringNode (location: (20,0)-(20,6))
+        ├── @ StringNode (location: (17,0)-(17,6))
         │   ├── flags: newline
-        │   ├── opening_loc: (20,0)-(20,2) = "%\""
-        │   ├── content_loc: (20,2)-(20,5) = "abc"
-        │   ├── closing_loc: (20,5)-(20,6) = "\""
+        │   ├── opening_loc: (17,0)-(17,2) = "%\""
+        │   ├── content_loc: (17,2)-(17,5) = "abc"
+        │   ├── closing_loc: (17,5)-(17,6) = "\""
         │   └── unescaped: "abc"
-        ├── @ DefNode (location: (22,0)-(23,3))
-        │   ├── flags: newline
-        │   ├── name: :a
-        │   ├── name_loc: (22,13)-(22,14) = "a"
-        │   ├── receiver:
-        │   │   @ SourceFileNode (location: (22,4)-(22,12))
-        │   │   ├── flags: ∅
-        │   │   └── filepath: "keyword_method_names.txt"
-        │   ├── parameters: ∅
-        │   ├── body: ∅
-        │   ├── locals: []
-        │   ├── def_keyword_loc: (22,0)-(22,3) = "def"
-        │   ├── operator_loc: (22,12)-(22,13) = "."
-        │   ├── lparen_loc: ∅
-        │   ├── rparen_loc: ∅
-        │   ├── equal_loc: ∅
-        │   └── end_keyword_loc: (23,0)-(23,3) = "end"
-        ├── @ DefNode (location: (25,0)-(26,3))
-        │   ├── flags: newline
-        │   ├── name: :a
-        │   ├── name_loc: (25,13)-(25,14) = "a"
-        │   ├── receiver:
-        │   │   @ SourceLineNode (location: (25,4)-(25,12))
-        │   │   └── flags: static_literal
-        │   ├── parameters: ∅
-        │   ├── body: ∅
-        │   ├── locals: []
-        │   ├── def_keyword_loc: (25,0)-(25,3) = "def"
-        │   ├── operator_loc: (25,12)-(25,13) = "."
-        │   ├── lparen_loc: ∅
-        │   ├── rparen_loc: ∅
-        │   ├── equal_loc: ∅
-        │   └── end_keyword_loc: (26,0)-(26,3) = "end"
-        └── @ DefNode (location: (28,0)-(29,3))
+        └── @ DefNode (location: (19,0)-(20,3))
             ├── flags: newline
             ├── name: :a
-            ├── name_loc: (28,9)-(28,10) = "a"
+            ├── name_loc: (19,9)-(19,10) = "a"
             ├── receiver:
-            │   @ NilNode (location: (28,4)-(28,7))
+            │   @ NilNode (location: (19,4)-(19,7))
             │   └── flags: static_literal
             ├── parameters: ∅
             ├── body: ∅
             ├── locals: []
-            ├── def_keyword_loc: (28,0)-(28,3) = "def"
-            ├── operator_loc: (28,7)-(28,9) = "::"
+            ├── def_keyword_loc: (19,0)-(19,3) = "def"
+            ├── operator_loc: (19,7)-(19,9) = "::"
             ├── lparen_loc: ∅
             ├── rparen_loc: ∅
             ├── equal_loc: ∅
-            └── end_keyword_loc: (29,0)-(29,3) = "end"
+            └── end_keyword_loc: (20,0)-(20,3) = "end"
