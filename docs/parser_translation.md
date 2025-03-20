@@ -6,17 +6,23 @@ Prism ships with the ability to translate its syntax tree into the syntax tree u
 
 The `parser` gem provides multiple parsers to support different versions of the Ruby grammar. This includes all of the Ruby versions going back to 1.8, as well as third-party parsers like MacRuby and RubyMotion. The `prism` gem provides another parser that uses the `prism` parser to build the syntax tree.
 
-You can use the `prism` parser like you would any other. After requiring the parser, you should be able to call any of the regular `Parser::Base` APIs that you would normally use.
+You can use the `prism` parser like you would any other. After requiring `prism`, you should be able to call any of the regular `Parser::Base` APIs that you would normally use.
 
 ```ruby
 require "prism"
 
-Prism::Translation::Parser.parse_file("path/to/file.rb")
+# Same as `Parser::Ruby34`
+Prism::Translation::Parser34.parse_file("path/to/file.rb")
+
+# Same as `Parser::CurrentRuby`
+Prism::Translation::ParserCurrent.parse("puts 'Hello World!'")
 ```
+
+All the parsers are autoloaded, so you don't have to worry about requiring them yourself.
 
 ### RuboCop
 
-Prism as a parser engine is directly supported since RuboCop 1.62. The class used for parsing is `Prism::Translation::Parser`.
+Prism as a parser engine is directly supported since RuboCop 1.62.
 
 First, specify `prism` in your Gemfile:
 
