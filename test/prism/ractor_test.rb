@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-return if !defined?(Ractor) || !defined?(fork)
+return unless defined?(Ractor)
 
 require_relative "test_helper"
 
