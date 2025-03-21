@@ -92,11 +92,13 @@ public abstract class Nodes {
 
         public static final Node[] EMPTY_ARRAY = {};
 
+        public final int nodeId;
         public final int startOffset;
         public final int length;
         private boolean newLineFlag = false;
 
-        public Node(int startOffset, int length) {
+        public Node(int nodeId, int startOffset, int length) {
+            this.nodeId = nodeId;
             this.startOffset = startOffset;
             this.length = length;
         }
@@ -223,13 +225,13 @@ public abstract class Nodes {
         <%- end -%>
 
         <%-
-          params = ["int startOffset", "int length"]
+          params = ["int nodeId", "int startOffset", "int length"]
           params << "int serializedLength" if node.needs_serialized_length?
           params << "short flags" if node.flags
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
         public <%= node.name -%>(<%= params.join(", ") %>) {
-            super(startOffset, length);
+            super(nodeId, startOffset, length);
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
         <%- end -%>
