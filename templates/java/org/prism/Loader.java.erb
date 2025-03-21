@@ -358,6 +358,7 @@ public class Loader {
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
+        int nodeId = loadVarUInt();
         int startOffset = loadVarUInt();
         int length = loadVarUInt();
 
@@ -366,7 +367,7 @@ public class Loader {
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
             <%-
-            params = ["startOffset", "length"]
+            params = ["nodeId", "startOffset", "length"]
             params << "buffer.getInt()" if node.needs_serialized_length?
             params << "loadFlags()" if node.flags
             params.concat node.semantic_fields.map { |field|
