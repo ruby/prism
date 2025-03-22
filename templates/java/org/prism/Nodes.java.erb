@@ -92,13 +92,19 @@ public abstract class Nodes {
 
         public static final Node[] EMPTY_ARRAY = {};
 
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
         public final int nodeId;
+        <%- end -%>
         public final int startOffset;
         public final int length;
         private boolean newLineFlag = false;
 
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
         public Node(int nodeId, int startOffset, int length) {
             this.nodeId = nodeId;
+        <%- else -%>
+        public Node(int startOffset, int length) {
+        <%- end -%>
             this.startOffset = startOffset;
             this.length = length;
         }
@@ -225,13 +231,19 @@ public abstract class Nodes {
         <%- end -%>
 
         <%-
-          params = ["int nodeId", "int startOffset", "int length"]
+          params = []
+          params << "int nodeId" if Prism::Template::INCLUDE_NODE_ID
+          params << "int startOffset" << "int length"
           params << "int serializedLength" if node.needs_serialized_length?
           params << "short flags" if node.flags
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
         public <%= node.name -%>(<%= params.join(", ") %>) {
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
             super(nodeId, startOffset, length);
+        <%- else -%>
+            super(startOffset, length);
+        <%- end -%>
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
         <%- end -%>
