@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(10,1))
+@ ProgramNode (location: (1,0)-(19,2))
 ├── flags: ∅
 ├── locals: [:x]
 └── statements:
-    @ StatementsNode (location: (1,0)-(10,1))
+    @ StatementsNode (location: (1,0)-(19,2))
     ├── flags: ∅
-    └── body: (length: 5)
+    └── body: (length: 8)
         ├── @ AndNode (location: (1,0)-(1,25))
         │   ├── flags: newline
         │   ├── left:
@@ -85,15 +85,44 @@
         │   │   └── value: 1
         │   ├── rparen_loc: ∅
         │   └── keyword_loc: (7,0)-(7,8) = "defined?"
-        └── @ DefinedNode (location: (9,0)-(10,1))
+        ├── @ DefinedNode (location: (9,0)-(10,1))
+        │   ├── flags: newline
+        │   ├── lparen_loc: (9,8)-(9,9) = "("
+        │   ├── value:
+        │   │   @ StringNode (location: (9,9)-(9,14))
+        │   │   ├── flags: ∅
+        │   │   ├── opening_loc: (9,9)-(9,10) = "\""
+        │   │   ├── content_loc: (9,10)-(9,13) = "foo"
+        │   │   ├── closing_loc: (9,13)-(9,14) = "\""
+        │   │   └── unescaped: "foo"
+        │   ├── rparen_loc: (10,0)-(10,1) = ")"
+        │   └── keyword_loc: (9,0)-(9,8) = "defined?"
+        ├── @ DefinedNode (location: (12,0)-(13,1))
+        │   ├── flags: newline
+        │   ├── lparen_loc: ∅
+        │   ├── value:
+        │   │   @ IntegerNode (location: (13,0)-(13,1))
+        │   │   ├── flags: static_literal, decimal
+        │   │   └── value: 1
+        │   ├── rparen_loc: ∅
+        │   └── keyword_loc: (12,0)-(12,8) = "defined?"
+        ├── @ DefinedNode (location: (15,0)-(16,3))
+        │   ├── flags: newline
+        │   ├── lparen_loc: (16,0)-(16,1) = "("
+        │   ├── value:
+        │   │   @ IntegerNode (location: (16,1)-(16,2))
+        │   │   ├── flags: static_literal, decimal
+        │   │   └── value: 1
+        │   ├── rparen_loc: (16,2)-(16,3) = ")"
+        │   └── keyword_loc: (15,0)-(15,8) = "defined?"
+        └── @ DefinedNode (location: (18,0)-(19,2))
             ├── flags: newline
-            ├── lparen_loc: (9,8)-(9,9) = "("
+            ├── lparen_loc: ∅
             ├── value:
-            │   @ StringNode (location: (9,9)-(9,14))
+            │   @ ParenthesesNode (location: (19,0)-(19,2))
             │   ├── flags: ∅
-            │   ├── opening_loc: (9,9)-(9,10) = "\""
-            │   ├── content_loc: (9,10)-(9,13) = "foo"
-            │   ├── closing_loc: (9,13)-(9,14) = "\""
-            │   └── unescaped: "foo"
-            ├── rparen_loc: (10,0)-(10,1) = ")"
-            └── keyword_loc: (9,0)-(9,8) = "defined?"
+            │   ├── body: ∅
+            │   ├── opening_loc: (19,0)-(19,1) = "("
+            │   └── closing_loc: (19,1)-(19,2) = ")"
+            ├── rparen_loc: ∅
+            └── keyword_loc: (18,0)-(18,8) = "defined?"
