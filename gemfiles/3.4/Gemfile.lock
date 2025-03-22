@@ -9,7 +9,7 @@ GEM
     ast (2.4.2)
     logger (1.6.5)
     mini_portile2 (2.8.8)
-    nokogiri (1.18.3)
+    nokogiri (1.18.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
