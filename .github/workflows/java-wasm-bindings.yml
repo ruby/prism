@@ -24,7 +24,7 @@ jobs:
           bundler-cache: true
 
       - name: rake templates
-        run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
+        run: PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
 
       - name: Set up WASI-SDK
         run: |
@@ -32,7 +32,7 @@ jobs:
           tar xvf wasi-sdk-25.0-x86_64-linux.tar.gz
 
       - name: Build the project
-        run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1
+        run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
 
       - name: Set up Java
         uses: actions/setup-java@v4
