@@ -24,6 +24,7 @@ module Prism
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
     def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
+    def deep_freeze: () -> void
 
     def self.for: (String source) -> Source
   end
@@ -145,6 +146,7 @@ module Prism
 
     def initialize: (Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+    def encoding: () -> Encoding
     def success?: () -> bool
     def failure?: () -> bool
     def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
@@ -155,6 +157,7 @@ module Prism
 
     def initialize: (ProgramNode value, Array[comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+    def errors_format: () -> String
   end
 
   class LexResult < Result
@@ -181,6 +184,7 @@ module Prism
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def pretty_print: (untyped q) -> untyped
     def ==: (untyped other) -> bool
+    def deep_freeze: () -> void
   end
 
   class Scope

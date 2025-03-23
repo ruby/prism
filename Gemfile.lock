@@ -6,12 +6,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    ast (2.4.2)
+    ast (2.4.3)
     benchmark-ips (2.14.0)
     date (3.4.1)
     ffi (1.17.1)
     mini_portile2 (2.8.8)
-    nokogiri (1.18.2)
+    nokogiri (1.18.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
@@ -26,7 +26,7 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.9)
       rake
-    rdoc (6.11.0)
+    rdoc (6.12.0)
       psych (>= 4.0.0)
     ruby_memcheck (3.0.1)
       nokogiri
@@ -34,7 +34,7 @@ GEM
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     sexp_processor (4.17.3)
-    stringio (3.1.2)
+    stringio (3.1.5)
     test-unit (3.6.7)
       power_assert
 

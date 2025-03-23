@@ -12,6 +12,9 @@ target :lib do
   ignore "lib/prism/lex_compat.rb"
   ignore "lib/prism/serialize.rb"
   ignore "lib/prism/ffi.rb"
-  ignore "lib/prism/polyfill/byteindex.rb"
   ignore "lib/prism/translation"
+
+  ignore "lib/prism/polyfill/append_as_bytes.rb"
+  ignore "lib/prism/polyfill/byteindex.rb"
+  ignore "lib/prism/polyfill/unpack1.rb"
 end

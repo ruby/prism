@@ -45,6 +45,6 @@ module Prism
       def initialize: (Symbol name, Array[Symbol] flags) -> void
     end
 
-    def self.fields_for: (node_singleton node) -> Array[Field]
+    def self.fields_for: (singleton(Node) node) -> Array[Field]
   end
 end
