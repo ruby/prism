@@ -8,6 +8,6 @@ class Module < Object
 
   # "define_method" accepts a block that's evaluated within
   # the context of the instance:
-  def define_method: (id symbol) { () [self: instance] -> untyped } -> Symbol
+  def define_method: (interned symbol) { () [self: instance] -> untyped } -> Symbol
                    | ...
 end
