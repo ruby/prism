@@ -55,7 +55,7 @@ GEM
       prism (~> 1.0)
       rbs (>= 3.4.4)
       sorbet-runtime (>= 0.5.9204)
-    rbs (3.9.0)
+    rbs (3.9.1)
       logger
     ruby_parser (3.21.1)
       racc (~> 1.5)
