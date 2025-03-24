@@ -250,6 +250,23 @@ impl<'pr> Integer<'pr> {
     fn new(pointer: *const pm_integer_t) -> Self {
         Integer { pointer, marker: PhantomData }
     }
+
+    /// Returns the sign and the u32 digits representation of the integer,
+    /// ordered least significant digit first.
+    pub fn to_u32_digits(&self) -> (bool, &[u32]) {
+        let negative = unsafe { (*self.pointer).negative };
+        let length = unsafe { (*self.pointer).length };
+        let values = unsafe { (*self.pointer).values };
+
+        if values.is_null() {
+            let value_ptr = unsafe { std::ptr::addr_of!((*self.pointer).value) };
+            let slice = unsafe { std::slice::from_raw_parts(value_ptr, 1) };
+            (negative, slice)
+        } else {
+            let slice = unsafe { std::slice::from_raw_parts(values, length) };
+            (negative, slice)
+        }
+    }
 }
 
 impl std::fmt::Debug for Integer<'_> {
@@ -1144,9 +1161,30 @@ end
     #[test]
     fn integer_value_test() {
         let result = parse("0xA".as_ref());
-        let value: i32 = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value().try_into().unwrap();
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let value: i32 = integer.try_into().unwrap();
 
         assert_eq!(value, 10);
+    }
+
+    #[test]
+    fn integer_small_value_to_u32_digits_test() {
+        let result = parse("0xA".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[10]);
+    }
+
+    #[test]
+    fn integer_large_value_to_u32_digits_test() {
+        let result = parse("0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[4294967295, 4294967295, 4294967295, 2147483647]);
     }
 
     #[test]
