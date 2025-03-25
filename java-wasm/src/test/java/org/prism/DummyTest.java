@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DummyTest {
 
-    byte[] packedOptions = ParsingOptions.serialize(
+    private static final byte[] packedOptions = ParsingOptions.serialize(
         new byte[] {},
         1,
         new byte[] {},

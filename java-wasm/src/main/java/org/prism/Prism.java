@@ -1,7 +1,8 @@
 package org.prism;
 
 import com.dylibso.chicory.runtime.ByteArrayMemory;
-import com.dylibso.chicory.runtime.ExportFunction;
+import com.dylibso.chicory.experimental.hostmodule.annotations.WasmModuleInterface;
+import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
@@ -9,16 +10,11 @@ import com.dylibso.chicory.wasi.WasiPreview1;
 
 import java.nio.charset.StandardCharsets;
 
+@WasmModuleInterface(WasmResource.absoluteFile)
 public class Prism implements AutoCloseable {
-    private final ExportFunction calloc;
-    private final ExportFunction pmSerializeParse;
-    private final ExportFunction pmBufferInit;
-    private final ExportFunction pmBufferSizeof;
-    private final ExportFunction pmBufferValue;
-    private final ExportFunction pmBufferLength;
-
     private final WasiPreview1 wasi;
     private final Instance instance;
+    private final Prism_ModuleExports exports;
 
     public Prism() {
         this(WasiOptions.builder().build());
@@ -30,33 +26,52 @@ public class Prism implements AutoCloseable {
             .withMachineFactory(PrismModule::create)
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
+        exports = new Prism_ModuleExports(instance);
+    }
 
-        calloc = instance.exports().function("calloc");
-        pmSerializeParse = instance.exports().function("pm_serialize_parse");
-        pmBufferInit = instance.exports().function("pm_buffer_init");
-        pmBufferSizeof = instance.exports().function("pm_buffer_sizeof");
-        pmBufferValue = instance.exports().function("pm_buffer_value");
-        pmBufferLength = instance.exports().function("pm_buffer_length");
+    public Prism_ModuleExports exports() {
+        return exports;
     }
 
     public ParseResult serializeParse(byte[] packedOptions, String source) {
         var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
 
-        var sourcePointer = calloc.apply(1, source.length());
-        instance.memory().writeString((int) sourcePointer[0], source);
+        int sourcePointer = 0;
+        int optionsPointer = 0;
+        int bufferPointer = 0;
+        int resultPointer = 0;
+        byte[] result;
+        try {
+            sourcePointer = exports.calloc(1, source.length());
+            exports.memory().writeString(sourcePointer, source);
 
-        var optionsPointer = calloc.apply(1, packedOptions.length);
-        instance.memory().write((int) optionsPointer[0], packedOptions);
+            optionsPointer = exports.calloc(1, packedOptions.length);
+            exports.memory().write(optionsPointer, packedOptions);
 
-        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], 1);
-        pmBufferInit.apply(bufferPointer);
+            bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
+            exports.pmBufferInit(bufferPointer);
 
-        pmSerializeParse.apply(
-            bufferPointer[0], sourcePointer[0], source.length(), optionsPointer[0]);
+            exports.pmSerializeParse(bufferPointer, sourcePointer, source.length(), optionsPointer);
 
-        var result = instance.memory().readBytes(
-            (int) pmBufferValue.apply(bufferPointer[0])[0],
-            (int) pmBufferLength.apply(bufferPointer[0])[0]);
+            resultPointer = exports.pmBufferValue(bufferPointer);
+
+            result = instance.memory().readBytes(
+                resultPointer,
+                exports.pmBufferLength(bufferPointer));
+        } finally {
+            if (sourcePointer != 0) {
+                exports.free(sourcePointer);
+            }
+            if (optionsPointer != 0) {
+                exports.free(optionsPointer);
+            }
+            if (bufferPointer != 0) {
+                exports.free(bufferPointer);
+            }
+            if (resultPointer != 0) {
+                exports.free(resultPointer);
+            }
+        }
 
         return Loader.load(result, sourceBytes);
     }
