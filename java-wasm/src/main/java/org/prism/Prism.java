@@ -1,5 +1,6 @@
 package org.prism;
 
+import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.runtime.ExportFunction;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
@@ -25,6 +26,7 @@ public class Prism implements AutoCloseable {
     public Prism(WasiOptions wasiOpts) {
         wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
         instance = Instance.builder(PrismModule.load())
+            .withMemoryFactory(ByteArrayMemory::new)
             .withMachineFactory(PrismModule::create)
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
