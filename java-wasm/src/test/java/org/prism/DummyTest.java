@@ -16,6 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DummyTest {
 
+    byte[] packedOptions = ParsingOptions.serialize(
+        new byte[] {},
+        1,
+        new byte[] {},
+        false,
+        EnumSet.noneOf(ParsingOptions.CommandLine.class),
+        ParsingOptions.SyntaxVersion.LATEST,
+        false,
+        false,
+        false,
+        new byte[][][] {}
+    );
+
     @Test
     public void test1() {
         WasiOptions wasiOpts = WasiOptions.builder().build();
@@ -38,19 +51,6 @@ public class DummyTest {
         var sourcePointer = calloc.apply(1, source.length());
         memory.writeString((int) sourcePointer[0], source);
 
-        var packedOptions = ParsingOptions.serialize(
-            new byte[] {},
-            1,
-            new byte[] {},
-            false,
-            EnumSet.noneOf(ParsingOptions.CommandLine.class),
-            ParsingOptions.SyntaxVersion.LATEST,
-            false,
-            false,
-            false,
-            new byte[][][] {}
-        );
-
         var optionsPointer = calloc.apply(1, packedOptions.length);
         memory.write((int) optionsPointer[0], packedOptions);
 
@@ -67,6 +67,22 @@ public class DummyTest {
         System.out.println("RESULT: " + new String(result));
 
         ParseResult pr = Loader.load(result, sourceBytes);
+
+        assertEquals(1, pr.value.childNodes().length);
+        System.out.println("Nodes:");
+        System.out.println(pr.value.childNodes()[0]);
+        assertTrue(pr.value.childNodes()[0].toString().contains("IntegerNode"));
+    }
+
+    @Test
+    public void test1Aot() {
+        // The Ruby source code to be processed
+        var source = "1 + 1";
+
+        ParseResult pr = null;
+        try (Prism prism = new Prism()) {
+            pr = prism.serializeParse(packedOptions, source);
+        }
 
         assertEquals(1, pr.value.childNodes().length);
         System.out.println("Nodes:");
@@ -96,19 +112,6 @@ public class DummyTest {
         var sourcePointer = calloc.apply(1, source.length());
         memory.writeString((int) sourcePointer[0], source);
 
-        var packedOptions = ParsingOptions.serialize(
-            new byte[] {},
-            1,
-            new byte[] {},
-            false,
-            EnumSet.noneOf(ParsingOptions.CommandLine.class),
-            ParsingOptions.SyntaxVersion.LATEST,
-            false,
-            false,
-            false,
-            new byte[][][] {}
-        );
-
         var optionsPointer = calloc.apply(1, packedOptions.length);
         memory.write((int) optionsPointer[0], packedOptions);
 
@@ -133,4 +136,19 @@ public class DummyTest {
         assertTrue(pr.value.childNodes()[0].toString().contains("CallNode"));
     }
 
+    @Test
+    public void test2Aot() {
+        // The Ruby source code to be processed
+        var source = "puts \"h\ne\nl\nl\no\n\"";
+
+        ParseResult pr = null;
+        try (Prism prism = new Prism()) {
+            pr = prism.serializeParse(packedOptions, source);
+        }
+
+        assertEquals(1, pr.value.childNodes().length);
+        System.out.println("Nodes:");
+        System.out.println(pr.value.childNodes()[0]);
+        assertTrue(pr.value.childNodes()[0].toString().contains("CallNode"));
+    }
 }
