@@ -616,6 +616,30 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    }}")?;
     writeln!(file)?;
 
+    writeln!(
+        file,
+        r#"
+    /// Returns a pretty-printed representation of this node.
+    #[must_use]
+    pub fn pretty_print(&self) -> String {{
+        let mut buffer = crate::Buffer::default();
+        unsafe {{
+            match *self {{
+"#
+    )?;
+    for node in &config.nodes {
+        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => pm_prettyprint(&mut buffer.buffer, parser.as_ptr(), pointer.cast()),", node.name)?;
+    }
+    writeln!(
+        file,
+        r#"
+            }}
+            std::str::from_utf8_unchecked(buffer.value()).to_string()
+        }}
+    }}
+"#
+    )?;
+
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
