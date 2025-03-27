@@ -1158,6 +1158,13 @@ end
     }
 
     #[test]
+    fn regex_value_test() {
+        let result = parse(b"//");
+        let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_regular_expression_node().unwrap();
+        assert_eq!(node.unescaped(), b"");
+    }
+
+    #[test]
     fn node_field_lifetime_test() {
         // The code below wouldn't typecheck prior to https://github.com/ruby/prism/pull/2519,
         // but we need to stop clippy from complaining about it.

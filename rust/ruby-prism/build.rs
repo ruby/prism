@@ -334,6 +334,9 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    pub fn {}(&self) -> &[u8] {{", field.name)?;
                 writeln!(file, "        unsafe {{")?;
                 writeln!(file, "            let source = (*self.pointer).{}.source;", field.name)?;
+                writeln!(file, "            if source.is_null() {{")?;
+                writeln!(file, "                return &[];")?;
+                writeln!(file, "            }}")?;
                 writeln!(file, "            let length = (*self.pointer).{}.length;", field.name)?;
                 writeln!(file, "            std::slice::from_raw_parts(source, length)")?;
                 writeln!(file, "        }}")?;
