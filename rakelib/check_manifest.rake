@@ -24,6 +24,7 @@ task check_manifest: :templates do
     rakelib
     rust
     sample
+    snapshots
     sorbet
     suppressions
     templates
