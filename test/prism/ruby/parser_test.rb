@@ -155,6 +155,23 @@ module Prism
       assert_empty(warnings)
     end
 
+    def test_version_less_parser_deprecated
+      warnings = capture_warnings { Prism::Translation::Parser.parse("foo") }
+
+      assert_include(warnings, "#{__FILE__}:#{__LINE__ - 2}")
+      assert_include(warnings, "`Prism::Translation::Parser` is deprecated")
+
+      warnings = capture_warnings { Prism::Translation::Parser.new }
+
+      assert_include(warnings, "#{__FILE__}:#{__LINE__ - 2}")
+      assert_include(warnings, "`Prism::Translation::Parser` is deprecated")
+
+      warnings = capture_warnings { Class.new(Prism::Translation::Parser) }
+
+      assert_include(warnings, "#{__FILE__}:#{__LINE__ - 2}")
+      assert_include(warnings, "`Prism::Translation::Parser` is deprecated")
+    end
+
     if RUBY_VERSION >= "3.3"
       def test_current_parser_for_current_ruby
         major, minor, _patch = Gem::Version.new(RUBY_VERSION).segments
