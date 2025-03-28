@@ -5,7 +5,7 @@ require_relative "../../polyfill/append_as_bytes"
 
 module Prism
   module Translation
-    class Parser
+    class Parser < ParserBase
       # Accepts a list of prism tokens and converts them into the expected
       # format for the parser gem.
       class Lexer

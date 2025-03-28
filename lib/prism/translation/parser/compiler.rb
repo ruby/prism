@@ -2,7 +2,7 @@
 
 module Prism
   module Translation
-    class Parser
+    class Parser < ParserBase
       # A visitor that knows how to convert a prism syntax tree into the
       # whitequark/parser gem's syntax tree.
       class Compiler < ::Prism::Compiler

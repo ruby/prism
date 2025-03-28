@@ -2,8 +2,8 @@
 
 module Prism
   module Translation
-    # This class is the entry-point for Ruby 3.4 of `Prism::Translation::Parser`.
-    class Parser34 < Parser
+    # This class is the entry-point for Ruby 3.4.
+    class Parser34 < ParserBase
       def version # :nodoc:
         34
       end

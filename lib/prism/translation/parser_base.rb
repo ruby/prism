@@ -18,7 +18,7 @@ module Prism
     # whitequark/parser gem's syntax tree. It inherits from the base parser for
     # the parser gem, and overrides the parse* methods to parse with prism and
     # then translate.
-    class Parser < ::Parser::Base
+    class ParserBase < ::Parser::Base # :nodoc:
       Diagnostic = ::Parser::Diagnostic # :nodoc:
       private_constant :Diagnostic
 
@@ -66,17 +66,13 @@ module Prism
       def initialize(builder = Prism::Translation::Parser::Builder.new, parser: Prism)
         if !builder.is_a?(Prism::Translation::Parser::Builder)
           warn(<<~MSG, uplevel: 1, category: :deprecated)
-            [deprecation]: The builder passed to `Prism::Translation::Parser.new` is not a \
+            [deprecation]: The builder passed to `#{self.class}.new` is not a \
             `Prism::Translation::Parser::Builder` subclass. This will raise in the next major version.
           MSG
         end
         @parser = parser
 
         super(builder)
-      end
-
-      def version # :nodoc:
-        34
       end
 
       # The default encoding for Ruby files is UTF-8.
@@ -359,8 +355,15 @@ module Prism
       require_relative "parser/compiler"
       require_relative "parser/lexer"
 
+      # This can be simplified by moving `Prism::Translation::ParserBase` to
+      # `Prism::Translation::Parser::Base` after `Prism::Translation::Parser` has been removed.
+      Compiler = Parser::Compiler
       private_constant :Compiler
+      Lexer = Parser::Lexer
       private_constant :Lexer
+
+      Parser.private_constant :Compiler
+      Parser.private_constant :Lexer
     end
   end
 end

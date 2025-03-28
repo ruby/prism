@@ -5,6 +5,7 @@ module Prism
   # syntax trees.
   module Translation # steep:ignore
     autoload :Parser, "prism/translation/parser"
+    autoload :ParserBase, "prism/translation/parser_base"
     autoload :ParserCurrent, "prism/translation/parser_current"
     autoload :Parser33, "prism/translation/parser33"
     autoload :Parser34, "prism/translation/parser34"

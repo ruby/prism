@@ -2,7 +2,7 @@
 
 module Prism
   module Translation
-    class Parser
+    class Parser < ParserBase
       # A builder that knows how to convert more modern Ruby syntax
       # into whitequark/parser gem's syntax tree.
       class Builder < ::Parser::Builders::Default
