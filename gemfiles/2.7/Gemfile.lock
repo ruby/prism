@@ -8,7 +8,7 @@ GEM
   specs:
     ast (2.4.2)
     onigmo (0.1.0)
-    parser (3.3.7.2)
+    parser (3.3.7.4)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.5)
