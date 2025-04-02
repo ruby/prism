@@ -12,7 +12,7 @@ on:
 
 jobs:
   test-all:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Set up latest ruby head
         uses: ruby/setup-ruby@v1
@@ -37,6 +37,7 @@ jobs:
         working-directory: ruby/ruby
       - name: Build Ruby
         run: |
+          ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
           autoconf
           ./configure -C --disable-install-doc
           make -j2
