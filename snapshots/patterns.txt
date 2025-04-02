@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(220,14))
+@ ProgramNode (location: (1,0)-(224,14))
 ├── flags: ∅
 ├── locals: [:bar, :baz, :qux, :b, :a, :foo, :x, :_a]
 └── statements:
-    @ StatementsNode (location: (1,0)-(220,14))
+    @ StatementsNode (location: (1,0)-(224,14))
     ├── flags: ∅
-    └── body: (length: 187)
+    └── body: (length: 190)
         ├── @ MatchRequiredNode (location: (1,0)-(1,10))
         │   ├── flags: newline
         │   ├── value:
@@ -5727,49 +5727,166 @@
         │   │   ├── closing_loc: ∅
         │   │   └── block: ∅
         │   └── operator_loc: (219,10)-(219,13) = "and"
-        └── @ OrNode (location: (220,0)-(220,14))
+        ├── @ OrNode (location: (220,0)-(220,14))
+        │   ├── flags: newline
+        │   ├── left:
+        │   │   @ ParenthesesNode (location: (220,0)-(220,9))
+        │   │   ├── flags: ∅
+        │   │   ├── body:
+        │   │   │   @ StatementsNode (location: (220,1)-(220,8))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── body: (length: 1)
+        │   │   │       └── @ MatchPredicateNode (location: (220,1)-(220,8))
+        │   │   │           ├── flags: newline
+        │   │   │           ├── value:
+        │   │   │           │   @ LocalVariableReadNode (location: (220,1)-(220,2))
+        │   │   │           │   ├── flags: ∅
+        │   │   │           │   ├── name: :a
+        │   │   │           │   └── depth: 0
+        │   │   │           ├── pattern:
+        │   │   │           │   @ ArrayPatternNode (location: (220,6)-(220,8))
+        │   │   │           │   ├── flags: ∅
+        │   │   │           │   ├── constant: ∅
+        │   │   │           │   ├── requireds: (length: 1)
+        │   │   │           │   │   └── @ LocalVariableTargetNode (location: (220,6)-(220,7))
+        │   │   │           │   │       ├── flags: ∅
+        │   │   │           │   │       ├── name: :b
+        │   │   │           │   │       └── depth: 0
+        │   │   │           │   ├── rest:
+        │   │   │           │   │   @ ImplicitRestNode (location: (220,7)-(220,8))
+        │   │   │           │   │   └── flags: ∅
+        │   │   │           │   ├── posts: (length: 0)
+        │   │   │           │   ├── opening_loc: ∅
+        │   │   │           │   └── closing_loc: ∅
+        │   │   │           └── operator_loc: (220,3)-(220,5) = "in"
+        │   │   ├── opening_loc: (220,0)-(220,1) = "("
+        │   │   └── closing_loc: (220,8)-(220,9) = ")"
+        │   ├── right:
+        │   │   @ CallNode (location: (220,13)-(220,14))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :c
+        │   │   ├── message_loc: (220,13)-(220,14) = "c"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   └── block: ∅
+        │   └── operator_loc: (220,10)-(220,12) = "or"
+        ├── @ MatchRequiredNode (location: (222,0)-(222,14))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ LocalVariableReadNode (location: (222,0)-(222,1))
+        │   │   ├── flags: ∅
+        │   │   ├── name: :x
+        │   │   └── depth: 0
+        │   ├── pattern:
+        │   │   @ PinnedExpressionNode (location: (222,5)-(222,14))
+        │   │   ├── flags: ∅
+        │   │   ├── expression:
+        │   │   │   @ ArrayNode (location: (222,7)-(222,13))
+        │   │   │   ├── flags: contains_splat
+        │   │   │   ├── elements: (length: 1)
+        │   │   │   │   └── @ SplatNode (location: (222,8)-(222,12))
+        │   │   │   │       ├── flags: ∅
+        │   │   │   │       ├── operator_loc: (222,8)-(222,9) = "*"
+        │   │   │   │       └── expression:
+        │   │   │   │           @ CallNode (location: (222,9)-(222,12))
+        │   │   │   │           ├── flags: ∅
+        │   │   │   │           ├── receiver:
+        │   │   │   │           │   @ LocalVariableReadNode (location: (222,9)-(222,10))
+        │   │   │   │           │   ├── flags: ∅
+        │   │   │   │           │   ├── name: :a
+        │   │   │   │           │   └── depth: 0
+        │   │   │   │           ├── call_operator_loc: (222,10)-(222,11) = "."
+        │   │   │   │           ├── name: :x
+        │   │   │   │           ├── message_loc: (222,11)-(222,12) = "x"
+        │   │   │   │           ├── opening_loc: ∅
+        │   │   │   │           ├── arguments: ∅
+        │   │   │   │           ├── closing_loc: ∅
+        │   │   │   │           └── block: ∅
+        │   │   │   ├── opening_loc: (222,7)-(222,8) = "["
+        │   │   │   └── closing_loc: (222,12)-(222,13) = "]"
+        │   │   ├── operator_loc: (222,5)-(222,6) = "^"
+        │   │   ├── lparen_loc: (222,6)-(222,7) = "("
+        │   │   └── rparen_loc: (222,13)-(222,14) = ")"
+        │   └── operator_loc: (222,2)-(222,4) = "=>"
+        ├── @ MatchRequiredNode (location: (223,0)-(223,15))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ LocalVariableReadNode (location: (223,0)-(223,1))
+        │   │   ├── flags: ∅
+        │   │   ├── name: :x
+        │   │   └── depth: 0
+        │   ├── pattern:
+        │   │   @ PinnedExpressionNode (location: (223,5)-(223,15))
+        │   │   ├── flags: ∅
+        │   │   ├── expression:
+        │   │   │   @ ArrayNode (location: (223,7)-(223,14))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── elements: (length: 1)
+        │   │   │   │   └── @ KeywordHashNode (location: (223,8)-(223,13))
+        │   │   │   │       ├── flags: ∅
+        │   │   │   │       └── elements: (length: 1)
+        │   │   │   │           └── @ AssocSplatNode (location: (223,8)-(223,13))
+        │   │   │   │               ├── flags: ∅
+        │   │   │   │               ├── value:
+        │   │   │   │               │   @ CallNode (location: (223,10)-(223,13))
+        │   │   │   │               │   ├── flags: ∅
+        │   │   │   │               │   ├── receiver:
+        │   │   │   │               │   │   @ LocalVariableReadNode (location: (223,10)-(223,11))
+        │   │   │   │               │   │   ├── flags: ∅
+        │   │   │   │               │   │   ├── name: :a
+        │   │   │   │               │   │   └── depth: 0
+        │   │   │   │               │   ├── call_operator_loc: (223,11)-(223,12) = "."
+        │   │   │   │               │   ├── name: :x
+        │   │   │   │               │   ├── message_loc: (223,12)-(223,13) = "x"
+        │   │   │   │               │   ├── opening_loc: ∅
+        │   │   │   │               │   ├── arguments: ∅
+        │   │   │   │               │   ├── closing_loc: ∅
+        │   │   │   │               │   └── block: ∅
+        │   │   │   │               └── operator_loc: (223,8)-(223,10) = "**"
+        │   │   │   ├── opening_loc: (223,7)-(223,8) = "["
+        │   │   │   └── closing_loc: (223,13)-(223,14) = "]"
+        │   │   ├── operator_loc: (223,5)-(223,6) = "^"
+        │   │   ├── lparen_loc: (223,6)-(223,7) = "("
+        │   │   └── rparen_loc: (223,14)-(223,15) = ")"
+        │   └── operator_loc: (223,2)-(223,4) = "=>"
+        └── @ MatchRequiredNode (location: (224,0)-(224,14))
             ├── flags: newline
-            ├── left:
-            │   @ ParenthesesNode (location: (220,0)-(220,9))
+            ├── value:
+            │   @ LocalVariableReadNode (location: (224,0)-(224,1))
             │   ├── flags: ∅
-            │   ├── body:
-            │   │   @ StatementsNode (location: (220,1)-(220,8))
+            │   ├── name: :x
+            │   └── depth: 0
+            ├── pattern:
+            │   @ PinnedExpressionNode (location: (224,5)-(224,14))
+            │   ├── flags: ∅
+            │   ├── expression:
+            │   │   @ HashNode (location: (224,7)-(224,13))
             │   │   ├── flags: ∅
-            │   │   └── body: (length: 1)
-            │   │       └── @ MatchPredicateNode (location: (220,1)-(220,8))
-            │   │           ├── flags: newline
-            │   │           ├── value:
-            │   │           │   @ LocalVariableReadNode (location: (220,1)-(220,2))
-            │   │           │   ├── flags: ∅
-            │   │           │   ├── name: :a
-            │   │           │   └── depth: 0
-            │   │           ├── pattern:
-            │   │           │   @ ArrayPatternNode (location: (220,6)-(220,8))
-            │   │           │   ├── flags: ∅
-            │   │           │   ├── constant: ∅
-            │   │           │   ├── requireds: (length: 1)
-            │   │           │   │   └── @ LocalVariableTargetNode (location: (220,6)-(220,7))
-            │   │           │   │       ├── flags: ∅
-            │   │           │   │       ├── name: :b
-            │   │           │   │       └── depth: 0
-            │   │           │   ├── rest:
-            │   │           │   │   @ ImplicitRestNode (location: (220,7)-(220,8))
-            │   │           │   │   └── flags: ∅
-            │   │           │   ├── posts: (length: 0)
-            │   │           │   ├── opening_loc: ∅
-            │   │           │   └── closing_loc: ∅
-            │   │           └── operator_loc: (220,3)-(220,5) = "in"
-            │   ├── opening_loc: (220,0)-(220,1) = "("
-            │   └── closing_loc: (220,8)-(220,9) = ")"
-            ├── right:
-            │   @ CallNode (location: (220,13)-(220,14))
-            │   ├── flags: variable_call, ignore_visibility
-            │   ├── receiver: ∅
-            │   ├── call_operator_loc: ∅
-            │   ├── name: :c
-            │   ├── message_loc: (220,13)-(220,14) = "c"
-            │   ├── opening_loc: ∅
-            │   ├── arguments: ∅
-            │   ├── closing_loc: ∅
-            │   └── block: ∅
-            └── operator_loc: (220,10)-(220,12) = "or"
+            │   │   ├── opening_loc: (224,7)-(224,8) = "{"
+            │   │   ├── elements: (length: 1)
+            │   │   │   └── @ AssocNode (location: (224,9)-(224,11))
+            │   │   │       ├── flags: ∅
+            │   │   │       ├── key:
+            │   │   │       │   @ SymbolNode (location: (224,9)-(224,11))
+            │   │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
+            │   │   │       │   ├── opening_loc: ∅
+            │   │   │       │   ├── value_loc: (224,9)-(224,10) = "a"
+            │   │   │       │   ├── closing_loc: (224,10)-(224,11) = ":"
+            │   │   │       │   └── unescaped: "a"
+            │   │   │       ├── value:
+            │   │   │       │   @ ImplicitNode (location: (224,9)-(224,11))
+            │   │   │       │   ├── flags: ∅
+            │   │   │       │   └── value:
+            │   │   │       │       @ LocalVariableReadNode (location: (224,9)-(224,11))
+            │   │   │       │       ├── flags: ∅
+            │   │   │       │       ├── name: :a
+            │   │   │       │       └── depth: 0
+            │   │   │       └── operator_loc: ∅
+            │   │   └── closing_loc: (224,12)-(224,13) = "}"
+            │   ├── operator_loc: (224,5)-(224,6) = "^"
+            │   ├── lparen_loc: (224,6)-(224,7) = "("
+            │   └── rparen_loc: (224,13)-(224,14) = ")"
+            └── operator_loc: (224,2)-(224,4) = "=>"
