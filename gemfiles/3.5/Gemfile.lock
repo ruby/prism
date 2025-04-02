@@ -8,13 +8,13 @@ GEM
   specs:
     ast (2.4.3)
     ffi (1.17.1)
-    logger (1.6.6)
+    logger (1.7.0)
     mini_portile2 (2.8.8)
     nokogiri (1.18.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
-    parser (3.3.7.2)
+    parser (3.3.7.4)
       ast (~> 2.4.1)
       racc
     power_assert (2.0.5)
@@ -22,7 +22,7 @@ GEM
     rake (13.2.1)
     rake-compiler (1.2.9)
       rake
-    rbs (3.9.1)
+    rbs (3.9.2)
       logger
     ruby_memcheck (3.0.1)
       nokogiri
