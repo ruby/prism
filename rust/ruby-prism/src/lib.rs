@@ -253,6 +253,7 @@ impl<'pr> Integer<'pr> {
 
     /// Returns the sign and the u32 digits representation of the integer,
     /// ordered least significant digit first.
+    #[must_use]
     pub fn to_u32_digits(&self) -> (bool, &[u32]) {
         let negative = unsafe { (*self.pointer).negative };
         let length = unsafe { (*self.pointer).length };
@@ -1184,7 +1185,7 @@ end
         let (negative, digits) = integer.to_u32_digits();
 
         assert!(!negative);
-        assert_eq!(digits, &[4294967295, 4294967295, 4294967295, 2147483647]);
+        assert_eq!(digits, &[4_294_967_295, 4_294_967_295, 4_294_967_295, 2_147_483_647]);
     }
 
     #[test]
