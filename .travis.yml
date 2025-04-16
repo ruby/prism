@@ -16,10 +16,3 @@ before_install:
 before_script:
   # Enable the verbose option in mkmf.rb to print the compiling commands.
   - export MAKEFLAGS="V=1 CC=gcc-11"
-
-notifications:
-  email:
-    recipients:
-      - jun.aruga@gmail.com
-    on_success: never
-    on_failure: always
