@@ -36,7 +36,7 @@ DEPENDENCIES
   test-unit
 
 RUBY VERSION
-   ruby 3.1.4p0 (jruby 9.4.5.0)
+   ruby 3.4.2p0 (jruby 10.0.0.0)
 
 BUNDLED WITH
-   2.3.26
+   2.6.3
