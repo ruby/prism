@@ -7,7 +7,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
-    ffi (1.17.1)
+    ffi (1.17.2)
     logger (1.7.0)
     mini_portile2 (2.8.8)
     nokogiri (1.18.5)
