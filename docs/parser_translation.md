@@ -20,6 +20,9 @@ Prism::Translation::ParserCurrent.parse("puts 'Hello World!'")
 
 All the parsers are autoloaded, so you don't have to worry about requiring them yourself.
 
+If you also need to parse Ruby versions below 3.3 (which `prism` has no support for), check out
+[this guide](https://github.com/whitequark/parser/blob/master/doc/PRISM_TRANSLATION.md) from the `parser` gem on how to use both in conjunction.
+
 ### RuboCop
 
 Prism as a parser engine is directly supported since RuboCop 1.62.
