@@ -20,6 +20,7 @@ module Prism
       when "parser"     then parser(argv)
       when "ripper"     then ripper(argv)
       when "rubyparser" then rubyparser(argv)
+      when "repl"       then repl
       else
         puts <<~TXT
           Usage:
@@ -35,6 +36,7 @@ module Prism
             bin/prism parser [source]
             bin/prism ripper [source]
             bin/prism rubyparser [source]
+            bin/prism repl
         TXT
       end
     end
@@ -322,6 +324,25 @@ module Prism
 
       puts "Prism:"
       pp prism
+    end
+
+    # bin/prism repl
+    def repl
+      loop do
+        print "Prism> "
+
+        input = gets
+        break if input.nil?
+
+        result = Prism.parse(input.chomp)
+
+        statements_node = result.value.statements
+        statements = statements_node.body
+
+        result.errors.each { |e| p(e) }
+
+        p(statements.one? ? statements.first : statements)
+      end
     end
 
     ############################################################################
