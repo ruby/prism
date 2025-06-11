@@ -16,5 +16,6 @@ target :lib do
 
   ignore "lib/prism/polyfill/append_as_bytes.rb"
   ignore "lib/prism/polyfill/byteindex.rb"
+  ignore "lib/prism/polyfill/scan_byte.rb"
   ignore "lib/prism/polyfill/unpack1.rb"
 end
