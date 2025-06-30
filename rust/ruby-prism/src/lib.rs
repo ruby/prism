@@ -19,7 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 /// A range in the source file.
 pub struct Location<'pr> {
@@ -329,6 +329,15 @@ pub struct Comment<'pr> {
     marker: PhantomData<&'pr pm_comment_t>,
 }
 
+/// The type of the comment
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CommentType {
+    /// InlineComment corresponds to comments that start with #.
+    InlineComment,
+    /// EmbDocComment corresponds to comments that are surrounded by =begin and =end.
+    EmbDocComment,
+}
+
 impl<'pr> Comment<'pr> {
     /// Returns the text of the comment.
     ///
@@ -337,6 +346,16 @@ impl<'pr> Comment<'pr> {
     #[must_use]
     pub fn text(&self) -> &[u8] {
         self.location().as_slice()
+    }
+
+    /// Returns the type of the comment.
+    pub fn type_(&self) -> CommentType {
+        let type_ = unsafe { self.comment.as_ref().type_ };
+        if type_ == pm_comment_type_t::PM_COMMENT_EMBDOC {
+            CommentType::EmbDocComment
+        } else {
+            CommentType::InlineComment
+        }
     }
 
     /// The location of the comment in the source.
@@ -593,6 +612,7 @@ mod tests {
         let result = parse(source.as_ref());
 
         for comment in result.comments() {
+            assert_eq!(super::CommentType::InlineComment, comment.type_());
             let text = std::str::from_utf8(comment.text()).unwrap();
             assert!(text.starts_with("# comment"));
         }
