@@ -1238,4 +1238,12 @@ end
         extractor.push_scope(node.as_program_node().unwrap().statements().body().iter().next().unwrap());
         assert_eq!(3, extractor.scopes.len());
     }
+
+    #[test]
+    fn malformed_shebang() {
+        let source = "#!\x00";
+        let result = parse(source.as_ref());
+        assert!(result.errors().next().is_none());
+        assert!(result.warnings().next().is_none());
+    }
 }
