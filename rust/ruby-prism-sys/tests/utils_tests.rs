@@ -66,13 +66,13 @@ mod string {
         let mut s = make_string(PM_STRING_SHARED);
 
         unsafe {
-            let len = pm_string_length(&s.pm_string);
+            let len = pm_string_length(&raw const s.pm_string);
             assert_eq!(len, 16);
 
-            let result_start = pm_string_source(&s.pm_string);
+            let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.start_ptr(), result_start);
 
-            pm_string_free(&mut s.pm_string);
+            pm_string_free(&raw mut s.pm_string);
         }
     }
 
@@ -81,10 +81,10 @@ mod string {
         let s = make_string(PM_STRING_OWNED);
 
         unsafe {
-            let result_len = pm_string_length(&s.pm_string);
+            let result_len = pm_string_length(&raw const s.pm_string);
             assert_eq!(result_len, 16);
 
-            let result_start = pm_string_source(&s.pm_string);
+            let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.pm_string.source, result_start);
 
             // Don't drop the pm_string--we don't own it anymore!
@@ -96,13 +96,13 @@ mod string {
         let mut s = make_string(PM_STRING_CONSTANT);
 
         unsafe {
-            let result_len = pm_string_length(&s.pm_string);
+            let result_len = pm_string_length(&raw const s.pm_string);
             assert_eq!(result_len, 16);
 
-            let result_start = pm_string_source(&s.pm_string);
+            let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.pm_string.source, result_start);
 
-            pm_string_free(&mut s.pm_string);
+            pm_string_free(&raw mut s.pm_string);
         }
     }
 
@@ -111,10 +111,10 @@ mod string {
         let s = make_string(PM_STRING_MAPPED);
 
         unsafe {
-            let result_len = pm_string_length(&s.pm_string);
+            let result_len = pm_string_length(&raw const s.pm_string);
             assert_eq!(result_len, 16);
 
-            let result_start = pm_string_source(&s.pm_string);
+            let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.pm_string.source, result_start);
         }
     }

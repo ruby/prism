@@ -7,7 +7,7 @@ fn main() {
     let comments_count = result.comments().count();
     let warnings_count = result.warnings().count();
     let errors_count = result.errors().count();
-    println!("  comments: {}", comments_count);
-    println!("  warnings: {}", warnings_count);
-    println!("  errors: {}", errors_count);
+    println!("  comments: {comments_count}");
+    println!("  warnings: {warnings_count}");
+    println!("  errors: {errors_count}");
 }
