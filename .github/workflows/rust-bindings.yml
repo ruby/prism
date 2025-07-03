@@ -20,7 +20,9 @@ jobs:
     name: cargo:test
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
