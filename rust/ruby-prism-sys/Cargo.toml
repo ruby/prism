@@ -22,7 +22,7 @@ build = "build/main.rs"
 include = ["src/", "build/", "Cargo.toml", "Cargo.lock", "README.md", "vendor"]
 
 [build-dependencies]
-bindgen = "0.66"
+bindgen = "0.72"
 cc = { version = "1.0", optional = true }
 
 [features]
