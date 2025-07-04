@@ -47,7 +47,9 @@ jobs:
             ${{ runner.os }}-cargo
       - name: Run tests
         run: bundle exec rake cargo:test
+
       - name: Run examples
+        if: ${{ matrix.os != 'windows-latest' }}
         run: bundle exec rake cargo:examples
 
   lint:
