@@ -19757,7 +19757,14 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_node_t *receiver = NULL;
 
             if (!accepts_command_call && !match1(parser, PM_TOKEN_PARENTHESIS_LEFT)) {
-                pm_parser_err_current(parser, PM_ERR_EXPECT_LPAREN_AFTER_NOT);
+                if (parser->current.type == PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES) {
+                    pm_parser_err(parser, parser->previous.end, parser->previous.end + 1, PM_ERR_EXPECT_LPAREN_AFTER_NOT);
+                } else if (parser->current.type == PM_TOKEN_NEWLINE) {
+                    parser_lex(parser);
+                    pm_parser_err_current(parser, PM_ERR_EXPECT_LPAREN_AFTER_NOT);
+                } else {
+                    pm_parser_err_current(parser, PM_ERR_EXPECT_LPAREN_AFTER_NOT);
+                }
                 return (pm_node_t *) pm_missing_node_create(parser, parser->current.start, parser->current.end);
             }
 
