@@ -247,14 +247,14 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
     writeln!(file, "impl<'pr> {}<'pr> {{", node.name)?;
     writeln!(file, "    /// Converts this node to a generic node.")?;
     writeln!(file, "    #[must_use]")?;
-    writeln!(file, "    pub fn as_node(&self) -> Node<'pr> {{")?;
+    writeln!(file, "    pub const fn as_node(&self) -> Node<'pr> {{")?;
     writeln!(file, "        Node::{} {{ parser: self.parser, pointer: self.pointer, marker: PhantomData }}", node.name)?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
-    writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
+    writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).base.location }};")?;
     writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
@@ -326,7 +326,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
             },
             NodeFieldType::NodeList => {
                 writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_node_list = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_node_list = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        NodeList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
@@ -359,19 +359,19 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
             },
             NodeFieldType::ConstantList => {
                 writeln!(file, "    pub fn {}(&self) -> ConstantList<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_constant_id_list_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        ConstantList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Location => {
                 writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        let start = unsafe {{ (*pointer).start }};")?;
                 writeln!(file, "        if start.is_null() {{")?;
                 writeln!(file, "            None")?;
@@ -392,7 +392,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
             },
             NodeFieldType::Integer => {
                 writeln!(file, "    pub fn {}(&self) -> Integer<'pr> {{", field.name)?;
-                writeln!(file, "        Integer::new(unsafe {{ &(*self.pointer).{} }})", field.name)?;
+                writeln!(file, "        Integer::new(unsafe {{ &raw const(*self.pointer).{} }})", field.name)?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Double => {
@@ -523,7 +523,7 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
                         }
                     },
                     NodeFieldType::NodeList => {
-                        writeln!(file, "    for node in node.{}().iter() {{", field.name)?;
+                        writeln!(file, "    for node in &node.{}() {{", field.name)?;
                         writeln!(file, "        visitor.visit(&node);")?;
                         writeln!(file, "    }}")?;
                     },
@@ -533,7 +533,7 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
 
             writeln!(file, "}}")?;
         } else {
-            writeln!(file, "pub fn visit{}<'pr, V>(_visitor: &mut V, _node: &{}<'pr>)", struct_name(&node.name), node.name)?;
+            writeln!(file, "pub const fn visit{}<'pr, V>(_visitor: &mut V, _node: &{}<'pr>)", struct_name(&node.name), node.name)?;
             writeln!(file, "where")?;
             writeln!(file, "    V: Visit<'pr> + ?Sized,")?;
             writeln!(file, "{{}}")?;
@@ -552,14 +552,14 @@ fn write_bindings(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
 
     write!(
         file,
-        r#"
+        r"
 use std::marker::PhantomData;
 use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
 use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
-"#
+"
     )?;
 
     for node in &config.nodes {
@@ -578,7 +578,7 @@ use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
     writeln!(file, "pub enum Node<'pr> {{")?;
 
     for node in &config.nodes {
-        writeln!(file, "    /// The {} node", node.name)?;
+        writeln!(file, "    /// The `{}` node", node.name)?;
         writeln!(file, "    {} {{", node.name)?;
         writeln!(file, "        /// The pointer to the associated parser this node came from.")?;
         writeln!(file, "        parser: NonNull<pm_parser_t>,")?;
@@ -596,7 +596,7 @@ use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
 
     writeln!(
         file,
-        r#"
+        r"
 impl<'pr> Node<'pr> {{
     /// Creates a new node from the given pointer.
     ///
@@ -607,7 +607,7 @@ impl<'pr> Node<'pr> {{
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
     pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{
-"#
+"
     )?;
 
     for node in &config.nodes {
@@ -633,7 +633,7 @@ impl<'pr> Node<'pr> {{
     for node in &config.nodes {
         writeln!(file, "    /// Returns the node as a `{}`.", node.name)?;
         writeln!(file, "    #[must_use]")?;
-        writeln!(file, "    pub fn as{}(&self) -> Option<{}<'pr>> {{", struct_name(&node.name), node.name)?;
+        writeln!(file, "    pub const fn as{}(&self) -> Option<{}<'pr>> {{", struct_name(&node.name), node.name)?;
         writeln!(file, "        match *self {{")?;
         writeln!(file, "            Self::{} {{ parser, pointer, marker }} => Some({} {{ parser, pointer, marker }}),", node.name, node.name)?;
         writeln!(file, "            _ => None")?;

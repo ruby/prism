@@ -20,19 +20,21 @@ jobs:
     name: cargo:test
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
-          targets: wasm32-wasi
+          toolchain: stable
+          targets: wasm32-wasip1
       - uses: actions/cache@v4
         with:
           path: |
@@ -45,7 +47,9 @@ jobs:
             ${{ runner.os }}-cargo
       - name: Run tests
         run: bundle exec rake cargo:test
+
       - name: Run examples
+        if: ${{ matrix.os != 'windows-latest' }}
         run: bundle exec rake cargo:examples
 
   lint:
@@ -58,12 +62,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
+          toolchain: stable
           components: clippy, rustfmt
       - uses: actions/cache@v4
         with:
@@ -92,13 +96,13 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: rake cargo:build
         run: bundle exec rake cargo:build
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-10-24
+          toolchain: nightly
           target: "x86_64-unknown-linux-gnu"
           components: "rust-src"
       - name: Test with sanitizer
@@ -124,7 +128,7 @@ jobs:
   #       uses: dtolnay/rust-toolchain@master
   #       with:
   #         toolchain: "1.71.1"
-  #         targets: wasm32-wasi
+  #         targets: wasm32-wasip1
   #     - uses: actions/cache@v4
   #       with:
   #         path: |
