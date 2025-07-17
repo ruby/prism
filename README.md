@@ -139,3 +139,4 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
 ### Applications
 
 * [gem.sh](https://github.com/marcoroth/gem.sh/pull/96)
+* [Sorbet](https://github.com/sorbet/sorbet)
