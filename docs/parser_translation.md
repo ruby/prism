@@ -22,27 +22,3 @@ All the parsers are autoloaded, so you don't have to worry about requiring them 
 
 If you also need to parse Ruby versions below 3.3 (which `prism` has no support for), check out
 [this guide](https://github.com/whitequark/parser/blob/master/doc/PRISM_TRANSLATION.md) from the `parser` gem on how to use both in conjunction.
-
-### RuboCop
-
-Prism as a parser engine is directly supported since RuboCop 1.62.
-
-First, specify `prism` in your Gemfile:
-
-```ruby
-gem "prism"
-```
-
-To use Prism with RuboCop, specify `ParserEngine` and `TargetRubyVersion` in your RuboCop configuration file:
-
-```yaml
-AllCops:
-  ParserEngine: parser_prism
-  TargetRubyVersion: 3.3
-```
-
-The default value for `ParserEngine` is `parser_whitequark`, which indicates the Parser gem. You need to explicitly switch it to `parser_prism` to indicate Prism. Additionally, the value for `TargetRubyVersion` must be specified as `3.3` or higher, as Prism supports parsing versions of Ruby 3.3 and higher.
-The parser class is determined by the combination of values for `ParserEngine` and `TargetRubyVersion`. For example, if `TargetRubyVersion: 3.3`, parsing is performed by `Prism::Translation::Parser33`, and for `TargetRubyVersion 3.4`, parsing is performed by `Prism::Translation::Parser34`.
-
-For further information, please refer to the RuboCop documentation:
-https://docs.rubocop.org/rubocop/configuration.html#setting-the-parser-engine
