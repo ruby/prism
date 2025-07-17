@@ -281,12 +281,14 @@ module Prism
           end
         }
 
+        eof_callback = -> (_) { stream.eof?  }
+
         # In the pm_serialize_parse_stream function it accepts a pointer to the
         # IO object as a void* and then passes it through to the callback as the
         # third argument, but it never touches it itself. As such, since we have
         # access to the IO object already through the closure of the lambda, we
         # can pass a null pointer here and not worry.
-        LibRubyParser.pm_serialize_parse_stream(buffer.pointer, nil, callback, dump_options(options))
+        LibRubyParser.pm_serialize_parse_stream(buffer.pointer, nil, callback, eof_callback, dump_options(options))
         Prism.load(source, buffer.read, options.fetch(:freeze, false))
       end
     end
