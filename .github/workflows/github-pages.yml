@@ -36,7 +36,7 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
+          toolchain: stable
       - name: Install doxygen and dependencies
         run: |
           sudo apt-get update
