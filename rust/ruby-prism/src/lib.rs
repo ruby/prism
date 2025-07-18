@@ -31,6 +31,8 @@ pub struct Location<'pr> {
 
 impl<'pr> Location<'pr> {
     /// Returns a byte slice for the range.
+    /// # Panics
+    /// Panics if the end offset is not greater than the start offset.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {
         unsafe {
@@ -41,7 +43,7 @@ impl<'pr> Location<'pr> {
 
     /// Return a Location from the given `pm_location_t`.
     #[must_use]
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Location<'pr> {
+    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Self {
         Location {
             parser,
             start: loc.start,
@@ -54,7 +56,7 @@ impl<'pr> Location<'pr> {
     /// Returns None if both locations did not originate from the same parser,
     /// or if self starts after other.
     #[must_use]
-    pub fn join(&self, other: &Location<'pr>) -> Option<Location<'pr>> {
+    pub fn join(&self, other: &Self) -> Option<Self> {
         if self.parser != other.parser || self.start > other.start {
             None
         } else {
@@ -68,6 +70,8 @@ impl<'pr> Location<'pr> {
     }
 
     /// Return the start offset from the beginning of the parsed source.
+    /// # Panics
+    /// Panics if the start offset is not greater than the parser's start.
     #[must_use]
     pub fn start_offset(&self) -> usize {
         unsafe {
@@ -77,6 +81,8 @@ impl<'pr> Location<'pr> {
     }
 
     /// Return the end offset from the beginning of the parsed source.
+    /// # Panics
+    /// Panics if the end offset is not greater than the parser's start.
     #[must_use]
     pub fn end_offset(&self) -> usize {
         unsafe {
@@ -135,13 +141,21 @@ pub struct NodeList<'pr> {
 impl<'pr> NodeList<'pr> {
     /// Returns an iterator over the nodes.
     #[must_use]
-    pub fn iter(&self) -> NodeListIter<'pr> {
+    pub const fn iter(&self) -> NodeListIter<'pr> {
         NodeListIter {
             parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData,
         }
+    }
+}
+
+impl<'pr> IntoIterator for &NodeList<'pr> {
+    type Item = Node<'pr>;
+    type IntoIter = NodeListIter<'pr>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
     }
 }
 
@@ -159,7 +173,7 @@ pub struct ConstantId<'pr> {
 }
 
 impl<'pr> ConstantId<'pr> {
-    fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {
+    const fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {
         ConstantId { parser, id, marker: PhantomData }
     }
 
@@ -221,13 +235,21 @@ pub struct ConstantList<'pr> {
 impl<'pr> ConstantList<'pr> {
     /// Returns an iterator over the constants in the list.
     #[must_use]
-    pub fn iter(&self) -> ConstantListIter<'pr> {
+    pub const fn iter(&self) -> ConstantListIter<'pr> {
         ConstantListIter {
             parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData,
         }
+    }
+}
+
+impl<'pr> IntoIterator for &ConstantList<'pr> {
+    type Item = ConstantId<'pr>;
+    type IntoIter = ConstantListIter<'pr>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
     }
 }
 
@@ -246,15 +268,15 @@ pub struct Integer<'pr> {
     marker: PhantomData<&'pr mut pm_constant_id_t>,
 }
 
-impl<'pr> Integer<'pr> {
-    fn new(pointer: *const pm_integer_t) -> Self {
+impl Integer<'_> {
+    const fn new(pointer: *const pm_integer_t) -> Self {
         Integer { pointer, marker: PhantomData }
     }
 
     /// Returns the sign and the u32 digits representation of the integer,
     /// ordered least significant digit first.
     #[must_use]
-    pub fn to_u32_digits(&self) -> (bool, &[u32]) {
+    pub const fn to_u32_digits(&self) -> (bool, &[u32]) {
         let negative = unsafe { (*self.pointer).negative };
         let length = unsafe { (*self.pointer).length };
         let values = unsafe { (*self.pointer).values };
@@ -294,7 +316,7 @@ impl TryInto<i32> for Integer<'_> {
 /// A diagnostic message that came back from the parser.
 #[derive(Debug)]
 pub struct Diagnostic<'pr> {
-    diagnostic: NonNull<pm_diagnostic_t>,
+    diag: NonNull<pm_diagnostic_t>,
     parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_diagnostic_t>,
 }
@@ -309,22 +331,22 @@ impl<'pr> Diagnostic<'pr> {
     #[must_use]
     pub fn message(&self) -> &str {
         unsafe {
-            let message: *mut c_char = self.diagnostic.as_ref().message.cast_mut();
+            let message: *mut c_char = self.diag.as_ref().message.cast_mut();
             CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
         }
     }
 
     /// The location of the diagnostic in the source.
     #[must_use]
-    pub fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.diagnostic.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.diag.as_ref().location })
     }
 }
 
 /// A comment that was found during parsing.
 #[derive(Debug)]
 pub struct Comment<'pr> {
-    comment: NonNull<pm_comment_t>,
+    content: NonNull<pm_comment_t>,
     parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_comment_t>,
 }
@@ -341,8 +363,8 @@ impl<'pr> Comment<'pr> {
 
     /// The location of the comment in the source.
     #[must_use]
-    pub fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.comment.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.content.as_ref().location })
     }
 }
 
@@ -353,10 +375,10 @@ pub struct MagicComment<'pr> {
     marker: PhantomData<&'pr pm_magic_comment_t>,
 }
 
-impl<'pr> MagicComment<'pr> {
+impl MagicComment<'_> {
     /// Returns the text of the comment's key.
     #[must_use]
-    pub fn key(&self) -> &[u8] {
+    pub const fn key(&self) -> &[u8] {
         unsafe {
             let start = self.comment.as_ref().key_start;
             let len = self.comment.as_ref().key_length as usize;
@@ -366,7 +388,7 @@ impl<'pr> MagicComment<'pr> {
 
     /// Returns the text of the comment's value.
     #[must_use]
-    pub fn value(&self) -> &[u8] {
+    pub const fn value(&self) -> &[u8] {
         unsafe {
             let start = self.comment.as_ref().value_start;
             let len = self.comment.as_ref().value_length as usize;
@@ -388,7 +410,11 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(diagnostic) = NonNull::new(self.diagnostic) {
-            let current = Diagnostic { diagnostic, parser: self.parser, marker: PhantomData };
+            let current = Diagnostic {
+                diag: diagnostic,
+                parser: self.parser,
+                marker: PhantomData,
+            };
             self.diagnostic = unsafe { diagnostic.as_ref().node.next.cast::<pm_diagnostic_t>() };
             Some(current)
         } else {
@@ -410,7 +436,11 @@ impl<'pr> Iterator for Comments<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(comment) = NonNull::new(self.comment) {
-            let current = Comment { comment, parser: self.parser, marker: PhantomData };
+            let current = Comment {
+                content: comment,
+                parser: self.parser,
+                marker: PhantomData,
+            };
             self.comment = unsafe { comment.as_ref().node.next.cast::<pm_comment_t>() };
             Some(current)
         } else {
@@ -549,7 +579,7 @@ impl<'pr> ParseResult<'pr> {
     }
 }
 
-impl<'pr> Drop for ParseResult<'pr> {
+impl Drop for ParseResult<'_> {
     fn drop(&mut self) {
         unsafe {
             pm_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
@@ -755,12 +785,12 @@ mod tests {
 
     #[test]
     fn optional_loc_test() {
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -829,9 +859,9 @@ end
 
     #[test]
     fn call_flags_test() {
-        let source = r#"
+        let source = r"
 x
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -839,9 +869,9 @@ x
         let call = call.as_call_node().unwrap();
         assert!(call.is_variable_call());
 
-        let source = r#"
+        let source = r"
 x&.foo
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -852,9 +882,9 @@ x&.foo
 
     #[test]
     fn integer_flags_test() {
-        let source = r#"
+        let source = r"
 0b1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -865,9 +895,9 @@ x&.foo
         assert!(!i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -878,9 +908,9 @@ x&.foo
         assert!(!i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 0o1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -891,9 +921,9 @@ x&.foo
         assert!(i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 0x1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -907,9 +937,9 @@ x&.foo
 
     #[test]
     fn range_flags_test() {
-        let source = r#"
+        let source = r"
 0..1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -917,9 +947,9 @@ x&.foo
         let range = range.as_range_node().unwrap();
         assert!(!range.is_exclude_end());
 
-        let source = r#"
+        let source = r"
 0...1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -931,9 +961,9 @@ x&.foo
     #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
     #[test]
     fn regex_flags_test() {
-        let source = r#"
+        let source = r"
 /a/i
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -948,9 +978,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/x
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -965,9 +995,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/m
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -982,9 +1012,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/e
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -999,9 +1029,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/n
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1016,9 +1046,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/s
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1033,9 +1063,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/u
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1050,9 +1080,9 @@ x&.foo
         assert!(regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/o
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1085,7 +1115,7 @@ x&.foo
             counts: NodeCounts,
         }
 
-        impl<'pr> Visit<'pr> for CountingVisitor {
+        impl Visit<'_> for CountingVisitor {
             fn visit_branch_node_enter(&mut self, _node: Node<'_>) {
                 self.counts.pre_parent += 1;
             }
@@ -1103,12 +1133,12 @@ x&.foo
             }
         }
 
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
         let node = result.node();
         let mut visitor = CountingVisitor::default();
@@ -1144,12 +1174,12 @@ end
             }
         }
 
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
         let node = result.node();
         let mut visitor = StackingNodeVisitor::default();

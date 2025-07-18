@@ -108,7 +108,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .impl_debug(true)
         .layout_tests(true)
         .merge_extern_blocks(true)
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .parse_callbacks(Box::new(Callbacks))
         .prepend_enum_name(false)
         .size_t_is_usize(true)

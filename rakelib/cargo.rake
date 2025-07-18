@@ -97,7 +97,7 @@ namespace :cargo do
 
         CRATES.each do |crate|
           Dir.chdir("rust/#{crate}") do
-            sh("cargo +nightly-2023-10-24 test -Zbuild-std --target=#{current_target} -- --nocapture")
+            sh("cargo +nightly test -Zbuild-std --target=#{current_target} -- --nocapture")
           end
         end
       ensure

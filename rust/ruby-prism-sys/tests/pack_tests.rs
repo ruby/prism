@@ -30,7 +30,7 @@ fn pack_parse_test() {
             endian_out.as_mut_ptr(),
             size_out.as_mut_ptr(),
             length_type_out.as_mut_ptr(),
-            &mut length_out,
+            &raw mut length_out,
             encoding_out.as_mut_ptr(),
         );
 
