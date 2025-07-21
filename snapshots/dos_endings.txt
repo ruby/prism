@@ -17,7 +17,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (1,5)-(2,12))
-        │   │           ├── flags: static_literal
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: ∅
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (1,5)-(1,9))
@@ -86,7 +86,7 @@
             │   │           ├── flags: ∅
             │   │           ├── receiver:
             │   │           │   @ InterpolatedStringNode (location: (17,8)-(17,14))
-            │   │           │   ├── flags: static_literal
+            │   │           │   ├── flags: ∅
             │   │           │   ├── opening_loc: (17,8)-(17,14) = "<<~EOF"
             │   │           │   ├── parts: (length: 2)
             │   │           │   │   ├── @ StringNode (location: (18,0)-(19,0))
