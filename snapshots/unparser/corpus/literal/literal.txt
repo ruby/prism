@@ -388,7 +388,7 @@
         │       ├── numerator: 1
         │       └── denominator: 1
         ├── @ InterpolatedStringNode (location: (28,0)-(28,11))
-        │   ├── flags: newline, static_literal
+        │   ├── flags: newline
         │   ├── opening_loc: ∅
         │   ├── parts: (length: 2)
         │   │   ├── @ StringNode (location: (28,0)-(28,5))

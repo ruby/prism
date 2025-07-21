@@ -37,7 +37,7 @@
             │           │   │   ├── flags: ∅
             │           │   │   └── arguments: (length: 1)
             │           │   │       └── @ InterpolatedStringNode (location: (1,9)-(4,4))
-            │           │   │           ├── flags: static_literal
+            │           │   │           ├── flags: ∅
             │           │   │           ├── opening_loc: (1,9)-(1,10) = "'"
             │           │   │           ├── parts: (length: 2)
             │           │   │           │   ├── @ StringNode (location: (1,10)-(2,0))

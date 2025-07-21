@@ -875,7 +875,7 @@
         │   ├── closing_loc: ∅
         │   └── unescaped: "a"
         ├── @ InterpolatedStringNode (location: (173,0)-(173,6))
-        │   ├── flags: newline, static_literal
+        │   ├── flags: newline
         │   ├── opening_loc: ∅
         │   ├── parts: (length: 2)
         │   │   ├── @ StringNode (location: (173,0)-(173,2))
