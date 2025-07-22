@@ -43,5 +43,5 @@ jobs:
           make -j2
         working-directory: ruby/ruby
       - name: make test-all
-        run: make -j2 -s test-all TESTS="prism --no-retry"
+        run: make -j2 -s test-all TESTS="prism ruby/test_syntax.rb ruby/test_compile_prism.rb --no-retry"
         working-directory: ruby/ruby
