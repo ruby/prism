@@ -78,6 +78,27 @@ jobs:
       run: bundle exec rake
       shell: bash
 
+  build-ibm:
+    if: github.repository == 'ruby/prism'
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04-ppc64le
+          - ubuntu-24.04-s390x
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      run: |
+        sudo apt-get update
+        sudo apt-get install ruby-full bundler libyaml-dev
+    - name: Install dependencies
+      run: sudo bundle install --jobs 2
+    - name: Run Ruby tests
+      run: bundle exec rake
+      shell: bash
+
   build-ffi:
     strategy:
       fail-fast: false
