@@ -86,6 +86,7 @@ module Prism
     end
 
     callback :pm_parse_stream_fgets_t, [:pointer, :int, :pointer], :pointer
+    callback :pm_parse_stream_feof_t, [:pointer], :int
     enum :pm_string_init_result_t, %i[PM_STRING_INIT_SUCCESS PM_STRING_INIT_ERROR_GENERIC PM_STRING_INIT_ERROR_DIRECTORY]
     enum :pm_string_query_t, [:PM_STRING_QUERY_ERROR, -1, :PM_STRING_QUERY_FALSE, :PM_STRING_QUERY_TRUE]
 
@@ -101,7 +102,7 @@ module Prism
       "pm_string_query_local",
       "pm_string_query_constant",
       "pm_string_query_method_name",
-      [:pm_parse_stream_fgets_t]
+      [:pm_parse_stream_fgets_t, :pm_parse_stream_feof_t]
     )
 
     load_exported_functions_from(
