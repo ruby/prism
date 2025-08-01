@@ -21183,6 +21183,13 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                 }
                 PRISM_FALLTHROUGH
                 case PM_CASE_WRITABLE: {
+                    // When we have `it = value`, we need to add `it` as a local
+                    // variable before parsing the value, in case the value
+                    // references the variable.
+                    if (PM_NODE_TYPE_P(node, PM_IT_LOCAL_VARIABLE_READ_NODE)) {
+                        pm_parser_local_add_location(parser, node->location.start, node->location.end, 0);
+                    }
+
                     parser_lex(parser);
                     pm_node_t *value = parse_assignment_values(parser, previous_binding_power, PM_NODE_TYPE_P(node, PM_MULTI_TARGET_NODE) ? PM_BINDING_POWER_MULTI_ASSIGNMENT + 1 : binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_EQUAL, (uint16_t) (depth + 1));
 
