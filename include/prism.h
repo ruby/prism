@@ -119,6 +119,7 @@ PRISM_EXPORTED_FUNCTION pm_node_t * pm_parse_stream(pm_parser_t *parser, pm_buff
  * @param buffer The buffer to serialize to.
  * @param stream The stream to parse.
  * @param stream_fgets The function to use to read from the stream.
+ * @param stream_feof The function to use to tell if the stream has hit eof.
  * @param data The optional data to pass to the parser.
  */
 PRISM_EXPORTED_FUNCTION void pm_serialize_parse_stream(pm_buffer_t *buffer, void *stream, pm_parse_stream_fgets_t *stream_fgets, pm_parse_stream_feof_t *stream_feof, const char *data);
