@@ -18799,7 +18799,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                             pm_parser_err_node(parser, old_name, PM_ERR_ALIAS_ARGUMENT_NUMBERED_REFERENCE);
                         }
                     } else {
-                        pm_parser_err_node(parser, old_name, PM_ERR_ALIAS_ARGUMENT);
+                        pm_parser_err_node(parser, old_name, PM_ERR_ALIAS_ARGUMENT_GLOBAL_VARIABLE);
                     }
 
                     return (pm_node_t *) pm_alias_global_variable_node_create(parser, &keyword, new_name, old_name);
