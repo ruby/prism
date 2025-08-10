@@ -372,6 +372,10 @@ PRISM_EXPORTED_FUNCTION void pm_options_scope_forwarding_set(pm_options_scope_t 
 /**
  * Free the internal memory associated with the options.
  *
+ * Must be called after the parser was freed with \ref pm_parser::pm_parser_free() "pm_parser_free()".
+ * If multiple parsers are created with the same options object, they must all be freed first,
+ * before it is safe to free the options object.
+ *
  * @param options The options struct whose internal memory should be freed.
  */
 PRISM_EXPORTED_FUNCTION void pm_options_free(pm_options_t *options);
