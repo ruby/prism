@@ -354,9 +354,9 @@ pub struct Comment<'pr> {
 /// The type of the comment
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CommentType {
-    /// InlineComment corresponds to comments that start with #.
+    /// `InlineComment` corresponds to comments that start with #.
     InlineComment,
-    /// EmbDocComment corresponds to comments that are surrounded by =begin and =end.
+    /// `EmbDocComment` corresponds to comments that are surrounded by =begin and =end.
     EmbDocComment,
 }
 
@@ -371,6 +371,7 @@ impl<'pr> Comment<'pr> {
     }
 
     /// Returns the type of the comment.
+    #[must_use]
     pub fn type_(&self) -> CommentType {
         let type_ = unsafe { self.content.as_ref().type_ };
         if type_ == pm_comment_type_t::PM_COMMENT_EMBDOC {
