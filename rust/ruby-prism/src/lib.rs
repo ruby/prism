@@ -372,7 +372,7 @@ impl<'pr> Comment<'pr> {
 
     /// Returns the type of the comment.
     pub fn type_(&self) -> CommentType {
-        let type_ = unsafe { self.comment.as_ref().type_ };
+        let type_ = unsafe { self.content.as_ref().type_ };
         if type_ == pm_comment_type_t::PM_COMMENT_EMBDOC {
             CommentType::EmbDocComment
         } else {
