@@ -59,7 +59,7 @@ jobs:
           cargo doc --no-deps --target-dir ../doc/rust
         working-directory: rust
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: doc
 

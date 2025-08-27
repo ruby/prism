@@ -35,7 +35,7 @@ jobs:
         run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
