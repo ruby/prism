@@ -25,7 +25,10 @@ module Prism
       except << "whitequark/ruby_bug_19281.txt"
     end
 
-    except << "leading_logical.txt" if RUBY_VERSION < "3.5.0"
+    if RUBY_VERSION < "3.5.0"
+      except << "leading_logical.txt"
+      except << "endless_methods_command_call.txt"
+    end
 
     Fixture.each(except: except) do |fixture|
       define_method(fixture.test_name) { assert_valid_syntax(fixture.read) }
