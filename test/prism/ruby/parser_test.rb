@@ -64,6 +64,9 @@ module Prism
 
       # 1.. && 2
       "ranges.txt",
+
+      # Ruby >= 3.5 specific syntax
+      "endless_methods_command_call.txt",
     ]
 
     # These files contain code that is being parsed incorrectly by the parser
