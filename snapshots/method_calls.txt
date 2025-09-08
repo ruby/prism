@@ -278,7 +278,7 @@
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
         │   └── block: ∅
-        ├── @ CallNode (location: (25,0)-(25,8))
+        ├── @ CallNode (location: (25,0)-(25,9))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -781,7 +781,7 @@
         │   │               └── block: ∅
         │   ├── closing_loc: (58,9)-(58,10) = ")"
         │   └── block: ∅
-        ├── @ CallNode (location: (60,0)-(60,39))
+        ├── @ CallNode (location: (60,0)-(60,40))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -1156,7 +1156,7 @@
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: (70,40)-(70,41) = ")"
         │   └── block: ∅
-        ├── @ CallNode (location: (72,0)-(72,35))
+        ├── @ CallNode (location: (72,0)-(72,36))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅

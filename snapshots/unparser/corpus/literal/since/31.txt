@@ -26,10 +26,10 @@
         │   │       ├── name_loc: ∅
         │   │       └── operator_loc: (1,8)-(1,9) = "&"
         │   ├── body:
-        │   │   @ StatementsNode (location: (2,2)-(2,7))
+        │   │   @ StatementsNode (location: (2,2)-(2,8))
         │   │   ├── flags: ∅
         │   │   └── body: (length: 1)
-        │   │       └── @ CallNode (location: (2,2)-(2,7))
+        │   │       └── @ CallNode (location: (2,2)-(2,8))
         │   │           ├── flags: newline, ignore_visibility
         │   │           ├── receiver: ∅
         │   │           ├── call_operator_loc: ∅
@@ -74,10 +74,10 @@
             │       ├── name_loc: ∅
             │       └── operator_loc: (5,11)-(5,12) = "&"
             ├── body:
-            │   @ StatementsNode (location: (6,2)-(6,7))
+            │   @ StatementsNode (location: (6,2)-(6,8))
             │   ├── flags: ∅
             │   └── body: (length: 1)
-            │       └── @ CallNode (location: (6,2)-(6,7))
+            │       └── @ CallNode (location: (6,2)-(6,8))
             │           ├── flags: newline, ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅

@@ -26,10 +26,10 @@
             │       ├── name_loc: ∅
             │       └── operator_loc: (1,8)-(1,9) = "&"
             ├── body:
-            │   @ StatementsNode (location: (1,12)-(1,17))
+            │   @ StatementsNode (location: (1,12)-(1,18))
             │   ├── flags: ∅
             │   └── body: (length: 1)
-            │       └── @ CallNode (location: (1,12)-(1,17))
+            │       └── @ CallNode (location: (1,12)-(1,18))
             │           ├── flags: newline, ignore_visibility
             │           ├── receiver: ∅
             │           ├── call_operator_loc: ∅
