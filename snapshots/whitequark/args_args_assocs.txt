@@ -1,8 +1,8 @@
-@ ProgramNode (location: (1,0)-(3,24))
+@ ProgramNode (location: (1,0)-(3,25))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(3,24))
+    @ StatementsNode (location: (1,0)-(3,25))
     ├── flags: ∅
     └── body: (length: 2)
         ├── @ CallNode (location: (1,0)-(1,19))
@@ -45,7 +45,7 @@
         │   │                   └── operator_loc: (1,14)-(1,16) = "=>"
         │   ├── closing_loc: (1,18)-(1,19) = ")"
         │   └── block: ∅
-        └── @ CallNode (location: (3,0)-(3,24))
+        └── @ CallNode (location: (3,0)-(3,25))
             ├── flags: newline, ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅

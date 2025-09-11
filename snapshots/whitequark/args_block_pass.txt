@@ -1,11 +1,11 @@
-@ ProgramNode (location: (1,0)-(1,8))
+@ ProgramNode (location: (1,0)-(1,9))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(1,8))
+    @ StatementsNode (location: (1,0)-(1,9))
     ├── flags: ∅
     └── body: (length: 1)
-        └── @ CallNode (location: (1,0)-(1,8))
+        └── @ CallNode (location: (1,0)-(1,9))
             ├── flags: newline, ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅

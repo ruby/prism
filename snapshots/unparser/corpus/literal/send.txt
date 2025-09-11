@@ -813,7 +813,7 @@
         │   │           └── unescaped: "bar"
         │   ├── closing_loc: ∅
         │   └── block: ∅
-        ├── @ CallNode (location: (50,0)-(50,17))
+        ├── @ CallNode (location: (50,0)-(50,18))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -860,7 +860,7 @@
         │       │   ├── opening_loc: (50,5)-(50,6) = "("
         │       │   └── closing_loc: (50,16)-(50,17) = ")"
         │       └── operator_loc: (50,4)-(50,5) = "&"
-        ├── @ CallNode (location: (51,0)-(51,10))
+        ├── @ CallNode (location: (51,0)-(51,11))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -884,7 +884,7 @@
         │       │   ├── closing_loc: ∅
         │       │   └── block: ∅
         │       └── operator_loc: (51,4)-(51,5) = "&"
-        ├── @ CallNode (location: (52,0)-(52,17))
+        ├── @ CallNode (location: (52,0)-(52,18))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
