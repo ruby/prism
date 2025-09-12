@@ -17,7 +17,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (1,2)-(1,8))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal, mutable
         │   │           ├── opening_loc: (1,2)-(1,8) = "<<~\"E\""
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (2,0)-(3,0))
@@ -109,7 +109,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (11,2)-(11,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (11,2)-(11,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (12,0)-(13,0))
@@ -139,7 +139,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (16,2)-(16,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (16,2)-(16,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (17,0)-(18,0))
@@ -169,7 +169,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (21,2)-(21,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (21,2)-(21,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (22,0)-(23,0))
@@ -199,7 +199,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (26,2)-(26,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (26,2)-(26,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (27,0)-(28,0))
@@ -229,7 +229,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (31,2)-(31,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (31,2)-(31,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (32,0)-(33,0))
@@ -259,7 +259,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (36,2)-(36,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (36,2)-(36,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (37,0)-(38,0))
@@ -308,7 +308,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (44,2)-(44,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (44,2)-(44,6) = "<<~E"
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (45,0)-(46,0))
@@ -344,7 +344,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (50,2)-(50,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (50,2)-(50,6) = "<<~E"
         │   │           ├── parts: (length: 3)
         │   │           │   ├── @ StringNode (location: (51,0)-(52,0))
@@ -380,7 +380,7 @@
         │   │   ├── flags: ∅
         │   │   └── arguments: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (56,2)-(56,6))
-        │   │           ├── flags: ∅
+        │   │           ├── flags: static_literal
         │   │           ├── opening_loc: (56,2)-(56,6) = "<<~E"
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (57,0)-(58,0))
