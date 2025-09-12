@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.5.0] - 2025-09-12
+
+### Added
+
+- Add `Prism::Translation::ParserCurrent`.
+- Add `Integer::to_u32_digits` for the Rust API.
+- Add `pm_comment_type_t` field for the Rust API.
+- Support leading logical operators for CRuby 3.5+.
+
+### Changed
+
+- Mark Prism as ractor-safe.
+- Enforce a minimum version for the parser translation layer.
+- Many fixes to the parser translation layer.
+- Accept a newline after the `defined?` keyword.
+- Reject `true && not true`.
+- Make `it = it` assign nil to match parse.y behavior [Bug #21139].
+- Some fixes to the ruby parser translation layer.
+- Ensure call nodes have the correct ending location.
+- Reject `foo && return bar`.
+
 ## [1.4.0] - 2025-03-18
 
 ### Added
@@ -649,7 +670,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/ruby/prism/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ruby/prism/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ruby/prism/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ruby/prism/compare/v1.1.0...v1.2.0
