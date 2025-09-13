@@ -7,8 +7,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
-    logger (1.6.1)
-    mini_portile2 (2.8.8)
+    logger (1.7.0)
+    mini_portile2 (2.8.9)
     nokogiri (1.17.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
