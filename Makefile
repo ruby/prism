@@ -15,6 +15,7 @@ CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion 
 JAVA_WASM_CFLAGS := -g -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(JAVA_WASM_CFLAGS)
 CC ?= cc
 AR ?= ar
+ARFLAGS ?= -r$(V0:1=v)
 WASI_SDK_PATH := /opt/wasi-sdk
 
 MAKEDIRS ?= mkdir -p
@@ -38,7 +39,7 @@ build/libprism.$(SOEXT): $(SHARED_OBJECTS)
 
 build/libprism.a: $(STATIC_OBJECTS)
 	$(ECHO) "building $@ with $(AR)"
-	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS) $(Q1:0=>/dev/null)
+	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
 
 javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 	$(ECHO) "building $@"
