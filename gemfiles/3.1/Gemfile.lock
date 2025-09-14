@@ -25,6 +25,10 @@ GEM
       logger
     ruby_memcheck (3.0.1)
       nokogiri
+    ruby_parser (3.21.1)
+      racc (~> 1.5)
+      sexp_processor (~> 4.16)
+    sexp_processor (4.17.4)
     test-unit (3.7.0)
       power_assert
 
@@ -39,6 +43,7 @@ DEPENDENCIES
   rake-compiler
   rbs
   ruby_memcheck
+  ruby_parser
   test-unit
 
 RUBY VERSION
