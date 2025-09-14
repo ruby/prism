@@ -17,6 +17,10 @@ GEM
     rake-compiler (1.3.0)
       rake
     rbs (3.1.3)
+    ruby_parser (3.21.1)
+      racc (~> 1.5)
+      sexp_processor (~> 4.16)
+    sexp_processor (4.17.4)
     test-unit (3.7.0)
       power_assert
 
@@ -30,6 +34,7 @@ DEPENDENCIES
   rake
   rake-compiler
   rbs
+  ruby_parser
   test-unit
 
 RUBY VERSION
