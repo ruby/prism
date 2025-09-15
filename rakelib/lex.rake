@@ -62,11 +62,10 @@ module Prism
     def parallelize(items, &block)
       Thread.abort_on_exception = true
 
-      queue = Queue.new
-      items.each { |item| queue << item }
+      queue = Queue.new(items).close
 
       workers =
-        ENV.fetch("WORKERS") { 16 }.to_i.times.map do
+        ENV.fetch("WORKERS", "16").to_i.times.map do
           parallelize_thread(queue, &block)
         end
 
@@ -77,7 +76,11 @@ module Prism
 
     # Create a new thread with a minimal number of locals that it can access.
     def parallelize_thread(queue, &block)
-      Thread.new { block.call(queue.shift) until queue.empty? }
+      Thread.new do
+        while item = queue.pop
+          block.call(item)
+        end
+      end
     end
   end
 end
