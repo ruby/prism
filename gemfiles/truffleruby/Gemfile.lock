@@ -34,7 +34,7 @@ DEPENDENCIES
   test-unit
 
 RUBY VERSION
-   ruby 3.3.5p0 (truffleruby 24.2.0)
+   ruby 3.3.7p0 (truffleruby 25.0.0)
 
 BUNDLED WITH
    2.4.19
