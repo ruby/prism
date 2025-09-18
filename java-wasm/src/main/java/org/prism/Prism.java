@@ -1,7 +1,7 @@
 package org.prism;
 
 import com.dylibso.chicory.runtime.ByteArrayMemory;
-import com.dylibso.chicory.experimental.hostmodule.annotations.WasmModuleInterface;
+import com.dylibso.chicory.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
