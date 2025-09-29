@@ -135,6 +135,7 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
 * [sorbet-eraser](https://github.com/kddnewton/sorbet-eraser/pull/25)
 * [synvert](https://github.com/xinminlabs/synvert-core-ruby)
 * [typeprof](https://github.com/ruby/typeprof)
+* [unparser](https://github.com/mbj/unparser) (via parser translator)
 
 ### Applications
 
