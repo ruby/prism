@@ -94,7 +94,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install ruby-full bundler libyaml-dev
     - name: Install dependencies
-      run: sudo bundle install --jobs 2
+      run: sudo bundle install --jobs $(nproc)
     - name: Run Ruby tests
       run: bundle exec rake
       shell: bash
