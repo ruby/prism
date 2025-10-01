@@ -17,7 +17,7 @@
             │   ├── flags: ∅
             │   └── arguments: (length: 1)
             │       └── @ InterpolatedStringNode (location: (1,2)-(1,12))
-            │           ├── flags: static_literal
+            │           ├── flags: ∅
             │           ├── opening_loc: ∅
             │           ├── parts: (length: 2)
             │           │   ├── @ StringNode (location: (1,2)-(1,6))

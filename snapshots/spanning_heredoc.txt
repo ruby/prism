@@ -78,7 +78,7 @@
         │   │       │   ├── closing_loc: (12,0)-(13,0) = "A\n"
         │   │       │   └── unescaped: "c\n"
         │   │       └── @ InterpolatedStringNode (location: (10,9)-(13,2))
-        │   │           ├── flags: static_literal
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (10,9)-(10,10) = "\""
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (10,10)-(10,12))
@@ -114,7 +114,7 @@
         │   │       │   ├── closing_loc: (18,0)-(19,0) = "A\n"
         │   │       │   └── unescaped: "e\n"
         │   │       └── @ InterpolatedStringNode (location: (16,9)-(19,2))
-        │   │           ├── flags: static_literal
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (16,9)-(16,12) = "%q["
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (16,12)-(16,14))
@@ -150,7 +150,7 @@
         │   │       │   ├── closing_loc: (24,0)-(25,0) = "A\n"
         │   │       │   └── unescaped: "g\n"
         │   │       └── @ InterpolatedStringNode (location: (22,9)-(25,2))
-        │   │           ├── flags: static_literal
+        │   │           ├── flags: ∅
         │   │           ├── opening_loc: (22,9)-(22,12) = "%Q["
         │   │           ├── parts: (length: 2)
         │   │           │   ├── @ StringNode (location: (22,12)-(22,14))
@@ -222,10 +222,10 @@
         │   │       │   ├── closing_loc: (37,0)-(38,0) = "A\n"
         │   │       │   └── unescaped: "k\n"
         │   │       └── @ ArrayNode (location: (35,9)-(38,2))
-        │   │           ├── flags: static_literal
+        │   │           ├── flags: ∅
         │   │           ├── elements: (length: 1)
         │   │           │   └── @ InterpolatedStringNode (location: (35,12)-(38,1))
-        │   │           │       ├── flags: static_literal
+        │   │           │       ├── flags: ∅
         │   │           │       ├── opening_loc: ∅
         │   │           │       ├── parts: (length: 2)
         │   │           │       │   ├── @ StringNode (location: (35,12)-(35,14))
