@@ -39,7 +39,7 @@
             │   │   ├── closing_loc: (5,10)-(5,11) = "'"
             │   │   └── unescaped: "bar"
             │   └── @ InterpolatedStringNode (location: (5,12)-(5,23))
-            │       ├── flags: frozen
+            │       ├── flags: ∅
             │       ├── opening_loc: (5,12)-(5,13) = "\""
             │       ├── parts: (length: 2)
             │       │   ├── @ StringNode (location: (5,13)-(5,16))
