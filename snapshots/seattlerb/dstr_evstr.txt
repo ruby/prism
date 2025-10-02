@@ -6,7 +6,7 @@
     ├── flags: ∅
     └── body: (length: 1)
         └── @ InterpolatedStringNode (location: (1,0)-(1,12))
-            ├── flags: newline, mutable
+            ├── flags: newline
             ├── opening_loc: (1,0)-(1,1) = "\""
             ├── parts: (length: 2)
             │   ├── @ EmbeddedStatementsNode (location: (1,1)-(1,7))
