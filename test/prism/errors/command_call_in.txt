@@ -2,4 +2,17 @@ foo 1 in a
       ^~ unexpected 'in', expecting end-of-input
       ^~ unexpected 'in', ignoring it
 a = foo 2 in b
+A.print foo in 'BAR'
+            ^~ unexpected 'in', expecting end-of-input
+            ^~ unexpected 'in', ignoring it
+A.print foo: bar in 'BAR'
+                 ^~ unexpected 'in', expecting end-of-input
+                 ^~ unexpected 'in', ignoring it
+A.print message: in 'BAR'
+                 ^~ unexpected 'in', expecting end-of-input
+                 ^~ unexpected 'in', ignoring it
+A.print message:
+in 'BAR'
+^~ unexpected 'in', expecting end-of-input
+^~ unexpected 'in', ignoring it
 

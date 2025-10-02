@@ -22311,14 +22311,23 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
                     return node;
                 }
                 break;
-            case PM_CALL_NODE:
+            case PM_CALL_NODE: {
                 // These expressions are also statements, by virtue of the
                 // right-hand side of the expression (i.e., the last argument to
                 // the call node) being an implicit array.
                 if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_IMPLICIT_ARRAY) && pm_binding_powers[parser->current.type].left > PM_BINDING_POWER_MODIFIER) {
                     return node;
                 }
+
+                // Method calls with arguments (without parentheses)
+                // cannot be followed by the `in` operator.
+                pm_call_node_t *cast = (pm_call_node_t *) node;
+                if (cast->arguments != NULL && cast->opening_loc.start == NULL && parser->current.type == PM_TOKEN_KEYWORD_IN) {
+                    return node;
+                }
+
                 break;
+            }
             default:
                 break;
         }
