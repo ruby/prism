@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (1.5.1)
+    prism (1.5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -44,4 +44,4 @@ RUBY VERSION
    ruby 3.4.2p0 (jruby 10.0.0.0)
 
 BUNDLED WITH
-   2.6.3
+   2.7.2

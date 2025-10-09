@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.5.2] - 2025-10-09
+
+### Changed
+
+- Fix character literal forced encoding when a unicode escape sequence is used.
+- Reject `1 if foo = bar baz`.
+- Clear static literal flag on interpolated strings.
+- Reject optional argument/endless method definition ambiguity.
+
 ## [1.5.1] - 2025-09-13
 
 ### Changed
@@ -676,7 +685,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.5.1...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/ruby/prism/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/ruby/prism/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/ruby/prism/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ruby/prism/compare/v1.3.0...v1.4.0
