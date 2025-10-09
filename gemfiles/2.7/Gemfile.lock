@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (1.5.1)
+    prism (1.5.2)
 
 GEM
   remote: https://rubygems.org/

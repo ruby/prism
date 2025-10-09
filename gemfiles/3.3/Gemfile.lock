@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (1.5.1)
+    prism (1.5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -9,7 +9,7 @@ GEM
     ast (2.4.3)
     logger (1.7.0)
     mini_portile2 (2.8.9)
-    nokogiri (1.18.9)
+    nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
@@ -50,4 +50,4 @@ RUBY VERSION
    ruby 3.3.0p0
 
 BUNDLED WITH
-   2.5.16
+   2.5.22
