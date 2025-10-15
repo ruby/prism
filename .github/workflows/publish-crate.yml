@@ -19,10 +19,8 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
-
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
+          ruby-version: "3.4"
+          bundler-cache: true
 
       - uses: rust-lang/crates-io-auth-action@v1
         id: auth

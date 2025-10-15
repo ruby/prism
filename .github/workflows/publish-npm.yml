@@ -19,16 +19,14 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: "3.4"
+          bundler-cache: true
 
       - name: Set up node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
 
       - name: rake templates
         run: bundle exec rake templates

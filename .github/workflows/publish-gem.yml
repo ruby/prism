@@ -33,9 +33,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
-
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
+          bundler-cache: true
 
       - name: Publish to RubyGems
         uses: rubygems/release-gem@v1
