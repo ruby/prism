@@ -11,8 +11,8 @@ FUZZ_OUTPUT_DIR = $(CURDIR)/fuzz/output
 SOEXT ?= $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
 CPPFLAGS := -Iinclude $(CPPFLAGS)
-CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(CFLAGS)
-JAVA_WASM_CFLAGS := -g -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(JAVA_WASM_CFLAGS)
+CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough -Wsign-conversion $(CFLAGS)
+JAVA_WASM_CFLAGS := -g -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough -Wsign-conversion $(JAVA_WASM_CFLAGS)
 CC ?= cc
 AR ?= ar
 ARFLAGS ?= -r$(V0:1=v)
