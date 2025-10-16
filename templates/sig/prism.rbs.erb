@@ -2,6 +2,10 @@ module Prism
   BACKEND: :CEXT | :FFI
   VERSION: String
 
+  class CurrentVersionError < ArgumentError
+    def initialize: (String version) -> void
+  end
+
   # Methods taking a Ruby source code string:
   <%-
     {
