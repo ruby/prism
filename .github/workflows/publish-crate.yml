@@ -1,0 +1,30 @@
+name: Publish to crates.io
+on:
+  push:
+    tags: ['v*']  # Triggers when pushing tags starting with 'v'
+jobs:
+  publish:
+    if: github.repository == 'ruby/prism'
+    runs-on: ubuntu-latest
+    environment: release  # Optional: for enhanced security
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@v5
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
+
+      - run: bundle exec rake cargo:publish:real
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
