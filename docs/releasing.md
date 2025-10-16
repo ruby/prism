@@ -49,6 +49,7 @@ bundle install
 ```sh
 for VERSION in "2.7" "3.0" "3.1" "3.2" "3.3" "3.4"; do docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/$VERSION/Gemfile" "ruby:$VERSION" bundle update; done
 docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/3.5/Gemfile" ruby:3.5.0-preview1 bundle update
+docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/jruby/Gemfile" jruby:latest bundle update
 BUNDLE_GEMFILE=gemfiles/truffleruby/Gemfile chruby-exec truffleruby -- bundle update
 ```
 
@@ -73,26 +74,4 @@ git push
 ## Publishing
 
 * Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
-* Publish the gem to [rubygems.org](rubygems.org). Note that you must have access to the `prism` gem to do this.
-
-```sh
-bundle exec rake release
-```
-
-* Generate the `wasm` artifact (or download it from GitHub actions and put it in `javascript/src/prism.wasm`).
-
-```sh
-make wasm
-```
-
-* Publish the JavaScript package to [npmjs.com](npmjs.com). Note that you must have access to the `@ruby/prism` package to do this.
-
-```sh
-npm publish
-```
-
-* Publish the rust crate to [crates.io](crates.io). Note that you must have access to the `ruby-prism-sys` and `ruby-prism` crates to do this.
-
-```sh
-bundle exec rake cargo:publish:real
-```
+* Push a new tag to the GitHub repository, following the `vX.Y.Z` format.

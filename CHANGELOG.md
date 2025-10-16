@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-10-16
+
+### Added
+
+- Add support for passing `"current"` as the version option to `Prism.*` APIs.
+
+### Changed
+
+- Remove a compiler warning for a missing unsigned cast for a shift value.
+
 ## [1.5.2] - 2025-10-09
 
 ### Changed
@@ -685,7 +695,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.5.2...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/ruby/prism/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/ruby/prism/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/ruby/prism/compare/v1.4.0...v1.5.0
