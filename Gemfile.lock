@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    prism (1.5.2)
+    prism (1.6.0)
 
 GEM
   remote: https://rubygems.org/
@@ -9,7 +9,7 @@ GEM
     ast (2.4.3)
     benchmark-ips (2.14.0)
     date (3.4.1)
-    erb (5.0.3)
+    erb (5.1.1)
     ffi (1.17.2)
     mini_portile2 (2.8.9)
     nokogiri (1.18.10)
