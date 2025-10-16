@@ -40,8 +40,8 @@ jobs:
           ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
           autoconf
           ./configure -C --disable-install-doc
-          make -j2
+          make -j$(nproc)
         working-directory: ruby/ruby
       - name: make test-all
-        run: make -j2 -s test-all
+        run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby
