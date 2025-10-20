@@ -295,7 +295,7 @@ jobs:
           - { ruby: "3.2", os: "windows-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "windows-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "windows-latest", gemfile: "3.4" }
-          # - { ruby: "head", os: "windows-latest", gemfile: "3.5" } <-- failing certs, temporarily disabled
+          - { ruby: "head", os: "windows-latest", gemfile: "3.5" }
           - { ruby: "jruby-10.0.0.0", os: "windows-latest", gemfile: "jruby" } # https://github.com/jruby/jruby/issues/8923
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
