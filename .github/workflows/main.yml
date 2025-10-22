@@ -65,7 +65,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          # - windows-latest <-- failing with fiddle error, temporarily disabled
+          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5
@@ -145,7 +145,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          # - windows-latest <-- failing with fiddle error, temporarily disabled
+          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5

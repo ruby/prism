@@ -11,6 +11,7 @@ GEM
     date (3.4.1)
     erb (5.1.1)
     ffi (1.17.2)
+    fiddle (1.1.8)
     mini_portile2 (2.8.9)
     nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
@@ -48,6 +49,7 @@ PLATFORMS
 DEPENDENCIES
   benchmark-ips
   ffi
+  fiddle
   onigmo
   parser
   prism!
