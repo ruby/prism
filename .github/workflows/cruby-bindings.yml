@@ -12,6 +12,14 @@ on:
 
 jobs:
   test-all:
+    strategy:
+      matrix:
+        # Some tests in this repository are only run against parse.y
+        # We test them here in order to not fail ruby/ruby CI.
+        parser:
+          - prism
+          - parse.y
+
     runs-on: ubuntu-24.04
     steps:
       - name: Set up latest ruby head
@@ -39,9 +47,11 @@ jobs:
         run: |
           ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
           autoconf
-          ./configure -C --disable-install-doc
+          ./configure -C --disable-install-doc --with-parser=${{ matrix.parser }}
           make -j$(nproc)
         working-directory: ruby/ruby
       - name: make test-all
+        env:
+          RUN_OPTS: --parser=${{ matrix.parser }}
         run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby
