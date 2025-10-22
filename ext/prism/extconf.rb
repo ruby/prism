@@ -37,7 +37,7 @@ end
 def generate_templates
   Dir.chdir(File.expand_path("../..", __dir__)) do
     if !File.exist?("include/prism/ast.h") && Dir.exist?(".git")
-      system("templates/template.rb", exception: true)
+      system(RbConfig.ruby, "templates/template.rb", exception: true)
     end
   end
 end
