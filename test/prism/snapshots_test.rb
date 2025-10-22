@@ -36,16 +36,16 @@ module Prism
       )
     end
 
-    Fixture.each(except: except) do |fixture|
-      define_method(fixture.test_name) { assert_snapshot(fixture) }
+    Fixture.each_with_version(except: except) do |fixture, version|
+      define_method(fixture.test_name(version)) { assert_snapshot(fixture, version) }
     end
 
     private
 
-    def assert_snapshot(fixture)
+    def assert_snapshot(fixture, version)
       source = fixture.read
 
-      result = Prism.parse(source, filepath: fixture.path)
+      result = Prism.parse(source, filepath: fixture.path, version: version)
       assert result.success?
 
       printed = PP.pp(result.value, +"", 79)
@@ -57,8 +57,14 @@ module Prism
         # If the snapshot file exists, but the printed value does not match the
         # snapshot, then update the snapshot file.
         if printed != saved
-          File.write(snapshot, printed)
-          warn("Updated snapshot at #{snapshot}.")
+          if ENV["UPDATE_SNAPSHOTS"]
+            File.write(snapshot, printed)
+          else
+            warn("Snapshot at #{snapshot} outdated for #{version}. Run with UPDATE_SNAPSHOTS=1 " \
+              "to regenerate the files. If modifying behaviour for a subset of ruby versions, " \
+              "instead move the fixture and snapshot into versioned directories. For more details, " \
+              "see `Prism::TestCase.ruby_versions_for`.")
+          end
         end
 
         # If the snapshot file exists, then assert that the printed value
