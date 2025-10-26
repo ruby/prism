@@ -57,8 +57,10 @@
         │   │           │           ├── closing_loc: (7,5)-(7,6) = "\""
         │   │           │           └── unescaped: ""
         │   │           ├── closing_loc: (7,6)-(7,7) = ")"
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (10,0)-(13,2))
         │   ├── flags: newline, ignore_visibility
@@ -95,6 +97,7 @@
         │   │           │       └── unescaped: "d"
         │   │           └── closing_loc: (13,1)-(13,2) = "\""
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (16,0)-(19,2))
         │   ├── flags: newline, ignore_visibility
@@ -131,6 +134,7 @@
         │   │           │       └── unescaped: "f"
         │   │           └── closing_loc: (19,1)-(19,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (22,0)-(25,2))
         │   ├── flags: newline, ignore_visibility
@@ -167,6 +171,7 @@
         │   │           │       └── unescaped: "h"
         │   │           └── closing_loc: (25,1)-(25,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (28,0)-(31,2))
         │   ├── flags: newline, ignore_visibility
@@ -203,6 +208,7 @@
         │   │           ├── opening_loc: (28,9)-(28,12) = "%w["
         │   │           └── closing_loc: (31,1)-(31,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (35,0)-(38,2))
         │   ├── flags: newline, ignore_visibility
@@ -244,6 +250,7 @@
         │   │           ├── opening_loc: (35,9)-(35,12) = "%W["
         │   │           └── closing_loc: (38,1)-(38,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (41,0)-(44,2))
         │   ├── flags: newline, ignore_visibility
@@ -280,6 +287,7 @@
         │   │           ├── opening_loc: (41,9)-(41,12) = "%i["
         │   │           └── closing_loc: (44,1)-(44,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (48,0)-(51,2))
         │   ├── flags: newline, ignore_visibility
@@ -321,6 +329,7 @@
         │   │           ├── opening_loc: (48,9)-(48,12) = "%I["
         │   │           └── closing_loc: (51,1)-(51,2) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ StringNode (location: (53,0)-(53,3))
         │   ├── flags: newline
@@ -366,6 +375,7 @@
         │   │   │           ├── closing_loc: (55,12)-(55,13) = "'"
         │   │   │           └── unescaped: ""
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   └── targets: (length: 1)
         │       └── @ LocalVariableTargetNode (location: (53,5)-(55,7))

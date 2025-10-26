@@ -36,8 +36,10 @@
         │   │           │           ├── opening_loc: ∅
         │   │           │           ├── arguments: ∅
         │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
         │   │           │           └── block: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (1,12)-(1,18))
         │   │               ├── flags: ∅
@@ -47,6 +49,7 @@
         │   │               ├── opening_loc: (1,12)-(1,14) = "do"
         │   │               └── closing_loc: (1,15)-(1,18) = "end"
         │   ├── closing_loc: (1,18)-(1,19) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         └── @ CallNode (location: (3,0)-(3,17))
             ├── flags: newline, ignore_visibility
@@ -79,6 +82,7 @@
             │           │       │   ├── opening_loc: ∅
             │           │       │   ├── arguments: ∅
             │           │       │   ├── closing_loc: ∅
+            │           │       │   ├── equal_loc: ∅
             │           │       │   └── block: ∅
             │           │       └── @ CallNode (location: (3,13)-(3,16))
             │           │           ├── flags: variable_call, ignore_visibility
@@ -89,8 +93,11 @@
             │           │           ├── opening_loc: ∅
             │           │           ├── arguments: ∅
             │           │           ├── closing_loc: ∅
+            │           │           ├── equal_loc: ∅
             │           │           └── block: ∅
             │           ├── closing_loc: ∅
+            │           ├── equal_loc: ∅
             │           └── block: ∅
             ├── closing_loc: (3,16)-(3,17) = ")"
+            ├── equal_loc: ∅
             └── block: ∅

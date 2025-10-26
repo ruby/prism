@@ -34,6 +34,7 @@
         │   │           │       └── unescaped: "there"
         │   │           └── closing_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ ArrayNode (location: (4,0)-(5,2))
         │   ├── flags: newline, static_literal
@@ -108,7 +109,9 @@
             │   │           ├── opening_loc: ∅
             │   │           ├── arguments: ∅
             │   │           ├── closing_loc: ∅
+            │   │           ├── equal_loc: ∅
             │   │           └── block: ∅
             │   ├── closing_loc: (17,19)-(17,20) = ")"
+            │   ├── equal_loc: ∅
             │   └── block: ∅
             └── operator_loc: (17,2)-(17,3) = "="
