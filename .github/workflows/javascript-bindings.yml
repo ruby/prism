@@ -34,7 +34,7 @@ jobs:
       - name: Build the project
         run: make wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: prism.wasm
           path: javascript/src/prism.wasm
