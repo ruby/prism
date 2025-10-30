@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     groups:
       action-deps:
         patterns:
@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: 'maven'
     directory: '/java-wasm'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     groups:
       java-deps:
         patterns:
@@ -29,7 +29,7 @@ updates:
       - '/gemfiles/truffleruby'
       - '/gemfiles/typecheck'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     groups:
       ruby-deps:
         patterns:
