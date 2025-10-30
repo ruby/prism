@@ -34,4 +34,5 @@
             │           │       └── unescaped: ""
             │           └── closing_loc: ∅
             ├── closing_loc: ∅
+            ├── equal_loc: ∅
             └── block: ∅

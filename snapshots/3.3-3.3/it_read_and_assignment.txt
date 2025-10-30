@@ -17,6 +17,7 @@
             ├── opening_loc: ∅
             ├── arguments: ∅
             ├── closing_loc: ∅
+            ├── equal_loc: ∅
             └── block:
                 @ BlockNode (location: (1,7)-(1,30))
                 ├── flags: ∅
@@ -46,8 +47,10 @@
                 │       │   │           ├── opening_loc: ∅
                 │       │   │           ├── arguments: ∅
                 │       │   │           ├── closing_loc: ∅
+                │       │   │           ├── equal_loc: ∅
                 │       │   │           └── block: ∅
                 │       │   ├── closing_loc: ∅
+                │       │   ├── equal_loc: ∅
                 │       │   └── block: ∅
                 │       ├── @ LocalVariableWriteNode (location: (1,15)-(1,22))
                 │       │   ├── flags: newline
@@ -76,6 +79,7 @@
                 │           │           ├── name: :it
                 │           │           └── depth: 0
                 │           ├── closing_loc: ∅
+                │           ├── equal_loc: ∅
                 │           └── block: ∅
                 ├── opening_loc: (1,7)-(1,8) = "{"
                 └── closing_loc: (1,29)-(1,30) = "}"
