@@ -142,10 +142,10 @@ fn struct_name(name: &str) -> String {
     result
 }
 
-fn kind_to_type(kind: &String) -> String {
-    match kind.as_str() {
+fn kind_to_type(kind: &str) -> String {
+    match kind {
         "non-void expression" | "pattern expression" | "Node" => String::new(),
-        _ => kind.to_string(),
+        _ => kind.to_owned(),
     }
 }
 
