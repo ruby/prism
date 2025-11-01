@@ -149,6 +149,12 @@ impl<'pr> NodeList<'pr> {
             marker: PhantomData,
         }
     }
+
+    /// Returns the size of the list.
+    #[must_use]
+    pub const fn size(&self) -> usize {
+        unsafe { self.pointer.as_ref().size }
+    }
 }
 
 impl<'pr> IntoIterator for &NodeList<'pr> {
@@ -795,6 +801,7 @@ mod tests {
         let result = parse(source.as_ref());
 
         let node = result.node();
+        assert_eq!(node.as_program_node().unwrap().statements().body().size(), 1);
         let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
         let module = module.as_module_node().unwrap();
         let locals = module.locals().iter().collect::<Vec<_>>();
