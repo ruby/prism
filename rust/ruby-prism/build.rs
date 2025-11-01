@@ -117,12 +117,12 @@ struct Config {
 ///
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let prism_dir = format!("prism-{}", env!("CARGO_PKG_VERSION"));
-    let config_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("vendor").join(prism_dir).join("config.yml");
+    let config_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("vendor").join(prism_dir).join("config.json");
 
     let config_file = std::fs::File::open(&config_path)?;
     println!("cargo:rerun-if-changed={}", config_path.to_str().unwrap());
 
-    let config: Config = serde_yaml::from_reader(config_file)?;
+    let config: Config = serde_json::from_reader(config_file)?;
     write_bindings(&config)?;
 
     Ok(())

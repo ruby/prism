@@ -23,7 +23,7 @@ include = ["src/", "build.rs", "Cargo.toml", "Cargo.lock", "vendor"]
 
 [build-dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
+serde_json = "1.0"
 
 [dependencies]
 ruby-prism-sys = { version = "1.6.0", path = "../ruby-prism-sys" }
