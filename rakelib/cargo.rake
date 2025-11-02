@@ -3,6 +3,9 @@ namespace :cargo do
 
   desc "Build and test the Rust packages"
   task build: [:templates] do
+    require "json"
+    require "yaml"
+
     gemspec = Gem::Specification.load("prism.gemspec")
 
     prism_sys_dir = Pathname(File.expand_path(File.join(__dir__, "../rust", "ruby-prism-sys")))
@@ -18,7 +21,11 @@ namespace :cargo do
 
     rm_rf(prism_dir.join("vendor"))
     mkdir_p(prism_vendor_dir)
-    cp(File.expand_path("../config.yml", __dir__), prism_vendor_dir.join("config.yml"))
+
+    # This used `serde_yaml` previously, which is now deprecated. Convert it to json
+    # so that `serde_json` can be used instead, keeping it strongly typed.
+    config_yaml = YAML.load_file(File.expand_path("../config.yml", __dir__))
+    File.write(prism_vendor_dir.join("config.json"), JSON.dump(config_yaml))
 
     # Align the Cargo.toml version with the gemspec version
     CRATES.each do |crate|
