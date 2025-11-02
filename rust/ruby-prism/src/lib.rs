@@ -155,6 +155,12 @@ impl<'pr> NodeList<'pr> {
     pub const fn len(&self) -> usize {
         unsafe { self.pointer.as_ref().size }
     }
+
+    /// Returns whether the list is empty.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl<'pr> IntoIterator for &NodeList<'pr> {
@@ -802,6 +808,7 @@ mod tests {
 
         let node = result.node();
         assert_eq!(node.as_program_node().unwrap().statements().body().len(), 1);
+        assert!(!node.as_program_node().unwrap().statements().body().is_empty());
         let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
         let module = module.as_module_node().unwrap();
         let locals = module.locals().iter().collect::<Vec<_>>();
