@@ -30,6 +30,7 @@ PLATFORMS
 DEPENDENCIES
   onigmo
   parser
+  power_assert (~> 2.0)
   prism!
   rake
   rake-compiler

@@ -8,6 +8,7 @@ gemspec path: "../.."
 
 gem "onigmo", platforms: :ruby
 gem "parser"
+gem "power_assert", "~> 2.0" # https://github.com/test-unit/test-unit/pull/329
 gem "rake-compiler"
 gem "rake"
 gem "rbs"
