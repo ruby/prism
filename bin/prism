@@ -15,6 +15,7 @@ module Prism
       when "encoding"   then encoding(argv)
       when "error"      then error(argv)
       when "lex"        then lex(argv)
+      when "lex_compat" then lex_compat(argv)
       when "locals"     then locals(argv)
       when "parse"      then parse(argv)
       when "parser"     then parser(argv)
@@ -31,6 +32,7 @@ module Prism
             bin/prism encoding [encoding]
             bin/prism error [name] [source]
             bin/prism lex [source]
+            bin/prism lex_compat [source]
             bin/prism locals [source]
             bin/prism parse [source]
             bin/prism parser [source]
@@ -194,6 +196,21 @@ module Prism
 
     # bin/prism lex [source]
     def lex(argv)
+      source, filepath = read_source(argv)
+      prism = Prism.lex(source, filepath: filepath)
+      max_token_type_length = prism.value.max_by { |token,| token.type.length }[0].type.length
+
+      prism.value.each do |token,|
+        loc = token.location
+        puts(format(
+          "%-#{max_token_type_length + 1}s(%s,%s)-(%s,%s) %s",
+          token.type, loc.start_line, loc.start_column, loc.end_line, loc.end_column, token.value.inspect
+        ))
+      end
+    end
+
+    # bin/prism lex_compat [source]
+    def lex_compat(argv)
       source, filepath = read_source(argv)
 
       ripper_value =
