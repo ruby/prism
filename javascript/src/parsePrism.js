@@ -146,7 +146,7 @@ function dumpOptions(options) {
     values.push(1);
   } else if (options.version.match(/^3\.4(\.\d+)?$/)) {
     values.push(2);
-  } else if (options.version.match(/^3\.5(\.\d+)?$/)) {
+  } else if (options.version.match(/^3\.5(\.\d+)?$/) || options.version.match(/^4\.0(\.\d+)?$/)) {
     values.push(3);
   } else {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
