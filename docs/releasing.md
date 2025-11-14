@@ -40,7 +40,7 @@ ruby -pi -e 'gsub(/^ruby-prism-sys = \{ version = ".+?"/, %Q{ruby-prism-sys = \{
 * Update the `Gemfile.lock` file:
 
 ```sh
-chruby ruby-3.5.0-dev
+chruby ruby-4.0.0-dev
 bundle install
 ```
 
@@ -48,7 +48,7 @@ bundle install
 
 ```sh
 for VERSION in "2.7" "3.0" "3.1" "3.2" "3.3" "3.4"; do docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/$VERSION/Gemfile" "ruby:$VERSION" bundle update; done
-docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/3.5/Gemfile" ruby:3.5.0-preview1 bundle update
+docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/4.0/Gemfile" ruby:4.0.0-preview2 bundle update
 docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/jruby/Gemfile" jruby:latest bundle update
 BUNDLE_GEMFILE=gemfiles/truffleruby/Gemfile chruby-exec truffleruby -- bundle update
 ```
