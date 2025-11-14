@@ -15,7 +15,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 
-    <chicory.version>1.5.3</chicory.version>
+    <chicory.version>1.6.0</chicory.version>
     <junit.version>6.0.1</junit.version>
   </properties>
 
