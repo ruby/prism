@@ -2632,6 +2632,14 @@ nodes:
 
           super
           ^^^^^
+
+      A `ForwardingSuperNode` can still have a block.
+      All other arguments are forwarded as normal, except the original block is replaced with the new block.
+
+          super { 123 }
+          ^^^^^^^^^^^^^
+
+      If it has any other arguments, it would be a `SuperNode` instead.
   - name: GlobalVariableAndWriteNode
     fields:
       - name: name
@@ -4507,6 +4515,7 @@ nodes:
       - name: arguments
         type: node?
         kind: ArgumentsNode
+        comment: "Can be `nil` when there are empty parentheses, like `super()`."
       - name: rparen_loc
         type: location?
       - name: block
