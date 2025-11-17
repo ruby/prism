@@ -62,14 +62,14 @@ GEM
       sexp_processor (~> 4.16)
     securerandom (0.4.1)
     sexp_processor (4.17.4)
-    sorbet (0.6.12666)
-      sorbet-static (= 0.6.12666)
-    sorbet-runtime (0.6.12666)
-    sorbet-static (0.6.12666-universal-darwin)
-    sorbet-static (0.6.12666-x86_64-linux)
-    sorbet-static-and-runtime (0.6.12666)
-      sorbet (= 0.6.12666)
-      sorbet-runtime (= 0.6.12666)
+    sorbet (0.6.12768)
+      sorbet-static (= 0.6.12768)
+    sorbet-runtime (0.6.12768)
+    sorbet-static (0.6.12768-universal-darwin)
+    sorbet-static (0.6.12768-x86_64-linux)
+    sorbet-static-and-runtime (0.6.12768)
+      sorbet (= 0.6.12768)
+      sorbet-runtime (= 0.6.12768)
     spoom (1.6.3)
       erubi (>= 1.10.0)
       prism (>= 0.28.0)
@@ -132,7 +132,7 @@ DEPENDENCIES
   rake-compiler
   rbs
   ruby_parser
-  sorbet (<= 0.6.12666)
+  sorbet (<= 0.6.12769)
   steep (>= 1.7.0.dev.1)
   tapioca
   test-unit
