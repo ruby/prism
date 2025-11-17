@@ -53,5 +53,6 @@ jobs:
       - name: make test-all
         env:
           RUN_OPTS: --parser=${{ matrix.parser }}
+          EXCLUDES: ${{ matrix.parser == 'parse.y' && './test/.excludes-parsey' }}
         run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby
