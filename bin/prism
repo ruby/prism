@@ -12,7 +12,6 @@ module Prism
       when "bundle"     then bundle(argv)
       when "console"    then console
       when "dot"        then dot(argv)
-      when "encoding"   then encoding(argv)
       when "error"      then error(argv)
       when "lex"        then lex(argv)
       when "lex_compat" then lex_compat(argv)
@@ -29,7 +28,6 @@ module Prism
             bin/prism bundle [...]
             bin/prism console
             bin/prism dot [source]
-            bin/prism encoding [encoding]
             bin/prism error [name] [source]
             bin/prism lex [source]
             bin/prism lex_compat [source]
@@ -146,20 +144,6 @@ module Prism
           file.read
         end
       )
-    end
-
-    # bin/prism encoding [encoding]
-    def encoding(argv)
-      found = Encoding.find(argv.shift)
-      found = Encoding::ASCII_8BIT if found == Encoding::US_ASCII
-
-      if !found.ascii_compatible?
-        warn("Encoding `#{found.name}' is not ASCII compatible")
-        exit(1)
-      end
-
-      lookup_table(found)
-      unicode_lists(found) if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
     end
 
     # bin/prism error [name] [source]
@@ -375,66 +359,6 @@ module Prism
       pp diagnostics if diagnostics.any?
       pp parser_ast
       pp parser_tokens
-    end
-
-    # Generate the list of values that will be used in a lookup table for a
-    # given encoding.
-    def lookup_table_values(encoding)
-      (0...256).each_slice(16).map.with_index do |slice, row_index|
-        slice.map do |codepoint|
-          character = codepoint.chr(encoding)
-
-          values = 0
-          values |= (1 << 0) if character.match?(/[[:alpha:]]/)
-          values |= (1 << 1) if character.match?(/[[:alnum:]]/)
-          values |= (1 << 2) if character.match?(/[[:upper:]]/)
-          values
-        rescue RangeError
-          0
-        end
-      end
-    end
-
-    # Generate a lookup table for a given encoding.
-    def lookup_table(encoding)
-      encoding_values = lookup_table_values(encoding)
-      if encoding_values == lookup_table_values(Encoding::US_ASCII)
-        puts "static const uint8_t pm_encoding_ascii_table[256] = {"
-      else
-        puts "static const uint8_t pm_encoding_#{encoding.name.downcase}_table[256] = {"
-      end
-
-      puts "//  #{(0...16).map { |value| value.to_s(16).upcase }.join("  ")}"
-      encoding_values.each_with_index do |row, row_index|
-        puts "    #{row.join(", ")}, // #{row_index.to_s(16).upcase}x"
-      end
-      puts "};"
-    end
-
-    # Generate lists of unicode codepoints for a given encoding.
-    def unicode_lists(encoding)
-      encoding = Encoding::UTF_8
-      range = (0x100..0xD7FF).to_a.concat((0xE000..0x10FFFF).to_a)
-
-      { alpha: /[[:alpha:]]/, alnum: /[[:alnum:]]/, isupper: /[[:upper:]]/ }.map do |kind, regex|
-        codepoints = range.select { |codepoint| codepoint.chr(encoding).match?(regex) }
-
-        previous = nil
-        groups =
-          codepoints.slice_before do |codepoint|
-            (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
-          end
-
-        matched =
-          groups.flat_map do |group|
-            ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
-          end
-
-        puts "\n#define UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH #{matched.length}"
-        puts "unicode_codepoint_t unicode_#{kind}_codepoints[UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH] = {"
-        matched.each_slice(2) { |slice| puts "    #{slice.join(", ")}," }
-        puts "};"
-      end
     end
 
     # Parse the source code indicated by the command-line arguments.
