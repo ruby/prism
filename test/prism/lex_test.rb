@@ -20,6 +20,8 @@ module Prism
       # is a line continuation preceded by escaped backslashes. It should emit two, same
       # as if the backslashes are not present.
       "heredocs_with_fake_newlines.txt",
+      # Prism is currently silent on malformed escapes in regexes
+      "regex_capture_escape_encoding_malformed.txt"
     ]
 
     if RUBY_VERSION < "3.3.0"

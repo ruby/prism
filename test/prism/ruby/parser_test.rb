@@ -76,6 +76,9 @@ module Prism
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",
+
+      # Prism is currently silent on malformed escapes in regexes
+      "regex_capture_escape_encoding_malformed.txt"
     ]
 
     # These files contain code that is being parsed incorrectly by the parser
