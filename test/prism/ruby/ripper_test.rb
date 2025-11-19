@@ -36,11 +36,16 @@ module Prism
       "3.3-3.3/keyword_args_in_array_assignment.txt",
       "3.3-3.3/return_in_sclass.txt",
 
+      "3.3-3.4/void_value.txt",
+
       # https://bugs.ruby-lang.org/issues/20478
       "3.4/circular_parameters.txt",
 
       # https://bugs.ruby-lang.org/issues/17398#note-12
       "4.0/endless_methods_command_call.txt",
+
+      # https://bugs.ruby-lang.org/issues/21669
+      "4.0/void_value.txt",
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",

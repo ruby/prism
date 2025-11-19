@@ -40,6 +40,7 @@ module Prism
       # Leaving these out until they are supported by parse.y.
       "4.0/leading_logical.txt",
       "4.0/endless_methods_command_call.txt",
+      "4.0/void_value.txt",
       "command_method_call_2.txt"
     ]
 
