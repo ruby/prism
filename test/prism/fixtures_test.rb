@@ -40,6 +40,8 @@ module Prism
     # https://bugs.ruby-lang.org/issues/21168#note-5
     except << "command_method_call_2.txt"
 
+    except << "regex_capture_escape_encoding_malformed.txt"
+
     Fixture.each(except: except) do |fixture|
       define_method(fixture.test_name) { assert_valid_syntax(fixture.read) }
     end
