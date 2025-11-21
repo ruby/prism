@@ -22620,8 +22620,11 @@ static const char *
 pm_strnstr(const char *big, const char *little, size_t big_length) {
     size_t little_length = strlen(little);
 
-    for (const char *big_end = big + big_length; big < big_end; big++) {
+
+    while (big_length >= little_length) {
         if (*big == *little && memcmp(big, little, little_length) == 0) return big;
+        big_length--;
+        big++;
     }
 
     return NULL;
