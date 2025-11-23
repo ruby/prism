@@ -41,10 +41,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
       - name: Run tests
         run: bundle exec rake cargo:test
 
@@ -76,9 +73,6 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo--${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
       - name: rake cargo:build
         run: bundle exec rake cargo:build
       - name: rake cargo:lint
@@ -107,37 +101,3 @@ jobs:
           components: "rust-src"
       - name: Test with sanitizer
         run: bundle exec rake cargo:sanitize:${{ matrix.sanitizer }}
-
-  # We need to figure out what to do here. When you run publish it checks
-  # against the latest version published to crates, which means if we have any
-  # breaking changes in the bindings then this fails.
-  #
-  # publish:
-  #   name: cargo:publish
-  #   strategy:
-  #     fail-fast: false
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: head
-  #         bundler-cache: true
-  #     - name: Set up Rust
-  #       uses: dtolnay/rust-toolchain@master
-  #       with:
-  #         toolchain: "1.71.1"
-  #         targets: wasm32-wasip1
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry
-  #           ~/.cargo/git
-  #           target
-  #         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-  #           ${{ runner.os }}-cargo
-  #     - name: Publish crates (dry-run)
-  #       run: bundle exec rake cargo:publish:dry
