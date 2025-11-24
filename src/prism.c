@@ -15789,7 +15789,6 @@ parse_block_exit(pm_parser_t *parser, pm_node_t *node) {
             case PM_CONTEXT_LAMBDA_ENSURE:
             case PM_CONTEXT_LAMBDA_RESCUE:
             case PM_CONTEXT_LOOP_PREDICATE:
-            case PM_CONTEXT_POSTEXE:
             case PM_CONTEXT_UNTIL:
             case PM_CONTEXT_WHILE:
                 // These are the good cases. We're allowed to have a block exit
@@ -15802,10 +15801,21 @@ parse_block_exit(pm_parser_t *parser, pm_node_t *node) {
             case PM_CONTEXT_DEF_RESCUE:
             case PM_CONTEXT_MAIN:
             case PM_CONTEXT_PREEXE:
+            case PM_CONTEXT_POSTEXE:
             case PM_CONTEXT_SCLASS:
             case PM_CONTEXT_SCLASS_ELSE:
             case PM_CONTEXT_SCLASS_ENSURE:
             case PM_CONTEXT_SCLASS_RESCUE:
+                // https://bugs.ruby-lang.org/issues/20409
+                if (context_node->context == PM_CONTEXT_POSTEXE) {
+                    if (parser->version < PM_OPTIONS_VERSION_CRUBY_4_0) {
+                        return;
+                    }
+                    if (PM_NODE_TYPE_P(node, PM_NEXT_NODE)) {
+                        return;
+                    }
+                }
+
                 // These are the bad cases. We're not allowed to have a block
                 // exit in these contexts.
                 //
