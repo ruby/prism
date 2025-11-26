@@ -48,7 +48,7 @@ module Prism
       result = Prism.parse(source, filepath: fixture.path, version: version)
       assert result.success?
 
-      printed = PP.pp(result.value, +"", 79)
+      printed = result.value.inspect
       snapshot = fixture.snapshot_path
 
       if File.exist?(snapshot)
