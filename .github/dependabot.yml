@@ -34,3 +34,5 @@ updates:
       ruby-deps:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "sorbet"
