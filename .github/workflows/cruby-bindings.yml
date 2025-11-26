@@ -27,7 +27,7 @@ jobs:
         with:
           ruby-version: head
           bundler: none
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: ruby/ruby
           path: ruby/ruby
@@ -37,7 +37,7 @@ jobs:
           set -x
           sudo apt-get update -q || :
           sudo apt-get install --no-install-recommends -q -y build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev autoconf ruby
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           path: ruby/prism
           fetch-depth: 1
