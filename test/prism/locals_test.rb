@@ -40,7 +40,9 @@ module Prism
       # Leaving these out until they are supported by parse.y.
       "4.0/leading_logical.txt",
       "4.0/endless_methods_command_call.txt",
-      "command_method_call_2.txt"
+      "command_method_call_2.txt",
+
+      "regex_capture_escape_encoding_malformed.txt"
     ]
 
     Fixture.each(except: except) do |fixture|

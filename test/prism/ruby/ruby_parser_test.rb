@@ -45,6 +45,7 @@ module Prism
       "not.txt",
       "patterns.txt",
       "regex.txt",
+      "regex_capture_escape_encoding_malformed.txt",
       "seattlerb/and_multi.txt",
       "seattlerb/heredoc__backslash_dos_format.txt",
       "seattlerb/heredoc_bad_hex_escape.txt",
