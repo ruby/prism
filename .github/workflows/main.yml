@@ -14,7 +14,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -28,7 +28,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: gemfiles/2.7/Gemfile
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -44,7 +44,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -68,7 +68,7 @@ jobs:
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -88,7 +88,7 @@ jobs:
           - ubuntu-24.04-s390x
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       run: |
         sudo apt-get update
@@ -112,7 +112,7 @@ jobs:
       PRISM_FFI_BACKEND: "true"
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -128,7 +128,7 @@ jobs:
         os: [ubuntu-22.04, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -148,7 +148,7 @@ jobs:
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -162,7 +162,7 @@ jobs:
   build-minimal:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -178,7 +178,7 @@ jobs:
     env:
       JRUBY_OPTS: "--dev"
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up JRuby
       uses: ruby/setup-ruby@v1
       with:
@@ -190,7 +190,7 @@ jobs:
   lex-ruby:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -202,7 +202,7 @@ jobs:
   lex-discourse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -214,7 +214,7 @@ jobs:
   lex-top-100:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -234,7 +234,7 @@ jobs:
   memcheck:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install valgrind
       run: |
         sudo apt-get update
@@ -250,7 +250,7 @@ jobs:
   gem-package:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: head
@@ -301,7 +301,7 @@ jobs:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     runs-on: ${{ matrix.target.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.target.ruby }}
@@ -323,7 +323,7 @@ jobs:
   gcc-analyzer:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -336,7 +336,7 @@ jobs:
   clang-analyzer:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
