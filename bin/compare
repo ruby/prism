@@ -1,0 +1,140 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Usage: bin/compare main feature-branch .
+
+$:.unshift(File.expand_path("../lib", __dir__))
+
+require "erb"
+require "json"
+require "socket"
+
+# InspectVisitor produces good-looking output but is not very efficient.
+VISITOR_TEMPLATE = <<~RUBY
+  <%- R = Prism::Reflection %>
+  class CompareVisitor < Prism::Visitor
+    attr_reader :result
+
+    def initialize
+      @result = +""
+    end
+
+    <%- Prism::Node.subclasses.each_with_index do |clazz, i| -%>
+      def visit_<%= clazz.type %>(node)
+        @result << "<%= i %>"
+        @result << node.start_offset.to_s
+        @result << node.end_offset.to_s
+        <%- clazz.fields.each do |field| -%>
+          <%- case field -%>
+          <%- when R::FlagsField -%>
+            @result << node.instance_variable_get(:@<%= field.name %>).to_s
+          <%- when R::LocationField, R::OptionalLocationField -%>
+            if (field = node.<%= field.name %>)
+              @result << field.start_offset.to_s
+              @result << field.length.to_s
+            end
+          <%- when R::StringField, R::IntegerField, R::FloatField -%>
+            @result << node.<%= field.name %>.to_s
+          <%- when R::ConstantField, R::OptionalConstantField -%>
+            if (field = node.<%= field.name %>)
+              @result << field.name
+            end
+          <%- when R::ConstantListField -%>
+            node.<%= field.name %>.each { |c| @result << c.name }
+          <%- when R::NodeField, R::NodeListField, R::OptionalNodeField %>
+            <%- # Will get visited later %>
+          <%- else -%>
+            raise "Unhandled field type <%= field.class.name %>"
+          <%- end %>
+        <%- end %>
+        super
+      end
+    <%- end -%>
+  end
+RUBY
+
+def create_prism(ref)
+  parent_socket, child_socket = UNIXSocket.pair
+
+  system("git checkout #{ref}", exception: true)
+  system("bundle exec rake compile", exception: true)
+
+  pid = fork do
+    parent_socket.close
+    require "prism"
+
+    eval(ERB.new(VISITOR_TEMPLATE, trim_mode: "-").result)
+
+    child_socket.puts("Compiling done for #{ref}")
+
+    while(path = child_socket.gets(chomp: true))
+      begin
+        result = Prism.parse(File.read(path), version: "latest")
+        child_socket.puts(serialize_parse_result(result).to_json)
+      rescue Errno::EISDIR
+        # Folder might end with `.rb` and get caught by the glob
+        child_socket.puts("{}")
+      end
+    end
+
+    exit!(0)
+  end
+
+  child_socket.close
+  parent_socket.gets
+  [pid, parent_socket]
+end
+
+def serialize_parse_result(parse_result)
+  visitor = CompareVisitor.new
+  parse_result.value.accept(visitor)
+  {
+    valid: parse_result.success?,
+    errors: parse_result.errors_format.hash,
+    ast: visitor.result.hash,
+  }
+end
+
+base_ref = ARGV.shift
+compare_ref = ARGV.shift
+path = ARGV.shift
+
+pid_baseline, socket_baseline = create_prism(base_ref)
+pid_compare, socket_compare = create_prism(compare_ref)
+
+result = +""
+files = Dir.glob(File.join(path, "**/*.rb"))
+
+start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+files.each_with_index do |source_path, i|
+  puts "#{i}/#{files.size}" if i % 1000 == 0
+
+  socket_baseline.puts(source_path)
+  socket_compare.puts(source_path)
+  
+  baseline = JSON.parse(socket_baseline.gets(chomp: true), symbolize_names: true)
+  compare = JSON.parse(socket_compare.gets(chomp: true), symbolize_names: true)
+
+  if compare[:valid] != baseline[:valid]
+    result << "#{source_path} changed from valid(#{baseline[:valid]}) to valid(#{compare[:valid]})\n"
+  elsif compare[:valid] && baseline[:valid] && compare[:ast] != baseline[:ast]
+    result << "#{source_path} is syntax valid with changed ast}\n"
+  elsif !compare[:valid] && !baseline[:valid] && compare[:errors] != baseline[:errors]
+    result << "#{source_path} is syntax invalid with changed errors\n"
+  end
+end
+
+if result.empty?
+  puts "All good!"
+else
+  puts "Oops:"
+  puts result
+end
+
+puts "Took #{Process.clock_gettime(Process::CLOCK_MONOTONIC) - start} seconds"
+
+socket_baseline.close
+socket_compare.close
+Process.wait(pid_baseline)
+Process.wait(pid_compare)
