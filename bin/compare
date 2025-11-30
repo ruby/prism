@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Usage: bin/compare main feature-branch .
+
+$:.unshift(File.expand_path("../lib", __dir__))
+
+require "json"
+require "socket"
+
+def create_prism(ref)
+  parent_socket, child_socket = UNIXSocket.pair
+
+  system("git checkout #{ref}", exception: true)
+  system("bundle exec rake compile", exception: true)
+
+  pid = fork do
+    parent_socket.close
+    require "prism"
+
+    child_socket.puts("Compiling done for #{ref}")
+
+    while (data = child_socket.gets(chomp: true))
+      command, path = data.split("\x00", 2)
+      case command
+      when "dump"
+        begin
+          child_socket.puts(Prism.dump_file(path).hash)
+        rescue Errno::EISDIR
+          # Folder might end with `.rb` and get caught by the glob
+          child_socket.puts("")
+        end
+      when "details"
+        parse_result = Prism.parse_file(path)
+        child_socket.puts({
+          valid: parse_result.success?,
+          errors: parse_result.errors_format.hash,
+          ast: parse_result.value.inspect.hash,
+        }.to_json)
+      else
+        raise "Unknown command #{command}"
+      end
+    end
+
+    exit!(0)
+  end
+
+  child_socket.close
+  parent_socket.gets
+  [pid, parent_socket]
+end
+
+base_ref = ARGV.shift
+compare_ref = ARGV.shift
+path = ARGV.shift
+
+pid_baseline, socket_baseline = create_prism(base_ref)
+pid_compare, socket_compare = create_prism(compare_ref)
+
+result = +""
+files = Dir.glob(File.join(path, "**/*.rb"))
+
+start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+def what_changed(baseline, compare, source_path)
+  if baseline[:valid] != compare[:valid]
+    "#{source_path} changed from valid(#{baseline[:valid]}) to valid(#{compare[:valid]})"
+  elsif baseline[:valid] && compare[:valid] && baseline[:ast] != compare[:ast]
+    "#{source_path} is syntax valid with changed ast}"
+  elsif !baseline[:valid] && !compare[:valid] && baseline[:errors] != compare[:errors]
+    "#{source_path} is syntax invalid with changed errors"
+  else
+    raise "Unknown condition for #{source_path}"
+  end
+end
+
+files.each_with_index do |source_path, i|
+  puts "#{i}/#{files.size}" if i % 1000 == 0
+
+  socket_baseline.puts("dump\x00#{source_path}")
+  socket_compare.puts("dump\x00#{source_path}")
+
+  dump_baseline = socket_baseline.gets(chomp: true)
+  dump_compare = socket_compare.gets(chomp: true)
+
+  if dump_baseline != dump_compare
+    socket_baseline.puts("details\x00#{source_path}")
+    socket_compare.puts("details\x00#{source_path}")
+
+    details_baseline = JSON.parse(socket_baseline.gets(chomp: true), symbolize_names: true)
+    details_compare = JSON.parse(socket_compare.gets(chomp: true), symbolize_names: true)
+    result << what_changed(details_baseline, details_compare, source_path) + "\n"
+  end
+end
+
+if result.empty?
+  puts "All good!"
+else
+  puts "Oops:"
+  puts result
+end
+
+puts "Took #{Process.clock_gettime(Process::CLOCK_MONOTONIC) - start} seconds"
+
+socket_baseline.close
+socket_compare.close
+Process.wait(pid_baseline)
+Process.wait(pid_compare)
