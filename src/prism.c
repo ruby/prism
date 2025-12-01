@@ -1971,6 +1971,8 @@ pm_missing_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t 
     return node;
 }
 
+#define TOKEN2SLICE(parser_, token_) ((pm_slice_t) { .start = (uint32_t) ((token_)->start - (parser_)->start), .length = (uint32_t) ((token_)->end - (token_)->start) })
+
 /**
  * Allocate and initialize a new AliasGlobalVariableNode node.
  */
@@ -1983,7 +1985,7 @@ pm_alias_global_variable_node_create(pm_parser_t *parser, const pm_token_t *keyw
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_ALIAS_GLOBAL_VARIABLE_NODE, 0, keyword, old_name),
         .new_name = new_name,
         .old_name = old_name,
-        .keyword_loc = PM_LOCATION_TOKEN_VALUE(keyword)
+        .keyword_loc = TOKEN2SLICE(parser, keyword)
     };
 
     return node;

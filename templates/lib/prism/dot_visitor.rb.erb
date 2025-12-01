@@ -141,7 +141,7 @@ module Prism
       end
       <%- when Prism::Template::StringField, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantListField, Prism::Template::IntegerField, Prism::Template::DoubleField -%>
       table.field("<%= field.name %>", node.<%= field.name %>.inspect)
-      <%- when Prism::Template::LocationField -%>
+      <%- when Prism::Template::LocationField, Prism::Template::SliceField -%>
       table.field("<%= field.name %>", location_inspect(node.<%= field.name %>))
       <%- when Prism::Template::OptionalLocationField -%>
       unless (<%= field.name %> = node.<%= field.name %>).nil?

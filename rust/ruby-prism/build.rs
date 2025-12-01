@@ -31,6 +31,9 @@ enum NodeFieldType {
     #[serde(rename = "location")]
     Location,
 
+    #[serde(rename = "slice")]
+    Slice,
+
     #[serde(rename = "location?")]
     OptionalLocation,
 
@@ -369,6 +372,12 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
+            NodeFieldType::Slice => {
+                writeln!(file, "    pub fn {}(&self) -> Slice<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        Slice::new(self.parser, unsafe {{ &(*pointer) }})")?;
+                writeln!(file, "    }}")?;
+            },
             NodeFieldType::OptionalLocation => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
@@ -558,7 +567,7 @@ use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
-use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
+use crate::{{ConstantId, ConstantList, Integer, Location, Slice, NodeList}};
 "
     )?;
 

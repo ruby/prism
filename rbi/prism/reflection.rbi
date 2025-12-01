@@ -35,6 +35,9 @@ end
 class Prism::Reflection::LocationField < Prism::Reflection::Field
 end
 
+class Prism::Reflection::SliceField < Prism::Reflection::Field
+end
+
 class Prism::Reflection::OptionalLocationField < Prism::Reflection::Field
 end
 

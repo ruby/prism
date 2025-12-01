@@ -116,7 +116,7 @@ class Prism::<%= node.name -%> < Prism::Node
   def deconstruct_keys(keys); end
   <%- node.fields.each do |field| -%>
   <%- case field -%>
-  <%- when Prism::Template::LocationField -%>
+  <%- when Prism::Template::LocationField, Prism::Template::SliceField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 

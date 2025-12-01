@@ -29,6 +29,12 @@ pm_serialize_location(const pm_parser_t *parser, const pm_location_t *location, 
     pm_buffer_append_varuint(buffer, pm_ptrdifft_to_u32(location->end - location->start));
 }
 
+PRISM_ATTRIBUTE_UNUSED static void
+pm_serialize_slice(const pm_slice_t *slice, pm_buffer_t *buffer) {
+    pm_buffer_append_varuint(buffer, slice->start);
+    pm_buffer_append_varuint(buffer, slice->length);
+}
+
 static void
 pm_serialize_string(const pm_parser_t *parser, const pm_string_t *string, pm_buffer_t *buffer) {
     switch (string->type) {
@@ -124,6 +130,10 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
             <%- when Prism::Template::LocationField -%>
             <%- if field.should_be_serialized? -%>
             pm_serialize_location(parser, &((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
+            <%- end -%>
+            <%- when Prism::Template::SliceField -%>
+            <%- if field.should_be_serialized? -%>
+            pm_serialize_slice(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             <%- end -%>
             <%- when Prism::Template::OptionalLocationField -%>
             <%- if field.should_be_serialized? -%>

@@ -19,7 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_slice_t};
 
 /// A range in the source file.
 pub struct Location<'pr> {
@@ -93,6 +93,53 @@ impl<'pr> Location<'pr> {
 }
 
 impl std::fmt::Debug for Location<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let slice: &[u8] = self.as_slice();
+
+        let mut visible = String::new();
+        visible.push('"');
+
+        for &byte in slice {
+            let part: Vec<u8> = std::ascii::escape_default(byte).collect();
+            visible.push_str(std::str::from_utf8(&part).unwrap());
+        }
+
+        visible.push('"');
+        write!(f, "{visible}")
+    }
+}
+
+/// A range in the source file, represented as a start offset and length.
+pub struct Slice<'pr> {
+    parser: NonNull<pm_parser_t>,
+    pub(crate) start: u32,
+    pub(crate) length: u32,
+    marker: PhantomData<&'pr [u8]>,
+}
+
+impl<'pr> Slice<'pr> {
+    /// Returns a byte slice for the range.
+    #[must_use]
+    pub fn as_slice(&self) -> &'pr [u8] {
+        unsafe {
+            let parser_start = (*self.parser.as_ptr()).start;
+            std::slice::from_raw_parts(parser_start.add(self.start as usize), self.length as usize)
+        }
+    }
+
+    /// Return a Slice from the given `pm_slice_t`.
+    #[must_use]
+    pub(crate) const fn new(parser: NonNull<pm_parser_t>, slice: &'pr pm_slice_t) -> Self {
+        Slice {
+            parser,
+            start: slice.start,
+            length: slice.length,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl std::fmt::Debug for Slice<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let slice: &[u8] = self.as_slice();
 

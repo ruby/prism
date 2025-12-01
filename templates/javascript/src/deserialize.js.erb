@@ -379,7 +379,7 @@ export function deserialize(source, array) {
           when Prism::Template::ConstantField then "readRequiredConstant()"
           when Prism::Template::OptionalConstantField then "readOptionalConstant()"
           when Prism::Template::ConstantListField then "Array.from({ length: buffer.readVarInt() }, readRequiredConstant)"
-          when Prism::Template::LocationField then "buffer.readLocation()"
+          when Prism::Template::LocationField, Prism::Template::SliceField then "buffer.readLocation()"
           when Prism::Template::OptionalLocationField then "buffer.readOptionalLocation()"
           when Prism::Template::UInt8Field then "buffer.readByte()"
           when Prism::Template::UInt32Field then "buffer.readVarInt()"

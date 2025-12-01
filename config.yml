@@ -819,7 +819,7 @@ nodes:
               alias $foo $bar
                          ^^^^
       - name: keyword_loc
-        type: location
+        type: slice
         comment: |
           The location of the `alias` keyword.
 

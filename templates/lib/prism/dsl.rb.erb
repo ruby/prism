@@ -84,7 +84,7 @@ module Prism
         "#{field.name}: []"
       when Prism::Template::StringField
         "#{field.name}: \"\""
-      when Prism::Template::LocationField
+      when Prism::Template::LocationField, Prism::Template::SliceField
         "#{field.name}: location"
       when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField
         "#{field.name}: 0"

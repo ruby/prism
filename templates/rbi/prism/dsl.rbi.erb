@@ -32,7 +32,7 @@ module Prism::DSL
       [field.name, "[]", field.rbi_class]
     when Prism::Template::StringField
       [field.name, "\"\"", field.rbi_class]
-    when Prism::Template::LocationField
+    when Prism::Template::LocationField, Prism::Template::SliceField
       [field.name, "location", field.rbi_class]
     when Prism::Template::OptionalLocationField
       [field.name, "nil", field.rbi_class]

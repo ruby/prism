@@ -57,6 +57,22 @@ typedef struct {
     const uint8_t *end;
 } pm_location_t;
 
+/**
+ * This struct represents a slice in the source code, defined by an offset and
+ * a length. Note that we have confirmation that we can represent all slices
+ * within Ruby source files using 32-bit integers per:
+ *
+ *     https://bugs.ruby-lang.org/issues/20488#note-1
+ *
+ */
+typedef struct {
+    /** The offset of the slice from the start of the source. */
+    uint32_t start;
+
+    /** The length of the slice. */
+    uint32_t length;
+} pm_slice_t;
+
 struct pm_node;
 
 /**
@@ -201,6 +217,7 @@ typedef struct pm_<%= node.human %> {
     when Prism::Template::ConstantListField then "pm_constant_id_list_t #{field.name}"
     when Prism::Template::StringField then "pm_string_t #{field.name}"
     when Prism::Template::LocationField, Prism::Template::OptionalLocationField then "pm_location_t #{field.name}"
+    when Prism::Template::SliceField then "pm_slice_t #{field.name}"
     when Prism::Template::UInt8Field then "uint8_t #{field.name}"
     when Prism::Template::UInt32Field then "uint32_t #{field.name}"
     when Prism::Template::IntegerField then "pm_integer_t #{field.name}"
