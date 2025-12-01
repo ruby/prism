@@ -1563,13 +1563,13 @@ pm_conditional_predicate(pm_parser_t *parser, pm_node_t *node, pm_conditional_pr
  */
 typedef struct {
     /** The optional location of the opening parenthesis or bracket. */
-    pm_location_t opening_loc;
+    pm_slice_t opening_loc;
 
     /** The lazily-allocated optional arguments node. */
     pm_arguments_node_t *arguments;
 
     /** The optional location of the closing parenthesis or bracket. */
-    pm_location_t closing_loc;
+    pm_slice_t closing_loc;
 
     /** The optional block attached to the call. */
     pm_node_t *block;
@@ -1582,21 +1582,26 @@ typedef struct {
  * Retrieve the end location of a `pm_arguments_t` object.
  */
 static inline const uint8_t *
-pm_arguments_end(pm_arguments_t *arguments) {
+pm_arguments_end(const pm_parser_t *parser, pm_arguments_t *arguments) {
     if (arguments->block != NULL) {
         const uint8_t *end = arguments->block->location.end;
-        if (arguments->closing_loc.start != NULL && arguments->closing_loc.end > end) {
-            end = arguments->closing_loc.end;
+
+        if (arguments->closing_loc.length > 0) {
+            const uint8_t *arguments_end = parser->start + arguments->closing_loc.start + arguments->closing_loc.length;
+
+            if (arguments_end > end) {
+                end = arguments_end;
+            }
         }
         return end;
     }
-    if (arguments->closing_loc.start != NULL) {
-        return arguments->closing_loc.end;
+    if (arguments->closing_loc.length > 0) {
+        return parser->start + arguments->closing_loc.start + arguments->closing_loc.length;
     }
     if (arguments->arguments != NULL) {
         return arguments->arguments->base.location.end;
     }
-    return arguments->closing_loc.end;
+    return NULL;
 }
 
 /**
@@ -1607,7 +1612,7 @@ static void
 pm_arguments_validate_block(pm_parser_t *parser, pm_arguments_t *arguments, pm_block_node_t *block) {
     // First, check that we have arguments and that we don't have a closing
     // location for them.
-    if (arguments->arguments == NULL || arguments->closing_loc.start != NULL) {
+    if (arguments->arguments == NULL || arguments->closing_loc.length > 0) {
         return;
     }
 
@@ -2589,15 +2594,15 @@ pm_call_node_aref_create(pm_parser_t *parser, pm_node_t *receiver, pm_arguments_
     pm_call_node_t *node = pm_call_node_create(parser, flags);
 
     node->base.location.start = receiver->location.start;
-    node->base.location.end = pm_arguments_end(arguments);
+    node->base.location.end = pm_arguments_end(parser, arguments);
 
     node->receiver = receiver;
-    node->message_loc.start = (arguments->opening_loc.start == NULL ? 0 : ((uint32_t) (arguments->opening_loc.start - parser->start)));
-    node->message_loc.length = (arguments->closing_loc.end == NULL ? 0 : ((uint32_t) (arguments->closing_loc.end - arguments->opening_loc.start)));
+    node->message_loc.start = arguments->opening_loc.start;
+    node->message_loc.length = (arguments->closing_loc.start + arguments->closing_loc.length) - arguments->opening_loc.start;
 
-    node->opening_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc);
+    node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
-    node->closing_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc);
+    node->closing_loc = arguments->closing_loc;
     node->block = arguments->block;
 
     node->name = pm_parser_constant_id_constant(parser, "[]", 2);
@@ -2640,7 +2645,7 @@ pm_call_node_call_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *o
     pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
 
     node->base.location.start = receiver->location.start;
-    const uint8_t *end = pm_arguments_end(arguments);
+    const uint8_t *end = pm_arguments_end(parser, arguments);
     if (end == NULL) {
         end = message->end;
     }
@@ -2649,9 +2654,9 @@ pm_call_node_call_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *o
     node->receiver = receiver;
     node->call_operator_loc = TOKEN2SLICE(parser, operator);
     node->message_loc = TOKEN2SLICE(parser, message);
-    node->opening_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc);
+    node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
-    node->closing_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc);
+    node->closing_loc = arguments->closing_loc;
     node->block = arguments->block;
 
     if (operator->type == PM_TOKEN_AMPERSAND_DOT) {
@@ -2691,12 +2696,12 @@ pm_call_node_fcall_create(pm_parser_t *parser, pm_token_t *message, pm_arguments
     pm_call_node_t *node = pm_call_node_create(parser, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY);
 
     node->base.location.start = message->start;
-    node->base.location.end = pm_arguments_end(arguments);
+    node->base.location.end = pm_arguments_end(parser, arguments);
 
     node->message_loc = TOKEN2SLICE(parser, message);
-    node->opening_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc);
+    node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
-    node->closing_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc);
+    node->closing_loc = arguments->closing_loc;
     node->block = arguments->block;
 
     node->name = pm_parser_constant_id_token(parser, message);
@@ -2729,8 +2734,8 @@ pm_call_node_not_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *me
     pm_call_node_t *node = pm_call_node_create(parser, receiver == NULL ? 0 : pm_call_node_ignore_visibility_flag(receiver));
 
     node->base.location.start = message->start;
-    if (arguments->closing_loc.start != NULL) {
-        node->base.location.end = arguments->closing_loc.end;
+    if (arguments->closing_loc.length > 0) {
+        node->base.location.end = parser->start + arguments->closing_loc.start + arguments->closing_loc.length;
     } else {
         assert(receiver != NULL);
         node->base.location.end = receiver->location.end;
@@ -2738,9 +2743,9 @@ pm_call_node_not_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *me
 
     node->receiver = receiver;
     node->message_loc = TOKEN2SLICE(parser, message);
-    node->opening_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc);
+    node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
-    node->closing_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc);
+    node->closing_loc = arguments->closing_loc;
 
     node->name = pm_parser_constant_id_constant(parser, "!", 1);
     return node;
@@ -2756,13 +2761,13 @@ pm_call_node_shorthand_create(pm_parser_t *parser, pm_node_t *receiver, pm_token
     pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
 
     node->base.location.start = receiver->location.start;
-    node->base.location.end = pm_arguments_end(arguments);
+    node->base.location.end = pm_arguments_end(parser, arguments);
 
     node->receiver = receiver;
     node->call_operator_loc = TOKEN2SLICE(parser, operator);
-    node->opening_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc);
+    node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
-    node->closing_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc);
+    node->closing_loc = arguments->closing_loc;
     node->block = arguments->block;
 
     if (operator->type == PM_TOKEN_AMPERSAND_DOT) {
@@ -6311,7 +6316,7 @@ pm_super_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argument
     assert(keyword->type == PM_TOKEN_KEYWORD_SUPER);
     pm_super_node_t *node = PM_NODE_ALLOC(parser, pm_super_node_t);
 
-    const uint8_t *end = pm_arguments_end(arguments);
+    const uint8_t *end = pm_arguments_end(parser, arguments);
     if (end == NULL) {
         assert(false && "unreachable");
     }
@@ -6319,9 +6324,9 @@ pm_super_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argument
     *node = (pm_super_node_t) {
         .base = PM_NODE_INIT(parser, PM_SUPER_NODE, 0, keyword->start, end),
         .keyword_loc = TOKEN2SLICE(parser, keyword),
-        .lparen_loc = arguments->opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->opening_loc),
+        .lparen_loc = arguments->opening_loc,
         .arguments = arguments->arguments,
-        .rparen_loc = arguments->closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments->closing_loc),
+        .rparen_loc = arguments->closing_loc,
         .block = arguments->block
     };
 
@@ -7017,16 +7022,16 @@ pm_xstring_node_create(pm_parser_t *parser, const pm_token_t *opening, const pm_
  * Allocate a new YieldNode node.
  */
 static pm_yield_node_t *
-pm_yield_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_location_t *lparen_loc, pm_arguments_node_t *arguments, const pm_location_t *rparen_loc) {
+pm_yield_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_slice_t *lparen_loc, pm_arguments_node_t *arguments, const pm_slice_t *rparen_loc) {
     pm_yield_node_t *node = PM_NODE_ALLOC(parser, pm_yield_node_t);
 
     const uint8_t *end;
-    if (rparen_loc != NULL) {
-        end = rparen_loc->end;
+    if (rparen_loc->length > 0) {
+        end = parser->start + rparen_loc->start + rparen_loc->length;
     } else if (arguments != NULL) {
         end = arguments->base.location.end;
-    } else if (lparen_loc != NULL) {
-        end = lparen_loc->end;
+    } else if (lparen_loc->length > 0) {
+        end = parser->start + lparen_loc->start + lparen_loc->length;
     } else {
         end = keyword->end;
     }
@@ -7034,9 +7039,9 @@ pm_yield_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_lo
     *node = (pm_yield_node_t) {
         .base = PM_NODE_INIT(parser, PM_YIELD_NODE, 0, keyword->start, end),
         .keyword_loc = TOKEN2SLICE(parser, keyword),
-        .lparen_loc = MAYBELOCATION2SLICE(parser, lparen_loc),
+        .lparen_loc = *lparen_loc,
         .arguments = arguments,
-        .rparen_loc = MAYBELOCATION2SLICE(parser, rparen_loc)
+        .rparen_loc = *rparen_loc
     };
 
     return node;
@@ -14730,10 +14735,10 @@ parse_arguments_list(pm_parser_t *parser, pm_arguments_t *arguments, bool accept
 
     if (accept1(parser, PM_TOKEN_PARENTHESIS_LEFT)) {
         found |= true;
-        arguments->opening_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+        arguments->opening_loc = TOKEN2SLICE(parser, &parser->previous);
 
         if (accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-            arguments->closing_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+            arguments->closing_loc = TOKEN2SLICE(parser, &parser->previous);
         } else {
             pm_accepts_block_stack_push(parser, true);
             parse_arguments(parser, arguments, accepts_block, PM_TOKEN_PARENTHESIS_RIGHT, (uint16_t) (depth + 1));
@@ -14745,7 +14750,7 @@ parse_arguments_list(pm_parser_t *parser, pm_arguments_t *arguments, bool accept
             }
 
             pm_accepts_block_stack_pop(parser);
-            arguments->closing_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+            arguments->closing_loc = TOKEN2SLICE(parser, &parser->previous);
         }
     } else if (accepts_command_call && (token_begins_expression_p(parser->current.type) || match3(parser, PM_TOKEN_USTAR, PM_TOKEN_USTAR_STAR, PM_TOKEN_UAMPERSAND)) && !match1(parser, PM_TOKEN_BRACE_LEFT)) {
         found |= true;
@@ -16298,7 +16303,7 @@ parse_pattern_hash_implicit_value(pm_parser_t *parser, pm_constant_id_list_t *ca
         .end = parser->start + value_slice->start + value_slice->length
     };
     const pm_location_t *value_loc = &value_location;
-    
+
     pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, value_loc->start, value_loc->end);
     int depth = -1;
 
@@ -17823,12 +17828,12 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     // variable call bit in the flags.
                     pm_node_flag_unset(UP(call), PM_CALL_NODE_FLAGS_VARIABLE_CALL);
 
-                    call->opening_loc = arguments.opening_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments.opening_loc);
+                    call->opening_loc = arguments.opening_loc;
                     call->arguments = arguments.arguments;
-                    call->closing_loc = arguments.closing_loc.start == NULL ? ((pm_slice_t) { 0 }) : LOCATION2SLICE(parser, &arguments.closing_loc);
+                    call->closing_loc = arguments.closing_loc;
                     call->block = arguments.block;
 
-                    const uint8_t *end = pm_arguments_end(&arguments);
+                    const uint8_t *end = pm_arguments_end(parser, &arguments);
                     if (!end) {
                         end = parser->start + call->message_loc.start + call->message_loc.length;
                     }
@@ -18405,7 +18410,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             parse_arguments_list(parser, &arguments, true, accepts_command_call, (uint16_t) (depth + 1));
 
             if (
-                arguments.opening_loc.start == NULL &&
+                arguments.opening_loc.length == 0 &&
                 arguments.arguments == NULL &&
                 ((arguments.block == NULL) || PM_NODE_TYPE_P(arguments.block, PM_BLOCK_NODE))
             ) {
@@ -18431,7 +18436,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 arguments.block = NULL;
             }
 
-            pm_node_t *node = UP(pm_yield_node_create(parser, &keyword, arguments.opening_loc.start == NULL ? NULL : &arguments.opening_loc, arguments.arguments, arguments.closing_loc.start == NULL ? NULL : &arguments.closing_loc));
+            pm_node_t *node = UP(pm_yield_node_create(parser, &keyword, &arguments.opening_loc, arguments.arguments, &arguments.closing_loc));
             if (!parser->parsing_eval && !parser->partial_script) parse_yield(parser, node);
 
             return node;
@@ -19053,13 +19058,13 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 if (accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
                     receiver = UP(pm_parentheses_node_create(parser, &lparen, NULL, &parser->previous, 0));
                 } else {
-                    arguments.opening_loc = PM_LOCATION_TOKEN_VALUE(&lparen);
+                    arguments.opening_loc = TOKEN2SLICE(parser, &lparen);
                     receiver = parse_expression(parser, PM_BINDING_POWER_COMPOSITION, true, false, PM_ERR_NOT_EXPRESSION, (uint16_t) (depth + 1));
 
                     if (!parser->recovering) {
                         accept1(parser, PM_TOKEN_NEWLINE);
                         expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
-                        arguments.closing_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+                        arguments.closing_loc = TOKEN2SLICE(parser, &parser->previous);
                     }
                 }
             } else {
@@ -20681,7 +20686,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_location_t message_loc = (pm_location_t) {
                             .start = parser->start + cast->message_loc.start,
-                            .end = parser->start + cast->message_loc.start + cast->message_loc.length                            
+                            .end = parser->start + cast->message_loc.start + cast->message_loc.length
                         };
 
                         pm_refute_numbered_parameter(parser, message_loc.start, message_loc.end);
@@ -20829,9 +20834,9 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_location_t message_loc = (pm_location_t) {
                             .start = parser->start + cast->message_loc.start,
-                            .end = parser->start + cast->message_loc.start + cast->message_loc.length                            
+                            .end = parser->start + cast->message_loc.start + cast->message_loc.length
                         };
-                        
+
                         pm_refute_numbered_parameter(parser, message_loc.start, message_loc.end);
                         pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR, (uint16_t) (depth + 1));
@@ -21081,7 +21086,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             if (
                 (previous_binding_power == PM_BINDING_POWER_STATEMENT) &&
                 arguments.arguments == NULL &&
-                arguments.opening_loc.start == NULL &&
+                arguments.opening_loc.length == 0 &&
                 match1(parser, PM_TOKEN_COMMA)
             ) {
                 return parse_targets_validate(parser, UP(call), PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
@@ -21253,7 +21258,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_arguments_t arguments = { 0 };
-            arguments.opening_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+            arguments.opening_loc = TOKEN2SLICE(parser, &parser->previous);
 
             if (!accept1(parser, PM_TOKEN_BRACKET_RIGHT)) {
                 pm_accepts_block_stack_push(parser, true);
@@ -21262,7 +21267,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                 expect1(parser, PM_TOKEN_BRACKET_RIGHT, PM_ERR_EXPECT_RBRACKET);
             }
 
-            arguments.closing_loc = PM_LOCATION_TOKEN_VALUE(&parser->previous);
+            arguments.closing_loc = TOKEN2SLICE(parser, &parser->previous);
 
             // If we have a comma after the closing bracket then this is a multiple
             // assignment and we should parse the targets.
