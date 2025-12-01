@@ -1958,7 +1958,6 @@ pm_missing_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t 
 #define MAYBETOKEN2SLICE(parser_, token_) ((token_) == NULL ? ((pm_slice_t) { 0 }) : TOKEN2SLICE(parser_, token_))
 #define MAYBETOKENPTR(token_) ((token_).start == NULL ? NULL : &(token_))
 #define LOCATION2SLICE TOKEN2SLICE
-#define MAYBELOCATION2SLICE MAYBETOKEN2SLICE
 
 /**
  * Allocate and initialize a new AliasGlobalVariableNode node.
@@ -2716,7 +2715,7 @@ static pm_call_node_t *
 pm_call_node_fcall_synthesized_create(pm_parser_t *parser, pm_arguments_node_t *arguments, pm_constant_id_t name) {
     pm_call_node_t *node = pm_call_node_create(parser, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY);
 
-    node->base.location = PM_LOCATION_NULL_VALUE(parser);
+    node->base.location = ((pm_location_t) { .start = parser->start, .end = parser->start });
     node->arguments = arguments;
 
     node->name = name;
