@@ -9277,7 +9277,7 @@ parser_comment(pm_parser_t *parser, pm_comment_type_t type) {
 
     *comment = (pm_comment_t) {
         .type = type,
-        .location = { parser->current.start, parser->current.end }
+        .location = TOKEN2SLICE(parser, &parser->current)
     };
 
     return comment;
@@ -9304,6 +9304,7 @@ lex_embdoc(pm_parser_t *parser) {
     parser_lex_callback(parser);
 
     // Now, create a comment that is going to be attached to the parser.
+    const uint8_t *comment_start = parser->current.start;
     pm_comment_t *comment = parser_comment(parser, PM_COMMENT_EMBDOC);
     if (comment == NULL) return PM_TOKEN_EOF;
 
@@ -9336,7 +9337,7 @@ lex_embdoc(pm_parser_t *parser) {
             parser->current.type = PM_TOKEN_EMBDOC_END;
             parser_lex_callback(parser);
 
-            comment->location.end = parser->current.end;
+            comment->location.length = (uint32_t) (parser->current.end - comment_start);
             pm_list_append(&parser->comment_list, (pm_list_node_t *) comment);
 
             return PM_TOKEN_EMBDOC_END;
@@ -9359,7 +9360,7 @@ lex_embdoc(pm_parser_t *parser) {
 
     pm_parser_err_current(parser, PM_ERR_EMBDOC_TERM);
 
-    comment->location.end = parser->current.end;
+    comment->location.length = (uint32_t) (parser->current.end - comment_start);
     pm_list_append(&parser->comment_list, (pm_list_node_t *) comment);
 
     return PM_TOKEN_EOF;
@@ -22288,7 +22289,7 @@ pm_serialize_parse_comments(pm_buffer_t *buffer, const uint8_t *source, size_t s
     pm_serialize_header(buffer);
     pm_serialize_encoding(parser.encoding, buffer);
     pm_buffer_append_varsint(buffer, parser.start_line);
-    pm_serialize_comment_list(&parser, &parser.comment_list, buffer);
+    pm_serialize_comment_list(&parser.comment_list, buffer);
 
     pm_node_destroy(&parser, node);
     pm_parser_free(&parser);

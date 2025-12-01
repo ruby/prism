@@ -463,7 +463,7 @@ typedef struct pm_comment {
     pm_list_node_t node;
 
     /** The location of the comment in the source. */
-    pm_location_t location;
+    pm_slice_t location;
 
     /** The type of comment that we've found. */
     pm_comment_type_t type;

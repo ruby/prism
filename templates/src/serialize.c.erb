@@ -188,24 +188,24 @@ pm_serialize_newline_list(pm_newline_list_t *list, pm_buffer_t *buffer) {
 }
 
 static void
-pm_serialize_comment(pm_parser_t *parser, pm_comment_t *comment, pm_buffer_t *buffer) {
+pm_serialize_comment(pm_comment_t *comment, pm_buffer_t *buffer) {
     // serialize type
     pm_buffer_append_byte(buffer, (uint8_t) comment->type);
 
     // serialize location
-    pm_serialize_location(parser, &comment->location, buffer);
+    pm_serialize_slice(&comment->location, buffer);
 }
 
 /**
  * Serialize the given list of comments to the given buffer.
  */
 void
-pm_serialize_comment_list(pm_parser_t *parser, pm_list_t *list, pm_buffer_t *buffer) {
+pm_serialize_comment_list(pm_list_t *list, pm_buffer_t *buffer) {
     pm_buffer_append_varuint(buffer, pm_sizet_to_u32(pm_list_size(list)));
 
     pm_comment_t *comment;
     for (comment = (pm_comment_t *) list->head; comment != NULL; comment = (pm_comment_t *) comment->node.next) {
-        pm_serialize_comment(parser, comment, buffer);
+        pm_serialize_comment(comment, buffer);
     }
 }
 
@@ -282,7 +282,7 @@ pm_serialize_metadata(pm_parser_t *parser, pm_buffer_t *buffer) {
     pm_buffer_append_varsint(buffer, parser->start_line);
     pm_serialize_newline_list(&parser->newline_list, buffer);
 <%- unless Prism::Template::SERIALIZE_ONLY_SEMANTICS_FIELDS -%>
-    pm_serialize_comment_list(parser, &parser->comment_list, buffer);
+    pm_serialize_comment_list(&parser->comment_list, buffer);
 <%- end -%>
     pm_serialize_magic_comment_list(&parser->magic_comment_list, buffer);
     pm_serialize_data_loc(parser, buffer);
