@@ -423,14 +423,14 @@ debug_lex_state_set(pm_parser_t *parser, pm_lex_state_t state, char const * call
  */
 static inline void
 pm_parser_err(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->error_list, start, end, diag_id);
+    pm_diagnostic_list_append(&parser->error_list, (uint32_t) (start - parser->start), (uint32_t) (end - start), diag_id);
 }
 
 /**
  * Append an error to the list of errors on the parser using a format string.
  */
-#define PM_PARSER_ERR_FORMAT(parser, start, end, diag_id, ...) \
-    pm_diagnostic_list_append_format(&parser->error_list, start, end, diag_id, __VA_ARGS__)
+#define PM_PARSER_ERR_FORMAT(parser_, start_, end_, diag_id_, ...) \
+    pm_diagnostic_list_append_format(&(parser_)->error_list, (uint32_t) ((start_) - (parser_)->start), (uint32_t) ((end_) - (start_)), diag_id_, __VA_ARGS__)
 
 /**
  * Append an error to the list of errors on the parser using the location of the
@@ -508,7 +508,7 @@ pm_parser_err_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic_
  */
 static inline void
 pm_parser_warn(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->warning_list, start, end, diag_id);
+    pm_diagnostic_list_append(&parser->warning_list, (uint32_t) (start - parser->start), (uint32_t) (end - start), diag_id);
 }
 
 /**
@@ -532,8 +532,8 @@ pm_parser_warn_node(pm_parser_t *parser, const pm_node_t *node, pm_diagnostic_id
 /**
  * Append a warning to the list of warnings on the parser using a format string.
  */
-#define PM_PARSER_WARN_FORMAT(parser, start, end, diag_id, ...) \
-    pm_diagnostic_list_append_format(&parser->warning_list, start, end, diag_id, __VA_ARGS__)
+#define PM_PARSER_WARN_FORMAT(parser_, start_, end_, diag_id_, ...) \
+    pm_diagnostic_list_append_format(&(parser_)->warning_list, (uint32_t) ((start_) - (parser_)->start), (uint32_t) ((end_) - (start_)), diag_id_, __VA_ARGS__)
 
 /**
  * Append a warning to the list of warnings on the parser using the location of
@@ -3847,7 +3847,7 @@ pm_double_parse(pm_parser_t *parser, const pm_token_t *token) {
             ellipsis = "";
         }
 
-        pm_diagnostic_list_append_format(&parser->warning_list, token->start, token->end, PM_WARN_FLOAT_OUT_OF_RANGE, warn_width, (const char *) token->start, ellipsis);
+        pm_diagnostic_list_append_format(&parser->warning_list, (uint32_t) (token->start - parser->start), (uint32_t) (token->end - token->start), PM_WARN_FLOAT_OUT_OF_RANGE, warn_width, (const char *) token->start, ellipsis);
         value = (value < 0.0) ? -HUGE_VAL : HUGE_VAL;
     }
 
@@ -13208,8 +13208,8 @@ pm_hash_key_static_literals_add(pm_parser_t *parser, pm_static_literals_t *liter
 
         pm_diagnostic_list_append_format(
             &parser->warning_list,
-            duplicated->location.start,
-            duplicated->location.end,
+            (uint32_t) (duplicated->location.start - parser->start),
+            (uint32_t) (duplicated->location.end - duplicated->location.start),
             PM_WARN_DUPLICATED_HASH_KEY,
             (int) pm_buffer_length(&buffer),
             pm_buffer_value(&buffer),
@@ -13231,8 +13231,8 @@ pm_when_clause_static_literals_add(pm_parser_t *parser, pm_static_literals_t *li
     if ((previous = pm_static_literals_add(&parser->newline_list, parser->start_line, literals, node, false)) != NULL) {
         pm_diagnostic_list_append_format(
             &parser->warning_list,
-            node->location.start,
-            node->location.end,
+            (uint32_t) (node->location.start - parser->start),
+            (uint32_t) (node->location.end - node->location.start),
             PM_WARN_DUPLICATED_WHEN_CLAUSE,
             pm_newline_list_line_column(&parser->newline_list, node->location.start, parser->start_line).line,
             pm_newline_list_line_column(&parser->newline_list, previous->location.start, parser->start_line).line

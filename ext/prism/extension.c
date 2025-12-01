@@ -455,16 +455,22 @@ rb_class_new_instance_freeze(int argc, const VALUE *argv, VALUE klass, bool free
  * Create a new Location instance from the given parser and bounds.
  */
 static inline VALUE
-parser_location(const pm_parser_t *parser, VALUE source, bool freeze, uint32_t start, uint32_t length) {
+parser_location(VALUE source, bool freeze, uint32_t start, uint32_t length) {
     VALUE argv[] = { source, LONG2FIX(start), LONG2FIX(length) };
     return rb_class_new_instance_freeze(3, argv, rb_cPrismLocation, freeze);
 }
 
 /**
+ * Create a new Location instance from the given parser and slice.
+ */
+#define PARSER_LOCATION_SLICE(parser, source, freeze, slice) \
+    parser_location(source, freeze, slice.start, slice.length)
+
+/**
  * Create a new Location instance from the given parser and location.
  */
 #define PARSER_LOCATION_LOC(parser, source, freeze, loc) \
-    parser_location(parser, source, freeze, (uint32_t) (loc.start - parser->start), (uint32_t) (loc.end - loc.start))
+    parser_location(source, freeze, (uint32_t) (loc.start - parser->start), (uint32_t) (loc.end - loc.start))
 
 /**
  * Build a new Comment instance from the given parser and comment.
@@ -500,9 +506,9 @@ parser_comments(const pm_parser_t *parser, VALUE source, bool freeze) {
  * Build a new MagicComment instance from the given parser and magic comment.
  */
 static inline VALUE
-parser_magic_comment(const pm_parser_t *parser, VALUE source, bool freeze, const pm_magic_comment_t *magic_comment) {
-    VALUE key_loc = parser_location(parser, source, freeze, magic_comment->key.start, magic_comment->key.length);
-    VALUE value_loc = parser_location(parser, source, freeze, magic_comment->value.start, magic_comment->value.length);
+parser_magic_comment(VALUE source, bool freeze, const pm_magic_comment_t *magic_comment) {
+    VALUE key_loc = parser_location(source, freeze, magic_comment->key.start, magic_comment->key.length);
+    VALUE value_loc = parser_location(source, freeze, magic_comment->value.start, magic_comment->value.length);
     VALUE argv[] = { key_loc, value_loc };
     return rb_class_new_instance_freeze(2, argv, rb_cPrismMagicComment, freeze);
 }
@@ -519,7 +525,7 @@ parser_magic_comments(const pm_parser_t *parser, VALUE source, bool freeze) {
         magic_comment != NULL;
         magic_comment = (const pm_magic_comment_t *) magic_comment->node.next
     ) {
-        VALUE value = parser_magic_comment(parser, source, freeze, magic_comment);
+        VALUE value = parser_magic_comment(source, freeze, magic_comment);
         rb_ary_push(magic_comments, value);
     }
 
@@ -536,7 +542,7 @@ parser_data_loc(const pm_parser_t *parser, VALUE source, bool freeze) {
     if (parser->data_loc.length == 0) {
         return Qnil;
     } else {
-        return parser_location(parser, source, freeze, parser->data_loc.start, parser->data_loc.length);
+        return parser_location(source, freeze, parser->data_loc.start, parser->data_loc.length);
     }
 }
 
@@ -554,7 +560,7 @@ parser_errors(const pm_parser_t *parser, rb_encoding *encoding, VALUE source, bo
     ) {
         VALUE type = ID2SYM(rb_intern(pm_diagnostic_id_human(error->diag_id)));
         VALUE message = rb_obj_freeze(rb_enc_str_new_cstr(error->message, encoding));
-        VALUE location = PARSER_LOCATION_LOC(parser, source, freeze, error->location);
+        VALUE location = PARSER_LOCATION_SLICE(parser, source, freeze, error->location);
 
         VALUE level = Qnil;
         switch (error->level) {
@@ -594,7 +600,7 @@ parser_warnings(const pm_parser_t *parser, rb_encoding *encoding, VALUE source, 
     ) {
         VALUE type = ID2SYM(rb_intern(pm_diagnostic_id_human(warning->diag_id)));
         VALUE message = rb_obj_freeze(rb_enc_str_new_cstr(warning->message, encoding));
-        VALUE location = PARSER_LOCATION_LOC(parser, source, freeze, warning->location);
+        VALUE location = PARSER_LOCATION_SLICE(parser, source, freeze, warning->location);
 
         VALUE level = Qnil;
         switch (warning->level) {
