@@ -51,6 +51,7 @@ module Prism
       "dos_endings.txt",
       "heredocs_with_fake_newlines.txt",
       "heredocs_with_ignored_newlines.txt",
+      "regex_capture_escape_encoding_malformed.txt",
       "seattlerb/block_call_dot_op2_brace_block.txt",
       "seattlerb/block_command_operation_colon.txt",
       "seattlerb/block_command_operation_dot.txt",
