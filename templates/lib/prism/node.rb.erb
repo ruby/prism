@@ -365,7 +365,7 @@ module Prism
       [<%= node.fields.map { |field|
         case field
         when Prism::Template::NodeField, Prism::Template::LocationField, Prism::Template::SliceField then field.name
-        when Prism::Template::OptionalNodeField, Prism::Template::NodeListField, Prism::Template::OptionalLocationField then "*#{field.name}"
+        when Prism::Template::OptionalNodeField, Prism::Template::NodeListField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField then "*#{field.name}"
         end
       }.compact.join(", ") %>] #: Array[Prism::node | Location]
     end
@@ -413,7 +413,7 @@ module Prism
     def save_<%= field.name %>(repository)
       repository.enter(node_id, :<%= field.name %>)
     end
-    <%- when Prism::Template::OptionalLocationField -%>
+    <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
     def <%= field.name %>
       location = @<%= field.name %>
       case location
@@ -445,7 +445,7 @@ module Prism
     def <%= field.name.delete_suffix("_loc") %>
       <%= field.name %>.slice
     end
-    <%- when Prism::Template::OptionalLocationField -%>
+    <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
@@ -476,7 +476,7 @@ module Prism
     def ===(other)
       other.is_a?(<%= node.name %>)<%= " &&" if (fields = [*node.flags, *node.fields]).any? %>
         <%- fields.each_with_index do |field, index| -%>
-        <%- if field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::SliceField) || field.is_a?(Prism::Template::OptionalLocationField) -%>
+        <%- if field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::SliceField) || field.is_a?(Prism::Template::OptionalLocationField) || field.is_a?(Prism::Template::OptionalSliceField) -%>
         (<%= field.name %>.nil? == other.<%= field.name %>.nil?)<%= " &&" if index != fields.length - 1 %>
         <%- elsif field.is_a?(Prism::Template::NodeListField) || field.is_a?(Prism::Template::ConstantListField) -%>
         (<%= field.name %>.length == other.<%= field.name %>.length) &&

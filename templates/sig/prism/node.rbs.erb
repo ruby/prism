@@ -86,7 +86,7 @@ module Prism
     <%- node.fields.each do |field| -%>
     attr_reader <%= field.name %>: <%= field.rbs_class %>
     <%- end -%>
-    <%- if (locations = node.fields.select { |field| field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::SliceField) || field.is_a?(Prism::Template::OptionalLocationField) }) -%>
+    <%- if (locations = node.fields.select { |field| field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::SliceField) || field.is_a?(Prism::Template::OptionalLocationField) || field.is_a?(Prism::Template::OptionalSliceField) }) -%>
 
     <%- locations.each do |field| -%>
     def save_<%= field.name %>: (_Repository repository) -> void
@@ -102,7 +102,7 @@ module Prism
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String
-    <%- when Prism::Template::OptionalLocationField -%>
+    <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
     def <%= field.name.delete_suffix("_loc") %>: () -> String?

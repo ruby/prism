@@ -37,6 +37,9 @@ enum NodeFieldType {
     #[serde(rename = "location?")]
     OptionalLocation,
 
+    #[serde(rename = "slice?")]
+    OptionalSlice,
+
     #[serde(rename = "uint8")]
     UInt8,
 
@@ -386,6 +389,17 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
                 writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
+                writeln!(file, "        }}")?;
+                writeln!(file, "    }}")?;
+            },
+            NodeFieldType::OptionalSlice => {
+                writeln!(file, "    pub fn {}(&self) -> Option<Slice<'pr>> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        let length = unsafe {{ (*pointer).length }};")?;
+                writeln!(file, "        if length == 0 {{")?;
+                writeln!(file, "            None")?;
+                writeln!(file, "        }} else {{")?;
+                writeln!(file, "            Some(Slice::new(self.parser, unsafe {{ &(*pointer) }}))")?;
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },

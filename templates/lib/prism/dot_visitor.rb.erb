@@ -143,7 +143,7 @@ module Prism
       table.field("<%= field.name %>", node.<%= field.name %>.inspect)
       <%- when Prism::Template::LocationField, Prism::Template::SliceField -%>
       table.field("<%= field.name %>", location_inspect(node.<%= field.name %>))
-      <%- when Prism::Template::OptionalLocationField -%>
+      <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
       unless (<%= field.name %> = node.<%= field.name %>).nil?
         table.field("<%= field.name %>", location_inspect(<%= field.name %>))
       end

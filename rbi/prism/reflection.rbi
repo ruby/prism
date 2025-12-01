@@ -41,6 +41,9 @@ end
 class Prism::Reflection::OptionalLocationField < Prism::Reflection::Field
 end
 
+class Prism::Reflection::OptionalSliceField < Prism::Reflection::Field
+end
+
 class Prism::Reflection::IntegerField < Prism::Reflection::Field
 end
 

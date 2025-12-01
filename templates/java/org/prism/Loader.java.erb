@@ -387,7 +387,7 @@ public class Loader {
               when Prism::Template::OptionalConstantField then "loadOptionalConstant()"
               when Prism::Template::ConstantListField then "loadConstants()"
               when Prism::Template::LocationField, Prism::Template::SliceField then "loadLocation()"
-              when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
+              when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField then "loadOptionalLocation()"
               when Prism::Template::UInt8Field then "buffer.get()"
               when Prism::Template::UInt32Field then "loadVarUInt()"
               when Prism::Template::IntegerField then "loadInteger()"

@@ -144,6 +144,15 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
                 pm_serialize_location(parser, &((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             }
             <%- end -%>
+            <%- when Prism::Template::OptionalSliceField -%>
+            <%- if field.should_be_serialized? -%>
+            if (((pm_<%= node.human %>_t *)node)-><%= field.name %>.length == 0) {
+                pm_buffer_append_byte(buffer, 0);
+            } else {
+                pm_buffer_append_byte(buffer, 1);
+                pm_serialize_slice(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
+            }
+            <%- end -%>
             <%- when Prism::Template::UInt8Field -%>
             pm_buffer_append_byte(buffer, ((pm_<%= node.human %>_t *)node)-><%= field.name %>);
             <%- when Prism::Template::UInt32Field -%>

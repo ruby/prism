@@ -122,7 +122,7 @@ class Prism::<%= node.name -%> < Prism::Node
 
   sig { returns(String) }
   def <%= field.name.delete_suffix("_loc") %>; end
-  <%- when Prism::Template::OptionalLocationField -%>
+  <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
   <%- raise unless field.name.end_with?("_loc") -%>
   <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 

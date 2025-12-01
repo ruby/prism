@@ -78,7 +78,7 @@ module Prism
         end
       when Prism::Template::ConstantField
         "#{field.name}: :\"\""
-      when Prism::Template::OptionalNodeField, Prism::Template::OptionalConstantField, Prism::Template::OptionalLocationField
+      when Prism::Template::OptionalNodeField, Prism::Template::OptionalConstantField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField
         "#{field.name}: nil"
       when Prism::Template::NodeListField, Prism::Template::ConstantListField
         "#{field.name}: []"

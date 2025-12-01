@@ -2096,12 +2096,21 @@ static pm_array_node_t *
 pm_array_node_create(pm_parser_t *parser, const pm_token_t *opening) {
     pm_array_node_t *node = PM_NODE_ALLOC(parser, pm_array_node_t);
 
-    *node = (pm_array_node_t) {
-        .base = PM_NODE_INIT_TOKEN(parser, PM_ARRAY_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening),
-        .opening_loc = PM_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = PM_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .elements = { 0 }
-    };
+    if (opening == NULL) {
+        *node = (pm_array_node_t) {
+            .base = PM_NODE_INIT_BASE(parser, PM_ARRAY_NODE, PM_NODE_FLAG_STATIC_LITERAL),
+            .opening_loc = { 0 },
+            .closing_loc = { 0 },
+            .elements = { 0 }
+        };
+    } else {
+        *node = (pm_array_node_t) {
+            .base = PM_NODE_INIT_TOKEN(parser, PM_ARRAY_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening),
+            .opening_loc = TOKEN2SLICE(parser, opening),
+            .closing_loc = TOKEN2SLICE(parser, opening),
+            .elements = { 0 }
+        };
+    }
 
     return node;
 }
@@ -2111,7 +2120,7 @@ pm_array_node_create(pm_parser_t *parser, const pm_token_t *opening) {
  */
 static inline void
 pm_array_node_elements_append(pm_array_node_t *node, pm_node_t *element) {
-    if (!node->elements.size && !node->opening_loc.start) {
+    if (!node->elements.size && !node->opening_loc.length) {
         node->base.location.start = element->location.start;
     }
 
@@ -2133,10 +2142,10 @@ pm_array_node_elements_append(pm_array_node_t *node, pm_node_t *element) {
  * Set the closing token and end location of an array node.
  */
 static void
-pm_array_node_close_set(pm_array_node_t *node, const pm_token_t *closing) {
+pm_array_node_close_set(const pm_parser_t *parser, pm_array_node_t *node, const pm_token_t *closing) {
     assert(closing->type == PM_TOKEN_BRACKET_RIGHT || closing->type == PM_TOKEN_STRING_END || closing->type == PM_TOKEN_MISSING || closing->type == PM_TOKEN_NOT_PROVIDED);
     node->base.location.end = closing->end;
-    node->closing_loc = PM_LOCATION_TOKEN_VALUE(closing);
+    node->closing_loc = TOKEN2SLICE(parser, closing);
 }
 
 /**
@@ -3331,7 +3340,7 @@ pm_class_variable_read_node_create(pm_parser_t *parser, const pm_token_t *token)
  */
 static inline pm_node_flags_t
 pm_implicit_array_write_flags(const pm_node_t *node, pm_node_flags_t flags) {
-    if (PM_NODE_TYPE_P(node, PM_ARRAY_NODE) && ((const pm_array_node_t *) node)->opening_loc.start == NULL) {
+    if (PM_NODE_TYPE_P(node, PM_ARRAY_NODE) && ((const pm_array_node_t *) node)->opening_loc.length == 0) {
         return flags;
     }
     return 0;
@@ -17465,7 +17474,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 parser->previous.type = PM_TOKEN_MISSING;
             }
 
-            pm_array_node_close_set(array, &parser->previous);
+            pm_array_node_close_set(parser, array, &parser->previous);
             pm_accepts_block_stack_pop(parser);
 
             return UP(array);
@@ -19322,7 +19331,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             } else {
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_LOWER_TERM);
             }
-            pm_array_node_close_set(array, &closing);
+            pm_array_node_close_set(parser, array, &closing);
 
             return UP(array);
         }
@@ -19483,7 +19492,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             } else {
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_I_UPPER_TERM);
             }
-            pm_array_node_close_set(array, &closing);
+            pm_array_node_close_set(parser, array, &closing);
 
             return UP(array);
         }
@@ -19518,7 +19527,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_LOWER_TERM);
             }
 
-            pm_array_node_close_set(array, &closing);
+            pm_array_node_close_set(parser, array, &closing);
             return UP(array);
         }
         case PM_TOKEN_PERCENT_UPPER_W: {
@@ -19665,7 +19674,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 expect1(parser, PM_TOKEN_STRING_END, PM_ERR_LIST_W_UPPER_TERM);
             }
 
-            pm_array_node_close_set(array, &closing);
+            pm_array_node_close_set(parser, array, &closing);
             return UP(array);
         }
         case PM_TOKEN_REGEXP_BEGIN: {
@@ -20159,9 +20168,7 @@ parse_assignment_values(pm_parser_t *parser, pm_binding_power_t previous_binding
     if (previous_binding_power == PM_BINDING_POWER_STATEMENT && (PM_NODE_TYPE_P(value, PM_SPLAT_NODE) || match1(parser, PM_TOKEN_COMMA))) {
         single_value = false;
 
-        pm_token_t opening = not_provided(parser);
-        pm_array_node_t *array = pm_array_node_create(parser, &opening);
-
+        pm_array_node_t *array = pm_array_node_create(parser, NULL);
         pm_array_node_elements_append(array, value);
         value = UP(array);
 

@@ -968,7 +968,7 @@ nodes:
         kind: non-void expression
         comment: Represent the list of zero or more [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression) within the array.
       - name: opening_loc
-        type: location?
+        type: slice?
         comment: |
           Represents the optional source location for the opening token.
 
@@ -977,7 +977,7 @@ nodes:
               %I(apple orange banana) # "%I("
               foo = 1, 2, 3           # nil
       - name: closing_loc
-        type: location?
+        type: slice?
         comment: |
           Represents the optional source location for the closing token.
 
