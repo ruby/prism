@@ -531,7 +531,7 @@ typedef struct {
     pm_constant_id_t name;
 
     /** The location of the local variable in the source. */
-    pm_location_t location;
+    pm_slice_t location;
 
     /** The index of the local variable in the local table. */
     uint32_t index;

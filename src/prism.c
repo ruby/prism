@@ -530,17 +530,25 @@ pm_parser_warn_node(pm_parser_t *parser, const pm_node_t *node, pm_diagnostic_id
 }
 
 /**
- * Append a warning to the list of warnings on the parser using a format string.
+ * Append a warning to the list of warnings on the parser using a format string
+ * and the given location.
  */
-#define PM_PARSER_WARN_FORMAT(parser_, start_, end_, diag_id_, ...) \
+#define PM_PARSER_WARN_FORMAT_LOCATION(parser_, start_, end_, diag_id_, ...) \
     pm_diagnostic_list_append_format(&(parser_)->warning_list, (uint32_t) ((start_) - (parser_)->start), (uint32_t) ((end_) - (start_)), diag_id_, __VA_ARGS__)
+
+/**
+ * Append a warning to the list of warnings on the parser using a format string
+ * and the given slice.
+ */
+#define PM_PARSER_WARN_FORMAT_SLICE(parser_, slice_, diag_id_, ...) \
+    pm_diagnostic_list_append_format(&(parser_)->warning_list, (slice_)->start, (slice_)->length, diag_id_, __VA_ARGS__)
 
 /**
  * Append a warning to the list of warnings on the parser using the location of
  * the given token and a format string.
  */
 #define PM_PARSER_WARN_TOKEN_FORMAT(parser, token, diag_id, ...) \
-    PM_PARSER_WARN_FORMAT(parser, (token).start, (token).end, diag_id, __VA_ARGS__)
+    PM_PARSER_WARN_FORMAT_LOCATION(parser, (token).start, (token).end, diag_id, __VA_ARGS__)
 
 /**
  * Append a warning to the list of warnings on the parser using the location of
@@ -554,7 +562,7 @@ pm_parser_warn_node(pm_parser_t *parser, const pm_node_t *node, pm_diagnostic_id
  * the given node and a format string.
  */
 #define PM_PARSER_WARN_NODE_FORMAT(parser, node, diag_id, ...) \
-    PM_PARSER_WARN_FORMAT(parser, (node)->location.start, (node)->location.end, diag_id, __VA_ARGS__)
+    PM_PARSER_WARN_FORMAT_LOCATION(parser, (node)->location.start, (node)->location.end, diag_id, __VA_ARGS__)
 
 /**
  * Add an error for an expected heredoc terminator. This is a special function
@@ -828,7 +836,7 @@ pm_locals_resize(pm_locals_t *locals) {
  * @return True if the local was added, and false if the local already exists.
  */
 static bool
-pm_locals_write(pm_locals_t *locals, pm_constant_id_t name, const uint8_t *start, const uint8_t *end, uint32_t reads) {
+pm_locals_write(pm_locals_t *locals, pm_constant_id_t name, uint32_t start, uint32_t length, uint32_t reads) {
     if (locals->size >= (locals->capacity / 4 * 3)) {
         pm_locals_resize(locals);
     }
@@ -840,7 +848,7 @@ pm_locals_write(pm_locals_t *locals, pm_constant_id_t name, const uint8_t *start
             if (local->name == PM_CONSTANT_ID_UNSET) {
                 *local = (pm_local_t) {
                     .name = name,
-                    .location = { .start = start, .end = end },
+                    .location = { .start = start, .length = length },
                     .index = locals->size++,
                     .reads = reads,
                     .hash = 0
@@ -861,7 +869,7 @@ pm_locals_write(pm_locals_t *locals, pm_constant_id_t name, const uint8_t *start
             if (local->name == PM_CONSTANT_ID_UNSET) {
                 *local = (pm_local_t) {
                     .name = name,
-                    .location = { .start = start, .end = end },
+                    .location = { .start = start, .length = length },
                     .index = locals->size++,
                     .reads = reads,
                     .hash = initial_hash
@@ -979,14 +987,13 @@ pm_locals_order(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, pm_locals_t *locals,
         if (local->name != PM_CONSTANT_ID_UNSET) {
             pm_constant_id_list_insert(list, (size_t) local->index, local->name);
 
-            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_newline_list_line(&parser->newline_list, local->location.start, parser->start_line) >= 0))) {
+            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_newline_list_line(&parser->newline_list, parser->start + local->location.start, parser->start_line) >= 0))) {
                 pm_constant_t *constant = pm_constant_pool_id_to_constant(&parser->constant_pool, local->name);
 
                 if (constant->length >= 1 && *constant->start != '_') {
-                    PM_PARSER_WARN_FORMAT(
+                    PM_PARSER_WARN_FORMAT_SLICE(
                         parser,
-                        local->location.start,
-                        local->location.end,
+                        &local->location,
                         PM_WARN_UNUSED_LOCAL_VARIABLE,
                         (int) constant->length,
                         (const char *) constant->start
@@ -5547,7 +5554,7 @@ pm_numbered_reference_read_node_number(pm_parser_t *parser, const pm_token_t *to
     xfree(digits);
 
     if ((errno == ERANGE) || (value > NTH_REF_MAX)) {
-        PM_PARSER_WARN_FORMAT(parser, start, end, PM_WARN_INVALID_NUMBERED_REFERENCE, (int) (length + 1), (const char *) token->start);
+        PM_PARSER_WARN_FORMAT_LOCATION(parser, start, end, PM_WARN_INVALID_NUMBERED_REFERENCE, (int) (length + 1), (const char *) token->start);
         value = 0;
     }
 
@@ -7081,7 +7088,7 @@ pm_parser_local_depth(pm_parser_t *parser, pm_token_t *token) {
  */
 static inline void
 pm_parser_local_add(pm_parser_t *parser, pm_constant_id_t constant_id, const uint8_t *start, const uint8_t *end, uint32_t reads) {
-    pm_locals_write(&parser->current_scope->locals, constant_id, start, end, reads);
+    pm_locals_write(&parser->current_scope->locals, constant_id, (uint32_t) (start - parser->start), (uint32_t) (end - start), reads);
 }
 
 /**
@@ -14245,7 +14252,7 @@ parser_warn_indentation_mismatch(pm_parser_t *parser, size_t opening_newline_ind
     if (allow_indent && (closing_column > opening_column)) return;
 
     // Otherwise, add a warning.
-    PM_PARSER_WARN_FORMAT(
+    PM_PARSER_WARN_FORMAT_LOCATION(
         parser,
         closing_token->start,
         closing_token->end,
@@ -16207,18 +16214,17 @@ parse_pattern_rest(pm_parser_t *parser, pm_constant_id_list_t *captures) {
     // will check for that here. If they do, then we'll add it to the local
     // table since this pattern will cause it to become a local variable.
     if (accept1(parser, PM_TOKEN_IDENTIFIER)) {
-        pm_token_t identifier = parser->previous;
-        pm_constant_id_t constant_id = pm_parser_constant_id_token(parser, &identifier);
+        pm_constant_id_t constant_id = pm_parser_constant_id_token(parser, &parser->previous);
 
         int depth;
         if ((depth = pm_parser_local_depth_constant_id(parser, constant_id)) == -1) {
-            pm_parser_local_add(parser, constant_id, identifier.start, identifier.end, 0);
+            pm_parser_local_add(parser, constant_id, parser->previous.start, parser->previous.end, 0);
         }
 
-        parse_pattern_capture(parser, captures, constant_id, &PM_LOCATION_TOKEN_VALUE(&identifier));
+        parse_pattern_capture(parser, captures, constant_id, &PM_LOCATION_TOKEN_VALUE(&parser->previous));
         name = UP(pm_local_variable_target_node_create(
             parser,
-            &PM_LOCATION_TOKEN_VALUE(&identifier),
+            &PM_LOCATION_TOKEN_VALUE(&parser->previous),
             constant_id,
             (uint32_t) (depth == -1 ? 0 : depth)
         ));
