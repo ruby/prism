@@ -7642,10 +7642,8 @@ parser_lex_magic_comment(pm_parser_t *parser, bool semantic_token_seen) {
         // Allocate a new magic comment node to append to the parser's list.
         pm_magic_comment_t *magic_comment;
         if ((magic_comment = (pm_magic_comment_t *) xcalloc(1, sizeof(pm_magic_comment_t))) != NULL) {
-            magic_comment->key_start = key_start;
-            magic_comment->value_start = value_start;
-            magic_comment->key_length = (uint32_t) key_length;
-            magic_comment->value_length = value_length;
+            magic_comment->key = (pm_slice_t) { .start = (uint32_t) (key_start - parser->start), .length = (uint32_t) key_length };
+            magic_comment->value = (pm_slice_t) { .start = (uint32_t) (value_start - parser->start), .length = value_length };
             pm_list_append(&parser->magic_comment_list, (pm_list_node_t *) magic_comment);
         }
     }

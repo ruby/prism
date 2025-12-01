@@ -455,8 +455,8 @@ rb_class_new_instance_freeze(int argc, const VALUE *argv, VALUE klass, bool free
  * Create a new Location instance from the given parser and bounds.
  */
 static inline VALUE
-parser_location(const pm_parser_t *parser, VALUE source, bool freeze, const uint8_t *start, size_t length) {
-    VALUE argv[] = { source, LONG2FIX(start - parser->start), LONG2FIX(length) };
+parser_location(const pm_parser_t *parser, VALUE source, bool freeze, uint32_t start, uint32_t length) {
+    VALUE argv[] = { source, LONG2FIX(start), LONG2FIX(length) };
     return rb_class_new_instance_freeze(3, argv, rb_cPrismLocation, freeze);
 }
 
@@ -464,7 +464,7 @@ parser_location(const pm_parser_t *parser, VALUE source, bool freeze, const uint
  * Create a new Location instance from the given parser and location.
  */
 #define PARSER_LOCATION_LOC(parser, source, freeze, loc) \
-    parser_location(parser, source, freeze, loc.start, (size_t) (loc.end - loc.start))
+    parser_location(parser, source, freeze, (uint32_t) (loc.start - parser->start), (uint32_t) (loc.end - loc.start))
 
 /**
  * Build a new Comment instance from the given parser and comment.
@@ -501,8 +501,8 @@ parser_comments(const pm_parser_t *parser, VALUE source, bool freeze) {
  */
 static inline VALUE
 parser_magic_comment(const pm_parser_t *parser, VALUE source, bool freeze, const pm_magic_comment_t *magic_comment) {
-    VALUE key_loc = parser_location(parser, source, freeze, magic_comment->key_start, magic_comment->key_length);
-    VALUE value_loc = parser_location(parser, source, freeze, magic_comment->value_start, magic_comment->value_length);
+    VALUE key_loc = parser_location(parser, source, freeze, magic_comment->key.start, magic_comment->key.length);
+    VALUE value_loc = parser_location(parser, source, freeze, magic_comment->value.start, magic_comment->value.length);
     VALUE argv[] = { key_loc, value_loc };
     return rb_class_new_instance_freeze(2, argv, rb_cPrismMagicComment, freeze);
 }
