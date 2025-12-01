@@ -232,11 +232,11 @@ pm_serialize_magic_comment_list(pm_list_t *list, pm_buffer_t *buffer) {
 
 static void
 pm_serialize_data_loc(const pm_parser_t *parser, pm_buffer_t *buffer) {
-    if (parser->data_loc.end == NULL) {
+    if (parser->data_loc.length == 0) {
         pm_buffer_append_byte(buffer, 0);
     } else {
         pm_buffer_append_byte(buffer, 1);
-        pm_serialize_location(parser, &parser->data_loc, buffer);
+        pm_serialize_slice(&parser->data_loc, buffer);
     }
 }
 

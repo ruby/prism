@@ -533,10 +533,10 @@ parser_magic_comments(const pm_parser_t *parser, VALUE source, bool freeze) {
  */
 static VALUE
 parser_data_loc(const pm_parser_t *parser, VALUE source, bool freeze) {
-    if (parser->data_loc.end == NULL) {
+    if (parser->data_loc.length == 0) {
         return Qnil;
     } else {
-        return PARSER_LOCATION_LOC(parser, source, freeze, parser->data_loc);
+        return parser_location(parser, source, freeze, parser->data_loc.start, parser->data_loc.length);
     }
 }
 

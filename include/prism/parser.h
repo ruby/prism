@@ -722,7 +722,7 @@ struct pm_parser {
      * and the rest of the content of the file. This content is loaded into the
      * DATA constant when the file being parsed is the main file being executed.
      */
-    pm_location_t data_loc;
+    pm_slice_t data_loc;
 
     /** The list of warnings that have been found while parsing. */
     pm_list_t warning_list;

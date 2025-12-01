@@ -11004,8 +11004,8 @@ parser_lex(pm_parser_t *parser) {
                         parser->current.type = PM_TOKEN___END__;
                         parser_lex_callback(parser);
 
-                        parser->data_loc.start = parser->current.start;
-                        parser->data_loc.end = parser->current.end;
+                        parser->data_loc.start = (uint32_t) (parser->current.start - parser->start);
+                        parser->data_loc.length = (uint32_t) (parser->current.end - parser->current.start);
 
                         LEX(PM_TOKEN_EOF);
                     }
@@ -21761,7 +21761,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         .current = { .type = PM_TOKEN_EOF, .start = source, .end = source },
         .next_start = NULL,
         .heredoc_end = NULL,
-        .data_loc = { .start = NULL, .end = NULL },
+        .data_loc = { 0 },
         .comment_list = { 0 },
         .magic_comment_list = { 0 },
         .warning_list = { 0 },
