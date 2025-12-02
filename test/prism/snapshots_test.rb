@@ -36,7 +36,7 @@ module Prism
       )
     end
 
-    Fixture.each_with_version(except: except) do |fixture, version|
+    Fixture.each_with_all_versions(except: except) do |fixture, version|
       define_method(fixture.test_name(version)) { assert_snapshot(fixture, version) }
     end
 
