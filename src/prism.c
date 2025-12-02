@@ -2828,7 +2828,7 @@ pm_call_node_writable_p(const pm_parser_t *parser, const pm_call_node_t *node) {
         (node->message_loc.length > 0) &&
         (parser->start[node->message_loc.start + node->message_loc.length - 1] != '!') &&
         (parser->start[node->message_loc.start + node->message_loc.length - 1] != '?') &&
-        char_is_identifier_start(parser, parser->start + node->message_loc.start, node->message_loc.length) &&
+        char_is_identifier_start(parser, parser->start + node->message_loc.start, (ptrdiff_t) node->message_loc.length) &&
         (node->opening_loc.length == 0) &&
         (node->arguments == NULL) &&
         (node->block == NULL)
@@ -12750,7 +12750,7 @@ parse_target(pm_parser_t *parser, pm_node_t *target, bool multiple, bool splat_p
                     return UP(pm_local_variable_target_node_create(parser, &message_loc, name, 0));
                 }
 
-                if (parser->start[call->message_loc.start] == '_' || parser->encoding->alnum_char(parser->start + call->message_loc.start, call->message_loc.length)) {
+                if (parser->start[call->message_loc.start] == '_' || parser->encoding->alnum_char(parser->start + call->message_loc.start, (ptrdiff_t) call->message_loc.length)) {
                     if (multiple && PM_NODE_FLAG_P(call, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
                         pm_parser_err_node(parser, (const pm_node_t *) call, PM_ERR_UNEXPECTED_SAFE_NAVIGATION);
                     }
@@ -12942,7 +12942,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
                     return target;
                 }
 
-                if (char_is_identifier_start(parser, parser->start + call->message_loc.start, call->message_loc.length)) {
+                if (char_is_identifier_start(parser, parser->start + call->message_loc.start, (ptrdiff_t) call->message_loc.length)) {
                     // When we get here, we have a method call, because it was
                     // previously marked as a method call but now we have an =. This
                     // looks like:
