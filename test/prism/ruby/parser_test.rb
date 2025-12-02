@@ -73,6 +73,7 @@ module Prism
 
       # Ruby >= 4.0 specific syntax
       "4.0/endless_methods_command_call.txt",
+      "4.0/void_value.txt",
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",
