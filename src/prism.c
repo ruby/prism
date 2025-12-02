@@ -987,7 +987,7 @@ pm_locals_order(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, pm_locals_t *locals,
         if (local->name != PM_CONSTANT_ID_UNSET) {
             pm_constant_id_list_insert(list, (size_t) local->index, local->name);
 
-            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_newline_list_line(&parser->newline_list, parser->start + local->location.start, parser->start_line) >= 0))) {
+            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_newline_list_line(&parser->newline_list, local->location.start, parser->start_line) >= 0))) {
                 pm_constant_t *constant = pm_constant_pool_id_to_constant(&parser->constant_pool, local->name);
 
                 if (constant->length >= 1 && *constant->start != '_') {
@@ -9307,7 +9307,7 @@ lex_embdoc(pm_parser_t *parser) {
     if (newline == NULL) {
         parser->current.end = parser->end;
     } else {
-        pm_newline_list_append(&parser->newline_list, newline);
+        pm_newline_list_append(&parser->newline_list, (uint32_t) (newline - parser->start + 1));
         parser->current.end = newline + 1;
     }
 
@@ -9341,7 +9341,7 @@ lex_embdoc(pm_parser_t *parser) {
             if (newline == NULL) {
                 parser->current.end = parser->end;
             } else {
-                pm_newline_list_append(&parser->newline_list, newline);
+                pm_newline_list_append(&parser->newline_list, (uint32_t) (newline - parser->start + 1));
                 parser->current.end = newline + 1;
             }
 
@@ -9361,7 +9361,7 @@ lex_embdoc(pm_parser_t *parser) {
         if (newline == NULL) {
             parser->current.end = parser->end;
         } else {
-            pm_newline_list_append(&parser->newline_list, newline);
+            pm_newline_list_append(&parser->newline_list, (uint32_t) (newline - parser->start + 1));
             parser->current.end = newline + 1;
         }
 
@@ -9675,7 +9675,7 @@ pm_lex_percent_delimiter(pm_parser_t *parser) {
             parser_flush_heredoc_end(parser);
         } else {
             // Otherwise, we'll add the newline to the list of newlines.
-            pm_newline_list_append(&parser->newline_list, parser->current.end + eol_length - 1);
+            pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end + eol_length - parser->start));
         }
 
         uint8_t delimiter = *parser->current.end;
@@ -9773,7 +9773,7 @@ parser_lex(pm_parser_t *parser) {
                                 parser->heredoc_end = NULL;
                             } else {
                                 parser->current.end += eol_length + 1;
-                                pm_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                                pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start));
                                 space_seen = true;
                             }
                         } else if (pm_char_is_inline_whitespace(*parser->current.end)) {
@@ -9867,7 +9867,7 @@ parser_lex(pm_parser_t *parser) {
                         }
 
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start));
                         }
                     }
 
@@ -10376,7 +10376,7 @@ parser_lex(pm_parser_t *parser) {
                                     } else {
                                         // Otherwise, we want to indicate that the body of the
                                         // heredoc starts on the character after the next newline.
-                                        pm_newline_list_append(&parser->newline_list, body_start);
+                                        pm_newline_list_append(&parser->newline_list, (uint32_t) (body_start - parser->start + 1));
                                         body_start++;
                                     }
 
@@ -11017,7 +11017,7 @@ parser_lex(pm_parser_t *parser) {
                         // correct column information for it.
                         const uint8_t *cursor = parser->current.end;
                         while ((cursor = next_newline(cursor, parser->end - cursor)) != NULL) {
-                            pm_newline_list_append(&parser->newline_list, cursor++);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (++cursor - parser->start));
                         }
 
                         parser->current.end = parser->end;
@@ -11078,7 +11078,7 @@ parser_lex(pm_parser_t *parser) {
                     whitespace += 1;
                 }
             } else {
-                whitespace = pm_strspn_whitespace_newlines(parser->current.end, parser->end - parser->current.end, &parser->newline_list);
+                whitespace = pm_strspn_whitespace_newlines(parser->current.end, parser->end - parser->current.end, &parser->newline_list, (uint32_t) (parser->current.end - parser->start));
             }
 
             if (whitespace > 0) {
@@ -11193,7 +11193,7 @@ parser_lex(pm_parser_t *parser) {
                                 LEX(PM_TOKEN_STRING_CONTENT);
                             } else {
                                 // ... else track the newline.
-                                pm_newline_list_append(&parser->newline_list, parser->current.end);
+                                pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start + 1));
                             }
 
                             parser->current.end++;
@@ -11331,7 +11331,7 @@ parser_lex(pm_parser_t *parser) {
                         // would have already have added the newline to the
                         // list.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start));
                         }
                     } else {
                         parser->current.end = breakpoint + 1;
@@ -11378,7 +11378,7 @@ parser_lex(pm_parser_t *parser) {
                         // If we've hit a newline, then we need to track that in
                         // the list of newlines.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, breakpoint);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (breakpoint - parser->start + 1));
                             parser->current.end = breakpoint + 1;
                             breakpoint = pm_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end, false);
                             break;
@@ -11426,7 +11426,7 @@ parser_lex(pm_parser_t *parser) {
                                     LEX(PM_TOKEN_STRING_CONTENT);
                                 } else {
                                     // ... else track the newline.
-                                    pm_newline_list_append(&parser->newline_list, parser->current.end);
+                                    pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start + 1));
                                 }
 
                                 parser->current.end++;
@@ -11591,7 +11591,7 @@ parser_lex(pm_parser_t *parser) {
                         // would have already have added the newline to the
                         // list.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start));
                         }
                     } else {
                         parser->current.end = breakpoint + 1;
@@ -11636,7 +11636,7 @@ parser_lex(pm_parser_t *parser) {
                         // for the terminator in case the terminator is a
                         // newline character.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, breakpoint);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (breakpoint - parser->start + 1));
                             parser->current.end = breakpoint + 1;
                             breakpoint = pm_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end, true);
                             break;
@@ -11690,7 +11690,7 @@ parser_lex(pm_parser_t *parser) {
                                     LEX(PM_TOKEN_STRING_CONTENT);
                                 } else {
                                     // ... else track the newline.
-                                    pm_newline_list_append(&parser->newline_list, parser->current.end);
+                                    pm_newline_list_append(&parser->newline_list, (uint32_t) (parser->current.end - parser->start + 1));
                                 }
 
                                 parser->current.end++;
@@ -11819,7 +11819,7 @@ parser_lex(pm_parser_t *parser) {
                         (memcmp(terminator_start, ident_start, ident_length) == 0)
                     ) {
                         if (newline != NULL) {
-                            pm_newline_list_append(&parser->newline_list, newline);
+                            pm_newline_list_append(&parser->newline_list, (uint32_t) (newline - parser->start + 1));
                         }
 
                         parser->current.end = terminator_end;
@@ -11891,7 +11891,7 @@ parser_lex(pm_parser_t *parser) {
                             LEX(PM_TOKEN_STRING_CONTENT);
                         }
 
-                        pm_newline_list_append(&parser->newline_list, breakpoint);
+                        pm_newline_list_append(&parser->newline_list, (uint32_t) (breakpoint - parser->start + 1));
 
                         // If we have a - or ~ heredoc, then we can match after
                         // some leading whitespace.
@@ -12009,7 +12009,7 @@ parser_lex(pm_parser_t *parser) {
                                     // string content.
                                     if (heredoc_lex_mode->indent == PM_HEREDOC_INDENT_TILDE) {
                                         const uint8_t *end = parser->current.end;
-                                        pm_newline_list_append(&parser->newline_list, end);
+                                        pm_newline_list_append(&parser->newline_list, (uint32_t) (end - parser->start + 1));
 
                                         // Here we want the buffer to only
                                         // include up to the backslash.
@@ -13220,11 +13220,11 @@ parse_statements(pm_parser_t *parser, pm_context_t context, uint16_t depth) {
  */
 static void
 pm_hash_key_static_literals_add(pm_parser_t *parser, pm_static_literals_t *literals, pm_node_t *node) {
-    const pm_node_t *duplicated = pm_static_literals_add(&parser->newline_list, parser->start_line, literals, node, true);
+    const pm_node_t *duplicated = pm_static_literals_add(&parser->newline_list, parser->start, parser->start_line, literals, node, true);
 
     if (duplicated != NULL) {
         pm_buffer_t buffer = { 0 };
-        pm_static_literal_inspect(&buffer, &parser->newline_list, parser->start_line, parser->encoding->name, duplicated);
+        pm_static_literal_inspect(&buffer, &parser->newline_list, parser->start, parser->start_line, parser->encoding->name, duplicated);
 
         pm_diagnostic_list_append_format(
             &parser->warning_list,
@@ -13233,7 +13233,7 @@ pm_hash_key_static_literals_add(pm_parser_t *parser, pm_static_literals_t *liter
             PM_WARN_DUPLICATED_HASH_KEY,
             (int) pm_buffer_length(&buffer),
             pm_buffer_value(&buffer),
-            pm_newline_list_line_column(&parser->newline_list, node->location.start, parser->start_line).line
+            pm_newline_list_line_column(&parser->newline_list, (uint32_t) (node->location.start - parser->start), parser->start_line).line
         );
 
         pm_buffer_free(&buffer);
@@ -13248,14 +13248,14 @@ static void
 pm_when_clause_static_literals_add(pm_parser_t *parser, pm_static_literals_t *literals, pm_node_t *node) {
     pm_node_t *previous;
 
-    if ((previous = pm_static_literals_add(&parser->newline_list, parser->start_line, literals, node, false)) != NULL) {
+    if ((previous = pm_static_literals_add(&parser->newline_list, parser->start, parser->start_line, literals, node, false)) != NULL) {
         pm_diagnostic_list_append_format(
             &parser->warning_list,
             (uint32_t) (node->location.start - parser->start),
             (uint32_t) (node->location.end - node->location.start),
             PM_WARN_DUPLICATED_WHEN_CLAUSE,
-            pm_newline_list_line_column(&parser->newline_list, node->location.start, parser->start_line).line,
-            pm_newline_list_line_column(&parser->newline_list, previous->location.start, parser->start_line).line
+            pm_newline_list_line_column(&parser->newline_list, (uint32_t) (node->location.start - parser->start), parser->start_line).line,
+            pm_newline_list_line_column(&parser->newline_list, (uint32_t) (previous->location.start - parser->start), parser->start_line).line
         );
     }
 }
@@ -14180,7 +14180,7 @@ token_newline_index(const pm_parser_t *parser) {
         // start of a heredoc, so we cannot rely on looking at the previous
         // offset of the newline list, and instead must go through the whole
         // process of a binary search for the line number.
-        return (size_t) pm_newline_list_line(&parser->newline_list, parser->current.start, 0);
+        return (size_t) pm_newline_list_line(&parser->newline_list, (uint32_t) (parser->current.start - parser->start), 0);
     }
 }
 
@@ -16343,7 +16343,7 @@ parse_pattern_hash_implicit_value(pm_parser_t *parser, pm_constant_id_list_t *ca
  */
 static void
 parse_pattern_hash_key(pm_parser_t *parser, pm_static_literals_t *keys, pm_node_t *node) {
-    if (pm_static_literals_add(&parser->newline_list, parser->start_line, keys, node, true) != NULL) {
+    if (pm_static_literals_add(&parser->newline_list, parser->start, parser->start_line, keys, node, true) != NULL) {
         pm_parser_err_node(parser, node, PM_ERR_PATTERN_HASH_KEY_DUPLICATE);
     }
 }
@@ -21834,7 +21834,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
     // guess at the number of newlines that we'll need based on the size of the
     // input.
     size_t newline_size = size / 22;
-    pm_newline_list_init(&parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
+    pm_newline_list_init(&parser->newline_list, newline_size < 4 ? 4 : newline_size);
 
     // If options were provided to this parse, establish them here.
     if (options != NULL) {
@@ -21973,7 +21973,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         const uint8_t *newline = next_newline(cursor, parser->end - cursor);
 
         while (newline != NULL) {
-            pm_newline_list_append(&parser->newline_list, newline);
+            pm_newline_list_append(&parser->newline_list, (uint32_t) (newline - parser->start + 1));
 
             cursor = newline + 1;
             newline = next_newline(cursor, parser->end - cursor);

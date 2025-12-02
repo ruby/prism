@@ -12,15 +12,15 @@ void pm_prettyprint(void) {}
 
 static inline void
 prettyprint_location(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm_location_t *location) {
-    pm_line_column_t start = pm_newline_list_line_column(&parser->newline_list, location->start, parser->start_line);
-    pm_line_column_t end = pm_newline_list_line_column(&parser->newline_list, location->end, parser->start_line);
+    pm_line_column_t start = pm_newline_list_line_column(&parser->newline_list, (uint32_t) (location->start - parser->start), parser->start_line);
+    pm_line_column_t end = pm_newline_list_line_column(&parser->newline_list, (uint32_t) (location->end - parser->start), parser->start_line);
     pm_buffer_append_format(output_buffer, "(%" PRIi32 ",%" PRIu32 ")-(%" PRIi32 ",%" PRIu32 ")", start.line, start.column, end.line, end.column);
 }
 
 static inline void
 prettyprint_slice(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm_slice_t *slice) {
-    pm_line_column_t start = pm_newline_list_line_column(&parser->newline_list, parser->start + slice->start, parser->start_line);
-    pm_line_column_t end = pm_newline_list_line_column(&parser->newline_list, parser->start + slice->start + slice->length, parser->start_line);
+    pm_line_column_t start = pm_newline_list_line_column(&parser->newline_list, slice->start, parser->start_line);
+    pm_line_column_t end = pm_newline_list_line_column(&parser->newline_list, slice->start + slice->length, parser->start_line);
     pm_buffer_append_format(output_buffer, "(%" PRIi32 ",%" PRIu32 ")-(%" PRIi32 ",%" PRIu32 ")", start.line, start.column, end.line, end.column);
 }
 
