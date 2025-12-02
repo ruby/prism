@@ -59,21 +59,10 @@ module Prism
     class LocationField < Field
     end
 
-    # A slice field represents a slice of the source code. It resolves to a
-    # Prism::Location in Ruby.
-    class SliceField < Field
-    end
-
     # An optional location field represents the location of some part of the
     # node in the source code that may or may not be present. It resolves to
     # either a Prism::Location or nil in Ruby.
     class OptionalLocationField < Field
-    end
-
-    # An optional slice field represents a slice of the source code that may or
-    # may not be present. It resolves to either a Prism::Location or nil in
-    # Ruby.
-    class OptionalSliceField < Field
     end
 
     # An integer field represents an integer value. It is used to represent the
@@ -126,12 +115,8 @@ module Prism
             "StringField.new(:#{field.name})"
           when Prism::Template::LocationField
             "LocationField.new(:#{field.name})"
-          when Prism::Template::SliceField
-            "SliceField.new(:#{field.name})"
           when Prism::Template::OptionalLocationField
             "OptionalLocationField.new(:#{field.name})"
-          when Prism::Template::OptionalSliceField
-            "OptionalSliceField.new(:#{field.name})"
           when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField
             "IntegerField.new(:#{field.name})"
           when Prism::Template::DoubleField

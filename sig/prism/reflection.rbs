@@ -30,13 +30,7 @@ module Prism
     class LocationField < Field
     end
 
-    class SliceField < Field
-    end
-
     class OptionalLocationField < Field
-    end
-
-    class OptionalSliceField < Field
     end
 
     class IntegerField < Field

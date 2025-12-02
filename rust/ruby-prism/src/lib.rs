@@ -397,8 +397,8 @@ impl<'pr> Diagnostic<'pr> {
 
     /// The location of the diagnostic in the source.
     #[must_use]
-    pub const fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.diag.as_ref().location })
+    pub const fn location(&self) -> Slice<'pr> {
+        Slice::new(self.parser, unsafe { &self.diag.as_ref().location })
     }
 }
 
@@ -442,14 +442,15 @@ impl<'pr> Comment<'pr> {
 
     /// The location of the comment in the source.
     #[must_use]
-    pub const fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.content.as_ref().location })
+    pub const fn location(&self) -> Slice<'pr> {
+        Slice::new(self.parser, unsafe { &self.content.as_ref().location })
     }
 }
 
 /// A magic comment that was found during parsing.
 #[derive(Debug)]
 pub struct MagicComment<'pr> {
+    parser: NonNull<pm_parser_t>,
     comment: NonNull<pm_magic_comment_t>,
     marker: PhantomData<&'pr pm_magic_comment_t>,
 }
@@ -459,8 +460,8 @@ impl MagicComment<'_> {
     #[must_use]
     pub const fn key(&self) -> &[u8] {
         unsafe {
-            let start = self.comment.as_ref().key_start;
-            let len = self.comment.as_ref().key_length as usize;
+            let start = self.parser.as_ref().start.add(self.comment.as_ref().key.start as usize);
+            let len = self.comment.as_ref().key.length as usize;
             std::slice::from_raw_parts(start, len)
         }
     }
@@ -469,8 +470,8 @@ impl MagicComment<'_> {
     #[must_use]
     pub const fn value(&self) -> &[u8] {
         unsafe {
-            let start = self.comment.as_ref().value_start;
-            let len = self.comment.as_ref().value_length as usize;
+            let start = self.parser.as_ref().start.add(self.comment.as_ref().value.start as usize);
+            let len = self.comment.as_ref().value.length as usize;
             std::slice::from_raw_parts(start, len)
         }
     }
@@ -531,6 +532,7 @@ impl<'pr> Iterator for Comments<'pr> {
 /// A struct created by the `magic_comments` method on `ParseResult`. It can be used
 /// to iterate over the magic comments in the parse result.
 pub struct MagicComments<'pr> {
+    parser: NonNull<pm_parser_t>,
     comment: *mut pm_magic_comment_t,
     marker: PhantomData<&'pr pm_magic_comment_t>,
 }
@@ -540,7 +542,7 @@ impl<'pr> Iterator for MagicComments<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(comment) = NonNull::new(self.comment) {
-            let current = MagicComment { comment, marker: PhantomData };
+            let current = MagicComment { parser: self.parser, comment, marker: PhantomData };
             self.comment = unsafe { comment.as_ref().node.next.cast::<pm_magic_comment_t>() };
             Some(current)
         } else {
@@ -576,12 +578,21 @@ impl<'pr> ParseResult<'pr> {
     /// # Panics
     /// Panics if start offset or end offset are not valid offsets from the root.
     #[must_use]
-    pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
+    pub fn as_location_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
         let root = self.source.as_ptr();
 
         let start = usize::try_from(unsafe { location.start.offset_from(root) }).expect("start should point to memory after root");
         let end = usize::try_from(unsafe { location.end.offset_from(root) }).expect("end should point to memory after root");
 
+        &self.source[start..end]
+    }
+
+    /// Returns a slice of the source string that was parsed using the given
+    /// slice range.
+    #[must_use]
+    pub fn as_slice(&self, slice: &Slice<'pr>) -> &'pr [u8] {
+        let start = slice.start as usize;
+        let end = start + slice.length as usize;
         &self.source[start..end]
     }
 
@@ -634,6 +645,7 @@ impl<'pr> ParseResult<'pr> {
         unsafe {
             let list = &mut (*self.parser.as_ptr()).magic_comment_list;
             MagicComments {
+                parser: self.parser,
                 comment: list.head.cast::<pm_magic_comment_t>(),
                 marker: PhantomData,
             }
@@ -642,12 +654,12 @@ impl<'pr> ParseResult<'pr> {
 
     /// Returns an optional location of the __END__ marker and the rest of the content of the file.
     #[must_use]
-    pub fn data_loc(&self) -> Option<Location<'_>> {
+    pub fn data_loc(&self) -> Option<Slice<'_>> {
         let location = unsafe { &(*self.parser.as_ptr()).data_loc };
-        if location.start.is_null() {
+        if location.length == 0 {
             None
         } else {
-            Some(Location::new(self.parser, location))
+            Some(Slice::new(self.parser, location))
         }
     }
 
@@ -760,7 +772,7 @@ mod tests {
         let node = plus.arguments().unwrap().arguments().iter().next().unwrap();
 
         let location = node.as_integer_node().unwrap().location();
-        let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
+        let slice = std::str::from_utf8(result.as_location_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
         assert_eq!(6, location.start_offset());
@@ -794,7 +806,7 @@ mod tests {
         }
 
         let location = node.location();
-        let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
+        let slice = std::str::from_utf8(result.as_location_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
 

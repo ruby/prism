@@ -78,13 +78,13 @@ module Prism
         end
       when Prism::Template::ConstantField
         "#{field.name}: :\"\""
-      when Prism::Template::OptionalNodeField, Prism::Template::OptionalConstantField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField
+      when Prism::Template::OptionalNodeField, Prism::Template::OptionalConstantField, Prism::Template::OptionalLocationField
         "#{field.name}: nil"
       when Prism::Template::NodeListField, Prism::Template::ConstantListField
         "#{field.name}: []"
       when Prism::Template::StringField
         "#{field.name}: \"\""
-      when Prism::Template::LocationField, Prism::Template::SliceField
+      when Prism::Template::LocationField
         "#{field.name}: location"
       when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField
         "#{field.name}: 0"

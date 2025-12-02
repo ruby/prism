@@ -52,8 +52,8 @@ fn comments_test() {
         assert_eq!((*comment).type_, pm_comment_type_t::PM_COMMENT_INLINE);
 
         let location = {
-            let start = (*comment).location.start.offset_from(parser.start);
-            let end = (*comment).location.end.offset_from(parser.start);
+            let start = (*comment).location.start;
+            let end = (*comment).location.start + (*comment).location.length;
             start..end
         };
         assert_eq!(location, 0..7);
@@ -89,8 +89,8 @@ fn diagnostics_test() {
         );
 
         let location = {
-            let start = (*error).location.start.offset_from(parser.start);
-            let end = (*error).location.end.offset_from(parser.start);
+            let start = (*error).location.start;
+            let end = (*error).location.start + (*error).location.length;
             start..end
         };
         assert_eq!(location, 10..10);

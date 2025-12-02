@@ -109,13 +109,6 @@ prettyprint_node(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm
                 }
                 pm_buffer_append_string(output_buffer, "]\n", 2);
             <%- when Prism::Template::LocationField -%>
-                pm_location_t *location = &cast-><%= field.name %>;
-                pm_buffer_append_byte(output_buffer, ' ');
-                prettyprint_location(output_buffer, parser, location);
-                pm_buffer_append_string(output_buffer, " = \"", 4);
-                pm_buffer_append_source(output_buffer, location->start, (size_t) (location->end - location->start), PM_BUFFER_ESCAPING_RUBY);
-                pm_buffer_append_string(output_buffer, "\"\n", 2);
-            <%- when Prism::Template::SliceField -%>
                 pm_slice_t *slice = &cast-><%= field.name %>;
                 pm_buffer_append_byte(output_buffer, ' ');
                 prettyprint_slice(output_buffer, parser, slice);
@@ -123,17 +116,6 @@ prettyprint_node(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm
                 pm_buffer_append_source(output_buffer, parser->start + slice->start, (size_t) slice->length, PM_BUFFER_ESCAPING_RUBY);
                 pm_buffer_append_string(output_buffer, "\"\n", 2);
             <%- when Prism::Template::OptionalLocationField -%>
-                pm_location_t *location = &cast-><%= field.name %>;
-                if (location->start == NULL) {
-                    pm_buffer_append_string(output_buffer, " nil\n", 5);
-                } else {
-                    pm_buffer_append_byte(output_buffer, ' ');
-                    prettyprint_location(output_buffer, parser, location);
-                    pm_buffer_append_string(output_buffer, " = \"", 4);
-                    pm_buffer_append_source(output_buffer, location->start, (size_t) (location->end - location->start), PM_BUFFER_ESCAPING_RUBY);
-                    pm_buffer_append_string(output_buffer, "\"\n", 2);
-                }
-            <%- when Prism::Template::OptionalSliceField -%>
                 pm_slice_t *slice = &cast-><%= field.name %>;
                 if (slice->length == 0) {
                     pm_buffer_append_string(output_buffer, " nil\n", 5);

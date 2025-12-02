@@ -342,7 +342,7 @@ public abstract class Nodes {
             <%- if node.fields.any?(Prism::Template::NodeListField) or node.fields.any?(Prism::Template::ConstantListField) -%>
             String nextNextIndent = nextIndent + "  ";
             <%- end -%>
-            <%- [*node.flags, *node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::SliceField).grep_v(Prism::Template::OptionalLocationField).grep_v(Prism::Template::OptionalSliceField)].each do |field| -%>
+            <%- [*node.flags, *node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::OptionalLocationField)].each do |field| -%>
             builder.append(nextIndent);
             builder.append("<%= field.name %>: ");
             <%- case field -%>

@@ -104,7 +104,7 @@ module Prism
       else
         commands << ["<%= pointer %><%= field.name %>: #{<%= field.name %>.inspect}\n", indent]
       end
-      <%- when Prism::Template::LocationField, Prism::Template::SliceField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
+      <%- when Prism::Template::LocationField, Prism::Template::OptionalLocationField -%>
       commands << ["<%= pointer %><%= field.name %>: #{inspect_location(node.<%= field.name %>)}\n", indent]
       <%- end -%>
       <%- end -%>

@@ -129,22 +129,9 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
             }
             <%- when Prism::Template::LocationField -%>
             <%- if field.should_be_serialized? -%>
-            pm_serialize_location(parser, &((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
-            <%- end -%>
-            <%- when Prism::Template::SliceField -%>
-            <%- if field.should_be_serialized? -%>
             pm_serialize_slice(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             <%- end -%>
             <%- when Prism::Template::OptionalLocationField -%>
-            <%- if field.should_be_serialized? -%>
-            if (((pm_<%= node.human %>_t *)node)-><%= field.name %>.start == NULL) {
-                pm_buffer_append_byte(buffer, 0);
-            } else {
-                pm_buffer_append_byte(buffer, 1);
-                pm_serialize_location(parser, &((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
-            }
-            <%- end -%>
-            <%- when Prism::Template::OptionalSliceField -%>
             <%- if field.should_be_serialized? -%>
             if (((pm_<%= node.human %>_t *)node)-><%= field.name %>.length == 0) {
                 pm_buffer_append_byte(buffer, 0);

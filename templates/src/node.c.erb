@@ -108,12 +108,12 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
         <%- nodes.each do |node| -%>
 #line <%= __LINE__ + 1 %> "prism/templates/src/<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
-            <%- if node.fields.any? { |field| ![Prism::Template::LocationField,  Prism::Template::SliceField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField].include?(field.class) } -%>
+            <%- if node.fields.any? { |field| ![Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField].include?(field.class) } -%>
             pm_<%= node.human %>_t *cast = (pm_<%= node.human %>_t *) node;
             <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field -%>
-            <%- when Prism::Template::LocationField, Prism::Template::SliceField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField -%>
+            <%- when Prism::Template::LocationField, Prism::Template::OptionalLocationField, Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::ConstantField, Prism::Template::OptionalConstantField, Prism::Template::DoubleField -%>
             <%- when Prism::Template::NodeField -%>
             pm_node_destroy(parser, (pm_node_t *)cast-><%= field.name %>);
             <%- when Prism::Template::OptionalNodeField -%>
@@ -295,16 +295,8 @@ pm_dump_json(pm_buffer_t *buffer, const pm_parser_t *parser, const pm_node_t *no
             }
             pm_buffer_append_byte(buffer, ']');
             <%- when Prism::Template::LocationField -%>
-            pm_dump_json_location(buffer, parser, &cast-><%= field.name %>);
-            <%- when Prism::Template::SliceField -%>
             pm_dump_json_slice(buffer, &cast-><%= field.name %>);
             <%- when Prism::Template::OptionalLocationField -%>
-            if (cast-><%= field.name %>.start != NULL) {
-                pm_dump_json_location(buffer, parser, &cast-><%= field.name %>);
-            } else {
-                pm_buffer_append_string(buffer, "null", 4);
-            }
-            <%- when Prism::Template::OptionalSliceField -%>
             if (cast-><%= field.name %>.length != 0) {
                 pm_dump_json_slice(buffer, &cast-><%= field.name %>);
             } else {

@@ -253,14 +253,8 @@ pm_ast_new(const pm_parser_t *parser, const pm_node_t *node, rb_encoding *encodi
                     if (freeze) rb_obj_freeze(argv[<%= index %>]);
                     <%- when Prism::Template::LocationField -%>
 #line <%= __LINE__ + 1 %> "prism/templates/ext/prism/<%= File.basename(__FILE__) %>"
-                    argv[<%= index %>] = pm_location_new(parser, cast-><%= field.name %>.start, cast-><%= field.name %>.end, source, freeze);
-                    <%- when Prism::Template::SliceField -%>
-#line <%= __LINE__ + 1 %> "prism/templates/ext/prism/<%= File.basename(__FILE__) %>"
                     argv[<%= index %>] = pm_slice_new(cast-><%= field.name %>.start, cast-><%= field.name %>.length, source, freeze);
                     <%- when Prism::Template::OptionalLocationField -%>
-#line <%= __LINE__ + 1 %> "prism/templates/ext/prism/<%= File.basename(__FILE__) %>"
-                    argv[<%= index %>] = cast-><%= field.name %>.start == NULL ? Qnil : pm_location_new(parser, cast-><%= field.name %>.start, cast-><%= field.name %>.end, source, freeze);
-                    <%- when Prism::Template::OptionalSliceField -%>
 #line <%= __LINE__ + 1 %> "prism/templates/ext/prism/<%= File.basename(__FILE__) %>"
                     argv[<%= index %>] = cast-><%= field.name %>.length == 0 ? Qnil : pm_slice_new(cast-><%= field.name %>.start, cast-><%= field.name %>.length, source, freeze);
                     <%- when Prism::Template::UInt8Field -%>

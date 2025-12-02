@@ -815,7 +815,7 @@ nodes:
               alias $foo $bar
                          ^^^^
       - name: keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `alias` keyword.
 
@@ -863,7 +863,7 @@ nodes:
               alias :"#{foo}" :"#{bar}"
                               ^^^^^^^^^
       - name: keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `alias` keyword.
 
@@ -893,7 +893,7 @@ nodes:
               foo => bar | baz
                            ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the alternation operator location.
 
@@ -929,7 +929,7 @@ nodes:
               1 and 2
                     ^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `and` keyword or the `&&` operator.
 
@@ -964,7 +964,7 @@ nodes:
         kind: non-void expression
         comment: Represent the list of zero or more [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression) within the array.
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the optional source location for the opening token.
 
@@ -973,7 +973,7 @@ nodes:
               %I(apple orange banana) # "%I("
               foo = 1, 2, 3           # nil
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the optional source location for the closing token.
 
@@ -1029,14 +1029,14 @@ nodes:
               foo in *bar, baz
                            ^^^
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the opening location of the array pattern.
 
               foo in [1, 2]
                      ^
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the closing location of the array pattern.
 
@@ -1087,7 +1087,7 @@ nodes:
               { x: 1 }
                    ^
       - name: operator_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `=>` operator, if present.
 
@@ -1109,7 +1109,7 @@ nodes:
               { **foo }
                   ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `**` operator.
 
@@ -1138,7 +1138,7 @@ nodes:
   - name: BeginNode
     fields:
       - name: begin_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the `begin` keyword.
 
@@ -1177,7 +1177,7 @@ nodes:
               begin x; ensure y; end
                        ^^^^^^^^
       - name: end_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the `end` keyword.
 
@@ -1202,7 +1202,7 @@ nodes:
               foo(&args)
                   ^^^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `&` operator.
 
@@ -1263,14 +1263,14 @@ nodes:
               [1, 2, 3].each { |i| puts x }
                                    ^^^^^^
       - name: opening_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the opening `|`.
 
               [1, 2, 3].each { |i| puts x }
                                ^
       - name: closing_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the closing `|`.
 
@@ -1293,14 +1293,14 @@ nodes:
                      ^
               end
       - name: name_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the block parameter name.
 
               def a(&b)
                      ^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `&` operator.
 
@@ -1340,7 +1340,7 @@ nodes:
                                 ^^^^^
               end
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the opening location of the block parameters.
 
@@ -1351,7 +1351,7 @@ nodes:
                      ^
               end
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the closing location of the block parameters.
 
@@ -1381,7 +1381,7 @@ nodes:
               break foo
                     ^^^
       - name: keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `break` keyword.
 
@@ -1404,14 +1404,14 @@ nodes:
               foo.bar &&= value
               ^^^
       - name: call_operator_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the call operator.
 
               foo.bar &&= value
                  ^
       - name: message_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the message.
 
@@ -1432,7 +1432,7 @@ nodes:
               foo.bar &&= value # write_name `:bar=`
                   ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the operator.
 
@@ -1469,7 +1469,7 @@ nodes:
               foo + bar
               ^^^
       - name: call_operator_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the call operator.
 
@@ -1486,14 +1486,14 @@ nodes:
               foo.bar # name `:foo`
               ^^^
       - name: message_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the message.
 
               foo.bar
                   ^^^
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the left parenthesis.
               foo(bar)
@@ -1507,14 +1507,14 @@ nodes:
               foo(bar)
                   ^^^
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the right parenthesis.
 
               foo(bar)
                      ^
       - name: equal_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the equal sign, in the case that this is an attribute write.
 
@@ -1565,14 +1565,14 @@ nodes:
               foo.bar += value
               ^^^
       - name: call_operator_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the call operator.
 
               foo.bar += value
                  ^
       - name: message_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the message.
 
@@ -1600,7 +1600,7 @@ nodes:
               foo.bar += value # binary_operator `:+`
                       ^
       - name: binary_operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the binary operator.
 
@@ -1631,14 +1631,14 @@ nodes:
               foo.bar ||= value
               ^^^
       - name: call_operator_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the call operator.
 
               foo.bar ||= value
                  ^
       - name: message_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the message.
 
@@ -1659,7 +1659,7 @@ nodes:
               foo.bar ||= value # write_name `:bar=`
                   ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the operator.
 
@@ -1690,7 +1690,7 @@ nodes:
               foo.bar = 1
               ^^^
       - name: call_operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the call operator.
 
@@ -1704,7 +1704,7 @@ nodes:
               foo.bar = 1 # name `:foo`
               ^^^
       - name: message_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the message.
 
@@ -1742,7 +1742,7 @@ nodes:
               foo => bar
               ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `=>` operator.
 
@@ -1780,14 +1780,14 @@ nodes:
               case true; in false; else; end
                                    ^^^^
       - name: case_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `case` keyword.
 
               case true; in false; end
               ^^^^
       - name: end_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `end` keyword.
 
@@ -1827,14 +1827,14 @@ nodes:
               case true; when false; else; end
                                      ^^^^
       - name: case_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `case` keyword.
 
               case true; when false; end
               ^^^^
       - name: end_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `end` keyword.
 
@@ -1852,7 +1852,7 @@ nodes:
       - name: locals
         type: constant[]
       - name: class_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `class` keyword.
 
@@ -1865,7 +1865,7 @@ nodes:
           - ConstantPathNode
           - on error: CallNode # class 0.X end
       - name: inheritance_operator_loc
-        type: slice?
+        type: location?
         comment: |
           Represents the location of the `<` operator.
 
@@ -1891,7 +1891,7 @@ nodes:
                 foo
                 ^^^
       - name: end_keyword_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `end` keyword.
 
@@ -1918,14 +1918,14 @@ nodes:
               @@target &&= value # name `:@@target`
               ^^^^^^^^
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the variable name.
 
               @@target &&= value
               ^^^^^^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           Represents the location of the `&&=` operator.
 
@@ -1949,9 +1949,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -1967,9 +1967,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2013,7 +2013,7 @@ nodes:
 
               @@_test = :test # name `@@_test`
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the variable name.
 
@@ -2031,7 +2031,7 @@ nodes:
               @@_xyz = 123
                        ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -2047,9 +2047,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2063,9 +2063,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2081,9 +2081,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2098,7 +2098,7 @@ nodes:
         type: node
         kind: ConstantPathNode
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2127,7 +2127,7 @@ nodes:
         type: constant?
         comment: The name of the constant being accessed. This could be `nil` in the event of a syntax error.
       - name: delimiter_loc
-        type: slice
+        type: location
         comment: |
           The location of the `::` delimiter.
 
@@ -2137,7 +2137,7 @@ nodes:
               One::Two
                  ^^
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the name of the constant.
 
@@ -2157,7 +2157,7 @@ nodes:
         type: node
         kind: ConstantPathNode
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2174,7 +2174,7 @@ nodes:
         type: node
         kind: ConstantPathNode
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2191,9 +2191,9 @@ nodes:
       - name: name
         type: constant?
       - name: delimiter_loc
-        type: slice
+        type: location
       - name: name_loc
-        type: slice
+        type: location
     comment: |
       Represents writing to a constant path in a context that doesn't have an explicit value.
 
@@ -2213,7 +2213,7 @@ nodes:
               ::Foo = :abc
               ^^^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -2273,7 +2273,7 @@ nodes:
 
               XYZ = 1    # name `:XYZ`
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the constant name.
 
@@ -2291,7 +2291,7 @@ nodes:
               MyClass = Class.new
                         ^^^^^^^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -2307,7 +2307,7 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: receiver
         type: node?
         kind: non-void expression
@@ -2322,17 +2322,17 @@ nodes:
       - name: locals
         type: constant[]
       - name: def_keyword_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice?
+        type: location?
       - name: lparen_loc
-        type: slice?
+        type: location?
       - name: rparen_loc
-        type: slice?
+        type: location?
       - name: equal_loc
-        type: slice?
+        type: location?
       - name: end_keyword_loc
-        type: slice?
+        type: location?
     comment: |
       Represents a method definition.
 
@@ -2342,14 +2342,14 @@ nodes:
   - name: DefinedNode
     fields:
       - name: lparen_loc
-        type: slice?
+        type: location?
       - name: value
         type: node
         kind: Node # More than non-void expression as defined?(return) is allowed, yet defined?(BEGIN{}) is SyntaxError
       - name: rparen_loc
-        type: slice?
+        type: location?
       - name: keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `defined?` keyword.
 
@@ -2358,12 +2358,12 @@ nodes:
   - name: ElseNode
     fields:
       - name: else_keyword_loc
-        type: slice
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
       - name: end_keyword_loc
-        type: slice?
+        type: location?
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -2372,12 +2372,12 @@ nodes:
   - name: EmbeddedStatementsNode
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
       - name: closing_loc
-        type: slice
+        type: location
     comment: |
       Represents an interpolated set of statements.
 
@@ -2386,7 +2386,7 @@ nodes:
   - name: EmbeddedVariableNode
     fields:
       - name: operator_loc
-        type: slice
+        type: location
       - name: variable
         type: node
         kind:
@@ -2403,12 +2403,12 @@ nodes:
   - name: EnsureNode
     fields:
       - name: ensure_keyword_loc
-        type: slice
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
       - name: end_keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents an `ensure` clause in a `begin` statement.
 
@@ -2472,7 +2472,7 @@ nodes:
               foo in Foo(*bar, baz, *qux)
                                     ^^^^
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the opening brace.
 
@@ -2482,7 +2482,7 @@ nodes:
               foo in Foo(*bar, baz, *qux)
                         ^
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the closing brace.
 
@@ -2515,7 +2515,7 @@ nodes:
         type: node?
         kind: non-void expression
       - name: operator_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `..` or `...` operators to create flip flops.
 
@@ -2572,28 +2572,28 @@ nodes:
                 ^^^^^^
               end
       - name: for_keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `for` keyword.
 
               for i in a end
               ^^^
       - name: in_keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `in` keyword.
 
               for i in a end
                     ^^
       - name: do_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `do` keyword, if present.
 
               for i in a do end
                          ^^
       - name: end_keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `end` keyword.
 
@@ -2641,9 +2641,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2657,9 +2657,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2675,9 +2675,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -2721,7 +2721,7 @@ nodes:
 
               $_Test = 123 # name `:$_Test`
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the global variable's name.
 
@@ -2739,7 +2739,7 @@ nodes:
               $-xyz = 123
                       ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -2753,7 +2753,7 @@ nodes:
   - name: HashNode
     fields:
       - name: opening_loc
-        type: slice
+        type: location
         comment: |
           The location of the opening brace.
 
@@ -2773,7 +2773,7 @@ nodes:
               { **foo }
                 ^^^^^
       - name: closing_loc
-        type: slice
+        type: location
         comment: |
           The location of the closing brace.
 
@@ -2824,7 +2824,7 @@ nodes:
               foo => { a: 1, b:, **nil }
                                  ^^^^^
       - name: opening_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the opening brace.
 
@@ -2834,7 +2834,7 @@ nodes:
               foo => Bar[a: 1]
                         ^
       - name: closing_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the closing brace.
 
@@ -2860,7 +2860,7 @@ nodes:
   - name: IfNode
     fields:
       - name: if_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `if` keyword if present.
 
@@ -2885,7 +2885,7 @@ nodes:
               foo ? bar : baz
               ^^^
       - name: then_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `then` keyword (if present) or the `?` in a ternary expression, `nil` otherwise.
 
@@ -2926,7 +2926,7 @@ nodes:
               if foo then bar else baz end
                               ^^^^^^^^^^^^
       - name: end_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `end` keyword if present, `nil` otherwise.
 
@@ -3003,9 +3003,9 @@ nodes:
         type: node?
         kind: StatementsNode
       - name: in_loc
-        type: slice
+        type: location
       - name: then_loc
-        type: slice?
+        type: location?
     comment: |
       Represents the use of the `in` keyword in a case statement.
 
@@ -3018,19 +3018,19 @@ nodes:
         type: node?
         kind: non-void expression
       - name: call_operator_loc
-        type: slice?
+        type: location?
       - name: opening_loc
-        type: slice
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: closing_loc
-        type: slice
+        type: location
       - name: block
         type: node?
         kind: BlockArgumentNode # foo[&b] &&= value, only valid on Ruby < 3.4
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3046,21 +3046,21 @@ nodes:
         type: node?
         kind: non-void expression
       - name: call_operator_loc
-        type: slice?
+        type: location?
       - name: opening_loc
-        type: slice
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: closing_loc
-        type: slice
+        type: location
       - name: block
         type: node?
         kind: BlockArgumentNode # foo[&b] += value, only valid on Ruby < 3.4
       - name: binary_operator
         type: constant
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3076,19 +3076,19 @@ nodes:
         type: node?
         kind: non-void expression
       - name: call_operator_loc
-        type: slice?
+        type: location?
       - name: opening_loc
-        type: slice
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: closing_loc
-        type: slice
+        type: location
       - name: block
         type: node?
         kind: BlockArgumentNode # foo[&b] ||= value, only valid on Ruby < 3.4
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3104,12 +3104,12 @@ nodes:
         type: node
         kind: non-void expression
       - name: opening_loc
-        type: slice
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: closing_loc
-        type: slice
+        type: location
       - name: block
         type: node?
         kind: BlockArgumentNode # foo[&b], = 1, only valid on Ruby < 3.4
@@ -3131,9 +3131,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3147,9 +3147,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3165,9 +3165,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3211,7 +3211,7 @@ nodes:
 
               @_foo = "bar" # name `@_foo`
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the variable name.
 
@@ -3229,7 +3229,7 @@ nodes:
               @_x = 1234
                     ^^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -3255,7 +3255,7 @@ nodes:
     flags: RegularExpressionFlags
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: parts
         type: node[]
         kind:
@@ -3263,7 +3263,7 @@ nodes:
           - EmbeddedStatementsNode
           - EmbeddedVariableNode
       - name: closing_loc
-        type: slice
+        type: location
     newline: parts
     comment: |
       Represents a regular expression literal that contains interpolation that is being used in the predicate of a conditional to implicitly match against the last line read by an IO object.
@@ -3274,7 +3274,7 @@ nodes:
     flags: RegularExpressionFlags
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: parts
         type: node[]
         kind:
@@ -3282,7 +3282,7 @@ nodes:
           - EmbeddedStatementsNode
           - EmbeddedVariableNode
       - name: closing_loc
-        type: slice
+        type: location
     newline: parts
     comment: |
       Represents a regular expression literal that contains interpolation.
@@ -3293,7 +3293,7 @@ nodes:
     flags: InterpolatedStringNodeFlags
     fields:
       - name: opening_loc
-        type: slice?
+        type: location?
       - name: parts
         type: node[]
         kind:
@@ -3306,7 +3306,7 @@ nodes:
           - on error: SymbolNode
           - on error: InterpolatedSymbolNode
       - name: closing_loc
-        type: slice?
+        type: location?
     newline: parts
     comment: |
       Represents a string literal that contains interpolation.
@@ -3316,7 +3316,7 @@ nodes:
   - name: InterpolatedSymbolNode
     fields:
       - name: opening_loc
-        type: slice?
+        type: location?
       - name: parts
         type: node[]
         kind:
@@ -3324,7 +3324,7 @@ nodes:
           - EmbeddedStatementsNode
           - EmbeddedVariableNode
       - name: closing_loc
-        type: slice?
+        type: location?
     newline: parts
     comment: |
       Represents a symbol literal that contains interpolation.
@@ -3334,7 +3334,7 @@ nodes:
   - name: InterpolatedXStringNode
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: parts
         type: node[]
         kind:
@@ -3342,7 +3342,7 @@ nodes:
           - EmbeddedStatementsNode
           - EmbeddedVariableNode
       - name: closing_loc
-        type: slice
+        type: location
     newline: parts
     comment: |
       Represents an xstring literal that contains interpolation.
@@ -3380,9 +3380,9 @@ nodes:
       - name: name
         type: constant?
       - name: name_loc
-        type: slice?
+        type: location?
       - name: operator_loc
-        type: slice
+        type: location
     comment: |
       Represents a keyword rest parameter to a method, block, or lambda definition.
 
@@ -3394,11 +3394,11 @@ nodes:
       - name: locals
         type: constant[]
       - name: operator_loc
-        type: slice
+        type: location
       - name: opening_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
       - name: parameters
         type: node?
         kind:
@@ -3418,9 +3418,9 @@ nodes:
   - name: LocalVariableAndWriteNode
     fields:
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3436,9 +3436,9 @@ nodes:
   - name: LocalVariableOperatorWriteNode
     fields:
       - name: name_loc
-        type: slice
+        type: location
       - name: binary_operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3456,9 +3456,9 @@ nodes:
   - name: LocalVariableOrWriteNode
     fields:
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3536,7 +3536,7 @@ nodes:
 
           The specific rules for calculating the depth may differ from individual Ruby implementations, as they are not specified by the language. For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
       - name: name_loc
-        type: slice
+        type: location
         comment: |
           The location of the variable name.
 
@@ -3558,7 +3558,7 @@ nodes:
 
               foo = foo
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `=` operator.
 
@@ -3573,11 +3573,11 @@ nodes:
     flags: RegularExpressionFlags
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: content_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
       - name: unescaped
         type: string
     comment: |
@@ -3594,7 +3594,7 @@ nodes:
         type: node
         kind: pattern expression
       - name: operator_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the modifier `in` operator.
 
@@ -3658,7 +3658,7 @@ nodes:
 
               foo => CONST
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the operator.
 
@@ -3690,7 +3690,7 @@ nodes:
       - name: locals
         type: constant[]
       - name: module_keyword_loc
-        type: slice
+        type: location
       - name: constant_path
         type: node
         kind:
@@ -3703,7 +3703,7 @@ nodes:
           - StatementsNode
           - BeginNode
       - name: end_keyword_loc
-        type: slice
+        type: location
       - name: name
         type: constant
     comment: |
@@ -3779,14 +3779,14 @@ nodes:
               a, (*, b, c) = 1, 2, 3, 4, 5
                      ^^^^
       - name: lparen_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the opening parenthesis.
 
               a, (b, c) = 1, 2, 3
                  ^
       - name: rparen_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the closing parenthesis.
 
@@ -3868,21 +3868,21 @@ nodes:
               a, *, b, c = 1, 2, 3, 4, 5
                     ^^^^
       - name: lparen_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the opening parenthesis.
 
               (a, b, c) = 1, 2, 3
               ^
       - name: rparen_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the closing parenthesis.
 
               (a, b, c) = 1, 2, 3
                       ^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the operator.
 
@@ -3907,7 +3907,7 @@ nodes:
         type: node?
         kind: ArgumentsNode
       - name: keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `next` keyword.
 
@@ -3922,9 +3922,9 @@ nodes:
   - name: NoKeywordsParameterNode
     fields:
       - name: operator_loc
-        type: slice
+        type: location
       - name: keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of `**nil` inside method arguments.
 
@@ -3963,7 +3963,7 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -3979,9 +3979,9 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: value
         type: node
         kind: non-void expression
@@ -4016,7 +4016,7 @@ nodes:
               1 or 2
                    ^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `or` keyword or the `||` operator.
 
@@ -4079,9 +4079,9 @@ nodes:
         type: node?
         kind: non-void expression # Usually a StatementsNode but not always e.g. `1 in (..10)`
       - name: opening_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
     newline: false
     comment: |
       Represents a parenthesized expression
@@ -4099,21 +4099,21 @@ nodes:
               foo in ^(bar)
                        ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `^` operator
 
               foo in ^(bar)
                      ^
       - name: lparen_loc
-        type: slice
+        type: location
         comment: |
           The location of the opening parenthesis.
 
               foo in ^(bar)
                       ^
       - name: rparen_loc
-        type: slice
+        type: location
         comment: |
           The location of the closing parenthesis.
 
@@ -4143,7 +4143,7 @@ nodes:
               foo in ^bar
                       ^^^
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `^` operator
 
@@ -4160,11 +4160,11 @@ nodes:
         type: node?
         kind: StatementsNode
       - name: keyword_loc
-        type: slice
+        type: location
       - name: opening_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `END` keyword.
 
@@ -4176,11 +4176,11 @@ nodes:
         type: node?
         kind: StatementsNode
       - name: keyword_loc
-        type: slice
+        type: location
       - name: opening_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `BEGIN` keyword.
 
@@ -4221,7 +4221,7 @@ nodes:
                   ^^^
           If neither right-hand or left-hand side was included, this will be a MissingNode.
       - name: operator_loc
-        type: slice
+        type: location
         comment: |
           The location of the `..` or `...` operator.
     comment: |
@@ -4262,11 +4262,11 @@ nodes:
     flags: RegularExpressionFlags
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: content_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
       - name: unescaped
         type: string
     comment: |
@@ -4280,7 +4280,7 @@ nodes:
       - name: name
         type: constant
       - name: name_loc
-        type: slice
+        type: location
     comment: |
       Represents a required keyword parameter to a method, block, or lambda definition.
 
@@ -4304,7 +4304,7 @@ nodes:
         type: node
         kind: Node
       - name: keyword_loc
-        type: slice
+        type: location
       - name: rescue_expression
         type: node
         kind: Node
@@ -4317,12 +4317,12 @@ nodes:
   - name: RescueNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: exceptions
         type: node[]
         kind: non-void expression
       - name: operator_loc
-        type: slice?
+        type: location?
       - name: reference
         type: node?
         kind:
@@ -4338,7 +4338,7 @@ nodes:
           - on error: NumberedReferenceReadNode # => begin; rescue => $1; end
           - on error: MissingNode # begin; rescue =>; end
       - name: then_keyword_loc
-        type: slice?
+        type: location?
       - name: statements
         type: node?
         kind: StatementsNode
@@ -4361,9 +4361,9 @@ nodes:
       - name: name
         type: constant?
       - name: name_loc
-        type: slice?
+        type: location?
       - name: operator_loc
-        type: slice
+        type: location
     comment: |
       Represents a rest parameter to a method, block, or lambda definition.
 
@@ -4379,7 +4379,7 @@ nodes:
   - name: ReturnNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
@@ -4420,9 +4420,9 @@ nodes:
       - name: locals
         type: constant[]
       - name: class_keyword_loc
-        type: slice
+        type: location
       - name: operator_loc
-        type: slice
+        type: location
       - name: expression
         type: node
         kind: non-void expression
@@ -4432,7 +4432,7 @@ nodes:
           - StatementsNode
           - BeginNode
       - name: end_keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 
@@ -4464,7 +4464,7 @@ nodes:
   - name: SplatNode
     fields:
       - name: operator_loc
-        type: slice
+        type: location
       - name: expression
         type: node?
         kind: non-void expression
@@ -4487,11 +4487,11 @@ nodes:
     flags: StringFlags
     fields:
       - name: opening_loc
-        type: slice?
+        type: location?
       - name: content_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice?
+        type: location?
       - name: unescaped
         type: string
     comment: |
@@ -4508,15 +4508,15 @@ nodes:
   - name: SuperNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: lparen_loc
-        type: slice?
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
         comment: "Can be only `nil` when there are empty parentheses, like `super()`."
       - name: rparen_loc
-        type: slice?
+        type: location?
       - name: block
         type: node?
         kind:
@@ -4536,11 +4536,11 @@ nodes:
     flags: SymbolFlags
     fields:
       - name: opening_loc
-        type: slice?
+        type: location?
       - name: value_loc
-        type: slice?
+        type: location?
       - name: closing_loc
-        type: slice?
+        type: location?
       - name: unescaped
         type: string
     comment: |
@@ -4565,7 +4565,7 @@ nodes:
           - SymbolNode
           - InterpolatedSymbolNode
       - name: keyword_loc
-        type: slice
+        type: location
     comment: |
       Represents the use of the `undef` keyword.
 
@@ -4574,7 +4574,7 @@ nodes:
   - name: UnlessNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
         comment: |
           The location of the `unless` keyword.
 
@@ -4595,7 +4595,7 @@ nodes:
               bar unless cond
                          ^^^^
       - name: then_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `then` keyword, if present.
 
@@ -4619,7 +4619,7 @@ nodes:
               unless cond then bar else baz end
                                    ^^^^^^^^
       - name: end_keyword_loc
-        type: slice?
+        type: location?
         comment: |
           The location of the `end` keyword, if present.
 
@@ -4638,11 +4638,11 @@ nodes:
     flags: LoopFlags
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: do_keyword_loc
-        type: slice?
+        type: location?
       - name: closing_loc
-        type: slice?
+        type: location?
       - name: predicate
         type: node
         kind: non-void expression
@@ -4661,12 +4661,12 @@ nodes:
   - name: WhenNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: conditions
         type: node[]
         kind: non-void expression
       - name: then_keyword_loc
-        type: slice?
+        type: location?
       - name: statements
         type: node?
         kind: StatementsNode
@@ -4681,11 +4681,11 @@ nodes:
     flags: LoopFlags
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: do_keyword_loc
-        type: slice?
+        type: location?
       - name: closing_loc
-        type: slice?
+        type: location?
       - name: predicate
         type: node
         kind: non-void expression
@@ -4705,11 +4705,11 @@ nodes:
     flags: EncodingFlags
     fields:
       - name: opening_loc
-        type: slice
+        type: location
       - name: content_loc
-        type: slice
+        type: location
       - name: closing_loc
-        type: slice
+        type: location
       - name: unescaped
         type: string
     comment: |
@@ -4720,14 +4720,14 @@ nodes:
   - name: YieldNode
     fields:
       - name: keyword_loc
-        type: slice
+        type: location
       - name: lparen_loc
-        type: slice?
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: rparen_loc
-        type: slice?
+        type: location?
     comment: |
       Represents the use of the `yield` keyword.
 

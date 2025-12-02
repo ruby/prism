@@ -317,48 +317,8 @@ module Prism
       end
     end
 
-    # This represents the same information as a location field, except it is
-    # represented in the source using two 32-bit integers, as opposed to two
-    # pointers.
-    class SliceField < Field
-      def semantic_field?
-        false
-      end
-
-      def rbs_class
-        "Location"
-      end
-
-      def rbi_class
-        "Prism::Location"
-      end
-
-      def java_type
-        "Location"
-      end
-    end
-
     # This represents a field on a node that is a location that is optional.
     class OptionalLocationField < Field
-      def semantic_field?
-        false
-      end
-
-      def rbs_class
-        "Location?"
-      end
-
-      def rbi_class
-        "T.nilable(Prism::Location)"
-      end
-
-      def java_type
-        "Location"
-      end
-    end
-
-    # This represents a field on a node that is a slice that is optional.
-    class OptionalSliceField < Field
       def semantic_field?
         false
       end
@@ -533,8 +493,6 @@ module Prism
         when "uint32"     then UInt32Field
         when "integer"    then IntegerField
         when "double"     then DoubleField
-        when "slice"      then SliceField
-        when "slice?"     then OptionalSliceField
         else raise("Unknown field type: #{name.inspect}")
         end
       end

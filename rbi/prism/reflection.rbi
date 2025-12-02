@@ -35,13 +35,7 @@ end
 class Prism::Reflection::LocationField < Prism::Reflection::Field
 end
 
-class Prism::Reflection::SliceField < Prism::Reflection::Field
-end
-
 class Prism::Reflection::OptionalLocationField < Prism::Reflection::Field
-end
-
-class Prism::Reflection::OptionalSliceField < Prism::Reflection::Field
 end
 
 class Prism::Reflection::IntegerField < Prism::Reflection::Field

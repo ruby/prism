@@ -31,14 +31,8 @@ enum NodeFieldType {
     #[serde(rename = "location")]
     Location,
 
-    #[serde(rename = "slice")]
-    Slice,
-
     #[serde(rename = "location?")]
     OptionalLocation,
-
-    #[serde(rename = "slice?")]
-    OptionalSlice,
 
     #[serde(rename = "uint8")]
     UInt8,
@@ -370,29 +364,12 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Location => {
-                writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
-                writeln!(file, "    }}")?;
-            },
-            NodeFieldType::Slice => {
                 writeln!(file, "    pub fn {}(&self) -> Slice<'pr> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        Slice::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
-                writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        let start = unsafe {{ (*pointer).start }};")?;
-                writeln!(file, "        if start.is_null() {{")?;
-                writeln!(file, "            None")?;
-                writeln!(file, "        }} else {{")?;
-                writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
-                writeln!(file, "        }}")?;
-                writeln!(file, "    }}")?;
-            },
-            NodeFieldType::OptionalSlice => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Slice<'pr>> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        let length = unsafe {{ (*pointer).length }};")?;

@@ -364,8 +364,8 @@ module Prism
     def comment_targets
       [<%= node.fields.map { |field|
         case field
-        when Prism::Template::NodeField, Prism::Template::LocationField, Prism::Template::SliceField then field.name
-        when Prism::Template::OptionalNodeField, Prism::Template::NodeListField, Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField then "*#{field.name}"
+        when Prism::Template::NodeField, Prism::Template::LocationField then field.name
+        when Prism::Template::OptionalNodeField, Prism::Template::NodeListField, Prism::Template::OptionalLocationField then "*#{field.name}"
         end
       }.compact.join(", ") %>] #: Array[Prism::node | Location]
     end
@@ -401,7 +401,7 @@ module Prism
     <%- end -%>
     <%- end -%>
     <%- case field -%>
-    <%- when Prism::Template::LocationField, Prism::Template::SliceField -%>
+    <%- when Prism::Template::LocationField -%>
     def <%= field.name %>
       location = @<%= field.name %>
       return location if location.is_a?(Location)
@@ -413,7 +413,7 @@ module Prism
     def save_<%= field.name %>(repository)
       repository.enter(node_id, :<%= field.name %>)
     end
-    <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
+    <%- when Prism::Template::OptionalLocationField -%>
     def <%= field.name %>
       location = @<%= field.name %>
       case location
@@ -437,7 +437,7 @@ module Prism
     <%- end -%>
     <%- node.fields.each do |field| -%>
     <%- case field -%>
-    <%- when Prism::Template::LocationField, Prism::Template::SliceField -%>
+    <%- when Prism::Template::LocationField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
@@ -445,7 +445,7 @@ module Prism
     def <%= field.name.delete_suffix("_loc") %>
       <%= field.name %>.slice
     end
-    <%- when Prism::Template::OptionalLocationField, Prism::Template::OptionalSliceField -%>
+    <%- when Prism::Template::OptionalLocationField -%>
     <%- raise unless field.name.end_with?("_loc") -%>
     <%- next if node.fields.any? { |other| other.name == field.name.delete_suffix("_loc") } -%>
 
@@ -476,7 +476,7 @@ module Prism
     def ===(other)
       other.is_a?(<%= node.name %>)<%= " &&" if (fields = [*node.flags, *node.fields]).any? %>
         <%- fields.each_with_index do |field, index| -%>
-        <%- if field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::SliceField) || field.is_a?(Prism::Template::OptionalLocationField) || field.is_a?(Prism::Template::OptionalSliceField) -%>
+        <%- if field.is_a?(Prism::Template::LocationField) || field.is_a?(Prism::Template::OptionalLocationField) -%>
         (<%= field.name %>.nil? == other.<%= field.name %>.nil?)<%= " &&" if index != fields.length - 1 %>
         <%- elsif field.is_a?(Prism::Template::NodeListField) || field.is_a?(Prism::Template::ConstantListField) -%>
         (<%= field.name %>.length == other.<%= field.name %>.length) &&
