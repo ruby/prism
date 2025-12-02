@@ -60,8 +60,8 @@ The available values for `type` are:
 * `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is a `pm_string_t` in C.
 * `constant` - A field that is an integer that represents an index in the constant pool. This is a `pm_constant_id_t` in C.
 * `constant[]` - A field that is an array of constants. This is a `pm_constant_id_list_t` in C.
-* `location` - A field that is a location. This is a `pm_location_t` in C.
-* `location?` - A field that is a location that is optionally present. This is a `pm_location_t` in C, but if the value is not present then the `start` and `end` fields will be `NULL`.
+* `location` - A field that is a location. This is a `pm_slice_t` in C.
+* `location?` - A field that is a location that is optionally present. This is a `pm_slice_t` in C, but if the value is not present then the `length` field will be `0`.
 * `uint8` - A field that is an 8-bit unsigned integer. This is a `uint8_t` in C.
 * `uint32` - A field that is a 32-bit unsigned integer. This is a `uint32_t` in C.
 
