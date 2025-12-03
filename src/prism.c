@@ -519,8 +519,8 @@ pm_parser_err_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic_
  * Append a warning to the list of warnings on the parser.
  */
 static inline void
-pm_parser_warn(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_diagnostic_id_t diag_id) {
-    pm_diagnostic_list_append(&parser->warning_list, (uint32_t) (start - parser->start), (uint32_t) (end - start), diag_id);
+pm_parser_warn(pm_parser_t *parser, uint32_t start, uint32_t length, pm_diagnostic_id_t diag_id) {
+    pm_diagnostic_list_append(&parser->warning_list, start, length, diag_id);
 }
 
 /**
@@ -529,7 +529,7 @@ pm_parser_warn(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm
  */
 static inline void
 pm_parser_warn_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic_id_t diag_id) {
-    pm_parser_warn(parser, token->start, token->end, diag_id);
+    pm_parser_warn(parser, U32(token->start - parser->start), PM_TOKEN_LENGTH(token), diag_id);
 }
 
 /**
@@ -538,7 +538,7 @@ pm_parser_warn_token(pm_parser_t *parser, const pm_token_t *token, pm_diagnostic
  */
 static inline void
 pm_parser_warn_node(pm_parser_t *parser, const pm_node_t *node, pm_diagnostic_id_t diag_id) {
-    pm_parser_warn(parser, node->location.start, node->location.end, diag_id);
+    pm_parser_warn(parser, U32(node->location.start - parser->start), PM_NODE_LENGTH(node), diag_id);
 }
 
 /**
@@ -9772,7 +9772,7 @@ parser_lex(pm_parser_t *parser) {
                         if (match_eol_offset(parser, 1)) {
                             chomping = false;
                         } else {
-                            pm_parser_warn(parser, parser->current.end, parser->current.end + 1, PM_WARN_UNEXPECTED_CARRIAGE_RETURN);
+                            pm_parser_warn(parser, U32(parser->current.end - parser->start), 1, PM_WARN_UNEXPECTED_CARRIAGE_RETURN);
                             parser->current.end++;
                             space_seen = true;
                         }
@@ -21719,7 +21719,7 @@ pm_strnstr(const char *big, const char *little, size_t big_length) {
 static void
 pm_parser_warn_shebang_carriage_return(pm_parser_t *parser, const uint8_t *start, size_t length) {
     if (length > 2 && start[length - 2] == '\r' && start[length - 1] == '\n') {
-        pm_parser_warn(parser, start, start + length, PM_WARN_SHEBANG_CARRIAGE_RETURN);
+        pm_parser_warn(parser, U32(start - parser->start), U32(length), PM_WARN_SHEBANG_CARRIAGE_RETURN);
     }
 }
 #endif
