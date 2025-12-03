@@ -58,12 +58,12 @@ prism's `Makefile` is not used at all in CRuby. Instead, CRuby's `Makefile` is u
 
 ### Building prism as part of TruffleRuby
 
-[This script](https://github.com/oracle/truffleruby/blob/master/tool/import-prism.sh) imports prism sources in TruffleRuby.
+[This script](https://github.com/truffleruby/truffleruby/blob/master/tool/import-prism.sh) imports prism sources in TruffleRuby.
 The script generates the templates when importing.
 
 Then when `mx build` builds TruffleRuby and the `prism` mx project inside, it runs `make`.
 
-Then the `prism bindings` mx project is built, which contains the [bindings](https://github.com/oracle/truffleruby/blob/vm-24.1.1/src/main/c/yarp_bindings/src/yarp_bindings.c)
+Then the `prism bindings` mx project is built, which contains the [bindings](https://github.com/truffleruby/truffleruby/blob/vm-24.1.1/src/main/c/yarp_bindings/src/yarp_bindings.c)
 and links to `libprism.a` (to avoid exporting symbols, so no conflict when installing the prism gem).
 
 ### Building prism as part of JRuby

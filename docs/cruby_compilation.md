@@ -1,6 +1,6 @@
 # Compiling Prism's AST
 
-One important class of consumers of Prism's AST is compilers. Currently [CRuby](https://github.com/ruby/ruby), [JRuby](https://github.com/jruby/jruby), [TruffleRuby](https://github.com/oracle/truffleruby), and [Natalie](https://github.com/natalie-lang/natalie) have all built compilation code on top of Prism's AST.
+One important class of consumers of Prism's AST is compilers. Currently [CRuby](https://github.com/ruby/ruby), [JRuby](https://github.com/jruby/jruby), [TruffleRuby](https://github.com/truffleruby/truffleruby), and [Natalie](https://github.com/natalie-lang/natalie) have all built compilation code on top of Prism's AST.
 
 This document will describe, at a high level, how CRuby's compilation of Prism's AST works.
 
