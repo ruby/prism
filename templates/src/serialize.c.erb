@@ -20,9 +20,9 @@ pm_sizet_to_u32(size_t value) {
 }
 
 static void
-pm_serialize_slice(const pm_slice_t *slice, pm_buffer_t *buffer) {
-    pm_buffer_append_varuint(buffer, slice->start);
-    pm_buffer_append_varuint(buffer, slice->length);
+pm_serialize_location(const pm_location_t *location, pm_buffer_t *buffer) {
+    pm_buffer_append_varuint(buffer, location->start);
+    pm_buffer_append_varuint(buffer, location->length);
 }
 
 static void
@@ -73,7 +73,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     <%- if Prism::Template::INCLUDE_NODE_ID -%>
     pm_buffer_append_varuint(buffer, node->node_id);
     <%- end -%>
-    pm_serialize_slice(&node->location, buffer);
+    pm_serialize_location(&node->location, buffer);
 
     switch (PM_NODE_TYPE(node)) {
         // We do not need to serialize a ScopeNode ever as
@@ -119,7 +119,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
             }
             <%- when Prism::Template::LocationField -%>
             <%- if field.should_be_serialized? -%>
-            pm_serialize_slice(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
+            pm_serialize_location(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             <%- end -%>
             <%- when Prism::Template::OptionalLocationField -%>
             <%- if field.should_be_serialized? -%>
@@ -127,7 +127,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
                 pm_buffer_append_byte(buffer, 0);
             } else {
                 pm_buffer_append_byte(buffer, 1);
-                pm_serialize_slice(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
+                pm_serialize_location(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             }
             <%- end -%>
             <%- when Prism::Template::UInt8Field -%>
@@ -170,7 +170,7 @@ pm_serialize_comment(pm_comment_t *comment, pm_buffer_t *buffer) {
     pm_buffer_append_byte(buffer, (uint8_t) comment->type);
 
     // serialize location
-    pm_serialize_slice(&comment->location, buffer);
+    pm_serialize_location(&comment->location, buffer);
 }
 
 /**
@@ -213,7 +213,7 @@ pm_serialize_data_loc(const pm_parser_t *parser, pm_buffer_t *buffer) {
         pm_buffer_append_byte(buffer, 0);
     } else {
         pm_buffer_append_byte(buffer, 1);
-        pm_serialize_slice(&parser->data_loc, buffer);
+        pm_serialize_location(&parser->data_loc, buffer);
     }
 }
 
@@ -228,7 +228,7 @@ pm_serialize_diagnostic(pm_diagnostic_t *diagnostic, pm_buffer_t *buffer) {
     pm_buffer_append_string(buffer, diagnostic->message, message_length);
 
     // serialize location
-    pm_serialize_slice(&diagnostic->location, buffer);
+    pm_serialize_location(&diagnostic->location, buffer);
 
     pm_buffer_append_byte(buffer, diagnostic->level);
 }

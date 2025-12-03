@@ -27,8 +27,8 @@ pm_version(void) {
 #define FL PM_NODE_FLAGS
 #define UP PM_NODE_UPCAST
 
-#define PM_SLICE_START(slice_) ((slice_)->start)
-#define PM_SLICE_END(slice_) ((slice_)->start + (slice_)->length)
+#define PM_LOCATION_START(location_) ((location_)->start)
+#define PM_LOCATION_END(location_) ((location_)->start + (location_)->length)
 
 #define PM_TOKEN_START(parser_, token_) U32((token_)->start - (parser_)->start)
 #define PM_TOKEN_END(parser_, token_) U32((token_)->end - (parser_)->start)
@@ -47,10 +47,10 @@ pm_version(void) {
 #define PM_NODE_START_SET_TOKEN(parser_, node_, token_) (PM_NODE_START(node_) = PM_TOKEN_START(parser_, token_))
 #define PM_NODE_LENGTH_SET_NODE(left_, right_) (PM_NODE_LENGTH(left_) = PM_NODE_END(right_) - PM_NODE_START(left_))
 #define PM_NODE_LENGTH_SET_TOKEN(parser_, node_, token_) (PM_NODE_LENGTH(node_) = PM_TOKEN_END(parser_, token_) - PM_NODE_START(node_))
-#define PM_NODE_LENGTH_SET_SLICE(node_, slice_) (PM_NODE_LENGTH(node_) = PM_SLICE_END(slice_) - PM_NODE_START(node_))
+#define PM_NODE_LENGTH_SET_LOCATION(node_, location_) (PM_NODE_LENGTH(node_) = PM_LOCATION_END(location_) - PM_NODE_START(node_))
 
-#define TOK2SLICE(parser_, token_) ((pm_slice_t) { .start = PM_TOKEN_START(parser_, token_), .length = PM_TOKEN_LENGTH(token_) })
-#define NTOK2SLICE(parser_, token_) ((token_) == NULL ? ((pm_slice_t) { 0 }) : TOK2SLICE(parser_, token_))
+#define TOK2LOC(parser_, token_) ((pm_location_t) { .start = PM_TOKEN_START(parser_, token_), .length = PM_TOKEN_LENGTH(token_) })
+#define NTOK2LOC(parser_, token_) ((token_) == NULL ? ((pm_location_t) { 0 }) : TOK2LOC(parser_, token_))
 #define NTOK2PTR(token_) ((token_).start == NULL ? NULL : &(token_))
 
 /******************************************************************************/
@@ -1574,13 +1574,13 @@ pm_conditional_predicate(pm_parser_t *parser, pm_node_t *node, pm_conditional_pr
  */
 typedef struct {
     /** The optional location of the opening parenthesis or bracket. */
-    pm_slice_t opening_loc;
+    pm_location_t opening_loc;
 
     /** The lazily-allocated optional arguments node. */
     pm_arguments_node_t *arguments;
 
     /** The optional location of the closing parenthesis or bracket. */
-    pm_slice_t closing_loc;
+    pm_location_t closing_loc;
 
     /** The optional block attached to the call. */
     pm_node_t *block;
@@ -1592,13 +1592,13 @@ typedef struct {
 /**
  * Retrieve the end location of a `pm_arguments_t` object.
  */
-static inline const pm_slice_t *
+static inline const pm_location_t *
 pm_arguments_end(pm_arguments_t *arguments) {
     if (arguments->block != NULL) {
         uint32_t end = PM_NODE_END(arguments->block);
 
         if (arguments->closing_loc.length > 0) {
-            uint32_t arguments_end = PM_SLICE_END(&arguments->closing_loc);
+            uint32_t arguments_end = PM_LOCATION_END(&arguments->closing_loc);
             if (arguments_end > end) {
                 return &arguments->closing_loc;
             }
@@ -1976,7 +1976,7 @@ pm_alias_global_variable_node_create(pm_parser_t *parser, const pm_token_t *keyw
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_ALIAS_GLOBAL_VARIABLE_NODE, 0, keyword, old_name),
         .new_name = new_name,
         .old_name = old_name,
-        .keyword_loc = TOK2SLICE(parser, keyword)
+        .keyword_loc = TOK2LOC(parser, keyword)
     };
 
     return node;
@@ -1994,7 +1994,7 @@ pm_alias_method_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_n
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_ALIAS_METHOD_NODE, 0, keyword, old_name),
         .new_name = new_name,
         .old_name = old_name,
-        .keyword_loc = TOK2SLICE(parser, keyword)
+        .keyword_loc = TOK2LOC(parser, keyword)
     };
 
     return node;
@@ -2011,7 +2011,7 @@ pm_alternation_pattern_node_create(pm_parser_t *parser, pm_node_t *left, pm_node
         .base = PM_NODE_INIT_NODES(parser, PM_ALTERNATION_PATTERN_NODE, 0, left, right),
         .left = left,
         .right = right,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -2029,7 +2029,7 @@ pm_and_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *opera
     *node = (pm_and_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_AND_NODE, 0, left, right),
         .left = left,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .right = right
     };
 
@@ -2097,8 +2097,8 @@ pm_array_node_create(pm_parser_t *parser, const pm_token_t *opening) {
     } else {
         *node = (pm_array_node_t) {
             .base = PM_NODE_INIT_TOKEN(parser, PM_ARRAY_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening),
-            .opening_loc = TOK2SLICE(parser, opening),
-            .closing_loc = TOK2SLICE(parser, opening),
+            .opening_loc = TOK2LOC(parser, opening),
+            .closing_loc = TOK2LOC(parser, opening),
             .elements = { 0 }
         };
     }
@@ -2136,7 +2136,7 @@ static void
 pm_array_node_close_set(const pm_parser_t *parser, pm_array_node_t *node, const pm_token_t *closing) {
     assert(closing->type == PM_TOKEN_BRACKET_RIGHT || closing->type == PM_TOKEN_STRING_END || closing->type == 0);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
 }
 
 /**
@@ -2208,8 +2208,8 @@ pm_array_pattern_node_constant_create(pm_parser_t *parser, pm_node_t *constant, 
         .base = PM_NODE_INIT_NODE_TOKEN(parser, PM_ARRAY_PATTERN_NODE, 0, constant, closing),
         .constant = constant,
         .rest = NULL,
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing),
         .requireds = { 0 },
         .posts = { 0 }
     };
@@ -2229,8 +2229,8 @@ pm_array_pattern_node_empty_create(pm_parser_t *parser, const pm_token_t *openin
         .base = PM_NODE_INIT_TOKENS(parser, PM_ARRAY_PATTERN_NODE, 0, opening, closing),
         .constant = NULL,
         .rest = NULL,
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing),
         .requireds = { 0 },
         .posts = { 0 }
     };
@@ -2279,7 +2279,7 @@ pm_assoc_node_create(pm_parser_t *parser, pm_node_t *key, const pm_token_t *oper
     *node = (pm_assoc_node_t) {
         .base = PM_NODE_INIT(parser, PM_ASSOC_NODE, flags, PM_NODE_START(key), U32(end - PM_NODE_START(key))),
         .key = key,
-        .operator_loc = NTOK2SLICE(parser, operator),
+        .operator_loc = NTOK2LOC(parser, operator),
         .value = value
     };
 
@@ -2301,7 +2301,7 @@ pm_assoc_splat_node_create(pm_parser_t *parser, pm_node_t *value, const pm_token
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_ASSOC_SPLAT_NODE, 0, operator, value)
         ),
         .value = value,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -2335,7 +2335,7 @@ pm_begin_node_create(pm_parser_t *parser, const pm_token_t *begin_keyword, pm_st
 
     *node = (pm_begin_node_t) {
         .base = PM_NODE_INIT(parser, PM_BEGIN_NODE, 0, start, U32(end - start)),
-        .begin_keyword_loc = NTOK2SLICE(parser, begin_keyword),
+        .begin_keyword_loc = NTOK2LOC(parser, begin_keyword),
         .statements = statements,
         .end_keyword_loc = { 0 }
     };
@@ -2386,7 +2386,7 @@ static void
 pm_begin_node_end_keyword_set(const pm_parser_t *parser, pm_begin_node_t *node, const pm_token_t *end_keyword) {
     assert(end_keyword->type == PM_TOKEN_KEYWORD_END || end_keyword->type == 0);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, end_keyword);
-    node->end_keyword_loc = TOK2SLICE(parser, end_keyword);
+    node->end_keyword_loc = TOK2LOC(parser, end_keyword);
 }
 
 /**
@@ -2404,7 +2404,7 @@ pm_block_argument_node_create(pm_parser_t *parser, const pm_token_t *operator, p
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_BLOCK_ARGUMENT_NODE, 0, operator, expression)
         ),
         .expression = expression,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -2422,8 +2422,8 @@ pm_block_node_create(pm_parser_t *parser, pm_constant_id_list_t *locals, const p
         .locals = *locals,
         .parameters = parameters,
         .body = body,
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing)
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing)
     };
 
     return node;
@@ -2444,8 +2444,8 @@ pm_block_parameter_node_create(pm_parser_t *parser, const pm_token_t *name, cons
             : PM_NODE_INIT_TOKENS(parser, PM_BLOCK_PARAMETER_NODE, 0, operator, name)
         ),
         .name = name == NULL ? 0 : pm_parser_constant_id_token(parser, name),
-        .name_loc = NTOK2SLICE(parser, name),
-        .operator_loc = TOK2SLICE(parser, operator)
+        .name_loc = NTOK2LOC(parser, name),
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -2479,7 +2479,7 @@ pm_block_parameters_node_create(pm_parser_t *parser, pm_parameters_node_t *param
     *node = (pm_block_parameters_node_t) {
         .base = PM_NODE_INIT(parser, PM_BLOCK_PARAMETERS_NODE, 0, start, U32(end - start)),
         .parameters = parameters,
-        .opening_loc = NTOK2SLICE(parser, opening),
+        .opening_loc = NTOK2LOC(parser, opening),
         .closing_loc = { 0 },
         .locals = { 0 }
     };
@@ -2494,7 +2494,7 @@ static void
 pm_block_parameters_node_closing_set(const pm_parser_t *parser, pm_block_parameters_node_t *node, const pm_token_t *closing) {
     assert(closing->type == PM_TOKEN_PIPE || closing->type == PM_TOKEN_PARENTHESIS_RIGHT || closing->type == 0);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
 }
 
 /**
@@ -2541,7 +2541,7 @@ pm_break_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argument
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_BREAK_NODE, 0, keyword, arguments)
         ),
         .arguments = arguments,
-        .keyword_loc = TOK2SLICE(parser, keyword)
+        .keyword_loc = TOK2LOC(parser, keyword)
     };
 
     return node;
@@ -2607,9 +2607,9 @@ pm_call_node_aref_create(pm_parser_t *parser, pm_node_t *receiver, pm_arguments_
 
     PM_NODE_START_SET_NODE(node, receiver);
 
-    const pm_slice_t *end = pm_arguments_end(arguments);
+    const pm_location_t *end = pm_arguments_end(arguments);
     assert(end != NULL && "unreachable");
-    PM_NODE_LENGTH_SET_SLICE(node, end);
+    PM_NODE_LENGTH_SET_LOCATION(node, end);
 
     node->receiver = receiver;
     node->message_loc.start = arguments->opening_loc.start;
@@ -2638,7 +2638,7 @@ pm_call_node_binary_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t 
     PM_NODE_LENGTH_SET_NODE(node, PM_NODE_END(receiver) > PM_NODE_END(argument) ? receiver : argument);
 
     node->receiver = receiver;
-    node->message_loc = TOK2SLICE(parser, operator);
+    node->message_loc = TOK2LOC(parser, operator);
 
     pm_arguments_node_t *arguments = pm_arguments_node_create(parser);
     pm_arguments_node_arguments_append(arguments, argument);
@@ -2660,16 +2660,16 @@ pm_call_node_call_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *o
     pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
 
     PM_NODE_START_SET_NODE(node, receiver);
-    const pm_slice_t *end = pm_arguments_end(arguments);
+    const pm_location_t *end = pm_arguments_end(arguments);
     if (end == NULL) {
         PM_NODE_LENGTH_SET_TOKEN(parser, node, message);
     } else {
-        PM_NODE_LENGTH_SET_SLICE(node, end);
+        PM_NODE_LENGTH_SET_LOCATION(node, end);
     }
 
     node->receiver = receiver;
-    node->call_operator_loc = TOK2SLICE(parser, operator);
-    node->message_loc = TOK2SLICE(parser, message);
+    node->call_operator_loc = TOK2LOC(parser, operator);
+    node->message_loc = TOK2LOC(parser, message);
     node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
     node->closing_loc = arguments->closing_loc;
@@ -2693,7 +2693,7 @@ pm_call_node_call_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *o
 static pm_call_node_t *
 pm_call_node_call_synthesized_create(pm_parser_t *parser, pm_node_t *receiver, const char *message, pm_arguments_node_t *arguments) {
     pm_call_node_t *node = pm_call_node_create(parser, 0);
-    node->base.location = (pm_slice_t) { .start = 0, .length = U32(parser->end - parser->start) };
+    node->base.location = (pm_location_t) { .start = 0, .length = U32(parser->end - parser->start) };
 
     node->receiver = receiver;
     node->arguments = arguments;
@@ -2711,11 +2711,11 @@ pm_call_node_fcall_create(pm_parser_t *parser, pm_token_t *message, pm_arguments
     pm_call_node_t *node = pm_call_node_create(parser, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY);
 
     PM_NODE_START_SET_TOKEN(parser, node, message);
-    const pm_slice_t *end = pm_arguments_end(arguments);
+    const pm_location_t *end = pm_arguments_end(arguments);
     assert(end != NULL && "unreachable");
-    PM_NODE_LENGTH_SET_SLICE(node, end);
+    PM_NODE_LENGTH_SET_LOCATION(node, end);
 
-    node->message_loc = TOK2SLICE(parser, message);
+    node->message_loc = TOK2LOC(parser, message);
     node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
     node->closing_loc = arguments->closing_loc;
@@ -2733,7 +2733,7 @@ static pm_call_node_t *
 pm_call_node_fcall_synthesized_create(pm_parser_t *parser, pm_arguments_node_t *arguments, pm_constant_id_t name) {
     pm_call_node_t *node = pm_call_node_create(parser, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY);
 
-    node->base.location = (pm_slice_t) { 0 };
+    node->base.location = (pm_location_t) { 0 };
     node->arguments = arguments;
 
     node->name = name;
@@ -2752,14 +2752,14 @@ pm_call_node_not_create(pm_parser_t *parser, pm_node_t *receiver, pm_token_t *me
 
     PM_NODE_START_SET_TOKEN(parser, node, message);
     if (arguments->closing_loc.length > 0) {
-        PM_NODE_LENGTH_SET_SLICE(node, &arguments->closing_loc);
+        PM_NODE_LENGTH_SET_LOCATION(node, &arguments->closing_loc);
     } else {
         assert(receiver != NULL);
         PM_NODE_LENGTH_SET_NODE(node, receiver);
     }
 
     node->receiver = receiver;
-    node->message_loc = TOK2SLICE(parser, message);
+    node->message_loc = TOK2LOC(parser, message);
     node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
     node->closing_loc = arguments->closing_loc;
@@ -2778,12 +2778,12 @@ pm_call_node_shorthand_create(pm_parser_t *parser, pm_node_t *receiver, pm_token
     pm_call_node_t *node = pm_call_node_create(parser, pm_call_node_ignore_visibility_flag(receiver));
 
     PM_NODE_START_SET_NODE(node, receiver);
-    const pm_slice_t *end = pm_arguments_end(arguments);
+    const pm_location_t *end = pm_arguments_end(arguments);
     assert(end != NULL && "unreachable");
-    PM_NODE_LENGTH_SET_SLICE(node, end);
+    PM_NODE_LENGTH_SET_LOCATION(node, end);
 
     node->receiver = receiver;
-    node->call_operator_loc = TOK2SLICE(parser, operator);
+    node->call_operator_loc = TOK2LOC(parser, operator);
     node->opening_loc = arguments->opening_loc;
     node->arguments = arguments->arguments;
     node->closing_loc = arguments->closing_loc;
@@ -2810,7 +2810,7 @@ pm_call_node_unary_create(pm_parser_t *parser, pm_token_t *operator, pm_node_t *
     PM_NODE_LENGTH_SET_NODE(node, receiver);
 
     node->receiver = receiver;
-    node->message_loc = TOK2SLICE(parser, operator);
+    node->message_loc = TOK2LOC(parser, operator);
 
     node->name = pm_parser_constant_id_constant(parser, name, strlen(name));
     return node;
@@ -2824,8 +2824,8 @@ static pm_call_node_t *
 pm_call_node_variable_call_create(pm_parser_t *parser, pm_token_t *message) {
     pm_call_node_t *node = pm_call_node_create(parser, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY);
 
-    node->base.location = TOK2SLICE(parser, message);
-    node->message_loc = TOK2SLICE(parser, message);
+    node->base.location = TOK2LOC(parser, message);
+    node->message_loc = TOK2LOC(parser, message);
 
     node->name = pm_parser_constant_id_token(parser, message);
     return node;
@@ -2884,7 +2884,7 @@ pm_call_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
         .message_loc = target->message_loc,
         .read_name = 0,
         .write_name = target->name,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -2940,7 +2940,7 @@ pm_index_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, cons
         .arguments = target->arguments,
         .closing_loc = target->closing_loc,
         .block = (pm_block_argument_node_t *) target->block,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -2968,7 +2968,7 @@ pm_call_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target, 
         .read_name = 0,
         .write_name = target->name,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1),
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3001,7 +3001,7 @@ pm_index_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target,
         .closing_loc = target->closing_loc,
         .block = (pm_block_argument_node_t *) target->block,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1),
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3029,7 +3029,7 @@ pm_call_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const 
         .message_loc = target->message_loc,
         .read_name = 0,
         .write_name = target->name,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3062,7 +3062,7 @@ pm_index_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
         .arguments = target->arguments,
         .closing_loc = target->closing_loc,
         .block = (pm_block_argument_node_t *) target->block,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3137,7 +3137,7 @@ pm_capture_pattern_node_create(pm_parser_t *parser, pm_node_t *value, pm_local_v
         .base = PM_NODE_INIT_NODES(parser, PM_CAPTURE_PATTERN_NODE, 0, value, target),
         .value = value,
         .target = target,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -3154,8 +3154,8 @@ pm_case_node_create(pm_parser_t *parser, const pm_token_t *case_keyword, pm_node
         .base = PM_NODE_INIT_TOKENS(parser, PM_CASE_NODE, 0, case_keyword, end_keyword == NULL ? case_keyword : end_keyword),
         .predicate = predicate,
         .else_clause = NULL,
-        .case_keyword_loc = TOK2SLICE(parser, case_keyword),
-        .end_keyword_loc = NTOK2SLICE(parser, end_keyword),
+        .case_keyword_loc = TOK2LOC(parser, case_keyword),
+        .end_keyword_loc = NTOK2LOC(parser, end_keyword),
         .conditions = { 0 }
     };
 
@@ -3188,7 +3188,7 @@ pm_case_node_else_clause_set(pm_case_node_t *node, pm_else_node_t *else_clause) 
 static void
 pm_case_node_end_keyword_loc_set(const pm_parser_t *parser, pm_case_node_t *node, const pm_token_t *end_keyword) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, end_keyword);
-    node->end_keyword_loc = TOK2SLICE(parser, end_keyword);
+    node->end_keyword_loc = TOK2LOC(parser, end_keyword);
 }
 
 /**
@@ -3202,7 +3202,7 @@ pm_case_match_node_create(pm_parser_t *parser, const pm_token_t *case_keyword, p
         .base = PM_NODE_INIT_TOKEN(parser, PM_CASE_MATCH_NODE, 0, case_keyword),
         .predicate = predicate,
         .else_clause = NULL,
-        .case_keyword_loc = TOK2SLICE(parser, case_keyword),
+        .case_keyword_loc = TOK2LOC(parser, case_keyword),
         .end_keyword_loc = { 0 },
         .conditions = { 0 }
     };
@@ -3236,7 +3236,7 @@ pm_case_match_node_else_clause_set(pm_case_match_node_t *node, pm_else_node_t *e
 static void
 pm_case_match_node_end_keyword_loc_set(const pm_parser_t *parser, pm_case_match_node_t *node, const pm_token_t *end_keyword) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, end_keyword);
-    node->end_keyword_loc = TOK2SLICE(parser, end_keyword);
+    node->end_keyword_loc = TOK2LOC(parser, end_keyword);
 }
 
 /**
@@ -3249,12 +3249,12 @@ pm_class_node_create(pm_parser_t *parser, pm_constant_id_list_t *locals, const p
     *node = (pm_class_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_CLASS_NODE, 0, class_keyword, end_keyword),
         .locals = *locals,
-        .class_keyword_loc = TOK2SLICE(parser, class_keyword),
+        .class_keyword_loc = TOK2LOC(parser, class_keyword),
         .constant_path = constant_path,
-        .inheritance_operator_loc = NTOK2SLICE(parser, inheritance_operator),
+        .inheritance_operator_loc = NTOK2LOC(parser, inheritance_operator),
         .superclass = superclass,
         .body = body,
-        .end_keyword_loc = TOK2SLICE(parser, end_keyword),
+        .end_keyword_loc = TOK2LOC(parser, end_keyword),
         .name = pm_parser_constant_id_token(parser, name)
     };
 
@@ -3273,7 +3273,7 @@ pm_class_variable_and_write_node_create(pm_parser_t *parser, pm_class_variable_r
         .base = PM_NODE_INIT_NODES(parser, PM_CLASS_VARIABLE_AND_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3291,7 +3291,7 @@ pm_class_variable_operator_write_node_create(pm_parser_t *parser, pm_class_varia
         .base = PM_NODE_INIT_NODES(parser, PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1)
     };
@@ -3311,7 +3311,7 @@ pm_class_variable_or_write_node_create(pm_parser_t *parser, pm_class_variable_re
         .base = PM_NODE_INIT_NODES(parser, PM_CLASS_VARIABLE_OR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3360,7 +3360,7 @@ pm_class_variable_write_node_create(pm_parser_t *parser, pm_class_variable_read_
         .base = PM_NODE_INIT_NODES(parser, PM_CLASS_VARIABLE_WRITE_NODE, flags, read_node, value),
         .name = read_node->name,
         .name_loc = read_node->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3378,7 +3378,7 @@ pm_constant_path_and_write_node_create(pm_parser_t *parser, pm_constant_path_nod
     *node = (pm_constant_path_and_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_PATH_AND_WRITE_NODE, 0, target, value),
         .target = target,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3395,7 +3395,7 @@ pm_constant_path_operator_write_node_create(pm_parser_t *parser, pm_constant_pat
     *node = (pm_constant_path_operator_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_PATH_OPERATOR_WRITE_NODE, 0, target, value),
         .target = target,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1)
     };
@@ -3414,7 +3414,7 @@ pm_constant_path_or_write_node_create(pm_parser_t *parser, pm_constant_path_node
     *node = (pm_constant_path_or_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_PATH_OR_WRITE_NODE, 0, target, value),
         .target = target,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3442,8 +3442,8 @@ pm_constant_path_node_create(pm_parser_t *parser, pm_node_t *parent, const pm_to
         ),
         .parent = parent,
         .name = name,
-        .delimiter_loc = TOK2SLICE(parser, delimiter),
-        .name_loc = TOK2SLICE(parser, name_token)
+        .delimiter_loc = TOK2LOC(parser, delimiter),
+        .name_loc = TOK2LOC(parser, name_token)
     };
 
     return node;
@@ -3460,7 +3460,7 @@ pm_constant_path_write_node_create(pm_parser_t *parser, pm_constant_path_node_t 
     *node = (pm_constant_path_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_PATH_WRITE_NODE, flags, target, value),
         .target = target,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3479,7 +3479,7 @@ pm_constant_and_write_node_create(pm_parser_t *parser, pm_constant_read_node_t *
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_AND_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3497,7 +3497,7 @@ pm_constant_operator_write_node_create(pm_parser_t *parser, pm_constant_read_nod
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_OPERATOR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1)
     };
@@ -3517,7 +3517,7 @@ pm_constant_or_write_node_create(pm_parser_t *parser, pm_constant_read_node_t *t
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_OR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3552,7 +3552,7 @@ pm_constant_write_node_create(pm_parser_t *parser, pm_constant_read_node_t *targ
         .base = PM_NODE_INIT_NODES(parser, PM_CONSTANT_WRITE_NODE, flags, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -3635,17 +3635,17 @@ pm_def_node_create(
             : PM_NODE_INIT_TOKENS(parser, PM_DEF_NODE, 0, def_keyword, end_keyword)
         ),
         .name = name,
-        .name_loc = TOK2SLICE(parser, name_loc),
+        .name_loc = TOK2LOC(parser, name_loc),
         .receiver = receiver,
         .parameters = parameters,
         .body = body,
         .locals = *locals,
-        .def_keyword_loc = TOK2SLICE(parser, def_keyword),
-        .operator_loc = NTOK2SLICE(parser, operator),
-        .lparen_loc = NTOK2SLICE(parser, lparen),
-        .rparen_loc = NTOK2SLICE(parser, rparen),
-        .equal_loc = NTOK2SLICE(parser, equal),
-        .end_keyword_loc = NTOK2SLICE(parser, end_keyword)
+        .def_keyword_loc = TOK2LOC(parser, def_keyword),
+        .operator_loc = NTOK2LOC(parser, operator),
+        .lparen_loc = NTOK2LOC(parser, lparen),
+        .rparen_loc = NTOK2LOC(parser, rparen),
+        .equal_loc = NTOK2LOC(parser, equal),
+        .end_keyword_loc = NTOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -3664,10 +3664,10 @@ pm_defined_node_create(pm_parser_t *parser, const pm_token_t *lparen, pm_node_t 
             ? PM_NODE_INIT_TOKEN_NODE(parser, PM_DEFINED_NODE, 0, keyword, value)
             : PM_NODE_INIT_TOKENS(parser, PM_DEFINED_NODE, 0, keyword, rparen)
         ),
-        .lparen_loc = NTOK2SLICE(parser, lparen),
+        .lparen_loc = NTOK2LOC(parser, lparen),
         .value = value,
-        .rparen_loc = NTOK2SLICE(parser, rparen),
-        .keyword_loc = TOK2SLICE(parser, keyword)
+        .rparen_loc = NTOK2LOC(parser, rparen),
+        .keyword_loc = TOK2LOC(parser, keyword)
     };
 
     return node;
@@ -3686,9 +3686,9 @@ pm_else_node_create(pm_parser_t *parser, const pm_token_t *else_keyword, pm_stat
             ? PM_NODE_INIT_TOKEN_NODE(parser, PM_ELSE_NODE, 0, else_keyword, statements)
             : PM_NODE_INIT_TOKENS(parser, PM_ELSE_NODE, 0, else_keyword, end_keyword)
         ),
-        .else_keyword_loc = TOK2SLICE(parser, else_keyword),
+        .else_keyword_loc = TOK2LOC(parser, else_keyword),
         .statements = statements,
-        .end_keyword_loc = NTOK2SLICE(parser, end_keyword)
+        .end_keyword_loc = NTOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -3703,9 +3703,9 @@ pm_embedded_statements_node_create(pm_parser_t *parser, const pm_token_t *openin
 
     *node = (pm_embedded_statements_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_EMBEDDED_STATEMENTS_NODE, 0, opening, closing),
-        .opening_loc = TOK2SLICE(parser, opening),
+        .opening_loc = TOK2LOC(parser, opening),
         .statements = statements,
-        .closing_loc = TOK2SLICE(parser, closing)
+        .closing_loc = TOK2LOC(parser, closing)
     };
 
     return node;
@@ -3720,7 +3720,7 @@ pm_embedded_variable_node_create(pm_parser_t *parser, const pm_token_t *operator
 
     *node = (pm_embedded_variable_node_t) {
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_EMBEDDED_VARIABLE_NODE, 0, operator, variable),
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .variable = variable
     };
 
@@ -3736,9 +3736,9 @@ pm_ensure_node_create(pm_parser_t *parser, const pm_token_t *ensure_keyword, pm_
 
     *node = (pm_ensure_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_ENSURE_NODE, 0, ensure_keyword, end_keyword),
-        .ensure_keyword_loc = TOK2SLICE(parser, ensure_keyword),
+        .ensure_keyword_loc = TOK2LOC(parser, ensure_keyword),
         .statements = statements,
-        .end_keyword_loc = TOK2SLICE(parser, end_keyword)
+        .end_keyword_loc = TOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -4006,10 +4006,10 @@ pm_for_node_create(
         .index = index,
         .collection = collection,
         .statements = statements,
-        .for_keyword_loc = TOK2SLICE(parser, for_keyword),
-        .in_keyword_loc = TOK2SLICE(parser, in_keyword),
-        .do_keyword_loc = NTOK2SLICE(parser, do_keyword),
-        .end_keyword_loc = TOK2SLICE(parser, end_keyword)
+        .for_keyword_loc = TOK2LOC(parser, for_keyword),
+        .in_keyword_loc = TOK2LOC(parser, in_keyword),
+        .do_keyword_loc = NTOK2LOC(parser, do_keyword),
+        .end_keyword_loc = TOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -4082,8 +4082,8 @@ pm_hash_pattern_node_empty_create(pm_parser_t *parser, const pm_token_t *opening
     *node = (pm_hash_pattern_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_HASH_PATTERN_NODE, 0, opening, closing),
         .constant = NULL,
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing),
         .elements = { 0 },
         .rest = NULL
     };
@@ -4164,7 +4164,7 @@ pm_global_variable_and_write_node_create(pm_parser_t *parser, pm_node_t *target,
         .base = PM_NODE_INIT_NODES(parser, PM_GLOBAL_VARIABLE_AND_WRITE_NODE, 0, target, value),
         .name = pm_global_variable_write_name(parser, target),
         .name_loc = target->location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4182,7 +4182,7 @@ pm_global_variable_operator_write_node_create(pm_parser_t *parser, pm_node_t *ta
         .base = PM_NODE_INIT_NODES(parser, PM_GLOBAL_VARIABLE_OPERATOR_WRITE_NODE, 0, target, value),
         .name = pm_global_variable_write_name(parser, target),
         .name_loc = target->location,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1)
     };
@@ -4202,7 +4202,7 @@ pm_global_variable_or_write_node_create(pm_parser_t *parser, pm_node_t *target, 
         .base = PM_NODE_INIT_NODES(parser, PM_GLOBAL_VARIABLE_OR_WRITE_NODE, 0, target, value),
         .name = pm_global_variable_write_name(parser, target),
         .name_loc = target->location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4251,7 +4251,7 @@ pm_global_variable_write_node_create(pm_parser_t *parser, pm_node_t *target, con
         .base = PM_NODE_INIT_NODES(parser, PM_GLOBAL_VARIABLE_WRITE_NODE, flags, target, value),
         .name = pm_global_variable_write_name(parser, target),
         .name_loc = target->location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4286,7 +4286,7 @@ pm_hash_node_create(pm_parser_t *parser, const pm_token_t *opening) {
 
     *node = (pm_hash_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_HASH_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening),
-        .opening_loc = TOK2SLICE(parser, opening),
+        .opening_loc = TOK2LOC(parser, opening),
         .closing_loc = { 0 },
         .elements = { 0 }
     };
@@ -4317,7 +4317,7 @@ pm_hash_node_elements_append(pm_hash_node_t *hash, pm_node_t *element) {
 static inline void
 pm_hash_node_closing_loc_set(const pm_parser_t *parser, pm_hash_node_t *hash, pm_token_t *token) {
     PM_NODE_LENGTH_SET_TOKEN(parser, hash, token);
-    hash->closing_loc = TOK2SLICE(parser, token);
+    hash->closing_loc = TOK2LOC(parser, token);
 }
 
 /**
@@ -4350,12 +4350,12 @@ pm_if_node_create(pm_parser_t *parser,
 
     *node = (pm_if_node_t) {
         .base = PM_NODE_INIT(parser, PM_IF_NODE, PM_NODE_FLAG_NEWLINE, start, U32(end - start)),
-        .if_keyword_loc = TOK2SLICE(parser, if_keyword),
+        .if_keyword_loc = TOK2LOC(parser, if_keyword),
         .predicate = predicate,
-        .then_keyword_loc = NTOK2SLICE(parser, then_keyword),
+        .then_keyword_loc = NTOK2LOC(parser, then_keyword),
         .statements = statements,
         .subsequent = subsequent,
-        .end_keyword_loc = NTOK2SLICE(parser, end_keyword)
+        .end_keyword_loc = NTOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -4374,7 +4374,7 @@ pm_if_node_modifier_create(pm_parser_t *parser, pm_node_t *statement, const pm_t
 
     *node = (pm_if_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_IF_NODE, PM_NODE_FLAG_NEWLINE, statement, predicate),
-        .if_keyword_loc = TOK2SLICE(parser, if_keyword),
+        .if_keyword_loc = TOK2LOC(parser, if_keyword),
         .predicate = predicate,
         .then_keyword_loc = { 0 },
         .statements = statements,
@@ -4406,7 +4406,7 @@ pm_if_node_ternary_create(pm_parser_t *parser, pm_node_t *predicate, const pm_to
         .base = PM_NODE_INIT_NODES(parser, PM_IF_NODE, PM_NODE_FLAG_NEWLINE, predicate, false_expression),
         .if_keyword_loc = { 0 },
         .predicate = predicate,
-        .then_keyword_loc = TOK2SLICE(parser, qmark),
+        .then_keyword_loc = TOK2LOC(parser, qmark),
         .statements = if_statements,
         .subsequent = UP(else_node),
         .end_keyword_loc = { 0 }
@@ -4419,13 +4419,13 @@ pm_if_node_ternary_create(pm_parser_t *parser, pm_node_t *predicate, const pm_to
 static inline void
 pm_if_node_end_keyword_loc_set(const pm_parser_t *parser, pm_if_node_t *node, const pm_token_t *keyword) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, keyword);
-    node->end_keyword_loc = TOK2SLICE(parser, keyword);
+    node->end_keyword_loc = TOK2LOC(parser, keyword);
 }
 
 static inline void
 pm_else_node_end_keyword_loc_set(const pm_parser_t *parser, pm_else_node_t *node, const pm_token_t *keyword) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, keyword);
-    node->end_keyword_loc = TOK2SLICE(parser, keyword);
+    node->end_keyword_loc = TOK2LOC(parser, keyword);
 }
 
 /**
@@ -4578,8 +4578,8 @@ pm_in_node_create(pm_parser_t *parser, pm_node_t *pattern, pm_statements_node_t 
         .base = PM_NODE_INIT(parser, PM_IN_NODE, 0, start, U32(end - start)),
         .pattern = pattern,
         .statements = statements,
-        .in_loc = TOK2SLICE(parser, in_keyword),
-        .then_loc = NTOK2SLICE(parser, then_keyword)
+        .in_loc = TOK2LOC(parser, in_keyword),
+        .then_loc = NTOK2LOC(parser, then_keyword)
     };
 
     return node;
@@ -4597,7 +4597,7 @@ pm_instance_variable_and_write_node_create(pm_parser_t *parser, pm_instance_vari
         .base = PM_NODE_INIT_NODES(parser, PM_INSTANCE_VARIABLE_AND_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4615,7 +4615,7 @@ pm_instance_variable_operator_write_node_create(pm_parser_t *parser, pm_instance
         .base = PM_NODE_INIT_NODES(parser, PM_INSTANCE_VARIABLE_OPERATOR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1)
     };
@@ -4635,7 +4635,7 @@ pm_instance_variable_or_write_node_create(pm_parser_t *parser, pm_instance_varia
         .base = PM_NODE_INIT_NODES(parser, PM_INSTANCE_VARIABLE_OR_WRITE_NODE, 0, target, value),
         .name = target->name,
         .name_loc = target->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4671,7 +4671,7 @@ pm_instance_variable_write_node_create(pm_parser_t *parser, pm_instance_variable
         .base = PM_NODE_INIT_NODES(parser, PM_INSTANCE_VARIABLE_WRITE_NODE, flags, read_node, value),
         .name = read_node->name,
         .name_loc = read_node->base.location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -4731,8 +4731,8 @@ pm_interpolated_regular_expression_node_create(pm_parser_t *parser, const pm_tok
 
     *node = (pm_interpolated_regular_expression_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_INTERPOLATED_REGULAR_EXPRESSION_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, opening),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, opening),
         .parts = { 0 }
     };
 
@@ -4753,7 +4753,7 @@ pm_interpolated_regular_expression_node_append(pm_interpolated_regular_expressio
 
 static inline void
 pm_interpolated_regular_expression_node_closing_set(pm_parser_t *parser, pm_interpolated_regular_expression_node_t *node, const pm_token_t *closing) {
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
     pm_node_flag_set(UP(node), pm_regular_expression_flags_create(parser, closing));
 }
@@ -4895,8 +4895,8 @@ pm_interpolated_string_node_create(pm_parser_t *parser, const pm_token_t *openin
 
     *node = (pm_interpolated_string_node_t) {
         .base = PM_NODE_INIT(parser, PM_INTERPOLATED_STRING_NODE, flags, start, U32(end - start)),
-        .opening_loc = NTOK2SLICE(parser, opening),
-        .closing_loc = NTOK2SLICE(parser, closing),
+        .opening_loc = NTOK2LOC(parser, opening),
+        .closing_loc = NTOK2LOC(parser, closing),
         .parts = { 0 }
     };
 
@@ -4915,7 +4915,7 @@ pm_interpolated_string_node_create(pm_parser_t *parser, const pm_token_t *openin
  */
 static void
 pm_interpolated_string_node_closing_set(const pm_parser_t *parser, pm_interpolated_string_node_t *node, const pm_token_t *closing) {
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
 }
 
@@ -4934,7 +4934,7 @@ pm_interpolated_symbol_node_append(pm_interpolated_symbol_node_t *node, pm_node_
 
 static void
 pm_interpolated_symbol_node_closing_loc_set(const pm_parser_t *parser, pm_interpolated_symbol_node_t *node, const pm_token_t *closing) {
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
 }
 
@@ -4950,8 +4950,8 @@ pm_interpolated_symbol_node_create(pm_parser_t *parser, const pm_token_t *openin
 
     *node = (pm_interpolated_symbol_node_t) {
         .base = PM_NODE_INIT(parser, PM_INTERPOLATED_SYMBOL_NODE, PM_NODE_FLAG_STATIC_LITERAL, start, U32(end - start)),
-        .opening_loc = NTOK2SLICE(parser, opening),
-        .closing_loc = NTOK2SLICE(parser, closing),
+        .opening_loc = NTOK2LOC(parser, opening),
+        .closing_loc = NTOK2LOC(parser, closing),
         .parts = { 0 }
     };
 
@@ -4974,8 +4974,8 @@ pm_interpolated_xstring_node_create(pm_parser_t *parser, const pm_token_t *openi
 
     *node = (pm_interpolated_x_string_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_INTERPOLATED_X_STRING_NODE, 0, opening, closing),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing),
         .parts = { 0 }
     };
 
@@ -4990,7 +4990,7 @@ pm_interpolated_xstring_node_append(pm_interpolated_x_string_node_t *node, pm_no
 
 static inline void
 pm_interpolated_xstring_node_closing_set(const pm_parser_t *parser, pm_interpolated_x_string_node_t *node, const pm_token_t *closing) {
-    node->closing_loc = TOK2SLICE(parser, closing);
+    node->closing_loc = TOK2LOC(parser, closing);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, closing);
 }
 
@@ -5065,7 +5065,7 @@ pm_required_keyword_parameter_node_create(pm_parser_t *parser, const pm_token_t 
     *node = (pm_required_keyword_parameter_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_REQUIRED_KEYWORD_PARAMETER_NODE, 0, name),
         .name = pm_parser_constant_id_location(parser, name->start, name->end - 1),
-        .name_loc = TOK2SLICE(parser, name),
+        .name_loc = TOK2LOC(parser, name),
     };
 
     return node;
@@ -5081,7 +5081,7 @@ pm_optional_keyword_parameter_node_create(pm_parser_t *parser, const pm_token_t 
     *node = (pm_optional_keyword_parameter_node_t) {
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_OPTIONAL_KEYWORD_PARAMETER_NODE, 0, name, value),
         .name = pm_parser_constant_id_location(parser, name->start, name->end - 1),
-        .name_loc = TOK2SLICE(parser, name),
+        .name_loc = TOK2LOC(parser, name),
         .value = value
     };
 
@@ -5102,8 +5102,8 @@ pm_keyword_rest_parameter_node_create(pm_parser_t *parser, const pm_token_t *ope
             : PM_NODE_INIT_TOKENS(parser, PM_KEYWORD_REST_PARAMETER_NODE, 0, operator, name)
         ),
         .name = name == NULL ? 0 : pm_parser_constant_id_token(parser, name),
-        .name_loc = NTOK2SLICE(parser, name),
-        .operator_loc = TOK2SLICE(parser, operator)
+        .name_loc = NTOK2LOC(parser, name),
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5127,9 +5127,9 @@ pm_lambda_node_create(
     *node = (pm_lambda_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_LAMBDA_NODE, 0, operator, closing),
         .locals = *locals,
-        .operator_loc = TOK2SLICE(parser, operator),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .operator_loc = TOK2LOC(parser, operator),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing),
         .parameters = parameters,
         .body = body
     };
@@ -5149,7 +5149,7 @@ pm_local_variable_and_write_node_create(pm_parser_t *parser, pm_node_t *target, 
     *node = (pm_local_variable_and_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_LOCAL_VARIABLE_AND_WRITE_NODE, 0, target, value),
         .name_loc = target->location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .name = name,
         .depth = depth
@@ -5168,7 +5168,7 @@ pm_local_variable_operator_write_node_create(pm_parser_t *parser, pm_node_t *tar
     *node = (pm_local_variable_operator_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_LOCAL_VARIABLE_OPERATOR_WRITE_NODE, 0, target, value),
         .name_loc = target->location,
-        .binary_operator_loc = TOK2SLICE(parser, operator),
+        .binary_operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .name = name,
         .binary_operator = pm_parser_constant_id_location(parser, operator->start, operator->end - 1),
@@ -5190,7 +5190,7 @@ pm_local_variable_or_write_node_create(pm_parser_t *parser, pm_node_t *target, c
     *node = (pm_local_variable_or_write_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_LOCAL_VARIABLE_OR_WRITE_NODE, 0, target, value),
         .name_loc = target->location,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value,
         .name = name,
         .depth = depth
@@ -5240,7 +5240,7 @@ pm_local_variable_read_node_missing_create(pm_parser_t *parser, const pm_token_t
  * Allocate and initialize a new LocalVariableWriteNode node.
  */
 static pm_local_variable_write_node_t *
-pm_local_variable_write_node_create(pm_parser_t *parser, pm_constant_id_t name, uint32_t depth, pm_node_t *value, const pm_slice_t *name_loc, const pm_token_t *operator) {
+pm_local_variable_write_node_create(pm_parser_t *parser, pm_constant_id_t name, uint32_t depth, pm_node_t *value, const pm_location_t *name_loc, const pm_token_t *operator) {
     pm_local_variable_write_node_t *node = PM_NODE_ALLOC(parser, pm_local_variable_write_node_t);
     pm_node_flags_t flags = pm_implicit_array_write_flags(value, PM_WRITE_NODE_FLAGS_IMPLICIT_ARRAY);
 
@@ -5250,7 +5250,7 @@ pm_local_variable_write_node_create(pm_parser_t *parser, pm_constant_id_t name, 
         .depth = depth,
         .value = value,
         .name_loc = *name_loc,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5294,7 +5294,7 @@ pm_refute_numbered_parameter(pm_parser_t *parser, uint32_t start, uint32_t lengt
  * name and depth.
  */
 static pm_local_variable_target_node_t *
-pm_local_variable_target_node_create(pm_parser_t *parser, const pm_slice_t *location, pm_constant_id_t name, uint32_t depth) {
+pm_local_variable_target_node_create(pm_parser_t *parser, const pm_location_t *location, pm_constant_id_t name, uint32_t depth) {
     pm_refute_numbered_parameter(parser, location->start, location->length);
     pm_local_variable_target_node_t *node = PM_NODE_ALLOC(parser, pm_local_variable_target_node_t);
 
@@ -5320,7 +5320,7 @@ pm_match_predicate_node_create(pm_parser_t *parser, pm_node_t *value, pm_node_t 
         .base = PM_NODE_INIT_NODES(parser, PM_MATCH_PREDICATE_NODE, 0, value, pattern),
         .value = value,
         .pattern = pattern,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5339,7 +5339,7 @@ pm_match_required_node_create(pm_parser_t *parser, pm_node_t *value, pm_node_t *
         .base = PM_NODE_INIT_NODES(parser, PM_MATCH_REQUIRED_NODE, 0, value, pattern),
         .value = value,
         .pattern = pattern,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5371,10 +5371,10 @@ pm_module_node_create(pm_parser_t *parser, pm_constant_id_list_t *locals, const 
     *node = (pm_module_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_MODULE_NODE, 0, module_keyword, end_keyword),
         .locals = (locals == NULL ? ((pm_constant_id_list_t) { .ids = NULL, .size = 0, .capacity = 0 }) : *locals),
-        .module_keyword_loc = TOK2SLICE(parser, module_keyword),
+        .module_keyword_loc = TOK2LOC(parser, module_keyword),
         .constant_path = constant_path,
         .body = body,
-        .end_keyword_loc = TOK2SLICE(parser, end_keyword),
+        .end_keyword_loc = TOK2LOC(parser, end_keyword),
         .name = pm_parser_constant_id_token(parser, name)
     };
 
@@ -5441,7 +5441,7 @@ static void
 pm_multi_target_node_opening_set(const pm_parser_t *parser, pm_multi_target_node_t *node, const pm_token_t *lparen) {
     PM_NODE_START_SET_TOKEN(parser, node, lparen);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, lparen);
-    node->lparen_loc = TOK2SLICE(parser, lparen);
+    node->lparen_loc = TOK2LOC(parser, lparen);
 }
 
 /**
@@ -5450,7 +5450,7 @@ pm_multi_target_node_opening_set(const pm_parser_t *parser, pm_multi_target_node
 static void
 pm_multi_target_node_closing_set(const pm_parser_t *parser, pm_multi_target_node_t *node, const pm_token_t *rparen) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, rparen);
-    node->rparen_loc = TOK2SLICE(parser, rparen);
+    node->rparen_loc = TOK2LOC(parser, rparen);
 }
 
 /**
@@ -5468,7 +5468,7 @@ pm_multi_write_node_create(pm_parser_t *parser, pm_multi_target_node_t *target, 
         .rights = target->rights,
         .lparen_loc = target->lparen_loc,
         .rparen_loc = target->rparen_loc,
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -5493,7 +5493,7 @@ pm_next_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_arguments
             ? PM_NODE_INIT_TOKEN(parser, PM_NEXT_NODE, 0, keyword)
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_NEXT_NODE, 0, keyword, arguments)
         ),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .arguments = arguments
     };
 
@@ -5526,8 +5526,8 @@ pm_no_keywords_parameter_node_create(pm_parser_t *parser, const pm_token_t *oper
 
     *node = (pm_no_keywords_parameter_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_NO_KEYWORDS_PARAMETER_NODE, 0, operator, keyword),
-        .operator_loc = TOK2SLICE(parser, operator),
-        .keyword_loc = TOK2SLICE(parser, keyword)
+        .operator_loc = TOK2LOC(parser, operator),
+        .keyword_loc = TOK2LOC(parser, keyword)
     };
 
     return node;
@@ -5623,8 +5623,8 @@ pm_optional_parameter_node_create(pm_parser_t *parser, const pm_token_t *name, c
     *node = (pm_optional_parameter_node_t) {
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_OPTIONAL_PARAMETER_NODE, 0, name, value),
         .name = pm_parser_constant_id_token(parser, name),
-        .name_loc = TOK2SLICE(parser, name),
-        .operator_loc = TOK2SLICE(parser, operator),
+        .name_loc = TOK2LOC(parser, name),
+        .operator_loc = TOK2LOC(parser, operator),
         .value = value
     };
 
@@ -5644,7 +5644,7 @@ pm_or_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *operat
         .base = PM_NODE_INIT_NODES(parser, PM_OR_NODE, 0, left, right),
         .left = left,
         .right = right,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5776,8 +5776,8 @@ pm_parentheses_node_create(pm_parser_t *parser, const pm_token_t *opening, pm_no
     *node = (pm_parentheses_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_PARENTHESES_NODE, flags, opening, closing),
         .body = body,
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing)
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing)
     };
 
     return node;
@@ -5793,9 +5793,9 @@ pm_pinned_expression_node_create(pm_parser_t *parser, pm_node_t *expression, con
     *node = (pm_pinned_expression_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_PINNED_EXPRESSION_NODE, 0, operator, rparen),
         .expression = expression,
-        .operator_loc = TOK2SLICE(parser, operator),
-        .lparen_loc = TOK2SLICE(parser, lparen),
-        .rparen_loc = TOK2SLICE(parser, rparen)
+        .operator_loc = TOK2LOC(parser, operator),
+        .lparen_loc = TOK2LOC(parser, lparen),
+        .rparen_loc = TOK2LOC(parser, rparen)
     };
 
     return node;
@@ -5811,7 +5811,7 @@ pm_pinned_variable_node_create(pm_parser_t *parser, const pm_token_t *operator, 
     *node = (pm_pinned_variable_node_t) {
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_PINNED_VARIABLE_NODE, 0, operator, variable),
         .variable = variable,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5827,9 +5827,9 @@ pm_post_execution_node_create(pm_parser_t *parser, const pm_token_t *keyword, co
     *node = (pm_post_execution_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_POST_EXECUTION_NODE, 0, keyword, closing),
         .statements = statements,
-        .keyword_loc = TOK2SLICE(parser, keyword),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing)
+        .keyword_loc = TOK2LOC(parser, keyword),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing)
     };
 
     return node;
@@ -5845,9 +5845,9 @@ pm_pre_execution_node_create(pm_parser_t *parser, const pm_token_t *keyword, con
     *node = (pm_pre_execution_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_PRE_EXECUTION_NODE, 0, keyword, closing),
         .statements = statements,
-        .keyword_loc = TOK2SLICE(parser, keyword),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .closing_loc = TOK2SLICE(parser, closing)
+        .keyword_loc = TOK2LOC(parser, keyword),
+        .opening_loc = TOK2LOC(parser, opening),
+        .closing_loc = TOK2LOC(parser, closing)
     };
 
     return node;
@@ -5886,7 +5886,7 @@ pm_range_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *ope
         .base = PM_NODE_INIT(parser, PM_RANGE_NODE, flags, start, U32(end - start)),
         .left = left,
         .right = right,
-        .operator_loc = TOK2SLICE(parser, operator)
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -5918,9 +5918,9 @@ pm_regular_expression_node_create_unescaped(pm_parser_t *parser, const pm_token_
 
     *node = (pm_regular_expression_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_REGULAR_EXPRESSION_NODE, flags, opening, closing),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .content_loc = TOK2SLICE(parser, content),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .content_loc = TOK2LOC(parser, content),
+        .closing_loc = TOK2LOC(parser, closing),
         .unescaped = *unescaped
     };
 
@@ -5960,7 +5960,7 @@ pm_rescue_modifier_node_create(pm_parser_t *parser, pm_node_t *expression, const
     *node = (pm_rescue_modifier_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_RESCUE_MODIFIER_NODE, 0, expression, rescue_expression),
         .expression = expression,
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .rescue_expression = rescue_expression
     };
 
@@ -5976,7 +5976,7 @@ pm_rescue_node_create(pm_parser_t *parser, const pm_token_t *keyword) {
 
     *node = (pm_rescue_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_RESCUE_NODE, 0, keyword),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .operator_loc = { 0 },
         .then_keyword_loc = { 0 },
         .reference = NULL,
@@ -5990,7 +5990,7 @@ pm_rescue_node_create(pm_parser_t *parser, const pm_token_t *keyword) {
 
 static inline void
 pm_rescue_node_operator_set(const pm_parser_t *parser, pm_rescue_node_t *node, const pm_token_t *operator) {
-    node->operator_loc = TOK2SLICE(parser, operator);
+    node->operator_loc = TOK2LOC(parser, operator);
 }
 
 /**
@@ -6045,8 +6045,8 @@ pm_rest_parameter_node_create(pm_parser_t *parser, const pm_token_t *operator, c
             : PM_NODE_INIT_TOKENS(parser, PM_REST_PARAMETER_NODE, 0, operator, name)
         ),
         .name = name == NULL ? 0 : pm_parser_constant_id_token(parser, name),
-        .name_loc = NTOK2SLICE(parser, name),
-        .operator_loc = TOK2SLICE(parser, operator)
+        .name_loc = NTOK2LOC(parser, name),
+        .operator_loc = TOK2LOC(parser, operator)
     };
 
     return node;
@@ -6080,7 +6080,7 @@ pm_return_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argumen
             ? PM_NODE_INIT_TOKEN(parser, PM_RETURN_NODE, 0, keyword)
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_RETURN_NODE, 0, keyword, arguments)
         ),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .arguments = arguments
     };
 
@@ -6127,11 +6127,11 @@ pm_singleton_class_node_create(pm_parser_t *parser, pm_constant_id_list_t *local
     *node = (pm_singleton_class_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_SINGLETON_CLASS_NODE, 0, class_keyword, end_keyword),
         .locals = *locals,
-        .class_keyword_loc = TOK2SLICE(parser, class_keyword),
-        .operator_loc = TOK2SLICE(parser, operator),
+        .class_keyword_loc = TOK2LOC(parser, class_keyword),
+        .operator_loc = TOK2LOC(parser, operator),
         .expression = expression,
         .body = body,
-        .end_keyword_loc = TOK2SLICE(parser, end_keyword)
+        .end_keyword_loc = TOK2LOC(parser, end_keyword)
     };
 
     return node;
@@ -6207,7 +6207,7 @@ pm_splat_node_create(pm_parser_t *parser, const pm_token_t *operator, pm_node_t 
             ? PM_NODE_INIT_TOKEN(parser, PM_SPLAT_NODE, 0, operator)
             : PM_NODE_INIT_TOKEN_NODE(parser, PM_SPLAT_NODE, 0, operator, expression)
         ),
-        .operator_loc = TOK2SLICE(parser, operator),
+        .operator_loc = TOK2LOC(parser, operator),
         .expression = expression
     };
 
@@ -6311,9 +6311,9 @@ pm_string_node_create_unescaped(pm_parser_t *parser, const pm_token_t *opening, 
 
     *node = (pm_string_node_t) {
         .base = PM_NODE_INIT(parser, PM_STRING_NODE, flags, start, U32(end - start)),
-        .opening_loc = NTOK2SLICE(parser, opening),
-        .content_loc = TOK2SLICE(parser, content),
-        .closing_loc = NTOK2SLICE(parser, closing),
+        .opening_loc = NTOK2LOC(parser, opening),
+        .content_loc = TOK2LOC(parser, content),
+        .closing_loc = NTOK2LOC(parser, closing),
         .unescaped = *string
     };
 
@@ -6347,12 +6347,12 @@ pm_super_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_argument
     assert(keyword->type == PM_TOKEN_KEYWORD_SUPER);
     pm_super_node_t *node = PM_NODE_ALLOC(parser, pm_super_node_t);
 
-    const pm_slice_t *end = pm_arguments_end(arguments);
+    const pm_location_t *end = pm_arguments_end(arguments);
     assert(end != NULL && "unreachable");
 
     *node = (pm_super_node_t) {
-        .base = PM_NODE_INIT(parser, PM_SUPER_NODE, 0, PM_TOKEN_START(parser, keyword), PM_SLICE_END(end) - PM_TOKEN_START(parser, keyword)),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .base = PM_NODE_INIT(parser, PM_SUPER_NODE, 0, PM_TOKEN_START(parser, keyword), PM_LOCATION_END(end) - PM_TOKEN_START(parser, keyword)),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .lparen_loc = arguments->opening_loc,
         .arguments = arguments->arguments,
         .rparen_loc = arguments->closing_loc,
@@ -6585,9 +6585,9 @@ pm_symbol_node_create_unescaped(pm_parser_t *parser, const pm_token_t *opening, 
 
     *node = (pm_symbol_node_t) {
         .base = PM_NODE_INIT(parser, PM_SYMBOL_NODE, PM_NODE_FLAG_STATIC_LITERAL | flags, start, U32(end - start)),
-        .opening_loc = NTOK2SLICE(parser, opening),
-        .value_loc = NTOK2SLICE(parser, value),
-        .closing_loc = NTOK2SLICE(parser, closing),
+        .opening_loc = NTOK2LOC(parser, opening),
+        .value_loc = NTOK2LOC(parser, value),
+        .closing_loc = NTOK2LOC(parser, closing),
         .unescaped = *unescaped
     };
 
@@ -6685,9 +6685,9 @@ pm_string_node_to_symbol_node(pm_parser_t *parser, pm_string_node_t *node, const
 
     *new_node = (pm_symbol_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_SYMBOL_NODE, PM_NODE_FLAG_STATIC_LITERAL, opening, closing),
-        .opening_loc = TOK2SLICE(parser, opening),
+        .opening_loc = TOK2LOC(parser, opening),
         .value_loc = node->content_loc,
-        .closing_loc = TOK2SLICE(parser, closing),
+        .closing_loc = TOK2LOC(parser, closing),
         .unescaped = node->unescaped
     };
 
@@ -6779,7 +6779,7 @@ pm_undef_node_create(pm_parser_t *parser, const pm_token_t *token) {
 
     *node = (pm_undef_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_UNDEF_NODE, 0, token),
-        .keyword_loc = TOK2SLICE(parser, token),
+        .keyword_loc = TOK2LOC(parser, token),
         .names = { 0 }
     };
 
@@ -6807,9 +6807,9 @@ pm_unless_node_create(pm_parser_t *parser, const pm_token_t *keyword, pm_node_t 
 
     *node = (pm_unless_node_t) {
         .base = PM_NODE_INIT_TOKEN_NODE(parser, PM_UNLESS_NODE, PM_NODE_FLAG_NEWLINE, keyword, end),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .predicate = predicate,
-        .then_keyword_loc = NTOK2SLICE(parser, then_keyword),
+        .then_keyword_loc = NTOK2LOC(parser, then_keyword),
         .statements = statements,
         .else_clause = NULL,
         .end_keyword_loc = { 0 }
@@ -6831,7 +6831,7 @@ pm_unless_node_modifier_create(pm_parser_t *parser, pm_node_t *statement, const 
 
     *node = (pm_unless_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_UNLESS_NODE, PM_NODE_FLAG_NEWLINE, statement, predicate),
-        .keyword_loc = TOK2SLICE(parser, unless_keyword),
+        .keyword_loc = TOK2LOC(parser, unless_keyword),
         .predicate = predicate,
         .then_keyword_loc = { 0 },
         .statements = statements,
@@ -6844,7 +6844,7 @@ pm_unless_node_modifier_create(pm_parser_t *parser, pm_node_t *statement, const 
 
 static inline void
 pm_unless_node_end_keyword_loc_set(const pm_parser_t *parser, pm_unless_node_t *node, const pm_token_t *end_keyword) {
-    node->end_keyword_loc = TOK2SLICE(parser, end_keyword);
+    node->end_keyword_loc = TOK2LOC(parser, end_keyword);
     PM_NODE_LENGTH_SET_TOKEN(parser, node, end_keyword);
 }
 
@@ -6881,9 +6881,9 @@ pm_until_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_to
 
     *node = (pm_until_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_UNTIL_NODE, flags, keyword, closing),
-        .keyword_loc = TOK2SLICE(parser, keyword),
-        .do_keyword_loc = NTOK2SLICE(parser, do_keyword),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .keyword_loc = TOK2LOC(parser, keyword),
+        .do_keyword_loc = NTOK2LOC(parser, do_keyword),
+        .closing_loc = TOK2LOC(parser, closing),
         .predicate = predicate,
         .statements = statements
     };
@@ -6902,7 +6902,7 @@ pm_until_node_modifier_create(pm_parser_t *parser, const pm_token_t *keyword, pm
 
     *node = (pm_until_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_UNTIL_NODE, flags, statements, predicate),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .do_keyword_loc = { 0 },
         .closing_loc = { 0 },
         .predicate = predicate,
@@ -6921,7 +6921,7 @@ pm_when_node_create(pm_parser_t *parser, const pm_token_t *keyword) {
 
     *node = (pm_when_node_t) {
         .base = PM_NODE_INIT_TOKEN(parser, PM_WHEN_NODE, 0, keyword),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .statements = NULL,
         .then_keyword_loc = { 0 },
         .conditions = { 0 }
@@ -6945,7 +6945,7 @@ pm_when_node_conditions_append(pm_when_node_t *node, pm_node_t *condition) {
 static inline void
 pm_when_node_then_keyword_loc_set(const pm_parser_t *parser, pm_when_node_t *node, const pm_token_t *then_keyword) {
     PM_NODE_LENGTH_SET_TOKEN(parser, node, then_keyword);
-    node->then_keyword_loc = TOK2SLICE(parser, then_keyword);
+    node->then_keyword_loc = TOK2LOC(parser, then_keyword);
 }
 
 /**
@@ -6970,9 +6970,9 @@ pm_while_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_to
 
     *node = (pm_while_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_WHILE_NODE, flags, keyword, closing),
-        .keyword_loc = TOK2SLICE(parser, keyword),
-        .do_keyword_loc = NTOK2SLICE(parser, do_keyword),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .keyword_loc = TOK2LOC(parser, keyword),
+        .do_keyword_loc = NTOK2LOC(parser, do_keyword),
+        .closing_loc = TOK2LOC(parser, closing),
         .predicate = predicate,
         .statements = statements
     };
@@ -6991,7 +6991,7 @@ pm_while_node_modifier_create(pm_parser_t *parser, const pm_token_t *keyword, pm
 
     *node = (pm_while_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_WHILE_NODE, flags, statements, predicate),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .do_keyword_loc = { 0 },
         .closing_loc = { 0 },
         .predicate = predicate,
@@ -7030,9 +7030,9 @@ pm_xstring_node_create_unescaped(pm_parser_t *parser, const pm_token_t *opening,
 
     *node = (pm_x_string_node_t) {
         .base = PM_NODE_INIT_TOKENS(parser, PM_X_STRING_NODE, PM_STRING_FLAGS_FROZEN, opening, closing),
-        .opening_loc = TOK2SLICE(parser, opening),
-        .content_loc = TOK2SLICE(parser, content),
-        .closing_loc = TOK2SLICE(parser, closing),
+        .opening_loc = TOK2LOC(parser, opening),
+        .content_loc = TOK2LOC(parser, content),
+        .closing_loc = TOK2LOC(parser, closing),
         .unescaped = *unescaped
     };
 
@@ -7051,25 +7051,25 @@ pm_xstring_node_create(pm_parser_t *parser, const pm_token_t *opening, const pm_
  * Allocate a new YieldNode node.
  */
 static pm_yield_node_t *
-pm_yield_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_slice_t *lparen_loc, pm_arguments_node_t *arguments, const pm_slice_t *rparen_loc) {
+pm_yield_node_create(pm_parser_t *parser, const pm_token_t *keyword, const pm_location_t *lparen_loc, pm_arguments_node_t *arguments, const pm_location_t *rparen_loc) {
     pm_yield_node_t *node = PM_NODE_ALLOC(parser, pm_yield_node_t);
 
     uint32_t start = PM_TOKEN_START(parser, keyword);
     uint32_t end;
 
     if (rparen_loc->length > 0) {
-        end = PM_SLICE_END(rparen_loc);
+        end = PM_LOCATION_END(rparen_loc);
     } else if (arguments != NULL) {
         end = PM_NODE_END(arguments);
     } else if (lparen_loc->length > 0) {
-        end = PM_SLICE_END(lparen_loc);
+        end = PM_LOCATION_END(lparen_loc);
     } else {
         end = PM_TOKEN_END(parser, keyword);
     }
 
     *node = (pm_yield_node_t) {
         .base = PM_NODE_INIT(parser, PM_YIELD_NODE, 0, start, U32(end - start)),
-        .keyword_loc = TOK2SLICE(parser, keyword),
+        .keyword_loc = TOK2LOC(parser, keyword),
         .lparen_loc = *lparen_loc,
         .arguments = arguments,
         .rparen_loc = *rparen_loc
@@ -7120,18 +7120,18 @@ pm_parser_local_add(pm_parser_t *parser, pm_constant_id_t constant_id, const uin
  * Add a local variable from a location to the current scope.
  */
 static pm_constant_id_t
-pm_parser_local_add_location(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, uint32_t reads) {
+pm_parser_local_add_raw(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, uint32_t reads) {
     pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, start, end);
     if (constant_id != 0) pm_parser_local_add(parser, constant_id, start, end, reads);
     return constant_id;
 }
 
 /**
- * Add a local variable from a slice to the current scope.
+ * Add a local variable from a location to the current scope.
  */
 static pm_constant_id_t
-pm_parser_local_add_slice(pm_parser_t *parser, pm_slice_t *slice, uint32_t reads) {
-    return pm_parser_local_add_location(parser, parser->start + slice->start, parser->start + slice->start + slice->length, reads);
+pm_parser_local_add_location(pm_parser_t *parser, pm_location_t *location, uint32_t reads) {
+    return pm_parser_local_add_raw(parser, parser->start + location->start, parser->start + location->start + location->length, reads);
 }
 
 /**
@@ -7139,7 +7139,7 @@ pm_parser_local_add_slice(pm_parser_t *parser, pm_slice_t *slice, uint32_t reads
  */
 static inline pm_constant_id_t
 pm_parser_local_add_token(pm_parser_t *parser, pm_token_t *token, uint32_t reads) {
-    return pm_parser_local_add_location(parser, token->start, token->end, reads);
+    return pm_parser_local_add_raw(parser, token->start, token->end, reads);
 }
 
 /**
@@ -7686,8 +7686,8 @@ parser_lex_magic_comment(pm_parser_t *parser, bool semantic_token_seen) {
         // Allocate a new magic comment node to append to the parser's list.
         pm_magic_comment_t *magic_comment;
         if ((magic_comment = (pm_magic_comment_t *) xcalloc(1, sizeof(pm_magic_comment_t))) != NULL) {
-            magic_comment->key = (pm_slice_t) { .start = U32(key_start - parser->start), .length = U32(key_length) };
-            magic_comment->value = (pm_slice_t) { .start = U32(value_start - parser->start), .length = value_length };
+            magic_comment->key = (pm_location_t) { .start = U32(key_start - parser->start), .length = U32(key_length) };
+            magic_comment->value = (pm_location_t) { .start = U32(value_start - parser->start), .length = value_length };
             pm_list_append(&parser->magic_comment_list, (pm_list_node_t *) magic_comment);
         }
     }
@@ -9313,7 +9313,7 @@ parser_comment(pm_parser_t *parser, pm_comment_type_t type) {
 
     *comment = (pm_comment_t) {
         .type = type,
-        .location = TOK2SLICE(parser, &parser->current)
+        .location = TOK2LOC(parser, &parser->current)
     };
 
     return comment;
@@ -12764,8 +12764,8 @@ parse_target(pm_parser_t *parser, pm_node_t *target, bool multiple, bool splat_p
                     // When it was parsed in the prefix position, foo was seen as a
                     // method call with no receiver and no arguments. Now we have an
                     // =, so we know it's a local variable write.
-                    pm_slice_t message_loc = call->message_loc;
-                    pm_constant_id_t name = pm_parser_local_add_slice(parser, &message_loc, 0);
+                    pm_location_t message_loc = call->message_loc;
+                    pm_constant_id_t name = pm_parser_local_add_location(parser, &message_loc, 0);
                     pm_node_destroy(parser, target);
 
                     return UP(pm_local_variable_target_node_create(parser, &message_loc, name, 0));
@@ -12879,7 +12879,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
         case PM_LOCAL_VARIABLE_READ_NODE: {
             pm_local_variable_read_node_t *local_read = (pm_local_variable_read_node_t *) target;
 
-            pm_slice_t location = target->location;
+            pm_location_t location = target->location;
             pm_constant_id_t name = local_read->name;
             uint32_t depth = local_read->depth;
             pm_scope_t *scope = pm_parser_scope_find(parser, depth);
@@ -12947,13 +12947,13 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
                     // When it was parsed in the prefix position, foo was seen as a
                     // method call with no receiver and no arguments. Now we have an
                     // =, so we know it's a local variable write.
-                    pm_slice_t message_loc = call->message_loc;
+                    pm_location_t message_loc = call->message_loc;
 
                     pm_refute_numbered_parameter(parser, message_loc.start, message_loc.length);
-                    pm_parser_local_add_slice(parser, &message_loc, 0);
+                    pm_parser_local_add_location(parser, &message_loc, 0);
                     pm_node_destroy(parser, target);
 
-                    pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, parser->start + PM_SLICE_START(&message_loc), parser->start + PM_SLICE_END(&message_loc));
+                    pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, parser->start + PM_LOCATION_START(&message_loc), parser->start + PM_LOCATION_END(&message_loc));
                     target = UP(pm_local_variable_write_node_create(parser, constant_id, 0, value, &message_loc, operator));
 
                     return target;
@@ -12975,7 +12975,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
 
                     pm_arguments_node_arguments_append(arguments, value);
                     PM_NODE_LENGTH_SET_NODE(call, arguments);
-                    call->equal_loc = TOK2SLICE(parser, operator);
+                    call->equal_loc = TOK2LOC(parser, operator);
 
                     parse_write_name(parser, &call->name);
                     pm_node_flag_set(UP(call), PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE | pm_implicit_array_write_flags(value, PM_CALL_NODE_FLAGS_IMPLICIT_ARRAY));
@@ -12997,7 +12997,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
 
                 // Replace the name with "[]=".
                 call->name = pm_parser_constant_id_constant(parser, "[]=", 3);
-                call->equal_loc = TOK2SLICE(parser, operator);
+                call->equal_loc = TOK2LOC(parser, operator);
 
                 // Ensure that the arguments for []= don't contain keywords
                 pm_index_arguments_check(parser, call->arguments, call->block);
@@ -13048,7 +13048,7 @@ parse_unwriteable_write(pm_parser_t *parser, pm_node_t *target, const pm_token_t
         default: break;
     }
 
-    pm_constant_id_t name = pm_parser_local_add_location(parser, parser->start + PM_NODE_START(target), parser->start + PM_NODE_END(target), 1);
+    pm_constant_id_t name = pm_parser_local_add_raw(parser, parser->start + PM_NODE_START(target), parser->start + PM_NODE_END(target), 1);
     pm_local_variable_write_node_t *result = pm_local_variable_write_node_create(parser, name, 0, value, &target->location, equals);
 
     pm_node_destroy(parser, target);
@@ -14356,11 +14356,11 @@ parse_rescues(pm_parser_t *parser, size_t opening_newline_index, const pm_token_
 
         if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
             if (accept1(parser, PM_TOKEN_KEYWORD_THEN)) {
-                rescue->then_keyword_loc = TOK2SLICE(parser, &parser->previous);
+                rescue->then_keyword_loc = TOK2LOC(parser, &parser->previous);
             }
         } else {
             expect1(parser, PM_TOKEN_KEYWORD_THEN, PM_ERR_RESCUE_TERM);
-            rescue->then_keyword_loc = TOK2SLICE(parser, &parser->previous);
+            rescue->then_keyword_loc = TOK2LOC(parser, &parser->previous);
         }
 
         if (!match3(parser, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_END)) {
@@ -14756,10 +14756,10 @@ parse_arguments_list(pm_parser_t *parser, pm_arguments_t *arguments, bool accept
 
     if (accept1(parser, PM_TOKEN_PARENTHESIS_LEFT)) {
         found |= true;
-        arguments->opening_loc = TOK2SLICE(parser, &parser->previous);
+        arguments->opening_loc = TOK2LOC(parser, &parser->previous);
 
         if (accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-            arguments->closing_loc = TOK2SLICE(parser, &parser->previous);
+            arguments->closing_loc = TOK2LOC(parser, &parser->previous);
         } else {
             pm_accepts_block_stack_push(parser, true);
             parse_arguments(parser, arguments, accepts_block, PM_TOKEN_PARENTHESIS_RIGHT, (uint16_t) (depth + 1));
@@ -14771,7 +14771,7 @@ parse_arguments_list(pm_parser_t *parser, pm_arguments_t *arguments, bool accept
             }
 
             pm_accepts_block_stack_pop(parser);
-            arguments->closing_loc = TOK2SLICE(parser, &parser->previous);
+            arguments->closing_loc = TOK2LOC(parser, &parser->previous);
         }
     } else if (accepts_command_call && (token_begins_expression_p(parser->current.type) || match3(parser, PM_TOKEN_USTAR, PM_TOKEN_USTAR_STAR, PM_TOKEN_UAMPERSAND)) && !match1(parser, PM_TOKEN_BRACE_LEFT)) {
         found |= true;
@@ -16085,7 +16085,7 @@ parse_pattern(pm_parser_t *parser, pm_constant_id_list_t *captures, uint8_t flag
  * an error to the parser.
  */
 static void
-parse_pattern_capture(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_constant_id_t capture, const pm_slice_t *location) {
+parse_pattern_capture(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_constant_id_t capture, const pm_location_t *location) {
     // Skip this capture if it starts with an underscore.
     if (parser->start[location->start] == '_') return;
 
@@ -16164,8 +16164,8 @@ parse_pattern_constant_path(pm_parser_t *parser, pm_constant_id_list_t *captures
                 PM_NODE_LENGTH_SET_TOKEN(parser, pattern_node, &closing);
 
                 pattern_node->constant = node;
-                pattern_node->opening_loc = TOK2SLICE(parser, &opening);
-                pattern_node->closing_loc = TOK2SLICE(parser, &closing);
+                pattern_node->opening_loc = TOK2LOC(parser, &opening);
+                pattern_node->closing_loc = TOK2LOC(parser, &closing);
 
                 return UP(pattern_node);
             }
@@ -16180,8 +16180,8 @@ parse_pattern_constant_path(pm_parser_t *parser, pm_constant_id_list_t *captures
                 PM_NODE_LENGTH_SET_TOKEN(parser, pattern_node, &closing);
 
                 pattern_node->constant = node;
-                pattern_node->opening_loc = TOK2SLICE(parser, &opening);
-                pattern_node->closing_loc = TOK2SLICE(parser, &closing);
+                pattern_node->opening_loc = TOK2LOC(parser, &opening);
+                pattern_node->closing_loc = TOK2LOC(parser, &closing);
 
                 return UP(pattern_node);
             }
@@ -16196,8 +16196,8 @@ parse_pattern_constant_path(pm_parser_t *parser, pm_constant_id_list_t *captures
                 PM_NODE_LENGTH_SET_TOKEN(parser, pattern_node, &closing);
 
                 pattern_node->constant = node;
-                pattern_node->opening_loc = TOK2SLICE(parser, &opening);
-                pattern_node->closing_loc = TOK2SLICE(parser, &closing);
+                pattern_node->opening_loc = TOK2LOC(parser, &opening);
+                pattern_node->closing_loc = TOK2LOC(parser, &closing);
 
                 return UP(pattern_node);
             }
@@ -16236,10 +16236,10 @@ parse_pattern_rest(pm_parser_t *parser, pm_constant_id_list_t *captures) {
             pm_parser_local_add(parser, constant_id, parser->previous.start, parser->previous.end, 0);
         }
 
-        parse_pattern_capture(parser, captures, constant_id, &TOK2SLICE(parser, &parser->previous));
+        parse_pattern_capture(parser, captures, constant_id, &TOK2LOC(parser, &parser->previous));
         name = UP(pm_local_variable_target_node_create(
             parser,
-            &TOK2SLICE(parser, &parser->previous),
+            &TOK2LOC(parser, &parser->previous),
             constant_id,
             (uint32_t) (depth == -1 ? 0 : depth)
         ));
@@ -16272,10 +16272,10 @@ parse_pattern_keyword_rest(pm_parser_t *parser, pm_constant_id_list_t *captures)
             pm_parser_local_add(parser, constant_id, parser->previous.start, parser->previous.end, 0);
         }
 
-        parse_pattern_capture(parser, captures, constant_id, &TOK2SLICE(parser, &parser->previous));
+        parse_pattern_capture(parser, captures, constant_id, &TOK2LOC(parser, &parser->previous));
         value = UP(pm_local_variable_target_node_create(
             parser,
-            &TOK2SLICE(parser, &parser->previous),
+            &TOK2LOC(parser, &parser->previous),
             constant_id,
             (uint32_t) (depth == -1 ? 0 : depth)
         ));
@@ -16317,9 +16317,9 @@ pm_slice_is_valid_local(const pm_parser_t *parser, const uint8_t *start, const u
  */
 static pm_node_t *
 parse_pattern_hash_implicit_value(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_symbol_node_t *key) {
-    const pm_slice_t *value_slice = &((pm_symbol_node_t *) key)->value_loc;
-    const uint8_t *start = parser->start + PM_SLICE_START(value_slice);
-    const uint8_t *end = parser->start + PM_SLICE_END(value_slice);
+    const pm_location_t *value_loc = &((pm_symbol_node_t *) key)->value_loc;
+    const uint8_t *start = parser->start + PM_LOCATION_START(value_loc);
+    const uint8_t *end = parser->start + PM_LOCATION_END(value_loc);
 
     pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, start, end);
     int depth = -1;
@@ -16330,7 +16330,7 @@ parse_pattern_hash_implicit_value(pm_parser_t *parser, pm_constant_id_list_t *ca
         pm_parser_err(parser, PM_NODE_START(key), PM_NODE_LENGTH(key), PM_ERR_PATTERN_HASH_KEY_LOCALS);
 
         if ((end > start) && ((end[-1] == '!') || (end[-1] == '?'))) {
-            PM_PARSER_ERR_FORMAT(parser, value_slice->start, value_slice->length, PM_ERR_INVALID_LOCAL_VARIABLE_WRITE, (int) (end - start), (const char *) start);
+            PM_PARSER_ERR_FORMAT(parser, value_loc->start, value_loc->length, PM_ERR_INVALID_LOCAL_VARIABLE_WRITE, (int) (end - start), (const char *) start);
         }
     }
 
@@ -16338,10 +16338,10 @@ parse_pattern_hash_implicit_value(pm_parser_t *parser, pm_constant_id_list_t *ca
         pm_parser_local_add(parser, constant_id, start, end, 0);
     }
 
-    parse_pattern_capture(parser, captures, constant_id, value_slice);
+    parse_pattern_capture(parser, captures, constant_id, value_loc);
     pm_local_variable_target_node_t *target = pm_local_variable_target_node_create(
         parser,
-        value_slice,
+        value_loc,
         constant_id,
         (uint32_t) (depth == -1 ? 0 : depth)
     );
@@ -16497,10 +16497,10 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                 pm_parser_local_add(parser, constant_id, parser->previous.start, parser->previous.end, 0);
             }
 
-            parse_pattern_capture(parser, captures, constant_id, &TOK2SLICE(parser, &parser->previous));
+            parse_pattern_capture(parser, captures, constant_id, &TOK2LOC(parser, &parser->previous));
             return UP(pm_local_variable_target_node_create(
                 parser,
-                &TOK2SLICE(parser, &parser->previous),
+                &TOK2LOC(parser, &parser->previous),
                 constant_id,
                 (uint32_t) (depth == -1 ? 0 : depth)
             ));
@@ -16530,8 +16530,8 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                         PM_NODE_START_SET_TOKEN(parser, pattern_node, &opening);
                         PM_NODE_LENGTH_SET_TOKEN(parser, pattern_node, &closing);
 
-                        pattern_node->opening_loc = TOK2SLICE(parser, &opening);
-                        pattern_node->closing_loc = TOK2SLICE(parser, &closing);
+                        pattern_node->opening_loc = TOK2LOC(parser, &opening);
+                        pattern_node->closing_loc = TOK2LOC(parser, &closing);
 
                         return UP(pattern_node);
                     }
@@ -16544,8 +16544,8 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                         PM_NODE_START_SET_TOKEN(parser, pattern_node, &opening);
                         PM_NODE_LENGTH_SET_TOKEN(parser, pattern_node, &closing);
 
-                        pattern_node->opening_loc = TOK2SLICE(parser, &opening);
-                        pattern_node->closing_loc = TOK2SLICE(parser, &closing);
+                        pattern_node->opening_loc = TOK2LOC(parser, &opening);
+                        pattern_node->closing_loc = TOK2LOC(parser, &closing);
 
                         return UP(pattern_node);
                     }
@@ -16604,8 +16604,8 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                 PM_NODE_START_SET_TOKEN(parser, node, &opening);
                 PM_NODE_LENGTH_SET_TOKEN(parser, node, &closing);
 
-                node->opening_loc = TOK2SLICE(parser, &opening);
-                node->closing_loc = TOK2SLICE(parser, &closing);
+                node->opening_loc = TOK2LOC(parser, &opening);
+                node->closing_loc = TOK2LOC(parser, &closing);
             }
 
             parser->pattern_matching_newlines = previous_pattern_matching_newlines;
@@ -16863,10 +16863,10 @@ parse_pattern_primitives(pm_parser_t *parser, pm_constant_id_list_t *captures, p
             pm_parser_local_add(parser, constant_id, parser->previous.start, parser->previous.end, 0);
         }
 
-        parse_pattern_capture(parser, captures, constant_id, &TOK2SLICE(parser, &parser->previous));
+        parse_pattern_capture(parser, captures, constant_id, &TOK2LOC(parser, &parser->previous));
         pm_local_variable_target_node_t *target = pm_local_variable_target_node_create(
             parser,
-            &TOK2SLICE(parser, &parser->previous),
+            &TOK2LOC(parser, &parser->previous),
             constant_id,
             (uint32_t) (depth == -1 ? 0 : depth)
         );
@@ -17531,8 +17531,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         pm_multi_target_node_targets_append(parser, multi_target, statement);
                     }
 
-                    multi_target->lparen_loc = TOK2SLICE(parser, &opening);
-                    multi_target->rparen_loc = TOK2SLICE(parser, &parser->previous);
+                    multi_target->lparen_loc = TOK2LOC(parser, &opening);
+                    multi_target->rparen_loc = TOK2LOC(parser, &parser->previous);
                     PM_NODE_START_SET_TOKEN(parser, multi_target, &opening);
                     PM_NODE_LENGTH_SET_TOKEN(parser, multi_target, &parser->previous);
 
@@ -17854,11 +17854,11 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     call->closing_loc = arguments.closing_loc;
                     call->block = arguments.block;
 
-                    const pm_slice_t *end = pm_arguments_end(&arguments);
+                    const pm_location_t *end = pm_arguments_end(&arguments);
                     if (end == NULL) {
-                        PM_NODE_LENGTH_SET_SLICE(call, &call->message_loc);
+                        PM_NODE_LENGTH_SET_LOCATION(call, &call->message_loc);
                     } else {
-                        PM_NODE_LENGTH_SET_SLICE(call, end);
+                        PM_NODE_LENGTH_SET_LOCATION(call, end);
                     }
                 }
             } else {
@@ -17949,8 +17949,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 pm_node_flag_set(part, parse_unescaped_encoding(parser));
                 pm_string_node_t *cast = (pm_string_node_t *) part;
 
-                cast->opening_loc = TOK2SLICE(parser, &opening);
-                cast->closing_loc = TOK2SLICE(parser, &parser->current);
+                cast->opening_loc = TOK2LOC(parser, &opening);
+                cast->closing_loc = TOK2LOC(parser, &parser->current);
                 cast->base.location = cast->opening_loc;
 
                 if (lex_mode.quote == PM_HEREDOC_QUOTE_BACKTICK) {
@@ -19071,13 +19071,13 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 if (accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
                     receiver = UP(pm_parentheses_node_create(parser, &lparen, NULL, &parser->previous, 0));
                 } else {
-                    arguments.opening_loc = TOK2SLICE(parser, &lparen);
+                    arguments.opening_loc = TOK2LOC(parser, &lparen);
                     receiver = parse_expression(parser, PM_BINDING_POWER_COMPOSITION, true, false, PM_ERR_NOT_EXPRESSION, (uint16_t) (depth + 1));
 
                     if (!parser->recovering) {
                         accept1(parser, PM_TOKEN_NEWLINE);
                         expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
-                        arguments.closing_loc = TOK2SLICE(parser, &parser->previous);
+                        arguments.closing_loc = TOK2LOC(parser, &parser->previous);
                     }
                 }
             } else {
@@ -20378,7 +20378,7 @@ parse_regular_expression_named_capture(const pm_string_t *capture, void *data) {
 
         // Next, create the local variable target and add it to the list of
         // targets for the match.
-        pm_node_t *target = UP(pm_local_variable_target_node_create(parser, &TOK2SLICE(parser, &((pm_token_t) { .type = 0, .start = start, .end = end })), name, depth == -1 ? 0 : (uint32_t) depth));
+        pm_node_t *target = UP(pm_local_variable_target_node_create(parser, &TOK2LOC(parser, &((pm_token_t) { .type = 0, .start = start, .end = end })), name, depth == -1 ? 0 : (uint32_t) depth));
         pm_node_list_append(&callback_data->match->targets, target);
     }
 
@@ -20429,7 +20429,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // is parsed because it could be referenced in the value.
                     pm_call_node_t *call_node = (pm_call_node_t *) node;
                     if (PM_NODE_FLAG_P(call_node, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
-                        pm_parser_local_add_slice(parser, &call_node->message_loc, 0);
+                        pm_parser_local_add_location(parser, &call_node->message_loc, 0);
                     }
                 }
                 PRISM_FALLTHROUGH
@@ -20438,7 +20438,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // variable before parsing the value, in case the value
                     // references the variable.
                     if (PM_NODE_TYPE_P(node, PM_IT_LOCAL_VARIABLE_READ_NODE)) {
-                        pm_parser_local_add_location(parser, parser->start + PM_NODE_START(node), parser->start + PM_NODE_END(node), 0);
+                        pm_parser_local_add_raw(parser, parser->start + PM_NODE_START(node), parser->start + PM_NODE_END(node), 0);
                     }
 
                     parser_lex(parser);
@@ -20564,7 +20564,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
-                        pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
+                        pm_constant_id_t constant_id = pm_parser_local_add_location(parser, &cast->message_loc, 1);
                         parser_lex(parser);
 
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_AMPAMPEQ, (uint16_t) (depth + 1));
@@ -20696,7 +20696,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
-                        pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
+                        pm_constant_id_t constant_id = pm_parser_local_add_location(parser, &cast->message_loc, 1);
                         parser_lex(parser);
 
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_PIPEPIPEEQ, (uint16_t) (depth + 1));
@@ -20839,7 +20839,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
                         pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
-                        pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
+                        pm_constant_id_t constant_id = pm_parser_local_add_location(parser, &cast->message_loc, 1);
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR, (uint16_t) (depth + 1));
                         pm_node_t *result = UP(pm_local_variable_operator_write_node_create(parser, UP(cast), &token, value, constant_id, 0));
 
@@ -21259,7 +21259,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
 
             pm_arguments_t arguments = { 0 };
-            arguments.opening_loc = TOK2SLICE(parser, &parser->previous);
+            arguments.opening_loc = TOK2LOC(parser, &parser->previous);
 
             if (!accept1(parser, PM_TOKEN_BRACKET_RIGHT)) {
                 pm_accepts_block_stack_push(parser, true);
@@ -21268,7 +21268,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                 expect1(parser, PM_TOKEN_BRACKET_RIGHT, PM_ERR_EXPECT_RBRACKET);
             }
 
-            arguments.closing_loc = TOK2SLICE(parser, &parser->previous);
+            arguments.closing_loc = TOK2LOC(parser, &parser->previous);
 
             // If we have a comma after the closing bracket then this is a multiple
             // assignment and we should parse the targets.
@@ -21676,7 +21676,7 @@ parse_program(pm_parser_t *parser) {
     // correct the location information.
     if (statements == NULL) {
         statements = pm_statements_node_create(parser);
-        statements->base.location = (pm_slice_t) { 0 };
+        statements->base.location = (pm_location_t) { 0 };
     }
 
     return UP(pm_program_node_create(parser, &locals, statements));

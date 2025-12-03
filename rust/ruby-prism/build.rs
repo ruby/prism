@@ -253,9 +253,9 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
     writeln!(file)?;
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
-    writeln!(file, "    pub fn location(&self) -> Slice<'pr> {{")?;
-    writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).base.location }};")?;
-    writeln!(file, "        Slice::new(self.parser, unsafe {{ &(*pointer) }})")?;
+    writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
+    writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).base.location }};")?;
+    writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
     writeln!(file, "    /// Returns the flags of this node.")?;
@@ -364,19 +364,19 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::Location => {
-                writeln!(file, "    pub fn {}(&self) -> Slice<'pr> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        Slice::new(self.parser, unsafe {{ &(*pointer) }})")?;
+                writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
-                writeln!(file, "    pub fn {}(&self) -> Option<Slice<'pr>> {{", field.name)?;
-                writeln!(file, "        let pointer: *mut pm_slice_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
+                writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        let length = unsafe {{ (*pointer).length }};")?;
                 writeln!(file, "        if length == 0 {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
-                writeln!(file, "            Some(Slice::new(self.parser, unsafe {{ &(*pointer) }}))")?;
+                writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
@@ -558,7 +558,7 @@ use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
-use crate::{{ConstantId, ConstantList, Integer, Slice, NodeList}};
+use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
 "
     )?;
 
@@ -621,10 +621,10 @@ impl<'pr> Node<'pr> {{
 
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
-    writeln!(file, "    pub fn location(&self) -> Slice<'pr> {{")?;
+    writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        match *self {{")?;
     for node in &config.nodes {
-        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Slice::new(parser, unsafe {{ &((*pointer.cast::<pm_node_t>()).location) }}),", node.name)?;
+        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Location::new(parser, unsafe {{ &((*pointer.cast::<pm_node_t>()).location) }}),", node.name)?;
     }
     writeln!(file, "        }}")?;
     writeln!(file, "    }}")?;

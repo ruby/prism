@@ -19,17 +19,17 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_slice_t};
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_location_t};
 
 /// A range in the source file, represented as a start offset and length.
-pub struct Slice<'pr> {
+pub struct Location<'pr> {
     parser: NonNull<pm_parser_t>,
     pub(crate) start: u32,
     pub(crate) length: u32,
     marker: PhantomData<&'pr [u8]>,
 }
 
-impl<'pr> Slice<'pr> {
+impl<'pr> Location<'pr> {
     /// Returns a byte slice for the range.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {
@@ -39,13 +39,13 @@ impl<'pr> Slice<'pr> {
         }
     }
 
-    /// Return a Slice from the given `pm_slice_t`.
+    /// Return a Location from the given `pm_location_t`.
     #[must_use]
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, slice: &'pr pm_slice_t) -> Self {
-        Slice {
+    pub(crate) const fn new(parser: NonNull<pm_parser_t>, location: &'pr pm_location_t) -> Self {
+        Location {
             parser,
-            start: slice.start,
-            length: slice.length,
+            start: location.start,
+            length: location.length,
             marker: PhantomData,
         }
     }
@@ -56,7 +56,7 @@ impl<'pr> Slice<'pr> {
         self.start + self.length
     }
 
-    /// Return a Slice starting at self and ending at the end of other.
+    /// Return a Location starting at self and ending at the end of other.
     /// Returns None if both locations did not originate from the same parser,
     /// or if self starts after other.
     #[must_use]
@@ -64,7 +64,7 @@ impl<'pr> Slice<'pr> {
         if self.parser != other.parser || self.start > other.start {
             None
         } else {
-            Some(Slice {
+            Some(Location {
                 parser: self.parser,
                 start: self.start,
                 length: other.end() - self.start,
@@ -74,7 +74,7 @@ impl<'pr> Slice<'pr> {
     }
 }
 
-impl std::fmt::Debug for Slice<'_> {
+impl std::fmt::Debug for Location<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let slice: &[u8] = self.as_slice();
 
@@ -332,8 +332,8 @@ impl<'pr> Diagnostic<'pr> {
 
     /// The location of the diagnostic in the source.
     #[must_use]
-    pub const fn location(&self) -> Slice<'pr> {
-        Slice::new(self.parser, unsafe { &self.diag.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.diag.as_ref().location })
     }
 }
 
@@ -377,8 +377,8 @@ impl<'pr> Comment<'pr> {
 
     /// The location of the comment in the source.
     #[must_use]
-    pub const fn location(&self) -> Slice<'pr> {
-        Slice::new(self.parser, unsafe { &self.content.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.content.as_ref().location })
     }
 }
 
@@ -510,9 +510,9 @@ impl<'pr> ParseResult<'pr> {
     /// Returns a slice of the source string that was parsed using the given
     /// slice range.
     #[must_use]
-    pub fn as_slice(&self, slice: &Slice<'pr>) -> &'pr [u8] {
-        let start = slice.start as usize;
-        let end = start + slice.length as usize;
+    pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
+        let start = location.start as usize;
+        let end = start + location.length as usize;
         &self.source[start..end]
     }
 
@@ -574,12 +574,12 @@ impl<'pr> ParseResult<'pr> {
 
     /// Returns an optional location of the __END__ marker and the rest of the content of the file.
     #[must_use]
-    pub fn data_loc(&self) -> Option<Slice<'_>> {
+    pub fn data_loc(&self) -> Option<Location<'_>> {
         let location = unsafe { &(*self.parser.as_ptr()).data_loc };
         if location.length == 0 {
             None
         } else {
-            Some(Slice::new(self.parser, location))
+            Some(Location::new(self.parser, location))
         }
     }
 

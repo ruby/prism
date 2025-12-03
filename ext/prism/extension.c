@@ -461,17 +461,17 @@ parser_location(VALUE source, bool freeze, uint32_t start, uint32_t length) {
 }
 
 /**
- * Create a new Location instance from the given parser and slice.
+ * Create a new Location instance from the given parser and location.
  */
-#define PARSER_LOCATION_SLICE(source, freeze, slice) \
-    parser_location(source, freeze, slice.start, slice.length)
+#define PARSER_LOCATION(source, freeze, location) \
+    parser_location(source, freeze, location.start, location.length)
 
 /**
  * Build a new Comment instance from the given parser and comment.
  */
 static inline VALUE
 parser_comment(VALUE source, bool freeze, const pm_comment_t *comment) {
-    VALUE argv[] = { PARSER_LOCATION_SLICE(source, freeze, comment->location) };
+    VALUE argv[] = { PARSER_LOCATION(source, freeze, comment->location) };
     VALUE type = (comment->type == PM_COMMENT_EMBDOC) ? rb_cPrismEmbDocComment : rb_cPrismInlineComment;
     return rb_class_new_instance_freeze(1, argv, type, freeze);
 }
@@ -554,7 +554,7 @@ parser_errors(const pm_parser_t *parser, rb_encoding *encoding, VALUE source, bo
     ) {
         VALUE type = ID2SYM(rb_intern(pm_diagnostic_id_human(error->diag_id)));
         VALUE message = rb_obj_freeze(rb_enc_str_new_cstr(error->message, encoding));
-        VALUE location = PARSER_LOCATION_SLICE(source, freeze, error->location);
+        VALUE location = PARSER_LOCATION(source, freeze, error->location);
 
         VALUE level = Qnil;
         switch (error->level) {
@@ -594,7 +594,7 @@ parser_warnings(const pm_parser_t *parser, rb_encoding *encoding, VALUE source, 
     ) {
         VALUE type = ID2SYM(rb_intern(pm_diagnostic_id_human(warning->diag_id)));
         VALUE message = rb_obj_freeze(rb_enc_str_new_cstr(warning->message, encoding));
-        VALUE location = PARSER_LOCATION_SLICE(source, freeze, warning->location);
+        VALUE location = PARSER_LOCATION(source, freeze, warning->location);
 
         VALUE level = Qnil;
         switch (warning->level) {

@@ -463,7 +463,7 @@ typedef struct pm_comment {
     pm_list_node_t node;
 
     /** The location of the comment in the source. */
-    pm_slice_t location;
+    pm_location_t location;
 
     /** The type of comment that we've found. */
     pm_comment_type_t type;
@@ -480,10 +480,10 @@ typedef struct {
     pm_list_node_t node;
 
     /** The key of the magic comment. */
-    pm_slice_t key;
+    pm_location_t key;
 
     /** The value of the magic comment. */
-    pm_slice_t value;
+    pm_location_t value;
 } pm_magic_comment_t;
 
 /**
@@ -531,7 +531,7 @@ typedef struct {
     pm_constant_id_t name;
 
     /** The location of the local variable in the source. */
-    pm_slice_t location;
+    pm_location_t location;
 
     /** The index of the local variable in the local table. */
     uint32_t index;
@@ -722,7 +722,7 @@ struct pm_parser {
      * and the rest of the content of the file. This content is loaded into the
      * DATA constant when the file being parsed is the main file being executed.
      */
-    pm_slice_t data_loc;
+    pm_location_t data_loc;
 
     /** The list of warnings that have been found while parsing. */
     pm_list_t warning_list;
