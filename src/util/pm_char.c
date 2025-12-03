@@ -84,7 +84,7 @@ pm_strspn_whitespace(const uint8_t *string, ptrdiff_t length) {
  */
 size_t
 pm_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, pm_newline_list_t *newline_list, uint32_t start_offset) {
-    if (length <= 0 || length > UINT32_MAX) return 0;
+    if (length <= 0) return 0;
 
     uint32_t size = 0;
     uint32_t maximum = (uint32_t) length;

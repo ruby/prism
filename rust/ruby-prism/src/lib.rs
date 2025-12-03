@@ -19,7 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_location_t};
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 /// A range in the source file, represented as a start offset and length.
 pub struct Location<'pr> {
@@ -52,7 +52,7 @@ impl<'pr> Location<'pr> {
 
     /// Returns the end offset from the beginning of the parsed source.
     #[must_use]
-    pub fn end(&self) -> u32 {
+    pub const fn end(&self) -> u32 {
         self.start + self.length
     }
 

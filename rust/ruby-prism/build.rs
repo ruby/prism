@@ -605,9 +605,9 @@ impl<'pr> Node<'pr> {{
     /// Panics if the node type cannot be read.
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
+    #[allow(clippy::cast_ptr_alignment)]
     pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
-        match unsafe {{ (*node).type_ }} {{
-"
+        match unsafe {{ (*node).type_ }} {{"
     )?;
 
     for node in &config.nodes {

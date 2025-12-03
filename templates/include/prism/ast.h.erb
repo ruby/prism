@@ -164,6 +164,15 @@ typedef struct pm_node {
  * Return true if the given flag is set on the given node.
  */
 #define PM_NODE_FLAG_P(node_, flag_) ((PM_NODE_FLAGS(node_) & (flag_)) != 0)
+
+/**
+ * The alignment required for a child node within a parent node.
+ */
+#ifdef _MSC_VER
+#define PM_NODE_ALIGNAS __declspec(align(8))
+#else
+#define PM_NODE_ALIGNAS PRISM_ALIGNAS(PRISM_ALIGNOF(void *))
+#endif
 <%- nodes.each do |node| -%>
 
 /**
@@ -186,7 +195,6 @@ typedef struct pm_node {
 typedef struct pm_<%= node.human %> {
     /** The embedded base node. */
     pm_node_t base;
-
 <%- node.fields.each do |field| -%>
 
     /**
@@ -199,7 +207,7 @@ typedef struct pm_<%= node.human %> {
     <%- end -%>
      */
     <%= case field
-    when Prism::Template::NodeField, Prism::Template::OptionalNodeField then "struct #{field.c_type} *#{field.name}"
+    when Prism::Template::NodeField, Prism::Template::OptionalNodeField then "PM_NODE_ALIGNAS struct #{field.c_type} *#{field.name}"
     when Prism::Template::NodeListField then "struct pm_node_list #{field.name}"
     when Prism::Template::ConstantField, Prism::Template::OptionalConstantField then "pm_constant_id_t #{field.name}"
     when Prism::Template::ConstantListField then "pm_constant_id_list_t #{field.name}"
