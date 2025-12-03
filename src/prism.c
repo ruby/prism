@@ -9291,12 +9291,13 @@ parser_lex_callback(pm_parser_t *parser) {
  * Return a new comment node of the specified type.
  */
 static inline pm_comment_t *
-parser_comment(pm_parser_t *parser, pm_comment_type_t type) {
+parser_comment(pm_parser_t *parser, pm_comment_type_t type, bool trailing) {
     pm_comment_t *comment = (pm_comment_t *) xcalloc(1, sizeof(pm_comment_t));
     if (comment == NULL) return NULL;
 
     *comment = (pm_comment_t) {
         .type = type,
+        .trailing = trailing,
         .location = { parser->current.start, parser->current.end }
     };
 
@@ -9324,7 +9325,7 @@ lex_embdoc(pm_parser_t *parser) {
     parser_lex_callback(parser);
 
     // Now, create a comment that is going to be attached to the parser.
-    pm_comment_t *comment = parser_comment(parser, PM_COMMENT_EMBDOC);
+    pm_comment_t *comment = parser_comment(parser, PM_COMMENT_EMBDOC, false);
     if (comment == NULL) return PM_TOKEN_EOF;
 
     // Now, loop until we find the end of the embedded documentation or the end
@@ -9831,7 +9832,11 @@ parser_lex(pm_parser_t *parser) {
                     // If we found a comment while lexing, then we're going to
                     // add it to the list of comments in the file and keep
                     // lexing.
-                    pm_comment_t *comment = parser_comment(parser, PM_COMMENT_INLINE);
+                    bool trailing = true;
+                    if (parser->previous.type == PM_TOKEN_EOF || parser->previous.type == PM_TOKEN_NEWLINE) {
+                        trailing = false;
+                    }
+                    pm_comment_t *comment = parser_comment(parser, PM_COMMENT_INLINE, trailing);
                     pm_list_append(&parser->comment_list, (pm_list_node_t *) comment);
 
                     if (ending) parser->current.end++;

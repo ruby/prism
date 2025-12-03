@@ -471,9 +471,12 @@ parser_location(const pm_parser_t *parser, VALUE source, bool freeze, const uint
  */
 static inline VALUE
 parser_comment(const pm_parser_t *parser, VALUE source, bool freeze, const pm_comment_t *comment) {
-    VALUE argv[] = { PARSER_LOCATION_LOC(parser, source, freeze, comment->location) };
+    VALUE argv[] = {
+        comment->trailing ? Qtrue : Qfalse,
+        PARSER_LOCATION_LOC(parser, source, freeze, comment->location)
+    };
     VALUE type = (comment->type == PM_COMMENT_EMBDOC) ? rb_cPrismEmbDocComment : rb_cPrismInlineComment;
-    return rb_class_new_instance_freeze(1, argv, type, freeze);
+    return rb_class_new_instance_freeze(2, argv, type, freeze);
 }
 
 /**

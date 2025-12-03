@@ -173,6 +173,9 @@ pm_serialize_comment(pm_parser_t *parser, pm_comment_t *comment, pm_buffer_t *bu
     // serialize type
     pm_buffer_append_byte(buffer, (uint8_t) comment->type);
 
+    // serialize trailing
+    pm_buffer_append_byte(buffer, (uint8_t) comment->trailing);
+
     // serialize location
     pm_serialize_location(parser, &comment->location, buffer);
 }

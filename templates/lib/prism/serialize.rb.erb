@@ -295,8 +295,8 @@ module Prism
           Array.new(load_varuint) do
             comment =
               case load_varuint
-              when 0 then InlineComment.new(load_location_object(freeze))
-              when 1 then EmbDocComment.new(load_location_object(freeze))
+              when 0 then InlineComment.new(load_boolean, load_location_object(freeze))
+              when 1 then EmbDocComment.new(load_boolean, load_location_object(freeze))
               end
 
             comment.freeze if freeze
@@ -448,6 +448,10 @@ module Prism
 
         value = -value if negative
         value
+      end
+
+      def load_boolean
+        io.getbyte != 0
       end
 
       def load_double

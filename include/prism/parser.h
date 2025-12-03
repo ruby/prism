@@ -467,6 +467,8 @@ typedef struct pm_comment {
 
     /** The type of comment that we've found. */
     pm_comment_type_t type;
+
+    bool trailing;
 } pm_comment_t;
 
 /**

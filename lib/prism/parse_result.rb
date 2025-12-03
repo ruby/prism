@@ -513,8 +513,15 @@ module Prism
     # The location of this comment in the source.
     attr_reader :location
 
+    # Returns true if this comment happens on the same line as other code and
+    # false if the comment is by itself.
+    def trailing?
+      @trailing
+    end
+
     # Create a new comment object with the given location.
-    def initialize(location)
+    def initialize(trailing, location)
+      @trailing = trailing
       @location = location
     end
 
@@ -532,12 +539,6 @@ module Prism
   # InlineComment objects are the most common. They correspond to comments in
   # the source file like this one that start with #.
   class InlineComment < Comment
-    # Returns true if this comment happens on the same line as other code and
-    # false if the comment is by itself.
-    def trailing?
-      !location.start_line_slice.strip.empty?
-    end
-
     # Returns a string representation of this comment.
     def inspect
       "#<Prism::InlineComment @location=#{location.inspect}>"
@@ -547,11 +548,6 @@ module Prism
   # EmbDocComment objects correspond to comments that are surrounded by =begin
   # and =end.
   class EmbDocComment < Comment
-    # This can only be true for inline comments.
-    def trailing?
-      false
-    end
-
     # Returns a string representation of this comment.
     def inspect
       "#<Prism::EmbDocComment @location=#{location.inspect}>"
