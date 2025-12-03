@@ -22,14 +22,18 @@ pm_version(void) {
 /* Helpful AST-related macros                                                 */
 /******************************************************************************/
 
+#define U32(value_) ((uint32_t) (value_))
+
 #define FL PM_NODE_FLAGS
 #define UP PM_NODE_UPCAST
 
 #define PM_TOKEN_START(token_) ((token_)->start)
 #define PM_TOKEN_END(token_) ((token_)->end)
+#define PM_TOKEN_LENGTH(token_) U32(PM_TOKEN_END(token_) - PM_TOKEN_START(token_))
 
 #define PM_NODE_START(node_) (UP(node_)->location.start)
 #define PM_NODE_END(node_) (UP(node_)->location.end)
+#define PM_NODE_LENGTH(node_) U32(PM_NODE_END(node_) - PM_NODE_START(node_))
 
 #define PM_LOCATION_TOKEN_VALUE(token_) ((pm_location_t) { .start = PM_TOKEN_START(token_), .end = PM_TOKEN_END(token_) })
 
@@ -433,6 +437,12 @@ pm_parser_err(pm_parser_t *parser, const uint8_t *start, const uint8_t *end, pm_
  */
 #define PM_PARSER_ERR_FORMAT(parser_, start_, end_, diag_id_, ...) \
     pm_diagnostic_list_append_format(&(parser_)->error_list, (uint32_t) ((start_) - (parser_)->start), (uint32_t) ((end_) - (start_)), diag_id_, __VA_ARGS__)
+
+/**
+ * Append an error to the list of errors on the parser using the given slice.
+ */
+#define PM_PARSER_ERR_FORMAT_SLICE(parser_, start_, length_, diag_id_, ...) \
+    pm_diagnostic_list_append_format(&(parser_)->error_list, (start_), (length_), diag_id_, __VA_ARGS__)
 
 /**
  * Append an error to the list of errors on the parser using the location of the
@@ -5238,8 +5248,13 @@ pm_token_is_it(const uint8_t *start, const uint8_t *end) {
  * are of the form /^_\d$/).
  */
 static inline bool
-pm_token_is_numbered_parameter(const uint8_t *start, const uint8_t *end) {
-    return (end - start == 2) && (start[0] == '_') && (start[1] != '0') && (pm_char_is_decimal_digit(start[1]));
+pm_token_is_numbered_parameter(const pm_parser_t *parser, uint32_t start, uint32_t length) {
+    return (
+        (length == 2) &&
+        (parser->start[start] == '_') &&
+        (parser->start[start + 1] != '0') &&
+        pm_char_is_decimal_digit(parser->start[start + 1])
+    );
 }
 
 /**
@@ -5247,9 +5262,9 @@ pm_token_is_numbered_parameter(const uint8_t *start, const uint8_t *end) {
  * an appropriate error message to the parser.
  */
 static inline void
-pm_refute_numbered_parameter(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
-    if (pm_token_is_numbered_parameter(start, end)) {
-        PM_PARSER_ERR_FORMAT(parser, start, end, PM_ERR_PARAMETER_NUMBERED_RESERVED, start);
+pm_refute_numbered_parameter(pm_parser_t *parser, uint32_t start, uint32_t length) {
+    if (pm_token_is_numbered_parameter(parser, start, length)) {
+        PM_PARSER_ERR_FORMAT_SLICE(parser, start, length, PM_ERR_PARAMETER_NUMBERED_RESERVED, parser->start + start);
     }
 }
 
@@ -5259,7 +5274,7 @@ pm_refute_numbered_parameter(pm_parser_t *parser, const uint8_t *start, const ui
  */
 static pm_local_variable_target_node_t *
 pm_local_variable_target_node_create(pm_parser_t *parser, const pm_location_t *location, pm_constant_id_t name, uint32_t depth) {
-    pm_refute_numbered_parameter(parser, location->start, location->end);
+    pm_refute_numbered_parameter(parser, U32(location->start - parser->start), PM_TOKEN_LENGTH(location));
     pm_local_variable_target_node_t *node = PM_NODE_ALLOC(parser, pm_local_variable_target_node_t);
 
     *node = (pm_local_variable_target_node_t) {
@@ -7145,7 +7160,7 @@ static bool
 pm_parser_parameter_name_check(pm_parser_t *parser, const pm_token_t *name) {
     // We want to check whether the parameter name is a numbered parameter or
     // not.
-    pm_refute_numbered_parameter(parser, name->start, name->end);
+    pm_refute_numbered_parameter(parser, (uint32_t) (name->start - parser->start), PM_TOKEN_LENGTH(name));
 
     // Otherwise we'll fetch the constant id for the parameter name and check
     // whether it's already in the current scope.
@@ -11047,7 +11062,7 @@ parser_lex(pm_parser_t *parser) {
                         !(last_state & (PM_LEX_STATE_DOT | PM_LEX_STATE_FNAME)) &&
                         (type == PM_TOKEN_IDENTIFIER) &&
                         ((pm_parser_local_depth(parser, &parser->current) != -1) ||
-                         pm_token_is_numbered_parameter(parser->current.start, parser->current.end))
+                         pm_token_is_numbered_parameter(parser, U32(parser->current.start - parser->start), PM_TOKEN_LENGTH(&parser->current)))
                     ) {
                         lex_state_set(parser, PM_LEX_STATE_END | PM_LEX_STATE_LABEL);
                     }
@@ -12667,7 +12682,7 @@ parse_target(pm_parser_t *parser, pm_node_t *target, bool multiple, bool splat_p
             target->type = PM_GLOBAL_VARIABLE_TARGET_NODE;
             return target;
         case PM_LOCAL_VARIABLE_READ_NODE: {
-            if (pm_token_is_numbered_parameter(target->location.start, target->location.end)) {
+            if (pm_token_is_numbered_parameter(parser, U32(target->location.start - parser->start), PM_NODE_LENGTH(target))) {
                 PM_PARSER_ERR_FORMAT(parser, target->location.start, target->location.end, PM_ERR_PARAMETER_NUMBERED_RESERVED, target->location.start);
                 pm_node_unreference(parser, target);
             }
@@ -12861,7 +12876,7 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
             uint32_t depth = local_read->depth;
             pm_scope_t *scope = pm_parser_scope_find(parser, depth);
 
-            if (pm_token_is_numbered_parameter(target->location.start, target->location.end)) {
+            if (pm_token_is_numbered_parameter(parser, U32(target->location.start - parser->start), PM_NODE_LENGTH(target))) {
                 pm_diagnostic_id_t diag_id = (scope->parameters & PM_SCOPE_PARAMETERS_NUMBERED_FOUND) ? PM_ERR_EXPRESSION_NOT_WRITABLE_NUMBERED : PM_ERR_PARAMETER_NUMBERED_RESERVED;
                 PM_PARSER_ERR_FORMAT(parser, target->location.start, target->location.end, diag_id, target->location.start);
                 pm_node_unreference(parser, target);
@@ -12929,13 +12944,13 @@ parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_nod
                         .end = parser->start + call->message_loc.start + call->message_loc.length
                     };
 
+                    pm_refute_numbered_parameter(parser, call->message_loc.start, call->message_loc.length);
                     pm_parser_local_add_slice(parser, &call->message_loc, 0);
                     pm_node_destroy(parser, target);
 
                     pm_constant_id_t constant_id = pm_parser_constant_id_location(parser, message.start, message.end);
                     target = UP(pm_local_variable_write_node_create(parser, constant_id, 0, value, &message, operator));
 
-                    pm_refute_numbered_parameter(parser, message.start, message.end);
                     return target;
                 }
 
@@ -14630,7 +14645,7 @@ parse_blocklike_parameters(pm_parser_t *parser, pm_node_t *parameters, const pm_
                 pm_parser_err_node(parser, node, PM_ERR_NUMBERED_PARAMETER_OUTER_BLOCK);
             } else if (parser->current_scope->parameters & PM_SCOPE_PARAMETERS_NUMBERED_INNER) {
                 pm_parser_err_node(parser, node, PM_ERR_NUMBERED_PARAMETER_INNER_BLOCK);
-            } else if (pm_token_is_numbered_parameter(node->location.start, node->location.end)) {
+            } else if (pm_token_is_numbered_parameter(parser, U32(node->location.start - parser->start), PM_NODE_LENGTH(node))) {
                 numbered_parameter = MAX(numbered_parameter, (uint8_t) (node->location.start[1] - '0'));
             } else {
                 assert(false && "unreachable");
@@ -15666,7 +15681,7 @@ static pm_node_t *
 parse_variable(pm_parser_t *parser) {
     pm_constant_id_t name_id = pm_parser_constant_id_token(parser, &parser->previous);
     int depth;
-    bool is_numbered_param = pm_token_is_numbered_parameter(parser->previous.start, parser->previous.end);
+    bool is_numbered_param = pm_token_is_numbered_parameter(parser, U32(parser->previous.start - parser->start), PM_TOKEN_LENGTH(&parser->previous));
 
     if (!is_numbered_param && ((depth = pm_parser_local_depth_constant_id(parser, name_id)) != -1)) {
         return UP(pm_local_variable_read_node_create_constant_id(parser, &parser->previous, name_id, (uint32_t) depth, false));
@@ -15736,7 +15751,7 @@ parse_method_definition_name(pm_parser_t *parser) {
             parser_lex(parser);
             return parser->previous;
         case PM_TOKEN_IDENTIFIER:
-            pm_refute_numbered_parameter(parser, parser->current.start, parser->current.end);
+            pm_refute_numbered_parameter(parser, U32(parser->current.start - parser->start), PM_TOKEN_LENGTH(&parser->current));
             parser_lex(parser);
             return parser->previous;
         case PM_CASE_OPERATOR:
@@ -17866,7 +17881,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         // purposes of warnings.
                         assert(PM_NODE_TYPE_P(node, PM_LOCAL_VARIABLE_READ_NODE));
 
-                        if (pm_token_is_numbered_parameter(identifier.start, identifier.end)) {
+                        if (pm_token_is_numbered_parameter(parser, U32(identifier.start - parser->start), PM_TOKEN_LENGTH(&identifier))) {
                             pm_node_unreference(parser, node);
                         } else {
                             pm_local_variable_read_node_t *cast = (pm_local_variable_read_node_t *) node;
@@ -18596,7 +18611,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         operator = parser->previous;
                         name = parse_method_definition_name(parser);
                     } else {
-                        pm_refute_numbered_parameter(parser, parser->previous.start, parser->previous.end);
+                        pm_refute_numbered_parameter(parser, U32(parser->previous.start - parser->start), PM_TOKEN_LENGTH(&parser->previous));
                         pm_parser_scope_push(parser, true);
 
                         name = parser->previous;
@@ -20528,7 +20543,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     return result;
                 }
                 case PM_LOCAL_VARIABLE_READ_NODE: {
-                    if (pm_token_is_numbered_parameter(node->location.start, node->location.end)) {
+                    if (pm_token_is_numbered_parameter(parser, U32(node->location.start - parser->start), PM_NODE_LENGTH(node))) {
                         PM_PARSER_ERR_FORMAT(parser, node->location.start, node->location.end, PM_ERR_PARAMETER_NUMBERED_RESERVED, node->location.start);
                         pm_node_unreference(parser, node);
                     }
@@ -20549,12 +20564,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
-                        pm_location_t message_loc = {
-                            .start = parser->start + cast->message_loc.start,
-                            .end = parser->start + cast->message_loc.start + cast->message_loc.length
-                        };
-
-                        pm_refute_numbered_parameter(parser, message_loc.start, message_loc.end);
+                        pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
                         pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
                         parser_lex(parser);
 
@@ -20665,7 +20675,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     return result;
                 }
                 case PM_LOCAL_VARIABLE_READ_NODE: {
-                    if (pm_token_is_numbered_parameter(node->location.start, node->location.end)) {
+                    if (pm_token_is_numbered_parameter(parser, U32(node->location.start - parser->start), PM_NODE_LENGTH(node))) {
                         PM_PARSER_ERR_FORMAT(parser, node->location.start, node->location.end, PM_ERR_PARAMETER_NUMBERED_RESERVED, node->location.start);
                         pm_node_unreference(parser, node);
                     }
@@ -20686,12 +20696,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
-                        pm_location_t message_loc = (pm_location_t) {
-                            .start = parser->start + cast->message_loc.start,
-                            .end = parser->start + cast->message_loc.start + cast->message_loc.length
-                        };
-
-                        pm_refute_numbered_parameter(parser, message_loc.start, message_loc.end);
+                        pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
                         pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
                         parser_lex(parser);
 
@@ -20812,7 +20817,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     return result;
                 }
                 case PM_LOCAL_VARIABLE_READ_NODE: {
-                    if (pm_token_is_numbered_parameter(node->location.start, node->location.end)) {
+                    if (pm_token_is_numbered_parameter(parser, U32(node->location.start - parser->start), PM_NODE_LENGTH(node))) {
                         PM_PARSER_ERR_FORMAT(parser, node->location.start, node->location.end, PM_ERR_PARAMETER_NUMBERED_RESERVED, node->location.start);
                         pm_node_unreference(parser, node);
                     }
@@ -20834,12 +20839,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
                     if (PM_NODE_FLAG_P(cast, PM_CALL_NODE_FLAGS_VARIABLE_CALL)) {
-                        pm_location_t message_loc = (pm_location_t) {
-                            .start = parser->start + cast->message_loc.start,
-                            .end = parser->start + cast->message_loc.start + cast->message_loc.length
-                        };
-
-                        pm_refute_numbered_parameter(parser, message_loc.start, message_loc.end);
+                        pm_refute_numbered_parameter(parser, cast->message_loc.start, cast->message_loc.length);
                         pm_constant_id_t constant_id = pm_parser_local_add_slice(parser, &cast->message_loc, 1);
                         pm_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, accepts_command_call, PM_ERR_EXPECT_EXPRESSION_AFTER_OPERATOR, (uint16_t) (depth + 1));
                         pm_node_t *result = UP(pm_local_variable_operator_write_node_create(parser, UP(cast), &token, value, constant_id, 0));
