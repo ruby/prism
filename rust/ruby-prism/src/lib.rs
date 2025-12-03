@@ -19,95 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_slice_t};
-
-/// A range in the source file.
-pub struct Location<'pr> {
-    parser: NonNull<pm_parser_t>,
-    pub(crate) start: *const u8,
-    pub(crate) end: *const u8,
-    marker: PhantomData<&'pr [u8]>,
-}
-
-impl<'pr> Location<'pr> {
-    /// Returns a byte slice for the range.
-    /// # Panics
-    /// Panics if the end offset is not greater than the start offset.
-    #[must_use]
-    pub fn as_slice(&self) -> &'pr [u8] {
-        unsafe {
-            let len = usize::try_from(self.end.offset_from(self.start)).expect("end should point to memory after start");
-            std::slice::from_raw_parts(self.start, len)
-        }
-    }
-
-    /// Return a Location from the given `pm_location_t`.
-    #[must_use]
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Self {
-        Location {
-            parser,
-            start: loc.start,
-            end: loc.end,
-            marker: PhantomData,
-        }
-    }
-
-    /// Return a Location starting at self and ending at the end of other.
-    /// Returns None if both locations did not originate from the same parser,
-    /// or if self starts after other.
-    #[must_use]
-    pub fn join(&self, other: &Self) -> Option<Self> {
-        if self.parser != other.parser || self.start > other.start {
-            None
-        } else {
-            Some(Location {
-                parser: self.parser,
-                start: self.start,
-                end: other.end,
-                marker: PhantomData,
-            })
-        }
-    }
-
-    /// Return the start offset from the beginning of the parsed source.
-    /// # Panics
-    /// Panics if the start offset is not greater than the parser's start.
-    #[must_use]
-    pub fn start_offset(&self) -> usize {
-        unsafe {
-            let parser_start = (*self.parser.as_ptr()).start;
-            usize::try_from(self.start.offset_from(parser_start)).expect("start should point to memory after the parser's start")
-        }
-    }
-
-    /// Return the end offset from the beginning of the parsed source.
-    /// # Panics
-    /// Panics if the end offset is not greater than the parser's start.
-    #[must_use]
-    pub fn end_offset(&self) -> usize {
-        unsafe {
-            let parser_start = (*self.parser.as_ptr()).start;
-            usize::try_from(self.end.offset_from(parser_start)).expect("end should point to memory after the parser's start")
-        }
-    }
-}
-
-impl std::fmt::Debug for Location<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let slice: &[u8] = self.as_slice();
-
-        let mut visible = String::new();
-        visible.push('"');
-
-        for &byte in slice {
-            let part: Vec<u8> = std::ascii::escape_default(byte).collect();
-            visible.push_str(std::str::from_utf8(&part).unwrap());
-        }
-
-        visible.push('"');
-        write!(f, "{visible}")
-    }
-}
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t, pm_slice_t};
 
 /// A range in the source file, represented as a start offset and length.
 pub struct Slice<'pr> {
@@ -135,6 +47,29 @@ impl<'pr> Slice<'pr> {
             start: slice.start,
             length: slice.length,
             marker: PhantomData,
+        }
+    }
+
+    /// Returns the end offset from the beginning of the parsed source.
+    #[must_use]
+    pub fn end(&self) -> u32 {
+        self.start + self.length
+    }
+
+    /// Return a Slice starting at self and ending at the end of other.
+    /// Returns None if both locations did not originate from the same parser,
+    /// or if self starts after other.
+    #[must_use]
+    pub fn join(&self, other: &Self) -> Option<Self> {
+        if self.parser != other.parser || self.start > other.start {
+            None
+        } else {
+            Some(Slice {
+                parser: self.parser,
+                start: self.start,
+                length: other.end() - self.start,
+                marker: PhantomData,
+            })
         }
     }
 }
@@ -573,21 +508,6 @@ impl<'pr> ParseResult<'pr> {
     }
 
     /// Returns a slice of the source string that was parsed using the given
-    /// location range.
-    ///
-    /// # Panics
-    /// Panics if start offset or end offset are not valid offsets from the root.
-    #[must_use]
-    pub fn as_location_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
-        let root = self.source.as_ptr();
-
-        let start = usize::try_from(unsafe { location.start.offset_from(root) }).expect("start should point to memory after root");
-        let end = usize::try_from(unsafe { location.end.offset_from(root) }).expect("end should point to memory after root");
-
-        &self.source[start..end]
-    }
-
-    /// Returns a slice of the source string that was parsed using the given
     /// slice range.
     #[must_use]
     pub fn as_slice(&self, slice: &Slice<'pr>) -> &'pr [u8] {
@@ -772,16 +692,16 @@ mod tests {
         let node = plus.arguments().unwrap().arguments().iter().next().unwrap();
 
         let location = node.as_integer_node().unwrap().location();
-        let slice = std::str::from_utf8(result.as_location_slice(&location)).unwrap();
+        let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
-        assert_eq!(6, location.start_offset());
-        assert_eq!(9, location.end_offset());
+        assert_eq!(6, location.start);
+        assert_eq!(9, location.end());
 
         let recv_loc = plus.receiver().unwrap().location();
         assert_eq!(recv_loc.as_slice(), b"111");
-        assert_eq!(0, recv_loc.start_offset());
-        assert_eq!(3, recv_loc.end_offset());
+        assert_eq!(0, recv_loc.start);
+        assert_eq!(3, recv_loc.end());
 
         let joined = recv_loc.join(&location).unwrap();
         assert_eq!(joined.as_slice(), b"111 + 222");
@@ -806,7 +726,7 @@ mod tests {
         }
 
         let location = node.location();
-        let slice = std::str::from_utf8(result.as_location_slice(&location)).unwrap();
+        let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
 

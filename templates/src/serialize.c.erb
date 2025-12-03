@@ -20,16 +20,6 @@ pm_sizet_to_u32(size_t value) {
 }
 
 static void
-pm_serialize_location(const pm_parser_t *parser, const pm_location_t *location, pm_buffer_t *buffer) {
-    assert(location->start);
-    assert(location->end);
-    assert(location->start <= location->end);
-
-    pm_buffer_append_varuint(buffer, pm_ptrdifft_to_u32(location->start - parser->start));
-    pm_buffer_append_varuint(buffer, pm_ptrdifft_to_u32(location->end - location->start));
-}
-
-PRISM_ATTRIBUTE_UNUSED static void
 pm_serialize_slice(const pm_slice_t *slice, pm_buffer_t *buffer) {
     pm_buffer_append_varuint(buffer, slice->start);
     pm_buffer_append_varuint(buffer, slice->length);
@@ -83,7 +73,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     <%- if Prism::Template::INCLUDE_NODE_ID -%>
     pm_buffer_append_varuint(buffer, node->node_id);
     <%- end -%>
-    pm_serialize_location(parser, &node->location, buffer);
+    pm_serialize_slice(&node->location, buffer);
 
     switch (PM_NODE_TYPE(node)) {
         // We do not need to serialize a ScopeNode ever as

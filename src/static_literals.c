@@ -95,7 +95,7 @@ node_hash(const pm_static_literals_metadata_t *metadata, const pm_node_t *node) 
         }
         case PM_SOURCE_LINE_NODE: {
             // Source lines hash their line number.
-            const pm_line_column_t line_column = pm_newline_list_line_column(metadata->newline_list, (uint32_t) (node->location.start - metadata->start), metadata->start_line);
+            const pm_line_column_t line_column = pm_newline_list_line_column(metadata->newline_list, node->location.start, metadata->start_line);
             const int32_t *value = &line_column.line;
             return murmur_hash((const uint8_t *) value, sizeof(int32_t));
         }
@@ -243,7 +243,7 @@ pm_int64_value(const pm_static_literals_metadata_t *metadata, const pm_node_t *n
             return integer->negative ? -value : value;
         }
         case PM_SOURCE_LINE_NODE:
-            return (int64_t) pm_newline_list_line_column(metadata->newline_list, (uint32_t) (node->location.start - metadata->start), metadata->start_line).line;
+            return (int64_t) pm_newline_list_line_column(metadata->newline_list, node->location.start, metadata->start_line).line;
         default:
             assert(false && "unreachable");
             return 0;
@@ -511,12 +511,12 @@ pm_static_literal_inspect_node(pm_buffer_t *buffer, const pm_static_literals_met
             const double value = ((const pm_float_node_t *) node)->value;
 
             if (PRISM_ISINF(value)) {
-                if (*node->location.start == '-') {
+                if (metadata->start[node->location.start] == '-') {
                     pm_buffer_append_byte(buffer, '-');
                 }
                 pm_buffer_append_string(buffer, "Infinity", 8);
             } else if (value == 0.0) {
-                if (*node->location.start == '-') {
+                if (metadata->start[node->location.start] == '-') {
                     pm_buffer_append_byte(buffer, '-');
                 }
                 pm_buffer_append_string(buffer, "0.0", 3);
@@ -585,7 +585,7 @@ pm_static_literal_inspect_node(pm_buffer_t *buffer, const pm_static_literals_met
             break;
         }
         case PM_SOURCE_LINE_NODE:
-            pm_buffer_append_format(buffer, "%d", pm_newline_list_line_column(metadata->newline_list, (uint32_t) (node->location.start - metadata->start), metadata->start_line).line);
+            pm_buffer_append_format(buffer, "%d", pm_newline_list_line_column(metadata->newline_list, node->location.start, metadata->start_line).line);
             break;
         case PM_STRING_NODE: {
             const pm_string_t *unescaped = &((const pm_string_node_t *) node)->unescaped;

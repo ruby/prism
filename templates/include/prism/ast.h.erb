@@ -46,18 +46,6 @@ typedef struct {
 } pm_token_t;
 
 /**
- * This represents a range of bytes in the source string to which a node or
- * token corresponds.
- */
-typedef struct {
-    /** A pointer to the start location of the range in the source. */
-    const uint8_t *start;
-
-    /** A pointer to the end location of the range in the source. */
-    const uint8_t *end;
-} pm_location_t;
-
-/**
  * This struct represents a slice in the source code, defined by an offset and
  * a length. Note that we have confirmation that we can represent all slices
  * within Ruby source files using 32-bit integers per:
@@ -148,7 +136,7 @@ typedef struct pm_node {
      * This is the location of the node in the source. It's a range of bytes
      * containing a start and an end.
      */
-    pm_location_t location;
+    pm_slice_t location;
 } pm_node_t;
 
 /**
