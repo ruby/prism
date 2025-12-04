@@ -13,6 +13,7 @@ on:
 jobs:
   test-all:
     strategy:
+      fail-fast: false
       matrix:
         # Some tests in this repository are only run against parse.y
         # We test them here in order to not fail ruby/ruby CI.
