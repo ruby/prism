@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 # :markup: markdown
 
-begin
-  require "ruby_parser"
-rescue LoadError
-  warn(%q{Error: Unable to load ruby_parser. Add `gem "ruby_parser"` to your Gemfile.})
-  exit(1)
+require "sexp"
+
+class RubyParser # :nodoc:
+  SyntaxError = Class.new RuntimeError # :nodoc:
 end
 
 module Prism
