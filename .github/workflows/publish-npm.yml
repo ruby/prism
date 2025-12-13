@@ -43,3 +43,4 @@ jobs:
         run: npm install -g npm@latest
 
       - run: npm publish
+        working-directory: javascript
