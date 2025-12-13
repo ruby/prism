@@ -255,6 +255,18 @@ impl<'pr> ConstantList<'pr> {
             marker: PhantomData,
         }
     }
+
+    /// Returns the length of the list.
+    #[must_use]
+    pub const fn len(&self) -> usize {
+        unsafe { self.pointer.as_ref().size }
+    }
+
+    /// Returns whether the list is empty.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl<'pr> IntoIterator for &ConstantList<'pr> {
@@ -811,11 +823,27 @@ mod tests {
         assert!(!node.as_program_node().unwrap().statements().body().is_empty());
         let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
         let module = module.as_module_node().unwrap();
+
+        assert_eq!(module.locals().len(), 1);
+        assert!(!module.locals().is_empty());
+
         let locals = module.locals().iter().collect::<Vec<_>>();
 
         assert_eq!(locals.len(), 1);
 
         assert_eq!(locals[0].as_slice(), b"x");
+
+        let source = "module Foo; end";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        assert_eq!(node.as_program_node().unwrap().statements().body().len(), 1);
+        assert!(!node.as_program_node().unwrap().statements().body().is_empty());
+        let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let module = module.as_module_node().unwrap();
+
+        assert_eq!(module.locals().len(), 0);
+        assert!(module.locals().is_empty());
     }
 
     #[test]
