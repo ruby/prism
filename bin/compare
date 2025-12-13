@@ -26,15 +26,17 @@ def create_prism(ref)
       when "dump"
         begin
           child_socket.puts(Prism.dump_file(path).hash)
-        rescue Errno::EISDIR
+        rescue Errno::EISDIR, Errno::EACCES
           # Folder might end with `.rb` and get caught by the glob
+          # Some gems may contain files that are not readable by the current user
           child_socket.puts("")
         end
       when "details"
         parse_result = Prism.parse_file(path)
         child_socket.puts({
           valid: parse_result.success?,
-          errors: parse_result.errors_format.hash,
+          errors: parse_result.errors.map(&:inspect).hash,
+          warnings: parse_result.warnings.map(&:inspect).hash,
           ast: parse_result.value.inspect.hash,
         }.to_json)
       else
@@ -64,14 +66,15 @@ start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
 def what_changed(baseline, compare, source_path)
   if baseline[:valid] != compare[:valid]
-    "#{source_path} changed from valid(#{baseline[:valid]}) to valid(#{compare[:valid]})"
-  elsif baseline[:valid] && compare[:valid] && baseline[:ast] != compare[:ast]
-    "#{source_path} is syntax valid with changed ast}"
-  elsif !baseline[:valid] && !compare[:valid] && baseline[:errors] != compare[:errors]
-    "#{source_path} is syntax invalid with changed errors"
-  else
-    raise "Unknown condition for #{source_path}"
+    return "#{source_path} changed from valid(#{baseline[:valid]}) to valid(#{compare[:valid]})"
   end
+
+  changed = []
+  %i[ast errors warnings].each do |type|
+    changed << type if baseline[type] != compare[type]
+  end
+  raise "Unknown changes for #{source_path}" if changed.empty?
+  "#{source_path} is valid(#{baseline[:valid]}) with changed #{changed.join(", ")}"
 end
 
 files.each_with_index do |source_path, i|
