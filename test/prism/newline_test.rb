@@ -17,6 +17,7 @@ module Prism
       result/breadth_first_search_test.rb
       result/static_literals_test.rb
       result/warnings_test.rb
+      ruby/inline_method.rb
       ruby/parser_test.rb
       ruby/ruby_parser_test.rb
     ]

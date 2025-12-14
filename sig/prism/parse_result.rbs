@@ -24,6 +24,7 @@ module Prism
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
     def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
+    def line_and_character_column_to_byte_offset: (Integer line, Integer column) -> Integer
     def deep_freeze: () -> void
 
     def self.for: (String source) -> Source
@@ -40,6 +41,7 @@ module Prism
     def code_units_offset: (Integer byte_offset, Encoding encoding) -> Integer
     def code_units_cache: (Encoding encoding) -> _CodeUnitsCache
     def code_units_column: (Integer byte_offset, Encoding encoding) -> Integer
+    def line_and_character_column_to_byte_offset: (Integer line, Integer column) -> Integer
   end
 
   class Location

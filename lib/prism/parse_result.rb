@@ -143,6 +143,14 @@ module Prism
       code_units_offset(byte_offset, encoding) - code_units_offset(line_start(byte_offset), encoding)
     end
 
+    # Returns the byte offset for a given line number and column number
+    def line_and_character_column_to_byte_offset(line, column)
+      line_start = offsets[line - 1]
+      line_end = offsets[line]
+      byte_column = (@source.byteslice(line_start, line_end) or raise)[0...column]&.bytesize #: Integer
+      line_start + byte_column
+    end
+
     # Freeze this object and the objects it contains.
     def deep_freeze
       source.freeze
@@ -271,6 +279,13 @@ module Prism
     # essentially the same as `Prism::Source#column`.
     def code_units_column(byte_offset, encoding)
       byte_offset - line_start(byte_offset)
+    end
+
+    # Specialized version of `line_and_character_column_to_byte_offset`
+    # which does not need to access the source String
+    def line_and_character_column_to_byte_offset(line, column)
+      line_start = offsets[line - 1]
+      line_start + column
     end
   end
 
@@ -894,5 +909,46 @@ module Prism
   # `scopes` option.
   def self.scope(locals: [], forwarding: [])
     Scope.new(locals, forwarding)
+  end
+
+  # Given a Method, UnboundMethod or Proc, use its #source_location to parse the file and return a Prism node representing it.
+  # The returned node will either be a DefNode, LambdaNode, CallNode or ForNode.
+  # Raises ArgumentError if it cannot be found for any reason.
+  # Only works on Ruby >= 4.1 as it needs #source_location to contain column and end line information.
+  def self.node_for(callable)
+    unless callable.is_a?(Method) || callable.is_a?(UnboundMethod) || callable.is_a?(Proc)
+      raise ArgumentError, 'Prism.node_for requires a Method, UnboundMethod or Proc'
+    end
+    source_location = callable.source_location
+    raise ArgumentError, "#source_location is nil for #{callable}" if source_location.nil?
+    raise ArgumentError, '#source_location does not contain column and end_line, this method only works on Ruby >= 4.1' if source_location.size != 5
+    file, start_line, start_column, end_line, end_column = source_location #: [String, Integer, Integer, Integer, Integer]
+
+    unless File.exist?(file)
+      raise ArgumentError, "#source_location[0] is #{file} but this file does not exist"
+    end
+
+    parse_result = Prism.parse_file(file, version: "current")
+    unless parse_result.success?
+      raise ArgumentError, "#{file} has syntax errors: #{parse_result.errors_format}"
+    end
+    root = parse_result.value
+    start_offset = parse_result.source.line_and_character_column_to_byte_offset(start_line, start_column)
+    end_offset = parse_result.source.line_and_character_column_to_byte_offset(end_line, end_column)
+
+    found = root.breadth_first_search do |node|
+      case node
+      when DefNode, LambdaNode, ForNode
+        node.start_offset == start_offset && node.end_offset == end_offset
+      when CallNode
+        # Proc#source_location returns start_column 5 for `proc { ... }` (the `{`)
+        node.block.is_a?(BlockNode) && node.block.opening_loc.start_offset == start_offset && node.end_offset == end_offset
+      else
+        false
+      end
+    end #: DefNode | LambdaNode | CallNode | ForNode
+
+    raise ArgumentError, "Could not find node for #{callable} in #{file} at (#{start_line},#{start_column})-(#{end_line},#{end_column})" unless found
+    found
   end
 end
