@@ -152,15 +152,6 @@ module Prism
       code_units_offset(byte_offset, encoding) - code_units_offset(line_start(byte_offset), encoding)
     end
 
-    # Returns the byte offset for a given line number and column number
-    def line_and_character_column_to_byte_offset(line, column)
-      line_start = line_to_byte_offset(line)
-      line_end = offsets[line + 1 - @start_line] || source.bytesize
-      byteslice = @source.byteslice(line_start, line_end) or raise ArgumentError, "line #{line} is out of range"
-      byte_column = (byteslice[0...column] or raise).bytesize
-      line_start + byte_column
-    end
-
     # Freeze this object and the objects it contains.
     def deep_freeze
       source.freeze
@@ -289,12 +280,6 @@ module Prism
     # essentially the same as `Prism::Source#column`.
     def code_units_column(byte_offset, encoding)
       byte_offset - line_start(byte_offset)
-    end
-
-    # Specialized version of `line_and_character_column_to_byte_offset`
-    # which does not need to access the source String
-    def line_and_character_column_to_byte_offset(line, column)
-      line_to_byte_offset(line) + column
     end
   end
 
