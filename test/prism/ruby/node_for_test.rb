@@ -17,6 +17,9 @@ module Prism
     end
     M_LOCATION = [__LINE__-3, 4, __LINE__-1, 7]
 
+    def été; 42; end
+    UTF8_LOCATION = [__LINE__-1, 4, __LINE__-1, 22]
+
     define_method(:define_method_method) { 42 }
     DEFINE_METHOD_LOCATION = [__LINE__-1, 41, __LINE__-1, 47]
 
@@ -53,6 +56,12 @@ module Prism
       node = Prism.node_for(with_location(method(:m), M_LOCATION))
       assert_instance_of(Prism::DefNode, node)
       assert_equal "def m(foo)\n      42\n    end", node.slice
+    end
+
+    def test_def_method_utf8
+      node = Prism.node_for(with_location(method(:été), UTF8_LOCATION))
+      assert_instance_of(Prism::DefNode, node)
+      assert_equal "def été; 42; end", node.slice
     end
 
     def test_inline_method

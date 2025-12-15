@@ -942,11 +942,11 @@ module Prism
       raise ArgumentError, "#{file} has syntax errors: #{parse_result.errors_format}"
     end
     root = parse_result.value
-    start_offset = parse_result.source.line_and_character_column_to_byte_offset(start_line, start_column)
-    end_offset = parse_result.source.line_and_character_column_to_byte_offset(end_line, end_column)
-    start_byte_column = start_offset - parse_result.source.line_start(start_offset)
+    # CRuby currently returns the source_location columns in bytes and not characters
+    start_offset = parse_result.source.line_to_byte_offset(start_line) + start_column
+    end_offset = parse_result.source.line_to_byte_offset(end_line) + end_column
 
-    found = root.tunnel(start_line, start_byte_column).reverse.find do |node|
+    found = root.tunnel(start_line, start_column).reverse.find do |node|
       case node
       when DefNode, LambdaNode, ForNode
         node.start_offset == start_offset && node.end_offset == end_offset
