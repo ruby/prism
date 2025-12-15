@@ -257,7 +257,7 @@ jobs:
         bundler-cache: true
     - run: bundle config --local frozen false
     - run: bundle exec rake build:dev
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         name: gem-package
         path: pkg
@@ -305,7 +305,7 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.target.ruby }}
-    - uses: actions/download-artifact@v6
+    - uses: actions/download-artifact@v7
       with:
         name: gem-package
         path: pkg
