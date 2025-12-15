@@ -14,6 +14,7 @@ module Prism
     def encoding: () -> Encoding
     def lines: () -> Array[String]
     def slice: (Integer byte_offset, Integer length) -> String
+    def line_to_byte_offset: (Integer line) -> Integer
     def line: (Integer byte_offset) -> Integer
     def line_start: (Integer byte_offset) -> Integer
     def line_end: (Integer byte_offset) -> Integer

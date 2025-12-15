@@ -76,6 +76,15 @@ module Prism
       source.byteslice(byte_offset, length) or raise
     end
 
+    # Converts the line number to a byte offset corresponding to the start of that line
+    def line_to_byte_offset(line)
+      l = line - @start_line
+      if l < 0 || l >= offsets.size
+        raise ArgumentError, "line #{line} is out of range"
+      end
+      offsets[l]
+    end
+
     # Binary search through the offsets to find the line number for the given
     # byte offset.
     def line(byte_offset)
@@ -145,9 +154,10 @@ module Prism
 
     # Returns the byte offset for a given line number and column number
     def line_and_character_column_to_byte_offset(line, column)
-      line_start = offsets[line - 1]
-      line_end = offsets[line]
-      byte_column = (@source.byteslice(line_start, line_end) or raise)[0...column]&.bytesize #: Integer
+      line_start = line_to_byte_offset(line)
+      line_end = offsets[line + 1 - @start_line] || source.bytesize
+      byteslice = @source.byteslice(line_start, line_end) or raise ArgumentError, "line #{line} is out of range"
+      byte_column = (byteslice[0...column] or raise).bytesize
       line_start + byte_column
     end
 
@@ -284,8 +294,7 @@ module Prism
     # Specialized version of `line_and_character_column_to_byte_offset`
     # which does not need to access the source String
     def line_and_character_column_to_byte_offset(line, column)
-      line_start = offsets[line - 1]
-      line_start + column
+      line_to_byte_offset(line) + column
     end
   end
 
