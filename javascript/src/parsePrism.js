@@ -148,6 +148,8 @@ function dumpOptions(options) {
     values.push(2);
   } else if (options.version.match(/^3\.5(\.\d+)?$/) || options.version.match(/^4\.0(\.\d+)?$/)) {
     values.push(3);
+  } else if (options.version.match(/^4\.1(\.\d+)?$/)) {
+    values.push(4);
   } else {
     throw new Error(`Unsupported version '${options.version}' in compiler options`);
   }
