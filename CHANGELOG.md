@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.7.0] - 2025-12-18
+
+### Added
+
+- Support `4.1` as a version option.
+- Add `equal_loc` to `CallNode`.
+- Add `len()`/`is_empty()` to `ConstantList` and `NodeList` in the Rust API.
+
+### Changed
+
+- Rename version `3.5` to version `4.0`.
+- Fix compiling the gem from source on Windows.
+- Fix parsing of unary method calls like `42.~@`.
+- Reject `def f a, (b) = 1`.
+- Reject endless method as a block parameter default.
+- Reject variable capture in alternative pattern.
+- Many fixes in regards to memory safety, found through fuzzing.
+- Many fixes to better handle invalid syntax, also found through fuzzing.
+- Fix the ruby version used by the `ripper` translator.
+- Fix `ruby_parser` translation comment processing.
+
 ## [1.6.0] - 2025-10-16
 
 ### Added
@@ -695,7 +716,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.6.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/ruby/prism/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/ruby/prism/compare/v1.5.0...v1.5.1
