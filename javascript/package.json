@@ -11,5 +11,9 @@
     "type": "tsc --allowJs -d --target ES2015 --emitDeclarationOnly --outDir src src/index.js"
   },
   "author": "Shopify <ruby@shopify.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruby/prism.git"
+  }
 }
