@@ -15,7 +15,7 @@ GEM
     rake (13.3.1)
     rake-compiler (1.3.1)
       rake
-    ruby_parser (3.21.1)
+    ruby_parser (3.22.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     sexp_processor (4.17.4)
