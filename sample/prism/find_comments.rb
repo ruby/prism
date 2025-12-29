@@ -16,7 +16,7 @@ class FindMethodComments < Prism::Visitor
   # method definition on the node.
   def visit_module_node(node)
     visitor = FindMethodComments.new(@target, @comments, [*@nesting, node.name])
-    node.compact_child_nodes.each { |child| child.accept(visitor) }
+    node.each_child_node { |child| child.accept(visitor) }
   end
 
   def visit_class_node(node)
@@ -26,7 +26,7 @@ class FindMethodComments < Prism::Visitor
     # because then the state is immutable and it's easier to reason about. This
     # also provides for more debugging opportunity in the initializer.
     visitor = FindMethodComments.new(@target, @comments, [*@nesting, node.name])
-    node.compact_child_nodes.each { |child| child.accept(visitor) }
+    node.each_child_node { |child| child.accept(visitor) }
   end
 
   def visit_def_node(node)
