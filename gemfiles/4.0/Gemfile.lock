@@ -7,10 +7,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
-    ffi (1.17.2)
+    ffi (1.17.3)
     logger (1.7.0)
     mini_portile2 (2.8.9)
-    nokogiri (1.18.10)
+    nokogiri (1.19.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
@@ -29,7 +29,7 @@ GEM
     ruby_parser (3.22.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
-    sexp_processor (4.17.4)
+    sexp_processor (4.17.5)
     test-unit (3.7.6)
       power_assert
 
@@ -49,7 +49,7 @@ DEPENDENCIES
   test-unit
 
 RUBY VERSION
-  ruby 3.5.0.dev
+  ruby 4.0.0
 
 BUNDLED WITH
-  4.0.0.dev
+  4.0.3
