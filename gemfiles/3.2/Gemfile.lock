@@ -9,7 +9,7 @@ GEM
     ast (2.4.3)
     logger (1.7.0)
     mini_portile2 (2.8.9)
-    nokogiri (1.18.10)
+    nokogiri (1.19.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
@@ -28,7 +28,7 @@ GEM
     ruby_parser (3.22.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
-    sexp_processor (4.17.4)
+    sexp_processor (4.17.5)
     test-unit (3.7.6)
       power_assert
 
@@ -50,4 +50,4 @@ RUBY VERSION
    ruby 3.2.3p157
 
 BUNDLED WITH
-   2.4.19
+   2.6.2
