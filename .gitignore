@@ -11,7 +11,7 @@
 /spec/reports/
 /top-100-gems/
 tmp/
-/vendor/bundle
+vendor/
 
 /build/
 /lib/prism/prism.*
