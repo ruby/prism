@@ -23,8 +23,8 @@ GEM
     csv (3.3.5)
     drb (2.2.3)
     erubi (1.13.1)
-    ffi (1.17.2-arm64-darwin)
-    ffi (1.17.2-x86_64-linux-gnu)
+    ffi (1.17.3-arm64-darwin)
+    ffi (1.17.3-x86_64-linux-gnu)
     fileutils (1.8.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -108,7 +108,7 @@ GEM
       yard-sorbet
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
-    test-unit (3.7.6)
+    test-unit (3.7.7)
       power_assert
     thor (1.4.0)
     tzinfo (2.0.6)

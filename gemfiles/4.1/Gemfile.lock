@@ -30,7 +30,7 @@ GEM
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     sexp_processor (4.17.5)
-    test-unit (3.7.6)
+    test-unit (3.7.7)
       power_assert
 
 PLATFORMS
