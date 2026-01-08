@@ -20,6 +20,7 @@ namespace :typecheck do
     File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result_with_hash(locals))
       false:
         - ./lib/prism/lex_compat.rb
+        - ./lib/prism/lex_ripper.rb
         - ./lib/prism/node_ext.rb
         - ./lib/prism/parse_result.rb
         - ./lib/prism/visitor.rb
