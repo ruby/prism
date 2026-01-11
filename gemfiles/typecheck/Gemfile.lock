@@ -55,7 +55,7 @@ GEM
     rbi (0.3.7)
       prism (~> 1.0)
       rbs (>= 3.4.4)
-    rbs (3.10.0)
+    rbs (3.10.2)
       logger
     rexml (3.4.4)
     ruby_parser (3.22.0)
