@@ -4751,7 +4751,7 @@ pm_interpolated_node_append(pm_node_t *node, pm_node_list_t *parts, pm_node_t *p
             pm_node_flag_unset(UP(node), PM_NODE_FLAG_STATIC_LITERAL);
             break;
         default:
-            assert(false && "unexpected node type");
+            pm_node_flag_unset(node, PM_NODE_FLAG_STATIC_LITERAL);
             break;
     }
 
@@ -4888,16 +4888,8 @@ pm_interpolated_string_node_append(pm_interpolated_string_node_t *node, pm_node_
             // should clear the mutability flags.
             CLEAR_FLAGS(node);
             break;
-        case PM_X_STRING_NODE:
-        case PM_INTERPOLATED_X_STRING_NODE:
-        case PM_SYMBOL_NODE:
-        case PM_INTERPOLATED_SYMBOL_NODE:
-            // These will only happen in error cases. But we want to handle it
-            // here so that we don't fail the assertion.
-            CLEAR_FLAGS(node);
-            break;
         default:
-            assert(false && "unexpected node type");
+            CLEAR_FLAGS(node);
             break;
     }
 
@@ -16172,14 +16164,16 @@ parse_strings(pm_parser_t *parser, pm_node_t *current, bool accepts_label, uint1
             // Otherwise we need to check the type of the node we just parsed.
             // If it cannot be concatenated with the previous node, then we'll
             // need to add a syntax error.
-            if (!PM_NODE_TYPE_P(node, PM_STRING_NODE) && !PM_NODE_TYPE_P(node, PM_INTERPOLATED_STRING_NODE)) {
+            PM_VALIDATE_NODE_TYPE(parser, node, PM_STRING_NODE, PM_INTERPOLATED_STRING_NODE);
+            if (PM_NODE_TYPE_P(node, PM_ERROR_RECOVERY_NODE)) {
                 pm_parser_err_node(parser, node, PM_ERR_STRING_CONCATENATION);
             }
 
             // If we haven't already created our container for concatenation,
             // we'll do that now.
             if (!concating) {
-                if (!PM_NODE_TYPE_P(current, PM_STRING_NODE) && !PM_NODE_TYPE_P(current, PM_INTERPOLATED_STRING_NODE)) {
+                PM_VALIDATE_NODE_TYPE(parser, current, PM_STRING_NODE, PM_INTERPOLATED_STRING_NODE);
+                if (PM_NODE_TYPE_P(current, PM_ERROR_RECOVERY_NODE)) {
                     pm_parser_err_node(parser, current, PM_ERR_STRING_CONCATENATION);
                 }
 

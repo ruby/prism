@@ -81,7 +81,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.parts.any? { |part| part.is_a?(XStringNode) }
+      assert node.parts.any? { |part| part.is_a?(ErrorRecoveryNode) && part.child.is_a?(XStringNode) }
     end
 
     def test_interpolated_string_node_parts_interpolated_xstring
@@ -89,7 +89,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.parts.any? { |part| part.is_a?(InterpolatedXStringNode) }
+      assert node.parts.any? { |part| part.is_a?(ErrorRecoveryNode) && part.child.is_a?(InterpolatedXStringNode) }
     end
 
     def test_module_node_constant_path_missing
