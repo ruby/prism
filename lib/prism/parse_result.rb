@@ -76,6 +76,15 @@ module Prism
       source.byteslice(byte_offset, length) or raise
     end
 
+    # Converts the line number to a byte offset corresponding to the start of that line
+    def line_to_byte_offset(line)
+      l = line - @start_line
+      if l < 0 || l >= offsets.size
+        raise ArgumentError, "line #{line} is out of range"
+      end
+      offsets[l]
+    end
+
     # Binary search through the offsets to find the line number for the given
     # byte offset.
     def line(byte_offset)
@@ -894,5 +903,47 @@ module Prism
   # `scopes` option.
   def self.scope(locals: [], forwarding: [])
     Scope.new(locals, forwarding)
+  end
+
+  # Given a Method, UnboundMethod or Proc, use its #source_location to parse the file and return a Prism node representing it.
+  # The returned node will either be a DefNode, LambdaNode, CallNode or ForNode.
+  # Raises ArgumentError if it cannot be found for any reason.
+  # Only works on Ruby >= 4.1 as it needs #source_location to contain column and end line information.
+  def self.node_for(callable)
+    unless callable.is_a?(Method) || callable.is_a?(UnboundMethod) || callable.is_a?(Proc)
+      raise ArgumentError, 'Prism.node_for requires a Method, UnboundMethod or Proc'
+    end
+    source_location = callable.source_location
+    raise ArgumentError, "#source_location is nil for #{callable}" if source_location.nil?
+    raise ArgumentError, '#source_location does not contain column and end_line, this method only works on Ruby >= 4.1' if source_location.size != 5
+    file, start_line, start_column, end_line, end_column = source_location #: [String, Integer, Integer, Integer, Integer]
+
+    unless File.exist?(file)
+      raise ArgumentError, "#source_location[0] is #{file} but this file does not exist"
+    end
+
+    parse_result = Prism.parse_file(file, version: "current")
+    unless parse_result.success?
+      raise ArgumentError, "#{file} has syntax errors: #{parse_result.errors_format}"
+    end
+    root = parse_result.value
+    # CRuby currently returns the source_location columns in bytes and not characters
+    start_offset = parse_result.source.line_to_byte_offset(start_line) + start_column
+    end_offset = parse_result.source.line_to_byte_offset(end_line) + end_column
+
+    found = root.tunnel(start_line, start_column).reverse.find do |node|
+      case node
+      when DefNode, LambdaNode, ForNode
+        node.start_offset == start_offset && node.end_offset == end_offset
+      when CallNode
+        # Proc#source_location returns start_column 5 for `proc { ... }` (the `{`)
+        node.block.is_a?(BlockNode) && node.block.opening_loc.start_offset == start_offset && node.end_offset == end_offset
+      else
+        false
+      end
+    end #: DefNode | LambdaNode | CallNode | ForNode
+
+    raise ArgumentError, "Could not find node for #{callable} in #{file} at (#{start_line},#{start_column})-(#{end_line},#{end_column})" unless found
+    found
   end
 end
