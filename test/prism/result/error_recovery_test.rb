@@ -92,6 +92,15 @@ module Prism
       assert node.parts.any? { |part| part.is_a?(ErrorRecoveryNode) && part.child.is_a?(InterpolatedXStringNode) }
     end
 
+    def test_module_node_constant_path_def
+      result = Prism.parse("module def foo; end")
+      refute result.success?
+
+      node = result.value.statements.body.first
+      assert_kind_of ErrorRecoveryNode, node.constant_path
+      assert_kind_of DefNode, node.constant_path.child
+    end
+
     def test_module_node_constant_path_missing
       result = Prism.parse("module Parent module end")
       refute result.success?
