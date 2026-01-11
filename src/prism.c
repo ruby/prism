@@ -19153,6 +19153,11 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             parser_warn_indentation_mismatch(parser, opening_newline_index, &for_keyword, false, false);
             expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_FOR_TERM, &for_keyword);
 
+            PM_VALIDATE_NODE_TYPE(parser, index,
+                PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE, PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE,
+                PM_CONSTANT_TARGET_NODE, PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE,
+                PM_MULTI_TARGET_NODE);
+
             return UP(pm_for_node_create(parser, index, collection, statements, &for_keyword, &in_keyword, &do_keyword, &parser->previous));
         }
         case PM_TOKEN_KEYWORD_IF:

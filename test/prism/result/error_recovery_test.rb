@@ -54,7 +54,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of BackReferenceReadNode, node.index
+      assert_kind_of ErrorRecoveryNode, node.index
+      assert_kind_of BackReferenceReadNode, node.index.child
     end
 
     def test_for_node_index_numbered_reference
@@ -62,7 +63,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of NumberedReferenceReadNode, node.index
+      assert_kind_of ErrorRecoveryNode, node.index
+      assert_kind_of NumberedReferenceReadNode, node.index.child
     end
 
     def test_for_node_index_missing
@@ -71,6 +73,7 @@ module Prism
 
       node = result.value.statements.body.first
       assert_kind_of ErrorRecoveryNode, node.index
+      assert_nil node.index.child
     end
 
     def test_interpolated_string_node_parts_xstring

@@ -2547,9 +2547,7 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: BackReferenceReadNode # for $& in a end
-          - on error: NumberedReferenceReadNode # for $1 in a end
-          - on error: ErrorRecoveryNode # for in 1..10; end
+          - on error: ErrorRecoveryNode
         comment: |
           The index expression for `for` loops.
 
