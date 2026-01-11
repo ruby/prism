@@ -1988,6 +1988,25 @@ pm_unexpected_node_create(pm_parser_t *parser, pm_node_t *child) {
 }
 
 /**
+ * Validate a required node's type. If NULL, creates an ErrorRecoveryNode with
+ * no child. If present but not one of the expected types, wraps it in an
+ * ErrorRecoveryNode.
+ */
+#define PM_VALIDATE_NODE_TYPE(parser, node, ...) \
+    do { \
+        if ((node) == NULL) { \
+            (node) = UP(pm_missing_node_create((parser), (parser)->previous.start, (parser)->previous.end)); \
+        } else if (!PM_NODE_TYPE_P((node), PM_ERROR_RECOVERY_NODE)) { \
+            pm_node_type_t _expected[] = {__VA_ARGS__}; \
+            bool _found = false; \
+            for (size_t _i = 0; _i < sizeof(_expected) / sizeof(pm_node_type_t); _i++) { \
+                if (PM_NODE_TYPE_P((node), _expected[_i])) { _found = true; break; } \
+            } \
+            if (!_found) (node) = UP(pm_unexpected_node_create((parser), (node))); \
+        } \
+    } while (0)
+
+/**
  * Allocate and initialize a new AliasGlobalVariableNode node.
  */
 static pm_alias_global_variable_node_t *
