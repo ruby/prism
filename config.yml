@@ -1865,7 +1865,7 @@ nodes:
         kind:
           - ConstantReadNode
           - ConstantPathNode
-          - on error: CallNode # class 0.X end
+          - on error: ErrorRecoveryNode
       - name: inheritance_operator_loc
         type: location?
         comment: |

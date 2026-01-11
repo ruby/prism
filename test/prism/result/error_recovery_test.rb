@@ -45,7 +45,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of CallNode, node.constant_path
+      assert_kind_of ErrorRecoveryNode, node.constant_path
+      assert_kind_of CallNode, node.constant_path.child
     end
 
     def test_for_node_index_back_reference

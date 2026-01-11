@@ -18694,7 +18694,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_parser_scope_pop(parser);
             pm_do_loop_stack_pop(parser);
 
-            if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
+            PM_VALIDATE_NODE_TYPE(parser, constant_path, PM_CONSTANT_PATH_NODE, PM_CONSTANT_READ_NODE);
+            if (PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
                 pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
             }
 
