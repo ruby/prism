@@ -19307,6 +19307,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 pm_parser_err_token(parser, &module_keyword, PM_ERR_MODULE_IN_METHOD);
             }
 
+            PM_VALIDATE_NODE_TYPE(parser, constant_path, PM_CONSTANT_PATH_NODE, PM_CONSTANT_READ_NODE);
+
             pop_block_exits(parser, previous_block_exits);
             pm_node_list_free(&current_block_exits);
 

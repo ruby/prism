@@ -98,6 +98,7 @@ module Prism
 
       node = result.value.statements.body.first.body.body.first
       assert_kind_of ErrorRecoveryNode, node.constant_path
+      assert_nil node.constant_path.child
     end
 
     def test_multi_target_node_lefts_back_reference
