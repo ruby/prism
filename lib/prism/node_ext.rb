@@ -208,7 +208,7 @@ module Prism
       if name
         ConstantReadNode.new(source, -1, name_loc, 0, name)
       else
-        ErrorRecoveryNode.new(source, -1, location, 0)
+        ErrorRecoveryNode.new(source, -1, location, 0, nil)
       end
     end
   end
@@ -249,7 +249,7 @@ module Prism
       if name
         ConstantReadNode.new(source, -1, name_loc, 0, name)
       else
-        ErrorRecoveryNode.new(source, -1, location, 0)
+        ErrorRecoveryNode.new(source, -1, location, 0, nil)
       end
     end
   end

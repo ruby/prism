@@ -3687,8 +3687,12 @@ nodes:
           /(?<foo>bar)/ =~ baz
           ^^^^^^^^^^^^^^^^^^^^
   - name: ErrorRecoveryNode
+    fields:
+      - name: child
+        type: node?
+        kind: Node
     comment: |
-      Represents a node that is missing from the source and results in a syntax error.
+      Represents a node that is either missing or unexpected and results in a syntax error.
   - name: ModuleNode
     fields:
       - name: locals

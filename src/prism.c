@@ -1965,7 +1965,23 @@ pm_missing_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t 
     pm_error_recovery_node_t *node = PM_NODE_ALLOC(parser, pm_error_recovery_node_t);
 
     *node = (pm_error_recovery_node_t) {
-        .base = PM_NODE_INIT(parser, PM_ERROR_RECOVERY_NODE, 0, start, end)
+        .base = PM_NODE_INIT(parser, PM_ERROR_RECOVERY_NODE, 0, start, end),
+        .child = NULL
+    };
+
+    return node;
+}
+
+/**
+ * Allocate a new ErrorRecoveryNode node that wraps an unexpected child node.
+ */
+PRISM_ATTRIBUTE_UNUSED static pm_error_recovery_node_t *
+pm_unexpected_node_create(pm_parser_t *parser, pm_node_t *child) {
+    pm_error_recovery_node_t *node = PM_NODE_ALLOC(parser, pm_error_recovery_node_t);
+
+    *node = (pm_error_recovery_node_t) {
+        .base = PM_NODE_INIT(parser, PM_ERROR_RECOVERY_NODE, 0, child->location.start, child->location.end),
+        .child = child
     };
 
     return node;
