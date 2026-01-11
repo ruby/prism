@@ -31,8 +31,6 @@ module Prism
     if RUBY_ENGINE == "truffleruby"
       except.push(
         "emoji_method_calls.txt",
-        "seattlerb/bug202.txt",
-        "seattlerb/magic_encoding_comment.txt"
       )
     end
 

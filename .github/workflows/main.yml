@@ -105,8 +105,8 @@ jobs:
       matrix:
         target:
           - { ruby: "head", gemfile: "4.1" }
-          - { ruby: "jruby-10.0.0.0", gemfile: "jruby" } # https://github.com/jruby/jruby/issues/8923
-          - { ruby: "truffleruby", gemfile: "truffleruby" }
+          - { ruby: "jruby-10.0.0.0", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", gemfile: ".." }
     runs-on: ubuntu-latest
     env:
       PRISM_FFI_BACKEND: "true"
@@ -277,8 +277,8 @@ jobs:
           - { ruby: "3.4", os: "ubuntu-latest", gemfile: "3.4" }
           - { ruby: "4.0", os: "ubuntu-latest", gemfile: "4.0" }
           - { ruby: "head", os: "ubuntu-latest", gemfile: "4.1" }
-          - { ruby: "jruby-10.0.0.0", os: "ubuntu-latest", gemfile: "jruby" } # https://github.com/jruby/jruby/issues/8923
-          - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: "truffleruby" }
+          - { ruby: "jruby-10.0.0.0", os: "ubuntu-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: ".." }
 
           - { ruby: "2.7", os: "macos-latest", gemfile: "2.7" }
           - { ruby: "3.0", os: "macos-latest", gemfile: "3.0" }
@@ -288,8 +288,8 @@ jobs:
           - { ruby: "3.4", os: "macos-latest", gemfile: "3.4" }
           - { ruby: "4.0", os: "macos-latest", gemfile: "4.0" }
           - { ruby: "head", os: "macos-latest", gemfile: "4.1" }
-          - { ruby: "jruby-10.0.0.0", os: "macos-latest", gemfile: "jruby" } # https://github.com/jruby/jruby/issues/8923
-          - { ruby: "truffleruby", os: "macos-latest", gemfile: "truffleruby" }
+          - { ruby: "jruby-10.0.0.0", os: "macos-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", os: "macos-latest", gemfile: ".." }
 
           - { ruby: "2.7", os: "windows-latest", gemfile: "2.7" }
           - { ruby: "3.0", os: "windows-latest", gemfile: "3.0" }
@@ -299,7 +299,7 @@ jobs:
           - { ruby: "3.4", os: "windows-latest", gemfile: "3.4" }
           - { ruby: "4.0", os: "windows-latest", gemfile: "4.0" }
           # - { ruby: "head", os: "windows-latest", gemfile: "4.1" } TODO: No windows build yet
-          - { ruby: "jruby-10.0.0.0", os: "windows-latest", gemfile: "jruby" } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "jruby-10.0.0.0", os: "windows-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     runs-on: ${{ matrix.target.os }}
