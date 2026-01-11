@@ -3814,21 +3814,17 @@ pm_find_pattern_node_create(pm_parser_t *parser, pm_node_list_t *nodes) {
     pm_splat_node_t *left_splat_node = (pm_splat_node_t *) left;
 
     pm_node_t *right;
+    pm_splat_node_t *right_splat_node;
 
     if (nodes->size == 1) {
-        right = UP(pm_missing_node_create(parser, left->location.end, left->location.end));
+        right = left;
+        right_splat_node = left_splat_node;
     } else {
         right = nodes->nodes[nodes->size - 1];
         assert(PM_NODE_TYPE_P(right, PM_SPLAT_NODE));
+        right_splat_node = (pm_splat_node_t *) right;
     }
 
-#if PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
-    // FindPatternNode#right is typed as SplatNode in this case, so replace the potential ErrorRecoveryNode with a SplatNode.
-    // The resulting AST will anyway be ignored, but this file still needs to compile.
-    pm_splat_node_t *right_splat_node = PM_NODE_TYPE_P(right, PM_SPLAT_NODE) ? (pm_splat_node_t *) right : left_splat_node;
-#else
-    pm_node_t *right_splat_node = right;
-#endif
     *node = (pm_find_pattern_node_t) {
         .base = PM_NODE_INIT_NODES(parser, PM_FIND_PATTERN_NODE, 0, left, right),
         .constant = NULL,
