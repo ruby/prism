@@ -852,8 +852,7 @@ nodes:
         kind:
           - SymbolNode
           - InterpolatedSymbolNode
-          - on error: GlobalVariableReadNode # alias a $b
-          - on error: ErrorRecoveryNode # alias a 42
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the old name of the method that will be aliased.
 

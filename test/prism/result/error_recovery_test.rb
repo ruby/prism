@@ -27,7 +27,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of GlobalVariableReadNode, node.old_name
+      assert_kind_of ErrorRecoveryNode, node.old_name
+      assert_kind_of GlobalVariableReadNode, node.old_name.child
     end
 
     def test_alias_method_node_old_name_missing
@@ -36,6 +37,7 @@ module Prism
 
       node = result.value.statements.body.first
       assert_kind_of ErrorRecoveryNode, node.old_name
+      assert_nil node.old_name.child
     end
 
     def test_class_node_constant_path_call

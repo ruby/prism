@@ -18218,9 +18218,12 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     if (!PM_NODE_TYPE_P(old_name, PM_SYMBOL_NODE) && !PM_NODE_TYPE_P(old_name, PM_INTERPOLATED_SYMBOL_NODE)) {
                         pm_parser_err_node(parser, old_name, PM_ERR_ALIAS_ARGUMENT);
                     }
+
+                    PM_VALIDATE_NODE_TYPE(parser, old_name, PM_SYMBOL_NODE, PM_INTERPOLATED_SYMBOL_NODE);
                 }
                 PRISM_FALLTHROUGH
                 default:
+                    PM_VALIDATE_NODE_TYPE(parser, old_name, PM_SYMBOL_NODE, PM_INTERPOLATED_SYMBOL_NODE);
                     return UP(pm_alias_method_node_create(parser, &keyword, new_name, old_name));
             }
         }
