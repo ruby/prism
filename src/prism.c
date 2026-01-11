@@ -1975,7 +1975,7 @@ pm_missing_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t 
 /**
  * Allocate a new ErrorRecoveryNode node that wraps an unexpected child node.
  */
-PRISM_ATTRIBUTE_UNUSED static pm_error_recovery_node_t *
+static pm_error_recovery_node_t *
 pm_unexpected_node_create(pm_parser_t *parser, pm_node_t *child) {
     pm_error_recovery_node_t *node = PM_NODE_ALLOC(parser, pm_error_recovery_node_t);
 
@@ -18210,6 +18210,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         pm_parser_err_node(parser, old_name, PM_ERR_ALIAS_ARGUMENT);
                     }
 
+                    PM_VALIDATE_NODE_TYPE(parser, old_name, PM_BACK_REFERENCE_READ_NODE, PM_NUMBERED_REFERENCE_READ_NODE, PM_GLOBAL_VARIABLE_READ_NODE);
                     return UP(pm_alias_global_variable_node_create(parser, &keyword, new_name, old_name));
                 }
                 case PM_SYMBOL_NODE:

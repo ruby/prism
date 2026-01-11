@@ -811,8 +811,7 @@ nodes:
           - GlobalVariableReadNode
           - BackReferenceReadNode
           - NumberedReferenceReadNode
-          - on error: SymbolNode # alias $a b
-          - on error: ErrorRecoveryNode # alias $a 42
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the old name of the global variable that can be used before aliasing.
 
