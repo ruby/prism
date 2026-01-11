@@ -3727,8 +3727,7 @@ nodes:
           - IndexTargetNode
           - MultiTargetNode
           - RequiredParameterNode # def m((a,b)); end
-          - on error: BackReferenceReadNode # a, (b, $&) = z
-          - on error: NumberedReferenceReadNode # a, (b, $1) = z
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions before a splat node.
 
@@ -3772,8 +3771,7 @@ nodes:
           - IndexTargetNode
           - MultiTargetNode
           - RequiredParameterNode # def m((*,b)); end
-          - on error: BackReferenceReadNode # a, (*, $&) = z
-          - on error: NumberedReferenceReadNode # a, (*, $1) = z
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions after a splat node.
 
@@ -3817,8 +3815,7 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: BackReferenceReadNode # $&, = z
-          - on error: NumberedReferenceReadNode # $1, = z
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions before a splat node.
 
@@ -3861,8 +3858,7 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: BackReferenceReadNode # *, $& = z
-          - on error: NumberedReferenceReadNode # *, $1 = z
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions after a splat node.
 

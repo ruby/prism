@@ -13125,7 +13125,13 @@ parse_targets(pm_parser_t *parser, pm_node_t *first_target, pm_binding_power_t b
     bool has_rest = PM_NODE_TYPE_P(first_target, PM_SPLAT_NODE);
 
     pm_multi_target_node_t *result = pm_multi_target_node_create(parser);
-    pm_multi_target_node_targets_append(parser, result, parse_target(parser, first_target, true, false));
+
+    pm_node_t *first = parse_target(parser, first_target, true, false);
+    PM_VALIDATE_NODE_TYPE(parser, first,
+        PM_SPLAT_NODE, PM_IMPLICIT_REST_NODE, PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE,
+        PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE, PM_CONSTANT_TARGET_NODE,
+        PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE, PM_MULTI_TARGET_NODE, PM_REQUIRED_PARAMETER_NODE);
+    pm_multi_target_node_targets_append(parser, result, first);
 
     while (accept1(parser, PM_TOKEN_COMMA)) {
         if (accept1(parser, PM_TOKEN_USTAR)) {
@@ -13152,12 +13158,20 @@ parse_targets(pm_parser_t *parser, pm_node_t *first_target, pm_binding_power_t b
             pm_node_t *target = parse_expression(parser, binding_power, false, false, PM_ERR_EXPECT_EXPRESSION_AFTER_COMMA, (uint16_t) (depth + 1));
             target = parse_target(parser, target, true, false);
 
+            PM_VALIDATE_NODE_TYPE(parser, target,
+                PM_SPLAT_NODE, PM_IMPLICIT_REST_NODE, PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE,
+                PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE, PM_CONSTANT_TARGET_NODE,
+                PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE, PM_MULTI_TARGET_NODE, PM_REQUIRED_PARAMETER_NODE);
             pm_multi_target_node_targets_append(parser, result, target);
             context_pop(parser);
         } else if (token_begins_expression_p(parser->current.type)) {
             pm_node_t *target = parse_expression(parser, binding_power, false, false, PM_ERR_EXPECT_EXPRESSION_AFTER_COMMA, (uint16_t) (depth + 1));
             target = parse_target(parser, target, true, false);
 
+            PM_VALIDATE_NODE_TYPE(parser, target,
+                PM_SPLAT_NODE, PM_IMPLICIT_REST_NODE, PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE,
+                PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE, PM_CONSTANT_TARGET_NODE,
+                PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE, PM_MULTI_TARGET_NODE, PM_REQUIRED_PARAMETER_NODE);
             pm_multi_target_node_targets_append(parser, result, target);
         } else if (!match1(parser, PM_TOKEN_EOF)) {
             // If we get here, then we have a trailing , in a multi target node.
@@ -17647,6 +17661,10 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         multi_target = (pm_multi_target_node_t *) statement;
                     } else {
                         multi_target = pm_multi_target_node_create(parser);
+                        PM_VALIDATE_NODE_TYPE(parser, statement,
+                            PM_SPLAT_NODE, PM_IMPLICIT_REST_NODE, PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE,
+                            PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE, PM_CONSTANT_TARGET_NODE,
+                            PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE, PM_MULTI_TARGET_NODE, PM_REQUIRED_PARAMETER_NODE);
                         pm_multi_target_node_targets_append(parser, multi_target, statement);
                     }
 
@@ -17755,6 +17773,10 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
                 if (PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
                     pm_multi_target_node_t *multi_target = pm_multi_target_node_create(parser);
+                    PM_VALIDATE_NODE_TYPE(parser, statement,
+                        PM_SPLAT_NODE, PM_IMPLICIT_REST_NODE, PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE,
+                        PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE, PM_CONSTANT_TARGET_NODE,
+                        PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE, PM_MULTI_TARGET_NODE, PM_REQUIRED_PARAMETER_NODE);
                     pm_multi_target_node_targets_append(parser, multi_target, statement);
 
                     statement = UP(multi_target);

@@ -106,7 +106,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.lefts.last
-      assert node.lefts.any? { |left| left.is_a?(BackReferenceReadNode) }
+      assert node.lefts.any? { |left| left.is_a?(ErrorRecoveryNode) && left.child.is_a?(BackReferenceReadNode) }
     end
 
     def test_multi_target_node_lefts_numbered_reference
@@ -114,7 +114,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.lefts.last
-      assert node.lefts.any? { |left| left.is_a?(NumberedReferenceReadNode) }
+      assert node.lefts.any? { |left| left.is_a?(ErrorRecoveryNode) && left.child.is_a?(NumberedReferenceReadNode) }
     end
 
     def test_multi_target_node_rights_back_reference
@@ -122,7 +122,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.lefts.last
-      assert node.rights.any? { |right| right.is_a?(BackReferenceReadNode) }
+      assert node.rights.any? { |right| right.is_a?(ErrorRecoveryNode) && right.child.is_a?(BackReferenceReadNode) }
     end
 
     def test_multi_target_node_rights_numbered_reference
@@ -130,7 +130,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.lefts.last
-      assert node.rights.any? { |right| right.is_a?(NumberedReferenceReadNode) }
+      assert node.rights.any? { |right| right.is_a?(ErrorRecoveryNode) && right.child.is_a?(NumberedReferenceReadNode) }
     end
 
     def test_multi_write_node_lefts_back_reference
@@ -138,7 +138,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.lefts.any? { |left| left.is_a?(BackReferenceReadNode) }
+      assert node.lefts.any? { |left| left.is_a?(ErrorRecoveryNode) && left.child.is_a?(BackReferenceReadNode) }
     end
 
     def test_multi_write_node_lefts_numbered_reference
@@ -146,7 +146,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.lefts.any? { |left| left.is_a?(NumberedReferenceReadNode) }
+      assert node.lefts.any? { |left| left.is_a?(ErrorRecoveryNode) && left.child.is_a?(NumberedReferenceReadNode) }
     end
 
     def test_multi_write_node_rights_back_reference
@@ -154,7 +154,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.rights.any? { |right| right.is_a?(BackReferenceReadNode) }
+      assert node.rights.any? { |right| right.is_a?(ErrorRecoveryNode) && right.child.is_a?(BackReferenceReadNode) }
     end
 
     def test_multi_write_node_rights_numbered_reference
@@ -162,7 +162,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert node.rights.any? { |right| right.is_a?(NumberedReferenceReadNode) }
+      assert node.rights.any? { |right| right.is_a?(ErrorRecoveryNode) && right.child.is_a?(NumberedReferenceReadNode) }
     end
 
     def test_parameters_node_posts_keyword_rest
