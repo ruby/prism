@@ -26,8 +26,6 @@ updates:
       - '/gemfiles/3.4'
       - '/gemfiles/4.0'
       - '/gemfiles/4.1'
-      - '/gemfiles/jruby'
-      - '/gemfiles/truffleruby'
       - '/gemfiles/typecheck'
     schedule:
       interval: 'weekly'

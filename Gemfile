@@ -5,16 +5,16 @@ source "https://rubygems.org"
 gemspec
 
 gem "benchmark-ips"
+gem "parser"
 gem "rake"
 gem "rake-compiler"
+gem "ruby_parser"
 gem "test-unit"
 
 platforms :mri, :mswin, :mingw, :x64_mingw do
   gem "ffi"
   gem "irb"
-  gem "parser"
   gem "ruby_memcheck"
-  gem "ruby_parser"
   gem "rdoc"
 end
 
