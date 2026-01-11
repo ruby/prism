@@ -203,7 +203,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.rescue_clause
-      assert_kind_of BackReferenceReadNode, node.reference
+      assert_kind_of ErrorRecoveryNode, node.reference
+      assert_kind_of BackReferenceReadNode, node.reference.child
     end
 
     def test_rescue_node_reference_numbered_reference
@@ -211,7 +212,8 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.rescue_clause
-      assert_kind_of NumberedReferenceReadNode, node.reference
+      assert_kind_of ErrorRecoveryNode, node.reference
+      assert_kind_of NumberedReferenceReadNode, node.reference.child
     end
 
     def test_rescue_node_reference_missing
@@ -220,6 +222,7 @@ module Prism
 
       node = result.value.statements.body.first.rescue_clause
       assert_kind_of ErrorRecoveryNode, node.reference
+      assert_nil node.reference.child
     end
   end
 end

@@ -14423,6 +14423,9 @@ parse_rescues(pm_parser_t *parser, size_t opening_newline_index, const pm_token_
                 pm_node_t *reference = parse_expression(parser, PM_BINDING_POWER_INDEX, false, false, PM_ERR_RESCUE_VARIABLE, (uint16_t) (depth + 1));
                 reference = parse_target(parser, reference, false, false);
 
+                PM_VALIDATE_NODE_TYPE(parser, reference,
+                    PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE, PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE,
+                    PM_CONSTANT_TARGET_NODE, PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE);
                 pm_rescue_node_reference_set(rescue, reference);
                 break;
             }
@@ -14453,6 +14456,9 @@ parse_rescues(pm_parser_t *parser, size_t opening_newline_index, const pm_token_
                             pm_node_t *reference = parse_expression(parser, PM_BINDING_POWER_INDEX, false, false, PM_ERR_RESCUE_VARIABLE, (uint16_t) (depth + 1));
                             reference = parse_target(parser, reference, false, false);
 
+                            PM_VALIDATE_NODE_TYPE(parser, reference,
+                                PM_LOCAL_VARIABLE_TARGET_NODE, PM_INSTANCE_VARIABLE_TARGET_NODE, PM_CLASS_VARIABLE_TARGET_NODE, PM_GLOBAL_VARIABLE_TARGET_NODE,
+                                PM_CONSTANT_TARGET_NODE, PM_CONSTANT_PATH_TARGET_NODE, PM_CALL_TARGET_NODE, PM_INDEX_TARGET_NODE);
                             pm_rescue_node_reference_set(rescue, reference);
                             break;
                         }

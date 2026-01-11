@@ -4327,9 +4327,7 @@ nodes:
           - ConstantPathTargetNode
           - CallTargetNode
           - IndexTargetNode
-          - on error: BackReferenceReadNode # => begin; rescue => $&; end
-          - on error: NumberedReferenceReadNode # => begin; rescue => $1; end
-          - on error: ErrorRecoveryNode # begin; rescue =>; end
+          - on error: ErrorRecoveryNode
       - name: then_keyword_loc
         type: location?
       - name: statements
