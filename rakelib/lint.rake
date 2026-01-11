@@ -29,7 +29,7 @@ task :lint do
     exit(1)
   end
 
-  if (uncommented = nodes.select { |node| !%w[MissingNode ProgramNode].include?(node.fetch("name")) && !node.fetch("comment").match?(/^\s{4}/) }).any?
+  if (uncommented = nodes.select { |node| !%w[ErrorRecoveryNode ProgramNode].include?(node.fetch("name")) && !node.fetch("comment").match?(/^\s{4}/) }).any?
     names = uncommented.map { |node| node.fetch("name") }
     warn("Expected all nodes to have an example, missing comments for #{names.join(", ")}")
     exit(1)

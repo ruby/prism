@@ -1958,14 +1958,14 @@ pm_node_alloc(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, size_t size) {
 #define PM_NODE_INIT_NODE_TOKEN(parser_, type_, flags_, node_, token_) PM_NODE_INIT(parser_, type_, flags_, PM_NODE_START(node_), PM_TOKEN_END(token_))
 
 /**
- * Allocate a new MissingNode node.
+ * Allocate a new ErrorRecoveryNode node to represent a missing node.
  */
-static pm_missing_node_t *
+static pm_error_recovery_node_t *
 pm_missing_node_create(pm_parser_t *parser, const uint8_t *start, const uint8_t *end) {
-    pm_missing_node_t *node = PM_NODE_ALLOC(parser, pm_missing_node_t);
+    pm_error_recovery_node_t *node = PM_NODE_ALLOC(parser, pm_error_recovery_node_t);
 
-    *node = (pm_missing_node_t) {
-        .base = PM_NODE_INIT(parser, PM_MISSING_NODE, 0, start, end)
+    *node = (pm_error_recovery_node_t) {
+        .base = PM_NODE_INIT(parser, PM_ERROR_RECOVERY_NODE, 0, start, end)
     };
 
     return node;
@@ -3788,7 +3788,7 @@ pm_find_pattern_node_create(pm_parser_t *parser, pm_node_list_t *nodes) {
     }
 
 #if PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
-    // FindPatternNode#right is typed as SplatNode in this case, so replace the potential MissingNode with a SplatNode.
+    // FindPatternNode#right is typed as SplatNode in this case, so replace the potential ErrorRecoveryNode with a SplatNode.
     // The resulting AST will anyway be ignored, but this file still needs to compile.
     pm_splat_node_t *right_splat_node = PM_NODE_TYPE_P(right, PM_SPLAT_NODE) ? (pm_splat_node_t *) right : left_splat_node;
 #else
@@ -12677,7 +12677,7 @@ parse_unwriteable_target(pm_parser_t *parser, pm_node_t *target) {
 static pm_node_t *
 parse_target(pm_parser_t *parser, pm_node_t *target, bool multiple, bool splat_parent) {
     switch (PM_NODE_TYPE(target)) {
-        case PM_MISSING_NODE:
+        case PM_ERROR_RECOVERY_NODE:
             return target;
         case PM_SOURCE_ENCODING_NODE:
         case PM_FALSE_NODE:
@@ -12867,7 +12867,7 @@ parse_shareable_constant_write(pm_parser_t *parser, pm_node_t *write) {
 static pm_node_t *
 parse_write(pm_parser_t *parser, pm_node_t *target, pm_token_t *operator, pm_node_t *value) {
     switch (PM_NODE_TYPE(target)) {
-        case PM_MISSING_NODE:
+        case PM_ERROR_RECOVERY_NODE:
             pm_node_destroy(parser, value);
             return target;
         case PM_CLASS_VARIABLE_READ_NODE: {
@@ -13220,7 +13220,7 @@ parse_statements(pm_parser_t *parser, pm_context_t context, uint16_t depth) {
         // we were unable to parse an expression, then we will skip past this
         // token and continue parsing the statements list. Otherwise we'll add
         // an error and continue parsing the statements list.
-        if (PM_NODE_TYPE_P(node, PM_MISSING_NODE)) {
+        if (PM_NODE_TYPE_P(node, PM_ERROR_RECOVERY_NODE)) {
             parser_lex(parser);
 
             // If we are at the end of the file, then we need to stop parsing
@@ -13661,7 +13661,7 @@ parse_arguments(pm_parser_t *parser, pm_arguments_t *arguments, bool accepts_for
         parsed_first_argument = true;
 
         // If parsing the argument failed, we need to stop parsing arguments.
-        if (PM_NODE_TYPE_P(argument, PM_MISSING_NODE) || parser->recovering) break;
+        if (PM_NODE_TYPE_P(argument, PM_ERROR_RECOVERY_NODE) || parser->recovering) break;
 
         // If the terminator of these arguments is not EOF, then we have a
         // specific token we're looking for. In that case we can accept a
@@ -16729,7 +16729,7 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
             // Call nodes (arithmetic operations) are not allowed in patterns
             if (PM_NODE_TYPE(node) == PM_CALL_NODE) {
                 pm_parser_err_node(parser, node, diag_id);
-                pm_missing_node_t *missing_node = pm_missing_node_create(parser, node->location.start, node->location.end);
+                pm_error_recovery_node_t *missing_node = pm_missing_node_create(parser, node->location.start, node->location.end);
 
                 pm_node_unreference(parser, node);
                 pm_node_destroy(parser, node);
@@ -17521,7 +17521,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                 }
 
                 pm_array_node_elements_append(array, element);
-                if (PM_NODE_TYPE_P(element, PM_MISSING_NODE)) break;
+                if (PM_NODE_TYPE_P(element, PM_ERROR_RECOVERY_NODE)) break;
             }
 
             accept1(parser, PM_TOKEN_NEWLINE);
@@ -17697,7 +17697,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
                 // If we couldn't parse an expression at all, then we need to
                 // bail out of the loop.
-                if (PM_NODE_TYPE_P(node, PM_MISSING_NODE)) break;
+                if (PM_NODE_TYPE_P(node, PM_ERROR_RECOVERY_NODE)) break;
 
                 // If we successfully parsed a statement, then we are going to
                 // need terminator to delimit them.
@@ -18248,14 +18248,14 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                             pm_splat_node_t *splat_node = pm_splat_node_create(parser, &operator, expression);
                             pm_when_node_conditions_append(when_node, UP(splat_node));
 
-                            if (PM_NODE_TYPE_P(expression, PM_MISSING_NODE)) break;
+                            if (PM_NODE_TYPE_P(expression, PM_ERROR_RECOVERY_NODE)) break;
                         } else {
                             pm_node_t *condition = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, false, false, PM_ERR_CASE_EXPRESSION_AFTER_WHEN, (uint16_t) (depth + 1));
                             pm_when_node_conditions_append(when_node, condition);
 
                             // If we found a missing node, then this is a syntax
                             // error and we should stop looping.
-                            if (PM_NODE_TYPE_P(condition, PM_MISSING_NODE)) break;
+                            if (PM_NODE_TYPE_P(condition, PM_ERROR_RECOVERY_NODE)) break;
 
                             // If this is a string node, then we need to mark it
                             // as frozen because when clause strings are frozen.
@@ -19134,7 +19134,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
             pm_undef_node_t *undef = pm_undef_node_create(parser, &parser->previous);
             pm_node_t *name = parse_undef_argument(parser, (uint16_t) (depth + 1));
 
-            if (PM_NODE_TYPE_P(name, PM_MISSING_NODE)) {
+            if (PM_NODE_TYPE_P(name, PM_ERROR_RECOVERY_NODE)) {
                 pm_node_destroy(parser, name);
             } else {
                 pm_undef_node_append(undef, name);
@@ -19144,7 +19144,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     parser_lex(parser);
                     name = parse_undef_argument(parser, (uint16_t) (depth + 1));
 
-                    if (PM_NODE_TYPE_P(name, PM_MISSING_NODE)) {
+                    if (PM_NODE_TYPE_P(name, PM_ERROR_RECOVERY_NODE)) {
                         pm_node_destroy(parser, name);
                         break;
                     }
@@ -19218,7 +19218,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
 
             // If we can recover from a syntax error that occurred while parsing
             // the name of the module, then we'll handle that here.
-            if (PM_NODE_TYPE_P(constant_path, PM_MISSING_NODE)) {
+            if (PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
                 pop_block_exits(parser, previous_block_exits);
                 pm_node_list_free(&current_block_exits);
 
@@ -20291,7 +20291,7 @@ parse_assignment_values(pm_parser_t *parser, pm_binding_power_t previous_binding
             pm_node_t *element = parse_starred_expression(parser, binding_power, false, PM_ERR_ARRAY_ELEMENT, (uint16_t) (depth + 1));
 
             pm_array_node_elements_append(array, element);
-            if (PM_NODE_TYPE_P(element, PM_MISSING_NODE)) break;
+            if (PM_NODE_TYPE_P(element, PM_ERROR_RECOVERY_NODE)) break;
 
             parse_assignment_value_local(parser, element);
         }
@@ -21584,7 +21584,7 @@ parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, bool acc
     pm_node_t *node = parse_expression_prefix(parser, binding_power, accepts_command_call, accepts_label, diag_id, depth);
 
     switch (PM_NODE_TYPE(node)) {
-        case PM_MISSING_NODE:
+        case PM_ERROR_RECOVERY_NODE:
             // If we found a syntax error, then the type of node returned by
             // parse_expression_prefix is going to be a missing node.
             return node;

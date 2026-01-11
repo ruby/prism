@@ -812,7 +812,7 @@ nodes:
           - BackReferenceReadNode
           - NumberedReferenceReadNode
           - on error: SymbolNode # alias $a b
-          - on error: MissingNode # alias $a 42
+          - on error: ErrorRecoveryNode # alias $a 42
         comment: |
           Represents the old name of the global variable that can be used before aliasing.
 
@@ -854,7 +854,7 @@ nodes:
           - SymbolNode
           - InterpolatedSymbolNode
           - on error: GlobalVariableReadNode # alias a $b
-          - on error: MissingNode # alias a 42
+          - on error: ErrorRecoveryNode # alias a 42
         comment: |
           Represents the old name of the method that will be aliased.
 
@@ -2466,7 +2466,7 @@ nodes:
         type: node
         kind:
           - SplatNode
-          - on error: MissingNode
+          - on error: ErrorRecoveryNode
         comment: |
           Represents the second wildcard node in the pattern.
 
@@ -2551,7 +2551,7 @@ nodes:
           - MultiTargetNode
           - on error: BackReferenceReadNode # for $& in a end
           - on error: NumberedReferenceReadNode # for $1 in a end
-          - on error: MissingNode # for in 1..10; end
+          - on error: ErrorRecoveryNode # for in 1..10; end
         comment: |
           The index expression for `for` loops.
 
@@ -3686,7 +3686,7 @@ nodes:
 
           /(?<foo>bar)/ =~ baz
           ^^^^^^^^^^^^^^^^^^^^
-  - name: MissingNode
+  - name: ErrorRecoveryNode
     comment: |
       Represents a node that is missing from the source and results in a syntax error.
   - name: ModuleNode
@@ -3700,7 +3700,7 @@ nodes:
         kind:
           - ConstantReadNode
           - ConstantPathNode
-          - on error: MissingNode # module Parent module end
+          - on error: ErrorRecoveryNode # module Parent module end
       - name: body
         type: node?
         kind:
@@ -4140,7 +4140,7 @@ nodes:
           - BackReferenceReadNode # foo in ^$&
           - NumberedReferenceReadNode # foo in ^$1
           - ItLocalVariableReadNode # proc { 1 in ^it }
-          - on error: MissingNode # foo in ^Bar
+          - on error: ErrorRecoveryNode # foo in ^Bar
         comment: |
           The variable used in the pinned expression
 
@@ -4223,7 +4223,7 @@ nodes:
 
               1...foo
                   ^^^
-          If neither right-hand or left-hand side was included, this will be a MissingNode.
+          If neither right-hand or left-hand side was included, this will be an ErrorRecoveryNode.
       - name: operator_loc
         type: location
         comment: |
@@ -4340,7 +4340,7 @@ nodes:
           - IndexTargetNode
           - on error: BackReferenceReadNode # => begin; rescue => $&; end
           - on error: NumberedReferenceReadNode # => begin; rescue => $1; end
-          - on error: MissingNode # begin; rescue =>; end
+          - on error: ErrorRecoveryNode # begin; rescue =>; end
       - name: then_keyword_loc
         type: location?
       - name: statements

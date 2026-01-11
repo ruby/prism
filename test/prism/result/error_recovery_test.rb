@@ -17,7 +17,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of MissingNode, node.old_name
+      assert_kind_of ErrorRecoveryNode, node.old_name
     end
 
     def test_alias_method_node_old_name_global_variable
@@ -33,7 +33,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of MissingNode, node.old_name
+      assert_kind_of ErrorRecoveryNode, node.old_name
     end
 
     def test_class_node_constant_path_call
@@ -65,7 +65,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first
-      assert_kind_of MissingNode, node.index
+      assert_kind_of ErrorRecoveryNode, node.index
     end
 
     def test_interpolated_string_node_parts_xstring
@@ -89,7 +89,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.body.body.first
-      assert_kind_of MissingNode, node.constant_path
+      assert_kind_of ErrorRecoveryNode, node.constant_path
     end
 
     def test_multi_target_node_lefts_back_reference
@@ -185,7 +185,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.pattern
-      assert_kind_of MissingNode, node.variable
+      assert_kind_of ErrorRecoveryNode, node.variable
     end
 
     def test_rescue_node_reference_back_reference
@@ -209,7 +209,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.rescue_clause
-      assert_kind_of MissingNode, node.reference
+      assert_kind_of ErrorRecoveryNode, node.reference
     end
   end
 end
