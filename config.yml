@@ -811,7 +811,6 @@ nodes:
           - GlobalVariableReadNode
           - BackReferenceReadNode
           - NumberedReferenceReadNode
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the old name of the global variable that can be used before aliasing.
 
@@ -852,7 +851,6 @@ nodes:
         kind:
           - SymbolNode
           - InterpolatedSymbolNode
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the old name of the method that will be aliased.
 
@@ -1865,7 +1863,6 @@ nodes:
         kind:
           - ConstantReadNode
           - ConstantPathNode
-          - on error: ErrorRecoveryNode
       - name: inheritance_operator_loc
         type: location?
         comment: |
@@ -2462,9 +2459,7 @@ nodes:
                                ^^^^^^
       - name: right
         type: node
-        kind:
-          - SplatNode
-          - on error: ErrorRecoveryNode
+        kind: SplatNode
         comment: |
           Represents the second wildcard node in the pattern.
 
@@ -2547,7 +2542,6 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: ErrorRecoveryNode
         comment: |
           The index expression for `for` loops.
 
@@ -3301,7 +3295,6 @@ nodes:
           - EmbeddedStatementsNode
           - EmbeddedVariableNode
           - InterpolatedStringNode # `"a" "#{b}"`
-          - on error: ErrorRecoveryNode
       - name: closing_loc
         type: location?
     newline: parts
@@ -3697,7 +3690,6 @@ nodes:
         kind:
           - ConstantReadNode
           - ConstantPathNode
-          - on error: ErrorRecoveryNode # module Parent module end
       - name: body
         type: node?
         kind:
@@ -3727,7 +3719,6 @@ nodes:
           - IndexTargetNode
           - MultiTargetNode
           - RequiredParameterNode # def m((a,b)); end
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions before a splat node.
 
@@ -3771,7 +3762,6 @@ nodes:
           - IndexTargetNode
           - MultiTargetNode
           - RequiredParameterNode # def m((*,b)); end
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions after a splat node.
 
@@ -3815,7 +3805,6 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions before a splat node.
 
@@ -3858,7 +3847,6 @@ nodes:
           - CallTargetNode
           - IndexTargetNode
           - MultiTargetNode
-          - on error: ErrorRecoveryNode
         comment: |
           Represents the targets expressions after a splat node.
 
@@ -4044,7 +4032,6 @@ nodes:
         kind:
           - RequiredParameterNode
           - MultiTargetNode
-          - on error: ErrorRecoveryNode
       - name: keywords
         type: node[]
         kind:
@@ -4129,7 +4116,6 @@ nodes:
           - BackReferenceReadNode # foo in ^$&
           - NumberedReferenceReadNode # foo in ^$1
           - ItLocalVariableReadNode # proc { 1 in ^it }
-          - on error: ErrorRecoveryNode # foo in ^Bar
         comment: |
           The variable used in the pinned expression
 
@@ -4327,7 +4313,6 @@ nodes:
           - ConstantPathTargetNode
           - CallTargetNode
           - IndexTargetNode
-          - on error: ErrorRecoveryNode
       - name: then_keyword_loc
         type: location?
       - name: statements
