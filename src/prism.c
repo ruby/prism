@@ -13944,7 +13944,9 @@ parse_parameters(
                     pm_parameters_node_block_set(params, param);
                 } else {
                     pm_parser_err_node(parser, UP(param), PM_ERR_PARAMETER_BLOCK_MULTI);
-                    pm_parameters_node_posts_append(params, UP(param));
+                    pm_node_t *post_param = UP(param);
+                    PM_VALIDATE_NODE_TYPE(parser, post_param, PM_REQUIRED_PARAMETER_NODE, PM_MULTI_TARGET_NODE);
+                    pm_parameters_node_posts_append(params, post_param);
                 }
 
                 break;
@@ -13964,6 +13966,7 @@ parse_parameters(
                     // If we already have a keyword rest parameter, then we replace it with the
                     // forwarding parameter and move the keyword rest parameter to the posts list.
                     pm_node_t *keyword_rest = params->keyword_rest;
+                    PM_VALIDATE_NODE_TYPE(parser, keyword_rest, PM_REQUIRED_PARAMETER_NODE, PM_MULTI_TARGET_NODE);
                     pm_parameters_node_posts_append(params, keyword_rest);
                     if (succeeded) pm_parser_err_previous(parser, PM_ERR_PARAMETER_UNEXPECTED_FWD);
                     params->keyword_rest = NULL;
@@ -14178,6 +14181,7 @@ parse_parameters(
                     pm_parameters_node_rest_set(params, param);
                 } else {
                     pm_parser_err_node(parser, param, PM_ERR_PARAMETER_SPLAT_MULTI);
+                    PM_VALIDATE_NODE_TYPE(parser, param, PM_REQUIRED_PARAMETER_NODE, PM_MULTI_TARGET_NODE);
                     pm_parameters_node_posts_append(params, param);
                 }
 
@@ -14221,6 +14225,7 @@ parse_parameters(
                     pm_parameters_node_keyword_rest_set(params, param);
                 } else {
                     pm_parser_err_node(parser, param, PM_ERR_PARAMETER_ASSOC_SPLAT_MULTI);
+                    PM_VALIDATE_NODE_TYPE(parser, param, PM_REQUIRED_PARAMETER_NODE, PM_MULTI_TARGET_NODE);
                     pm_parameters_node_posts_append(params, param);
                 }
 
@@ -14236,8 +14241,9 @@ parse_parameters(
                         if (params->rest == NULL) {
                             pm_parameters_node_rest_set(params, param);
                         } else {
-                            pm_parser_err_node(parser, UP(param), PM_ERR_PARAMETER_SPLAT_MULTI);
-                            pm_parameters_node_posts_append(params, UP(param));
+                            pm_parser_err_node(parser, param, PM_ERR_PARAMETER_SPLAT_MULTI);
+                            PM_VALIDATE_NODE_TYPE(parser, param, PM_REQUIRED_PARAMETER_NODE, PM_MULTI_TARGET_NODE);
+                            pm_parameters_node_posts_append(params, param);
                         }
                     } else {
                         pm_parser_err_previous(parser, PM_ERR_PARAMETER_WILD_LOOSE_COMMA);

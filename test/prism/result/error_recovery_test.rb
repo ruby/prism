@@ -170,7 +170,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.parameters
-      assert node.posts.any? { |post| post.is_a?(KeywordRestParameterNode) }
+      assert node.posts.any? { |post| post.is_a?(ErrorRecoveryNode) && post.child.is_a?(KeywordRestParameterNode) }
     end
 
     def test_parameters_node_posts_no_keywords
@@ -178,7 +178,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.parameters
-      assert node.posts.any? { |post| post.is_a?(NoKeywordsParameterNode) }
+      assert node.posts.any? { |post| post.is_a?(ErrorRecoveryNode) && post.child.is_a?(NoKeywordsParameterNode) }
     end
 
     def test_parameters_node_posts_forwarding
@@ -186,7 +186,7 @@ module Prism
       refute result.success?
 
       node = result.value.statements.body.first.parameters
-      assert node.posts.any? { |post| post.is_a?(ForwardingParameterNode) }
+      assert node.posts.any? { |post| post.is_a?(ErrorRecoveryNode) && post.child.is_a?(ForwardingParameterNode) }
     end
 
     def test_pinned_variable_node_variable_missing

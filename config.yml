@@ -4044,11 +4044,7 @@ nodes:
         kind:
           - RequiredParameterNode
           - MultiTargetNode
-          # On parsing error of `f(**kwargs, ...)` or `f(**nil, ...)`, the keyword_rest value is moved here:
-          - on error: KeywordRestParameterNode
-          - on error: NoKeywordsParameterNode
-          # On parsing error of `f(..., ...)`, the first forwarding parameter is moved here:
-          - on error: ForwardingParameterNode
+          - on error: ErrorRecoveryNode
       - name: keywords
         type: node[]
         kind:
