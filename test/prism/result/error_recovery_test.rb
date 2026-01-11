@@ -195,6 +195,7 @@ module Prism
 
       node = result.value.statements.body.first.pattern
       assert_kind_of ErrorRecoveryNode, node.variable
+      assert_nil node.variable.child
     end
 
     def test_rescue_node_reference_back_reference

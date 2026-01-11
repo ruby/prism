@@ -16871,6 +16871,9 @@ parse_pattern_primitive(pm_parser_t *parser, pm_constant_id_list_t *captures, pm
                     // not understood. We'll create a missing node and return that.
                     pm_parser_err_token(parser, &operator, PM_ERR_PATTERN_EXPRESSION_AFTER_PIN);
                     pm_node_t *variable = UP(pm_missing_node_create(parser, operator.start, operator.end));
+                    PM_VALIDATE_NODE_TYPE(parser, variable,
+                        PM_LOCAL_VARIABLE_READ_NODE, PM_INSTANCE_VARIABLE_READ_NODE, PM_CLASS_VARIABLE_READ_NODE, PM_GLOBAL_VARIABLE_READ_NODE,
+                        PM_BACK_REFERENCE_READ_NODE, PM_NUMBERED_REFERENCE_READ_NODE, PM_IT_LOCAL_VARIABLE_READ_NODE);
                     return UP(pm_pinned_variable_node_create(parser, &operator, variable));
                 }
             }
