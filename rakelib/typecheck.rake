@@ -26,6 +26,7 @@ namespace :typecheck do
         - ./lib/prism/visitor.rb
         - ./lib/prism/translation/parser/lexer.rb
         - ./lib/prism/translation/ripper.rb
+        - ./lib/prism/translation/ripper/lexer.rb
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
         - ./lib/prism/inspect_visitor.rb
