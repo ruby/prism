@@ -37,6 +37,9 @@ module Prism
       ]
     end
 
+    # https://bugs.ruby-lang.org/issues/21669
+    incorrect << "4.0/void_value.txt"
+
     # Skip these tests that we haven't implemented yet.
     omitted = [
       "dos_endings.txt",
