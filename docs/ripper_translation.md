@@ -1,22 +1,6 @@
 # Ripper translation
 
-Prism provides the ability to mirror the `Ripper` standard library. You can do this by:
-
-```ruby
-require "prism/translation/ripper/shim"
-```
-
-This provides the APIs like:
-
-```ruby
-Ripper.lex
-Ripper.parse
-Ripper.sexp_raw
-Ripper.sexp
-
-Ripper::SexpBuilder
-Ripper::SexpBuilderPP
-```
+Prism provides the ability to mirror the `Ripper` standard library. It is available under `Prism::Translation::Ripper`. You can use the entire public API, and also some undocumented features that are commonly used.
 
 Briefly, `Ripper` is a streaming parser that allows you to construct your own syntax tree. As an example:
 
@@ -48,6 +32,13 @@ ArithmeticRipper.new("1 + 2 - 3").parse # => [0]
 ```
 
 The exact names of the `on_*` methods are listed in the `Ripper` source.
+
+You can can also automatically use the ripper translation in places that don't explicitly use the translation layer by doing the following:
+
+```ruby
+# Will redirect access of the `Ripper` constant to `Prism::Translation::Ripper`.
+require "prism/translation/ripper/shim"
+```
 
 ## Background
 
