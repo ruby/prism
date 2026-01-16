@@ -8,7 +8,6 @@ require "yaml"
 module Prism
   module Template
     SERIALIZE_ONLY_SEMANTICS_FIELDS = ENV.fetch("PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS", false)
-    REMOVE_ON_ERROR_TYPES = SERIALIZE_ONLY_SEMANTICS_FIELDS
     CHECK_FIELD_KIND = ENV.fetch("CHECK_FIELD_KIND", false)
 
     JAVA_BACKEND = ENV["PRISM_JAVA_BACKEND"] || "truffleruby"
@@ -432,13 +431,10 @@ module Prism
                 when "pattern expression"
                   # the list of all possible types is too long with 37+ different classes
                   "Node"
-                when Hash
-                  kind = kind.fetch("on error")
-                  REMOVE_ON_ERROR_TYPES ? nil : kind
                 else
                   kind
                 end
-              end.compact
+              end
               if kinds.size == 1
                 kinds = kinds.first
                 kinds = nil if kinds == "Node"

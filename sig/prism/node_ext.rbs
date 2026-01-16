@@ -60,18 +60,18 @@ module Prism
     class DynamicPartsInConstantPathError < StandardError
     end
 
-    class MissingNodesInConstantPathError < StandardError
+    class ErrorRecoveryNodesInConstantPathError < StandardError
     end
 
     def full_name_parts: () -> Array[Symbol]
     def full_name: () -> String
-    def child: () -> (ConstantReadNode | MissingNode)
+    def child: () -> (ConstantReadNode | ErrorRecoveryNode)
   end
 
   class ConstantPathTargetNode < Node
     def full_name_parts: () -> Array[Symbol]
     def full_name: () -> String
-    def child: () -> (ConstantReadNode | MissingNode)
+    def child: () -> (ConstantReadNode | ErrorRecoveryNode)
   end
 
   class ConstantTargetNode < Node
