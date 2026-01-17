@@ -225,66 +225,6 @@ module Prism
       end
     end
 
-    # Ripper doesn't include the rest of the token in the event, so we need to
-    # trim it down to just the content on the first line when comparing.
-    class EndContentToken < Token
-      def ==(other) # :nodoc:
-        [self[0], self[1], self[2][0..self[2].index("\n")], self[3]] == other
-      end
-    end
-
-    # Tokens where state should be ignored
-    # used for :on_comment, :on_heredoc_end, :on_embexpr_end
-    class IgnoreStateToken < Token
-      def ==(other) # :nodoc:
-        self[0...-1] == other[0...-1]
-      end
-    end
-
-    # Ident tokens for the most part are exactly the same, except sometimes we
-    # know an ident is a local when ripper doesn't (when they are introduced
-    # through named captures in regular expressions). In that case we don't
-    # compare the state.
-    class IdentToken < Token
-      def ==(other) # :nodoc:
-        (self[0...-1] == other[0...-1]) && (
-          (other[3] == Translation::Ripper::EXPR_LABEL | Translation::Ripper::EXPR_END) ||
-          (other[3] & (Translation::Ripper::EXPR_ARG | Translation::Ripper::EXPR_CMDARG) != 0)
-        )
-      end
-    end
-
-    # Ignored newlines can occasionally have a LABEL state attached to them, so
-    # we compare the state differently here.
-    class IgnoredNewlineToken < Token
-      def ==(other) # :nodoc:
-        return false unless self[0...-1] == other[0...-1]
-
-        if self[3] == Translation::Ripper::EXPR_ARG | Translation::Ripper::EXPR_LABELED
-          other[3] & Translation::Ripper::EXPR_ARG | Translation::Ripper::EXPR_LABELED != 0
-        else
-          self[3] == other[3]
-        end
-      end
-    end
-
-    # If we have an identifier that follows a method name like:
-    #
-    #     def foo bar
-    #
-    # then Ripper will mark bar as END|LABEL if there is a local in a parent
-    # scope named bar because it hasn't pushed the local table yet. We do this
-    # more accurately, so we need to allow comparing against both END and
-    # END|LABEL.
-    class ParamToken < Token
-      def ==(other) # :nodoc:
-        (self[0...-1] == other[0...-1]) && (
-          (other[3] == Translation::Ripper::EXPR_END) ||
-          (other[3] == Translation::Ripper::EXPR_END | Translation::Ripper::EXPR_LABEL)
-        )
-      end
-    end
-
     # A heredoc in this case is a list of tokens that belong to the body of the
     # heredoc that should be appended onto the list of tokens when the heredoc
     # closes.
@@ -679,42 +619,9 @@ module Prism
 
         token =
           case event
-          when :on___end__
-            EndContentToken.new([[lineno, column], event, value, lex_state])
-          when :on_comment
-            IgnoreStateToken.new([[lineno, column], event, value, lex_state])
           when :on_heredoc_end
-            # Heredoc end tokens can be emitted in an odd order, so we don't
-            # want to bother comparing the state on them.
             last_heredoc_end = token.location.end_offset
-            IgnoreStateToken.new([[lineno, column], event, value, lex_state])
-          when :on_ident
-            if lex_state == Translation::Ripper::EXPR_END
-              # If we have an identifier that follows a method name like:
-              #
-              #     def foo bar
-              #
-              # then Ripper will mark bar as END|LABEL if there is a local in a
-              # parent scope named bar because it hasn't pushed the local table
-              # yet. We do this more accurately, so we need to allow comparing
-              # against both END and END|LABEL.
-              ParamToken.new([[lineno, column], event, value, lex_state])
-            elsif lex_state == Translation::Ripper::EXPR_END | Translation::Ripper::EXPR_LABEL
-              # In the event that we're comparing identifiers, we're going to
-              # allow a little divergence. Ripper doesn't account for local
-              # variables introduced through named captures in regexes, and we
-              # do, which accounts for this difference.
-              IdentToken.new([[lineno, column], event, value, lex_state])
-            else
-              Token.new([[lineno, column], event, value, lex_state])
-            end
-          when :on_embexpr_end
-            IgnoreStateToken.new([[lineno, column], event, value, lex_state])
-          when :on_ignored_nl
-            # Ignored newlines can occasionally have a LABEL state attached to
-            # them which doesn't actually impact anything. We don't mirror that
-            # state so we ignored it.
-            IgnoredNewlineToken.new([[lineno, column], event, value, lex_state])
+            Token.new([[lineno, column], event, value, lex_state])
           when :on_regexp_end
             # On regex end, Ripper scans and then sets end state, so the ripper
             # lexed output is begin, when it should be end. prism sets lex state
