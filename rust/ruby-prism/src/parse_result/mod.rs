@@ -119,6 +119,15 @@ impl<'pr> ParseResult<'pr> {
         &self.source[start..end]
     }
 
+    /// Returns a slice containing the offsets of the start of each line in the source string
+    /// that was parsed.
+    #[must_use]
+    pub fn line_offsets(&self) -> &'pr [u32] {
+        unsafe {
+            let list = &(*self.parser.as_ptr()).line_offsets;
+            std::slice::from_raw_parts(list.offsets, list.size)
+        }
+    }
     /// Returns an iterator that can be used to iterate over the errors in the
     /// parse result.
     #[must_use]
