@@ -66,6 +66,27 @@ mod tests {
     }
 
     #[test]
+    fn line_offsets_test() {
+        let source = "";
+        let result = parse(source.as_ref());
+
+        let expected: [u32; 1] = [0];
+        assert_eq!(expected, result.line_offsets());
+
+        let source = "1 + 1";
+        let result = parse(source.as_ref());
+
+        let expected: [u32; 1] = [0];
+        assert_eq!(expected, result.line_offsets());
+
+        let source = "begin\n1 + 1\n2 + 2\nend";
+        let result = parse(source.as_ref());
+
+        let expected: [u32; 4] = [0, 6, 12, 18];
+        assert_eq!(expected, result.line_offsets());
+    }
+
+    #[test]
     fn magic_comments_test() {
         use crate::MagicComment;
 
