@@ -611,10 +611,10 @@ module Prism
     BOM_FLUSHED = RUBY_VERSION >= "3.3.0"
     private_constant :BOM_FLUSHED
 
-    attr_reader :source, :options
+    attr_reader :code, :options
 
-    def initialize(source, **options)
-      @source = source
+    def initialize(code, **options)
+      @code = code
       @options = options
     end
 
@@ -624,12 +624,13 @@ module Prism
       state = :default
       heredoc_stack = [[]] #: Array[Array[Heredoc::PlainHeredoc | Heredoc::DashHeredoc | Heredoc::DedentingHeredoc]]
 
-      result = Prism.lex(source, **options)
+      result = Prism.lex(code, **options)
+      @source = result.source
       result_value = result.value
       previous_state = nil #: State?
       last_heredoc_end = nil #: Integer?
 
-      bom = source.byteslice(0..2) == "\xEF\xBB\xBF"
+      bom = code.byteslice(0..2) == "\xEF\xBB\xBF"
 
       result_value.each_with_index do |(token, lex_state), index|
         lineno = token.location.start_line
@@ -763,7 +764,7 @@ module Prism
                   end_offset += 3
                 end
 
-                tokens << Token.new([[lineno, 0], :on_nl, source.byteslice(start_offset...end_offset), lex_state])
+                tokens << Token.new([[lineno, 0], :on_nl, code.byteslice(start_offset...end_offset), lex_state])
               end
             end
 
@@ -857,7 +858,39 @@ module Prism
       # We sort by location to compare against Ripper's output
       tokens.sort_by!(&:location)
 
-      Result.new(tokens, result.comments, result.magic_comments, result.data_loc, result.errors, result.warnings, Source.for(source))
+      # Add :on_sp tokens
+      tokens = add_on_sp_tokens(tokens)
+
+      Result.new(tokens, result.comments, result.magic_comments, result.data_loc, result.errors, result.warnings, @source)
+    end
+
+    def add_on_sp_tokens(tokens)
+      new_tokens = []
+
+      last_token_state = Translation::Ripper::Lexer::State.new(Translation::Ripper::EXPR_BEG)
+      last_token_end = 0
+
+      tokens.each do |token|
+        line, column = token.location
+        start_offset = @source.line_to_byte_offset(line) + column
+        if start_offset > last_token_end
+          new_tokens << Token.new([
+            [
+              @source.line(last_token_end),
+              @source.column(last_token_end),
+            ],
+            :on_sp,
+            @source.slice(last_token_end, start_offset - last_token_end),
+            last_token_state
+          ])
+        end
+        new_tokens << token
+
+        last_token_state = token.state
+        last_token_end = start_offset + token.value.bytesize
+      end
+
+      new_tokens
     end
   end
 

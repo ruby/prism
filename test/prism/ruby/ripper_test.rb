@@ -74,6 +74,10 @@ module Prism
       "strings.txt",
       "whitequark/dedenting_heredoc.txt",
       "whitequark/procarg0.txt",
+      "dos_endings.txt",
+      "seattlerb/str_lit_concat_bad_encodings.txt",
+      "seattlerb/utf8_bom.txt",
+      "unparser/corpus/semantic/dstr.txt",
     ]
 
     Fixture.each_for_current_ruby(except: incorrect | omitted_sexp_raw) do |fixture|
@@ -92,7 +96,7 @@ module Prism
       assert_equal(expected, lexer.parse[0].to_a)
       assert_equal(lexer.parse[0].to_a, lexer.scan[0].to_a)
 
-      assert_equal(%i[on_int on_op], Translation::Ripper::Lexer.new("1 +").lex.map(&:event))
+      assert_equal(%i[on_int on_sp on_op], Translation::Ripper::Lexer.new("1 +").lex.map(&:event))
       assert_raise(SyntaxError) { Translation::Ripper::Lexer.new("1 +").lex(raise_errors: true) }
     end
 
@@ -121,12 +125,18 @@ module Prism
     def assert_ripper_lex(source)
       prism = Translation::Ripper.lex(source)
       ripper = Ripper.lex(source)
-      ripper.reject! { |elem| elem[1] == :on_sp } # Prism doesn't emit on_sp
+
       ripper.sort_by! { |elem| elem[0] } # Prism emits tokens by their order in the code, not in parse order
 
       [prism.size, ripper.size].max.times do |i|
         expected = ripper[i]
         actual = prism[i]
+
+        # Since :on_sp tokens are synthesized on Prism, their state doesn't always line up.
+        if expected[1] == :on_sp && actual[1] == :on_sp
+          expected[3] = actual[3] = nil
+        end
+
         # Since tokens related to heredocs are not emitted in the same order,
         # the state also doesn't line up.
         if expected[1] == :on_heredoc_end && actual[1] == :on_heredoc_end

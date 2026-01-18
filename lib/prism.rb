@@ -61,8 +61,7 @@ module Prism
   #   Prism::lex_compat(source, **options) -> LexCompat::Result
   #
   # Returns a parse result whose value is an array of tokens that closely
-  # resembles the return value of Ripper::lex. The main difference is that the
-  # `:on_sp` token is not emitted.
+  # resembles the return value of Ripper::lex.
   #
   # For supported options, see Prism::parse.
   def self.lex_compat(source, **options)
