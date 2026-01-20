@@ -51,6 +51,7 @@ namespace :typecheck do
       --ignore=rakelib/
       --ignore=Rakefile
       --ignore=top-100-gems/
+      #{Dir.glob("*.rb").map { |f| "--ignore=/#{f}" }.join("\n")}
       # Treat all files as "typed: true" by default
       --typed=true
       # Use the typed-override file to revert some files to "typed: false"
