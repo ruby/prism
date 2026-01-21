@@ -2,6 +2,7 @@
 name = "ruby-prism"
 version = "1.8.0"
 edition = "2021"
+license = "MIT"
 license-file = "../../LICENSE.md"
 repository = "https://github.com/ruby/prism"
 description = "Rustified version of Ruby's prism parsing library"
