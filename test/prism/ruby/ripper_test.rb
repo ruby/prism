@@ -110,6 +110,22 @@ module Prism
       include Events
     end
 
+    class ObjectEvents < Translation::Ripper
+      OBJECT = BasicObject.new
+      Prism::Translation::Ripper::PARSER_EVENTS.each do |event|
+        define_method(:"on_#{event}") { |*args| OBJECT }
+      end
+    end
+
+    Fixture.each_for_current_ruby(except: incorrect) do |fixture|
+      define_method("#{fixture.test_name}_events") do
+        source = fixture.read
+        # Similar to test/ripper/assert_parse_files.rb in CRuby
+        object_events = ObjectEvents.new(source)
+        assert_nothing_raised { object_events.parse }
+      end
+    end
+
     def test_events
       source = "1 rescue 2"
       ripper = RipperEvents.new(source)
