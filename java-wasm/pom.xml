@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.prism</groupId>
-  <artifactId>java-prism</artifactId>
-  <version>999-SNAPSHOT</version>
+  <groupId>org.jruby</groupId>
+  <artifactId>chicory-prism</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <name>Java Prism</name>
-  <description>Pure Java Prism interpreting WASM</description>
+  <description>Pure Java Prism using Chicory WASM runtime</description>
 
 
   <properties>
