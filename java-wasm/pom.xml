@@ -130,7 +130,7 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.prism.Prism</name>
+              <name>org.prism.PrismParser</name>
               <wasmFile>src/main/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>
