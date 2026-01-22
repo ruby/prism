@@ -15,7 +15,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 
-    <chicory.version>1.2.1</chicory.version>
+    <chicory.version>1.6.1</chicory.version>
     <junit.version>5.12.1</junit.version>
   </properties>
 
@@ -47,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>com.dylibso.chicory</groupId>
-      <artifactId>host-module-annotations-experimental</artifactId>
+      <artifactId>annotations</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -81,7 +81,7 @@
           <annotationProcessorPaths>
             <path>
               <groupId>com.dylibso.chicory</groupId>
-              <artifactId>host-module-processor-experimental</artifactId>
+              <artifactId>annotations-processor</artifactId>
               <version>${chicory.version}</version>
             </path>
           </annotationProcessorPaths>
@@ -112,16 +112,16 @@
       </plugin>
       <plugin>
         <groupId>com.dylibso.chicory</groupId>
-        <artifactId>aot-maven-plugin-experimental</artifactId>
+        <artifactId>chicory-compiler-maven-plugin</artifactId>
         <version>${chicory.version}</version>
         <executions>
           <execution>
             <id>prism</id>
             <goals>
-              <goal>wasm-aot-gen</goal>
+              <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.prism.Prism</name>
+              <name>org.prism.PrismParser</name>
               <wasmFile>src/main/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>
