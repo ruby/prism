@@ -1,11 +1,12 @@
 package org.prism;
 
-import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.annotations.WasmModuleInterface;
+import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
+import com.dylibso.chicory.wasm.WasmModule;
 import com.dylibso.chicory.wasm.types.MemoryLimits;
 
 import java.nio.charset.StandardCharsets;
@@ -21,9 +22,11 @@ public class Prism implements AutoCloseable {
     }
     public Prism(WasiOptions wasiOpts) {
         wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
-        instance = Instance.builder(PrismModule.load())
+        WasmModule module = PrismParser.load();
+        PrismParser parser = new PrismParser();
+        instance = Instance.builder(module)
             .withMemoryFactory(limits -> new ByteArrayMemory(new MemoryLimits(10, MemoryLimits.MAX_PAGES)))
-            .withMachineFactory(PrismModule::create)
+            .withMachineFactory(parser.machineFactory())
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
         exports = new Prism_ModuleExports(instance);
