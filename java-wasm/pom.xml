@@ -130,8 +130,8 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.prism.PrismModule</name>
-              <wasmFile>src/test/resources/prism.wasm</wasmFile>
+              <name>org.prism.Prism</name>
+              <wasmFile>src/main/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>
         </executions>
