@@ -1,11 +1,11 @@
-@ ProgramNode (location: (1,0)-(1,6))
+@ ProgramNode (location: (1,0)-(1,7))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(1,6))
+    @ StatementsNode (location: (1,0)-(1,7))
     ├── flags: ∅
     └── body: (length: 1)
-        └── @ CallNode (location: (1,0)-(1,6))
+        └── @ CallNode (location: (1,0)-(1,7))
             ├── flags: newline, ignore_visibility
             ├── receiver: ∅
             ├── call_operator_loc: ∅
@@ -14,6 +14,7 @@
             ├── opening_loc: (1,1)-(1,2) = "("
             ├── arguments: ∅
             ├── closing_loc: (1,6)-(1,7) = ")"
+            ├── equal_loc: ∅
             └── block:
                 @ BlockArgumentNode (location: (1,2)-(1,6))
                 ├── flags: ∅
@@ -27,5 +28,6 @@
                 │   ├── opening_loc: ∅
                 │   ├── arguments: ∅
                 │   ├── closing_loc: ∅
+                │   ├── equal_loc: ∅
                 │   └── block: ∅
                 └── operator_loc: (1,2)-(1,3) = "&"

@@ -18,11 +18,11 @@ The templated files contain all of the code required to allocate and initialize 
 
 In order to provide the best possible error tolerance, the parser is hand-written. It is structured using Pratt parsing, a technique developed by Vaughan Pratt back in the 1970s. Below are a bunch of links to articles and papers that explain Pratt parsing in more detail.
 
-* https://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf
+* https://github.com/tdop/tdop.github.io/raw/master/original.pdf
 * https://tdop.github.io/
 * https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/
 * https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
-* https://chidiwilliams.com/post/on-recursive-descent-and-pratt-parsing/
+* https://chidiwilliams.com/posts/on-recursive-descent-and-pratt-parsing
 
 You can find most of the functions that correspond to constructs in the Pratt parsing algorithm in `prism.c`. As a couple of examples:
 

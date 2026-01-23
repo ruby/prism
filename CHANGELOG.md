@@ -4,7 +4,89 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-01-12
+
+### Added
+
+- Optimize ruby visitor.
+- Report unterminated construct errors at opening token.
+
+### Changed
+
+- Correctly expose ripper state.
+- Use one file for versioned parser classes.
+- Fix denominator of rational float literal.
+- Decouple ripper translator from ripper library.
+- Sync Prism::Translation::ParserCurrent with Ruby 4.0.
+
 ## [Unreleased]
+
+## [1.7.0] - 2025-12-18
+
+### Added
+
+- Support `4.1` as a version option.
+- Add `equal_loc` to `CallNode`.
+- Add `len()`/`is_empty()` to `ConstantList` and `NodeList` in the Rust API.
+
+### Changed
+
+- Rename version `3.5` to version `4.0`.
+- Fix compiling the gem from source on Windows.
+- Fix parsing of unary method calls like `42.~@`.
+- Reject `def f a, (b) = 1`.
+- Reject endless method as a block parameter default.
+- Reject variable capture in alternative pattern.
+- Many fixes in regards to memory safety, found through fuzzing.
+- Many fixes to better handle invalid syntax, also found through fuzzing.
+- Fix the ruby version used by the `ripper` translator.
+- Fix `ruby_parser` translation comment processing.
+
+## [1.6.0] - 2025-10-16
+
+### Added
+
+- Add support for passing `"current"` as the version option to `Prism.*` APIs.
+
+### Changed
+
+- Remove a compiler warning for a missing unsigned cast for a shift value.
+
+## [1.5.2] - 2025-10-09
+
+### Changed
+
+- Fix character literal forced encoding when a unicode escape sequence is used.
+- Reject `1 if foo = bar baz`.
+- Clear static literal flag on interpolated strings.
+- Reject optional argument/endless method definition ambiguity.
+
+## [1.5.1] - 2025-09-13
+
+### Changed
+
+- Revert of a bug introduced with static literal flags on interpolated strings.
+
+## [1.5.0] - 2025-09-12
+
+### Added
+
+- Add `Prism::Translation::ParserCurrent`.
+- Add `Integer::to_u32_digits` for the Rust API.
+- Add `pm_comment_type_t` field for the Rust API.
+- Support leading logical operators for CRuby 3.5+.
+
+### Changed
+
+- Mark Prism as ractor-safe.
+- Enforce a minimum version for the parser translation layer.
+- Many fixes to the parser translation layer.
+- Accept a newline after the `defined?` keyword.
+- Reject `true && not true`.
+- Make `it = it` assign nil to match parse.y behavior [Bug #21139].
+- Some fixes to the ruby parser translation layer.
+- Ensure call nodes have the correct ending location.
+- Reject `foo && return bar`.
 
 ## [1.4.0] - 2025-03-18
 
@@ -649,7 +731,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
+[1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0
+[1.5.2]: https://github.com/ruby/prism/compare/v1.5.1...v1.5.2
+[1.5.1]: https://github.com/ruby/prism/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/ruby/prism/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ruby/prism/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ruby/prism/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ruby/prism/compare/v1.1.0...v1.2.0

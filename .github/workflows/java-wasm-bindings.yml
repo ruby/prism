@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -35,7 +35,7 @@ jobs:
         run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -45,7 +45,7 @@ jobs:
         run: mvn -B install
         working-directory: java-wasm
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: prism.wasm
           path: java-wasm/src/main/resources/prism.wasm

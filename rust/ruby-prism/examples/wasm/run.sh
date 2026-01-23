@@ -7,7 +7,7 @@ WASI_SDK_VERSION="$WASI_SDK_VERSION_MAJOR.0"
 TMPDIR="$(pwd)/tmp"
 WASI_SDK_PATH="${TMPDIR}/wasi-sdk-${WASI_SDK_VERSION}"
 WASI_SDK_TAR="${TMPDIR}/wasi-sdk.tar.gz"
-WASM_BUILD_DIR="./target/wasm32-wasi/debug/examples"
+WASM_BUILD_DIR="./target/wasm32-wasip1/debug/examples"
 WASM_FILE="${WASM_BUILD_DIR}/wasm.wasm"
 
 export WASI_SDK_PATH
@@ -45,7 +45,7 @@ download_wasi_sdk() {
 }
 
 build_wasm() {
-  cargo build --target=wasm32-wasi --example wasm >&2
+  cargo build --target=wasm32-wasip1 --example wasm >&2
   echo "WASM built to ${WASM_FILE}" >&2
 }
 

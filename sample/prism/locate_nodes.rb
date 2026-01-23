@@ -40,11 +40,12 @@ def locate(node, line:, column:)
   while (node = queue.shift)
     result << node
 
-    # Nodes have `child_nodes` and `compact_child_nodes`. `child_nodes` have
-    # consistent indices but include `nil` for optional fields that are not
-    # present, whereas `compact_child_nodes` has inconsistent indices but does
-    # not include `nil` for optional fields that are not present.
-    node.compact_child_nodes.find do |child|
+    # Nodes have `child_nodes`, `compact_child_nodes`, and `each_child_node`.
+    # `child_nodes` have consistent indices but include `nil` for optional fields that
+    # are not present, whereas `compact_child_nodes` has inconsistent indices but does
+    # not include `nil` for optional fields that are not present. `each_child_node` is
+    # like `compact_child_nodes`, returning an enumerator instead of an array.
+    node.each_child_node.find do |child|
       queue << child if covers?(child.location, line: line, column: column)
     end
   end

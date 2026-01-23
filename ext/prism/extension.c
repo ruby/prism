@@ -25,6 +25,7 @@ VALUE rb_cPrismLexResult;
 VALUE rb_cPrismParseLexResult;
 VALUE rb_cPrismStringQuery;
 VALUE rb_cPrismScope;
+VALUE rb_cPrismCurrentVersionError;
 
 VALUE rb_cPrismDebugEncoding;
 
@@ -199,7 +200,12 @@ build_options_i(VALUE key, VALUE value, VALUE argument) {
         if (!NIL_P(value)) {
             const char *version = check_string(value);
 
-            if (!pm_options_version_set(options, version, RSTRING_LEN(value))) {
+            if (RSTRING_LEN(value) == 7 && strncmp(version, "current", 7) == 0) {
+                const char *current_version = RSTRING_PTR(rb_const_get(rb_cObject, rb_intern("RUBY_VERSION")));
+                if (!pm_options_version_set(options, current_version, 3)) {
+                    rb_exc_raise(rb_exc_new_cstr(rb_cPrismCurrentVersionError, current_version));
+                }
+            } else if (!pm_options_version_set(options, version, RSTRING_LEN(value))) {
                 rb_raise(rb_eArgError, "invalid version: %" PRIsVALUE, value);
             }
         }
@@ -888,7 +894,7 @@ parse_input(pm_string_t *input, const pm_options_t *options) {
  *       version of Ruby syntax (which you can trigger with `nil` or
  *       `"latest"`). You may also restrict the syntax to a specific version of
  *       Ruby, e.g., with `"3.3.0"`. To parse with the same syntax version that
- *       the current Ruby is running use `version: RUBY_VERSION`. Raises
+ *       the current Ruby is running use `version: "current"`. Raises
  *       ArgumentError if the version is not currently supported by Prism.
  */
 static VALUE
@@ -994,6 +1000,14 @@ profile_file(int argc, VALUE *argv, VALUE self) {
     return Qnil;
 }
 
+static int
+parse_stream_eof(void *stream) {
+    if (rb_funcall((VALUE) stream, rb_intern("eof?"), 0)) {
+        return 1;
+    }
+    return 0;
+}
+
 /**
  * An implementation of fgets that is suitable for use with Ruby IO objects.
  */
@@ -1034,7 +1048,7 @@ parse_stream(int argc, VALUE *argv, VALUE self) {
     pm_parser_t parser;
     pm_buffer_t buffer;
 
-    pm_node_t *node = pm_parse_stream(&parser, &buffer, (void *) stream, parse_stream_fgets, &options);
+    pm_node_t *node = pm_parse_stream(&parser, &buffer, (void *) stream, parse_stream_fgets, parse_stream_eof, &options);
     rb_encoding *encoding = rb_enc_find(parser.encoding->name);
 
     VALUE source = pm_source_new(&parser, encoding, options.freeze);
@@ -1355,6 +1369,8 @@ Init_prism(void) {
     rb_cPrismParseLexResult = rb_define_class_under(rb_cPrism, "ParseLexResult", rb_cPrismResult);
     rb_cPrismStringQuery = rb_define_class_under(rb_cPrism, "StringQuery", rb_cObject);
     rb_cPrismScope = rb_define_class_under(rb_cPrism, "Scope", rb_cObject);
+
+    rb_cPrismCurrentVersionError = rb_const_get(rb_cPrism, rb_intern("CurrentVersionError"));
 
     // Intern all of the IDs eagerly that we support so that we don't have to do
     // it every time we parse.

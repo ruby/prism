@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
+          toolchain: stable
       - name: Install doxygen and dependencies
         run: |
           sudo apt-get update
@@ -59,7 +59,7 @@ jobs:
           cargo doc --no-deps --target-dir ../doc/rust
         working-directory: rust
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: doc
 

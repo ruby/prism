@@ -11,7 +11,10 @@ desc "Generate all ERB template based files"
 task templates: Prism::Template::TEMPLATES
 
 make = RUBY_PLATFORM.match?(/openbsd|freebsd/) ? "gmake" : "make"
-task(make: :templates) { sh(make) }
+task(make: :templates) {
+  ENV["MAKEFLAGS"] ||= "-j"
+  sh(make)
+}
 task(make_no_debug: :templates) { sh("#{make} all-no-debug") }
 task(make_minimal: :templates) { sh("#{make} minimal") }
 

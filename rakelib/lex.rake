@@ -62,11 +62,10 @@ module Prism
     def parallelize(items, &block)
       Thread.abort_on_exception = true
 
-      queue = Queue.new
-      items.each { |item| queue << item }
+      queue = Queue.new(items).close
 
       workers =
-        ENV.fetch("WORKERS") { 16 }.to_i.times.map do
+        ENV.fetch("WORKERS", "16").to_i.times.map do
           parallelize_thread(queue, &block)
         end
 
@@ -77,7 +76,11 @@ module Prism
 
     # Create a new thread with a minimal number of locals that it can access.
     def parallelize_thread(queue, &block)
-      Thread.new { block.call(queue.shift) until queue.empty? }
+      Thread.new do
+        while item = queue.pop
+          block.call(item)
+        end
+      end
     end
   end
 end
@@ -123,7 +126,6 @@ TARGETS.each do |name, target|
   desc "Lex #{repo} and compare with lex_compat"
   task "lex:#{name}" => [dirpath, :compile] do
     $:.unshift(File.expand_path("../lib", __dir__))
-    require "ripper"
     require "prism"
 
     plain_text = ENV.fetch("CI", false)
@@ -166,7 +168,6 @@ end
 desc "Lex files and compare with lex_compat"
 task lex: :compile do
   $:.unshift(File.expand_path("../lib", __dir__))
-  require "ripper"
   require "prism"
 
   plain_text = ENV.fetch("CI", false)
@@ -198,7 +199,6 @@ desc "Lex against the most recent version of various rubygems"
 task "lex:rubygems": [:compile, "tmp/failing"] do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "net/http"
-  require "ripper"
   require "rubygems/package"
   require "tmpdir"
   require "prism"
@@ -330,7 +330,6 @@ desc "Lex against the top 100 rubygems"
 task "lex:topgems": ["download:topgems", :compile] do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "net/http"
-  require "ripper"
   require "rubygems/package"
   require "tmpdir"
   require "prism"

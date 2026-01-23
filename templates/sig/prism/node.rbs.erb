@@ -12,6 +12,7 @@ module Prism
     def child_nodes: () -> Array[Prism::node?]
     def comment_targets: () -> Array[Prism::node | Location]
     def compact_child_nodes: () -> Array[Prism::node]
+    def each_child_node: () { (Prism::node) -> void } -> void | () -> Enumerator[Prism::node]
     def self.fields: () -> Array[Prism::Reflection::Field]
     def type: () -> Symbol
     def self.type: () -> Symbol

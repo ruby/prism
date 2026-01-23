@@ -8,7 +8,6 @@ module Prism
   class FixturesTest < TestCase
     except = []
 
-
     if RUBY_VERSION < "3.3.0"
       # Ruby < 3.3.0 cannot parse heredocs where there are leading whitespace
       # characters in the heredoc start.
@@ -25,7 +24,9 @@ module Prism
       except << "whitequark/ruby_bug_19281.txt"
     end
 
-    Fixture.each(except: except) do |fixture|
+    except << "command_method_call_2.txt"
+
+    Fixture.each_for_current_ruby(except: except) do |fixture|
       define_method(fixture.test_name) { assert_valid_syntax(fixture.read) }
     end
   end

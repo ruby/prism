@@ -114,7 +114,7 @@ fn source_files<P: AsRef<Path>>(root_dir: P) -> Vec<String> {
 
             if Path::new(&path)
                 .extension()
-                .map_or(false, |ext| ext.eq_ignore_ascii_case("c"))
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("c"))
             {
                 files.push(path);
             }

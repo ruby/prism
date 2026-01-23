@@ -20,61 +20,57 @@ jobs:
     name: cargo:test
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
-          targets: wasm32-wasi
-      - uses: actions/cache@v4
+          toolchain: stable
+          targets: wasm32-wasip1
+      - uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
       - name: Run tests
         run: bundle exec rake cargo:test
+
       - name: Run examples
+        if: ${{ matrix.os != 'windows-latest' }}
         run: bundle exec rake cargo:examples
 
   lint:
     name: cargo:lint
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.71.1"
+          toolchain: "1.91.1"
           components: clippy, rustfmt
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo--${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
       - name: rake cargo:build
         run: bundle exec rake cargo:build
       - name: rake cargo:lint
@@ -88,52 +84,18 @@ jobs:
       matrix:
         sanitizer: [address]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: head
+          ruby-version: 3.4
           bundler-cache: true
       - name: rake cargo:build
         run: bundle exec rake cargo:build
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-10-24
+          toolchain: nightly
           target: "x86_64-unknown-linux-gnu"
           components: "rust-src"
       - name: Test with sanitizer
         run: bundle exec rake cargo:sanitize:${{ matrix.sanitizer }}
-
-  # We need to figure out what to do here. When you run publish it checks
-  # against the latest version published to crates, which means if we have any
-  # breaking changes in the bindings then this fails.
-  #
-  # publish:
-  #   name: cargo:publish
-  #   strategy:
-  #     fail-fast: false
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: head
-  #         bundler-cache: true
-  #     - name: Set up Rust
-  #       uses: dtolnay/rust-toolchain@master
-  #       with:
-  #         toolchain: "1.71.1"
-  #         targets: wasm32-wasi
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry
-  #           ~/.cargo/git
-  #           target
-  #         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-  #           ${{ runner.os }}-cargo
-  #     - name: Publish crates (dry-run)
-  #       run: bundle exec rake cargo:publish:dry

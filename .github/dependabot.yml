@@ -24,9 +24,8 @@ updates:
       - '/gemfiles/3.2'
       - '/gemfiles/3.3'
       - '/gemfiles/3.4'
-      - '/gemfiles/3.5'
-      - '/gemfiles/jruby'
-      - '/gemfiles/truffleruby'
+      - '/gemfiles/4.0'
+      - '/gemfiles/4.1'
       - '/gemfiles/typecheck'
     schedule:
       interval: 'weekly'
@@ -34,3 +33,5 @@ updates:
       ruby-deps:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "sorbet"
