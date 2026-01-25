@@ -40,10 +40,9 @@ public class Prism implements AutoCloseable {
         int sourcePointer = 0;
         int optionsPointer = 0;
         int bufferPointer = 0;
-        int resultPointer = 0;
         byte[] result;
         try {
-            sourcePointer = exports.calloc(1, sourceLength);
+            sourcePointer = exports.calloc(sourceLength, 1);
             exports.memory().write(sourcePointer, source);
 
             optionsPointer = exports.calloc(1, packedOptions.length);
@@ -54,10 +53,8 @@ public class Prism implements AutoCloseable {
 
             exports.pmSerializeParse(bufferPointer, sourcePointer, sourceLength, optionsPointer);
 
-            resultPointer = exports.pmBufferValue(bufferPointer);
-
             result = instance.memory().readBytes(
-                resultPointer,
+                exports.pmBufferValue(bufferPointer),
                 exports.pmBufferLength(bufferPointer));
         } finally {
             if (sourcePointer != 0) {
@@ -67,10 +64,8 @@ public class Prism implements AutoCloseable {
                 exports.free(optionsPointer);
             }
             if (bufferPointer != 0) {
+                exports.pmBufferFree(bufferPointer);
                 exports.free(bufferPointer);
-            }
-            if (resultPointer != 0) {
-                exports.free(resultPointer);
             }
         }
 
