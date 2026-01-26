@@ -23,15 +23,16 @@ module Prism
 
   def self.<%= method %>: (
     String source,
+    ?command_line: String,
     ?encoding: Encoding | false,
     ?filepath: String,
     ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,
-    ?offset: Integer,
+    ?partial_script: bool,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?version: String
   ) -> <%= return_type %>
   <%- end -%>
 
@@ -61,14 +62,15 @@ module Prism
 
   def self.<%= method %>: (
     String filepath,
+    ?command_line: String,
     ?encoding: Encoding | false,
     ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,
-    ?offset: Integer,
+    ?partial_script: bool,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?version: String
   ) -> <%= return_type %>
   <%- end -%>
 
@@ -78,15 +80,16 @@ module Prism
 
   def self.parse_stream: (
     _Stream stream,
+    ?command_line: String,
     ?encoding: Encoding | false,
     ?filepath: String,
     ?freeze: bool,
     ?frozen_string_literal: bool,
     ?line: Integer,
     ?main_script: bool,
-    ?offset: Integer,
+    ?partial_script: bool,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?version: String
   ) -> ParseResult
 
   def self.scope: (?locals: Array[Symbol], ?forwarding: Array[Symbol]) -> Scope
