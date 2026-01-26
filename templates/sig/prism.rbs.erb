@@ -41,10 +41,6 @@ module Prism
     ?bool freeze
   ) -> ParseResult
 
-  def self.lex_ripper: (
-    String source
-  ) -> Array[[[Integer, Integer], Symbol, String, untyped]]
-
   # Methods taking a path to a Ruby file:
   <%-
     {
