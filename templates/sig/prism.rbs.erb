@@ -31,7 +31,8 @@ module Prism
     ?main_script: bool,
     ?offset: Integer,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?verbose: bool,
+    ?version: String
   ) -> <%= return_type %>
   <%- end -%>
 
@@ -68,7 +69,8 @@ module Prism
     ?main_script: bool,
     ?offset: Integer,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?verbose: bool,
+    ?version: String
   ) -> <%= return_type %>
   <%- end -%>
 
@@ -86,8 +88,11 @@ module Prism
     ?main_script: bool,
     ?offset: Integer,
     ?scopes: Array[Array[Symbol]],
-    ?verbose: bool
+    ?verbose: bool,
+    ?version: String
   ) -> ParseResult
 
   def self.scope: (?locals: Array[Symbol], ?forwarding: Array[Symbol]) -> Scope
+
+  def self.node_for: (Method | UnboundMethod | Proc callable) -> (DefNode | LambdaNode | CallNode | ForNode)
 end
