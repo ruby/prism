@@ -1,70 +1,70 @@
 package org.prism;
 
-import com.dylibso.chicory.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ByteArrayMemory;
-import com.dylibso.chicory.runtime.ExportFunction;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
-import com.dylibso.chicory.runtime.WasmRuntimeException;
-import com.dylibso.chicory.wasi.WasiOptions;
-import com.dylibso.chicory.wasi.WasiPreview1;
+import com.dylibso.chicory.runtime.InterpreterMachine;
+import com.dylibso.chicory.wasm.Parser;
 import com.dylibso.chicory.wasm.WasmModule;
-import com.dylibso.chicory.wasm.types.MemoryLimits;
 
-import java.nio.charset.StandardCharsets;
-
-@WasmModuleInterface(WasmResource.absoluteFile)
 public class PrismWASM extends Prism {
-    private final ExportFunction calloc;
-    private final ExportFunction pmSerializeParse;
-    private final ExportFunction pmBufferInit;
-    private final ExportFunction pmBufferSizeof;
-    private final ExportFunction pmBufferValue;
-    private final ExportFunction pmBufferLength;
-
+    private final Prism_ModuleExports exports;
     private final Instance instance;
 
     public PrismWASM() {
         super();
-        instance = Instance.builder(PrismParser.load())
+        WasmModule module = Parser.parse(
+            PrismWASM.class.getResourceAsStream("/prism.wasm"));
+        instance = Instance.builder(module)
             .withMemoryFactory(ByteArrayMemory::new)
-            .withMachineFactory(PrismParser::create)
+            .withMachineFactory(InterpreterMachine::new)
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
-
-        calloc = instance.exports().function("calloc");
-        pmSerializeParse = instance.exports().function("pm_serialize_parse");
-        pmBufferInit = instance.exports().function("pm_buffer_init");
-        pmBufferSizeof = instance.exports().function("pm_buffer_sizeof");
-        pmBufferValue = instance.exports().function("pm_buffer_value");
-        pmBufferLength = instance.exports().function("pm_buffer_length");
+        exports = new Prism_ModuleExports(instance);
     }
 
     @Override
     public byte[] serialize(byte[] packedOptions, byte[] sourceBytes, int sourceLength) {
-        var sourcePointer = calloc.apply(1, sourceLength);
-        instance.memory().write((int) sourcePointer[0], sourceBytes, 0, sourceLength);
+        int sourcePointer = 0;
+        int optionsPointer = 0;
+        int bufferPointer = 0;
+        byte[] result;
+        try {
+            sourcePointer = exports.calloc(1, sourceLength + 1);
+            instance.memory().write(sourcePointer, sourceBytes, 0, sourceLength);
+            instance.memory().writeByte(sourcePointer + sourceLength, (byte) 0);
 
-        var optionsPointer = calloc.apply(1, packedOptions.length);
-        instance.memory().write((int) optionsPointer[0], packedOptions);
+            optionsPointer = exports.calloc(1, packedOptions.length);
+            instance.memory().write(optionsPointer, packedOptions);
 
-        var bufferPointer = calloc.apply(pmBufferSizeof.apply()[0], 1);
-        pmBufferInit.apply(bufferPointer);
+            bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
+            exports.pmBufferInit(bufferPointer);
 
-        pmSerializeParse.apply(
-            bufferPointer[0], sourcePointer[0], sourceLength, optionsPointer[0]);
+            exports.pmSerializeParse(
+                bufferPointer, sourcePointer, sourceLength, optionsPointer);
 
-        var result = instance.memory().readBytes(
-            (int) pmBufferValue.apply(bufferPointer[0])[0],
-            (int) pmBufferLength.apply(bufferPointer[0])[0]);
+            result = instance.memory().readBytes(
+                exports.pmBufferValue(bufferPointer),
+                exports.pmBufferLength(bufferPointer));
+        } finally {
+            if (sourcePointer != 0) {
+                exports.pmStringFree(sourcePointer);
+                exports.free(sourcePointer);
+            }
+            if (optionsPointer != 0) {
+                exports.free(optionsPointer);
+            }
+            if (bufferPointer != 0) {
+                exports.pmBufferFree(bufferPointer);
+                exports.free(bufferPointer);
+            }
+        }
 
         return result;
     }
 
-    @Override
-    public void close() {
-        if (wasi != null) {
-            wasi.close();
-        }
+    // DEBUG
+    public int memorySize() {
+        return instance.memory().pages();
     }
 }

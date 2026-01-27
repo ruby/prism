@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class JRubyTest {
     final static String[] JRUBY_BOOT_FILES = {
         "jruby/java.rb",
@@ -55,9 +57,27 @@ public class JRubyTest {
     };
 
     @Test
-    public void basicJRubyTest() throws Throwable{
-        Prism prism = new PrismWASM();
-        byte[] src = new byte[1024*1024];
+    public void jrubyAOT() throws Exception {
+        var prismAot = new PrismAOT();
+
+        for (int i = 0; i < 3; i++) {
+            basicJRubyTest(prismAot);
+        }
+        var memoryPagesBefore = prismAot.memorySize();
+        for (int i = 0; i < 100; i++) {
+            basicJRubyTest(prismAot);
+        }
+        var memoryPagesAfter = prismAot.memorySize();
+        assertEquals(memoryPagesBefore, memoryPagesAfter);
+    }
+
+    @Test
+    public void jrubyWASM() throws Exception {
+        basicJRubyTest(new PrismWASM());
+    }
+
+    private static void basicJRubyTest(Prism prism) throws Exception {
+        byte[] src = new byte[1024 * 1024];
 
         for (var file : JRUBY_BOOT_FILES) {
             byte[] options = ParsingOptions.serialize(
