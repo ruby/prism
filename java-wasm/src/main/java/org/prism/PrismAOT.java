@@ -9,45 +9,46 @@ import com.dylibso.chicory.wasm.types.MemoryLimits;
 
 import java.nio.charset.StandardCharsets;
 
-@WasmModuleInterface(WasmResource.absoluteFile)
 public class PrismAOT extends Prism {
-    private final Instance instance;
     private final Prism_ModuleExports exports;
+    private final Instance instance;
 
     public PrismAOT() {
         super();
-        WasmModule module = PrismParser.load();
-        PrismParser parser = new PrismParser();
-        instance = Instance.builder(module)
-            .withMemoryFactory(limits -> new ByteArrayMemory(new MemoryLimits(10, MemoryLimits.MAX_PAGES)))
-            .withMachineFactory(parser.machineFactory())
+        instance = Instance.builder(PrismParser.load())
+            .withMemoryFactory(ByteArrayMemory::new)
+            .withMachineFactory(PrismParser::create)
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
         exports = new Prism_ModuleExports(instance);
     }
 
-    public byte[] serialize(byte[] packedOptions, byte[] source, int sourceLength) {
+    @Override
+    public byte[] serialize(byte[] packedOptions, byte[] sourceBytes, int sourceLength) {
         int sourcePointer = 0;
         int optionsPointer = 0;
         int bufferPointer = 0;
         byte[] result;
         try {
-            sourcePointer = exports.calloc(sourceLength, 1);
-            exports.memory().write(sourcePointer, source);
+            sourcePointer = exports.calloc(1, sourceLength + 1);
+            instance.memory().write(sourcePointer, sourceBytes, 0, sourceLength);
+            instance.memory().writeByte(sourcePointer + sourceLength, (byte) 0);
 
             optionsPointer = exports.calloc(1, packedOptions.length);
-            exports.memory().write(optionsPointer, packedOptions);
+            instance.memory().write(optionsPointer, packedOptions);
 
             bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
             exports.pmBufferInit(bufferPointer);
 
-            exports.pmSerializeParse(bufferPointer, sourcePointer, sourceLength, optionsPointer);
+            exports.pmSerializeParse(
+                bufferPointer, sourcePointer, sourceLength, optionsPointer);
 
             result = instance.memory().readBytes(
                 exports.pmBufferValue(bufferPointer),
                 exports.pmBufferLength(bufferPointer));
         } finally {
             if (sourcePointer != 0) {
+                exports.pmStringFree(sourcePointer);
                 exports.free(sourcePointer);
             }
             if (optionsPointer != 0) {
@@ -62,18 +63,8 @@ public class PrismAOT extends Prism {
         return result;
     }
 
-    public ParseResult serializeParse(byte[] packedOptions, String source) {
-        var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
-
-        byte[] result = serialize(packedOptions, sourceBytes, sourceBytes.length);
-
-        return Loader.load(result, sourceBytes);
-    }
-
-    @Override
-    public void close() {
-        if (wasi != null) {
-            wasi.close();
-        }
+    // DEBUG CHECK
+    public int memorySize() {
+        return instance.memory().pages();
     }
 }

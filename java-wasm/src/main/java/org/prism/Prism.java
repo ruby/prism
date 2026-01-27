@@ -33,5 +33,9 @@ public abstract class Prism implements AutoCloseable {
     }
 
     @Override
-    public abstract void close();
+    public void close() {
+        if (wasi != null) {
+            wasi.close();
+        }
+    }
 }
