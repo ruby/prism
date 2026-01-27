@@ -12,7 +12,7 @@ fn version_test() {
         CStr::from_ptr(version)
     };
 
-    assert_eq!(&cstring.to_string_lossy(), "1.8.0");
+    assert_eq!(&cstring.to_string_lossy(), "1.9.0");
 }
 
 #[test]
