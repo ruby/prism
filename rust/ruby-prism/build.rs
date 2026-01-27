@@ -372,8 +372,8 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
             NodeFieldType::OptionalLocation => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut pm_location_t = unsafe {{ &raw mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        let start = unsafe {{ (*pointer).start }};")?;
-                writeln!(file, "        if start.is_null() {{")?;
+                writeln!(file, "        let length = unsafe {{ (*pointer).length }};")?;
+                writeln!(file, "        if length == 0 {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
                 writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
@@ -605,9 +605,9 @@ impl<'pr> Node<'pr> {{
     /// Panics if the node type cannot be read.
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
+    #[allow(clippy::cast_ptr_alignment)]
     pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
-        match unsafe {{ (*node).type_ }} {{
-"
+        match unsafe {{ (*node).type_ }} {{"
     )?;
 
     for node in &config.nodes {
