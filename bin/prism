@@ -210,18 +210,10 @@ module Prism
 
     # bin/prism lex_compat [source]
     def lex_compat(argv)
+      require "ripper"
       source, filepath = read_source(argv)
 
-      ripper_value =
-        begin
-          Prism.lex_ripper(source)
-        rescue ArgumentError, SyntaxError
-          # If Ripper raises a syntax error, we want to continue as if it didn't
-          # return any tokens at all. prism won't raise a syntax error, so it's
-          # nicer to still be able to see the tokens that prism generated.
-          []
-        end
-
+      ripper_value = Ripper.lex(source)
       prism_compat = Prism.lex_compat(source, filepath: filepath)
       prism = Prism.lex(source, filepath: filepath)
 
