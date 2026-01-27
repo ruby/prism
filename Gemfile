@@ -11,7 +11,7 @@ gem "rake-compiler"
 gem "ruby_parser"
 gem "test-unit"
 
-platforms :mri, :mswin, :mingw, :x64_mingw do
+platforms :mri, :windows do
   gem "ffi"
   gem "irb"
   gem "ruby_memcheck"
