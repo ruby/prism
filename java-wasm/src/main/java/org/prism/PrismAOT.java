@@ -48,7 +48,6 @@ public class PrismAOT extends Prism {
                 exports.pmBufferLength(bufferPointer));
         } finally {
             if (sourcePointer != 0) {
-                exports.pmStringFree(sourcePointer);
                 exports.free(sourcePointer);
             }
             if (optionsPointer != 0) {
