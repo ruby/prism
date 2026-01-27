@@ -25,6 +25,9 @@ module Prism
     def to_dot: () -> String
     def tunnel: (Integer line, Integer column) -> Array[Prism::node]
     def breadth_first_search: () { (Prism::node) -> bool } -> Prism::node?
+    alias find breadth_first_search
+    def breadth_first_search_all: () { (Prism::node) -> bool } -> Array[Prism::node]
+    alias find_all breadth_first_search_all
     def newline!: (Array[untyped]) -> void
 
     def save: (_Repository repository) -> void

@@ -49,6 +49,9 @@ class Prism::Node
   sig { params(block: T.proc.params(node: Prism::Node).returns(T::Boolean)).returns(T.nilable(Prism::Node)) }
   def breadth_first_search(&block); end
 
+  sig { params(block: T.proc.params(node: Prism::Node).returns(T::Boolean)).returns(T::Array[Prism::Node]) }
+  def breadth_first_search_all(&block); end
+
   sig { abstract.params(visitor: Prism::Visitor).returns(T.untyped) }
   def accept(visitor); end
 
