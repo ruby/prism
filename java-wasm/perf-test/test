@@ -1,16 +1,22 @@
-package org.prism;
+///usr/bin/env jbang "$0" "$@" ; exit $?
 
-import org.jruby.Ruby;
-import org.junit.jupiter.api.Test;
+//DEPS org.jruby:chicory-prism:0.0.1-SNAPSHOT
+//DEPS org.jruby:jruby-complete:10.0.2.0
+
+import static java.lang.System.*;
 
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.jruby.Ruby;
 
-public class JRubyTest {
+import org.prism.Prism;
+import org.prism.ParsingOptions;
+
+public class test {
+
     final static String[] JRUBY_BOOT_FILES = {
         "jruby/java.rb",
         "jruby/java/core_ext.rb",
@@ -56,58 +62,36 @@ public class JRubyTest {
         "META-INF/jruby.home/lib/ruby/stdlib/rubygems/version.rb",
     };
 
-    private class TestingPrism extends Prism {
-        TestingPrism() {
-            super();
-        }
+    public static void main(String... args) throws Exception {
+        out.println("Starting");
+        var count = 100;
 
-        public int memPages() {
-            return exports.memory().pages();
-        }
-    }
-
-    @Test
-    public void jrubyReproducer() throws Exception {
-        var prism = new TestingPrism();
-
-        for (int i = 0; i < 3; i++) {
-            basicJRubyTest(prism);
-        }
-        var memoryPagesBefore = prism.memPages();
-        for (int i = 0; i < 100; i++) {
-            var before = System.currentTimeMillis();
-
-            basicJRubyTest(prism);
-
-            var after = System.currentTimeMillis();
-            System.out.println("Elapsed: " + (after - before));
-        }
-        var memoryPagesAfter = prism.memPages();
-        assertEquals(memoryPagesBefore, memoryPagesAfter);
-    }
-
-    private static void basicJRubyTest(Prism prism) throws Exception {
+        var prism = new Prism();
         byte[] src = new byte[1024 * 1024];
 
-        for (var file : JRUBY_BOOT_FILES) {
-            byte[] options = ParsingOptions.serialize(
-                file.getBytes(StandardCharsets.UTF_8),
-                1,
-                "UTF-8".getBytes(StandardCharsets.UTF_8),
-                false,
-                EnumSet.noneOf(ParsingOptions.CommandLine.class),
-                ParsingOptions.SyntaxVersion.LATEST,
-                false,
-                false,
-                false,
-                new byte[][][]{}
-            );
+        for (int i = 0; i < count; i++) {
+            for (var file : JRUBY_BOOT_FILES) {
+                byte[] options = ParsingOptions.serialize(
+                    file.getBytes(StandardCharsets.UTF_8),
+                    1,
+                    "UTF-8".getBytes(StandardCharsets.UTF_8),
+                    false,
+                    EnumSet.noneOf(ParsingOptions.CommandLine.class),
+                    ParsingOptions.SyntaxVersion.LATEST,
+                    false,
+                    false,
+                    false,
+                    new byte[][][]{}
+                );
 
-            try (InputStream fileIn = Ruby.getClassLoader().getResourceAsStream(file)) {
-                DataInputStream dis = new DataInputStream(fileIn);
-                int read = dis.read(src);
-                prism.serialize(options, src, read);
+                try (InputStream fileIn = Ruby.getClassLoader().getResourceAsStream(file)) {
+                    DataInputStream dis = new DataInputStream(fileIn);
+                    int read = dis.read(src);
+                    prism.serialize(options, src, read);
+                }
             }
         }
+
+        out.println("End");
     }
 }

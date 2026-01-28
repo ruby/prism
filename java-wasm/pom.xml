@@ -131,7 +131,7 @@
             </goals>
             <configuration>
               <name>org.prism.PrismParser</name>
-              <wasmFile>src/main/resources/prism.wasm</wasmFile>
+              <wasmFile>src/test/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>
         </executions>

@@ -48,4 +48,4 @@ jobs:
       - uses: actions/upload-artifact@v6
         with:
           name: prism.wasm
-          path: java-wasm/src/main/resources/prism.wasm
+          path: java-wasm/src/test/resources/prism.wasm
