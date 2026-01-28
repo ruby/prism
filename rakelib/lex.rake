@@ -30,7 +30,7 @@ module Prism
       end
 
       result = Prism.lex_compat(source)
-      if result.errors.empty? && Ripper.lex(source) == result.value
+      if result.errors.empty? && compare_lex(Ripper.lex(source), result.value)
         @passing_file_count += 1
         true
       else
@@ -53,6 +53,23 @@ module Prism
         FAILING=#{failing_file_count}
         PERCENT=#{(passing_file_count.to_f / (passing_file_count + failing_file_count) * 100).round(2)}%
       RESULTS
+    end
+
+    private
+
+    def compare_lex(ripper, prism)
+      [ripper.length, prism.length].max.times do |index|
+        ripper_token = ripper[index]
+        prism_token = prism[index]
+
+        # There are some tokens that have slightly different state that do not
+        # effect the parse tree, so they may not match.
+        if ripper_token && prism_token && ripper_token[1] == prism_token[1] && %i[on_comment on_heredoc_end on_embexpr_end on_sp].include?(ripper_token[1])
+          ripper_token[3] = prism_token[3] = nil
+        end
+      end
+
+      ripper == prism
     end
   end
 
