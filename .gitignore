@@ -74,3 +74,5 @@ compile_commands.json
 .vscode/
 
 tags
+
+wasi-sdk*
