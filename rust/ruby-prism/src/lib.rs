@@ -578,6 +578,16 @@ impl<'pr> ParseResult<'pr> {
         &self.source[start..end]
     }
 
+    /// Returns a slice containing the offsets of the start of each line in the source string
+    /// that was parsed.
+    #[must_use]
+    pub fn line_offsets(&self) -> &'pr [usize] {
+        unsafe {
+            let list = &(*self.parser.as_ptr()).newline_list;
+            std::slice::from_raw_parts(list.offsets, list.size)
+        }
+    }
+
     /// Returns an iterator that can be used to iterate over the errors in the
     /// parse result.
     #[must_use]
@@ -700,6 +710,27 @@ mod tests {
             let text = std::str::from_utf8(comment.text()).unwrap();
             assert!(text.starts_with("# comment"));
         }
+    }
+
+    #[test]
+    fn line_offsets_test() {
+        let source = "";
+        let result = parse(source.as_ref());
+
+        let expected: [usize; 1] = [0];
+        assert_eq!(expected, result.line_offsets());
+
+        let source = "1 + 1";
+        let result = parse(source.as_ref());
+
+        let expected: [usize; 1] = [0];
+        assert_eq!(expected, result.line_offsets());
+
+        let source = "begin\n1 + 1\n2 + 2\nend";
+        let result = parse(source.as_ref());
+
+        let expected: [usize; 4] = [0, 6, 12, 18];
+        assert_eq!(expected, result.line_offsets());
     }
 
     #[test]
