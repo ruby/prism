@@ -28,7 +28,7 @@ public class DummyTest {
         var source = "1 + 1";
 
         ParseResult pr = null;
-        try (Prism prism = new PrismWASM()) {
+        try (Prism prism = new Prism()) {
             pr = prism.serializeParse(packedOptions, source);
         }
 
@@ -44,7 +44,7 @@ public class DummyTest {
         var source = "1 + 1";
 
         ParseResult pr = null;
-        try (Prism prism = new PrismAOT()) {
+        try (Prism prism = new Prism()) {
             pr = prism.serializeParse(packedOptions, source);
         }
 
@@ -60,7 +60,7 @@ public class DummyTest {
         var source = "puts \"h\ne\nl\nl\no\n\"";
 
         ParseResult pr = null;
-        try (Prism prism = new PrismWASM()) {
+        try (Prism prism = new Prism()) {
             pr = prism.serializeParse(packedOptions, source);
         }
 
@@ -76,7 +76,7 @@ public class DummyTest {
         var source = "puts \"h\ne\nl\nl\no\n\"";
 
         ParseResult pr = null;
-        try (Prism prism = new PrismAOT()) {
+        try (Prism prism = new Prism()) {
             pr = prism.serializeParse(packedOptions, source);
         }
 
