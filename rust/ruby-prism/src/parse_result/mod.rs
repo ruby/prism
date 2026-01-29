@@ -175,6 +175,20 @@ impl<'pr> ParseResult<'pr> {
     pub fn node(&self) -> Node<'_> {
         Node::new(self.parser, self.node.as_ptr())
     }
+
+    /// Returns true if there were no errors during parsing and false if there
+    /// were.
+    #[must_use]
+    pub fn is_success(&self) -> bool {
+        self.errors().next().is_none()
+    }
+
+    /// Returns true if there were errors during parsing and false if there were
+    /// not.
+    #[must_use]
+    pub fn is_failure(&self) -> bool {
+        !self.is_success()
+    }
 }
 
 impl Drop for ParseResult<'_> {
@@ -184,5 +198,24 @@ impl Drop for ParseResult<'_> {
             pm_parser_free(self.parser.as_ptr());
             drop(Box::from_raw(self.parser.as_ptr()));
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::parse;
+
+    #[test]
+    fn test_is_success() {
+        let result = parse(b"1 + 1");
+        assert!(result.is_success());
+        assert!(!result.is_failure());
+    }
+
+    #[test]
+    fn test_is_failure() {
+        let result = parse(b"<>");
+        assert!(result.is_failure());
+        assert!(!result.is_success());
     }
 }
