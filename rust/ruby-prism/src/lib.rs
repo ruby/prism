@@ -163,6 +163,48 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::similar_names)]
+    fn location_line_column_test() {
+        let source = "foo\nbar\nbaz";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let program = node.as_program_node().unwrap();
+        let statements = program.statements().body();
+        let mut iter = statements.iter();
+        let _foo = iter.next().unwrap();
+        let bar = iter.next().unwrap();
+        let baz = iter.next().unwrap();
+
+        let bar_loc = bar.location();
+        assert_eq!(bar_loc.start_line(), 2);
+        assert_eq!(bar_loc.end_line(), 2);
+        assert_eq!(bar_loc.start_column(), 0);
+        assert_eq!(bar_loc.end_column(), 3);
+
+        let baz_loc = baz.location();
+        assert_eq!(baz_loc.start_line(), 3);
+        assert_eq!(baz_loc.end_line(), 3);
+        assert_eq!(baz_loc.start_column(), 0);
+        assert_eq!(baz_loc.end_column(), 3);
+    }
+
+    #[test]
+    fn test_chop() {
+        let result = parse(b"foo");
+        let mut location = result.node().as_program_node().unwrap().location();
+
+        assert_eq!(location.chop().as_slice(), b"fo");
+        assert_eq!(location.chop().chop().chop().as_slice(), b"");
+
+        // Check that we don't go negative.
+        for _ in 0..10 {
+            location = location.chop();
+        }
+        assert_eq!(location.as_slice(), b"");
+    }
+
+    #[test]
     fn visitor_test() {
         use super::{visit_interpolated_regular_expression_node, visit_regular_expression_node, InterpolatedRegularExpressionNode, RegularExpressionNode, Visit};
 
