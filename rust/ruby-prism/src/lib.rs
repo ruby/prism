@@ -14,6 +14,7 @@ mod bindings {
 }
 
 mod node;
+mod node_ext;
 mod parse_result;
 
 use std::mem::MaybeUninit;
@@ -21,6 +22,7 @@ use std::ptr::NonNull;
 
 pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
+pub use self::node_ext::ConstantPathError;
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
 use ruby_prism_sys::{pm_parse, pm_parser_init, pm_parser_t};
@@ -158,6 +160,48 @@ mod tests {
         let slice = std::str::from_utf8(location.as_slice()).unwrap();
 
         assert_eq!(slice, "222");
+    }
+
+    #[test]
+    #[allow(clippy::similar_names)]
+    fn location_line_column_test() {
+        let source = "foo\nbar\nbaz";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let program = node.as_program_node().unwrap();
+        let statements = program.statements().body();
+        let mut iter = statements.iter();
+        let _foo = iter.next().unwrap();
+        let bar = iter.next().unwrap();
+        let baz = iter.next().unwrap();
+
+        let bar_loc = bar.location();
+        assert_eq!(bar_loc.start_line(), 2);
+        assert_eq!(bar_loc.end_line(), 2);
+        assert_eq!(bar_loc.start_column(), 0);
+        assert_eq!(bar_loc.end_column(), 3);
+
+        let baz_loc = baz.location();
+        assert_eq!(baz_loc.start_line(), 3);
+        assert_eq!(baz_loc.end_line(), 3);
+        assert_eq!(baz_loc.start_column(), 0);
+        assert_eq!(baz_loc.end_column(), 3);
+    }
+
+    #[test]
+    fn test_chop() {
+        let result = parse(b"foo");
+        let mut location = result.node().as_program_node().unwrap().location();
+
+        assert_eq!(location.chop().as_slice(), b"fo");
+        assert_eq!(location.chop().chop().chop().as_slice(), b"");
+
+        // Check that we don't go negative.
+        for _ in 0..10 {
+            location = location.chop();
+        }
+        assert_eq!(location.as_slice(), b"");
     }
 
     #[test]
