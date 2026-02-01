@@ -113,7 +113,7 @@ pm_node_stack_pop(pm_node_stack_node_t **stack) {
     const pm_node_t *visit = current->visit;
 
     *stack = current->prev;
-    xfree(current);
+    xfree_sized(current, sizeof(pm_node_stack_node_t));
 
     return visit;
 }

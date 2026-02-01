@@ -32,7 +32,11 @@ pm_node_list_grow(pm_node_list_t *list, size_t size) {
         next_capacity = double_capacity;
     }
 
-    pm_node_t **nodes = (pm_node_t **) xrealloc(list->nodes, sizeof(pm_node_t *) * next_capacity);
+    pm_node_t **nodes = (pm_node_t **) xrealloc_sized(
+      list->nodes,
+      sizeof(pm_node_t *) * next_capacity,
+      sizeof(pm_node_t *) * list->capacity
+    );
     if (nodes == NULL) return false;
 
     list->nodes = nodes;
@@ -79,7 +83,7 @@ pm_node_list_concat(pm_node_list_t *list, pm_node_list_t *other) {
 void
 pm_node_list_free(pm_node_list_t *list) {
     if (list->capacity > 0) {
-        xfree(list->nodes);
+        xfree_sized(list->nodes, sizeof(pm_node_t *) * list->capacity);
         *list = (pm_node_list_t) { 0 };
     }
 }
@@ -132,6 +136,7 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             <%- raise -%>
             <%- end -%>
             <%- end -%>
+            xfree_sized(node, sizeof(pm_<%= node.human %>_t));
             break;
         }
         <%- end -%>
@@ -140,7 +145,6 @@ pm_node_destroy(pm_parser_t *parser, pm_node_t *node) {
             assert(false && "unreachable");
             break;
     }
-    xfree(node);
 }
 
 /**

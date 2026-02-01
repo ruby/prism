@@ -413,7 +413,7 @@ dump(int argc, VALUE *argv, VALUE self) {
     if (options.freeze) rb_obj_freeze(value);
 
 #ifdef PRISM_BUILD_DEBUG
-    xfree(dup);
+    xfree_sized(dup, length);
 #endif
 
     pm_string_free(&input);
@@ -929,7 +929,7 @@ parse(int argc, VALUE *argv, VALUE self) {
     VALUE value = parse_input(&input, &options);
 
 #ifdef PRISM_BUILD_DEBUG
-    xfree(dup);
+    xfree_sized(dup, length);
 #endif
 
     pm_string_free(&input);

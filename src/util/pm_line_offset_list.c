@@ -39,7 +39,7 @@ pm_line_offset_list_append(pm_line_offset_list_t *list, uint32_t cursor) {
         if (list->offsets == NULL) return false;
 
         memcpy(list->offsets, original_offsets, list->size * sizeof(uint32_t));
-        xfree(original_offsets);
+        xfree_sized(original_offsets, list->size * sizeof(uint32_t));
     }
 
     assert(list->size == 0 || cursor > list->offsets[list->size - 1]);
@@ -109,5 +109,5 @@ pm_line_offset_list_line_column(const pm_line_offset_list_t *list, uint32_t curs
  */
 void
 pm_line_offset_list_free(pm_line_offset_list_t *list) {
-    xfree(list->offsets);
+    xfree_sized(list->offsets, list->capacity * sizeof(uint32_t));
 }

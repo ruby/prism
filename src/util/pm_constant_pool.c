@@ -33,8 +33,13 @@ pm_constant_id_list_init_capacity(pm_constant_id_list_t *list, size_t capacity) 
 bool
 pm_constant_id_list_append(pm_constant_id_list_t *list, pm_constant_id_t id) {
     if (list->size >= list->capacity) {
+        const size_t original_capacity = list->capacity;
         list->capacity = list->capacity == 0 ? 8 : list->capacity * 2;
-        list->ids = (pm_constant_id_t *) xrealloc(list->ids, sizeof(pm_constant_id_t) * list->capacity);
+        list->ids = (pm_constant_id_t *) xrealloc_sized(
+            list->ids,
+            sizeof(pm_constant_id_t) * list->capacity,
+            sizeof(pm_constant_id_t) * original_capacity
+        );
         if (list->ids == NULL) return false;
     }
 
@@ -71,7 +76,7 @@ pm_constant_id_list_includes(pm_constant_id_list_t *list, pm_constant_id_t id) {
 void
 pm_constant_id_list_free(pm_constant_id_list_t *list) {
     if (list->ids != NULL) {
-        xfree(list->ids);
+        xfree_sized(list->ids, list->capacity * sizeof(pm_constant_id_t));
     }
 }
 
@@ -165,7 +170,7 @@ pm_constant_pool_resize(pm_constant_pool_t *pool) {
 
     // pool->constants and pool->buckets are allocated out of the same chunk
     // of memory, with the buckets coming first.
-    xfree(pool->buckets);
+    xfree_sized(pool->buckets, pool->capacity * element_size);
     pool->constants = next_constants;
     pool->buckets = next_buckets;
     pool->capacity = next_capacity;
@@ -257,12 +262,12 @@ pm_constant_pool_insert(pm_constant_pool_t *pool, const uint8_t *start, size_t l
                 // an existing constant, then either way we don't want the given
                 // memory. Either it's duplicated with the existing constant or
                 // it's not necessary because we have a shared version.
-                xfree((void *) start);
+                xfree_sized((void *) start, length);
             } else if (bucket->type == PM_CONSTANT_POOL_BUCKET_OWNED) {
                 // If we're attempting to insert a shared constant and the
                 // existing constant is owned, then we can free the owned
                 // constant and replace it with the shared constant.
-                xfree((void *) constant->start);
+                xfree_sized((void *) constant->start, constant->length);
                 constant->start = start;
                 bucket->type = (unsigned int) (type & 0x3);
             }
@@ -334,9 +339,9 @@ pm_constant_pool_free(pm_constant_pool_t *pool) {
         // If an id is set on this constant, then we know we have content here.
         if (bucket->id != PM_CONSTANT_ID_UNSET && bucket->type == PM_CONSTANT_POOL_BUCKET_OWNED) {
             pm_constant_t *constant = &pool->constants[bucket->id - 1];
-            xfree((void *) constant->start);
+            xfree_sized((void *) constant->start, constant->length);
         }
     }
 
-    xfree(pool->buckets);
+    xfree_sized(pool->buckets, pool->capacity * (sizeof(pm_constant_pool_bucket_t) + sizeof(pm_constant_t)));
 }

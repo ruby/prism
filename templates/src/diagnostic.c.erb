@@ -488,7 +488,7 @@ pm_diagnostic_list_append_format(pm_list_t *list, uint32_t start, uint32_t lengt
     size_t message_length = (size_t) (result + 1);
     char *message = (char *) xmalloc(message_length);
     if (message == NULL) {
-        xfree(diagnostic);
+        xfree_sized(diagnostic, sizeof(pm_diagnostic_t));
         return false;
     }
 
@@ -519,7 +519,7 @@ pm_diagnostic_list_free(pm_list_t *list) {
         pm_diagnostic_t *next = (pm_diagnostic_t *) node->node.next;
 
         if (node->owned) xfree((void *) node->message);
-        xfree(node);
+        xfree_sized(node, sizeof(pm_diagnostic_t));
 
         node = next;
     }

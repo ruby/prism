@@ -183,7 +183,7 @@ pm_node_hash_insert(pm_node_hash_t *hash, const pm_static_literals_metadata_t *m
         }
 
         // Finally, free the old node list and update the hash.
-        xfree(hash->nodes);
+        xfree_sized(hash->nodes, hash->capacity * sizeof(pm_node_t *));
         hash->nodes = new_nodes;
         hash->capacity = new_capacity;
     }
@@ -221,7 +221,7 @@ pm_node_hash_insert(pm_node_hash_t *hash, const pm_static_literals_metadata_t *m
  */
 static void
 pm_node_hash_free(pm_node_hash_t *hash) {
-    if (hash->capacity > 0) xfree(hash->nodes);
+    if (hash->capacity > 0) xfree_sized(hash->nodes, hash->capacity * sizeof(pm_node_t *));
 }
 
 /**

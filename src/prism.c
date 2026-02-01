@@ -286,7 +286,7 @@ lex_mode_pop(pm_parser_t *parser) {
     } else {
         parser->lex_modes.index--;
         pm_lex_mode_t *prev = parser->lex_modes.current->prev;
-        xfree(parser->lex_modes.current);
+        xfree_sized(parser->lex_modes.current, sizeof(pm_lex_mode_t));
         parser->lex_modes.current = prev;
     }
 }
@@ -777,7 +777,7 @@ pm_parser_scope_shareable_constant_set(pm_parser_t *parser, pm_shareable_constan
 static void
 pm_locals_free(pm_locals_t *locals) {
     if (locals->capacity > 0) {
-        xfree(locals->locals);
+        xfree_sized(locals->locals, locals->capacity * sizeof(pm_local_t));
     }
 }
 
@@ -2956,7 +2956,7 @@ pm_call_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3010,7 +3010,7 @@ pm_index_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, cons
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3040,7 +3040,7 @@ pm_call_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target, 
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3071,7 +3071,7 @@ pm_index_operator_write_node_create(pm_parser_t *parser, pm_call_node_t *target,
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3101,7 +3101,7 @@ pm_call_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const 
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3132,7 +3132,7 @@ pm_index_or_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3164,7 +3164,7 @@ pm_call_target_node_create(pm_parser_t *parser, pm_call_node_t *target) {
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3192,7 +3192,7 @@ pm_index_target_node_create(pm_parser_t *parser, pm_call_node_t *target) {
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_call_node_t));
 
     return node;
 }
@@ -3873,7 +3873,8 @@ pm_double_parse(pm_parser_t *parser, const pm_token_t *token) {
 
     // First, get a buffer of the content.
     size_t length = (size_t) diff;
-    char *buffer = xmalloc(sizeof(char) * (length + 1));
+    const size_t buffer_size = sizeof(char) * (length + 1);
+    char *buffer = xmalloc(buffer_size);
     memcpy((void *) buffer, token->start, length);
 
     // Next, determine if we need to replace the decimal point because of
@@ -3908,7 +3909,7 @@ pm_double_parse(pm_parser_t *parser, const pm_token_t *token) {
     // is in a valid format. However it's good to be safe.
     if ((eptr != buffer + length) || (errno != 0 && errno != ERANGE)) {
         PM_PARSER_ERR_TOKEN_FORMAT_CONTENT(parser, token, PM_ERR_FLOAT_PARSE);
-        xfree((void *) buffer);
+        xfree_sized(buffer, buffer_size);
         return 0.0;
     }
 
@@ -3931,7 +3932,7 @@ pm_double_parse(pm_parser_t *parser, const pm_token_t *token) {
     }
 
     // Finally we can free the buffer and return the value.
-    xfree((void *) buffer);
+    xfree_sized(buffer, buffer_size);
     return value;
 }
 
@@ -4017,7 +4018,7 @@ pm_float_node_rational_create(pm_parser_t *parser, const pm_token_t *token) {
     digits[0] = '1';
     if (fract_length > 1) memset(digits + 1, '0', fract_length - 1);
     pm_integer_parse(&node->denominator, PM_INTEGER_BASE_DEFAULT, digits, digits + fract_length);
-    xfree(digits);
+    xfree_sized(digits, length);
 
     pm_integers_reduce(&node->numerator, &node->denominator);
     return node;
@@ -5521,7 +5522,7 @@ pm_multi_write_node_create(pm_parser_t *parser, pm_multi_target_node_t *target, 
 
     // Explicitly do not call pm_node_destroy here because we want to keep
     // around all of the information within the MultiWriteNode node.
-    xfree(target);
+    xfree_sized(target, sizeof(pm_multi_target_node_t));
 
     return node;
 }
@@ -5646,7 +5647,7 @@ pm_numbered_reference_read_node_number(pm_parser_t *parser, const pm_token_t *to
         value = 0;
     }
 
-    xfree(digits);
+    xfree_sized(digits, sizeof(char) * (length + 1));
 
     if ((errno == ERANGE) || (value > NTH_REF_MAX)) {
         PM_PARSER_WARN_FORMAT(parser, U32(start - parser->start), U32(length), PM_WARN_INVALID_NUMBERED_REFERENCE, (int) (length + 1), (const char *) token->start);
@@ -6751,7 +6752,7 @@ pm_string_node_to_symbol_node(pm_parser_t *parser, pm_string_node_t *node, const
     // We are explicitly _not_ using pm_node_destroy here because we don't want
     // to trash the unescaped string. We could instead copy the string if we
     // know that it is owned, but we're taking the fast path for now.
-    xfree(node);
+    xfree_sized(node, sizeof(pm_string_node_t));
 
     return new_node;
 }
@@ -6784,7 +6785,7 @@ pm_symbol_node_to_string_node(pm_parser_t *parser, pm_symbol_node_t *node) {
     // We are explicitly _not_ using pm_node_destroy here because we don't want
     // to trash the unescaped string. We could instead copy the string if we
     // know that it is owned, but we're taking the fast path for now.
-    xfree(node);
+    xfree_sized(node, sizeof(pm_symbol_node_t));
 
     return new_node;
 }
@@ -7247,7 +7248,7 @@ pm_parser_scope_pop(pm_parser_t *parser) {
     parser->current_scope = scope->previous;
     pm_locals_free(&scope->locals);
     pm_node_list_free(&scope->implicit_parameters);
-    xfree(scope);
+    xfree_sized(scope, sizeof(pm_scope_t));
 }
 
 /******************************************************************************/
@@ -7847,7 +7848,7 @@ context_push(pm_parser_t *parser, pm_context_t context) {
 static void
 context_pop(pm_parser_t *parser) {
     pm_context_node_t *prev = parser->current_context->prev;
-    xfree(parser->current_context);
+    xfree_sized(parser->current_context, sizeof(pm_context_node_t));
     parser->current_context = prev;
 }
 
@@ -16639,7 +16640,7 @@ parse_pattern_hash(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_node
     }
 
     pm_hash_pattern_node_t *node = pm_hash_pattern_node_node_list_create(parser, &assocs, rest);
-    xfree(assocs.nodes);
+    xfree_sized(assocs.nodes, assocs.capacity * sizeof(pm_node_t *));
 
     pm_static_literals_free(&keys);
     return node;
@@ -17166,7 +17167,7 @@ parse_pattern(pm_parser_t *parser, pm_constant_id_list_t *captures, uint8_t flag
             }
         }
 
-        xfree(nodes.nodes);
+        xfree_sized(nodes.nodes, nodes.capacity * sizeof(pm_node_t *));
     } else if (leading_rest) {
         // Otherwise, if we parsed a single splat pattern, then we know we have
         // an array pattern, so we can go ahead and create that node.
@@ -19453,7 +19454,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                         pm_interpolated_symbol_node_append(interpolated, first_string);
                         pm_interpolated_symbol_node_append(interpolated, second_string);
 
-                        xfree(current);
+                        xfree_sized(current, sizeof(pm_symbol_node_t));
                         current = UP(interpolated);
                     } else {
                         assert(false && "unreachable");
@@ -19538,7 +19539,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                             pm_interpolated_symbol_node_append(interpolated, first_string);
                             pm_interpolated_symbol_node_append(interpolated, second_string);
 
-                            xfree(current);
+                            xfree_sized(current, sizeof(pm_symbol_node_t));
                             current = UP(interpolated);
                         } else {
                             assert(false && "unreachable");
@@ -22252,7 +22253,7 @@ pm_comment_list_free(pm_list_t *list) {
         next = node->next;
 
         pm_comment_t *comment = (pm_comment_t *) node;
-        xfree(comment);
+        xfree_sized(comment, sizeof(pm_comment_t));
     }
 }
 
@@ -22267,7 +22268,7 @@ pm_magic_comment_list_free(pm_list_t *list) {
         next = node->next;
 
         pm_magic_comment_t *magic_comment = (pm_magic_comment_t *) node;
-        xfree(magic_comment);
+        xfree_sized(magic_comment, sizeof(pm_magic_comment_t));
     }
 }
 

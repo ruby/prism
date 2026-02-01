@@ -161,10 +161,12 @@
  * ```
  * #ifndef PRISM_XALLOCATOR_H
  * #define PRISM_XALLOCATOR_H
- * #define xmalloc      my_malloc
- * #define xrealloc     my_realloc
- * #define xcalloc      my_calloc
- * #define xfree        my_free
+ * #define xmalloc          my_malloc
+ * #define xrealloc         my_realloc
+ * #define xcalloc          my_calloc
+ * #define xfree            my_free
+ * #define xrealloc_sized   my_realloc_sized // (optional)
+ * #define xfree_sized      my_free_sized    // (optional)
  * #endif
  * ```
  */
@@ -202,6 +204,28 @@
          */
         #define xfree free
     #endif
+#endif
+
+#ifndef xfree_sized
+/**
+ * The free_sized function that should be used. This can be overridden with the
+ * PRISM_XALLOCATOR define.
+ * If not defined, defaults to calling xfree.
+ */
+    #define xfree_sized(p, s) xfree(((void)(s), (p)))
+#endif
+
+#ifndef xrealloc_sized
+/**
+ * The xrealloc_sized function that should be used. This can be overridden with the
+ * PRISM_XALLOCATOR define.
+ * If not defined, defaults to calling xrealloc.
+ */
+    #define xrealloc_sized(p, ns, os) xrealloc((p), ((void)(os), (ns)))
+#endif
+
+#ifdef PRISM_BUILD_DEBUG
+    #include "prism/debug_allocator.h"
 #endif
 
 /**

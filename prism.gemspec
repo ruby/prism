@@ -48,6 +48,7 @@ Gem::Specification.new do |spec|
     "ext/prism/extension.h",
     "include/prism.h",
     "include/prism/ast.h",
+    "include/prism/debug_allocator.h",
     "include/prism/defines.h",
     "include/prism/diagnostic.h",
     "include/prism/encoding.h",
