@@ -7,7 +7,7 @@
  */
 typedef struct {
     /** The list of newline offsets to use to calculate line numbers. */
-    const pm_newline_list_t *newline_list;
+    const pm_line_offset_list_t *newline_list;
 
     /** The start of the source being parsed. */
     const uint8_t *start;
@@ -356,7 +356,7 @@ pm_compare_regular_expression_nodes(PRISM_ATTRIBUTE_UNUSED const pm_static_liter
  * Add a node to the set of static literals.
  */
 pm_node_t *
-pm_static_literals_add(const pm_newline_list_t *newline_list, const uint8_t *start, int32_t start_line, pm_static_literals_t *literals, pm_node_t *node, bool replace) {
+pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t *start, int32_t start_line, pm_static_literals_t *literals, pm_node_t *node, bool replace) {
     switch (PM_NODE_TYPE(node)) {
         case PM_INTEGER_NODE:
         case PM_SOURCE_LINE_NODE:
@@ -613,7 +613,7 @@ pm_static_literal_inspect_node(pm_buffer_t *buffer, const pm_static_literals_met
  * Create a string-based representation of the given static literal.
  */
 void
-pm_static_literal_inspect(pm_buffer_t *buffer, const pm_newline_list_t *newline_list, const uint8_t *start, int32_t start_line, const char *encoding_name, const pm_node_t *node) {
+pm_static_literal_inspect(pm_buffer_t *buffer, const pm_line_offset_list_t *newline_list, const uint8_t *start, int32_t start_line, const char *encoding_name, const pm_node_t *node) {
     pm_static_literal_inspect_node(
         buffer,
         &(pm_static_literals_metadata_t) {

@@ -83,7 +83,7 @@ pm_strspn_whitespace(const uint8_t *string, ptrdiff_t length) {
  * searching past the given maximum number of characters.
  */
 size_t
-pm_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, pm_newline_list_t *newline_list, uint32_t start_offset) {
+pm_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, pm_line_offset_list_t *newline_list, uint32_t start_offset) {
     if (length <= 0) return 0;
 
     uint32_t size = 0;

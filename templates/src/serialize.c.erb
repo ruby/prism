@@ -154,7 +154,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
 }
 
 static void
-pm_serialize_newline_list(pm_newline_list_t *list, pm_buffer_t *buffer) {
+pm_serialize_newline_list(pm_line_offset_list_t *list, pm_buffer_t *buffer) {
     uint32_t size = pm_sizet_to_u32(list->size);
     pm_buffer_append_varuint(buffer, size);
 
