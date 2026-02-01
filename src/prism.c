@@ -1000,7 +1000,7 @@ pm_locals_order(PRISM_ATTRIBUTE_UNUSED pm_parser_t *parser, pm_locals_t *locals,
         if (local->name != PM_CONSTANT_ID_UNSET) {
             pm_constant_id_list_insert(list, (size_t) local->index, local->name);
 
-            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_newline_list_line(&parser->newline_list, local->location.start, parser->start_line) >= 0))) {
+            if (warn_unused && local->reads == 0 && ((parser->start_line >= 0) || (pm_line_offset_list_line(&parser->newline_list, local->location.start, parser->start_line) >= 0))) {
                 pm_constant_t *constant = pm_constant_pool_id_to_constant(&parser->constant_pool, local->name);
 
                 if (constant->length >= 1 && *constant->start != '_') {
@@ -9367,7 +9367,7 @@ lex_embdoc(pm_parser_t *parser) {
     if (newline == NULL) {
         parser->current.end = parser->end;
     } else {
-        pm_newline_list_append(&parser->newline_list, U32(newline - parser->start + 1));
+        pm_line_offset_list_append(&parser->newline_list, U32(newline - parser->start + 1));
         parser->current.end = newline + 1;
     }
 
@@ -9401,7 +9401,7 @@ lex_embdoc(pm_parser_t *parser) {
             if (newline == NULL) {
                 parser->current.end = parser->end;
             } else {
-                pm_newline_list_append(&parser->newline_list, U32(newline - parser->start + 1));
+                pm_line_offset_list_append(&parser->newline_list, U32(newline - parser->start + 1));
                 parser->current.end = newline + 1;
             }
 
@@ -9421,7 +9421,7 @@ lex_embdoc(pm_parser_t *parser) {
         if (newline == NULL) {
             parser->current.end = parser->end;
         } else {
-            pm_newline_list_append(&parser->newline_list, U32(newline - parser->start + 1));
+            pm_line_offset_list_append(&parser->newline_list, U32(newline - parser->start + 1));
             parser->current.end = newline + 1;
         }
 
@@ -9735,7 +9735,7 @@ pm_lex_percent_delimiter(pm_parser_t *parser) {
             parser_flush_heredoc_end(parser);
         } else {
             // Otherwise, we'll add the newline to the list of newlines.
-            pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + U32(eol_length));
+            pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + U32(eol_length));
         }
 
         uint8_t delimiter = *parser->current.end;
@@ -9839,7 +9839,7 @@ parser_lex(pm_parser_t *parser) {
                                 parser->heredoc_end = NULL;
                             } else {
                                 parser->current.end += eol_length + 1;
-                                pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
+                                pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
                                 space_seen = true;
                             }
                         } else if (pm_char_is_inline_whitespace(*parser->current.end)) {
@@ -9941,7 +9941,7 @@ parser_lex(pm_parser_t *parser) {
                         }
 
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
+                            pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
                         }
                     }
 
@@ -10450,7 +10450,7 @@ parser_lex(pm_parser_t *parser) {
                                     } else {
                                         // Otherwise, we want to indicate that the body of the
                                         // heredoc starts on the character after the next newline.
-                                        pm_newline_list_append(&parser->newline_list, U32(body_start - parser->start + 1));
+                                        pm_line_offset_list_append(&parser->newline_list, U32(body_start - parser->start + 1));
                                         body_start++;
                                     }
 
@@ -11091,7 +11091,7 @@ parser_lex(pm_parser_t *parser) {
                         // correct column information for it.
                         const uint8_t *cursor = parser->current.end;
                         while ((cursor = next_newline(cursor, parser->end - cursor)) != NULL) {
-                            pm_newline_list_append(&parser->newline_list, U32(++cursor - parser->start));
+                            pm_line_offset_list_append(&parser->newline_list, U32(++cursor - parser->start));
                         }
 
                         parser->current.end = parser->end;
@@ -11267,7 +11267,7 @@ parser_lex(pm_parser_t *parser) {
                                 LEX(PM_TOKEN_STRING_CONTENT);
                             } else {
                                 // ... else track the newline.
-                                pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
+                                pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
                             }
 
                             parser->current.end++;
@@ -11405,7 +11405,7 @@ parser_lex(pm_parser_t *parser) {
                         // would have already have added the newline to the
                         // list.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
+                            pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
                         }
                     } else {
                         parser->current.end = breakpoint + 1;
@@ -11452,7 +11452,7 @@ parser_lex(pm_parser_t *parser) {
                         // If we've hit a newline, then we need to track that in
                         // the list of newlines.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
+                            pm_line_offset_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
                             parser->current.end = breakpoint + 1;
                             breakpoint = pm_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end, false);
                             break;
@@ -11500,7 +11500,7 @@ parser_lex(pm_parser_t *parser) {
                                     LEX(PM_TOKEN_STRING_CONTENT);
                                 } else {
                                     // ... else track the newline.
-                                    pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
+                                    pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
                                 }
 
                                 parser->current.end++;
@@ -11665,7 +11665,7 @@ parser_lex(pm_parser_t *parser) {
                         // would have already have added the newline to the
                         // list.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
+                            pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current));
                         }
                     } else {
                         parser->current.end = breakpoint + 1;
@@ -11717,7 +11717,7 @@ parser_lex(pm_parser_t *parser) {
                         // for the terminator in case the terminator is a
                         // newline character.
                         if (parser->heredoc_end == NULL) {
-                            pm_newline_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
+                            pm_line_offset_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
                             parser->current.end = breakpoint + 1;
                             breakpoint = pm_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end, true);
                             break;
@@ -11771,7 +11771,7 @@ parser_lex(pm_parser_t *parser) {
                                     LEX(PM_TOKEN_STRING_CONTENT);
                                 } else {
                                     // ... else track the newline.
-                                    pm_newline_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
+                                    pm_line_offset_list_append(&parser->newline_list, PM_TOKEN_END(parser, &parser->current) + 1);
                                 }
 
                                 parser->current.end++;
@@ -11900,7 +11900,7 @@ parser_lex(pm_parser_t *parser) {
                         (memcmp(terminator_start, ident_start, ident_length) == 0)
                     ) {
                         if (newline != NULL) {
-                            pm_newline_list_append(&parser->newline_list, U32(newline - parser->start + 1));
+                            pm_line_offset_list_append(&parser->newline_list, U32(newline - parser->start + 1));
                         }
 
                         parser->current.end = terminator_end;
@@ -11972,7 +11972,7 @@ parser_lex(pm_parser_t *parser) {
                             LEX(PM_TOKEN_STRING_CONTENT);
                         }
 
-                        pm_newline_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
+                        pm_line_offset_list_append(&parser->newline_list, U32(breakpoint - parser->start + 1));
 
                         // If we have a - or ~ heredoc, then we can match after
                         // some leading whitespace.
@@ -12092,7 +12092,7 @@ parser_lex(pm_parser_t *parser) {
                                         const uint8_t *end = parser->current.end;
 
                                         if (parser->heredoc_end == NULL) {
-                                            pm_newline_list_append(&parser->newline_list, U32(end - parser->start + 1));
+                                            pm_line_offset_list_append(&parser->newline_list, U32(end - parser->start + 1));
                                         }
 
                                         // Here we want the buffer to only
@@ -13329,7 +13329,7 @@ pm_hash_key_static_literals_add(pm_parser_t *parser, pm_static_literals_t *liter
             PM_WARN_DUPLICATED_HASH_KEY,
             (int) pm_buffer_length(&buffer),
             pm_buffer_value(&buffer),
-            pm_newline_list_line_column(&parser->newline_list, PM_NODE_START(node), parser->start_line).line
+            pm_line_offset_list_line_column(&parser->newline_list, PM_NODE_START(node), parser->start_line).line
         );
 
         pm_buffer_free(&buffer);
@@ -13350,8 +13350,8 @@ pm_when_clause_static_literals_add(pm_parser_t *parser, pm_static_literals_t *li
             PM_NODE_START(node),
             PM_NODE_LENGTH(node),
             PM_WARN_DUPLICATED_WHEN_CLAUSE,
-            pm_newline_list_line_column(&parser->newline_list, PM_NODE_START(node), parser->start_line).line,
-            pm_newline_list_line_column(&parser->newline_list, PM_NODE_START(previous), parser->start_line).line
+            pm_line_offset_list_line_column(&parser->newline_list, PM_NODE_START(node), parser->start_line).line,
+            pm_line_offset_list_line_column(&parser->newline_list, PM_NODE_START(previous), parser->start_line).line
         );
     }
 }
@@ -14299,7 +14299,7 @@ token_newline_index(const pm_parser_t *parser) {
         // start of a heredoc, so we cannot rely on looking at the previous
         // offset of the newline list, and instead must go through the whole
         // process of a binary search for the line number.
-        return (size_t) pm_newline_list_line(&parser->newline_list, PM_TOKEN_START(parser, &parser->current), 0);
+        return (size_t) pm_line_offset_list_line(&parser->newline_list, PM_TOKEN_START(parser, &parser->current), 0);
     }
 }
 
@@ -21990,7 +21990,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
     // guess at the number of newlines that we'll need based on the size of the
     // input.
     size_t newline_size = size / 22;
-    pm_newline_list_init(&parser->newline_list, newline_size < 4 ? 4 : newline_size);
+    pm_line_offset_list_init(&parser->newline_list, newline_size < 4 ? 4 : newline_size);
 
     // If options were provided to this parse, establish them here.
     if (options != NULL) {
@@ -22129,7 +22129,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
         const uint8_t *newline = next_newline(cursor, parser->end - cursor);
 
         while (newline != NULL) {
-            pm_newline_list_append(&parser->newline_list, U32(newline - parser->start + 1));
+            pm_line_offset_list_append(&parser->newline_list, U32(newline - parser->start + 1));
 
             cursor = newline + 1;
             newline = next_newline(cursor, parser->end - cursor);
@@ -22159,7 +22159,7 @@ pm_parser_init(pm_parser_t *parser, const uint8_t *source, size_t size, const pm
             parser->current = (pm_token_t) { .type = PM_TOKEN_EOF, .start = cursor, .end = cursor };
         } else {
             pm_parser_err(parser, 0, 0, PM_ERR_SCRIPT_NOT_FOUND);
-            pm_newline_list_clear(&parser->newline_list);
+            pm_line_offset_list_clear(&parser->newline_list);
         }
     }
 
@@ -22219,7 +22219,7 @@ pm_parser_free(pm_parser_t *parser) {
     pm_comment_list_free(&parser->comment_list);
     pm_magic_comment_list_free(&parser->magic_comment_list);
     pm_constant_pool_free(&parser->constant_pool);
-    pm_newline_list_free(&parser->newline_list);
+    pm_line_offset_list_free(&parser->newline_list);
 
     while (parser->current_scope != NULL) {
         // Normally, popping the scope doesn't free the locals since it is

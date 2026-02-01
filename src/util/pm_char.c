@@ -91,7 +91,7 @@ pm_strspn_whitespace_newlines(const uint8_t *string, ptrdiff_t length, pm_line_o
 
     while (size < maximum && (pm_byte_table[string[size]] & PRISM_CHAR_BIT_WHITESPACE)) {
         if (string[size] == '\n') {
-            pm_newline_list_append(newline_list, start_offset + size + 1);
+            pm_line_offset_list_append(newline_list, start_offset + size + 1);
         }
 
         size++;
