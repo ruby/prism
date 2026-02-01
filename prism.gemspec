@@ -61,7 +61,7 @@ Gem::Specification.new do |spec|
     "include/prism/util/pm_integer.h",
     "include/prism/util/pm_list.h",
     "include/prism/util/pm_memchr.h",
-    "include/prism/util/pm_newline_list.h",
+    "include/prism/util/pm_line_offset_list.h",
     "include/prism/util/pm_strncasecmp.h",
     "include/prism/util/pm_string.h",
     "include/prism/util/pm_strpbrk.h",
