@@ -374,7 +374,7 @@ tokens:
   - name: AMPERSAND_EQUAL
     comment: "&="
   - name: BACKTICK
-    comment: "`"
+    comment: "\\`"
   - name: BACK_REFERENCE
     comment: "a back reference"
   - name: BANG
