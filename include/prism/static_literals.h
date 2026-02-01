@@ -8,7 +8,7 @@
 
 #include "prism/defines.h"
 #include "prism/ast.h"
-#include "prism/util/pm_newline_list.h"
+#include "prism/util/pm_line_offset_list.h"
 
 #include <assert.h>
 #include <stdbool.h>

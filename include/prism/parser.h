@@ -13,7 +13,7 @@
 #include "prism/static_literals.h"
 #include "prism/util/pm_constant_pool.h"
 #include "prism/util/pm_list.h"
-#include "prism/util/pm_newline_list.h"
+#include "prism/util/pm_line_offset_list.h"
 #include "prism/util/pm_string.h"
 
 #include <stdbool.h>

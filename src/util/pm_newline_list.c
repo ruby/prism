@@ -1,4 +1,4 @@
-#include "prism/util/pm_newline_list.h"
+#include "prism/util/pm_line_offset_list.h"
 
 /**
  * Initialize a new newline list with the given capacity. Returns true if the
