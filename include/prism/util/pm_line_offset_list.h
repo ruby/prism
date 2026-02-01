@@ -11,8 +11,8 @@
  * end column on every node in addition to the offsets that we already store,
  * but that would be quite a lot of memory overhead.
  */
-#ifndef PRISM_NEWLINE_LIST_H
-#define PRISM_NEWLINE_LIST_H
+#ifndef PRISM_LINE_OFFSET_LIST_H
+#define PRISM_LINE_OFFSET_LIST_H
 
 #include "prism/defines.h"
 
