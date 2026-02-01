@@ -286,7 +286,7 @@ lex_mode_pop(pm_parser_t *parser) {
     } else {
         parser->lex_modes.index--;
         pm_lex_mode_t *prev = parser->lex_modes.current->prev;
-        xfree(parser->lex_modes.current);
+        PM_FREE_SIZED(parser->lex_modes.current);
         parser->lex_modes.current = prev;
     }
 }
@@ -777,7 +777,7 @@ pm_parser_scope_shareable_constant_set(pm_parser_t *parser, pm_shareable_constan
 static void
 pm_locals_free(pm_locals_t *locals) {
     if (locals->capacity > 0) {
-        xfree(locals->locals);
+        PM_FREE_SIZED_N(locals->locals, locals->capacity);
     }
 }
 
@@ -2883,7 +2883,7 @@ pm_call_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, const
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    PM_FREE_SIZED(target);
 
     return node;
 }
@@ -2937,7 +2937,7 @@ pm_index_and_write_node_create(pm_parser_t *parser, pm_call_node_t *target, cons
     // Here we're going to free the target, since it is no longer necessary.
     // However, we don't want to call `pm_node_destroy` because we want to keep
     // around all of its children since we just reused them.
-    xfree(target);
+    PM_FREE_SIZED(target);
 
     return node;
 }
