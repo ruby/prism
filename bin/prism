@@ -30,7 +30,7 @@ module Prism
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
-            bin/prism error [name] [source]
+            bin/prism error [source]
             bin/prism lex [source]
             bin/prism lex_compat [source]
             bin/prism locals [source]
@@ -161,36 +161,17 @@ module Prism
       unicode_lists(found) if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
     end
 
-    # bin/prism error [name] [source]
+    # bin/prism error [source]
     def error(argv)
-      name = argv.shift
-
-      source = nil
-      filepath = File.expand_path("../test/prism/errors/#{name}.txt", __dir__)
-
-      if argv.empty?
-        raise "Expected #{filepath} to exist" unless File.file?(filepath)
-
-        source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
-        source = source.lines.grep_v(/^\s*\^/).join.gsub(/\n*\z/, "")
-      else
-        if File.file?(filepath)
-          counter = 1
-
-          begin
-            current = "#{File.dirname(filepath)}/#{File.basename(filepath, ".txt")}_#{counter += 1}.txt"
-          end while File.file?(current)
-
-          filepath = current
-        end
-
-        source, _ = read_source(argv)
-      end
-
+      source, filepath = read_source(argv)
       result = Prism.parse(source)
-      raise "Expected #{source.inspect} to have errors" if result.success?
 
-      File.write(filepath, result.errors_format)
+
+      if result.errors.any?
+        puts result.errors_format
+      else
+        puts "No syntax errors for #{filepath}"
+      end
     end
 
     # bin/prism lex [source]
