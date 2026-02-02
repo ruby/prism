@@ -15958,6 +15958,19 @@ parse_heredoc_dedent_string(pm_string_t *string, size_t common_whitespace) {
 }
 
 /**
+ * If we end up trimming all of the whitespace from a node and it isn't
+ * part of a line continuation, then we'll drop it from the list entirely.
+ */
+static inline bool
+heredoc_dedent_discard_string_node(pm_parser_t *parser, pm_string_node_t *string_node) {
+    if (string_node->unescaped.length == 0) {
+        const uint8_t *cursor = parser->start + PM_LOCATION_START(&string_node->content_loc);
+        return pm_memchr(cursor, '\\', string_node->content_loc.length, parser->encoding_changed, parser->encoding) == NULL;
+    }
+    return false;
+}
+
+/**
  * Take a heredoc node that is indented by a ~ and trim the leading whitespace.
  */
 static void
@@ -15967,8 +15980,7 @@ parse_heredoc_dedent(pm_parser_t *parser, pm_node_list_t *nodes, size_t common_w
     bool dedent_next = true;
 
     // Iterate over all nodes, and trim whitespace accordingly. We're going to
-    // keep around two indices: a read and a write. If we end up trimming all of
-    // the whitespace from a node, then we'll drop it from the list entirely.
+    // keep around two indices: a read and a write.
     size_t write_index = 0;
 
     pm_node_t *node;
@@ -15987,7 +15999,7 @@ parse_heredoc_dedent(pm_parser_t *parser, pm_node_list_t *nodes, size_t common_w
             parse_heredoc_dedent_string(&string_node->unescaped, common_whitespace);
         }
 
-        if (string_node->unescaped.length == 0) {
+        if (heredoc_dedent_discard_string_node(parser, string_node)) {
             pm_node_destroy(parser, node);
         } else {
             nodes->nodes[write_index++] = node;
