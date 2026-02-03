@@ -12,8 +12,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
     <chicory.version>1.6.1</chicory.version>
     <junit.version>6.0.3</junit.version>
@@ -86,7 +86,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.15.0</version>
         <configuration>
-          <release>11</release>
+          <release>21</release>
           <annotationProcessorPaths>
             <path>
               <groupId>com.dylibso.chicory</groupId>
