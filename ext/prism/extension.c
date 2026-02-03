@@ -201,12 +201,10 @@ build_options_i(VALUE key, VALUE value, VALUE argument) {
             const char *version = check_string(value);
 
             if (RSTRING_LEN(value) == 7 && strncmp(version, "current", 7) == 0) {
-                const char *ruby_version = RSTRING_PTR(rb_const_get(rb_cObject, rb_intern("RUBY_VERSION")));
                 if (!pm_options_version_set(options, ruby_version, 3)) {
                     rb_exc_raise(rb_exc_new_cstr(rb_cPrismCurrentVersionError, ruby_version));
                 }
             } else if (RSTRING_LEN(value) == 7 && strncmp(version, "nearest", 7) == 0) {
-                const char *ruby_version = RSTRING_PTR(rb_const_get(rb_cObject, rb_intern("RUBY_VERSION")));
                 const char *nearest_version;
 
                 if (ruby_version[0] < '3' || (ruby_version[0] == '3' && ruby_version[2] < '3')) {
