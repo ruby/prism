@@ -12,7 +12,7 @@ import java.util.EnumSet;
 
 import org.jruby.Ruby;
 
-import org.prism.Prism;
+import org.jruby.parser.prism.wasm.Prism;
 import org.prism.ParsingOptions;
 
 public class test {

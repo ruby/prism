@@ -130,7 +130,7 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.prism.PrismParser</name>
+              <name>org.jruby.parser.prism.wasm.PrismParser</name>
               <wasmFile>src/test/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>

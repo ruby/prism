@@ -1,7 +1,9 @@
-package org.prism;
+package org.jruby.parser.prism;
 
 import org.jruby.Ruby;
+import org.jruby.parser.prism.wasm.Prism;
 import org.junit.jupiter.api.Test;
+import org.prism.ParsingOptions;
 
 import java.io.DataInputStream;
 import java.io.InputStream;
