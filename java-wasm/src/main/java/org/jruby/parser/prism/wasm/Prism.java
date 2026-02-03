@@ -1,4 +1,4 @@
-package org.prism;
+package org.jruby.parser.prism.wasm;
 
 import com.dylibso.chicory.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ByteArrayMemory;
@@ -6,6 +6,8 @@ import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
+import org.prism.Loader;
+import org.prism.ParseResult;
 
 import java.nio.charset.StandardCharsets;
 
