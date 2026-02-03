@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 # typed: ignore
 
+require "ripper"
+
 module Prism
-  # This class is responsible for lexing files with both lex_compat and
-  # lex_ripper and ensuring they match up. It keeps track of the files which
+  # This class is responsible for lexing files with both prism and
+  # ripper and ensuring they match up. It keeps track of the files which
   # failed to match up, and the files which passed.
   class LexTask
     attr_reader :failing_files, :passing_file_count
@@ -28,7 +30,7 @@ module Prism
       end
 
       result = Prism.lex_compat(source)
-      if result.errors.empty? && Prism.lex_ripper(source) == result.value
+      if result.errors.empty? && compare_lex(Ripper.lex(source), result.value)
         @passing_file_count += 1
         true
       else
@@ -51,6 +53,23 @@ module Prism
         FAILING=#{failing_file_count}
         PERCENT=#{(passing_file_count.to_f / (passing_file_count + failing_file_count) * 100).round(2)}%
       RESULTS
+    end
+
+    private
+
+    def compare_lex(ripper, prism)
+      [ripper.length, prism.length].max.times do |index|
+        ripper_token = ripper[index]
+        prism_token = prism[index]
+
+        # There are some tokens that have slightly different state that do not
+        # effect the parse tree, so they may not match.
+        if ripper_token && prism_token && ripper_token[1] == prism_token[1] && %i[on_comment on_heredoc_end on_embexpr_end on_sp].include?(ripper_token[1])
+          ripper_token[3] = prism_token[3] = nil
+        end
+      end
+
+      ripper == prism
     end
   end
 
@@ -98,6 +117,10 @@ TARGETS = {
 
       # Requires an implicit -x, which ripper does not respect
       "tool/merger.rb",
+
+      # Contains `"x#$%"` which looks like bare interpolation but $% is not a valid global.
+      # This confuses ripper, it emits two string tokens. https://bugs.ruby-lang.org/issues/21849
+      "ext/psych/lib/psych/scalar_scanner.rb",
     ]
   },
   discourse: {
@@ -265,6 +288,16 @@ TOP_100_GEMS_INVALID_SYNTAX_PREFIXES = %w[
   top-100-gems/devise-4.9.2/lib/generators/templates/controllers/
   top-100-gems/fastlane-2.212.1/fastlane/lib/assets/custom_action_template.rb
 ]
+TOP_100_GEMS_LEX_RIPPER_BUG = [
+  # Contains code like `"x#$%"` which looks like bare interpolation but $% is not a valid global.
+  # This confuses ripper, it emits two string tokens. https://bugs.ruby-lang.org/issues/21849
+  "faker-3.1.1/lib/faker/default/internet.rb",
+  "ruby_parser-3.20.0/test/test_ruby_parser.rb",
+  "rouge-4.1.0/lib/rouge/lexers/cisco_ios.rb",
+  "rouge-4.1.0/lib/rouge/lexers/ghc_cmm.rb",
+  "rouge-4.1.0/lib/rouge/lexers/nasm.rb",
+  "rouge-4.1.0/lib/rouge/lexers/velocity.rb",
+]
 
 namespace :download do
   directory TOP_100_GEMS_DIR
@@ -346,7 +379,10 @@ task "lex:topgems": ["download:topgems", :compile] do
       lex_task.compare(filepath)
     end
 
-    gem_failing_files = lex_task.failing_files.map { |todo| todo.delete_prefix("#{directory}/") }
+    gem_failing_files = lex_task.failing_files.filter_map do |todo|
+      next if TOP_100_GEMS_LEX_RIPPER_BUG.any? { |path| todo.end_with?(path) }
+      todo.delete_prefix("#{directory}/")
+    end
     failing_files[gem_name] = gem_failing_files if gem_failing_files.any?
   end
 

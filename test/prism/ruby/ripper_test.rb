@@ -37,6 +37,9 @@ module Prism
       ]
     end
 
+    # https://bugs.ruby-lang.org/issues/21669
+    incorrect << "4.1/void_value.txt"
+
     # Skip these tests that we haven't implemented yet.
     omitted_sexp_raw = [
       "bom_leading_space.txt",
@@ -62,18 +65,10 @@ module Prism
     ]
 
     omitted_lex = [
-      "comments.txt",
-      "heredoc_percent_q_newline_delimiter.txt",
       "heredoc_with_escaped_newline_at_start.txt",
       "heredocs_with_fake_newlines.txt",
       "indented_file_end.txt",
-      "seattlerb/TestRubyParserShared.txt",
-      "seattlerb/class_comments.txt",
-      "seattlerb/module_comments.txt",
-      "seattlerb/parse_line_block_inline_comment_leading_newlines.txt",
-      "seattlerb/parse_line_block_inline_multiline_comment.txt",
       "spanning_heredoc_newlines.txt",
-      "strings.txt",
       "whitequark/dedenting_heredoc.txt",
       "whitequark/procarg0.txt",
     ]
@@ -144,13 +139,54 @@ module Prism
       assert_equal(expected, lexer.parse[0].to_a)
       assert_equal(lexer.parse[0].to_a, lexer.scan[0].to_a)
 
-      assert_equal(%i[on_int on_sp on_op], Translation::Ripper::Lexer.new("1 +").lex.map(&:event))
+      assert_equal(%i[on_int on_sp on_op], Translation::Ripper::Lexer.new("1 +").lex.map { |token| token[1] })
       assert_raise(SyntaxError) { Translation::Ripper::Lexer.new("1 +").lex(raise_errors: true) }
+    end
+
+
+    # On syntax invalid code the output doesn't always match up
+    # In these cases we just want to make sure that it doesn't raise.
+    def test_lex_invalid_syntax
+      assert_nothing_raised do
+        Translation::Ripper.lex('scan/\p{alpha}/')
+      end
+
+      assert_equal(Ripper.lex('if;)'), Translation::Ripper.lex('if;)'))
     end
 
     def test_tokenize
       source = "foo;1;BAZ"
       assert_equal(Ripper.tokenize(source), Translation::Ripper.tokenize(source))
+    end
+
+    def test_sexp_coercion
+      string_like = Object.new
+      def string_like.to_str
+        "a"
+      end
+      assert_equal Ripper.sexp(string_like), Translation::Ripper.sexp(string_like)
+
+      File.open(__FILE__) do |file1|
+        File.open(__FILE__) do |file2|
+          assert_equal Ripper.sexp(file1), Translation::Ripper.sexp(file2)
+        end
+      end
+
+      File.open(__FILE__) do |file1|
+        File.open(__FILE__) do |file2|
+          object1_with_gets = Object.new
+          object1_with_gets.define_singleton_method(:gets) do
+            file1.gets
+          end
+
+          object2_with_gets = Object.new
+          object2_with_gets.define_singleton_method(:gets) do
+            file2.gets
+          end
+
+          assert_equal Ripper.sexp(object1_with_gets), Translation::Ripper.sexp(object2_with_gets)
+        end
+      end
     end
 
     # Check that the hardcoded values don't change without us noticing.
@@ -177,13 +213,13 @@ module Prism
       # Prism emits tokens by their order in the code, not in parse order
       ripper.sort_by! { |elem| elem[0] }
 
-      [prism.size, ripper.size].max.times do |i|
-        expected = ripper[i]
-        actual = prism[i]
+      [prism.size, ripper.size].max.times do |index|
+        expected = ripper[index]
+        actual = prism[index]
 
-        # Since tokens related to heredocs are not emitted in the same order,
-        # the state also doesn't line up.
-        if expected && actual && expected[1] == :on_heredoc_end && actual[1] == :on_heredoc_end
+        # There are some tokens that have slightly different state that do not
+        # effect the parse tree, so they may not match.
+        if expected && actual && expected[1] == actual[1] && %i[on_comment on_heredoc_end on_embexpr_end on_sp].include?(expected[1])
           expected[3] = actual[3] = nil
         end
 

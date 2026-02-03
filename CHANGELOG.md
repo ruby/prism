@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.9.0] - 2026-01-27
+
+### Added
+
+- Lots of work on the Ripper translation layer to make it more compatible and efficient.
+- Alias `Prism::Node#breadth_first_search` to `Prism::Node#find`.
+- Add `Prism::Node#breadth_first_search_all`/`Prism::Node#find_all` for finding all nodes matching a condition.
+
+### Changed
+
+- Fixed location of opening tokens when invalid syntax is parsed.
+- Fix RBI for parsing options.
+
 ## [1.8.0] - 2026-01-12
 
 ### Added
@@ -18,8 +33,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Fix denominator of rational float literal.
 - Decouple ripper translator from ripper library.
 - Sync Prism::Translation::ParserCurrent with Ruby 4.0.
-
-## [Unreleased]
 
 ## [1.7.0] - 2025-12-18
 
@@ -731,7 +744,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.8.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/ruby/prism/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0

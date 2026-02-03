@@ -16,9 +16,6 @@ module Prism
   sig { params(source: String, options: T::Hash[Symbol, T.untyped]).returns(Prism::LexCompat::Result) }
   def self.lex_compat(source, **options); end
 
-  sig { params(source: String).returns(T::Array[T.untyped]) }
-  def self.lex_ripper(source); end
-
   sig { params(source: String, serialized: String, freeze: T.nilable(T::Boolean)).returns(Prism::ParseResult) }
   def self.load(source, serialized, freeze = false); end
 
