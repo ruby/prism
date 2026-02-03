@@ -79,7 +79,7 @@ jobs:
       shell: bash
 
   build-ibm:
-    if: github.repository == 'ruby/prism'
+    if: github.repository == 'ruby/prism' && false
     strategy:
       fail-fast: false
       matrix:
