@@ -14,7 +14,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -28,7 +28,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: gemfiles/2.7/Gemfile
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -44,7 +44,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -65,10 +65,10 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          # - windows-latest <-- failing with fiddle error, temporarily disabled
+          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -78,20 +78,41 @@ jobs:
       run: bundle exec rake
       shell: bash
 
+  build-ibm:
+    if: github.repository == 'ruby/prism'
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04-ppc64le
+          - ubuntu-24.04-s390x
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Ruby
+      run: |
+        sudo apt-get update
+        sudo apt-get install ruby-full bundler libyaml-dev
+    - name: Install dependencies
+      run: sudo bundle install --jobs $(nproc)
+    - name: Run Ruby tests
+      run: bundle exec rake
+      shell: bash
+
   build-ffi:
     strategy:
       fail-fast: false
       matrix:
         target:
-          - { ruby: "head", gemfile: "3.5" }
-          - { ruby: "jruby", gemfile: "jruby" }
-          - { ruby: "truffleruby", gemfile: "truffleruby" }
+          - { ruby: "head", gemfile: "4.1" }
+          - { ruby: "jruby-10.0.0.0", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", gemfile: ".." }
     runs-on: ubuntu-latest
     env:
       PRISM_FFI_BACKEND: "true"
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -104,10 +125,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-22.04, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -124,10 +145,10 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          # - windows-latest <-- failing with fiddle error, temporarily disabled
+          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -141,7 +162,7 @@ jobs:
   build-minimal:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -157,7 +178,7 @@ jobs:
     env:
       JRUBY_OPTS: "--dev"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up JRuby
       uses: ruby/setup-ruby@v1
       with:
@@ -169,7 +190,7 @@ jobs:
   lex-ruby:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -181,7 +202,7 @@ jobs:
   lex-discourse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -193,7 +214,7 @@ jobs:
   lex-top-100:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -213,7 +234,7 @@ jobs:
   memcheck:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install valgrind
       run: |
         sudo apt-get update
@@ -229,14 +250,14 @@ jobs:
   gem-package:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: head
         bundler-cache: true
     - run: bundle config --local frozen false
     - run: bundle exec rake build:dev
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: gem-package
         path: pkg
@@ -254,9 +275,10 @@ jobs:
           - { ruby: "3.2", os: "ubuntu-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "ubuntu-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "ubuntu-latest", gemfile: "3.4" }
-          - { ruby: "head", os: "ubuntu-latest", gemfile: "3.5" }
-          - { ruby: "jruby", os: "ubuntu-latest", gemfile: "jruby" }
-          - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: "truffleruby" }
+          - { ruby: "4.0", os: "ubuntu-latest", gemfile: "4.0" }
+          - { ruby: "head", os: "ubuntu-latest", gemfile: "4.1" }
+          - { ruby: "jruby-10.0.0.0", os: "ubuntu-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: ".." }
 
           - { ruby: "2.7", os: "macos-latest", gemfile: "2.7" }
           - { ruby: "3.0", os: "macos-latest", gemfile: "3.0" }
@@ -264,9 +286,10 @@ jobs:
           - { ruby: "3.2", os: "macos-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "macos-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "macos-latest", gemfile: "3.4" }
-          - { ruby: "head", os: "macos-latest", gemfile: "3.5" }
-          - { ruby: "jruby", os: "macos-latest", gemfile: "jruby" }
-          - { ruby: "truffleruby", os: "macos-latest", gemfile: "truffleruby" }
+          - { ruby: "4.0", os: "macos-latest", gemfile: "4.0" }
+          - { ruby: "head", os: "macos-latest", gemfile: "4.1" }
+          - { ruby: "jruby-10.0.0.0", os: "macos-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
+          - { ruby: "truffleruby", os: "macos-latest", gemfile: ".." }
 
           - { ruby: "2.7", os: "windows-latest", gemfile: "2.7" }
           - { ruby: "3.0", os: "windows-latest", gemfile: "3.0" }
@@ -274,17 +297,18 @@ jobs:
           - { ruby: "3.2", os: "windows-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "windows-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "windows-latest", gemfile: "3.4" }
-          # - { ruby: "head", os: "windows-latest", gemfile: "3.5" } <-- failing certs, temporarily disabled
-          - { ruby: "jruby", os: "windows-latest", gemfile: "jruby" }
+          - { ruby: "4.0", os: "windows-latest", gemfile: "4.0" }
+          # - { ruby: "head", os: "windows-latest", gemfile: "4.1" } TODO: No windows build yet
+          - { ruby: "jruby-10.0.0.0", os: "windows-latest", gemfile: ".." } # https://github.com/jruby/jruby/issues/8923
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.target.gemfile }}/Gemfile
     runs-on: ${{ matrix.target.os }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.target.ruby }}
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v7
       with:
         name: gem-package
         path: pkg
@@ -302,7 +326,7 @@ jobs:
   gcc-analyzer:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -315,7 +339,7 @@ jobs:
   clang-analyzer:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:

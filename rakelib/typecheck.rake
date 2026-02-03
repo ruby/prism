@@ -4,20 +4,6 @@ namespace :typecheck do
   task tapioca: :templates do
     Rake::Task["compile:prism"].invoke
 
-    # Yard crashes parsing steep, which is all run because of tapioca. So to
-    # avoid this, we're going to monkey patch yard to ignore these kinds of
-    # crashes so tapioca can keep running.
-    require "yard"
-    YARD.singleton_class.prepend(
-      Module.new do
-        def parse(*args, **kwargs)
-          super
-        rescue RangeError
-          []
-        end
-      end
-    )
-
     require "tapioca/internal"
     Tapioca::Cli.start(["configure"])
     Tapioca::Cli.start(["gems", "--exclude", "prism"])
@@ -34,11 +20,14 @@ namespace :typecheck do
     File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result_with_hash(locals))
       false:
         - ./lib/prism/lex_compat.rb
+        - ./lib/prism/lex_ripper.rb
         - ./lib/prism/node_ext.rb
         - ./lib/prism/parse_result.rb
         - ./lib/prism/visitor.rb
         - ./lib/prism/translation/parser/lexer.rb
         - ./lib/prism/translation/ripper.rb
+        - ./lib/prism/translation/ripper/filter.rb
+        - ./lib/prism/translation/ripper/lexer.rb
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
         - ./lib/prism/inspect_visitor.rb
@@ -62,6 +51,7 @@ namespace :typecheck do
       --ignore=rakelib/
       --ignore=Rakefile
       --ignore=top-100-gems/
+      #{Dir.glob("*.rb").map { |f| "--ignore=/#{f}" }.join("\n")}
       # Treat all files as "typed: true" by default
       --typed=true
       # Use the typed-override file to revert some files to "typed: false"

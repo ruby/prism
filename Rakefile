@@ -11,7 +11,10 @@ desc "Generate all ERB template based files"
 task templates: Prism::Template::TEMPLATES
 
 make = RUBY_PLATFORM.match?(/openbsd|freebsd/) ? "gmake" : "make"
-task(make: :templates) { sh(make) }
+task(make: :templates) {
+  ENV["MAKEFLAGS"] ||= "-j"
+  sh(make)
+}
 task(make_no_debug: :templates) { sh("#{make} all-no-debug") }
 task(make_minimal: :templates) { sh("#{make} minimal") }
 
@@ -52,6 +55,7 @@ end
 CLOBBER.concat(Prism::Template::TEMPLATES)
 CLOBBER.concat(["build"])
 CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
+CLOBBER << "java-wasm/src/main/resources/prism.wasm"
 
 Prism::Template::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"

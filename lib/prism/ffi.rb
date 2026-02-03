@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :markup: markdown
 # typed: ignore
 
 # This file is responsible for mirroring the API provided by the C extension by
@@ -85,6 +86,7 @@ module Prism
     end
 
     callback :pm_parse_stream_fgets_t, [:pointer, :int, :pointer], :pointer
+    callback :pm_parse_stream_feof_t, [:pointer], :int
     enum :pm_string_init_result_t, %i[PM_STRING_INIT_SUCCESS PM_STRING_INIT_ERROR_GENERIC PM_STRING_INIT_ERROR_DIRECTORY]
     enum :pm_string_query_t, [:PM_STRING_QUERY_ERROR, -1, :PM_STRING_QUERY_FALSE, :PM_STRING_QUERY_TRUE]
 
@@ -100,7 +102,7 @@ module Prism
       "pm_string_query_local",
       "pm_string_query_constant",
       "pm_string_query_method_name",
-      [:pm_parse_stream_fgets_t]
+      [:pm_parse_stream_fgets_t, :pm_parse_stream_feof_t]
     )
 
     load_exported_functions_from(
@@ -280,12 +282,14 @@ module Prism
           end
         }
 
+        eof_callback = -> (_) { stream.eof?  }
+
         # In the pm_serialize_parse_stream function it accepts a pointer to the
         # IO object as a void* and then passes it through to the callback as the
         # third argument, but it never touches it itself. As such, since we have
         # access to the IO object already through the closure of the lambda, we
         # can pass a null pointer here and not worry.
-        LibRubyParser.pm_serialize_parse_stream(buffer.pointer, nil, callback, dump_options(options))
+        LibRubyParser.pm_serialize_parse_stream(buffer.pointer, nil, callback, eof_callback, dump_options(options))
         Prism.load(source, buffer.read, options.fetch(:freeze, false))
       end
     end
@@ -419,17 +423,25 @@ module Prism
 
     # Return the value that should be dumped for the version option.
     def dump_options_version(version)
-      case version
+      current = version == "current"
+
+      case current ? RUBY_VERSION : version
       when nil, "latest"
-        0
+        0 # Handled in pm_parser_init
       when /\A3\.3(\.\d+)?\z/
         1
       when /\A3\.4(\.\d+)?\z/
         2
-      when /\A3\.5(\.\d+)?\z/
-        0
+      when /\A3\.5(\.\d+)?\z/, /\A4\.0(\.\d+)?\z/
+        3
+      when /\A4\.1(\.\d+)?\z/
+        4
       else
-        raise ArgumentError, "invalid version: #{version}"
+        if current
+          raise CurrentVersionError, RUBY_VERSION
+        else
+          raise ArgumentError, "invalid version: #{version}"
+        end
       end
     end
 

@@ -12,9 +12,12 @@ public abstract class ParsingOptions {
      * See pm_options_version_t in include/prism/options.h.
      */
     public enum SyntaxVersion {
-        LATEST(0),
+        LATEST(0), // Handled in pm_parser_init
         V3_3(1),
-        V3_4(2);
+        V3_4(2),
+        V3_5(3),
+        V4_0(3),
+        V4_1(4);
 
         private final int value;
 
@@ -63,15 +66,15 @@ public abstract class ParsingOptions {
         private byte[][] locals;
         private Forwarding[] forwarding;
 
-        Scope(byte[][] locals) {
+        public Scope(byte[][] locals) {
             this(locals, new Forwarding[0]);
         }
 
-        Scope(Forwarding[] forwarding) {
+        public Scope(Forwarding[] forwarding) {
             this(new byte[0][], forwarding);
         }
 
-        Scope(byte[][] locals, Forwarding[] forwarding) {
+        public Scope(byte[][] locals, Forwarding[] forwarding) {
             this.locals = locals;
             this.forwarding = forwarding;
         }

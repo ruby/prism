@@ -1,8 +1,9 @@
-FROM aflplusplus/aflplusplus
+FROM aflplusplus/aflplusplus:v4.32c
 
 ARG USERNAME=prism
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG RUBY_VERSION=3.3.10
 ENV MAKEFLAGS=-j8
 
 RUN groupadd --gid $USER_GID $USERNAME \
@@ -12,10 +13,10 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 
-RUN wget https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz
-RUN tar -xvf ruby-3.2.2.tar.gz
+RUN wget https://cache.ruby-lang.org/pub/ruby/3.3/ruby-${RUBY_VERSION}.tar.gz -O ruby.tar.gz
+RUN mkdir ruby-source && tar -xvf ruby.tar.gz -C ruby-source --strip-components=1
 RUN apt update && apt -y install libyaml-dev libz-dev libssl-dev
-RUN cd ruby-3.2.2 && ./configure --disable-install-doc && make && make install
+RUN cd ruby-source && ./configure --disable-install-doc && make && make install
 RUN gem install rake-compiler ruby_memcheck
 RUN git clone https://github.com/pwndbg/pwndbg && cd pwndbg && ./setup.sh
 ENV LC_CTYPE=C.UTF-8

@@ -12,14 +12,23 @@ on:
 
 jobs:
   test-all:
-    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Some tests in this repository are only run against parse.y
+        # We test them here in order to not fail ruby/ruby CI.
+        parser:
+          - prism
+          - parse.y
+
+    runs-on: ubuntu-24.04
     steps:
       - name: Set up latest ruby head
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: head
           bundler: none
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: ruby/ruby
           path: ruby/ruby
@@ -29,7 +38,7 @@ jobs:
           set -x
           sudo apt-get update -q || :
           sudo apt-get install --no-install-recommends -q -y build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev autoconf ruby
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: ruby/prism
           fetch-depth: 1
@@ -37,10 +46,14 @@ jobs:
         working-directory: ruby/ruby
       - name: Build Ruby
         run: |
+          ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
           autoconf
-          ./configure -C --disable-install-doc
-          make -j2
+          ./configure -C --disable-install-doc --with-parser=${{ matrix.parser }}
+          make -j$(nproc)
         working-directory: ruby/ruby
       - name: make test-all
-        run: make -j2 -s test-all TESTS="prism --no-retry"
+        env:
+          RUN_OPTS: --parser=${{ matrix.parser }}
+          EXCLUDES: ${{ matrix.parser == 'parse.y' && './test/.excludes-parsey' }}
+        run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby

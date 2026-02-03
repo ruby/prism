@@ -36,6 +36,7 @@ Once you have nodes in hand coming out of a parse result, there are a number of 
 * `#accept(visitor)` - a method that will immediately call `visit_*` to specialize for the node type
 * `#child_nodes` - a positional array of the child nodes of the node, with `nil` values for any missing children
 * `#compact_child_nodes` - a positional array of the child nodes of the node with no `nil` values
+* `#each_child_node` - with a block given yields all child nodes, without a block return an enumerator containing all child nodes
 * `#copy(**keys)` - a method that allows creating a shallow copy of the node with the given keys overridden
 * `#deconstruct`/`#deconstruct_keys(keys)` - the pattern matching interface for nodes
 * `#inspect` - a string representation that looks like the syntax tree of the node

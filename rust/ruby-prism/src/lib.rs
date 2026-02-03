@@ -19,7 +19,7 @@ use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
-use ruby_prism_sys::{pm_comment_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_comment_type_t, pm_constant_id_list_t, pm_constant_id_t, pm_diagnostic_t, pm_integer_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_list, pm_node_t, pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
 
 /// A range in the source file.
 pub struct Location<'pr> {
@@ -31,6 +31,8 @@ pub struct Location<'pr> {
 
 impl<'pr> Location<'pr> {
     /// Returns a byte slice for the range.
+    /// # Panics
+    /// Panics if the end offset is not greater than the start offset.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {
         unsafe {
@@ -41,7 +43,7 @@ impl<'pr> Location<'pr> {
 
     /// Return a Location from the given `pm_location_t`.
     #[must_use]
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Location<'pr> {
+    pub(crate) const fn new(parser: NonNull<pm_parser_t>, loc: &'pr pm_location_t) -> Self {
         Location {
             parser,
             start: loc.start,
@@ -54,7 +56,7 @@ impl<'pr> Location<'pr> {
     /// Returns None if both locations did not originate from the same parser,
     /// or if self starts after other.
     #[must_use]
-    pub fn join(&self, other: &Location<'pr>) -> Option<Location<'pr>> {
+    pub fn join(&self, other: &Self) -> Option<Self> {
         if self.parser != other.parser || self.start > other.start {
             None
         } else {
@@ -68,6 +70,8 @@ impl<'pr> Location<'pr> {
     }
 
     /// Return the start offset from the beginning of the parsed source.
+    /// # Panics
+    /// Panics if the start offset is not greater than the parser's start.
     #[must_use]
     pub fn start_offset(&self) -> usize {
         unsafe {
@@ -77,6 +81,8 @@ impl<'pr> Location<'pr> {
     }
 
     /// Return the end offset from the beginning of the parsed source.
+    /// # Panics
+    /// Panics if the end offset is not greater than the parser's start.
     #[must_use]
     pub fn end_offset(&self) -> usize {
         unsafe {
@@ -133,15 +139,60 @@ pub struct NodeList<'pr> {
 }
 
 impl<'pr> NodeList<'pr> {
+    unsafe fn at(&self, index: usize) -> Node<'pr> {
+        let node: *mut pm_node_t = *(self.pointer.as_ref().nodes.add(index));
+        Node::new(self.parser, node)
+    }
+
     /// Returns an iterator over the nodes.
     #[must_use]
-    pub fn iter(&self) -> NodeListIter<'pr> {
+    pub const fn iter(&self) -> NodeListIter<'pr> {
         NodeListIter {
             parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData,
         }
+    }
+
+    /// Returns the length of the list.
+    #[must_use]
+    pub const fn len(&self) -> usize {
+        unsafe { self.pointer.as_ref().size }
+    }
+
+    /// Returns whether the list is empty.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Returns the first element of the list, or `None` if it is empty.
+    #[must_use]
+    pub fn first(&self) -> Option<Node<'pr>> {
+        if self.is_empty() {
+            None
+        } else {
+            Some(unsafe { self.at(0) })
+        }
+    }
+
+    /// Returns the last element of the list, or `None` if it is empty.
+    #[must_use]
+    pub fn last(&self) -> Option<Node<'pr>> {
+        if self.is_empty() {
+            None
+        } else {
+            Some(unsafe { self.at(self.len() - 1) })
+        }
+    }
+}
+
+impl<'pr> IntoIterator for &NodeList<'pr> {
+    type Item = Node<'pr>;
+    type IntoIter = NodeListIter<'pr>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
     }
 }
 
@@ -159,7 +210,7 @@ pub struct ConstantId<'pr> {
 }
 
 impl<'pr> ConstantId<'pr> {
-    fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {
+    const fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {
         ConstantId { parser, id, marker: PhantomData }
     }
 
@@ -219,15 +270,60 @@ pub struct ConstantList<'pr> {
 }
 
 impl<'pr> ConstantList<'pr> {
+    const unsafe fn at(&self, index: usize) -> ConstantId<'pr> {
+        let constant_id: pm_constant_id_t = *(self.pointer.as_ref().ids.add(index));
+        ConstantId::new(self.parser, constant_id)
+    }
+
     /// Returns an iterator over the constants in the list.
     #[must_use]
-    pub fn iter(&self) -> ConstantListIter<'pr> {
+    pub const fn iter(&self) -> ConstantListIter<'pr> {
         ConstantListIter {
             parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData,
         }
+    }
+
+    /// Returns the length of the list.
+    #[must_use]
+    pub const fn len(&self) -> usize {
+        unsafe { self.pointer.as_ref().size }
+    }
+
+    /// Returns whether the list is empty.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Returns the first element of the list, or `None` if it is empty.
+    #[must_use]
+    pub const fn first(&self) -> Option<ConstantId<'pr>> {
+        if self.is_empty() {
+            None
+        } else {
+            Some(unsafe { self.at(0) })
+        }
+    }
+
+    /// Returns the last element of the list, or `None` if it is empty.
+    #[must_use]
+    pub const fn last(&self) -> Option<ConstantId<'pr>> {
+        if self.is_empty() {
+            None
+        } else {
+            Some(unsafe { self.at(self.len() - 1) })
+        }
+    }
+}
+
+impl<'pr> IntoIterator for &ConstantList<'pr> {
+    type Item = ConstantId<'pr>;
+    type IntoIter = ConstantListIter<'pr>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
     }
 }
 
@@ -246,9 +342,27 @@ pub struct Integer<'pr> {
     marker: PhantomData<&'pr mut pm_constant_id_t>,
 }
 
-impl<'pr> Integer<'pr> {
-    fn new(pointer: *const pm_integer_t) -> Self {
+impl Integer<'_> {
+    const fn new(pointer: *const pm_integer_t) -> Self {
         Integer { pointer, marker: PhantomData }
+    }
+
+    /// Returns the sign and the u32 digits representation of the integer,
+    /// ordered least significant digit first.
+    #[must_use]
+    pub const fn to_u32_digits(&self) -> (bool, &[u32]) {
+        let negative = unsafe { (*self.pointer).negative };
+        let length = unsafe { (*self.pointer).length };
+        let values = unsafe { (*self.pointer).values };
+
+        if values.is_null() {
+            let value_ptr = unsafe { std::ptr::addr_of!((*self.pointer).value) };
+            let slice = unsafe { std::slice::from_raw_parts(value_ptr, 1) };
+            (negative, slice)
+        } else {
+            let slice = unsafe { std::slice::from_raw_parts(values, length) };
+            (negative, slice)
+        }
     }
 }
 
@@ -276,7 +390,7 @@ impl TryInto<i32> for Integer<'_> {
 /// A diagnostic message that came back from the parser.
 #[derive(Debug)]
 pub struct Diagnostic<'pr> {
-    diagnostic: NonNull<pm_diagnostic_t>,
+    diag: NonNull<pm_diagnostic_t>,
     parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_diagnostic_t>,
 }
@@ -291,24 +405,33 @@ impl<'pr> Diagnostic<'pr> {
     #[must_use]
     pub fn message(&self) -> &str {
         unsafe {
-            let message: *mut c_char = self.diagnostic.as_ref().message.cast_mut();
+            let message: *mut c_char = self.diag.as_ref().message.cast_mut();
             CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
         }
     }
 
     /// The location of the diagnostic in the source.
     #[must_use]
-    pub fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.diagnostic.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.diag.as_ref().location })
     }
 }
 
 /// A comment that was found during parsing.
 #[derive(Debug)]
 pub struct Comment<'pr> {
-    comment: NonNull<pm_comment_t>,
+    content: NonNull<pm_comment_t>,
     parser: NonNull<pm_parser_t>,
     marker: PhantomData<&'pr pm_comment_t>,
+}
+
+/// The type of the comment
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CommentType {
+    /// `InlineComment` corresponds to comments that start with #.
+    InlineComment,
+    /// `EmbDocComment` corresponds to comments that are surrounded by =begin and =end.
+    EmbDocComment,
 }
 
 impl<'pr> Comment<'pr> {
@@ -321,10 +444,21 @@ impl<'pr> Comment<'pr> {
         self.location().as_slice()
     }
 
+    /// Returns the type of the comment.
+    #[must_use]
+    pub fn type_(&self) -> CommentType {
+        let type_ = unsafe { self.content.as_ref().type_ };
+        if type_ == pm_comment_type_t::PM_COMMENT_EMBDOC {
+            CommentType::EmbDocComment
+        } else {
+            CommentType::InlineComment
+        }
+    }
+
     /// The location of the comment in the source.
     #[must_use]
-    pub fn location(&self) -> Location<'pr> {
-        Location::new(self.parser, unsafe { &self.comment.as_ref().location })
+    pub const fn location(&self) -> Location<'pr> {
+        Location::new(self.parser, unsafe { &self.content.as_ref().location })
     }
 }
 
@@ -335,10 +469,10 @@ pub struct MagicComment<'pr> {
     marker: PhantomData<&'pr pm_magic_comment_t>,
 }
 
-impl<'pr> MagicComment<'pr> {
+impl MagicComment<'_> {
     /// Returns the text of the comment's key.
     #[must_use]
-    pub fn key(&self) -> &[u8] {
+    pub const fn key(&self) -> &[u8] {
         unsafe {
             let start = self.comment.as_ref().key_start;
             let len = self.comment.as_ref().key_length as usize;
@@ -348,7 +482,7 @@ impl<'pr> MagicComment<'pr> {
 
     /// Returns the text of the comment's value.
     #[must_use]
-    pub fn value(&self) -> &[u8] {
+    pub const fn value(&self) -> &[u8] {
         unsafe {
             let start = self.comment.as_ref().value_start;
             let len = self.comment.as_ref().value_length as usize;
@@ -370,7 +504,11 @@ impl<'pr> Iterator for Diagnostics<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(diagnostic) = NonNull::new(self.diagnostic) {
-            let current = Diagnostic { diagnostic, parser: self.parser, marker: PhantomData };
+            let current = Diagnostic {
+                diag: diagnostic,
+                parser: self.parser,
+                marker: PhantomData,
+            };
             self.diagnostic = unsafe { diagnostic.as_ref().node.next.cast::<pm_diagnostic_t>() };
             Some(current)
         } else {
@@ -392,7 +530,11 @@ impl<'pr> Iterator for Comments<'pr> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(comment) = NonNull::new(self.comment) {
-            let current = Comment { comment, parser: self.parser, marker: PhantomData };
+            let current = Comment {
+                content: comment,
+                parser: self.parser,
+                marker: PhantomData,
+            };
             self.comment = unsafe { comment.as_ref().node.next.cast::<pm_comment_t>() };
             Some(current)
         } else {
@@ -531,7 +673,7 @@ impl<'pr> ParseResult<'pr> {
     }
 }
 
-impl<'pr> Drop for ParseResult<'pr> {
+impl Drop for ParseResult<'_> {
     fn drop(&mut self) {
         unsafe {
             pm_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
@@ -575,6 +717,7 @@ mod tests {
         let result = parse(source.as_ref());
 
         for comment in result.comments() {
+            assert_eq!(super::CommentType::InlineComment, comment.type_());
             let text = std::str::from_utf8(comment.text()).unwrap();
             assert!(text.starts_with("# comment"));
         }
@@ -722,27 +865,42 @@ mod tests {
 
     #[test]
     fn constant_id_test() {
-        let source = "module Foo; x = 1; end";
+        let source = "module Foo; x = 1; y = 2; end";
         let result = parse(source.as_ref());
 
         let node = result.node();
-        let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        assert_eq!(node.as_program_node().unwrap().statements().body().len(), 1);
+        assert!(!node.as_program_node().unwrap().statements().body().is_empty());
+        let module = node.as_program_node().and_then(|pn| pn.statements().body().first()).unwrap();
         let module = module.as_module_node().unwrap();
-        let locals = module.locals().iter().collect::<Vec<_>>();
 
-        assert_eq!(locals.len(), 1);
+        assert_eq!(module.locals().len(), 2);
+        assert!(!module.locals().is_empty());
 
-        assert_eq!(locals[0].as_slice(), b"x");
+        assert_eq!(module.locals().first().unwrap().as_slice(), b"x");
+        assert_eq!(module.locals().last().unwrap().as_slice(), b"y");
+
+        let source = "module Foo; end";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        assert_eq!(node.as_program_node().unwrap().statements().body().len(), 1);
+        assert!(!node.as_program_node().unwrap().statements().body().is_empty());
+        let module = node.as_program_node().and_then(|pn| pn.statements().body().first()).unwrap();
+        let module = module.as_module_node().unwrap();
+
+        assert_eq!(module.locals().len(), 0);
+        assert!(module.locals().is_empty());
     }
 
     #[test]
     fn optional_loc_test() {
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -811,9 +969,9 @@ end
 
     #[test]
     fn call_flags_test() {
-        let source = r#"
+        let source = r"
 x
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -821,9 +979,9 @@ x
         let call = call.as_call_node().unwrap();
         assert!(call.is_variable_call());
 
-        let source = r#"
+        let source = r"
 x&.foo
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -834,9 +992,9 @@ x&.foo
 
     #[test]
     fn integer_flags_test() {
-        let source = r#"
+        let source = r"
 0b1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -847,9 +1005,9 @@ x&.foo
         assert!(!i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -860,9 +1018,9 @@ x&.foo
         assert!(!i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 0o1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -873,9 +1031,9 @@ x&.foo
         assert!(i.is_octal());
         assert!(!i.is_hexadecimal());
 
-        let source = r#"
+        let source = r"
 0x1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -889,9 +1047,9 @@ x&.foo
 
     #[test]
     fn range_flags_test() {
-        let source = r#"
+        let source = r"
 0..1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -899,9 +1057,9 @@ x&.foo
         let range = range.as_range_node().unwrap();
         assert!(!range.is_exclude_end());
 
-        let source = r#"
+        let source = r"
 0...1
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -913,9 +1071,9 @@ x&.foo
     #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
     #[test]
     fn regex_flags_test() {
-        let source = r#"
+        let source = r"
 /a/i
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -930,9 +1088,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/x
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -947,9 +1105,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/m
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -964,9 +1122,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/e
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -981,9 +1139,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/n
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -998,9 +1156,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/s
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1015,9 +1173,9 @@ x&.foo
         assert!(!regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/u
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1032,9 +1190,9 @@ x&.foo
         assert!(regex.is_utf_8());
         assert!(!regex.is_once());
 
-        let source = r#"
+        let source = r"
 /a/o
-"#;
+";
         let result = parse(source.as_ref());
 
         let node = result.node();
@@ -1067,7 +1225,7 @@ x&.foo
             counts: NodeCounts,
         }
 
-        impl<'pr> Visit<'pr> for CountingVisitor {
+        impl Visit<'_> for CountingVisitor {
             fn visit_branch_node_enter(&mut self, _node: Node<'_>) {
                 self.counts.pre_parent += 1;
             }
@@ -1085,12 +1243,12 @@ x&.foo
             }
         }
 
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
         let node = result.node();
         let mut visitor = CountingVisitor::default();
@@ -1126,12 +1284,12 @@ end
             }
         }
 
-        let source = r#"
+        let source = r"
 module Example
   x = call_func(3, 4)
   y = x.call_func 5, 6
 end
-"#;
+";
         let result = parse(source.as_ref());
         let node = result.node();
         let mut visitor = StackingNodeVisitor::default();
@@ -1144,9 +1302,30 @@ end
     #[test]
     fn integer_value_test() {
         let result = parse("0xA".as_ref());
-        let value: i32 = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value().try_into().unwrap();
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let value: i32 = integer.try_into().unwrap();
 
         assert_eq!(value, 10);
+    }
+
+    #[test]
+    fn integer_small_value_to_u32_digits_test() {
+        let result = parse("0xA".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[10]);
+    }
+
+    #[test]
+    fn integer_large_value_to_u32_digits_test() {
+        let result = parse("0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[4_294_967_295, 4_294_967_295, 4_294_967_295, 2_147_483_647]);
     }
 
     #[test]
@@ -1198,5 +1377,13 @@ end
         let mut extractor = Extract::default();
         extractor.push_scope(node.as_program_node().unwrap().statements().body().iter().next().unwrap());
         assert_eq!(3, extractor.scopes.len());
+    }
+
+    #[test]
+    fn malformed_shebang() {
+        let source = "#!\x00";
+        let result = parse(source.as_ref());
+        assert!(result.errors().next().is_none());
+        assert!(result.warnings().next().is_none());
     }
 }

@@ -17,6 +17,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (1,3)-(1,4) = "."
         │   ├── name: :bar
@@ -33,6 +34,7 @@
         │   │           ├── closing_loc: (1,13)-(1,14) = "}"
         │   │           └── unescaped: "baz"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (3,0)-(3,9))
         │   ├── flags: newline
@@ -46,6 +48,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (3,1)-(3,2) = "."
         │   ├── name: :b
@@ -64,6 +67,7 @@
         │   │       │   ├── opening_loc: ∅
         │   │       │   ├── arguments: ∅
         │   │       │   ├── closing_loc: ∅
+        │   │       │   ├── equal_loc: ∅
         │   │       │   └── block: ∅
         │   │       └── @ CallNode (location: (3,7)-(3,8))
         │   │           ├── flags: variable_call, ignore_visibility
@@ -74,8 +78,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: (3,8)-(3,9) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (5,0)-(5,5))
         │   ├── flags: newline
@@ -89,6 +95,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (5,1)-(5,2) = "."
         │   ├── name: :b
@@ -96,6 +103,7 @@
         │   ├── opening_loc: (5,3)-(5,4) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (5,4)-(5,5) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (7,0)-(9,7))
         │   ├── flags: newline, safe_navigation
@@ -112,6 +120,7 @@
         │   │   │   ├── opening_loc: ∅
         │   │   │   ├── arguments: ∅
         │   │   │   ├── closing_loc: ∅
+        │   │   │   ├── equal_loc: ∅
         │   │   │   └── block: ∅
         │   │   ├── call_operator_loc: (8,2)-(8,3) = "."
         │   │   ├── name: :bar
@@ -119,6 +128,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (9,2)-(9,4) = "&."
         │   ├── name: :baz
@@ -126,6 +136,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (11,0)-(11,2))
         │   ├── flags: newline, ignore_visibility
@@ -136,6 +147,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (13,0)-(13,4))
         │   ├── flags: newline
@@ -149,6 +161,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (13,1)-(13,2) = "."
         │   ├── name: :call
@@ -156,6 +169,7 @@
         │   ├── opening_loc: (13,2)-(13,3) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (13,3)-(13,4) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (15,0)-(15,11))
         │   ├── flags: newline
@@ -169,6 +183,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (15,1)-(15,2) = "."
         │   ├── name: :call
@@ -188,6 +203,7 @@
         │   │           ├── flags: static_literal, decimal
         │   │           └── value: 3
         │   ├── closing_loc: (15,10)-(15,11) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (17,0)-(17,4))
         │   ├── flags: newline
@@ -201,6 +217,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (17,1)-(17,3) = "::"
         │   ├── name: :b
@@ -208,6 +225,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (19,0)-(19,6))
         │   ├── flags: newline
@@ -221,6 +239,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (19,1)-(19,3) = "::"
         │   ├── name: :b
@@ -239,8 +258,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (21,0)-(21,11))
         │   ├── flags: newline, attribute_write
@@ -254,6 +275,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (21,3)-(21,4) = "."
         │   ├── name: :bar=
@@ -267,6 +289,7 @@
         │   │           ├── flags: static_literal, decimal
         │   │           └── value: 1
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: (21,8)-(21,9) = "="
         │   └── block: ∅
         ├── @ CallNode (location: (23,0)-(23,2))
         │   ├── flags: newline, ignore_visibility
@@ -277,8 +300,9 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
-        ├── @ CallNode (location: (25,0)-(25,8))
+        ├── @ CallNode (location: (25,0)-(25,9))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -287,6 +311,7 @@
         │   ├── opening_loc: (25,1)-(25,2) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (25,8)-(25,9) = ")"
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockArgumentNode (location: (25,2)-(25,8))
         │       ├── flags: ∅
@@ -300,6 +325,7 @@
         │       │   ├── opening_loc: ∅
         │       │   ├── arguments: ∅
         │       │   ├── closing_loc: ∅
+        │       │   ├── equal_loc: ∅
         │       │   └── block: ∅
         │       └── operator_loc: (25,2)-(25,3) = "&"
         ├── @ CallNode (location: (27,0)-(27,11))
@@ -328,9 +354,11 @@
         │   │                   │   ├── opening_loc: ∅
         │   │                   │   ├── arguments: ∅
         │   │                   │   ├── closing_loc: ∅
+        │   │                   │   ├── equal_loc: ∅
         │   │                   │   └── block: ∅
         │   │                   └── operator_loc: (27,2)-(27,4) = "**"
         │   ├── closing_loc: (27,10)-(27,11) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (29,0)-(29,5))
         │   ├── flags: newline
@@ -347,6 +375,7 @@
         │   │   │   ├── opening_loc: ∅
         │   │   │   ├── arguments: ∅
         │   │   │   ├── closing_loc: ∅
+        │   │   │   ├── equal_loc: ∅
         │   │   │   └── block: ∅
         │   │   ├── call_operator_loc: (29,1)-(29,2) = "."
         │   │   ├── name: :b
@@ -354,6 +383,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (29,3)-(29,4) = "."
         │   ├── name: :c
@@ -361,6 +391,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (31,0)-(31,7))
         │   ├── flags: newline, ignore_visibility
@@ -382,6 +413,7 @@
         │   │       │   ├── opening_loc: ∅
         │   │       │   ├── arguments: ∅
         │   │       │   ├── closing_loc: ∅
+        │   │       │   ├── equal_loc: ∅
         │   │       │   └── block: ∅
         │   │       └── @ CallNode (location: (31,5)-(31,6))
         │   │           ├── flags: variable_call, ignore_visibility
@@ -392,8 +424,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: (31,6)-(31,7) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (33,0)-(33,3))
         │   ├── flags: newline, ignore_visibility
@@ -404,6 +438,7 @@
         │   ├── opening_loc: (33,1)-(33,2) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (33,2)-(33,3) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (35,0)-(35,8))
         │   ├── flags: newline, ignore_visibility
@@ -429,8 +464,10 @@
         │   │               ├── opening_loc: ∅
         │   │               ├── arguments: ∅
         │   │               ├── closing_loc: ∅
+        │   │               ├── equal_loc: ∅
         │   │               └── block: ∅
         │   ├── closing_loc: (35,7)-(35,8) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (37,0)-(37,6))
         │   ├── flags: newline, ignore_visibility
@@ -452,6 +489,7 @@
         │   │       │   ├── opening_loc: ∅
         │   │       │   ├── arguments: ∅
         │   │       │   ├── closing_loc: ∅
+        │   │       │   ├── equal_loc: ∅
         │   │       │   └── block: ∅
         │   │       └── @ CallNode (location: (37,5)-(37,6))
         │   │           ├── flags: variable_call, ignore_visibility
@@ -462,8 +500,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (39,0)-(39,8))
         │   ├── flags: newline
@@ -477,6 +517,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (39,1)-(39,2) = "."
         │   ├── name: :b
@@ -495,6 +536,7 @@
         │   │       │   ├── opening_loc: ∅
         │   │       │   ├── arguments: ∅
         │   │       │   ├── closing_loc: ∅
+        │   │       │   ├── equal_loc: ∅
         │   │       │   └── block: ∅
         │   │       └── @ CallNode (location: (39,7)-(39,8))
         │   │           ├── flags: variable_call, ignore_visibility
@@ -505,8 +547,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ MultiWriteNode (location: (41,0)-(41,23))
         │   ├── flags: newline
@@ -523,6 +567,7 @@
         │   │   │   │   ├── opening_loc: ∅
         │   │   │   │   ├── arguments: ∅
         │   │   │   │   ├── closing_loc: ∅
+        │   │   │   │   ├── equal_loc: ∅
         │   │   │   │   └── block: ∅
         │   │   │   ├── call_operator_loc: (41,3)-(41,4) = "."
         │   │   │   ├── name: :foo=
@@ -539,6 +584,7 @@
         │   │       │   ├── opening_loc: ∅
         │   │       │   ├── arguments: ∅
         │   │       │   ├── closing_loc: ∅
+        │   │       │   ├── equal_loc: ∅
         │   │       │   └── block: ∅
         │   │       ├── call_operator_loc: (41,12)-(41,13) = "."
         │   │       ├── name: :bar=
@@ -572,6 +618,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (43,1)-(43,3) = "&."
         │   ├── name: :b
@@ -579,6 +626,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (45,0)-(45,5))
         │   ├── flags: newline, safe_navigation
@@ -592,6 +640,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (45,1)-(45,3) = "&."
         │   ├── name: :call
@@ -599,6 +648,7 @@
         │   ├── opening_loc: (45,3)-(45,4) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (45,4)-(45,5) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (47,0)-(47,7))
         │   ├── flags: newline, safe_navigation
@@ -612,6 +662,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (47,1)-(47,3) = "&."
         │   ├── name: :b
@@ -630,8 +681,10 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── closing_loc: (47,6)-(47,7) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (49,0)-(49,6))
         │   ├── flags: newline, safe_navigation
@@ -645,6 +698,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (49,1)-(49,3) = "&."
         │   ├── name: :b
@@ -652,6 +706,7 @@
         │   ├── opening_loc: (49,4)-(49,5) = "("
         │   ├── arguments: ∅
         │   ├── closing_loc: (49,5)-(49,6) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ IfNode (location: (51,0)-(51,33))
         │   ├── flags: newline
@@ -672,6 +727,7 @@
         │   │   │   │   ├── opening_loc: ∅
         │   │   │   │   ├── arguments: ∅
         │   │   │   │   ├── closing_loc: ∅
+        │   │   │   │   ├── equal_loc: ∅
         │   │   │   │   └── block: ∅
         │   │   │   ├── right:
         │   │   │   │   @ CallNode (location: (51,22)-(51,25))
@@ -683,6 +739,7 @@
         │   │   │   │   ├── opening_loc: ∅
         │   │   │   │   ├── arguments: ∅
         │   │   │   │   ├── closing_loc: ∅
+        │   │   │   │   ├── equal_loc: ∅
         │   │   │   │   └── block: ∅
         │   │   │   └── operator_loc: (51,19)-(51,21) = "or"
         │   │   ├── right:
@@ -695,6 +752,7 @@
         │   │   │   ├── opening_loc: ∅
         │   │   │   ├── arguments: ∅
         │   │   │   ├── closing_loc: ∅
+        │   │   │   ├── equal_loc: ∅
         │   │   │   └── block: ∅
         │   │   └── operator_loc: (51,26)-(51,29) = "and"
         │   ├── then_keyword_loc: ∅
@@ -726,6 +784,7 @@
         │   │           │           ├── closing_loc: ∅
         │   │           │           └── unescaped: "b"
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── subsequent: ∅
         │   └── end_keyword_loc: ∅
@@ -753,6 +812,7 @@
         │   │           ├── closing_loc: ∅
         │   │           └── unescaped: "b"
         │   ├── closing_loc: (56,0)-(56,1) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (58,0)-(58,10))
         │   ├── flags: newline, ignore_visibility
@@ -778,10 +838,12 @@
         │   │               ├── opening_loc: ∅
         │   │               ├── arguments: ∅
         │   │               ├── closing_loc: ∅
+        │   │               ├── equal_loc: ∅
         │   │               └── block: ∅
         │   ├── closing_loc: (58,9)-(58,10) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
-        ├── @ CallNode (location: (60,0)-(60,39))
+        ├── @ CallNode (location: (60,0)-(60,40))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -847,6 +909,7 @@
         │   │                   │   └── unescaped: "b"
         │   │                   └── operator_loc: (60,27)-(60,29) = "=>"
         │   ├── closing_loc: (60,39)-(60,40) = ")"
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockArgumentNode (location: (60,34)-(60,39))
         │       ├── flags: ∅
@@ -921,6 +984,7 @@
         │   │           │       └── operator_loc: ∅
         │   │           └── closing_loc: (62,48)-(62,49) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (64,0)-(64,36))
         │   ├── flags: newline, ignore_visibility
@@ -956,6 +1020,7 @@
         │   │                   │   └── flags: static_literal
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (64,16)-(64,36))
         │       ├── flags: ∅
@@ -1002,6 +1067,7 @@
         │       │           │           ├── name: :a
         │       │           │           └── depth: 0
         │       │           ├── closing_loc: ∅
+        │       │           ├── equal_loc: ∅
         │       │           └── block: ∅
         │       ├── opening_loc: (64,16)-(64,18) = "do"
         │       └── closing_loc: (64,33)-(64,36) = "end"
@@ -1037,6 +1103,7 @@
         │   │                   │   └── unescaped: "friend"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (68,0)-(68,40))
         │   ├── flags: newline, ignore_visibility
@@ -1096,6 +1163,7 @@
         │   │                   │   └── unescaped: "dog"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (70,0)-(70,41))
         │   ├── flags: newline, ignore_visibility
@@ -1155,8 +1223,9 @@
         │   │                   │   └── unescaped: "dog"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: (70,40)-(70,41) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
-        ├── @ CallNode (location: (72,0)-(72,35))
+        ├── @ CallNode (location: (72,0)-(72,36))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
         │   ├── call_operator_loc: ∅
@@ -1199,6 +1268,7 @@
         │   │           │       └── operator_loc: ∅
         │   │           └── closing_loc: (72,25)-(72,26) = "}"
         │   ├── closing_loc: (72,35)-(72,36) = ")"
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockArgumentNode (location: (72,28)-(72,35))
         │       ├── flags: ∅
@@ -1242,6 +1312,7 @@
         │   │                   │   └── unescaped: "friend"
         │   │                   └── operator_loc: (74,10)-(74,12) = "=>"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (76,0)-(78,1))
         │   ├── flags: newline, ignore_visibility
@@ -1267,6 +1338,7 @@
         │   │           ├── closing_loc: ∅
         │   │           └── unescaped: "b"
         │   ├── closing_loc: (78,0)-(78,1) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (80,0)-(83,1))
         │   ├── flags: newline, ignore_visibility
@@ -1306,6 +1378,7 @@
         │   │                   │   └── unescaped: "c"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: (83,0)-(83,1) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (85,0)-(85,11))
         │   ├── flags: newline, ignore_visibility
@@ -1316,6 +1389,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockArgumentNode (location: (85,4)-(85,11))
         │       ├── flags: ∅
@@ -1368,6 +1442,7 @@
         │   │                   │   └── flags: static_literal
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockArgumentNode (location: (87,23)-(87,30))
         │       ├── flags: ∅
@@ -1411,6 +1486,7 @@
         │   │                   │   └── value: 2
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (91,0)-(91,18))
         │   ├── flags: newline
@@ -1430,6 +1506,7 @@
         │   │           ├── flags: static_literal, decimal
         │   │           └── value: 10
         │   ├── closing_loc: (91,17)-(91,18) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (93,0)-(93,10))
         │   ├── flags: newline
@@ -1443,6 +1520,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (93,1)-(93,2) = "."
         │   ├── name: :each
@@ -1450,6 +1528,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (93,7)-(93,10))
         │       ├── flags: ∅
@@ -1470,6 +1549,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: (95,3)-(95,4) = "."
         │   ├── name: :map
@@ -1477,6 +1557,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (95,8)-(95,14))
         │       ├── flags: ∅
@@ -1518,6 +1599,7 @@
         │   │           ├── closing_loc: ∅
         │   │           └── unescaped: "foo"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (99,0)-(99,13))
         │   ├── flags: newline
@@ -1546,6 +1628,7 @@
         │   │           ├── closing_loc: ∅
         │   │           └── unescaped: "foo"
         │   ├── closing_loc: (99,12)-(99,13) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (101,0)-(101,17))
         │   ├── flags: newline
@@ -1574,6 +1657,7 @@
         │   │           ├── closing_loc: ∅
         │   │           └── unescaped: "foo"
         │   ├── closing_loc: (101,12)-(101,13) = ")"
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (101,14)-(101,17))
         │       ├── flags: ∅
@@ -1611,6 +1695,7 @@
         │   │                   │   └── value: -1
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: (103,11)-(103,12) = ")"
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (105,0)-(105,28))
         │   ├── flags: newline, ignore_visibility
@@ -1659,6 +1744,7 @@
         │   │                   │   │       │   ├── opening_loc: ∅
         │   │                   │   │       │   ├── arguments: ∅
         │   │                   │   │       │   ├── closing_loc: ∅
+        │   │                   │   │       │   ├── equal_loc: ∅
         │   │                   │   │       │   └── block:
         │   │                   │   │       │       @ BlockNode (location: (105,20)-(105,26))
         │   │                   │   │       │       ├── flags: ∅
@@ -1671,6 +1757,7 @@
         │   │                   │   └── closing_loc: (105,27)-(105,28) = "}"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (107,0)-(107,24))
         │   ├── flags: newline, ignore_visibility
@@ -1712,6 +1799,7 @@
         │   │                   │   │       │   ├── opening_loc: ∅
         │   │                   │   │       │   ├── arguments: ∅
         │   │                   │   │       │   ├── closing_loc: ∅
+        │   │                   │   │       │   ├── equal_loc: ∅
         │   │                   │   │       │   └── block:
         │   │                   │   │       │       @ BlockNode (location: (107,16)-(107,22))
         │   │                   │   │       │       ├── flags: ∅
@@ -1724,6 +1812,7 @@
         │   │                   │   └── closing_loc: (107,23)-(107,24) = "}"
         │   │                   └── operator_loc: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (109,0)-(109,36))
         │   ├── flags: newline, ignore_visibility
@@ -1759,6 +1848,7 @@
         │   │           │       │           │   ├── opening_loc: ∅
         │   │           │       │           │   ├── arguments: ∅
         │   │           │       │           │   ├── closing_loc: ∅
+        │   │           │       │           │   ├── equal_loc: ∅
         │   │           │       │           │   └── block: ∅
         │   │           │       │           ├── call_operator_loc: (109,10)-(109,11) = "."
         │   │           │       │           ├── name: :map
@@ -1766,6 +1856,7 @@
         │   │           │       │           ├── opening_loc: ∅
         │   │           │       │           ├── arguments: ∅
         │   │           │       │           ├── closing_loc: ∅
+        │   │           │       │           ├── equal_loc: ∅
         │   │           │       │           └── block:
         │   │           │       │               @ BlockNode (location: (109,15)-(109,27))
         │   │           │       │               ├── flags: ∅
@@ -1786,6 +1877,7 @@
         │   │           │       └── closing_loc: (109,27)-(109,28) = "}"
         │   │           └── closing_loc: (109,28)-(109,29) = "\""
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (109,30)-(109,36))
         │       ├── flags: ∅
@@ -1828,6 +1920,7 @@
         │   │           │           ├── opening_loc: ∅
         │   │           │           ├── arguments: ∅
         │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
         │   │           │           └── block:
         │   │           │               @ BlockNode (location: (111,18)-(111,24))
         │   │           │               ├── flags: ∅
@@ -1839,6 +1932,7 @@
         │   │           ├── end_keyword_loc: (111,25)-(111,28) = "end"
         │   │           └── name: :Bar
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (113,0)-(113,29))
         │   ├── flags: newline, ignore_visibility
@@ -1872,6 +1966,7 @@
         │   │           │           ├── opening_loc: ∅
         │   │           │           ├── arguments: ∅
         │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
         │   │           │           └── block:
         │   │           │               @ BlockNode (location: (113,19)-(113,25))
         │   │           │               ├── flags: ∅
@@ -1883,6 +1978,7 @@
         │   │           ├── end_keyword_loc: (113,26)-(113,29) = "end"
         │   │           └── name: :Bar
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (115,0)-(115,16))
         │   ├── flags: newline, ignore_visibility
@@ -1907,6 +2003,7 @@
         │   │           │       ├── opening_loc: ∅
         │   │           │       ├── arguments: ∅
         │   │           │       ├── closing_loc: ∅
+        │   │           │       ├── equal_loc: ∅
         │   │           │       └── block:
         │   │           │           @ BlockNode (location: (115,9)-(115,15))
         │   │           │           ├── flags: ∅
@@ -1918,6 +2015,7 @@
         │   │           ├── opening_loc: (115,4)-(115,5) = "["
         │   │           └── closing_loc: (115,15)-(115,16) = "]"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (117,0)-(117,28))
         │   ├── flags: newline, ignore_visibility
@@ -1949,6 +2047,7 @@
         │   │           │           ├── opening_loc: ∅
         │   │           │           ├── arguments: ∅
         │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
         │   │           │           └── block:
         │   │           │               @ BlockNode (location: (117,16)-(117,24))
         │   │           │               ├── flags: ∅
@@ -1968,6 +2067,7 @@
         │   │           ├── ensure_clause: ∅
         │   │           └── end_keyword_loc: (117,25)-(117,28) = "end"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (119,0)-(124,5))
         │   ├── flags: newline, ignore_visibility
@@ -1999,6 +2099,7 @@
         │   │           │   ├── opening_loc: ∅
         │   │           │   ├── arguments: ∅
         │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
         │   │           │   └── block: ∅
         │   │           ├── then_keyword_loc: ∅
         │   │           ├── statements:
@@ -2014,6 +2115,7 @@
         │   │           │           ├── opening_loc: ∅
         │   │           │           ├── arguments: ∅
         │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
         │   │           │           └── block:
         │   │           │               @ BlockNode (location: (121,8)-(123,7))
         │   │           │               ├── flags: ∅
@@ -2050,6 +2152,7 @@
         │   │           ├── subsequent: ∅
         │   │           └── end_keyword_loc: (124,2)-(124,5) = "end"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (126,0)-(135,5))
         │   ├── flags: newline, ignore_visibility
@@ -2083,6 +2186,7 @@
         │   │       │   │   ├── opening_loc: ∅
         │   │       │   │   ├── arguments: ∅
         │   │       │   │   ├── closing_loc: ∅
+        │   │       │   │   ├── equal_loc: ∅
         │   │       │   │   └── block: ∅
         │   │       │   └── statements:
         │   │       │       @ StatementsNode (location: (128,4)-(130,7))
@@ -2097,6 +2201,7 @@
         │   │       │               ├── opening_loc: ∅
         │   │       │               ├── arguments: ∅
         │   │       │               ├── closing_loc: ∅
+        │   │       │               ├── equal_loc: ∅
         │   │       │               └── block:
         │   │       │                   @ BlockNode (location: (128,8)-(130,7))
         │   │       │                   ├── flags: ∅
@@ -2145,6 +2250,7 @@
         │   │           │   ├── opening_loc: ∅
         │   │           │   ├── arguments: ∅
         │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
         │   │           │   └── block: ∅
         │   │           └── statements:
         │   │               @ StatementsNode (location: (133,4)-(134,7))
@@ -2159,6 +2265,7 @@
         │   │                       ├── opening_loc: ∅
         │   │                       ├── arguments: ∅
         │   │                       ├── closing_loc: ∅
+        │   │                       ├── equal_loc: ∅
         │   │                       └── block:
         │   │                           @ BlockNode (location: (133,8)-(134,7))
         │   │                           ├── flags: ∅
@@ -2168,6 +2275,7 @@
         │   │                           ├── opening_loc: (133,8)-(133,10) = "do"
         │   │                           └── closing_loc: (134,4)-(134,7) = "end"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (137,0)-(137,9))
         │   ├── flags: newline
@@ -2194,6 +2302,7 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (137,7)-(137,9))
         │   │               ├── flags: ∅
@@ -2203,6 +2312,7 @@
         │   │               ├── opening_loc: (137,7)-(137,8) = "{"
         │   │               └── closing_loc: (137,8)-(137,9) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (139,0)-(139,16))
         │   ├── flags: newline
@@ -2229,6 +2339,7 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (139,7)-(139,16))
         │   │               ├── flags: ∅
@@ -2263,6 +2374,7 @@
         │   │               ├── opening_loc: (139,7)-(139,8) = "{"
         │   │               └── closing_loc: (139,15)-(139,16) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (141,0)-(141,11))
         │   ├── flags: newline
@@ -2276,6 +2388,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block:
         │   │       @ BlockNode (location: (141,2)-(141,4))
         │   │       ├── flags: ∅
@@ -2301,6 +2414,7 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (141,9)-(141,11))
         │   │               ├── flags: ∅
@@ -2310,6 +2424,7 @@
         │   │               ├── opening_loc: (141,9)-(141,10) = "{"
         │   │               └── closing_loc: (141,10)-(141,11) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ CallNode (location: (143,0)-(143,11))
         │   ├── flags: newline
@@ -2323,6 +2438,7 @@
         │   │   ├── opening_loc: ∅
         │   │   ├── arguments: ∅
         │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   ├── call_operator_loc: ∅
         │   ├── name: :<<
@@ -2341,6 +2457,7 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (143,9)-(143,11))
         │   │               ├── flags: ∅
@@ -2350,6 +2467,7 @@
         │   │               ├── opening_loc: (143,9)-(143,10) = "{"
         │   │               └── closing_loc: (143,10)-(143,11) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ InterpolatedStringNode (location: (145,0)-(145,17))
         │   ├── flags: newline
@@ -2388,6 +2506,7 @@
         │   │       │           │           ├── opening_loc: (145,9)-(145,10) = "("
         │   │       │           │           └── closing_loc: (145,13)-(145,14) = ")"
         │   │       │           ├── closing_loc: ∅
+        │   │       │           ├── equal_loc: ∅
         │   │       │           └── block: ∅
         │   │       └── closing_loc: (145,15)-(145,16) = "}"
         │   └── closing_loc: (145,16)-(145,17) = "\""
@@ -2417,6 +2536,7 @@
         │   │       │           │           ├── opening_loc: ∅
         │   │       │           │           ├── arguments: ∅
         │   │       │           │           ├── closing_loc: ∅
+        │   │       │           │           ├── equal_loc: ∅
         │   │       │           │           └── block: ∅
         │   │       │           ├── opening_loc: (147,3)-(147,4) = "("
         │   │       │           └── closing_loc: (147,5)-(147,6) = ")"
@@ -2462,6 +2582,7 @@
         │   │           │           ├── operator_loc: (149,12)-(149,13) = "*"
         │   │           │           └── expression: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block: ∅
         │   ├── locals: []
         │   ├── def_keyword_loc: (149,0)-(149,3) = "def"
@@ -2493,6 +2614,7 @@
         │   │           ├── opening_loc: ∅
         │   │           ├── arguments: ∅
         │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
         │   │           └── block:
         │   │               @ BlockNode (location: (151,11)-(151,16))
         │   │               ├── flags: ∅
@@ -2508,6 +2630,7 @@
         │   │               ├── opening_loc: (151,11)-(151,12) = "{"
         │   │               └── closing_loc: (151,15)-(151,16) = "}"
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block: ∅
         ├── @ LocalVariableWriteNode (location: (153,0)-(153,7))
         │   ├── flags: newline
@@ -2528,6 +2651,7 @@
         │   ├── opening_loc: ∅
         │   ├── arguments: ∅
         │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
         │   └── block:
         │       @ BlockNode (location: (154,4)-(154,6))
         │       ├── flags: ∅
@@ -2582,6 +2706,7 @@
             │                   │   │       │           ├── opening_loc: ∅
             │                   │   │       │           ├── arguments: ∅
             │                   │   │       │           ├── closing_loc: ∅
+            │                   │   │       │           ├── equal_loc: ∅
             │                   │   │       │           └── block: ∅
             │                   │   │       └── closing_loc: (156,13)-(156,14) = "}"
             │                   │   └── closing_loc: (156,14)-(156,16) = "\":"
@@ -2591,4 +2716,5 @@
             │                   │   └── value: 42
             │                   └── operator_loc: ∅
             ├── closing_loc: ∅
+            ├── equal_loc: ∅
             └── block: ∅

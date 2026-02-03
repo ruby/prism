@@ -1,73 +1,77 @@
 package org.prism;
 
+import com.dylibso.chicory.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ByteArrayMemory;
-import com.dylibso.chicory.experimental.hostmodule.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
-import com.dylibso.chicory.wasm.types.MemoryLimits;
 
 import java.nio.charset.StandardCharsets;
 
 @WasmModuleInterface(WasmResource.absoluteFile)
 public class Prism implements AutoCloseable {
     private final WasiPreview1 wasi;
+    protected final Prism_ModuleExports exports;
     private final Instance instance;
-    private final Prism_ModuleExports exports;
+
+    private int bufferPointer;
+    private int preSourcePointer;
+    private int preOptionsPointer;
+
+    private final int SOURCE_SIZE = 2 * 1024 * 1024; // 2 MiB
+    private final int PACKED_OPTIONS_BUFFER_SIZE = 1024;
 
     public Prism() {
         this(WasiOptions.builder().build());
     }
+
     public Prism(WasiOptions wasiOpts) {
         wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
-        instance = Instance.builder(PrismModule.load())
-            .withMemoryFactory(limits -> new ByteArrayMemory(new MemoryLimits(10, MemoryLimits.MAX_PAGES)))
-            .withMachineFactory(PrismModule::create)
+        instance = Instance.builder(PrismParser.load())
+            .withMemoryFactory(ByteArrayMemory::new)
+            .withMachineFactory(PrismParser::create)
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
         exports = new Prism_ModuleExports(instance);
+
+        preOptionsPointer = exports.calloc(1, PACKED_OPTIONS_BUFFER_SIZE);
+        preSourcePointer = exports.calloc(1, SOURCE_SIZE);
+
+        bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
+        exports.pmBufferInit(bufferPointer);
     }
 
-    public Prism_ModuleExports exports() {
-        return exports;
-    }
-
-    public byte[] serialize(byte[] packedOptions, byte[] source, int sourceLength) {
+    public byte[] serialize(byte[] packedOptions, byte[] sourceBytes, int sourceLength) {
         int sourcePointer = 0;
+        boolean useDefaultSourcePointer = sourceLength + 1 > SOURCE_SIZE;
         int optionsPointer = 0;
-        int bufferPointer = 0;
-        int resultPointer = 0;
+        boolean useDefaultOptionsPointer = packedOptions.length > PACKED_OPTIONS_BUFFER_SIZE;
         byte[] result;
         try {
-            sourcePointer = exports.calloc(1, sourceLength);
-            exports.memory().write(sourcePointer, source);
+            sourcePointer = (!useDefaultSourcePointer) ?
+                exports.calloc(1, sourceLength + 1) : preSourcePointer;
+            instance.memory().write(sourcePointer, sourceBytes, 0, sourceLength);
+            instance.memory().writeByte(sourcePointer + sourceLength, (byte) 0);
 
-            optionsPointer = exports.calloc(1, packedOptions.length);
-            exports.memory().write(optionsPointer, packedOptions);
+            optionsPointer = (!useDefaultOptionsPointer) ?
+                exports.calloc(1, packedOptions.length) : preOptionsPointer;
+            instance.memory().write(optionsPointer, packedOptions);
 
-            bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
-            exports.pmBufferInit(bufferPointer);
+            exports.pmBufferClear(bufferPointer);
 
-            exports.pmSerializeParse(bufferPointer, sourcePointer, sourceLength, optionsPointer);
-
-            resultPointer = exports.pmBufferValue(bufferPointer);
+            exports.pmSerializeParse(
+                bufferPointer, sourcePointer, sourceLength, optionsPointer);
 
             result = instance.memory().readBytes(
-                resultPointer,
+                exports.pmBufferValue(bufferPointer),
                 exports.pmBufferLength(bufferPointer));
         } finally {
-            if (sourcePointer != 0) {
+            if (!useDefaultSourcePointer) {
                 exports.free(sourcePointer);
             }
-            if (optionsPointer != 0) {
+            if (!useDefaultOptionsPointer) {
                 exports.free(optionsPointer);
-            }
-            if (bufferPointer != 0) {
-                exports.free(bufferPointer);
-            }
-            if (resultPointer != 0) {
-                exports.free(resultPointer);
             }
         }
 
@@ -75,10 +79,8 @@ public class Prism implements AutoCloseable {
     }
 
     public ParseResult serializeParse(byte[] packedOptions, String source) {
-        var sourceBytes = source.getBytes(StandardCharsets.US_ASCII);
-
+        var sourceBytes = source.getBytes(StandardCharsets.ISO_8859_1);
         byte[] result = serialize(packedOptions, sourceBytes, sourceBytes.length);
-
         return Loader.load(result, sourceBytes);
     }
 

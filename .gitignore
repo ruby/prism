@@ -11,7 +11,7 @@
 /spec/reports/
 /top-100-gems/
 tmp/
-/vendor/bundle
+vendor/
 
 /build/
 /lib/prism/prism.*
@@ -74,3 +74,5 @@ compile_commands.json
 .vscode/
 
 tags
+
+wasi-sdk*
