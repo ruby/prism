@@ -1,4 +1,4 @@
-package org.prism;
+package org.ruby_lang.prism;
 
 // Keep in sync with Ruby MarkNewlinesVisitor
 final class MarkNewlinesVisitor extends AbstractNodeVisitor<Void> {

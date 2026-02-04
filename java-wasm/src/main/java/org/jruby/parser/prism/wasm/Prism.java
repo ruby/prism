@@ -6,8 +6,8 @@ import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
-import org.prism.Loader;
-import org.prism.ParseResult;
+import org.ruby_lang.prism.Loader;
+import org.ruby_lang.prism.ParseResult;
 
 import java.nio.charset.StandardCharsets;
 

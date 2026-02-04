@@ -23,9 +23,9 @@ ruby -pi -e 'gsub(/PRISM_VERSION_PATCH \d+/, %Q{PRISM_VERSION_PATCH #{ENV["PRISM
 ruby -pi -e 'gsub(/PRISM_VERSION ".+?"/, %Q{PRISM_VERSION "#{ENV["PRISM_VERSION"]}"})' include/prism/version.h
 ruby -pi -e 'gsub(/"version": ".+?"/, %Q{"version": "#{ENV["PRISM_VERSION"]}"})' javascript/package.json
 ruby -pi -e 'gsub(/lossy\(\), ".+?"/, %Q{lossy(), "#{ENV["PRISM_VERSION"]}"})' rust/ruby-prism-sys/tests/utils_tests.rs
-ruby -pi -e 'gsub(/\d+, "prism major/, %Q{#{ENV["PRISM_MAJOR"]}, "prism major})' templates/java/org/prism/Loader.java.erb
-ruby -pi -e 'gsub(/\d+, "prism minor/, %Q{#{ENV["PRISM_MINOR"]}, "prism minor})' templates/java/org/prism/Loader.java.erb
-ruby -pi -e 'gsub(/\d+, "prism patch/, %Q{#{ENV["PRISM_PATCH"]}, "prism patch})' templates/java/org/prism/Loader.java.erb
+ruby -pi -e 'gsub(/\d+, "prism major/, %Q{#{ENV["PRISM_MAJOR"]}, "prism major})' templates/java/org/ruby_lang/prism/Loader.java.erb
+ruby -pi -e 'gsub(/\d+, "prism minor/, %Q{#{ENV["PRISM_MINOR"]}, "prism minor})' templates/java/org/ruby_lang/prism/Loader.java.erb
+ruby -pi -e 'gsub(/\d+, "prism patch/, %Q{#{ENV["PRISM_PATCH"]}, "prism patch})' templates/java/org/ruby_lang/prism/Loader.java.erb
 ruby -pi -e 'gsub(/MAJOR_VERSION = \d+/, %Q{MAJOR_VERSION = #{ENV["PRISM_MAJOR"]}})' templates/javascript/src/deserialize.js.erb
 ruby -pi -e 'gsub(/MINOR_VERSION = \d+/, %Q{MINOR_VERSION = #{ENV["PRISM_MINOR"]}})' templates/javascript/src/deserialize.js.erb
 ruby -pi -e 'gsub(/PATCH_VERSION = \d+/, %Q{PATCH_VERSION = #{ENV["PRISM_PATCH"]}})' templates/javascript/src/deserialize.js.erb

@@ -1,4 +1,4 @@
-package org.prism;
+package org.ruby_lang.prism;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
