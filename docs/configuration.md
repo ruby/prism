@@ -7,9 +7,9 @@ A lot of code in prism's repository is templated from a single configuration fil
 * `include/prism/diagnostic.h` - for defining the diagnostics
 * `javascript/src/deserialize.js` - for defining how to deserialize the nodes in JavaScript
 * `javascript/src/nodes.js` - for defining the nodes in JavaScript
-* `java/org/prism/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
-* `java/org/prism/Loader.java` - for defining how to deserialize the nodes in Java
-* `java/org/prism/Nodes.java` - for defining the nodes in Java
+* `java/org/ruby_lang/prism/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
+* `java/org/ruby_lang/prism/Loader.java` - for defining how to deserialize the nodes in Java
+* `java/org/ruby_lang/prism/Nodes.java` - for defining the nodes in Java
 * `lib/prism/compiler.rb` - for defining the compiler for the nodes in Ruby
 * `lib/prism/dispatcher.rb` - for defining the dispatch visitors for the nodes in Ruby
 * `lib/prism/dot_visitor.rb` - for defining the dot visitor for the nodes in Ruby

@@ -39,9 +39,9 @@ out.svg
 /javascript/src/visitor.js
 /javascript/src/prism.wasm
 /javascript/src/*.d.ts
-/java/org/prism/AbstractNodeVisitor.java
-/java/org/prism/Loader.java
-/java/org/prism/Nodes.java
+/java/org/ruby_lang/prism/AbstractNodeVisitor.java
+/java/org/ruby_lang/prism/Loader.java
+/java/org/ruby_lang/prism/Nodes.java
 /lib/prism/compiler.rb
 /lib/prism/dispatcher.rb
 /lib/prism/dot_visitor.rb

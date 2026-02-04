@@ -1,4 +1,4 @@
-package org.prism;
+package org.ruby_lang.prism;
 
 // @formatter:off
 public final class ParseResult {
