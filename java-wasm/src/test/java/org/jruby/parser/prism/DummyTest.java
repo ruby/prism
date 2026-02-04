@@ -2,8 +2,8 @@ package org.jruby.parser.prism;
 
 import org.jruby.parser.prism.wasm.Prism;
 import org.junit.jupiter.api.Test;
-import org.prism.ParseResult;
-import org.prism.ParsingOptions;
+import org.ruby_lang.prism.ParseResult;
+import org.ruby_lang.prism.ParsingOptions;
 
 import java.util.EnumSet;
 
