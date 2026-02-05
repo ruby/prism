@@ -519,7 +519,7 @@ module Prism
   # This represents a comment that was encountered during parsing. It is the
   # base class for all comment types.
   class Comment
-    # The location of this comment in the source.
+    # The Location of this comment in the source.
     attr_reader :location
 
     # Create a new comment object with the given location.
