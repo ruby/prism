@@ -114,13 +114,13 @@ module Prism
     private
 
     # Compose a header for the given node.
-    def inspect_node(name, node)
+    def inspect_node(name, node) # :nodoc:
       location = node.location
       "@ #{name} (location: (#{location.start_line},#{location.start_column})-(#{location.end_line},#{location.end_column}))\n"
     end
 
     # Compose a string representing the given inner location field.
-    def inspect_location(location)
+    def inspect_location(location) # :nodoc:
       if location
         "(#{location.start_line},#{location.start_column})-(#{location.end_line},#{location.end_column}) = #{location.slice.inspect}"
       else

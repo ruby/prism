@@ -56,7 +56,7 @@ module Prism
     end
 
     # Register a listener for the given events.
-    private def register_events(listener, events)
+    private def register_events(listener, events) # :nodoc:
       events.each { |event| (listeners[event] ||= []) << listener }
     end
 

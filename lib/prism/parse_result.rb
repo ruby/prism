@@ -163,7 +163,7 @@ module Prism
 
     # Binary search through the offsets to find the line number for the given
     # byte offset.
-    def find_line(byte_offset)
+    def find_line(byte_offset) # :nodoc:
       index = offsets.bsearch_index { |offset| offset > byte_offset } || offsets.length
       index - 1
     end
