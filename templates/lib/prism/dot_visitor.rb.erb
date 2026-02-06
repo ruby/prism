@@ -106,8 +106,7 @@ module Prism
     end
     <%- nodes.each do |node| -%>
 
-    # Visit a <%= node.name %> node.
-    def visit_<%= node.human %>(node)
+    def visit_<%= node.human %>(node) # :nodoc:
       table = Table.new("<%= node.name %>")
       id = node_id(node)
       <%- if (node_flags = node.flags) -%>

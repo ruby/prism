@@ -17,14 +17,13 @@ module Prism
     private_constant :Replace
 
     # The current prefix string.
-    attr_reader :indent
+    attr_reader :indent # :nodoc:
 
     # The list of commands that we need to execute in order to compose the
     # final string.
-    attr_reader :commands
+    attr_reader :commands # :nodoc:
 
-    # Initializes a new instance of the InspectVisitor.
-    def initialize(indent = +"")
+    def initialize(indent = +"") # :nodoc:
       @indent = indent
       @commands = []
     end
@@ -37,7 +36,7 @@ module Prism
     end
 
     # Compose the final string.
-    def compose
+    def compose # :nodoc:
       buffer = +""
       replace = nil
 
@@ -66,8 +65,7 @@ module Prism
     end
     <%- nodes.each do |node| -%>
 
-    # Inspect a <%= node.name %> node.
-    def visit_<%= node.human %>(node)
+    def visit_<%= node.human %>(node) # :nodoc:
       commands << [inspect_node(<%= node.name.inspect %>, node), indent]
       <%- (fields = [node.flags || Prism::Template::Flags.empty, *node.fields]).each_with_index do |field, index| -%>
       <%- pointer = index == fields.length - 1 ? "└── " : "├── " -%>
