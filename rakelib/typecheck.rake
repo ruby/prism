@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
 namespace :typecheck do
+  def with_gemfile
+    Bundler.with_original_env do
+      ENV['BUNDLE_GEMFILE'] = "gemfiles/typecheck/Gemfile"
+      yield
+    end
+  end
+
   task tapioca: :templates do
     Rake::Task["compile:prism"].invoke
 
-    require "tapioca/internal"
-    Tapioca::Cli.start(["configure"])
-    Tapioca::Cli.start(["gems", "--exclude", "prism"])
-    Tapioca::Cli.start(["todo"])
+    with_gemfile do
+      sh "bundle", "exec", "tapioca", "configure"
+      sh "bundle", "exec", "tapioca", "gems", "--exclude", "prism"
+      sh "bundle", "exec", "tapioca", "todo"
+    end
   end
 
   desc "Typecheck with Sorbet"
@@ -63,11 +71,15 @@ namespace :typecheck do
       --suppress-error-code=7001
     CONFIG
 
-    exec "#{::Gem::Specification.find_by_name("sorbet-static").full_gem_path}/libexec/sorbet"
+    with_gemfile do
+      sh "bundle", "exec", "srb"
+    end
   end
 
   desc "Typecheck with Steep"
   task steep: :templates do
-    exec Gem.bin_path("steep", "steep"), "check"
+    with_gemfile do
+      sh "bundle", "exec", "steep", "check"
+    end
   end
 end
