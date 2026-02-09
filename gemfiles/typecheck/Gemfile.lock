@@ -131,7 +131,6 @@ DEPENDENCIES
   parser
   rake
   rake-compiler
-  rbs
   ruby_parser
   sorbet (<= 0.6.12666)
   steep (>= 1.7.0.dev.1)

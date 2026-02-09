@@ -11,7 +11,6 @@ gem "onigmo", platforms: :ruby
 gem "parser"
 gem "rake-compiler"
 gem "rake"
-gem "rbs"
 gem "ruby_memcheck"
 gem "ruby_parser"
 gem "test-unit"
