@@ -113,7 +113,6 @@ MAKEFLAGS="-j10" bundle exec rake compile
 * `PRISM_ENCODING_EXCLUDE_FULL` - Will cause the library to exclude the full encoding API, and only include the minimal number of encodings to support parsing Ruby code without encoding comments. By default this is off.
 * `PRISM_EXPORT_SYMBOLS` - Will cause the shared library to export symbols. By default this is off.
 * `PRISM_EXCLUDE_JSON` - Will cause the library to exclude the JSON API. By default this is off.
-* `PRISM_EXCLUDE_PACK` - Will cause the library to exclude the pack API. By default this is off.
 * `PRISM_EXCLUDE_PRETTYPRINT` - Will cause the library to exclude the prettyprint API. By default this is off.
 * `PRISM_EXCLUDE_SERIALIZATION` - Will cause the library to exclude the serialization API. By default this is off.
 * `PRISM_XALLOCATOR` - Will cause the library to use the custom memory allocator. By default this is off.
