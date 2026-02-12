@@ -57,3 +57,7 @@ jobs:
           EXCLUDES: ${{ matrix.parser == 'parse.y' && './test/.excludes-parsey' }}
         run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby
+      - name: make test-bundled-gems
+        if: ${{ matrix.parser == 'prism' }}
+        run: make -j$(nproc) -s test-bundled-gems BUNDLED_GEMS=irb,rbs,rdoc,syntax_suggest
+        working-directory: ruby/ruby
