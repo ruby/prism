@@ -39,6 +39,8 @@ module Prism
 
     # https://bugs.ruby-lang.org/issues/21669
     incorrect << "4.1/void_value.txt"
+    # https://bugs.ruby-lang.org/issues/19107
+    incorrect << "4.1/trailing_comma_after_method_arguments.txt"
 
     # https://bugs.ruby-lang.org/issues/19979
     incorrect << "4.1/noblock.txt"

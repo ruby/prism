@@ -13907,6 +13907,43 @@ update_parameter_state(pm_parser_t *parser, pm_token_t *token, pm_parameters_ord
     return true;
 }
 
+static inline void
+parse_parameters_handle_trailing_comma(
+    pm_parser_t *parser,
+    pm_parameters_node_t *params,
+    pm_parameters_order_t order,
+    bool in_block,
+    bool allows_trailing_comma
+) {
+    if (!allows_trailing_comma) {
+        pm_parser_err_previous(parser, PM_ERR_PARAMETER_WILD_LOOSE_COMMA);
+        return;
+    }
+
+    if (in_block) {
+        if (order >= PM_PARAMETERS_ORDER_NAMED) {
+            // foo do |bar,|; end
+            pm_node_t *param = UP(pm_implicit_rest_node_create(parser, &parser->previous));
+
+            if (params->rest == NULL) {
+                pm_parameters_node_rest_set(params, param);
+            } else {
+                pm_parser_err_node(parser, UP(param), PM_ERR_PARAMETER_SPLAT_MULTI);
+                pm_parameters_node_posts_append(params, UP(param));
+            }
+        } else {
+            // foo do |*bar,|; end
+            pm_parser_err_previous(parser, PM_ERR_PARAMETER_WILD_LOOSE_COMMA);
+        }
+    } else {
+        // https://bugs.ruby-lang.org/issues/19107
+        // Allow `def foo(bar,); end`, `def foo(*bar,); end`, etc. but not `def foo(...,); end`
+        if (parser->version < PM_OPTIONS_VERSION_CRUBY_4_1 || order == PM_PARAMETERS_ORDER_NOTHING_AFTER) {
+            pm_parser_err_previous(parser, PM_ERR_PARAMETER_WILD_LOOSE_COMMA);
+        }
+    }
+}
+
 /**
  * Parse a list of parameters on a method definition.
  */
@@ -14255,20 +14292,7 @@ parse_parameters(
             }
             default:
                 if (parser->previous.type == PM_TOKEN_COMMA) {
-                    if (allows_trailing_comma && order >= PM_PARAMETERS_ORDER_NAMED) {
-                        // If we get here, then we have a trailing comma in a
-                        // block parameter list.
-                        pm_node_t *param = UP(pm_implicit_rest_node_create(parser, &parser->previous));
-
-                        if (params->rest == NULL) {
-                            pm_parameters_node_rest_set(params, param);
-                        } else {
-                            pm_parser_err_node(parser, UP(param), PM_ERR_PARAMETER_SPLAT_MULTI);
-                            pm_parameters_node_posts_append(params, UP(param));
-                        }
-                    } else {
-                        pm_parser_err_previous(parser, PM_ERR_PARAMETER_WILD_LOOSE_COMMA);
-                    }
+                    parse_parameters_handle_trailing_comma(parser, params, order, in_block, allows_trailing_comma);
                 }
 
                 parsing = false;
@@ -18865,7 +18889,9 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, b
                     if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
                         params = NULL;
                     } else {
-                        params = parse_parameters(parser, PM_BINDING_POWER_DEFINED, true, false, true, true, false, (uint16_t) (depth + 1));
+                        // https://bugs.ruby-lang.org/issues/19107
+                        bool allow_trailing_comma = parser->version >= PM_OPTIONS_VERSION_CRUBY_4_1;
+                        params = parse_parameters(parser, PM_BINDING_POWER_DEFINED, true, allow_trailing_comma, true, true, false, (uint16_t) (depth + 1));
                     }
 
                     lex_state_set(parser, PM_LEX_STATE_BEG);

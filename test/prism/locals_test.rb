@@ -31,6 +31,9 @@ module Prism
 
       # https://bugs.ruby-lang.org/issues/21669
       "4.1/void_value.txt",
+
+      # https://bugs.ruby-lang.org/issues/19107
+      "4.1/trailing_comma_after_method_arguments.txt",
     ]
 
     Fixture.each_for_current_ruby(except: except) do |fixture|
