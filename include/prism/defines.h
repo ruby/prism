@@ -161,10 +161,12 @@
  * ```
  * #ifndef PRISM_XALLOCATOR_H
  * #define PRISM_XALLOCATOR_H
- * #define xmalloc      my_malloc
- * #define xrealloc     my_realloc
- * #define xcalloc      my_calloc
- * #define xfree        my_free
+ * #define xmalloc          my_malloc
+ * #define xrealloc         my_realloc
+ * #define xcalloc          my_calloc
+ * #define xfree            my_free
+ * #define xrealloc_sized   my_realloc_sized // (optional)
+ * #define xfree_sized      my_free_sized    // (optional)
  * #endif
  * ```
  */
@@ -202,6 +204,47 @@
          */
         #define xfree free
     #endif
+#endif
+
+#ifndef xfree_sized
+/**
+ * The free_sized function that should be used. This can be overridden with the
+ * PRISM_XALLOCATOR define.
+ * If not defined, defaults to calling xfree.
+ */
+    #define xfree_sized(p, s) xfree(p)
+#endif
+
+/**
+ * Convenience macro to call xfree_sized with a pointer to a fixed size object.
+ * Example:
+ *      pm_call_node_t *target = xmalloc(sizeof(pm_call_node_t));
+ *      ...
+ *      PM_FREE_SIZED(target);
+ */
+#define PM_FREE_SIZED(p) xfree_sized((p), (sizeof(*(p))))
+
+/**
+ * Convenience macro to call xfree_sized with a pointer to an array of fixed size objects.
+ * Example:
+ *      size_t capacity = 12;
+ *      pm_call_node_t *targets = xcalloc(capacity, sizeof(pm_call_node_t));
+ *      ...
+ *      PM_FREE_SIZED_N(target, capacity);
+ */
+#define PM_FREE_SIZED_N(p, n) xfree_sized((p), (sizeof(*(p))) * n)
+
+#ifndef xrealloc_sized
+/**
+ * The xrealloc_sized function that should be used. This can be overridden with the
+ * PRISM_XALLOCATOR define.
+ * If not defined, defaults to calling xrealloc.
+ */
+    #define xrealloc_sized(p, ns, os) xrealloc(p, ns)
+#endif
+
+#ifdef PRISM_BUILD_DEBUG
+    #include "prism/debug_allocator.h"
 #endif
 
 /**
