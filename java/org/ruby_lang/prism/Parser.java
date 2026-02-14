@@ -1,4 +1,4 @@
-package org.prism;
+package org.ruby_lang.prism;
 
 public abstract class Parser {
 

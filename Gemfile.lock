@@ -65,6 +65,7 @@ GEM
 PLATFORMS
   java
   ruby
+  universal-java
 
 DEPENDENCIES
   benchmark-ips
