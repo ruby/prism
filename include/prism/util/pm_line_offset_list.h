@@ -22,8 +22,8 @@
 #include <stdlib.h>
 
 /**
- * A list of offsets of newlines in a string. The offsets are assumed to be
- * sorted/inserted in ascending order.
+ * A list of offsets of the start of lines in a string. The offsets are assumed
+ * to be sorted/inserted in ascending order.
  */
 typedef struct {
     /** The number of offsets in the list. */
@@ -48,8 +48,8 @@ typedef struct {
 } pm_line_column_t;
 
 /**
- * Initialize a new newline list with the given capacity. Returns true if the
- * allocation of the offsets succeeds, otherwise returns false.
+ * Initialize a new line offset list with the given capacity. Returns true if
+ * the allocation of the offsets succeeds, otherwise returns false.
  *
  * @param list The list to initialize.
  * @param capacity The initial capacity of the list.
@@ -58,15 +58,15 @@ typedef struct {
 bool pm_line_offset_list_init(pm_line_offset_list_t *list, size_t capacity);
 
 /**
- * Clear out the newlines that have been appended to the list.
+ * Clear out the offsets that have been appended to the list.
  *
  * @param list The list to clear.
  */
 void pm_line_offset_list_clear(pm_line_offset_list_t *list);
 
 /**
- * Append a new offset to the newline list. Returns true if the reallocation of
- * the offsets succeeds (if one was necessary), otherwise returns false.
+ * Append a new offset to the list. Returns true if the reallocation of the
+ * offsets succeeds (if one was necessary), otherwise returns false.
  *
  * @param list The list to append to.
  * @param cursor The offset to append.
@@ -99,7 +99,7 @@ int32_t pm_line_offset_list_line(const pm_line_offset_list_t *list, uint32_t cur
 pm_line_column_t pm_line_offset_list_line_column(const pm_line_offset_list_t *list, uint32_t cursor, int32_t start_line);
 
 /**
- * Free the internal memory allocated for the newline list.
+ * Free the internal memory allocated for the list.
  *
  * @param list The list to free.
  */
