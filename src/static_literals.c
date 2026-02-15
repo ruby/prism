@@ -7,7 +7,7 @@
  */
 typedef struct {
     /** The list of newline offsets to use to calculate line numbers. */
-    const pm_line_offset_list_t *newline_list;
+    const pm_line_offset_list_t *line_offsets;
 
     /** The start of the source being parsed. */
     const uint8_t *start;
@@ -95,7 +95,7 @@ node_hash(const pm_static_literals_metadata_t *metadata, const pm_node_t *node) 
         }
         case PM_SOURCE_LINE_NODE: {
             // Source lines hash their line number.
-            const pm_line_column_t line_column = pm_line_offset_list_line_column(metadata->newline_list, node->location.start, metadata->start_line);
+            const pm_line_column_t line_column = pm_line_offset_list_line_column(metadata->line_offsets, node->location.start, metadata->start_line);
             const int32_t *value = &line_column.line;
             return murmur_hash((const uint8_t *) value, sizeof(int32_t));
         }
@@ -243,7 +243,7 @@ pm_int64_value(const pm_static_literals_metadata_t *metadata, const pm_node_t *n
             return integer->negative ? -value : value;
         }
         case PM_SOURCE_LINE_NODE:
-            return (int64_t) pm_line_offset_list_line_column(metadata->newline_list, node->location.start, metadata->start_line).line;
+            return (int64_t) pm_line_offset_list_line_column(metadata->line_offsets, node->location.start, metadata->start_line).line;
         default:
             assert(false && "unreachable");
             return 0;
@@ -363,7 +363,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->integer_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -376,7 +376,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->float_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -390,7 +390,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->number_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -404,7 +404,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->string_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -417,7 +417,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->regexp_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -430,7 +430,7 @@ pm_static_literals_add(const pm_line_offset_list_t *newline_list, const uint8_t 
             return pm_node_hash_insert(
                 &literals->symbol_nodes,
                 &(pm_static_literals_metadata_t) {
-                    .newline_list = newline_list,
+                    .line_offsets = newline_list,
                     .start = start,
                     .start_line = start_line,
                     .encoding_name = NULL
@@ -585,7 +585,7 @@ pm_static_literal_inspect_node(pm_buffer_t *buffer, const pm_static_literals_met
             break;
         }
         case PM_SOURCE_LINE_NODE:
-            pm_buffer_append_format(buffer, "%d", pm_line_offset_list_line_column(metadata->newline_list, node->location.start, metadata->start_line).line);
+            pm_buffer_append_format(buffer, "%d", pm_line_offset_list_line_column(metadata->line_offsets, node->location.start, metadata->start_line).line);
             break;
         case PM_STRING_NODE: {
             const pm_string_t *unescaped = &((const pm_string_node_t *) node)->unescaped;
@@ -617,7 +617,7 @@ pm_static_literal_inspect(pm_buffer_t *buffer, const pm_line_offset_list_t *newl
     pm_static_literal_inspect_node(
         buffer,
         &(pm_static_literals_metadata_t) {
-            .newline_list = newline_list,
+            .line_offsets = newline_list,
             .start = start,
             .start_line = start_line,
             .encoding_name = encoding_name

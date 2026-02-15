@@ -783,7 +783,7 @@ struct pm_parser {
     pm_constant_pool_t constant_pool;
 
     /** This is the list of newline offsets in the source file. */
-    pm_line_offset_list_t newline_list;
+    pm_line_offset_list_t line_offsets;
 
     /**
      * We want to add a flag to integer nodes that indicates their base. We only
