@@ -782,7 +782,7 @@ struct pm_parser {
      */
     pm_constant_pool_t constant_pool;
 
-    /** This is the list of newline offsets in the source file. */
+    /** This is the list of line offsets in the source file. */
     pm_line_offset_list_t line_offsets;
 
     /**
