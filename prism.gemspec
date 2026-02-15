@@ -154,7 +154,7 @@ Gem::Specification.new do |spec|
     "src/util/pm_integer.c",
     "src/util/pm_list.c",
     "src/util/pm_memchr.c",
-    "src/util/pm_newline_list.c",
+    "src/util/pm_line_offset_list.c",
     "src/util/pm_string.c",
     "src/util/pm_strncasecmp.c",
     "src/util/pm_strpbrk.c"
