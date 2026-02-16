@@ -270,17 +270,17 @@ module Prism
 
     # bin/prism parser [source]
     def parser(argv)
-      require "parser/ruby34"
+      require "parser/current"
       source, filepath = read_source(argv)
 
       buffer = Parser::Source::Buffer.new(filepath, 1)
       buffer.source = source
 
       puts "Parser:"
-      parser_parse(Parser::Ruby34.new, buffer)
+      parser_parse(Parser::CurrentRuby.new, buffer)
 
       puts "Prism:"
-      parser_parse(Prism::Translation::Parser34.new, buffer)
+      parser_parse(Prism::Translation::ParserCurrent.new, buffer)
     end
 
     # bin/prism ripper [source]
