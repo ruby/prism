@@ -9,7 +9,6 @@ end
 
 RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.main = "README.md"
-  rdoc.markup = "markdown"
 
   rdoc.rdoc_dir = "doc/rb"
   rdoc.options.push("--all", "-x", "lib/prism/translation/ripper/shim.rb")
