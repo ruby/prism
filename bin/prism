@@ -166,7 +166,6 @@ module Prism
       source, filepath = read_source(argv)
       result = Prism.parse(source)
 
-
       if result.errors.any?
         puts result.errors_format
       else
