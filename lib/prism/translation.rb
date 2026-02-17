@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 # :markup: markdown
 
 module Prism

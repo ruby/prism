@@ -1,21 +1,18 @@
 # frozen_string_literal: true
 
 target :lib do
+  check "lib"
   signature "sig"
 
-  library "cgi" # in lib/prism/dot_visitor.rb (Prism::DotVisitor)
+  library "cgi"
+  library "pp"
 
-  check "lib"
-
-  # TODO: Type-checking these files is still WIP
-  ignore "lib/prism/desugar_compiler.rb"
-  ignore "lib/prism/lex_compat.rb"
-  ignore "lib/prism/serialize.rb"
-  ignore "lib/prism/ffi.rb"
+  # Ignored because it requires other libraries.
   ignore "lib/prism/translation"
 
-  ignore "lib/prism/polyfill/append_as_bytes.rb"
-  ignore "lib/prism/polyfill/byteindex.rb"
-  ignore "lib/prism/polyfill/scan_byte.rb"
-  ignore "lib/prism/polyfill/unpack1.rb"
+  # Ignored because they are only for older Rubies.
+  ignore "lib/prism/polyfill"
+
+  # Ignored because we do not want to overlap with the C extension.
+  ignore "lib/prism/ffi.rb"
 end

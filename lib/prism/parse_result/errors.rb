@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rbs_inline: enabled
 # :markup: markdown
 
 require "stringio"
@@ -9,14 +10,18 @@ module Prism
     # can be used to format the errors in a human-readable way.
     class Errors
       # The parse result that contains the errors.
-      attr_reader :parse_result
+      attr_reader :parse_result #: ParseResult
 
       # Initialize a new set of errors from the given parse result.
+      #--
+      #: (ParseResult parse_result) -> void
       def initialize(parse_result)
         @parse_result = parse_result
       end
 
       # Formats the errors in a human-readable way and return them as a string.
+      #--
+      #: () -> String
       def format
         error_lines = {} #: Hash[Integer, Array[ParseError]]
         parse_result.errors.each do |error|

@@ -1,4 +1,4 @@
-# rbs_inline: enabled
+# Generated from lib/prism/reflection.rb with RBS::Inline
 
 module Prism
   # The Reflection module provides the ability to reflect on the structure of
@@ -9,14 +9,12 @@ module Prism
     # for all other field types.
     class Field
       # The name of the field.
-      attr_reader :name #: Symbol
+      attr_reader name: Symbol
 
       # Initializes the field with the given name.
-      #--
-      #: (Symbol name) -> void
-      def initialize(name)
-        @name = name
-      end
+      # --
+      # : (Symbol name) -> void
+      def initialize: (Symbol name) -> void
     end
 
     # A node field represents a single child node in the syntax tree. It
@@ -87,58 +85,17 @@ module Prism
     # the bitset should be accessed through their query methods.
     class FlagsField < Field
       # The names of the flags in the bitset.
-      attr_reader :flags #: Array[Symbol]
+      attr_reader flags: Array[Symbol]
 
       # Initializes the flags field with the given name and flags.
-      #--
-      #: (Symbol name, Array[Symbol] flags) -> void
-      def initialize(name, flags)
-        super(name)
-        @flags = flags
-      end
+      # --
+      # : (Symbol name, Array[Symbol] flags) -> void
+      def initialize: (Symbol name, Array[Symbol] flags) -> void
     end
 
     # Returns the fields for the given node.
-    #--
-    #: (singleton(Node) node) -> Array[Field]
-    def self.fields_for(node)
-      case node.type
-      <%- nodes.each do |node| -%>
-      when :<%= node.human %>
-        [<%= [*node.flags, *node.fields].map { |field|
-          case field
-          when Prism::Template::NodeField
-            "NodeField.new(:#{field.name})"
-          when Prism::Template::OptionalNodeField
-            "OptionalNodeField.new(:#{field.name})"
-          when Prism::Template::NodeListField
-            "NodeListField.new(:#{field.name})"
-          when Prism::Template::ConstantField
-            "ConstantField.new(:#{field.name})"
-          when Prism::Template::OptionalConstantField
-            "OptionalConstantField.new(:#{field.name})"
-          when Prism::Template::ConstantListField
-            "ConstantListField.new(:#{field.name})"
-          when Prism::Template::StringField
-            "StringField.new(:#{field.name})"
-          when Prism::Template::LocationField
-            "LocationField.new(:#{field.name})"
-          when Prism::Template::OptionalLocationField
-            "OptionalLocationField.new(:#{field.name})"
-          when Prism::Template::UInt8Field, Prism::Template::UInt32Field, Prism::Template::IntegerField
-            "IntegerField.new(:#{field.name})"
-          when Prism::Template::DoubleField
-            "FloatField.new(:#{field.name})"
-          when Prism::Template::Flags
-            "FlagsField.new(:flags, [#{field.values.map { |value| ":#{value.name.downcase}?" }.join(", ")}])"
-          else
-            raise field.class.name
-          end
-        }.join(", ") %>]
-      <%- end -%>
-      else
-        raise "Unknown node type: #{node.type.inspect}"
-      end
-    end
+    # --
+    # : (singleton(Node) node) -> Array[Field]
+    def self.fields_for: (singleton(Node) node) -> Array[Field]
   end
 end

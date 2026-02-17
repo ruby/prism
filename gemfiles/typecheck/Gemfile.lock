@@ -23,8 +23,7 @@ GEM
     csv (3.3.5)
     drb (2.2.3)
     erubi (1.13.1)
-    ffi (1.17.3-arm64-darwin)
-    ffi (1.17.3-x86_64-linux-gnu)
+    ffi (1.17.3)
     fileutils (1.8.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -57,12 +56,15 @@ GEM
       rbs (>= 3.4.4)
     rbs (3.10.2)
       logger
+    rbs-inline (0.13.0)
+      prism (>= 0.29)
+      rbs (>= 3.8.0)
     rexml (3.4.4)
     ruby_parser (3.22.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
     securerandom (0.4.1)
-    sexp_processor (4.17.4)
+    sexp_processor (4.17.5)
     sorbet (0.6.12666)
       sorbet-static (= 0.6.12666)
     sorbet-runtime (0.6.12666)
@@ -111,11 +113,12 @@ GEM
     test-unit (3.7.7)
       power_assert
     thor (1.4.0)
+    tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
-    unicode-emoji (4.1.0)
+    unicode-emoji (4.2.0)
     uri (1.1.1)
     yard (0.9.37)
     yard-sorbet (0.9.0)
@@ -130,11 +133,13 @@ DEPENDENCIES
   parser
   rake
   rake-compiler
+  rbs-inline
   ruby_parser
   sorbet (<= 0.6.12666)
   steep (>= 1.7.0.dev.1)
   tapioca
   test-unit
+  tsort
 
 BUNDLED WITH
    2.5.16
