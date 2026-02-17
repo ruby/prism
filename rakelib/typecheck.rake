@@ -38,6 +38,7 @@ namespace :typecheck do
         - ./lib/prism/translation/ripper/sexp.rb
         - ./lib/prism/translation/ruby_parser.rb
         - ./lib/prism/inspect_visitor.rb
+        - ./lib/prism/serialize.rb
         - ./sample/prism/multiplex_constants.rb
         # We want to treat all polyfill files as "typed: false"
       <% polyfills.each do |file| -%>
@@ -73,6 +74,13 @@ namespace :typecheck do
 
     with_gemfile do
       sh "bundle", "exec", "srb"
+    end
+  end
+
+  desc "Generate RBS with rbs-inline"
+  task rbs_inline: :templates do
+    with_gemfile do
+      sh "bundle", "exec", "rbs-inline", "lib", "--output", "lib"
     end
   end
 

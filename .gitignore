@@ -59,12 +59,6 @@ out.svg
 /src/serialize.c
 /src/token_type.c
 /src/**/*.o
-/sig/prism.rbs
-/sig/prism/dsl.rbs
-/sig/prism/mutation_compiler.rbs
-/sig/prism/node.rbs
-/sig/prism/visitor.rbs
-/sig/prism/_private/dot_visitor.rbs
 /rbi/prism/dsl.rbi
 /rbi/prism/node.rbi
 /rbi/prism/visitor.rbi
