@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# rbs_inline: enabled
 # :markup: markdown
+#--
+# rbs_inline: enabled
 
 module Prism
   # Query methods that allow categorizing strings based on their context for

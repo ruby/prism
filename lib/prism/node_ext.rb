@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-# rbs_inline: enabled
 # :markup: markdown
+#--
+# rbs_inline: enabled
 
 #--
 # Here we are reopening the prism module to provide methods on nodes that aren't
