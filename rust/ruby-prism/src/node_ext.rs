@@ -3,7 +3,6 @@
 //! This module provides convenience methods on AST nodes that aren't generated
 //! from the config, mirroring Ruby's `node_ext.rb`.
 
-use std::borrow::Cow;
 use std::fmt;
 
 use crate::{ConstantPathNode, ConstantPathTargetNode, ConstantReadNode, ConstantTargetNode, ConstantWriteNode, Node};
@@ -50,11 +49,11 @@ impl<'pr> ConstantReadNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant = stmt.as_constant_read_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec!["Foo"]);
+    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
     /// ```
     #[must_use]
-    pub fn full_name_parts(&self) -> Vec<Cow<'pr, str>> {
-        vec![String::from_utf8_lossy(self.name().as_slice())]
+    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
+        vec![self.name().as_slice()]
     }
 
     /// Returns the full name of this constant.
@@ -67,11 +66,11 @@ impl<'pr> ConstantReadNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant = stmt.as_constant_read_node().unwrap();
-    /// assert_eq!(constant.full_name(), "Foo");
+    /// assert_eq!(constant.full_name(), b"Foo");
     /// ```
     #[must_use]
-    pub fn full_name(&self) -> Cow<'pr, str> {
-        String::from_utf8_lossy(self.name().as_slice())
+    pub fn full_name(&self) -> &'pr [u8] {
+        self.name().as_slice()
     }
 }
 
@@ -86,11 +85,11 @@ impl<'pr> ConstantWriteNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant = stmt.as_constant_write_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec!["Foo"]);
+    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
     /// ```
     #[must_use]
-    pub fn full_name_parts(&self) -> Vec<Cow<'pr, str>> {
-        vec![String::from_utf8_lossy(self.name().as_slice())]
+    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
+        vec![self.name().as_slice()]
     }
 
     /// Returns the full name of this constant.
@@ -103,11 +102,11 @@ impl<'pr> ConstantWriteNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant = stmt.as_constant_write_node().unwrap();
-    /// assert_eq!(constant.full_name(), "Foo");
+    /// assert_eq!(constant.full_name(), b"Foo");
     /// ```
     #[must_use]
-    pub fn full_name(&self) -> Cow<'pr, str> {
-        String::from_utf8_lossy(self.name().as_slice())
+    pub fn full_name(&self) -> &'pr [u8] {
+        self.name().as_slice()
     }
 }
 
@@ -124,11 +123,11 @@ impl<'pr> ConstantTargetNode<'pr> {
     /// let target = stmt.as_multi_write_node().unwrap()
     ///     .lefts().iter().next().unwrap();
     /// let constant = target.as_constant_target_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec!["Foo"]);
+    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
     /// ```
     #[must_use]
-    pub fn full_name_parts(&self) -> Vec<Cow<'pr, str>> {
-        vec![String::from_utf8_lossy(self.name().as_slice())]
+    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
+        vec![self.name().as_slice()]
     }
 
     /// Returns the full name of this constant.
@@ -143,11 +142,11 @@ impl<'pr> ConstantTargetNode<'pr> {
     /// let target = stmt.as_multi_write_node().unwrap()
     ///     .lefts().iter().next().unwrap();
     /// let constant = target.as_constant_target_node().unwrap();
-    /// assert_eq!(constant.full_name(), "Foo");
+    /// assert_eq!(constant.full_name(), b"Foo");
     /// ```
     #[must_use]
-    pub fn full_name(&self) -> Cow<'pr, str> {
-        String::from_utf8_lossy(self.name().as_slice())
+    pub fn full_name(&self) -> &'pr [u8] {
+        self.name().as_slice()
     }
 }
 
@@ -162,7 +161,7 @@ impl<'pr> ConstantPathNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant_path = stmt.as_constant_path_node().unwrap();
-    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec!["Foo", "Bar"]);
+    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
     /// ```
     ///
     /// # Errors
@@ -170,17 +169,17 @@ impl<'pr> ConstantPathNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name_parts(&self) -> Result<Vec<Cow<'pr, str>>, ConstantPathError> {
+    pub fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
         let mut parts = Vec::new();
         let mut current: Option<Node<'pr>> = Some(self.as_node());
 
         while let Some(ref node) = current {
             if let Some(path_node) = node.as_constant_path_node() {
                 let name = path_node.name().ok_or(ConstantPathError::MissingNodes)?;
-                parts.push(String::from_utf8_lossy(name.as_slice()));
+                parts.push(name.as_slice());
                 current = path_node.parent();
             } else if let Some(read_node) = node.as_constant_read_node() {
-                parts.push(String::from_utf8_lossy(read_node.name().as_slice()));
+                parts.push(read_node.name().as_slice());
                 current = None;
             } else {
                 return Err(ConstantPathError::DynamicParts);
@@ -190,7 +189,7 @@ impl<'pr> ConstantPathNode<'pr> {
         parts.reverse();
 
         if self.is_stovetop() {
-            parts.insert(0, Cow::Borrowed(""));
+            parts.insert(0, b"".as_slice());
         }
 
         Ok(parts)
@@ -206,7 +205,7 @@ impl<'pr> ConstantPathNode<'pr> {
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let constant_path = stmt.as_constant_path_node().unwrap();
-    /// assert_eq!(constant_path.full_name().unwrap(), "Foo::Bar");
+    /// assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
     /// ```
     ///
     /// # Errors
@@ -214,8 +213,16 @@ impl<'pr> ConstantPathNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name(&self) -> Result<String, ConstantPathError> {
-        Ok(self.full_name_parts()?.join("::"))
+    pub fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+        let parts = self.full_name_parts()?;
+        let mut result = Vec::new();
+        for (i, part) in parts.iter().enumerate() {
+            if i > 0 {
+                result.extend_from_slice(b"::");
+            }
+            result.extend_from_slice(part);
+        }
+        Ok(result)
     }
 
     fn is_stovetop(&self) -> bool {
@@ -246,7 +253,7 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// let target = stmt.as_multi_write_node().unwrap()
     ///     .lefts().iter().next().unwrap();
     /// let constant_path = target.as_constant_path_target_node().unwrap();
-    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec!["Foo", "Bar"]);
+    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
     /// ```
     ///
     /// # Errors
@@ -254,7 +261,7 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name_parts(&self) -> Result<Vec<Cow<'pr, str>>, ConstantPathError> {
+    pub fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
         let name = self.name().ok_or(ConstantPathError::MissingNodes)?;
 
         let mut parts = if let Some(parent) = self.parent() {
@@ -266,10 +273,10 @@ impl<'pr> ConstantPathTargetNode<'pr> {
                 return Err(ConstantPathError::DynamicParts);
             }
         } else {
-            vec![Cow::Borrowed("")]
+            vec![b"".as_slice()]
         };
 
-        parts.push(String::from_utf8_lossy(name.as_slice()));
+        parts.push(name.as_slice());
         Ok(parts)
     }
 
@@ -285,7 +292,7 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// let target = stmt.as_multi_write_node().unwrap()
     ///     .lefts().iter().next().unwrap();
     /// let constant_path = target.as_constant_path_target_node().unwrap();
-    /// assert_eq!(constant_path.full_name().unwrap(), "Foo::Bar");
+    /// assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
     /// ```
     ///
     /// # Errors
@@ -293,8 +300,16 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name(&self) -> Result<String, ConstantPathError> {
-        Ok(self.full_name_parts()?.join("::"))
+    pub fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+        let parts = self.full_name_parts()?;
+        let mut result = Vec::new();
+        for (i, part) in parts.iter().enumerate() {
+            if i > 0 {
+                result.extend_from_slice(b"::");
+            }
+            result.extend_from_slice(part);
+        }
+        Ok(result)
     }
 }
 
@@ -309,8 +324,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant = node.as_constant_read_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec!["Foo"]);
-        assert_eq!(constant.full_name(), "Foo");
+        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name(), b"Foo");
     }
 
     #[test]
@@ -319,8 +334,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant = node.as_constant_write_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec!["Foo"]);
-        assert_eq!(constant.full_name(), "Foo");
+        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name(), b"Foo");
     }
 
     #[test]
@@ -331,8 +346,8 @@ mod tests {
         let target = multi_write.lefts().iter().next().unwrap();
         let constant = target.as_constant_target_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec!["Foo"]);
-        assert_eq!(constant.full_name(), "Foo");
+        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name(), b"Foo");
     }
 
     #[test]
@@ -341,8 +356,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant_path = node.as_constant_path_node().unwrap();
 
-        assert_eq!(constant_path.full_name_parts().unwrap(), vec!["Foo", "Bar"]);
-        assert_eq!(constant_path.full_name().unwrap(), "Foo::Bar");
+        assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
+        assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
     }
 
     #[test]
@@ -351,8 +366,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant_path = node.as_constant_path_node().unwrap();
 
-        assert_eq!(constant_path.full_name_parts().unwrap(), vec!["", "Foo", "Bar"]);
-        assert_eq!(constant_path.full_name().unwrap(), "::Foo::Bar");
+        assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"".as_slice(), b"Foo".as_slice(), b"Bar".as_slice()]);
+        assert_eq!(constant_path.full_name().unwrap(), b"::Foo::Bar");
     }
 
     #[test]
@@ -400,8 +415,8 @@ foo::
         let target = multi_write.lefts().iter().next().unwrap();
         let constant_path = target.as_constant_path_target_node().unwrap();
 
-        assert_eq!(constant_path.full_name_parts().unwrap(), vec!["Foo", "Bar"]);
-        assert_eq!(constant_path.full_name().unwrap(), "Foo::Bar");
+        assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
+        assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
     }
 
     #[test]
@@ -412,8 +427,8 @@ foo::
         let target = multi_write.lefts().iter().next().unwrap();
         let constant_path = target.as_constant_path_target_node().unwrap();
 
-        assert_eq!(constant_path.full_name_parts().unwrap(), vec!["", "Foo"]);
-        assert_eq!(constant_path.full_name().unwrap(), "::Foo");
+        assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"".as_slice(), b"Foo".as_slice()]);
+        assert_eq!(constant_path.full_name().unwrap(), b"::Foo");
     }
 
     #[test]
