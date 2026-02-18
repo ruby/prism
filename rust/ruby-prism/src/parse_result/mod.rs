@@ -8,7 +8,7 @@ mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_line_column_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -104,7 +104,7 @@ impl<'pr> Location<'pr> {
         }
     }
 
-    fn line_column_at(&self, offset: u32) -> ruby_prism_sys::pm_line_column_t {
+    fn line_column_at(&self, offset: u32) -> pm_line_column_t {
         // SAFETY: `self.parser` is a valid pointer to a `pm_parser_t` that
         // outlives `self`, and `pm_line_offset_list_line_column` only reads
         // from the line offset list.
