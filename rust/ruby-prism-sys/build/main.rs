@@ -116,7 +116,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Structs
         .allowlist_type("pm_comment_t")
         .allowlist_type("pm_diagnostic_t")
-        .allowlist_type("pm_line_column_t")
         .allowlist_type("pm_list_t")
         .allowlist_type("pm_magic_comment_t")
         .allowlist_type("pm_node_t")
@@ -132,8 +131,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Functions
         .allowlist_function("pm_list_empty_p")
         .allowlist_function("pm_list_free")
-        .allowlist_function("pm_newline_list_line")
-        .allowlist_function("pm_newline_list_line_column")
         .allowlist_function("pm_node_destroy")
         .allowlist_function("pm_parse")
         .allowlist_function("pm_parser_free")

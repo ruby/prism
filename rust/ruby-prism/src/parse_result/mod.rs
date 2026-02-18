@@ -104,20 +104,17 @@ impl<'pr> Location<'pr> {
         }
     }
 
-    fn line_column_at(&self, offset: u32) -> LineColumn {
+    fn line_column_at(&self, offset: u32) -> ruby_prism_sys::pm_line_column_t {
+        // SAFETY: `self.parser` is a valid pointer to a `pm_parser_t` that
+        // outlives `self`, and `pm_newline_list_line_column` only reads from
+        // the newline list.
         unsafe {
             let parser = self.parser.as_ptr();
             let newline_list = &(*parser).newline_list;
             let start_line = (*parser).start_line;
-            let result = pm_newline_list_line_column(newline_list, offset, start_line);
-            LineColumn { line: result.line, column: result.column }
+            pm_newline_list_line_column(newline_list, offset, start_line)
         }
     }
-}
-
-struct LineColumn {
-    line: i32,
-    column: u32,
 }
 
 impl std::fmt::Debug for Location<'_> {

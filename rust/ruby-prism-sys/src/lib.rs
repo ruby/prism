@@ -35,3 +35,25 @@ mod bindings {
 }
 
 pub use self::bindings::*;
+
+/// Line and column information for a given byte offset relative to the
+/// beginning of the source.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct pm_line_column_t {
+    /// The 1-indexed line number relative to the start line configured on the
+    /// parser.
+    pub line: i32,
+    /// The 0-indexed column number in bytes.
+    pub column: u32,
+}
+
+extern "C" {
+    /// Return the line and column number for the given byte offset relative to
+    /// the beginning of the source.
+    pub fn pm_newline_list_line_column(
+        list: *const pm_newline_list_t,
+        cursor: u32,
+        start_line: i32,
+    ) -> pm_line_column_t;
+}
