@@ -8,7 +8,7 @@ mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_location_t, pm_magic_comment_t, pm_newline_list_line_column, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -106,13 +106,13 @@ impl<'pr> Location<'pr> {
 
     fn line_column_at(&self, offset: u32) -> ruby_prism_sys::pm_line_column_t {
         // SAFETY: `self.parser` is a valid pointer to a `pm_parser_t` that
-        // outlives `self`, and `pm_newline_list_line_column` only reads from
-        // the newline list.
+        // outlives `self`, and `pm_line_offset_list_line_column` only reads
+        // from the line offset list.
         unsafe {
             let parser = self.parser.as_ptr();
-            let newline_list = &(*parser).newline_list;
+            let line_offsets = &(*parser).line_offsets;
             let start_line = (*parser).start_line;
-            pm_newline_list_line_column(newline_list, offset, start_line)
+            pm_line_offset_list_line_column(line_offsets, offset, start_line)
         }
     }
 }

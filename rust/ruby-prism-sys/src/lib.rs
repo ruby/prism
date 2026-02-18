@@ -51,8 +51,8 @@ pub struct pm_line_column_t {
 extern "C" {
     /// Return the line and column number for the given byte offset relative to
     /// the beginning of the source.
-    pub fn pm_newline_list_line_column(
-        list: *const pm_newline_list_t,
+    pub fn pm_line_offset_list_line_column(
+        list: *const pm_line_offset_list_t,
         cursor: u32,
         start_line: i32,
     ) -> pm_line_column_t;
