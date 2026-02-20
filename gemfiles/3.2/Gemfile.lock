@@ -8,7 +8,7 @@ GEM
   specs:
     ast (2.4.3)
     mini_portile2 (2.8.9)
-    nokogiri (1.19.0)
+    nokogiri (1.19.1)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     onigmo (0.1.0)
