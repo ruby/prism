@@ -127,7 +127,6 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  minitest
   parser
   rake
   rake-compiler
