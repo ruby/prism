@@ -118,6 +118,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_type("pm_diagnostic_t")
         .allowlist_type("pm_list_t")
         .allowlist_type("pm_magic_comment_t")
+        .allowlist_type("pm_line_offset_list_t")
         .allowlist_type("pm_node_t")
         .allowlist_type("pm_node_type")
         .allowlist_type("pm_parser_t")

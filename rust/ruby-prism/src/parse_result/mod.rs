@@ -8,7 +8,7 @@ mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
+use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_line_column_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -64,6 +64,55 @@ impl<'pr> Location<'pr> {
                 length: other.end() - self.start,
                 marker: std::marker::PhantomData,
             })
+        }
+    }
+
+    /// Returns the line number where this location starts.
+    #[must_use]
+    pub fn start_line(&self) -> i32 {
+        self.line_column_at(self.start).line
+    }
+
+    /// Returns the line number where this location ends.
+    #[must_use]
+    pub fn end_line(&self) -> i32 {
+        self.line_column_at(self.end()).line
+    }
+
+    /// Returns the column number in bytes where this location starts from the
+    /// start of the line.
+    #[must_use]
+    pub fn start_column(&self) -> u32 {
+        self.line_column_at(self.start).column
+    }
+
+    /// Returns the column number in bytes where this location ends from the
+    /// start of the line.
+    #[must_use]
+    pub fn end_column(&self) -> u32 {
+        self.line_column_at(self.end()).column
+    }
+
+    /// Returns a new location that is the result of chopping off the last byte.
+    #[must_use]
+    pub const fn chop(&self) -> Self {
+        Location {
+            parser: self.parser,
+            start: self.start,
+            length: if self.length == 0 { 0 } else { self.length - 1 },
+            marker: std::marker::PhantomData,
+        }
+    }
+
+    fn line_column_at(&self, offset: u32) -> pm_line_column_t {
+        // SAFETY: `self.parser` is a valid pointer to a `pm_parser_t` that
+        // outlives `self`, and `pm_line_offset_list_line_column` only reads
+        // from the line offset list.
+        unsafe {
+            let parser = self.parser.as_ptr();
+            let line_offsets = &(*parser).line_offsets;
+            let start_line = (*parser).start_line;
+            pm_line_offset_list_line_column(line_offsets, offset, start_line)
         }
     }
 }
