@@ -174,7 +174,7 @@ module Prism
     def self.fields; end
 
     # Accepts a visitor and calls back into the specialized visit function.
-    sig { abstract.params(visitor: T.untyped).returns(T.untyped) }
+    sig { abstract.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # Returns an array of child nodes, including `nil`s in the place of optional
@@ -236,7 +236,7 @@ module Prism
     def initialize(source, node_id, location, flags, new_name, old_name, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -318,7 +318,7 @@ module Prism
     def initialize(source, node_id, location, flags, new_name, old_name, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -412,7 +412,7 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -494,7 +494,7 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -582,7 +582,7 @@ module Prism
     def initialize(source, node_id, location, flags, arguments); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -661,7 +661,7 @@ module Prism
     def initialize(source, node_id, location, flags, elements, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -769,7 +769,7 @@ module Prism
     def initialize(source, node_id, location, flags, constant, requireds, rest, posts, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -887,7 +887,7 @@ module Prism
     def initialize(source, node_id, location, flags, key, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -978,7 +978,7 @@ module Prism
     def initialize(source, node_id, location, flags, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1053,7 +1053,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1115,7 +1115,7 @@ module Prism
     def initialize(source, node_id, location, flags, begin_keyword_loc, statements, rescue_clause, else_clause, ensure_clause, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1227,7 +1227,7 @@ module Prism
     def initialize(source, node_id, location, flags, expression, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1302,7 +1302,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1365,7 +1365,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, parameters, body, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1475,7 +1475,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1572,7 +1572,7 @@ module Prism
     def initialize(source, node_id, location, flags, parameters, locals, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1686,7 +1686,7 @@ module Prism
     def initialize(source, node_id, location, flags, arguments, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1761,7 +1761,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -1920,7 +1920,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, name, message_loc, opening_loc, arguments, closing_loc, equal_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2108,7 +2108,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, binary_operator, binary_operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2255,7 +2255,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2407,7 +2407,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, name, message_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2521,7 +2521,7 @@ module Prism
     def initialize(source, node_id, location, flags, value, target, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2605,7 +2605,7 @@ module Prism
     def initialize(source, node_id, location, flags, predicate, conditions, else_clause, case_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2712,7 +2712,7 @@ module Prism
     def initialize(source, node_id, location, flags, predicate, conditions, else_clause, case_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2817,7 +2817,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, class_keyword_loc, constant_path, inheritance_operator_loc, superclass, body, end_keyword_loc, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -2946,7 +2946,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3040,7 +3040,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3122,7 +3122,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3204,7 +3204,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3264,7 +3264,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3320,7 +3320,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3418,7 +3418,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3500,7 +3500,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3582,7 +3582,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3664,7 +3664,7 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3737,7 +3737,7 @@ module Prism
     def initialize(source, node_id, location, flags, parent, name, delimiter_loc, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3840,7 +3840,7 @@ module Prism
     def initialize(source, node_id, location, flags, target, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3913,7 +3913,7 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -3986,7 +3986,7 @@ module Prism
     def initialize(source, node_id, location, flags, parent, name, delimiter_loc, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4074,7 +4074,7 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4159,7 +4159,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4219,7 +4219,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4275,7 +4275,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4374,7 +4374,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, receiver, parameters, body, locals, def_keyword_loc, operator_loc, lparen_loc, rparen_loc, equal_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4533,7 +4533,7 @@ module Prism
     def initialize(source, node_id, location, flags, lparen_loc, value, rparen_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4628,7 +4628,7 @@ module Prism
     def initialize(source, node_id, location, flags, else_keyword_loc, statements, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4710,7 +4710,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, statements, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4792,7 +4792,7 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, variable); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4865,7 +4865,7 @@ module Prism
     def initialize(source, node_id, location, flags, ensure_keyword_loc, statements, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -4947,7 +4947,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5008,7 +5008,7 @@ module Prism
     def initialize(source, node_id, location, flags, constant, left, requireds, right, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5135,7 +5135,7 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5212,7 +5212,7 @@ module Prism
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5268,7 +5268,7 @@ module Prism
     def initialize(source, node_id, location, flags, index, collection, statements, for_keyword_loc, in_keyword_loc, do_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5409,7 +5409,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5462,7 +5462,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5519,7 +5519,7 @@ module Prism
     def initialize(source, node_id, location, flags, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5575,7 +5575,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5657,7 +5657,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5739,7 +5739,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5821,7 +5821,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5881,7 +5881,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -5937,7 +5937,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6035,7 +6035,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, elements, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6138,7 +6138,7 @@ module Prism
     def initialize(source, node_id, location, flags, constant, elements, rest, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6264,7 +6264,7 @@ module Prism
     def initialize(source, node_id, location, flags, if_keyword_loc, predicate, then_keyword_loc, statements, subsequent, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6413,7 +6413,7 @@ module Prism
     def initialize(source, node_id, location, flags, numeric); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6475,7 +6475,7 @@ module Prism
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6540,7 +6540,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6592,7 +6592,7 @@ module Prism
     def initialize(source, node_id, location, flags, pattern, statements, in_loc, then_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6678,7 +6678,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6814,7 +6814,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, binary_operator, binary_operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -6950,7 +6950,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7094,7 +7094,7 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, opening_loc, arguments, closing_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7200,7 +7200,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7282,7 +7282,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7364,7 +7364,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7446,7 +7446,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7506,7 +7506,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7562,7 +7562,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7660,7 +7660,7 @@ module Prism
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7732,7 +7732,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7858,7 +7858,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -7984,7 +7984,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8074,7 +8074,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8156,7 +8156,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8238,7 +8238,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8290,7 +8290,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8342,7 +8342,7 @@ module Prism
     def initialize(source, node_id, location, flags, elements); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8403,7 +8403,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8485,7 +8485,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, operator_loc, opening_loc, closing_loc, parameters, body); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8588,7 +8588,7 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, operator_loc, value, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8674,7 +8674,7 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, binary_operator_loc, value, name, binary_operator, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8760,7 +8760,7 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, operator_loc, value, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8846,7 +8846,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8923,7 +8923,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -8983,7 +8983,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9095,7 +9095,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9234,7 +9234,7 @@ module Prism
     def initialize(source, node_id, location, flags, value, pattern, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9307,7 +9307,7 @@ module Prism
     def initialize(source, node_id, location, flags, value, pattern, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9428,7 +9428,7 @@ module Prism
     def initialize(source, node_id, location, flags, call, targets); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9485,7 +9485,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9537,7 +9537,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, module_keyword_loc, constant_path, body, end_keyword_loc, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9636,7 +9636,7 @@ module Prism
     def initialize(source, node_id, location, flags, lefts, rest, rights, lparen_loc, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9756,7 +9756,7 @@ module Prism
     def initialize(source, node_id, location, flags, lefts, rest, rights, lparen_loc, rparen_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9899,7 +9899,7 @@ module Prism
     def initialize(source, node_id, location, flags, arguments, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -9968,7 +9968,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10021,7 +10021,7 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10100,7 +10100,7 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10178,7 +10178,7 @@ module Prism
     def initialize(source, node_id, location, flags, maximum); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10234,7 +10234,7 @@ module Prism
     def initialize(source, node_id, location, flags, number); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10297,7 +10297,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10371,7 +10371,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10457,7 +10457,7 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10546,7 +10546,7 @@ module Prism
     def initialize(source, node_id, location, flags, requireds, optionals, rest, posts, keywords, keyword_rest, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10626,7 +10626,7 @@ module Prism
     def initialize(source, node_id, location, flags, body, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10712,7 +10712,7 @@ module Prism
     def initialize(source, node_id, location, flags, expression, operator_loc, lparen_loc, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10819,7 +10819,7 @@ module Prism
     def initialize(source, node_id, location, flags, variable, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10894,7 +10894,7 @@ module Prism
     def initialize(source, node_id, location, flags, statements, keyword_loc, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -10989,7 +10989,7 @@ module Prism
     def initialize(source, node_id, location, flags, statements, keyword_loc, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11081,7 +11081,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11144,7 +11144,7 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11234,7 +11234,7 @@ module Prism
     def initialize(source, node_id, location, flags, numerator, denominator); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11314,7 +11314,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11366,7 +11366,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11506,7 +11506,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11576,7 +11576,7 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11636,7 +11636,7 @@ module Prism
     def initialize(source, node_id, location, flags, expression, keyword_loc, rescue_expression); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11714,7 +11714,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, exceptions, operator_loc, reference, then_keyword_loc, statements, subsequent); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11822,7 +11822,7 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11904,7 +11904,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -11956,7 +11956,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, arguments); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12025,7 +12025,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12078,7 +12078,7 @@ module Prism
     def initialize(source, node_id, location, flags, write); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12146,7 +12146,7 @@ module Prism
     def initialize(source, node_id, location, flags, locals, class_keyword_loc, operator_loc, expression, body, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12249,7 +12249,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12301,7 +12301,7 @@ module Prism
     def initialize(source, node_id, location, flags, filepath); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12373,7 +12373,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12425,7 +12425,7 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, expression); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12494,7 +12494,7 @@ module Prism
     def initialize(source, node_id, location, flags, body); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12556,7 +12556,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12672,7 +12672,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, lparen_loc, arguments, rparen_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12774,7 +12774,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12881,7 +12881,7 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -12933,7 +12933,7 @@ module Prism
     def initialize(source, node_id, location, flags, names, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13005,7 +13005,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, predicate, then_keyword_loc, statements, else_clause, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13136,7 +13136,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13241,7 +13241,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, conditions, then_keyword_loc, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13330,7 +13330,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13433,7 +13433,7 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
@@ -13536,7 +13536,7 @@ module Prism
     def initialize(source, node_id, location, flags, keyword_loc, lparen_loc, arguments, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: T.untyped).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.

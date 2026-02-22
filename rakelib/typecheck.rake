@@ -249,8 +249,10 @@ namespace :typecheck do
         end
       when RBS::Types::Interface
         case type.name.name
-        when :_CodeUnitsCache, :_CommentTarget, :_Field, :_Repository, :_Stream, :_Value, :_Visitor
+        when :_CodeUnitsCache, :_CommentTarget, :_Field, :_Repository, :_Stream, :_Value
           RBI::Type.untyped
+        when :_Visitor
+          RBI::Type.simple("Visitor")
         else
           raise
         end
@@ -331,6 +333,7 @@ namespace :typecheck do
         - ./lib/prism/node_ext.rb
         - ./lib/prism/parse_result.rb
         - ./lib/prism/pattern.rb
+        - ./lib/prism/visitor.rb
         - ./lib/prism/translation/parser/lexer.rb
         - ./lib/prism/translation/ripper.rb
         - ./lib/prism/translation/ripper/sexp.rb

@@ -7,6 +7,8 @@ test/prism/fixtures/seattlerb/**/*.txt linguist-vendored
 test/prism/fixtures/unparser/**/*.txt linguist-vendored
 test/prism/fixtures/whitequark/**/*.txt linguist-vendored
 test/prism/snapshots/**/*.txt linguist-generated
+
+rbi/generated/**/*.rbi linguist-generated
 sig/generated/**/*.rbs linguist-generated
 
 # All .rb files should have LF line ending, even on Windows, regardless of the git config core.autocrlf value.
