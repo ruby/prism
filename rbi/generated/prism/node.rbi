@@ -110,6 +110,11 @@ module Prism
     sig { returns(T::Array[String]) }
     def source_lines; end
 
+    # An alias for source_lines, used to mimic the API from
+    # RubyVM::AbstractSyntaxTree to make it easier to migrate.
+    sig { returns(T::Array[String]) }
+    def script_lines; end
+
     # Slice the location of the node from the source.
     sig { returns(String) }
     def slice; end
@@ -159,6 +164,9 @@ module Prism
     sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T.nilable(Node)) }
     def breadth_first_search(&blk); end
 
+    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T.nilable(Node)) }
+    def find(&blk); end
+
     # Returns all of the nodes that match the given block when visited in a
     # breadth-first search. This is useful for finding all nodes that match a
     # particular condition.
@@ -166,6 +174,9 @@ module Prism
     #     node.breadth_first_search_all { |node| node.is_a?(Prism::CallNode) }
     sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
     def breadth_first_search_all(&blk); end
+
+    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
+    def find_all(&blk); end
 
     # Returns a list of the fields that exist for this node class. Fields
     # describe the structure of the node. This kind of reflection is useful for
@@ -181,6 +192,9 @@ module Prism
     # nodes that were not present.
     sig { abstract.returns(T::Array[T.nilable(Node)]) }
     def child_nodes; end
+
+    sig { abstract.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     # With a block given, yields each child node. Without a block, returns
     # an enumerator that contains each child node. Excludes any `nil`s in
@@ -259,6 +273,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, new_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).returns(AliasGlobalVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -341,6 +358,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, new_name: T.any(SymbolNode, InterpolatedSymbolNode), old_name: T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).returns(AliasMethodNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -436,6 +456,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(AlternationPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -517,6 +540,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(AndNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -606,6 +632,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T::Array[Node]).returns(ArgumentsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -684,6 +713,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(ArrayNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), elements: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -792,6 +824,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: T.nilable(Node), posts: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(ArrayPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), requireds: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -911,6 +946,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: T.nilable(Location)).returns(AssocNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), key: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1002,6 +1040,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, value: T.nilable(Node), operator_loc: Location).returns(AssocSplatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1077,6 +1118,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(BackReferenceReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1138,6 +1182,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), rescue_clause: T.nilable(RescueNode), else_clause: T.nilable(ElseNode), ensure_clause: T.nilable(EnsureNode), end_keyword_loc: T.nilable(Location)).returns(BeginNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), begin_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), rescue_clause: T.unsafe(nil), else_clause: T.unsafe(nil), ensure_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -1251,6 +1298,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, expression: T.nilable(Node), operator_loc: Location).returns(BlockArgumentNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1326,6 +1376,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(BlockLocalVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1388,6 +1441,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).returns(BlockNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -1499,6 +1555,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(BlockParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1595,6 +1654,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, parameters: T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(BlockParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parameters: T.unsafe(nil), locals: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -1710,6 +1772,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).returns(BreakNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -1784,6 +1849,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -1943,6 +2011,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), name: Symbol, message_loc: T.nilable(Location), opening_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), closing_loc: T.nilable(Location), equal_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).returns(CallNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), name: T.unsafe(nil), message_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), equal_loc: T.unsafe(nil), block: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -2132,6 +2203,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(CallOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), binary_operator: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -2278,6 +2352,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -2431,6 +2508,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: Node, call_operator_loc: Location, name: Symbol, message_loc: Location).returns(CallTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), name: T.unsafe(nil), message_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -2545,6 +2625,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, target: LocalVariableTargetNode, operator_loc: Location).returns(CapturePatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -2628,6 +2711,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[InNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseMatchNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), predicate: T.unsafe(nil), conditions: T.unsafe(nil), else_clause: T.unsafe(nil), case_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -2736,6 +2822,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[WhenNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), predicate: T.unsafe(nil), conditions: T.unsafe(nil), else_clause: T.unsafe(nil), case_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -2840,6 +2929,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: T.nilable(Location), superclass: T.nilable(Node), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ClassNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), class_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), inheritance_operator_loc: T.unsafe(nil), superclass: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -2970,6 +3062,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ClassVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3064,6 +3159,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ClassVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3145,6 +3243,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ClassVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -3228,6 +3329,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ClassVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3288,6 +3392,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ClassVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3343,6 +3450,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(ClassVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -3442,6 +3552,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ConstantAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3523,6 +3636,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ConstantOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -3606,6 +3722,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ConstantOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3688,6 +3807,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3760,6 +3882,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parent: T.unsafe(nil), name: T.unsafe(nil), delimiter_loc: T.unsafe(nil), name_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -3864,6 +3989,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ConstantPathOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -3937,6 +4065,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4009,6 +4140,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parent: T.unsafe(nil), name: T.unsafe(nil), delimiter_loc: T.unsafe(nil), name_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -4098,6 +4232,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4183,6 +4320,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ConstantReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4243,6 +4383,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ConstantTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4298,6 +4441,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(ConstantWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -4397,6 +4543,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: T.nilable(Node), parameters: T.nilable(ParametersNode), body: T.nilable(T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: T.nilable(Location), lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), equal_loc: T.nilable(Location), end_keyword_loc: T.nilable(Location)).returns(DefNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), receiver: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil), locals: T.unsafe(nil), def_keyword_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil), equal_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -4557,6 +4706,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, lparen_loc: T.nilable(Location), value: Node, rparen_loc: T.nilable(Location), keyword_loc: Location).returns(DefinedNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lparen_loc: T.unsafe(nil), value: T.unsafe(nil), rparen_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4652,6 +4804,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: T.nilable(Location)).returns(ElseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), else_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4733,6 +4888,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: T.nilable(StatementsNode), closing_loc: Location).returns(EmbeddedStatementsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), statements: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -4816,6 +4974,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).returns(EmbeddedVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), variable: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -4888,6 +5049,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: Location).returns(EnsureNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), ensure_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -4971,6 +5135,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(FalseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5031,6 +5198,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: T.any(SplatNode, MissingNode), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(FindPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), left: T.unsafe(nil), requireds: T.unsafe(nil), right: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -5159,6 +5329,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).returns(FlipFlopNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5236,6 +5409,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Float).returns(FloatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5291,6 +5467,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, index: T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: T.nilable(Location), end_keyword_loc: Location).returns(ForNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), index: T.unsafe(nil), collection: T.unsafe(nil), statements: T.unsafe(nil), for_keyword_loc: T.unsafe(nil), in_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -5433,6 +5612,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ForwardingArgumentsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5485,6 +5667,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ForwardingParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -5543,6 +5728,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, block: T.nilable(BlockNode)).returns(ForwardingSuperNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), block: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5598,6 +5786,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(GlobalVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -5681,6 +5872,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(GlobalVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5762,6 +5956,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(GlobalVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -5845,6 +6042,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(GlobalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5905,6 +6105,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(GlobalVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -5960,6 +6163,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(GlobalVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6058,6 +6264,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[T.any(AssocNode, AssocSplatNode)], closing_loc: Location).returns(HashNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), elements: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6161,6 +6370,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: T.nilable(T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(HashPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), elements: T.unsafe(nil), rest: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6287,6 +6499,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, if_keyword_loc: T.nilable(Location), predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(T.any(ElseNode, IfNode)), end_keyword_loc: T.nilable(Location)).returns(IfNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), if_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), subsequent: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6437,6 +6652,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, numeric: T.any(FloatNode, IntegerNode, RationalNode)).returns(ImaginaryNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), numeric: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -6498,6 +6716,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6564,6 +6785,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ImplicitRestNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -6615,6 +6839,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: T.nilable(StatementsNode), in_loc: Location, then_loc: T.nilable(Location)).returns(InNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), pattern: T.unsafe(nil), statements: T.unsafe(nil), in_loc: T.unsafe(nil), then_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6701,6 +6928,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -6838,6 +7068,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(IndexOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), binary_operator: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -6973,6 +7206,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -7118,6 +7354,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode)).returns(IndexTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7224,6 +7463,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(InstanceVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7305,6 +7547,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(InstanceVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -7388,6 +7633,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(InstanceVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7470,6 +7718,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(InstanceVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7530,6 +7781,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(InstanceVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7585,6 +7839,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(InstanceVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -7684,6 +7941,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Integer).returns(IntegerNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -7755,6 +8015,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedMatchLastLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -7882,6 +8145,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedRegularExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8008,6 +8274,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: T.nilable(Location)).returns(InterpolatedStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8098,6 +8367,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: T.nilable(Location)).returns(InterpolatedSymbolNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8179,6 +8451,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedXStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -8262,6 +8537,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ItLocalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8314,6 +8592,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ItParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8365,6 +8646,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[T.any(AssocNode, AssocSplatNode)]).returns(KeywordHashNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), elements: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -8426,6 +8710,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(KeywordRestParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -8508,6 +8795,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode))).returns(LambdaNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -8612,6 +8902,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).returns(LocalVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8697,6 +8990,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, binary_operator_loc: Location, value: Node, name: Symbol, binary_operator: Symbol, depth: Integer).returns(LocalVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), binary_operator: T.unsafe(nil), depth: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -8784,6 +9080,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).returns(LocalVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8870,6 +9169,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).returns(LocalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -8947,6 +9249,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).returns(LocalVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -9006,6 +9311,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer, name_loc: Location, value: Node, operator_loc: Location).returns(LocalVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9118,6 +9426,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9258,6 +9569,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).returns(MatchPredicateNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -9330,6 +9644,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).returns(MatchRequiredNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9452,6 +9769,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, call: CallNode, targets: T::Array[LocalVariableTargetNode]).returns(MatchWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), call: T.unsafe(nil), targets: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -9509,6 +9829,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(MissingNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -9560,6 +9883,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ModuleNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), module_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9659,6 +9985,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location)).returns(MultiTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9779,6 +10108,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), operator_loc: Location, value: Node).returns(MultiWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -9923,6 +10255,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).returns(NextNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -9992,6 +10327,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(NilNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -10044,6 +10382,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).returns(NoBlockParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10124,6 +10465,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).returns(NoKeywordsParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -10202,6 +10546,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, maximum: Integer).returns(NumberedParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), maximum: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -10257,6 +10604,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, number: Integer).returns(NumberedReferenceReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), number: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10320,6 +10670,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node).returns(OptionalKeywordParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10394,6 +10747,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(OptionalParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10480,6 +10836,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(OrNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10570,6 +10929,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, requireds: T::Array[T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: T.nilable(T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: T.nilable(T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: T.nilable(T.any(BlockParameterNode, NoBlockParameterNode))).returns(ParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), requireds: T.unsafe(nil), optionals: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), keywords: T.unsafe(nil), keyword_rest: T.unsafe(nil), block: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -10649,6 +11011,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, body: T.nilable(Node), opening_loc: Location, closing_loc: Location).returns(ParenthesesNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), body: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10735,6 +11100,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, expression: Node, operator_loc: Location, lparen_loc: Location, rparen_loc: Location).returns(PinnedExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), operator_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -10843,6 +11211,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, variable: T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).returns(PinnedVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), variable: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -10917,6 +11288,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PostExecutionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), statements: T.unsafe(nil), keyword_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -11013,6 +11387,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PreExecutionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), statements: T.unsafe(nil), keyword_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11105,6 +11482,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], statements: StatementsNode).returns(ProgramNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), statements: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11167,6 +11547,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).returns(RangeNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -11258,6 +11641,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, numerator: Integer, denominator: Integer).returns(RationalNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), numerator: T.unsafe(nil), denominator: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11338,6 +11724,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(RedoNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11389,6 +11778,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -11530,6 +11922,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location).returns(RequiredKeywordParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11600,6 +11995,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(RequiredParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11659,6 +12057,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, expression: Node, keyword_loc: Location, rescue_expression: Node).returns(RescueModifierNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), keyword_loc: T.unsafe(nil), rescue_expression: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -11737,6 +12138,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: T.nilable(Location), reference: T.nilable(T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(RescueNode)).returns(RescueNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), exceptions: T.unsafe(nil), operator_loc: T.unsafe(nil), reference: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), subsequent: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -11846,6 +12250,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(RestParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11928,6 +12335,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(RetryNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -11979,6 +12389,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: T.nilable(ArgumentsNode)).returns(ReturnNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), arguments: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12049,6 +12462,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SelfNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12101,6 +12517,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, write: T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).returns(ShareableConstantNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), write: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12169,6 +12588,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).returns(SingletonClassNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), class_keyword_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), expression: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12273,6 +12695,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SourceEncodingNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12324,6 +12749,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, filepath: String).returns(SourceFileNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), filepath: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12397,6 +12825,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SourceLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12448,6 +12879,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: T.nilable(Node)).returns(SplatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), expression: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12518,6 +12952,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, body: T::Array[Node]).returns(StatementsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), body: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12579,6 +13016,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), content_loc: Location, closing_loc: T.nilable(Location), unescaped: String).returns(StringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12696,6 +13136,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).returns(SuperNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), arguments: T.unsafe(nil), rparen_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12797,6 +13240,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), value_loc: T.nilable(Location), closing_loc: T.nilable(Location), unescaped: String).returns(SymbolNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -12905,6 +13351,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(TrueNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -12956,6 +13405,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, names: T::Array[T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).returns(UndefNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), names: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -13028,6 +13480,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), else_clause: T.nilable(ElseNode), end_keyword_loc: T.nilable(Location)).returns(UnlessNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), else_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -13160,6 +13615,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).returns(UntilNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -13265,6 +13723,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode)).returns(WhenNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), conditions: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -13353,6 +13814,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).returns(WhileNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
@@ -13457,6 +13921,9 @@ module Prism
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
+
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end
 
@@ -13559,6 +14026,9 @@ module Prism
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location)).returns(YieldNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), arguments: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
+
+    sig { override.returns(T::Array[T.nilable(Node)]) }
+    def deconstruct; end
 
     sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
     def deconstruct_keys(keys); end

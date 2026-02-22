@@ -55,6 +55,10 @@ module Prism
     sig { params(arg0: T.untyped, arg1: T::Array[Symbol]).void }
     def register_events(arg0, arg1); end
 
+    # Walks `root` dispatching events to all registered listeners.
+    sig { params(node: T.nilable(Node)).returns(T.untyped) }
+    def dispatch(node); end
+
     # Dispatches a single event for `node` to all registered listeners.
     sig { params(node: Node).void }
     def dispatch_once(node); end

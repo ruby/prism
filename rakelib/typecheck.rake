@@ -138,8 +138,32 @@ namespace :typecheck do
               method.sigs << sig
             end
           end
-      when RBS::AST::Members::Alias, RBS::AST::Members::InstanceVariable,
-          RBS::AST::Declarations::Interface, RBS::AST::Declarations::TypeAlias
+      when RBS::AST::Members::Alias
+        case [node.new_name, node.old_name]
+        when [:dispatch, :visit]
+          parent <<
+            RBI::Method.new("dispatch", visibility: @visibility, comments: compile_comments(node)) do |method|
+              method.add_param("node")
+              method.sigs <<
+                RBI::Sig.new(
+                  params: [RBI::SigParam.new("node", RBI::Type.nilable(RBI::Type.simple("Node")))],
+                  return_type: RBI::Type.untyped
+                )
+            end
+        when [:script_lines, :source_lines],
+             [:find, :breadth_first_search],
+             [:find_all, :breadth_first_search_all],
+             [:deconstruct, :child_nodes]
+          found = parent.nodes.find { |child| child.is_a?(RBI::Method) && child.name == node.old_name.name }
+          parent <<
+            found.dup.tap do |method|
+              method.name = node.new_name.name
+              method.comments = compile_comments(node)
+            end
+        else
+          raise
+        end
+      when RBS::AST::Members::InstanceVariable, RBS::AST::Declarations::Interface, RBS::AST::Declarations::TypeAlias
         # skip
       else
         raise
@@ -277,7 +301,7 @@ namespace :typecheck do
   end
 
   desc "Generate RBIs from RBSs"
-  task rbi: :rbs_inline do
+  task rbi: :templates do
     with_gemfile do
       require "fileutils"
       require "rbs"
