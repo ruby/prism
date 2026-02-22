@@ -74,461 +74,461 @@ module Prism
     # : () -> String
     def to_dot: () -> String
 
-    # (AliasGlobalVariableNode) -> void
-    def visit_alias_global_variable_node: (untyped node) -> untyped
+    # : (AliasGlobalVariableNode) -> void
+    def visit_alias_global_variable_node: (AliasGlobalVariableNode) -> void
 
-    # (AliasMethodNode) -> void
-    def visit_alias_method_node: (untyped node) -> untyped
+    # : (AliasMethodNode) -> void
+    def visit_alias_method_node: (AliasMethodNode) -> void
 
-    # (AlternationPatternNode) -> void
-    def visit_alternation_pattern_node: (untyped node) -> untyped
+    # : (AlternationPatternNode) -> void
+    def visit_alternation_pattern_node: (AlternationPatternNode) -> void
 
-    # (AndNode) -> void
-    def visit_and_node: (untyped node) -> untyped
+    # : (AndNode) -> void
+    def visit_and_node: (AndNode) -> void
 
-    # (ArgumentsNode) -> void
-    def visit_arguments_node: (untyped node) -> untyped
+    # : (ArgumentsNode) -> void
+    def visit_arguments_node: (ArgumentsNode) -> void
 
-    # (ArrayNode) -> void
-    def visit_array_node: (untyped node) -> untyped
+    # : (ArrayNode) -> void
+    def visit_array_node: (ArrayNode) -> void
 
-    # (ArrayPatternNode) -> void
-    def visit_array_pattern_node: (untyped node) -> untyped
+    # : (ArrayPatternNode) -> void
+    def visit_array_pattern_node: (ArrayPatternNode) -> void
 
-    # (AssocNode) -> void
-    def visit_assoc_node: (untyped node) -> untyped
+    # : (AssocNode) -> void
+    def visit_assoc_node: (AssocNode) -> void
 
-    # (AssocSplatNode) -> void
-    def visit_assoc_splat_node: (untyped node) -> untyped
+    # : (AssocSplatNode) -> void
+    def visit_assoc_splat_node: (AssocSplatNode) -> void
 
-    # (BackReferenceReadNode) -> void
-    def visit_back_reference_read_node: (untyped node) -> untyped
+    # : (BackReferenceReadNode) -> void
+    def visit_back_reference_read_node: (BackReferenceReadNode) -> void
 
-    # (BeginNode) -> void
-    def visit_begin_node: (untyped node) -> untyped
+    # : (BeginNode) -> void
+    def visit_begin_node: (BeginNode) -> void
 
-    # (BlockArgumentNode) -> void
-    def visit_block_argument_node: (untyped node) -> untyped
+    # : (BlockArgumentNode) -> void
+    def visit_block_argument_node: (BlockArgumentNode) -> void
 
-    # (BlockLocalVariableNode) -> void
-    def visit_block_local_variable_node: (untyped node) -> untyped
+    # : (BlockLocalVariableNode) -> void
+    def visit_block_local_variable_node: (BlockLocalVariableNode) -> void
 
-    # (BlockNode) -> void
-    def visit_block_node: (untyped node) -> untyped
+    # : (BlockNode) -> void
+    def visit_block_node: (BlockNode) -> void
 
-    # (BlockParameterNode) -> void
-    def visit_block_parameter_node: (untyped node) -> untyped
+    # : (BlockParameterNode) -> void
+    def visit_block_parameter_node: (BlockParameterNode) -> void
 
-    # (BlockParametersNode) -> void
-    def visit_block_parameters_node: (untyped node) -> untyped
+    # : (BlockParametersNode) -> void
+    def visit_block_parameters_node: (BlockParametersNode) -> void
 
-    # (BreakNode) -> void
-    def visit_break_node: (untyped node) -> untyped
+    # : (BreakNode) -> void
+    def visit_break_node: (BreakNode) -> void
 
-    # (CallAndWriteNode) -> void
-    def visit_call_and_write_node: (untyped node) -> untyped
+    # : (CallAndWriteNode) -> void
+    def visit_call_and_write_node: (CallAndWriteNode) -> void
 
-    # (CallNode) -> void
-    def visit_call_node: (untyped node) -> untyped
+    # : (CallNode) -> void
+    def visit_call_node: (CallNode) -> void
 
-    # (CallOperatorWriteNode) -> void
-    def visit_call_operator_write_node: (untyped node) -> untyped
+    # : (CallOperatorWriteNode) -> void
+    def visit_call_operator_write_node: (CallOperatorWriteNode) -> void
 
-    # (CallOrWriteNode) -> void
-    def visit_call_or_write_node: (untyped node) -> untyped
+    # : (CallOrWriteNode) -> void
+    def visit_call_or_write_node: (CallOrWriteNode) -> void
 
-    # (CallTargetNode) -> void
-    def visit_call_target_node: (untyped node) -> untyped
+    # : (CallTargetNode) -> void
+    def visit_call_target_node: (CallTargetNode) -> void
 
-    # (CapturePatternNode) -> void
-    def visit_capture_pattern_node: (untyped node) -> untyped
+    # : (CapturePatternNode) -> void
+    def visit_capture_pattern_node: (CapturePatternNode) -> void
 
-    # (CaseMatchNode) -> void
-    def visit_case_match_node: (untyped node) -> untyped
+    # : (CaseMatchNode) -> void
+    def visit_case_match_node: (CaseMatchNode) -> void
 
-    # (CaseNode) -> void
-    def visit_case_node: (untyped node) -> untyped
+    # : (CaseNode) -> void
+    def visit_case_node: (CaseNode) -> void
 
-    # (ClassNode) -> void
-    def visit_class_node: (untyped node) -> untyped
+    # : (ClassNode) -> void
+    def visit_class_node: (ClassNode) -> void
 
-    # (ClassVariableAndWriteNode) -> void
-    def visit_class_variable_and_write_node: (untyped node) -> untyped
+    # : (ClassVariableAndWriteNode) -> void
+    def visit_class_variable_and_write_node: (ClassVariableAndWriteNode) -> void
 
-    # (ClassVariableOperatorWriteNode) -> void
-    def visit_class_variable_operator_write_node: (untyped node) -> untyped
+    # : (ClassVariableOperatorWriteNode) -> void
+    def visit_class_variable_operator_write_node: (ClassVariableOperatorWriteNode) -> void
 
-    # (ClassVariableOrWriteNode) -> void
-    def visit_class_variable_or_write_node: (untyped node) -> untyped
+    # : (ClassVariableOrWriteNode) -> void
+    def visit_class_variable_or_write_node: (ClassVariableOrWriteNode) -> void
 
-    # (ClassVariableReadNode) -> void
-    def visit_class_variable_read_node: (untyped node) -> untyped
+    # : (ClassVariableReadNode) -> void
+    def visit_class_variable_read_node: (ClassVariableReadNode) -> void
 
-    # (ClassVariableTargetNode) -> void
-    def visit_class_variable_target_node: (untyped node) -> untyped
+    # : (ClassVariableTargetNode) -> void
+    def visit_class_variable_target_node: (ClassVariableTargetNode) -> void
 
-    # (ClassVariableWriteNode) -> void
-    def visit_class_variable_write_node: (untyped node) -> untyped
+    # : (ClassVariableWriteNode) -> void
+    def visit_class_variable_write_node: (ClassVariableWriteNode) -> void
 
-    # (ConstantAndWriteNode) -> void
-    def visit_constant_and_write_node: (untyped node) -> untyped
+    # : (ConstantAndWriteNode) -> void
+    def visit_constant_and_write_node: (ConstantAndWriteNode) -> void
 
-    # (ConstantOperatorWriteNode) -> void
-    def visit_constant_operator_write_node: (untyped node) -> untyped
+    # : (ConstantOperatorWriteNode) -> void
+    def visit_constant_operator_write_node: (ConstantOperatorWriteNode) -> void
 
-    # (ConstantOrWriteNode) -> void
-    def visit_constant_or_write_node: (untyped node) -> untyped
+    # : (ConstantOrWriteNode) -> void
+    def visit_constant_or_write_node: (ConstantOrWriteNode) -> void
 
-    # (ConstantPathAndWriteNode) -> void
-    def visit_constant_path_and_write_node: (untyped node) -> untyped
+    # : (ConstantPathAndWriteNode) -> void
+    def visit_constant_path_and_write_node: (ConstantPathAndWriteNode) -> void
 
-    # (ConstantPathNode) -> void
-    def visit_constant_path_node: (untyped node) -> untyped
+    # : (ConstantPathNode) -> void
+    def visit_constant_path_node: (ConstantPathNode) -> void
 
-    # (ConstantPathOperatorWriteNode) -> void
-    def visit_constant_path_operator_write_node: (untyped node) -> untyped
+    # : (ConstantPathOperatorWriteNode) -> void
+    def visit_constant_path_operator_write_node: (ConstantPathOperatorWriteNode) -> void
 
-    # (ConstantPathOrWriteNode) -> void
-    def visit_constant_path_or_write_node: (untyped node) -> untyped
+    # : (ConstantPathOrWriteNode) -> void
+    def visit_constant_path_or_write_node: (ConstantPathOrWriteNode) -> void
 
-    # (ConstantPathTargetNode) -> void
-    def visit_constant_path_target_node: (untyped node) -> untyped
+    # : (ConstantPathTargetNode) -> void
+    def visit_constant_path_target_node: (ConstantPathTargetNode) -> void
 
-    # (ConstantPathWriteNode) -> void
-    def visit_constant_path_write_node: (untyped node) -> untyped
+    # : (ConstantPathWriteNode) -> void
+    def visit_constant_path_write_node: (ConstantPathWriteNode) -> void
 
-    # (ConstantReadNode) -> void
-    def visit_constant_read_node: (untyped node) -> untyped
+    # : (ConstantReadNode) -> void
+    def visit_constant_read_node: (ConstantReadNode) -> void
 
-    # (ConstantTargetNode) -> void
-    def visit_constant_target_node: (untyped node) -> untyped
+    # : (ConstantTargetNode) -> void
+    def visit_constant_target_node: (ConstantTargetNode) -> void
 
-    # (ConstantWriteNode) -> void
-    def visit_constant_write_node: (untyped node) -> untyped
+    # : (ConstantWriteNode) -> void
+    def visit_constant_write_node: (ConstantWriteNode) -> void
 
-    # (DefNode) -> void
-    def visit_def_node: (untyped node) -> untyped
+    # : (DefNode) -> void
+    def visit_def_node: (DefNode) -> void
 
-    # (DefinedNode) -> void
-    def visit_defined_node: (untyped node) -> untyped
+    # : (DefinedNode) -> void
+    def visit_defined_node: (DefinedNode) -> void
 
-    # (ElseNode) -> void
-    def visit_else_node: (untyped node) -> untyped
+    # : (ElseNode) -> void
+    def visit_else_node: (ElseNode) -> void
 
-    # (EmbeddedStatementsNode) -> void
-    def visit_embedded_statements_node: (untyped node) -> untyped
+    # : (EmbeddedStatementsNode) -> void
+    def visit_embedded_statements_node: (EmbeddedStatementsNode) -> void
 
-    # (EmbeddedVariableNode) -> void
-    def visit_embedded_variable_node: (untyped node) -> untyped
+    # : (EmbeddedVariableNode) -> void
+    def visit_embedded_variable_node: (EmbeddedVariableNode) -> void
 
-    # (EnsureNode) -> void
-    def visit_ensure_node: (untyped node) -> untyped
+    # : (EnsureNode) -> void
+    def visit_ensure_node: (EnsureNode) -> void
 
-    # (FalseNode) -> void
-    def visit_false_node: (untyped node) -> untyped
+    # : (FalseNode) -> void
+    def visit_false_node: (FalseNode) -> void
 
-    # (FindPatternNode) -> void
-    def visit_find_pattern_node: (untyped node) -> untyped
+    # : (FindPatternNode) -> void
+    def visit_find_pattern_node: (FindPatternNode) -> void
 
-    # (FlipFlopNode) -> void
-    def visit_flip_flop_node: (untyped node) -> untyped
+    # : (FlipFlopNode) -> void
+    def visit_flip_flop_node: (FlipFlopNode) -> void
 
-    # (FloatNode) -> void
-    def visit_float_node: (untyped node) -> untyped
+    # : (FloatNode) -> void
+    def visit_float_node: (FloatNode) -> void
 
-    # (ForNode) -> void
-    def visit_for_node: (untyped node) -> untyped
+    # : (ForNode) -> void
+    def visit_for_node: (ForNode) -> void
 
-    # (ForwardingArgumentsNode) -> void
-    def visit_forwarding_arguments_node: (untyped node) -> untyped
+    # : (ForwardingArgumentsNode) -> void
+    def visit_forwarding_arguments_node: (ForwardingArgumentsNode) -> void
 
-    # (ForwardingParameterNode) -> void
-    def visit_forwarding_parameter_node: (untyped node) -> untyped
+    # : (ForwardingParameterNode) -> void
+    def visit_forwarding_parameter_node: (ForwardingParameterNode) -> void
 
-    # (ForwardingSuperNode) -> void
-    def visit_forwarding_super_node: (untyped node) -> untyped
+    # : (ForwardingSuperNode) -> void
+    def visit_forwarding_super_node: (ForwardingSuperNode) -> void
 
-    # (GlobalVariableAndWriteNode) -> void
-    def visit_global_variable_and_write_node: (untyped node) -> untyped
+    # : (GlobalVariableAndWriteNode) -> void
+    def visit_global_variable_and_write_node: (GlobalVariableAndWriteNode) -> void
 
-    # (GlobalVariableOperatorWriteNode) -> void
-    def visit_global_variable_operator_write_node: (untyped node) -> untyped
+    # : (GlobalVariableOperatorWriteNode) -> void
+    def visit_global_variable_operator_write_node: (GlobalVariableOperatorWriteNode) -> void
 
-    # (GlobalVariableOrWriteNode) -> void
-    def visit_global_variable_or_write_node: (untyped node) -> untyped
+    # : (GlobalVariableOrWriteNode) -> void
+    def visit_global_variable_or_write_node: (GlobalVariableOrWriteNode) -> void
 
-    # (GlobalVariableReadNode) -> void
-    def visit_global_variable_read_node: (untyped node) -> untyped
+    # : (GlobalVariableReadNode) -> void
+    def visit_global_variable_read_node: (GlobalVariableReadNode) -> void
 
-    # (GlobalVariableTargetNode) -> void
-    def visit_global_variable_target_node: (untyped node) -> untyped
+    # : (GlobalVariableTargetNode) -> void
+    def visit_global_variable_target_node: (GlobalVariableTargetNode) -> void
 
-    # (GlobalVariableWriteNode) -> void
-    def visit_global_variable_write_node: (untyped node) -> untyped
+    # : (GlobalVariableWriteNode) -> void
+    def visit_global_variable_write_node: (GlobalVariableWriteNode) -> void
 
-    # (HashNode) -> void
-    def visit_hash_node: (untyped node) -> untyped
+    # : (HashNode) -> void
+    def visit_hash_node: (HashNode) -> void
 
-    # (HashPatternNode) -> void
-    def visit_hash_pattern_node: (untyped node) -> untyped
+    # : (HashPatternNode) -> void
+    def visit_hash_pattern_node: (HashPatternNode) -> void
 
-    # (IfNode) -> void
-    def visit_if_node: (untyped node) -> untyped
+    # : (IfNode) -> void
+    def visit_if_node: (IfNode) -> void
 
-    # (ImaginaryNode) -> void
-    def visit_imaginary_node: (untyped node) -> untyped
+    # : (ImaginaryNode) -> void
+    def visit_imaginary_node: (ImaginaryNode) -> void
 
-    # (ImplicitNode) -> void
-    def visit_implicit_node: (untyped node) -> untyped
+    # : (ImplicitNode) -> void
+    def visit_implicit_node: (ImplicitNode) -> void
 
-    # (ImplicitRestNode) -> void
-    def visit_implicit_rest_node: (untyped node) -> untyped
+    # : (ImplicitRestNode) -> void
+    def visit_implicit_rest_node: (ImplicitRestNode) -> void
 
-    # (InNode) -> void
-    def visit_in_node: (untyped node) -> untyped
+    # : (InNode) -> void
+    def visit_in_node: (InNode) -> void
 
-    # (IndexAndWriteNode) -> void
-    def visit_index_and_write_node: (untyped node) -> untyped
+    # : (IndexAndWriteNode) -> void
+    def visit_index_and_write_node: (IndexAndWriteNode) -> void
 
-    # (IndexOperatorWriteNode) -> void
-    def visit_index_operator_write_node: (untyped node) -> untyped
+    # : (IndexOperatorWriteNode) -> void
+    def visit_index_operator_write_node: (IndexOperatorWriteNode) -> void
 
-    # (IndexOrWriteNode) -> void
-    def visit_index_or_write_node: (untyped node) -> untyped
+    # : (IndexOrWriteNode) -> void
+    def visit_index_or_write_node: (IndexOrWriteNode) -> void
 
-    # (IndexTargetNode) -> void
-    def visit_index_target_node: (untyped node) -> untyped
+    # : (IndexTargetNode) -> void
+    def visit_index_target_node: (IndexTargetNode) -> void
 
-    # (InstanceVariableAndWriteNode) -> void
-    def visit_instance_variable_and_write_node: (untyped node) -> untyped
+    # : (InstanceVariableAndWriteNode) -> void
+    def visit_instance_variable_and_write_node: (InstanceVariableAndWriteNode) -> void
 
-    # (InstanceVariableOperatorWriteNode) -> void
-    def visit_instance_variable_operator_write_node: (untyped node) -> untyped
+    # : (InstanceVariableOperatorWriteNode) -> void
+    def visit_instance_variable_operator_write_node: (InstanceVariableOperatorWriteNode) -> void
 
-    # (InstanceVariableOrWriteNode) -> void
-    def visit_instance_variable_or_write_node: (untyped node) -> untyped
+    # : (InstanceVariableOrWriteNode) -> void
+    def visit_instance_variable_or_write_node: (InstanceVariableOrWriteNode) -> void
 
-    # (InstanceVariableReadNode) -> void
-    def visit_instance_variable_read_node: (untyped node) -> untyped
+    # : (InstanceVariableReadNode) -> void
+    def visit_instance_variable_read_node: (InstanceVariableReadNode) -> void
 
-    # (InstanceVariableTargetNode) -> void
-    def visit_instance_variable_target_node: (untyped node) -> untyped
+    # : (InstanceVariableTargetNode) -> void
+    def visit_instance_variable_target_node: (InstanceVariableTargetNode) -> void
 
-    # (InstanceVariableWriteNode) -> void
-    def visit_instance_variable_write_node: (untyped node) -> untyped
+    # : (InstanceVariableWriteNode) -> void
+    def visit_instance_variable_write_node: (InstanceVariableWriteNode) -> void
 
-    # (IntegerNode) -> void
-    def visit_integer_node: (untyped node) -> untyped
+    # : (IntegerNode) -> void
+    def visit_integer_node: (IntegerNode) -> void
 
-    # (InterpolatedMatchLastLineNode) -> void
-    def visit_interpolated_match_last_line_node: (untyped node) -> untyped
+    # : (InterpolatedMatchLastLineNode) -> void
+    def visit_interpolated_match_last_line_node: (InterpolatedMatchLastLineNode) -> void
 
-    # (InterpolatedRegularExpressionNode) -> void
-    def visit_interpolated_regular_expression_node: (untyped node) -> untyped
+    # : (InterpolatedRegularExpressionNode) -> void
+    def visit_interpolated_regular_expression_node: (InterpolatedRegularExpressionNode) -> void
 
-    # (InterpolatedStringNode) -> void
-    def visit_interpolated_string_node: (untyped node) -> untyped
+    # : (InterpolatedStringNode) -> void
+    def visit_interpolated_string_node: (InterpolatedStringNode) -> void
 
-    # (InterpolatedSymbolNode) -> void
-    def visit_interpolated_symbol_node: (untyped node) -> untyped
+    # : (InterpolatedSymbolNode) -> void
+    def visit_interpolated_symbol_node: (InterpolatedSymbolNode) -> void
 
-    # (InterpolatedXStringNode) -> void
-    def visit_interpolated_x_string_node: (untyped node) -> untyped
+    # : (InterpolatedXStringNode) -> void
+    def visit_interpolated_x_string_node: (InterpolatedXStringNode) -> void
 
-    # (ItLocalVariableReadNode) -> void
-    def visit_it_local_variable_read_node: (untyped node) -> untyped
+    # : (ItLocalVariableReadNode) -> void
+    def visit_it_local_variable_read_node: (ItLocalVariableReadNode) -> void
 
-    # (ItParametersNode) -> void
-    def visit_it_parameters_node: (untyped node) -> untyped
+    # : (ItParametersNode) -> void
+    def visit_it_parameters_node: (ItParametersNode) -> void
 
-    # (KeywordHashNode) -> void
-    def visit_keyword_hash_node: (untyped node) -> untyped
+    # : (KeywordHashNode) -> void
+    def visit_keyword_hash_node: (KeywordHashNode) -> void
 
-    # (KeywordRestParameterNode) -> void
-    def visit_keyword_rest_parameter_node: (untyped node) -> untyped
+    # : (KeywordRestParameterNode) -> void
+    def visit_keyword_rest_parameter_node: (KeywordRestParameterNode) -> void
 
-    # (LambdaNode) -> void
-    def visit_lambda_node: (untyped node) -> untyped
+    # : (LambdaNode) -> void
+    def visit_lambda_node: (LambdaNode) -> void
 
-    # (LocalVariableAndWriteNode) -> void
-    def visit_local_variable_and_write_node: (untyped node) -> untyped
+    # : (LocalVariableAndWriteNode) -> void
+    def visit_local_variable_and_write_node: (LocalVariableAndWriteNode) -> void
 
-    # (LocalVariableOperatorWriteNode) -> void
-    def visit_local_variable_operator_write_node: (untyped node) -> untyped
+    # : (LocalVariableOperatorWriteNode) -> void
+    def visit_local_variable_operator_write_node: (LocalVariableOperatorWriteNode) -> void
 
-    # (LocalVariableOrWriteNode) -> void
-    def visit_local_variable_or_write_node: (untyped node) -> untyped
+    # : (LocalVariableOrWriteNode) -> void
+    def visit_local_variable_or_write_node: (LocalVariableOrWriteNode) -> void
 
-    # (LocalVariableReadNode) -> void
-    def visit_local_variable_read_node: (untyped node) -> untyped
+    # : (LocalVariableReadNode) -> void
+    def visit_local_variable_read_node: (LocalVariableReadNode) -> void
 
-    # (LocalVariableTargetNode) -> void
-    def visit_local_variable_target_node: (untyped node) -> untyped
+    # : (LocalVariableTargetNode) -> void
+    def visit_local_variable_target_node: (LocalVariableTargetNode) -> void
 
-    # (LocalVariableWriteNode) -> void
-    def visit_local_variable_write_node: (untyped node) -> untyped
+    # : (LocalVariableWriteNode) -> void
+    def visit_local_variable_write_node: (LocalVariableWriteNode) -> void
 
-    # (MatchLastLineNode) -> void
-    def visit_match_last_line_node: (untyped node) -> untyped
+    # : (MatchLastLineNode) -> void
+    def visit_match_last_line_node: (MatchLastLineNode) -> void
 
-    # (MatchPredicateNode) -> void
-    def visit_match_predicate_node: (untyped node) -> untyped
+    # : (MatchPredicateNode) -> void
+    def visit_match_predicate_node: (MatchPredicateNode) -> void
 
-    # (MatchRequiredNode) -> void
-    def visit_match_required_node: (untyped node) -> untyped
+    # : (MatchRequiredNode) -> void
+    def visit_match_required_node: (MatchRequiredNode) -> void
 
-    # (MatchWriteNode) -> void
-    def visit_match_write_node: (untyped node) -> untyped
+    # : (MatchWriteNode) -> void
+    def visit_match_write_node: (MatchWriteNode) -> void
 
-    # (MissingNode) -> void
-    def visit_missing_node: (untyped node) -> untyped
+    # : (MissingNode) -> void
+    def visit_missing_node: (MissingNode) -> void
 
-    # (ModuleNode) -> void
-    def visit_module_node: (untyped node) -> untyped
+    # : (ModuleNode) -> void
+    def visit_module_node: (ModuleNode) -> void
 
-    # (MultiTargetNode) -> void
-    def visit_multi_target_node: (untyped node) -> untyped
+    # : (MultiTargetNode) -> void
+    def visit_multi_target_node: (MultiTargetNode) -> void
 
-    # (MultiWriteNode) -> void
-    def visit_multi_write_node: (untyped node) -> untyped
+    # : (MultiWriteNode) -> void
+    def visit_multi_write_node: (MultiWriteNode) -> void
 
-    # (NextNode) -> void
-    def visit_next_node: (untyped node) -> untyped
+    # : (NextNode) -> void
+    def visit_next_node: (NextNode) -> void
 
-    # (NilNode) -> void
-    def visit_nil_node: (untyped node) -> untyped
+    # : (NilNode) -> void
+    def visit_nil_node: (NilNode) -> void
 
-    # (NoBlockParameterNode) -> void
-    def visit_no_block_parameter_node: (untyped node) -> untyped
+    # : (NoBlockParameterNode) -> void
+    def visit_no_block_parameter_node: (NoBlockParameterNode) -> void
 
-    # (NoKeywordsParameterNode) -> void
-    def visit_no_keywords_parameter_node: (untyped node) -> untyped
+    # : (NoKeywordsParameterNode) -> void
+    def visit_no_keywords_parameter_node: (NoKeywordsParameterNode) -> void
 
-    # (NumberedParametersNode) -> void
-    def visit_numbered_parameters_node: (untyped node) -> untyped
+    # : (NumberedParametersNode) -> void
+    def visit_numbered_parameters_node: (NumberedParametersNode) -> void
 
-    # (NumberedReferenceReadNode) -> void
-    def visit_numbered_reference_read_node: (untyped node) -> untyped
+    # : (NumberedReferenceReadNode) -> void
+    def visit_numbered_reference_read_node: (NumberedReferenceReadNode) -> void
 
-    # (OptionalKeywordParameterNode) -> void
-    def visit_optional_keyword_parameter_node: (untyped node) -> untyped
+    # : (OptionalKeywordParameterNode) -> void
+    def visit_optional_keyword_parameter_node: (OptionalKeywordParameterNode) -> void
 
-    # (OptionalParameterNode) -> void
-    def visit_optional_parameter_node: (untyped node) -> untyped
+    # : (OptionalParameterNode) -> void
+    def visit_optional_parameter_node: (OptionalParameterNode) -> void
 
-    # (OrNode) -> void
-    def visit_or_node: (untyped node) -> untyped
+    # : (OrNode) -> void
+    def visit_or_node: (OrNode) -> void
 
-    # (ParametersNode) -> void
-    def visit_parameters_node: (untyped node) -> untyped
+    # : (ParametersNode) -> void
+    def visit_parameters_node: (ParametersNode) -> void
 
-    # (ParenthesesNode) -> void
-    def visit_parentheses_node: (untyped node) -> untyped
+    # : (ParenthesesNode) -> void
+    def visit_parentheses_node: (ParenthesesNode) -> void
 
-    # (PinnedExpressionNode) -> void
-    def visit_pinned_expression_node: (untyped node) -> untyped
+    # : (PinnedExpressionNode) -> void
+    def visit_pinned_expression_node: (PinnedExpressionNode) -> void
 
-    # (PinnedVariableNode) -> void
-    def visit_pinned_variable_node: (untyped node) -> untyped
+    # : (PinnedVariableNode) -> void
+    def visit_pinned_variable_node: (PinnedVariableNode) -> void
 
-    # (PostExecutionNode) -> void
-    def visit_post_execution_node: (untyped node) -> untyped
+    # : (PostExecutionNode) -> void
+    def visit_post_execution_node: (PostExecutionNode) -> void
 
-    # (PreExecutionNode) -> void
-    def visit_pre_execution_node: (untyped node) -> untyped
+    # : (PreExecutionNode) -> void
+    def visit_pre_execution_node: (PreExecutionNode) -> void
 
-    # (ProgramNode) -> void
-    def visit_program_node: (untyped node) -> untyped
+    # : (ProgramNode) -> void
+    def visit_program_node: (ProgramNode) -> void
 
-    # (RangeNode) -> void
-    def visit_range_node: (untyped node) -> untyped
+    # : (RangeNode) -> void
+    def visit_range_node: (RangeNode) -> void
 
-    # (RationalNode) -> void
-    def visit_rational_node: (untyped node) -> untyped
+    # : (RationalNode) -> void
+    def visit_rational_node: (RationalNode) -> void
 
-    # (RedoNode) -> void
-    def visit_redo_node: (untyped node) -> untyped
+    # : (RedoNode) -> void
+    def visit_redo_node: (RedoNode) -> void
 
-    # (RegularExpressionNode) -> void
-    def visit_regular_expression_node: (untyped node) -> untyped
+    # : (RegularExpressionNode) -> void
+    def visit_regular_expression_node: (RegularExpressionNode) -> void
 
-    # (RequiredKeywordParameterNode) -> void
-    def visit_required_keyword_parameter_node: (untyped node) -> untyped
+    # : (RequiredKeywordParameterNode) -> void
+    def visit_required_keyword_parameter_node: (RequiredKeywordParameterNode) -> void
 
-    # (RequiredParameterNode) -> void
-    def visit_required_parameter_node: (untyped node) -> untyped
+    # : (RequiredParameterNode) -> void
+    def visit_required_parameter_node: (RequiredParameterNode) -> void
 
-    # (RescueModifierNode) -> void
-    def visit_rescue_modifier_node: (untyped node) -> untyped
+    # : (RescueModifierNode) -> void
+    def visit_rescue_modifier_node: (RescueModifierNode) -> void
 
-    # (RescueNode) -> void
-    def visit_rescue_node: (untyped node) -> untyped
+    # : (RescueNode) -> void
+    def visit_rescue_node: (RescueNode) -> void
 
-    # (RestParameterNode) -> void
-    def visit_rest_parameter_node: (untyped node) -> untyped
+    # : (RestParameterNode) -> void
+    def visit_rest_parameter_node: (RestParameterNode) -> void
 
-    # (RetryNode) -> void
-    def visit_retry_node: (untyped node) -> untyped
+    # : (RetryNode) -> void
+    def visit_retry_node: (RetryNode) -> void
 
-    # (ReturnNode) -> void
-    def visit_return_node: (untyped node) -> untyped
+    # : (ReturnNode) -> void
+    def visit_return_node: (ReturnNode) -> void
 
-    # (SelfNode) -> void
-    def visit_self_node: (untyped node) -> untyped
+    # : (SelfNode) -> void
+    def visit_self_node: (SelfNode) -> void
 
-    # (ShareableConstantNode) -> void
-    def visit_shareable_constant_node: (untyped node) -> untyped
+    # : (ShareableConstantNode) -> void
+    def visit_shareable_constant_node: (ShareableConstantNode) -> void
 
-    # (SingletonClassNode) -> void
-    def visit_singleton_class_node: (untyped node) -> untyped
+    # : (SingletonClassNode) -> void
+    def visit_singleton_class_node: (SingletonClassNode) -> void
 
-    # (SourceEncodingNode) -> void
-    def visit_source_encoding_node: (untyped node) -> untyped
+    # : (SourceEncodingNode) -> void
+    def visit_source_encoding_node: (SourceEncodingNode) -> void
 
-    # (SourceFileNode) -> void
-    def visit_source_file_node: (untyped node) -> untyped
+    # : (SourceFileNode) -> void
+    def visit_source_file_node: (SourceFileNode) -> void
 
-    # (SourceLineNode) -> void
-    def visit_source_line_node: (untyped node) -> untyped
+    # : (SourceLineNode) -> void
+    def visit_source_line_node: (SourceLineNode) -> void
 
-    # (SplatNode) -> void
-    def visit_splat_node: (untyped node) -> untyped
+    # : (SplatNode) -> void
+    def visit_splat_node: (SplatNode) -> void
 
-    # (StatementsNode) -> void
-    def visit_statements_node: (untyped node) -> untyped
+    # : (StatementsNode) -> void
+    def visit_statements_node: (StatementsNode) -> void
 
-    # (StringNode) -> void
-    def visit_string_node: (untyped node) -> untyped
+    # : (StringNode) -> void
+    def visit_string_node: (StringNode) -> void
 
-    # (SuperNode) -> void
-    def visit_super_node: (untyped node) -> untyped
+    # : (SuperNode) -> void
+    def visit_super_node: (SuperNode) -> void
 
-    # (SymbolNode) -> void
-    def visit_symbol_node: (untyped node) -> untyped
+    # : (SymbolNode) -> void
+    def visit_symbol_node: (SymbolNode) -> void
 
-    # (TrueNode) -> void
-    def visit_true_node: (untyped node) -> untyped
+    # : (TrueNode) -> void
+    def visit_true_node: (TrueNode) -> void
 
-    # (UndefNode) -> void
-    def visit_undef_node: (untyped node) -> untyped
+    # : (UndefNode) -> void
+    def visit_undef_node: (UndefNode) -> void
 
-    # (UnlessNode) -> void
-    def visit_unless_node: (untyped node) -> untyped
+    # : (UnlessNode) -> void
+    def visit_unless_node: (UnlessNode) -> void
 
-    # (UntilNode) -> void
-    def visit_until_node: (untyped node) -> untyped
+    # : (UntilNode) -> void
+    def visit_until_node: (UntilNode) -> void
 
-    # (WhenNode) -> void
-    def visit_when_node: (untyped node) -> untyped
+    # : (WhenNode) -> void
+    def visit_when_node: (WhenNode) -> void
 
-    # (WhileNode) -> void
-    def visit_while_node: (untyped node) -> untyped
+    # : (WhileNode) -> void
+    def visit_while_node: (WhileNode) -> void
 
-    # (XStringNode) -> void
-    def visit_x_string_node: (untyped node) -> untyped
+    # : (XStringNode) -> void
+    def visit_x_string_node: (XStringNode) -> void
 
-    # (YieldNode) -> void
-    def visit_yield_node: (untyped node) -> untyped
+    # : (YieldNode) -> void
+    def visit_yield_node: (YieldNode) -> void
 
     private
 

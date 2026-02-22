@@ -1,4 +1,4 @@
-# Generated from lib/prism/pattern.rb with RBS::Inline
+# typed: true
 
 module Prism
   # A pattern is an object that wraps a Ruby pattern matching expression. The
@@ -40,117 +40,95 @@ module Prism
     class CompilationError < StandardError
       # Create a new CompilationError with the given representation of the node
       # that caused the error.
-      # --
-      # : (String repr) -> void
-      def initialize: (String repr) -> void
+      sig { params(repr: String).void }
+      def initialize(repr); end
     end
 
     # The query that this pattern was initialized with.
-    attr_reader query: String
-
-    @compiled: Proc?
+    sig { returns(String) }
+    attr_reader :query
 
     # Create a new pattern with the given query. The query should be a string
     # containing a Ruby pattern matching expression.
-    # --
-    # : (String query) -> void
-    def initialize: (String query) -> void
+    sig { params(query: String).void }
+    def initialize(query); end
 
     # Compile the query into a callable object that can be used to match against
     # nodes.
-    # --
-    # : () -> Proc
-    def compile: () -> Proc
+    sig { returns(Proc) }
+    def compile; end
 
     # Scan the given node and all of its children for nodes that match the
     # pattern. If a block is given, it will be called with each node that
     # matches the pattern. If no block is given, an enumerator will be returned
     # that will yield each node that matches the pattern.
-    # --
-    # : (node root) -> Enumerator[node, void]
-    # : (node root) { (node) -> void } -> void
-    def scan: (node root) -> Enumerator[node, void]
-            | (node root) { (node) -> void } -> void
-
-    private
+    sig { params(root: Node).returns(T::Enumerator[Node]) }
+    sig { params(root: Node, blk: T.proc.params(arg0: Node).void).void }
+    def scan(root, &blk); end
 
     # Shortcut for combining two procs into one that returns true if both return
     # true.
-    # --
-    # : (Proc left, Proc right) -> Proc
-    def combine_and: (Proc left, Proc right) -> Proc
+    sig { params(left: Proc, right: Proc).returns(Proc) }
+    private def combine_and(left, right); end
 
     # Shortcut for combining two procs into one that returns true if either
     # returns true.
-    # --
-    # : (Proc left, Proc right) -> Proc
-    def combine_or: (Proc left, Proc right) -> Proc
+    sig { params(left: Proc, right: Proc).returns(Proc) }
+    private def combine_or(left, right); end
 
     # Raise an error because the given node is not supported. Note purposefully
     # not typing this method since it is a no return method that Steep does not
     # understand.
-    # --
-    # : (node node) -> bot
-    def compile_error: (node node) -> bot
+    sig { params(node: Node).returns(T.noreturn) }
+    private def compile_error(node); end
 
     # in [foo, bar, baz]
-    # --
-    # : (ArrayPatternNode node) -> Proc
-    def compile_array_pattern_node: (ArrayPatternNode node) -> Proc
+    sig { params(node: ArrayPatternNode).returns(Proc) }
+    private def compile_array_pattern_node(node); end
 
     # in foo | bar
-    # --
-    # : (AlternationPatternNode node) -> Proc
-    def compile_alternation_pattern_node: (AlternationPatternNode node) -> Proc
+    sig { params(node: AlternationPatternNode).returns(Proc) }
+    private def compile_alternation_pattern_node(node); end
 
     # in Prism::ConstantReadNode
-    # --
-    # : (ConstantPathNode node) -> Proc
-    def compile_constant_path_node: (ConstantPathNode node) -> Proc
+    sig { params(node: ConstantPathNode).returns(Proc) }
+    private def compile_constant_path_node(node); end
 
     # in ConstantReadNode
     # in String
-    # --
-    # : (ConstantReadNode node) -> Proc
-    def compile_constant_read_node: (ConstantReadNode node) -> Proc
+    sig { params(node: ConstantReadNode).returns(Proc) }
+    private def compile_constant_read_node(node); end
 
     # Compile a name associated with a constant.
-    # --
-    # : ((ConstantPathNode | ConstantReadNode) node, Symbol name) -> Proc
-    def compile_constant_name: (ConstantPathNode | ConstantReadNode node, Symbol name) -> Proc
+    sig { params(node: T.any(ConstantPathNode, ConstantReadNode), name: Symbol).returns(Proc) }
+    private def compile_constant_name(node, name); end
 
     # in InstanceVariableReadNode[name: Symbol]
     # in { name: Symbol }
-    # --
-    # : (HashPatternNode node) -> Proc
-    def compile_hash_pattern_node: (HashPatternNode node) -> Proc
+    sig { params(node: HashPatternNode).returns(Proc) }
+    private def compile_hash_pattern_node(node); end
 
     # in nil
-    # --
-    # : (NilNode node) -> Proc
-    def compile_nil_node: (NilNode node) -> Proc
+    sig { params(node: NilNode).returns(Proc) }
+    private def compile_nil_node(node); end
 
     # in /foo/
-    # --
-    # : (RegularExpressionNode node) -> Proc
-    def compile_regular_expression_node: (RegularExpressionNode node) -> Proc
+    sig { params(node: RegularExpressionNode).returns(Proc) }
+    private def compile_regular_expression_node(node); end
 
     # in ""
     # in "foo"
-    # --
-    # : (StringNode node) -> Proc
-    def compile_string_node: (StringNode node) -> Proc
+    sig { params(node: StringNode).returns(Proc) }
+    private def compile_string_node(node); end
 
     # in :+
     # in :foo
-    # --
-    # : (SymbolNode node) -> Proc
-    def compile_symbol_node: (SymbolNode node) -> Proc
+    sig { params(node: SymbolNode).returns(Proc) }
+    private def compile_symbol_node(node); end
 
     # Compile any kind of node. Dispatch out to the individual compilation
     # methods based on the type of node.
-    # --
-    # : (node node) -> Proc
-    def compile_node: (node node) -> Proc
+    sig { params(node: Node).returns(Proc) }
+    private def compile_node(node); end
   end
 end

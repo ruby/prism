@@ -240,10 +240,10 @@ module Prism
     # an enumerator that contains each child node. Excludes any `nil`s in
     # the place of optional nodes that were not present.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # Returns an array of child nodes, excluding any `nil`s in the place of
     # optional nodes that were not present.
@@ -315,10 +315,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -405,8 +405,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `alias` keyword to alias a method.
@@ -437,10 +437,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -539,8 +539,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an alternation pattern in pattern matching.
@@ -571,10 +571,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -661,8 +661,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&` operator or the `and` keyword.
@@ -693,10 +693,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -789,8 +789,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a set of arguments to a method or a keyword.
@@ -817,10 +817,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -899,8 +899,8 @@ module Prism
     # : () -> Array[Prism::node]
     def arguments: () -> Array[Prism::node]
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an array literal. This can be a regular array using brackets or a special array using % like %w or %i.
@@ -931,10 +931,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1044,8 +1044,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an array pattern in pattern matching.
@@ -1094,10 +1094,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1239,8 +1239,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a hash key/value pair.
@@ -1271,10 +1271,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1370,8 +1370,8 @@ module Prism
     # : () -> String?
     def operator: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a splat in a hash literal.
@@ -1400,10 +1400,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1479,8 +1479,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents reading a reference to a field in the previous match.
@@ -1507,10 +1507,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1560,8 +1560,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a begin statement.
@@ -1600,10 +1600,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1739,8 +1739,8 @@ module Prism
     # : () -> String?
     def end_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a block argument using `&`.
@@ -1769,10 +1769,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1848,8 +1848,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a block local variable.
@@ -1876,10 +1876,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -1934,8 +1934,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a block of ruby code.
@@ -1970,10 +1970,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -2102,8 +2102,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a block parameter of a method, block, or lambda definition.
@@ -2135,10 +2135,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -2241,8 +2241,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a block's parameters declaration.
@@ -2279,10 +2279,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -2412,8 +2412,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `break` keyword.
@@ -2442,10 +2442,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -2521,8 +2521,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator on a call.
@@ -2561,10 +2561,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -2751,8 +2751,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a method call, in all of the various forms that can take.
@@ -2810,10 +2810,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -3066,8 +3066,8 @@ module Prism
     # : () -> String?
     def equal: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of an assignment operator on a call.
@@ -3108,10 +3108,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -3301,8 +3301,8 @@ module Prism
     # : () -> String?
     def message: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator on a call.
@@ -3341,10 +3341,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -3531,8 +3531,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a method call.
@@ -3573,10 +3573,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -3714,8 +3714,8 @@ module Prism
     # : () -> String
     def message: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a local variable in pattern matching.
@@ -3746,10 +3746,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -3836,8 +3836,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of a case statement for pattern matching.
@@ -3874,10 +3874,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4002,8 +4002,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of a case statement.
@@ -4040,10 +4040,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4168,8 +4168,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a class declaration involving the `class` keyword.
@@ -4210,10 +4210,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4381,8 +4381,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to a class variable.
@@ -4415,10 +4415,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4524,8 +4524,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a class variable using an operator that isn't `=`.
@@ -4560,10 +4560,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4657,8 +4657,8 @@ module Prism
     # : () -> Symbol
     def binary_operator: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to a class variable.
@@ -4691,10 +4691,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4788,8 +4788,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents referencing a class variable.
@@ -4816,10 +4816,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4869,8 +4869,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a class variable in a context that doesn't have an explicit value.
@@ -4897,10 +4897,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -4946,8 +4946,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a class variable.
@@ -4980,10 +4980,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5093,8 +5093,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to a constant.
@@ -5127,10 +5127,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5224,8 +5224,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a constant using an operator that isn't `=`.
@@ -5260,10 +5260,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5357,8 +5357,8 @@ module Prism
     # : () -> Symbol
     def binary_operator: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to a constant.
@@ -5391,10 +5391,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5488,8 +5488,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to a constant path.
@@ -5520,10 +5520,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5601,8 +5601,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents accessing a constant through a path of `::` operators.
@@ -5635,10 +5635,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5753,8 +5753,8 @@ module Prism
     # : () -> String
     def delimiter: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a constant path using an operator that isn't `=`.
@@ -5787,10 +5787,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5868,8 +5868,8 @@ module Prism
     # : () -> Symbol
     def binary_operator: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to a constant path.
@@ -5900,10 +5900,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -5981,8 +5981,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a constant path in a context that doesn't have an explicit value.
@@ -6015,10 +6015,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6112,8 +6112,8 @@ module Prism
     # : () -> String
     def delimiter: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a constant path.
@@ -6150,10 +6150,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6243,8 +6243,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents referencing a constant.
@@ -6271,10 +6271,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6324,8 +6324,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a constant in a context that doesn't have an explicit value.
@@ -6352,10 +6352,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6401,8 +6401,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a constant.
@@ -6435,10 +6435,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6548,8 +6548,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a method definition.
@@ -6599,10 +6599,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6840,8 +6840,8 @@ module Prism
     # : () -> String?
     def end_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `defined?` keyword.
@@ -6874,10 +6874,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -6995,8 +6995,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an `else` clause in a `case`, `if`, or `unless` statement.
@@ -7027,10 +7027,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7124,8 +7124,8 @@ module Prism
     # : () -> String?
     def end_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an interpolated set of statements.
@@ -7156,10 +7156,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7253,8 +7253,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an interpolated variable.
@@ -7283,10 +7283,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7356,8 +7356,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an `ensure` clause in a `begin` statement.
@@ -7392,10 +7392,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7489,8 +7489,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the literal `false` keyword.
@@ -7515,10 +7515,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7556,8 +7556,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a find pattern in pattern matching.
@@ -7603,10 +7603,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7757,8 +7757,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `..` or `...` operators to create flip flops.
@@ -7789,10 +7789,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7876,8 +7876,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a floating point number literal.
@@ -7904,10 +7904,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -7953,8 +7953,8 @@ module Prism
     # : () -> Float
     def value: () -> Float
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `for` keyword.
@@ -7993,10 +7993,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8177,8 +8177,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents forwarding all arguments to this method to another method.
@@ -8205,10 +8205,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8246,8 +8246,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the forwarding parameter in a method, block, or lambda declaration.
@@ -8273,10 +8273,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8314,8 +8314,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `super` keyword without parentheses or arguments, but which might have a block.
@@ -8347,10 +8347,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8396,8 +8396,8 @@ module Prism
     # : () -> BlockNode?
     def block: () -> BlockNode?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to a global variable.
@@ -8430,10 +8430,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8527,8 +8527,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a global variable using an operator that isn't `=`.
@@ -8563,10 +8563,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8660,8 +8660,8 @@ module Prism
     # : () -> Symbol
     def binary_operator: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to a global variable.
@@ -8694,10 +8694,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8791,8 +8791,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents referencing a global variable.
@@ -8819,10 +8819,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8872,8 +8872,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a global variable in a context that doesn't have an explicit value.
@@ -8900,10 +8900,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -8949,8 +8949,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a global variable.
@@ -8983,10 +8983,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9096,8 +9096,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a hash literal.
@@ -9128,10 +9128,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9237,8 +9237,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a hash pattern in pattern matching.
@@ -9282,10 +9282,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9425,8 +9425,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `if` keyword, either in the block form or the modifier form, or a ternary expression.
@@ -9469,10 +9469,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9652,8 +9652,8 @@ module Prism
     # : () -> String?
     def end_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an imaginary number literal.
@@ -9680,10 +9680,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9729,8 +9729,8 @@ module Prism
     # : () -> (FloatNode | IntegerNode | RationalNode)
     def numeric: () -> (FloatNode | IntegerNode | RationalNode)
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a node that is implicitly being added to the tree but doesn't correspond directly to a node in the source.
@@ -9763,10 +9763,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9812,8 +9812,8 @@ module Prism
     # : () -> (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
     def value: () -> (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents using a trailing comma to indicate an implicit rest parameter.
@@ -9847,10 +9847,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -9888,8 +9888,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `in` keyword in a case statement.
@@ -9922,10 +9922,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -10027,8 +10027,8 @@ module Prism
     # : () -> String?
     def then: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator on a call to the `[]` method.
@@ -10069,10 +10069,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -10262,8 +10262,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of an assignment operator on a call to `[]`.
@@ -10306,10 +10306,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -10499,8 +10499,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator on a call to `[]`.
@@ -10541,10 +10541,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -10734,8 +10734,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to an index.
@@ -10778,10 +10778,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -10915,8 +10915,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to an instance variable.
@@ -10949,10 +10949,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11046,8 +11046,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to an instance variable using an operator that isn't `=`.
@@ -11082,10 +11082,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11179,8 +11179,8 @@ module Prism
     # : () -> Symbol
     def binary_operator: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to an instance variable.
@@ -11213,10 +11213,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11310,8 +11310,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents referencing an instance variable.
@@ -11338,10 +11338,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11391,8 +11391,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to an instance variable in a context that doesn't have an explicit value.
@@ -11419,10 +11419,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11468,8 +11468,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to an instance variable.
@@ -11502,10 +11502,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11615,8 +11615,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an integer number literal.
@@ -11643,10 +11643,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11716,8 +11716,8 @@ module Prism
     # : () -> Integer
     def value: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a regular expression literal that contains interpolation that is being used in the predicate of a conditional to implicitly match against the last line read by an IO object.
@@ -11748,10 +11748,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -11911,8 +11911,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a regular expression literal that contains interpolation.
@@ -11943,10 +11943,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12106,8 +12106,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a string literal that contains interpolation.
@@ -12138,10 +12138,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12247,8 +12247,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a symbol literal that contains interpolation.
@@ -12279,10 +12279,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12376,8 +12376,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an xstring literal that contains interpolation.
@@ -12408,10 +12408,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12505,8 +12505,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents reading from the implicit `it` local variable.
@@ -12531,10 +12531,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12572,8 +12572,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an implicit set of parameters through the use of the `it` keyword within a block or lambda.
@@ -12598,10 +12598,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12639,8 +12639,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a hash literal without opening and closing braces.
@@ -12667,10 +12667,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12722,8 +12722,8 @@ module Prism
     # : () -> Array[AssocNode | AssocSplatNode]
     def elements: () -> Array[AssocNode | AssocSplatNode]
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a keyword rest parameter to a method, block, or lambda definition.
@@ -12755,10 +12755,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -12850,8 +12850,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents using a lambda literal (not the lambda method call).
@@ -12888,10 +12888,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13025,8 +13025,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `&&=` operator for assignment to a local variable.
@@ -13061,10 +13061,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13166,8 +13166,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents assigning to a local variable using an operator that isn't `=`.
@@ -13204,10 +13204,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13309,8 +13309,8 @@ module Prism
     # : () -> Integer
     def depth: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||=` operator for assignment to a local variable.
@@ -13345,10 +13345,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13450,8 +13450,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents reading a local variable. Note that this requires that a local variable of the same name has already been written to in the same scope, otherwise it is parsed as a method call.
@@ -13480,10 +13480,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13551,8 +13551,8 @@ module Prism
     # : () -> Integer
     def depth: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a local variable in a context that doesn't have an explicit value.
@@ -13584,10 +13584,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13641,8 +13641,8 @@ module Prism
     # : () -> Integer
     def depth: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing to a local variable.
@@ -13677,10 +13677,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -13808,8 +13808,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a regular expression literal used in the predicate of a conditional to implicitly match against the last line read by an IO object.
@@ -13842,10 +13842,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14029,8 +14029,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the modifier `in` operator.
@@ -14061,10 +14061,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14142,8 +14142,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `=>` operator.
@@ -14174,10 +14174,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14303,8 +14303,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents writing local variables using a regular expression match with named capture groups.
@@ -14333,10 +14333,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14390,8 +14390,8 @@ module Prism
     # : () -> Array[LocalVariableTargetNode]
     def targets: () -> Array[LocalVariableTargetNode]
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a node that is missing from the source and results in a syntax error.
@@ -14413,10 +14413,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14454,8 +14454,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a module declaration involving the `module` keyword.
@@ -14492,10 +14492,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14613,8 +14613,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a multi-target expression.
@@ -14654,10 +14654,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -14797,8 +14797,8 @@ module Prism
     # : () -> String?
     def rparen: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a write to a multi-target expression.
@@ -14837,10 +14837,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15018,8 +15018,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `next` keyword.
@@ -15048,10 +15048,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15121,8 +15121,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `nil` keyword.
@@ -15147,10 +15147,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15188,8 +15188,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of `&nil` inside method arguments.
@@ -15219,10 +15219,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15308,8 +15308,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of `**nil` inside method arguments.
@@ -15339,10 +15339,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15428,8 +15428,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an implicit set of parameters through the use of numbered parameters within a block or lambda.
@@ -15456,10 +15456,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15505,8 +15505,8 @@ module Prism
     # : () -> Integer
     def maximum: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents reading a numbered reference to a capture in the previous match.
@@ -15533,10 +15533,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15588,8 +15588,8 @@ module Prism
     # : () -> Integer
     def number: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an optional keyword parameter to a method, block, or lambda definition.
@@ -15621,10 +15621,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15700,8 +15700,8 @@ module Prism
     # : () -> Prism::node
     def value: () -> Prism::node
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an optional parameter to a method, block, or lambda definition.
@@ -15735,10 +15735,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15838,8 +15838,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `||` operator or the `or` keyword.
@@ -15870,10 +15870,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -15966,8 +15966,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the list of parameters on a method, block, or lambda definition.
@@ -16007,10 +16007,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16104,8 +16104,8 @@ module Prism
     # : () -> (BlockParameterNode | NoBlockParameterNode)?
     def block: () -> (BlockParameterNode | NoBlockParameterNode)?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a parenthesized expression
@@ -16136,10 +16136,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16239,8 +16239,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `^` operator for pinning an expression in a pattern matching expression.
@@ -16273,10 +16273,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16406,8 +16406,8 @@ module Prism
     # : () -> String
     def rparen: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `^` operator for pinning a variable in a pattern matching expression.
@@ -16436,10 +16436,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16515,8 +16515,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `END` keyword.
@@ -16549,10 +16549,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16670,8 +16670,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `BEGIN` keyword.
@@ -16704,10 +16704,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16825,8 +16825,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # The top level node of any parse tree.
@@ -16852,10 +16852,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -16909,8 +16909,8 @@ module Prism
     # : () -> StatementsNode
     def statements: () -> StatementsNode
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `..` or `...` operators.
@@ -16944,10 +16944,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17044,8 +17044,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a rational number literal.
@@ -17074,10 +17074,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17159,8 +17159,8 @@ module Prism
     # : () -> Integer
     def denominator: () -> Integer
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `redo` keyword.
@@ -17185,10 +17185,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17226,8 +17226,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a regular expression literal with no interpolation.
@@ -17260,10 +17260,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17447,8 +17447,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a required keyword parameter to a method, block, or lambda definition.
@@ -17478,10 +17478,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17549,8 +17549,8 @@ module Prism
     # : (_Repository repository) -> Relocation::Entry
     def save_name_loc: (_Repository repository) -> Relocation::Entry
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a required parameter to a method, block, or lambda definition.
@@ -17578,10 +17578,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17633,8 +17633,8 @@ module Prism
     # : () -> Symbol
     def name: () -> Symbol
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an expression modified with a rescue.
@@ -17665,10 +17665,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17746,8 +17746,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a rescue statement.
@@ -17791,10 +17791,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -17936,8 +17936,8 @@ module Prism
     # : () -> String?
     def then_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a rest parameter to a method, block, or lambda definition.
@@ -17969,10 +17969,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18064,8 +18064,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `retry` keyword.
@@ -18090,10 +18090,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18131,8 +18131,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `return` keyword.
@@ -18161,10 +18161,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18234,8 +18234,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the `self` keyword.
@@ -18260,10 +18260,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18301,8 +18301,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # This node wraps a constant write to indicate that when the value is written, it should have its shareability state modified.
@@ -18330,10 +18330,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18397,8 +18397,8 @@ module Prism
     # : () -> (ConstantWriteNode | ConstantAndWriteNode | ConstantOrWriteNode | ConstantOperatorWriteNode | ConstantPathWriteNode | ConstantPathAndWriteNode | ConstantPathOrWriteNode | ConstantPathOperatorWriteNode)
     def write: () -> (ConstantWriteNode | ConstantAndWriteNode | ConstantOrWriteNode | ConstantOperatorWriteNode | ConstantPathWriteNode | ConstantPathAndWriteNode | ConstantPathOrWriteNode | ConstantPathOperatorWriteNode)
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a singleton class declaration involving the `class` keyword.
@@ -18435,10 +18435,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18572,8 +18572,8 @@ module Prism
     # : () -> String
     def end_keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `__ENCODING__` keyword.
@@ -18598,10 +18598,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18639,8 +18639,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `__FILE__` keyword.
@@ -18667,10 +18667,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18740,8 +18740,8 @@ module Prism
     # : () -> String
     def filepath: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `__LINE__` keyword.
@@ -18766,10 +18766,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18807,8 +18807,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the splat operator.
@@ -18837,10 +18837,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18910,8 +18910,8 @@ module Prism
     # : () -> String
     def operator: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a set of statements contained within some scope.
@@ -18938,10 +18938,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -18987,8 +18987,8 @@ module Prism
     # : () -> Array[Prism::node]
     def body: () -> Array[Prism::node]
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a string literal, a string contained within a `%w` list, or plain string content within an interpolated string.
@@ -19027,10 +19027,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19172,8 +19172,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `super` keyword with parentheses or arguments.
@@ -19213,10 +19213,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19342,8 +19342,8 @@ module Prism
     # : () -> String?
     def rparen: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents a symbol literal or a symbol contained within a `%i` list.
@@ -19379,10 +19379,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19518,8 +19518,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the literal `true` keyword.
@@ -19544,10 +19544,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19585,8 +19585,8 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `undef` keyword.
@@ -19615,10 +19615,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19688,8 +19688,8 @@ module Prism
     # : () -> String
     def keyword: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `unless` keyword, either in the block form or the modifier form.
@@ -19729,10 +19729,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -19891,8 +19891,8 @@ module Prism
     # : () -> String?
     def end_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `until` keyword, either in the block form or the modifier form.
@@ -19930,10 +19930,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -20065,8 +20065,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `when` keyword within a case statement.
@@ -20101,10 +20101,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -20206,8 +20206,8 @@ module Prism
     # : () -> String?
     def then_keyword: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `while` keyword, either in the block form or the modifier form.
@@ -20245,10 +20245,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -20380,8 +20380,8 @@ module Prism
     # : () -> String?
     def closing: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents an xstring literal with no interpolation.
@@ -20414,10 +20414,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -20547,8 +20547,8 @@ module Prism
     # : () -> String
     def closing: () -> String
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Represents the use of the `yield` keyword.
@@ -20581,10 +20581,10 @@ module Prism
 
     # See Node.each_child_node.
     # --
-    # : () { (node) -> void } -> void
     # : () -> Enumerator[node, void]
-    def each_child_node: () { (node) -> void } -> void
-                       | () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
 
     # See Node.compact_child_nodes.
     # --
@@ -20702,8 +20702,8 @@ module Prism
     # : () -> String?
     def rparen: () -> String?
 
-    # : (untyped other) -> bool
-    def ===: (untyped other) -> bool
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
   end
 
   # Flags for arguments nodes.

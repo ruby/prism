@@ -7,7 +7,16 @@ module Prism
   # @rbs!
   #    module Translation
   #      class Ripper
+  #        EXPR_NONE: Integer
   #        EXPR_BEG: Integer
+  #        EXPR_MID: Integer
+  #        EXPR_END: Integer
+  #        EXPR_CLASS: Integer
+  #        EXPR_VALUE: Integer
+  #        EXPR_ARG: Integer
+  #        EXPR_CMDARG: Integer
+  #        EXPR_ENDARG: Integer
+  #        EXPR_ENDFN: Integer
   #
   #        class Lexer < Ripper
   #          class State

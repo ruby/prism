@@ -114,56 +114,56 @@ module Prism
   end
 
   class BeginNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       # Never mark BeginNode with a newline flag, mark children instead.
     end
   end
 
   class ParenthesesNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       # Never mark ParenthesesNode with a newline flag, mark children instead.
     end
   end
 
   class IfNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       predicate.newline_flag!(lines)
     end
   end
 
   class UnlessNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       predicate.newline_flag!(lines)
     end
   end
 
   class UntilNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       predicate.newline_flag!(lines)
     end
   end
 
   class WhileNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       predicate.newline_flag!(lines)
     end
   end
 
   class RescueModifierNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       expression.newline_flag!(lines)
     end
   end
 
   class InterpolatedMatchLastLineNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
       first.newline_flag!(lines) if first
@@ -171,7 +171,7 @@ module Prism
   end
 
   class InterpolatedRegularExpressionNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
       first.newline_flag!(lines) if first
@@ -179,7 +179,7 @@ module Prism
   end
 
   class InterpolatedStringNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
       first.newline_flag!(lines) if first
@@ -187,7 +187,7 @@ module Prism
   end
 
   class InterpolatedSymbolNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
       first.newline_flag!(lines) if first
@@ -195,7 +195,7 @@ module Prism
   end
 
   class InterpolatedXStringNode < Node
-    # @rbs override
+    #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
       first.newline_flag!(lines) if first

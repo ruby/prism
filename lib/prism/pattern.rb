@@ -94,9 +94,9 @@ module Prism
     # matches the pattern. If no block is given, an enumerator will be returned
     # that will yield each node that matches the pattern.
     #--
-    #: (node root) { (node) -> void } -> void
     #: (node root) -> Enumerator[node, void]
-    def scan(root)
+    #: (node root) { (node) -> void } -> void
+    def scan(root, &blk)
       return to_enum(:scan, root) unless block_given?
 
       @compiled ||= compile

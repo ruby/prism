@@ -11,8 +11,7 @@ module Prism
   class Node
     #: (*String replacements) -> void
     def deprecated(*replacements) # :nodoc:
-      location = caller_locations(1, 1)
-      location = location[0].label if location
+      location = caller_locations(1, 1)&.[](0)&.label
       suggest = replacements.map { |replacement| "#{self.class}##{replacement}" }
 
       warn(<<~MSG, uplevel: 1, category: :deprecated)

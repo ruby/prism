@@ -54,8 +54,9 @@ GEM
     rbi (0.3.7)
       prism (~> 1.0)
       rbs (>= 3.4.4)
-    rbs (3.10.2)
+    rbs (3.10.3)
       logger
+      tsort
     rbs-inline (0.13.0)
       prism (>= 0.29)
       rbs (>= 3.8.0)
@@ -133,13 +134,13 @@ DEPENDENCIES
   parser
   rake
   rake-compiler
+  rbi
   rbs-inline
   ruby_parser
   sorbet (<= 0.6.12666)
   steep (>= 1.7.0.dev.1)
   tapioca
   test-unit
-  tsort
 
 BUNDLED WITH
    2.5.16

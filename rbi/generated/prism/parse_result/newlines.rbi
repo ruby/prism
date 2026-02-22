@@ -1,4 +1,4 @@
-# Generated from lib/prism/parse_result/newlines.rb with RBS::Inline
+# typed: true
 
 module Prism
   class ParseResult < Result
@@ -23,107 +23,99 @@ module Prism
     # that case. We do that to avoid storing the extra `@newline` instance
     # variable on every node if we don't need it.
     class Newlines < Visitor
-      @lines: Array[bool]
-
       # Create a new Newlines visitor with the given newline offsets.
-      # --
-      # : (Integer lines) -> void
-      def initialize: (Integer lines) -> void
+      sig { params(lines: Integer).void }
+      def initialize(lines); end
 
       # Permit block nodes to mark newlines within themselves.
-      # --
-      # : (BlockNode node) -> void
-      def visit_block_node: (BlockNode node) -> void
+      sig { params(node: BlockNode).void }
+      def visit_block_node(node); end
 
       # Permit lambda nodes to mark newlines within themselves.
-      # --
-      # : (LambdaNode node) -> void
-      def visit_lambda_node: (LambdaNode node) -> void
+      sig { params(node: LambdaNode).void }
+      def visit_lambda_node(node); end
 
       # Mark if nodes as newlines.
-      # --
-      # : (IfNode node) -> void
-      def visit_if_node: (IfNode node) -> void
+      sig { params(node: IfNode).void }
+      def visit_if_node(node); end
 
       # Mark unless nodes as newlines.
-      # --
-      # : (UnlessNode node) -> void
-      def visit_unless_node: (UnlessNode node) -> void
+      sig { params(node: UnlessNode).void }
+      def visit_unless_node(node); end
 
       # Permit statements lists to mark newlines within themselves.
-      # --
-      # : (StatementsNode node) -> void
-      def visit_statements_node: (StatementsNode node) -> void
+      sig { params(node: StatementsNode).void }
+      def visit_statements_node(node); end
     end
   end
 
   class Node
-    @newline_flag: bool
+    abstract!
 
-    # : () -> bool
-    def newline_flag?: () -> bool
+    sig { returns(T::Boolean) }
+    def newline_flag?; end
 
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class BeginNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class ParenthesesNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class IfNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class UnlessNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class UntilNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class WhileNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class RescueModifierNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class InterpolatedMatchLastLineNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class InterpolatedRegularExpressionNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class InterpolatedStringNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class InterpolatedSymbolNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 
   class InterpolatedXStringNode < Node
-    # : (Array[bool] lines) -> void
-    def newline_flag!: (Array[bool] lines) -> void
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
   end
 end

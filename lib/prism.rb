@@ -43,12 +43,12 @@ module Prism
     #: (String version) -> void
     def initialize(version)
       message = +"invalid version: Requested to parse as `version: 'current'`; "
-      segments =
+      major, minor, =
         if version.match?(/\A\d+\.\d+.\d+\z/)
           version.split(".").map(&:to_i)
         end
 
-      if segments && ((segments[0] < 3) || (segments[0] == 3 && segments[1] < 3))
+      if major && minor && ((major < 3) || (major == 3 && minor < 3))
         message << " #{version} is below the minimum supported syntax."
       else
         message << " #{version} is unknown. Please update the `prism` gem."

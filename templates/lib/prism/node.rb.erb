@@ -294,7 +294,7 @@ module Prism
     #     node.breadth_first_search { |node| node.node_id == node_id }
     #--
     #: () { (node) -> bool } -> node?
-    def breadth_first_search(&block)
+    def breadth_first_search(&blk)
       queue = [self] #: Array[node]
 
       while (node = queue.shift)
@@ -313,7 +313,7 @@ module Prism
     #     node.breadth_first_search_all { |node| node.is_a?(Prism::CallNode) }
     #--
     #: () { (node) -> bool } -> Array[node]
-    def breadth_first_search_all(&block)
+    def breadth_first_search_all(&blk)
       queue = [self] #: Array[Prism::node]
       results = [] #: Array[Prism::node]
 
@@ -366,9 +366,9 @@ module Prism
     # an enumerator that contains each child node. Excludes any `nil`s in
     # the place of optional nodes that were not present.
     #--
-    #: () { (node) -> void } -> void
     #: () -> Enumerator[node, void]
-    def each_child_node
+    #: () { (node) -> void } -> void
+    def each_child_node(&blk)
       raise NoMethodError, "undefined method `each_child_node' for #{inspect}"
     end
 
@@ -481,9 +481,9 @@ module Prism
 
     # See Node.each_child_node.
     #--
-    #: () { (node) -> void } -> void
     #: () -> Enumerator[node, void]
-    def each_child_node
+    #: () { (node) -> void } -> void
+    def each_child_node(&blk)
       return to_enum(:each_child_node) unless block_given?
 
       <%- node.fields.each do |field| -%>
@@ -705,7 +705,7 @@ module Prism
     <%- end -%>
     # :section:
 
-    #: (untyped other) -> bool
+    #: (untyped other) -> boolish
     def ===(other) # :nodoc:
       other.is_a?(<%= node.name %>)<%= " &&" if (fields = [*node.flags, *node.fields]).any? %>
         <%- fields.each_with_index do |field, index| -%>
