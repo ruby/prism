@@ -1,0 +1,387 @@
+# Generated from lib/prism/node_ext.rb with RBS::Inline
+
+# --
+#  Here we are reopening the prism module to provide methods on nodes that aren't
+#  templated and are meant as convenience methods.
+# ++
+module Prism
+  class Node
+    # : (*String replacements) -> void
+    def deprecated: (*String replacements) -> void
+  end
+
+  module RegularExpressionOptions
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    # --
+    # : (Integer flags) -> Integer
+    def self.options: (Integer flags) -> Integer
+  end
+
+  class InterpolatedMatchLastLineNode < Node
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    # --
+    # : () -> Integer
+    def options: () -> Integer
+  end
+
+  class InterpolatedRegularExpressionNode < Node
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    # --
+    # : () -> Integer
+    def options: () -> Integer
+  end
+
+  class MatchLastLineNode < Node
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    # --
+    # : () -> Integer
+    def options: () -> Integer
+  end
+
+  class RegularExpressionNode < Node
+    # Returns a numeric value that represents the flags that were used to create
+    # the regular expression.
+    # --
+    # : () -> Integer
+    def options: () -> Integer
+  end
+
+  module HeredocQuery
+    # Returns true if this node was represented as a heredoc in the source code.
+    # --
+    # : (String? opening) -> bool?
+    def self.heredoc?: (String? opening) -> bool?
+  end
+
+  class InterpolatedStringNode < Node
+    # Returns true if this node was represented as a heredoc in the source code.
+    # --
+    # : () -> bool?
+    def heredoc?: () -> bool?
+  end
+
+  class InterpolatedXStringNode < Node
+    # Returns true if this node was represented as a heredoc in the source code.
+    # --
+    # : () -> bool?
+    def heredoc?: () -> bool?
+  end
+
+  class StringNode < Node
+    # Returns true if this node was represented as a heredoc in the source code.
+    # --
+    # : () -> bool?
+    def heredoc?: () -> bool?
+
+    # Occasionally it's helpful to treat a string as if it were interpolated so
+    # that there's a consistent interface for working with strings.
+    # --
+    # : () -> InterpolatedStringNode
+    def to_interpolated: () -> InterpolatedStringNode
+  end
+
+  class XStringNode < Node
+    # Returns true if this node was represented as a heredoc in the source code.
+    # --
+    # : () -> bool?
+    def heredoc?: () -> bool?
+
+    # Occasionally it's helpful to treat a string as if it were interpolated so
+    # that there's a consistent interface for working with strings.
+    # --
+    # : () -> InterpolatedXStringNode
+    def to_interpolated: () -> InterpolatedXStringNode
+  end
+
+  class ImaginaryNode < Node
+    # Returns the value of the node as a Ruby Complex.
+    # --
+    # : () -> Complex
+    def value: () -> Complex
+  end
+
+  class RationalNode < Node
+    # Returns the value of the node as a Ruby Rational.
+    # --
+    # : () -> Rational
+    def value: () -> Rational
+
+    # Returns the value of the node as an IntegerNode or a FloatNode. This
+    # method is deprecated in favor of #value or #numerator/#denominator.
+    # --
+    # : () -> (IntegerNode | FloatNode)
+    def numeric: () -> (IntegerNode | FloatNode)
+  end
+
+  class ConstantReadNode < Node
+    # Returns the list of parts for the full name of this constant.
+    # For example: [:Foo]
+    # --
+    # : () -> Array[Symbol]
+    def full_name_parts: () -> Array[Symbol]
+
+    # Returns the full name of this constant. For example: "Foo"
+    # --
+    # : () -> String
+    def full_name: () -> String
+  end
+
+  class ConstantWriteNode < Node
+    # Returns the list of parts for the full name of this constant.
+    # For example: [:Foo]
+    # --
+    # : () -> Array[Symbol]
+    def full_name_parts: () -> Array[Symbol]
+
+    # Returns the full name of this constant. For example: "Foo"
+    # --
+    # : () -> String
+    def full_name: () -> String
+  end
+
+  class ConstantPathNode < Node
+    # An error class raised when dynamic parts are found while computing a
+    # constant path's full name. For example:
+    # Foo::Bar::Baz -> does not raise because all parts of the constant path are
+    # simple constants
+    # var::Bar::Baz -> raises because the first part of the constant path is a
+    # local variable
+    class DynamicPartsInConstantPathError < StandardError
+    end
+
+    # An error class raised when missing nodes are found while computing a
+    # constant path's full name. For example:
+    # Foo:: -> raises because the constant path is missing the last part
+    class MissingNodesInConstantPathError < StandardError
+    end
+
+    # Returns the list of parts for the full name of this constant path.
+    # For example: [:Foo, :Bar]
+    # --
+    # : () -> Array[Symbol]
+    def full_name_parts: () -> Array[Symbol]
+
+    # Returns the full name of this constant path. For example: "Foo::Bar"
+    # --
+    # : () -> String
+    def full_name: () -> String
+
+    # Previously, we had a child node on this class that contained either a
+    # constant read or a missing node. To not cause a breaking change, we
+    # continue to supply that API.
+    # --
+    # : () -> (ConstantReadNode | MissingNode)
+    def child: () -> (ConstantReadNode | MissingNode)
+  end
+
+  class ConstantPathTargetNode < Node
+    # Returns the list of parts for the full name of this constant path.
+    # For example: [:Foo, :Bar]
+    # --
+    # : () -> Array[Symbol]
+    def full_name_parts: () -> Array[Symbol]
+
+    # Returns the full name of this constant path. For example: "Foo::Bar"
+    # --
+    # : () -> String
+    def full_name: () -> String
+
+    # Previously, we had a child node on this class that contained either a
+    # constant read or a missing node. To not cause a breaking change, we
+    # continue to supply that API.
+    # --
+    # : () -> (ConstantReadNode | MissingNode)
+    def child: () -> (ConstantReadNode | MissingNode)
+  end
+
+  class ConstantTargetNode < Node
+    # Returns the list of parts for the full name of this constant.
+    # For example: [:Foo]
+    # --
+    # : () -> Array[Symbol]
+    def full_name_parts: () -> Array[Symbol]
+
+    # Returns the full name of this constant. For example: "Foo"
+    # --
+    # : () -> String
+    def full_name: () -> String
+  end
+
+  class ParametersNode < Node
+    # Mirrors the Method#parameters method.
+    # --
+    # : () -> Array[[Symbol, Symbol] | [Symbol]]
+    def signature: () -> Array[[ Symbol, Symbol ] | [ Symbol ]]
+  end
+
+  class CallNode < Node
+    # When a call node has the attribute_write flag set, it means that the call
+    # is using the attribute write syntax. This is either a method call to []=
+    # or a method call to a method that ends with =. Either way, the = sign is
+    # present in the source.
+    #
+    # Prism returns the message_loc _without_ the = sign attached, because there
+    # can be any amount of space between the message and the = sign. However,
+    # sometimes you want the location of the full message including the inner
+    # space and the = sign. This method provides that.
+    # --
+    # : () -> Location?
+    def full_message_loc: () -> Location?
+  end
+
+  class CallOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class ClassVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class ConstantOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class ConstantPathOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class GlobalVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class IndexOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class InstanceVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class LocalVariableOperatorWriteNode < Node
+    # Returns the binary operator used to modify the receiver. This method is
+    # deprecated in favor of #binary_operator.
+    # --
+    # : () -> Symbol
+    def operator: () -> Symbol
+
+    # Returns the location of the binary operator used to modify the receiver.
+    # This method is deprecated in favor of #binary_operator_loc.
+    # --
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class CaseMatchNode < Node
+    # Returns the else clause of the case match node. This method is deprecated
+    # in favor of #else_clause.
+    # --
+    # : () -> ElseNode?
+    def consequent: () -> ElseNode?
+  end
+
+  class CaseNode < Node
+    # Returns the else clause of the case node. This method is deprecated in
+    # favor of #else_clause.
+    # --
+    # : () -> ElseNode?
+    def consequent: () -> ElseNode?
+  end
+
+  class IfNode < Node
+    # Returns the subsequent if/elsif/else clause of the if node. This method is
+    # deprecated in favor of #subsequent.
+    # --
+    # : () -> (IfNode | ElseNode)?
+    def consequent: () -> (IfNode | ElseNode)?
+  end
+
+  class RescueNode < Node
+    # Returns the subsequent rescue clause of the rescue node. This method is
+    # deprecated in favor of #subsequent.
+    # --
+    # : () -> RescueNode?
+    def consequent: () -> RescueNode?
+  end
+
+  class UnlessNode < Node
+    # Returns the else clause of the unless node. This method is deprecated in
+    # favor of #else_clause.
+    # --
+    # : () -> ElseNode?
+    def consequent: () -> ElseNode?
+  end
+end

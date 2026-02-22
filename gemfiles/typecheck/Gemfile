@@ -5,8 +5,10 @@ source "https://rubygems.org"
 gem "parser"
 gem "rake-compiler"
 gem "rake"
+gem "rbs-inline"
 gem "ruby_parser"
 gem "sorbet", "<= 0.6.12666" # until tapioca is bumped
 gem "steep", ">= 1.7.0.dev.1"
 gem "tapioca"
 gem "test-unit"
+gem "tsort" # until rbs is bumped
