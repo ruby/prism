@@ -1,5 +1,7 @@
 This dir contains the chicory-prism artifact, a version of prism compiled to WASM and then AOT compiled to JVM bytecode by the Chicory project.
 
+## Building
+
 Generate the templated sources:
 
 ```
@@ -21,3 +23,7 @@ mvn -f java-wasm/pom.xml clean package
 This should build the chicory-wasm jar file and pass some basic tests.
 
 The jar will be under `java-wasm/target/chicory-prism-#####-SNAPSHOT.jar` or can be installed by using `install` instead of `pacakge` in the `mvn` command line above.
+
+## Releasing
+
+Pass `-Prelease` to enable release plugins for Maven Central (optional for snapshots) and run the `deploy` target for `mvn`.
