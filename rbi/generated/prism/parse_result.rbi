@@ -579,6 +579,35 @@ module Prism
     sig { returns(T::Boolean) }
     def failure?; end
 
+    # Returns true if the parsed source is an incomplete expression that could
+    # become valid with additional input. This is useful for REPL contexts (such
+    # as IRB) where the user may be entering a multi-line expression one line at
+    # a time and the implementation needs to determine whether to wait for more
+    # input or to evaluate what has been entered so far.
+    #
+    # Concretely, this returns true when every error present is caused by the
+    # parser reaching the end of the input before a construct was closed (e.g.
+    # an unclosed string, array, block, or keyword), and returns false when any
+    # error is caused by a token that makes the input structurally invalid
+    # regardless of what might follow (e.g. a stray `end`, `]`, or `)` with no
+    # matching opener).
+    #
+    # Examples:
+    #
+    #     Prism.parse("1 + [").continuable?      #=> true  (unclosed array)
+    #     Prism.parse("1 + ]").continuable?      #=> false (stray ])
+    #     Prism.parse("tap do").continuable?     #=> true  (unclosed block)
+    #     Prism.parse("end.tap do").continuable? #=> false (stray end)
+    #
+    sig { returns(T::Boolean) }
+    def continuable?; end
+
+    # The set of error types whose location the parser places at the opening
+    # token of an unclosed construct rather than at the end of the source. These
+    # errors always indicate incomplete input regardless of their byte position,
+    # so they are checked by type rather than by location.
+    CONTINUABLE = T.let(nil, T.untyped)
+
     # Create a code units cache for the given encoding.
     sig { params(encoding: Encoding).returns(T.untyped) }
     def code_units_cache(encoding); end
