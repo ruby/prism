@@ -782,19 +782,19 @@ module Prism
   # Represents an array pattern in pattern matching.
   #
   #     foo in 1, 2
-  #     ^^^^^^^^^^^
+  #            ^^^^
   #
   #     foo in [1, 2]
-  #     ^^^^^^^^^^^^^
+  #            ^^^^^^
   #
   #     foo in *bar
-  #     ^^^^^^^^^^^
+  #            ^^^^
   #
   #     foo in Bar[]
-  #     ^^^^^^^^^^^^
+  #            ^^^^^
   #
   #     foo in Bar[1, 2, 3]
-  #     ^^^^^^^^^^^^^^^^^^^
+  #            ^^^^^^^^^^^^
   class ArrayPatternNode < Node
     # Initialize a new ArrayPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: T.nilable(Node), posts: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
@@ -1229,7 +1229,7 @@ module Prism
     # Represents the else clause within the begin block.
     #
     #     begin x; rescue y; else z; end
-    #                        ^^^^^^
+    #                        ^^^^^^^^^^^
     sig { returns(T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -1267,7 +1267,7 @@ module Prism
   # Represents a block argument using `&`.
   #
   #     bar(&args)
-  #     ^^^^^^^^^^
+  #         ^^^^^
   class BlockArgumentNode < Node
     # Initialize a new BlockArgumentNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: T.nilable(Node), operator_loc: Location).void }
@@ -1318,7 +1318,7 @@ module Prism
     # The expression that is being passed as a block argument. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
     #     foo(&args)
-    #         ^^^^^
+    #          ^^^^
     sig { returns(T.nilable(Node)) }
     def expression; end
 
@@ -2594,7 +2594,7 @@ module Prism
   # Represents assigning to a local variable in pattern matching.
   #
   #     foo => [bar => baz]
-  #            ^^^^^^^^^^^^
+  #             ^^^^^^^^^^
   class CapturePatternNode < Node
     # Initialize a new CapturePatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, target: LocalVariableTargetNode, operator_loc: Location).void }
@@ -2732,7 +2732,7 @@ module Prism
     # Represents the predicate of the case match. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
     #     case true; in false; end
-    #     ^^^^
+    #          ^^^^
     sig { returns(T.nilable(Node)) }
     def predicate; end
 
@@ -2746,7 +2746,7 @@ module Prism
     # Represents the else clause of the case match.
     #
     #     case true; in false; else; end
-    #                          ^^^^
+    #                          ^^^^^^^^^
     sig { returns(T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -2856,7 +2856,7 @@ module Prism
     # Represents the else clause of the case statement.
     #
     #     case true; when false; else; end
-    #                            ^^^^
+    #                            ^^^^^^^^^
     sig { returns(T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -2988,9 +2988,8 @@ module Prism
 
     # Represents the body of the class.
     #
-    #     class Foo
-    #       foo
-    #       ^^^
+    #     class Foo; bar; end
+    #                ^^^
     sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
     def body; end
 
@@ -13546,7 +13545,7 @@ module Prism
     # The else clause of the unless expression, if present.
     #
     #     unless cond then bar else baz end
-    #                          ^^^^^^^^
+    #                          ^^^^^^^^^^^^
     sig { returns(T.nilable(ElseNode)) }
     def else_clause; end
 

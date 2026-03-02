@@ -15,9 +15,17 @@ module Prism
     # be used instead of `new` and it will return either a `Source` or a
     # specialized and more performant `ASCIISource` if no multibyte characters
     # are present in the source code.
+    #
+    # Note that if you are calling this method manually, you will need to supply
+    # the start_line and offsets parameters. start_line is the line number that
+    # the source starts on, which is typically 1 but can be different if this
+    # source is a subset of a larger source or if this is an eval. offsets is an
+    # array of byte offsets for the start of each line in the source code, which
+    # can be calculated by iterating through the source code and recording the
+    # byte offset whenever a newline character is encountered.
     # --
-    # : (String source, ?Integer start_line, ?Array[Integer] offsets) -> Source
-    def self.for: (String source, ?Integer start_line, ?Array[Integer] offsets) -> Source
+    # : (String source, Integer start_line, Array[Integer] offsets) -> Source
+    def self.for: (String source, Integer start_line, Array[Integer] offsets) -> Source
 
     # The source code that this source object represents.
     attr_reader source: String
@@ -30,8 +38,8 @@ module Prism
 
     # Create a new source object with the given source code.
     # --
-    # : (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
-    def initialize: (String source, ?Integer start_line, ?Array[Integer] offsets) -> void
+    # : (String source, Integer start_line, Array[Integer] offsets) -> void
+    def initialize: (String source, Integer start_line, Array[Integer] offsets) -> void
 
     # Replace the value of start_line with the given value.
     # --
