@@ -38,182 +38,27 @@ impl fmt::Display for ConstantPathError {
 
 impl std::error::Error for ConstantPathError {}
 
-impl<'pr> ConstantReadNode<'pr> {
+/// Trait for nodes that can compute their full constant name.
+///
+/// Implemented by constant-related nodes (`ConstantReadNode`,
+/// `ConstantWriteNode`, `ConstantTargetNode`, `ConstantPathNode`, and
+/// `ConstantPathTargetNode`).
+pub trait FullName<'pr> {
     /// Returns the list of parts for the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant = stmt.as_constant_read_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-    /// ```
-    #[must_use]
-    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
-        vec![self.name().as_slice()]
-    }
-
-    /// Returns the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant = stmt.as_constant_read_node().unwrap();
-    /// assert_eq!(constant.full_name(), b"Foo");
-    /// ```
-    #[must_use]
-    pub fn full_name(&self) -> &'pr [u8] {
-        self.name().as_slice()
-    }
-}
-
-impl<'pr> ConstantWriteNode<'pr> {
-    /// Returns the list of parts for the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo = 1");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant = stmt.as_constant_write_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-    /// ```
-    #[must_use]
-    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
-        vec![self.name().as_slice()]
-    }
-
-    /// Returns the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo = 1");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant = stmt.as_constant_write_node().unwrap();
-    /// assert_eq!(constant.full_name(), b"Foo");
-    /// ```
-    #[must_use]
-    pub fn full_name(&self) -> &'pr [u8] {
-        self.name().as_slice()
-    }
-}
-
-impl<'pr> ConstantTargetNode<'pr> {
-    /// Returns the list of parts for the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo, Bar = [1, 2]");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let target = stmt.as_multi_write_node().unwrap()
-    ///     .lefts().iter().next().unwrap();
-    /// let constant = target.as_constant_target_node().unwrap();
-    /// assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-    /// ```
-    #[must_use]
-    pub fn full_name_parts(&self) -> Vec<&'pr [u8]> {
-        vec![self.name().as_slice()]
-    }
-
-    /// Returns the full name of this constant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo, Bar = [1, 2]");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let target = stmt.as_multi_write_node().unwrap()
-    ///     .lefts().iter().next().unwrap();
-    /// let constant = target.as_constant_target_node().unwrap();
-    /// assert_eq!(constant.full_name(), b"Foo");
-    /// ```
-    #[must_use]
-    pub fn full_name(&self) -> &'pr [u8] {
-        self.name().as_slice()
-    }
-}
-
-impl<'pr> ConstantPathNode<'pr> {
-    /// Returns the list of parts for the full name of this constant path.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo::Bar");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant_path = stmt.as_constant_path_node().unwrap();
-    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
-    /// ```
     ///
     /// # Errors
     ///
-    /// Returns [`ConstantPathError::DynamicParts`] if the path contains
-    /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
-    /// contains missing nodes.
-    pub fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
-        let mut parts = Vec::new();
-        let mut current: Option<Node<'pr>> = Some(self.as_node());
+    /// Returns [`ConstantPathError`] if the path contains dynamic parts or
+    /// missing nodes.
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError>;
 
-        while let Some(ref node) = current {
-            if let Some(path_node) = node.as_constant_path_node() {
-                let name = path_node.name().ok_or(ConstantPathError::MissingNodes)?;
-                parts.push(name.as_slice());
-                current = path_node.parent();
-            } else if let Some(read_node) = node.as_constant_read_node() {
-                parts.push(read_node.name().as_slice());
-                current = None;
-            } else {
-                return Err(ConstantPathError::DynamicParts);
-            }
-        }
-
-        parts.reverse();
-
-        if self.is_stovetop() {
-            parts.insert(0, b"".as_slice());
-        }
-
-        Ok(parts)
-    }
-
-    /// Returns the full name of this constant path.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo::Bar");
-    /// let stmt = result.node().as_program_node().unwrap()
-    ///     .statements().body().iter().next().unwrap();
-    /// let constant_path = stmt.as_constant_path_node().unwrap();
-    /// assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
-    /// ```
+    /// Returns the full name of this constant.
     ///
     /// # Errors
     ///
-    /// Returns [`ConstantPathError::DynamicParts`] if the path contains
-    /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
-    /// contains missing nodes.
-    pub fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+    /// Returns [`ConstantPathError`] if the path contains dynamic parts or
+    /// missing nodes.
+    fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
         let parts = self.full_name_parts()?;
         let mut result = Vec::new();
         for (i, part) in parts.iter().enumerate() {
@@ -224,35 +69,132 @@ impl<'pr> ConstantPathNode<'pr> {
         }
         Ok(result)
     }
+}
 
-    fn is_stovetop(&self) -> bool {
-        let mut current: Option<Node<'pr>> = Some(self.as_node());
+/// Computes `full_name_parts` for a `Node` by dispatching to the appropriate
+/// `FullName` implementation.
+fn full_name_parts_for_node<'pr>(node: &Node<'pr>) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+    node.as_constant_path_node()
+        .map_or_else(|| node.as_constant_read_node().map_or(Err(ConstantPathError::DynamicParts), |read_node| read_node.full_name_parts()), |path_node| path_node.full_name_parts())
+}
 
-        while let Some(ref node) = current {
-            if let Some(path_node) = node.as_constant_path_node() {
-                current = path_node.parent();
-            } else {
-                return false;
-            }
-        }
+impl<'pr> FullName<'pr> for ConstantReadNode<'pr> {
+    /// Returns the list of parts for the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let constant = stmt.as_constant_read_node().unwrap();
+    /// assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+    /// ```
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+        Ok(vec![self.name().as_slice()])
+    }
 
-        true
+    /// Returns the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let constant = stmt.as_constant_read_node().unwrap();
+    /// assert_eq!(constant.full_name().unwrap(), b"Foo");
+    /// ```
+    fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+        Ok(self.name().as_slice().to_vec())
     }
 }
 
-impl<'pr> ConstantPathTargetNode<'pr> {
+impl<'pr> FullName<'pr> for ConstantWriteNode<'pr> {
+    /// Returns the list of parts for the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo = 1");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let constant = stmt.as_constant_write_node().unwrap();
+    /// assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+    /// ```
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+        Ok(vec![self.name().as_slice()])
+    }
+
+    /// Returns the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo = 1");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let constant = stmt.as_constant_write_node().unwrap();
+    /// assert_eq!(constant.full_name().unwrap(), b"Foo");
+    /// ```
+    fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+        Ok(self.name().as_slice().to_vec())
+    }
+}
+
+impl<'pr> FullName<'pr> for ConstantTargetNode<'pr> {
+    /// Returns the list of parts for the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo, Bar = [1, 2]");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let target = stmt.as_multi_write_node().unwrap()
+    ///     .lefts().iter().next().unwrap();
+    /// let constant = target.as_constant_target_node().unwrap();
+    /// assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+    /// ```
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+        Ok(vec![self.name().as_slice()])
+    }
+
+    /// Returns the full name of this constant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo, Bar = [1, 2]");
+    /// let stmt = result.node().as_program_node().unwrap()
+    ///     .statements().body().iter().next().unwrap();
+    /// let target = stmt.as_multi_write_node().unwrap()
+    ///     .lefts().iter().next().unwrap();
+    /// let constant = target.as_constant_target_node().unwrap();
+    /// assert_eq!(constant.full_name().unwrap(), b"Foo");
+    /// ```
+    fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
+        Ok(self.name().as_slice().to_vec())
+    }
+}
+
+impl<'pr> FullName<'pr> for ConstantPathNode<'pr> {
     /// Returns the list of parts for the full name of this constant path.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use ruby_prism::parse;
-    /// let result = parse(b"Foo::Bar, Baz = [1, 2]");
+    /// # use ruby_prism::{parse, FullName};
+    /// let result = parse(b"Foo::Bar");
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
-    /// let target = stmt.as_multi_write_node().unwrap()
-    ///     .lefts().iter().next().unwrap();
-    /// let constant_path = target.as_constant_path_target_node().unwrap();
+    /// let constant_path = stmt.as_constant_path_node().unwrap();
     /// assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
     /// ```
     ///
@@ -261,38 +203,33 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
         let name = self.name().ok_or(ConstantPathError::MissingNodes)?;
 
-        let mut parts = if let Some(parent) = self.parent() {
-            if let Some(path_node) = parent.as_constant_path_node() {
-                path_node.full_name_parts()?
-            } else if let Some(read_node) = parent.as_constant_read_node() {
-                read_node.full_name_parts()
-            } else {
-                return Err(ConstantPathError::DynamicParts);
-            }
-        } else {
-            vec![b"".as_slice()]
+        let mut parts = match self.parent() {
+            Some(ref parent) => full_name_parts_for_node(parent)?,
+            None => vec![b"".as_slice()],
         };
 
         parts.push(name.as_slice());
         Ok(parts)
     }
+}
 
-    /// Returns the full name of this constant path.
+impl<'pr> FullName<'pr> for ConstantPathTargetNode<'pr> {
+    /// Returns the list of parts for the full name of this constant path.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use ruby_prism::parse;
+    /// # use ruby_prism::{parse, FullName};
     /// let result = parse(b"Foo::Bar, Baz = [1, 2]");
     /// let stmt = result.node().as_program_node().unwrap()
     ///     .statements().body().iter().next().unwrap();
     /// let target = stmt.as_multi_write_node().unwrap()
     ///     .lefts().iter().next().unwrap();
     /// let constant_path = target.as_constant_path_target_node().unwrap();
-    /// assert_eq!(constant_path.full_name().unwrap(), b"Foo::Bar");
+    /// assert_eq!(constant_path.full_name_parts().unwrap(), vec![b"Foo".as_slice(), b"Bar".as_slice()]);
     /// ```
     ///
     /// # Errors
@@ -300,22 +237,22 @@ impl<'pr> ConstantPathTargetNode<'pr> {
     /// Returns [`ConstantPathError::DynamicParts`] if the path contains
     /// dynamic parts, or [`ConstantPathError::MissingNodes`] if the path
     /// contains missing nodes.
-    pub fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
-        let parts = self.full_name_parts()?;
-        let mut result = Vec::new();
-        for (i, part) in parts.iter().enumerate() {
-            if i > 0 {
-                result.extend_from_slice(b"::");
-            }
-            result.extend_from_slice(part);
-        }
-        Ok(result)
+    fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
+        let name = self.name().ok_or(ConstantPathError::MissingNodes)?;
+
+        let mut parts = match self.parent() {
+            Some(ref parent) => full_name_parts_for_node(parent)?,
+            None => vec![b"".as_slice()],
+        };
+
+        parts.push(name.as_slice());
+        Ok(parts)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::ConstantPathError;
+    use super::{ConstantPathError, FullName};
     use crate::parse;
 
     #[test]
@@ -324,8 +261,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant = node.as_constant_read_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-        assert_eq!(constant.full_name(), b"Foo");
+        assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name().unwrap(), b"Foo");
     }
 
     #[test]
@@ -334,8 +271,8 @@ mod tests {
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant = node.as_constant_write_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-        assert_eq!(constant.full_name(), b"Foo");
+        assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name().unwrap(), b"Foo");
     }
 
     #[test]
@@ -346,8 +283,8 @@ mod tests {
         let target = multi_write.lefts().iter().next().unwrap();
         let constant = target.as_constant_target_node().unwrap();
 
-        assert_eq!(constant.full_name_parts(), vec![b"Foo".as_slice()]);
-        assert_eq!(constant.full_name(), b"Foo");
+        assert_eq!(constant.full_name_parts().unwrap(), vec![b"Foo".as_slice()]);
+        assert_eq!(constant.full_name().unwrap(), b"Foo");
     }
 
     #[test]
