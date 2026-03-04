@@ -9,6 +9,7 @@ fn main() {
 
     let ruby_build_path = prism_lib_path();
     let ruby_include_path = prism_include_path();
+    emit_rerun_hints(&ruby_include_path);
 
     // Tell cargo/rustc that we want to link against `libprism.a`.
     println!("cargo:rustc-link-lib=static=prism");
@@ -21,6 +22,19 @@ fn main() {
 
     // Write the bindings to file.
     write_bindings(&bindings);
+}
+
+fn emit_rerun_hints(ruby_include_path: &Path) {
+    println!("cargo:rerun-if-env-changed=PRISM_INCLUDE_DIR");
+    println!("cargo:rerun-if-env-changed=PRISM_LIB_DIR");
+    println!("cargo:rerun-if-changed={}", ruby_include_path.display());
+
+    if let Some(project_root) = ruby_include_path.parent() {
+        let src_path = project_root.join("src");
+        if src_path.exists() {
+            println!("cargo:rerun-if-changed={}", src_path.display());
+        }
+    }
 }
 
 /// Gets the path to project files (`libprism*`) at `[root]/build/`.
