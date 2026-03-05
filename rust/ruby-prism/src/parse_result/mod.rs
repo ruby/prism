@@ -8,7 +8,7 @@ mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_comment_t, pm_diagnostic_t, pm_location_t, pm_magic_comment_t, pm_node_destroy, pm_node_t, pm_parser_free, pm_parser_t};
+use ruby_prism_sys::{pm_arena_free, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_free, pm_parser_t};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -89,13 +89,14 @@ impl std::fmt::Debug for Location<'_> {
 #[derive(Debug)]
 pub struct ParseResult<'pr> {
     source: &'pr [u8],
+    arena: Box<pm_arena_t>,
     parser: NonNull<pm_parser_t>,
     node: NonNull<pm_node_t>,
 }
 
 impl<'pr> ParseResult<'pr> {
-    pub(crate) const unsafe fn new(source: &'pr [u8], parser: NonNull<pm_parser_t>, node: NonNull<pm_node_t>) -> Self {
-        ParseResult { source, parser, node }
+    pub(crate) const unsafe fn new(source: &'pr [u8], arena: Box<pm_arena_t>, parser: NonNull<pm_parser_t>, node: NonNull<pm_node_t>) -> Self {
+        ParseResult { source, arena, parser, node }
     }
 
     /// Returns the source string that was parsed.
@@ -203,9 +204,9 @@ impl<'pr> ParseResult<'pr> {
 impl Drop for ParseResult<'_> {
     fn drop(&mut self) {
         unsafe {
-            pm_node_destroy(self.parser.as_ptr(), self.node.as_ptr());
             pm_parser_free(self.parser.as_ptr());
             drop(Box::from_raw(self.parser.as_ptr()));
+            pm_arena_free(self.arena.as_mut());
         }
     }
 }

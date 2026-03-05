@@ -27,6 +27,7 @@
 #[allow(unused_qualifications)]
 #[allow(clippy::missing_const_for_fn)]
 #[allow(clippy::use_self)]
+#[allow(trivial_casts)]
 mod bindings {
     // In `build.rs`, we use `bindgen` to generate bindings based on C headers
     // and `libprism`. Here is where we pull in those bindings and make

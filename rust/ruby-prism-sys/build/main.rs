@@ -129,9 +129,9 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .rustified_non_exhaustive_enum(r"pm_\w+_flags")
         .rustified_non_exhaustive_enum("pm_node_type")
         // Functions
+        .allowlist_function("pm_arena_free")
         .allowlist_function("pm_list_empty_p")
         .allowlist_function("pm_list_free")
-        .allowlist_function("pm_node_destroy")
         .allowlist_function("pm_parse")
         .allowlist_function("pm_parser_free")
         .allowlist_function("pm_parser_init")

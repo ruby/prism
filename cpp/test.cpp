@@ -5,8 +5,9 @@ extern "C" {
 #include <iostream>
 
 int main() {
+    pm_arena_t arena = { 0 };
     pm_parser_t parser;
-    pm_parser_init(&parser, reinterpret_cast<const uint8_t *>("1 + 2"), 5, NULL);
+    pm_parser_init(&arena, &parser, reinterpret_cast<const uint8_t *>("1 + 2"), 5, NULL);
 
     pm_node_t *root = pm_parse(&parser);
     pm_buffer_t buffer = { 0 };
@@ -17,8 +18,8 @@ int main() {
     std::cout << buffer.value << std::endl;
 
     pm_buffer_free(&buffer);
-    pm_node_destroy(&parser, root);
     pm_parser_free(&parser);
+    pm_arena_free(&arena);
 
     return 0;
 }
