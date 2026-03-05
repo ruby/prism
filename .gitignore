@@ -32,6 +32,7 @@ out.svg
 /gemfiles/typecheck/bin/
 /include/prism/ast.h
 /include/prism/diagnostic.h
+/include/prism/node_new.h
 /javascript/node_modules/
 /javascript/package-lock.json
 /javascript/src/deserialize.js
