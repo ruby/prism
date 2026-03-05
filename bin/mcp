@@ -1,0 +1,188 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This script is a server that can be run on your local machine, typically given
+# to an LLM to reduce token usage and standardize interactions. It listens for
+# JSON-RPC requests on stdin, processes them using the defined tools, and writes
+# responses to stdout.
+#
+# To test out the server locally, it is easiest to pipe requests directly into
+# stdin and then format JSON responses with a tool like `jq` for readability.
+# Here are some example requests you can make to the server:
+#
+#     echo '{"jsonrpc":"2.0","id":"1","method":"ping"}' | bin/mcp | jq
+#     echo '{"jsonrpc":"2.0","id":"2","method":"tools/list"}' | bin/mcp | jq
+#     echo '{"jsonrpc":"2.0","id":"1","method":"tools/call","params":{"name":"rake","arguments":{"target":"compile"}}}' | bin/mcp | jq
+#     echo '{"jsonrpc":"2.0","id":"1","method":"tools/call","params":{"name":"c_function","arguments":{"filepath":"src/prism.c","function_name":"pm_parser_init"}}}' | bin/mcp | jq
+#     echo '{"jsonrpc":"2.0","id":"1","method":"tools/call","params":{"name":"ruby_method","arguments":{"filepath":"lib/prism.rb","method_name":"load"}}}' | bin/mcp | jq
+#
+
+def silence_output
+  original_stdout = $stdout.dup
+  original_stderr = $stderr.dup
+
+  File.open(File::NULL, "w") do |null|
+    $stdout.reopen(null)
+    $stderr.reopen(null)
+    yield
+  end
+ensure
+  $stdout.reopen(original_stdout)
+  $stderr.reopen(original_stderr)
+end
+
+require "bundler/inline"
+gemfile do
+  source "https://rubygems.org"
+  gem "mcp"
+  gem "open3"
+  gem "prism", path: File.expand_path("..", __dir__)
+
+  silence_output do
+    gem "ffi-clang"
+    require "ffi/clang"
+  end
+end
+
+class RakeTool < MCP::Tool
+  tool_name "rake"
+  description "Run rake on a specific target."
+
+  input_schema(
+    properties: {
+      target: { type: "string", enum: ["clean", "compile", "test"], description: "The rake target to build." }
+    },
+    required: ["target"]
+  )
+  output_schema(
+    properties: {
+      success: { type: "boolean" },
+      stderr: { type: "string" }
+    },
+    required: ["success"]
+  )
+
+  def self.call(server_context:, target:)
+    _, stderr, status =
+      Dir.chdir(File.expand_path("..", __dir__)) do
+        Open3.capture3("bundle", "exec", "rake", target)
+      end
+
+    result =
+      if status.success?
+        { success: true }
+      else
+        { success: false, stderr: stderr.strip }
+      end
+
+    output_schema.validate_result(result)
+    MCP::Tool::Response.new([{ type: "text", text: result.to_json }], structured_content: result)
+  end
+end
+
+class CFunctionTool < MCP::Tool
+  tool_name "c_function"
+  description "Extracts a C function from a source file."
+
+  input_schema(
+    properties: {
+      filepath: { type: "string", description: "Path to the C source file." },
+      function_name: { type: "string", description: "The name of the function to extract." }
+    },
+    required: ["filepath", "function_name"]
+  )
+  output_schema(
+    properties: {
+      body: { type: "string" }
+    },
+    required: ["body"]
+  )
+
+  class << self
+    def call(server_context:, filepath:, function_name:)
+      if !File.readable?(filepath)
+        MCP::Tool::Response.new([MCP::Content::Text.new("Invalid filepath").to_h], error: true)
+      elsif !(body = find(filepath, function_name))
+        MCP::Tool::Response.new([MCP::Content::Text.new("Function not found").to_h], error: true)
+      else
+        result = { body: body }
+        output_schema.validate_result(result)
+
+        MCP::Tool::Response.new([{ type: "text", text: result.to_json }], structured_content: result)
+      end
+    end
+
+    private
+
+    def extract(cursor)
+      location = cursor.definition.location
+      return unless (filepath = location.file)
+
+      extent = cursor.extent
+      start_offset = extent.start.offset
+      File.open(filepath, "rb") do |file|
+        file.pread(extent.end.offset - start_offset, start_offset)
+      end
+    end
+
+    def find(filepath, function_name)
+      translation_unit = FFI::Clang::Index.new.parse_translation_unit(filepath)
+      translation_unit.cursor.find { |cursor, _| break extract(cursor) if cursor.declaration? && cursor.spelling == function_name }
+    end
+  end
+end
+
+class RubyMethodTool < MCP::Tool
+  tool_name "ruby_method"
+  description "Extracts a Ruby method from a source file."
+
+  input_schema(
+    properties: {
+      filepath: { type: "string", description: "Path to the Ruby source file." },
+      method_name: { type: "string", description: "The name of the method to extract." }
+    },
+    required: ["filepath", "method_name"]
+  )
+  output_schema(
+    properties: {
+      body: { type: "string" }
+    },
+    required: ["body"]
+  )
+
+  class << self
+    def call(server_context:, filepath:, method_name:)
+      if !File.readable?(filepath)
+        MCP::Tool::Response.new([MCP::Content::Text.new("Invalid filepath").to_h], error: true)
+      elsif !(result = Prism.parse_file(filepath)).success?
+        MCP::Tool::Response.new([MCP::Content::Text.new("Failed to parse file").to_h], error: true)
+      elsif !(body = find(result.value, method_name))
+        MCP::Tool::Response.new([MCP::Content::Text.new("Method not found").to_h], error: true)
+      else
+        result = { body: body }
+        output_schema.validate_result(result)
+
+        MCP::Tool::Response.new([{ type: "text", text: result.to_json }], structured_content: result)
+      end
+    end
+
+    private
+
+    def find(node, method_name)
+      name = method_name.to_sym
+      node.breadth_first_search do |child|
+        break child.slice if child.is_a?(Prism::DefNode) && child.name == name
+      end
+    end
+  end
+end
+
+tools = [
+  RakeTool,
+  CFunctionTool,
+  RubyMethodTool
+]
+
+server = MCP::Server.new(name: "Prism", tools: tools)
+transport = MCP::Server::Transports::StdioTransport.new(server)
+transport.open
