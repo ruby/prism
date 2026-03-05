@@ -5,8 +5,8 @@ use std::{
 };
 
 use ruby_prism_sys::{
-    pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_node_destroy, pm_parse, pm_parser_free, pm_parser_init,
-    pm_parser_t,
+    pm_arena_free, pm_arena_t, pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_parse, pm_parser_free,
+    pm_parser_init, pm_parser_t,
 };
 
 fn ruby_file_contents() -> (CString, usize) {
@@ -22,30 +22,34 @@ fn ruby_file_contents() -> (CString, usize) {
 fn init_test() {
     let (ruby_file_contents, len) = ruby_file_contents();
     let source = ruby_file_contents.as_ptr().cast::<u8>();
+    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
     let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
-        pm_parser_init(parser.as_mut_ptr(), source, len, std::ptr::null());
+        pm_parser_init(arena.as_mut_ptr(), parser.as_mut_ptr(), source, len, std::ptr::null());
         let parser = parser.assume_init_mut();
 
         pm_parser_free(parser);
+        pm_arena_free(arena.as_mut_ptr());
     }
 }
 
 #[test]
 fn comments_test() {
     let source = CString::new("# Meow!").unwrap();
+    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
     let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
         pm_parser_init(
+            arena.as_mut_ptr(),
             parser.as_mut_ptr(),
             source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );
         let parser = parser.assume_init_mut();
-        let node = pm_parse(parser);
+        let _node = pm_parse(parser);
 
         let comment_list = &parser.comment_list;
         let comment = comment_list.head as *const pm_comment_t;
@@ -58,25 +62,27 @@ fn comments_test() {
         };
         assert_eq!(location, 0..7);
 
-        pm_node_destroy(parser, node);
         pm_parser_free(parser);
+        pm_arena_free(arena.as_mut_ptr());
     }
 }
 
 #[test]
 fn diagnostics_test() {
     let source = CString::new("class Foo;").unwrap();
+    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
     let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
         pm_parser_init(
+            arena.as_mut_ptr(),
             parser.as_mut_ptr(),
             source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );
         let parser = parser.assume_init_mut();
-        let node = pm_parse(parser);
+        let _node = pm_parse(parser);
 
         let error_list = &parser.error_list;
         assert!(!error_list.head.is_null());
@@ -95,7 +101,7 @@ fn diagnostics_test() {
         };
         assert_eq!(location, 10..10);
 
-        pm_node_destroy(parser, node);
         pm_parser_free(parser);
+        pm_arena_free(arena.as_mut_ptr());
     }
 }

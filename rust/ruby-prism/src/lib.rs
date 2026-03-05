@@ -23,7 +23,7 @@ pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
-use ruby_prism_sys::{pm_parse, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_arena_t, pm_parse, pm_parser_init, pm_parser_t};
 
 /// Parses the given source string and returns a parse result.
 ///
@@ -34,10 +34,11 @@ use ruby_prism_sys::{pm_parse, pm_parser_init, pm_parser_t};
 #[must_use]
 pub fn parse(source: &[u8]) -> ParseResult<'_> {
     unsafe {
+        let mut arena = Box::new(MaybeUninit::<pm_arena_t>::zeroed().assume_init());
         let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
         let uninit = Box::into_raw(uninit);
 
-        pm_parser_init((*uninit).as_mut_ptr(), source.as_ptr(), source.len(), std::ptr::null());
+        pm_parser_init(arena.as_mut(), (*uninit).as_mut_ptr(), source.as_ptr(), source.len(), std::ptr::null());
 
         let parser = (*uninit).assume_init_mut();
         let parser = NonNull::new_unchecked(parser);
@@ -45,7 +46,7 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
         let node = pm_parse(parser.as_ptr());
         let node = NonNull::new_unchecked(node);
 
-        ParseResult::new(source, parser, node)
+        ParseResult::new(source, arena, parser, node)
     }
 }
 
