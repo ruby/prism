@@ -405,11 +405,10 @@ module Prism
         tokens = []
 
         while (type = TOKEN_TYPES.fetch(load_varuint))
-          start = load_varuint
-          length = load_varuint
+          location = load_location_object(false)
+          
           lex_state = load_varuint
 
-          location = Location.new(@source, start, length)
           token = Token.new(@source, type, location.slice, location)
 
           tokens << [token, lex_state]
