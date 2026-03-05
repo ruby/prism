@@ -122,6 +122,8 @@ $srcs = src_list("$(srcdir)") +
   add_libprism_source("$(srcdir)/../../src") +
   add_libprism_source("$(srcdir)/../../src/util")
 
+$headers += Dir["#{$srcdir}/../../include/**/*.h"]
+
 # Finally, we'll create the `Makefile` that is going to be used to configure and
 # build the C extension.
 create_makefile("prism/prism")
