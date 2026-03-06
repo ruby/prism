@@ -8,7 +8,7 @@ module Prism
   class CLI
     def run(argv)
       case argv.shift
-      when "benchmark"  then benchmark(argv)
+      when "bench"      then bench(argv)
       when "bundle"     then bundle(argv)
       when "console"    then console
       when "dot"        then dot(argv)
@@ -25,7 +25,7 @@ module Prism
       else
         puts <<~TXT
           Usage:
-            bin/prism benchmark [source_file]
+            bin/prism bench [file ...]
             bin/prism bundle [...]
             bin/prism console
             bin/prism dot [source]
@@ -49,46 +49,34 @@ module Prism
     # Commands
     ############################################################################
 
-    # bin/prism benchmark [source_file]
-    def benchmark(argv)
+    # bin/prism bench [file ...]
+    # Measures raw parse throughput using Prism.profile (no Ruby AST creation).
+    def bench(argv)
       require "benchmark/ips"
-      require "parser/current"
-      require "ripper"
-      require "ruby_parser"
 
-      filepath = argv.fetch(0) { File.expand_path("../lib/prism/node.rb", __dir__) }
-      source = File.read(filepath)
+      files =
+        if argv.any?
+          argv.map { |path| [path, File.read(path)] }
+        else
+          Dir[File.join(__dir__, "../test/prism/fixtures/**/*.txt")].sort.map { |path| [path, File.read(path)] } +
+            Dir[File.join(__dir__, "../lib/**/*.rb")].sort.map { |path| [path, File.read(path)] }
+        end
+
+      total_bytes = files.sum { |_, source| source.bytesize }
+      puts "Benchmarking #{files.size} files (#{total_bytes} bytes total)"
+      puts
 
       Benchmark.ips do |x|
-        x.report("Prism") do
-          Prism.parse(source, filepath: filepath)
+        x.time = 10
+        x.warmup = 3
+
+        x.report("parse (all files)") do
+          files.each { |_, source| Prism.profile(source) }
         end
 
-        x.report("Ripper::SexpBuilder") do
-          Ripper.sexp_raw(source, filepath)
+        x.report("parse (fixtures only)") do
+          files.each { |path, source| Prism.profile(source) if path.end_with?(".txt") }
         end
-
-        x.report("Prism::Translation::Ripper::SexpBuilder") do
-          Prism::Translation::Ripper.sexp_raw(source, filepath)
-        end
-
-        x.report("Parser::CurrentRuby") do
-          Parser::CurrentRuby.parse(source, filepath)
-        end
-
-        x.report("Prism::Translation::Parser") do
-          Prism::Translation::Parser.parse(source, filepath)
-        end
-
-        x.report("RubyParser") do
-          RubyParser.new.parse(source, filepath)
-        end
-
-        x.report("Prism::Translation::RubyParser") do
-          Prism::Translation::RubyParser.new.parse(source, filepath)
-        end
-
-        x.compare!
       end
     end
 
