@@ -40,13 +40,11 @@ public class Loader {
     private static final class ConstantPool {
 
         private final Loader loader;
-        private final byte[] source;
         private final int bufferOffset;
         private final <%= string_type %>[] cache;
 
-        ConstantPool(Loader loader, byte[] source, int bufferOffset, int length) {
+        ConstantPool(Loader loader, int bufferOffset, int length) {
             this.loader = loader;
-            this.source = source;
             this.bufferOffset = bufferOffset;
             cache = new <%= string_type %>[length];
         }
@@ -61,15 +59,10 @@ public class Loader {
                 int length = buffer.getInt(offset + 4);
 
                 byte[] bytes = new byte[length];
-
-                if (Integer.compareUnsigned(start, 0x7FFFFFFF) <= 0) {
-                    System.arraycopy(source, start, bytes, 0, length);
-                } else {
-                    int position = buffer.position();
-                    buffer.position(start & 0x7FFFFFFF);
-                    buffer.get(bytes, 0, length);
-                    buffer.position(position);
-                }
+                int position = buffer.position();
+                buffer.position(start);
+                buffer.get(bytes, 0, length);
+                buffer.position(position);
 
                 constant = loader.bytesToName(bytes);
                 cache[index] = constant;
@@ -125,7 +118,7 @@ public class Loader {
 
         int constantPoolBufferOffset = buffer.getInt();
         int constantPoolLength = loadVarUInt();
-        this.constantPool = new ConstantPool(this, source.bytes, constantPoolBufferOffset, constantPoolLength);
+        this.constantPool = new ConstantPool(this, constantPoolBufferOffset, constantPoolLength);
 
         Nodes.Node node;
         if (errors.length == 0) {
@@ -146,26 +139,11 @@ public class Loader {
         return new ParseResult(node, magicComments, dataLocation, errors, warnings, source);
     }
 
-    private byte[] loadEmbeddedString() {
+    private byte[] loadString() {
         int length = loadVarUInt();
         byte[] bytes = new byte[length];
         buffer.get(bytes);
         return bytes;
-    }
-
-    private byte[] loadString() {
-        switch (buffer.get()) {
-            case 1:
-                int start = loadVarUInt();
-                int length = loadVarUInt();
-                byte[] bytes = new byte[length];
-                System.arraycopy(source.bytes, start, bytes, 0, length);
-                return bytes;
-            case 2:
-                return loadEmbeddedString();
-            default:
-                throw new Error("Expected 0 or 1 but was " + buffer.get());
-        }
     }
 
     private int[] loadLineOffsets() {
@@ -199,7 +177,7 @@ public class Loader {
         // error messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
             Nodes.ErrorType type = Nodes.ERROR_TYPES[loadVarUInt()];
-            byte[] bytes = loadEmbeddedString();
+            byte[] bytes = loadString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
             ParseResult.ErrorLevel level = ParseResult.ERROR_LEVELS[buffer.get()];
@@ -218,7 +196,7 @@ public class Loader {
         // warning messages only contain ASCII characters
         for (int i = 0; i < count; i++) {
             Nodes.WarningType type = Nodes.WARNING_TYPES[loadVarUInt() - <%= errors.length %>];
-            byte[] bytes = loadEmbeddedString();
+            byte[] bytes = loadString();
             String message = new String(bytes, StandardCharsets.US_ASCII);
             Nodes.Location location = loadLocation();
             ParseResult.WarningLevel level = ParseResult.WARNING_LEVELS[buffer.get()];

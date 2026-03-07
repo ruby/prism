@@ -126,7 +126,7 @@ Every field on the node is then appended to the serialized string. The fields ca
 * `node` - A field that is a node. This is structured just as like parent node.
 * `node?` - A field that is a node that is optionally present. If the node is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just as like parent node.
 * `node[]` - A field that is an array of nodes. This is structured as a variable-length integer length, followed by the child nodes themselves.
-* `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a variable-length integer byte length, followed by the string itself (_without_ a trailing null byte).
+* `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a variable-length integer byte length, followed by the string bytes (_without_ a trailing null byte).
 * `constant` - A variable-length integer that represents an index in the constant pool.
 * `constant?` - An optional variable-length integer that represents an index in the constant pool. If it's not present, then a single `0` byte will be written in its place.
 * `integer` - A field that represents an arbitrary-sized integer. The structure is listed above.
@@ -135,23 +135,14 @@ Every field on the node is then appended to the serialized string. The fields ca
 * `uint8` - A field that is an 8-bit unsigned integer. This is structured as a single byte.
 * `uint32` - A field that is a 32-bit unsigned integer. This is structured as a variable-length integer.
 
-After the syntax tree, the content pool is serialized. This is a list of constants that were referenced from within the tree. The content pool begins at the offset specified in the header. Constants can be either "owned" (in which case their contents are embedded in the serialization) or "shared" (in which case their contents represent a slice of the source string). The most significant bit of the constant indicates whether it is owned or shared.
-
-In the case that it is owned, the constant is structured as follows:
+After the syntax tree, the content pool is serialized. This is a list of constants that were referenced from within the tree. The content pool begins at the offset specified in the header. Every constant is embedded in the serialization. Each constant is structured as follows:
 
 | # bytes | field |
 | --- | --- |
 | `4` | the byte offset in the serialization for the contents of the constant |
 | `4` | the byte length in the serialization |
 
-Note that you will need to mask off the most significant bit for the byte offset in the serialization. In the case that it is shared, the constant is structured as follows:
-
-| # bytes | field |
-| --- | --- |
-| `4` | the byte offset in the source string for the contents of the constant |
-| `4` | the byte length in the source string |
-
-After the constant pool, the contents of the owned constants are serialized. This is just a sequence of bytes that represent the contents of the constants. At the end of the serialization, the buffer is null terminated.
+After the constant pool, the contents of the constants are serialized. This is just a sequence of bytes that represent the contents of the constants. At the end of the serialization, the buffer is null terminated.
 
 ## APIs
 
