@@ -29,8 +29,7 @@ class SerializationBuffer {
     ["ascii-8bit", "ascii"]
   ]);
 
-  constructor(source, array) {
-    this.source = source;
+  constructor(array) {
     this.array = array;
     this.index = 0;
     this.fileEncoding = "utf-8";
@@ -96,32 +95,15 @@ class SerializationBuffer {
 
   readStringField(flags) {
     if (flags === undefined) flags = 0;
-    const type = this.readByte();
-
-    switch (type) {
-      case 1: {
-        const startOffset = this.readVarInt();
-        const length = this.readVarInt();
-        return this.decodeString(this.source.slice(startOffset, startOffset + length), flags);
-      }
-      case 2:
-        return this.decodeString(this.readBytes(this.readVarInt()), flags);
-      default:
-        throw new Error(`Unknown serialized string type: ${type}`);
-    }
+    return this.decodeString(this.readBytes(this.readVarInt()), flags);
   }
 
   scanConstant(constantPoolOffset, constantIndex) {
     const offset = constantPoolOffset + constantIndex * 8;
-    let startOffset = this.scanUint32(offset);
+    const startOffset = this.scanUint32(offset);
     const length = this.scanUint32(offset + 4);
 
-    if (startOffset & (1 << 31)) {
-      startOffset &= (1 << 31) - 1;
-      return new TextDecoder().decode(this.array.slice(startOffset, startOffset + length));
-    } else {
-      return new TextDecoder().decode(this.source.slice(startOffset, startOffset + length));
-    }
+    return this.getDecoder(this.fileEncoding).decode(this.array.slice(startOffset, startOffset + length));
   }
 
   readDouble() {
@@ -293,13 +275,12 @@ const warningTypes = [
  * Accept two Uint8Arrays, one for the source and one for the serialized format.
  * Return the AST corresponding to the serialized form.
  *
- * @param {Uint8Array} source
  * @param {Uint8Array} array
  * @returns {ParseResult}
  * @throws {Error}
  */
-export function deserialize(source, array) {
-  const buffer = new SerializationBuffer(source, array);
+export function deserialize(array) {
+  const buffer = new SerializationBuffer(array);
 
   if (buffer.readString(5) !== "PRISM") {
     throw new Error("Invalid serialization");
