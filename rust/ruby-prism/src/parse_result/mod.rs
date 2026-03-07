@@ -66,6 +66,69 @@ impl<'pr> Location<'pr> {
             })
         }
     }
+
+    /// Returns a new location that is the result of chopping off the last byte.
+    #[must_use]
+    pub const fn chop(&self) -> Self {
+        Location {
+            parser: self.parser,
+            start: self.start,
+            length: if self.length == 0 { 0 } else { self.length - 1 },
+            marker: std::marker::PhantomData,
+        }
+    }
+}
+
+impl Location<'_> {
+    /// Returns the line number where this location starts.
+    #[must_use]
+    pub fn start_line(&self) -> i32 {
+        self.line_column(self.start).0
+    }
+
+    /// Returns the column number in bytes where this location starts from the
+    /// start of the line.
+    #[must_use]
+    pub fn start_column(&self) -> u32 {
+        self.line_column(self.start).1
+    }
+
+    /// Returns the line number where this location ends.
+    #[must_use]
+    pub fn end_line(&self) -> i32 {
+        self.line_column(self.end()).0
+    }
+
+    /// Returns the column number in bytes where this location ends from the
+    /// start of the line.
+    #[must_use]
+    pub fn end_column(&self) -> u32 {
+        self.line_column(self.end()).1
+    }
+
+    /// Returns the line and column number for the given byte offset, using
+    /// binary search on the line offsets array.
+    fn line_column(&self, cursor: u32) -> (i32, u32) {
+        // SAFETY: We read the line_offsets and start_line from the parser,
+        // which is valid for the lifetime of this Location.
+        unsafe {
+            let parser = self.parser.as_ptr();
+            let list = &(*parser).line_offsets;
+            let start_line = (*parser).start_line;
+            let offsets = std::slice::from_raw_parts(list.offsets, list.size);
+
+            let index = offsets.partition_point(|&offset| offset <= cursor);
+
+            #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
+            if index > 0 && offsets[index - 1] == cursor {
+                ((index - 1) as i32 + start_line, 0)
+            } else {
+                let line = (index - 1) as i32 + start_line;
+                let column = cursor - offsets[index - 1];
+                (line, column)
+            }
+        }
+    }
 }
 
 impl std::fmt::Debug for Location<'_> {
