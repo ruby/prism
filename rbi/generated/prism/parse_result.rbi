@@ -192,7 +192,7 @@ module Prism
     # Returns a cache that is the identity function in order to maintain the
     # same interface. We can do this because code units are always equivalent to
     # byte offsets for ASCII-only sources.
-    sig { params(encoding: Encoding).returns(T.untyped) }
+    sig { params(encoding: Encoding).returns(::T.untyped) }
     def code_units_cache(encoding); end
 
     # Specialized version of `code_units_column` that does not depend on
@@ -283,7 +283,7 @@ module Prism
 
     # The start offset from the start of the file in code units using the given
     # cache to fetch or calculate the value.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_start_code_units_offset(cache); end
 
     # The byte offset from the beginning of the source where this location ends.
@@ -301,7 +301,7 @@ module Prism
 
     # The end offset from the start of the file in code units using the given
     # cache to fetch or calculate the value.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_end_code_units_offset(cache); end
 
     # The line number where this location starts.
@@ -333,7 +333,7 @@ module Prism
 
     # The start column in code units using the given cache to fetch or calculate
     # the value.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_start_code_units_column(cache); end
 
     # The column in bytes where this location ends from the start of the
@@ -353,11 +353,11 @@ module Prism
 
     # The end column in code units using the given cache to fetch or calculate
     # the value.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_end_code_units_column(cache); end
 
     # Implement the hash pattern matching interface for Location.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Implement the pretty print interface for Location.
@@ -365,7 +365,7 @@ module Prism
     def pretty_print(q); end
 
     # Returns true if the given other location is equal to this location.
-    sig { params(other: T.untyped).returns(T::Boolean) }
+    sig { params(other: ::T.untyped).returns(T::Boolean) }
     def ==(other); end
 
     # Returns a new location that stretches from this location to the given
@@ -393,7 +393,7 @@ module Prism
     def initialize(location); end
 
     # Implement the hash pattern matching interface for Comment.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Returns the content of the comment by slicing it from the source code.
@@ -455,7 +455,7 @@ module Prism
     def value; end
 
     # Implement the hash pattern matching interface for MagicComment.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Returns a string representation of this magic comment.
@@ -487,7 +487,7 @@ module Prism
     def initialize(type, message, location, level); end
 
     # Implement the hash pattern matching interface for ParseError.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Returns a string representation of this error.
@@ -519,7 +519,7 @@ module Prism
     def initialize(type, message, location, level); end
 
     # Implement the hash pattern matching interface for ParseWarning.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Returns a string representation of this warning.
@@ -542,7 +542,7 @@ module Prism
     # An optional location that represents the location of the __END__ marker
     # and the rest of the content of the file. This content is loaded into the
     # DATA constant when the file being parsed is the main file being executed.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     attr_reader :data_loc
 
     # The list of errors that were generated during parsing.
@@ -558,11 +558,11 @@ module Prism
     attr_reader :source
 
     # Create a new result object with the given values.
-    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
+    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
     def initialize(comments, magic_comments, data_loc, errors, warnings, source); end
 
     # Implement the hash pattern matching interface for Result.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Returns the encoding of the source code that was parsed.
@@ -606,10 +606,10 @@ module Prism
     # token of an unclosed construct rather than at the end of the source. These
     # errors always indicate incomplete input regardless of their byte position,
     # so they are checked by type rather than by location.
-    CONTINUABLE = T.let(nil, T.untyped)
+    CONTINUABLE = T.let(nil, ::T.untyped)
 
     # Create a code units cache for the given encoding.
-    sig { params(encoding: Encoding).returns(T.untyped) }
+    sig { params(encoding: Encoding).returns(::T.untyped) }
     def code_units_cache(encoding); end
   end
 
@@ -620,11 +620,11 @@ module Prism
     attr_reader :value
 
     # Create a new parse result object with the given values.
-    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
+    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
 
     # Implement the hash pattern matching interface for ParseResult.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # Attach the list of comments to their respective locations in the tree.
@@ -649,11 +649,11 @@ module Prism
     attr_reader :value
 
     # Create a new lex result object with the given values.
-    sig { params(value: T::Array[[Token, Integer]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
+    sig { params(value: T::Array[[Token, Integer]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
 
     # Implement the hash pattern matching interface for LexResult.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
   end
 
@@ -665,11 +665,11 @@ module Prism
     attr_reader :value
 
     # Create a new parse lex result object with the given values.
-    sig { params(value: [ProgramNode, T::Array[[Token, Integer]]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
+    sig { params(value: [ProgramNode, T::Array[[Token, Integer]]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
 
     # Implement the hash pattern matching interface for ParseLexResult.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
   end
 
@@ -688,11 +688,11 @@ module Prism
     attr_reader :value
 
     # Create a new token object with the given type, value, and location.
-    sig { params(source: Source, type: Symbol, value: String, location: T.any(Location, Integer)).void }
+    sig { params(source: Source, type: Symbol, value: String, location: ::T.any(Location, Integer)).void }
     def initialize(source, type, value, location); end
 
     # Implement the hash pattern matching interface for Token.
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # A Location object representing the location of this token in the source.
@@ -704,7 +704,7 @@ module Prism
     def pretty_print(q); end
 
     # Returns true if the given other token is equal to this token.
-    sig { params(other: T.untyped).returns(T::Boolean) }
+    sig { params(other: ::T.untyped).returns(T::Boolean) }
     def ==(other); end
 
     # Returns a string representation of this token.

@@ -18,7 +18,7 @@ module Prism
     attr_reader :node_id
 
     # Save this node using a saved source so that it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save(repository); end
 
     # A Location instance that represents the location of this node in the
@@ -27,7 +27,7 @@ module Prism
     def location; end
 
     # Save the location using a saved source so that it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_location(repository); end
 
     # Delegates to [`start_line`](rdoc-ref:Location#start_line) of the associated location object.
@@ -58,12 +58,12 @@ module Prism
 
     # Delegates to [`cached_start_code_units_offset`](rdoc-ref:Location#cached_start_code_units_offset)
     # of the associated location object.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_start_code_units_offset(cache); end
 
     # Delegates to [`cached_end_code_units_offset`](rdoc-ref:Location#cached_end_code_units_offset)
     # of the associated location object.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_end_code_units_offset(cache); end
 
     # Delegates to [`start_column`](rdoc-ref:Location#start_column) of the associated location object.
@@ -86,12 +86,12 @@ module Prism
 
     # Delegates to [`cached_start_code_units_column`](rdoc-ref:Location#cached_start_code_units_column)
     # of the associated location object.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_start_code_units_column(cache); end
 
     # Delegates to [`cached_end_code_units_column`](rdoc-ref:Location#cached_end_code_units_column)
     # of the associated location object.
-    sig { params(cache: T.untyped).returns(Integer) }
+    sig { params(cache: ::T.untyped).returns(Integer) }
     def cached_end_code_units_column(cache); end
 
     # Delegates to [`leading_comments`](rdoc-ref:Location#leading_comments) of the associated location object.
@@ -161,10 +161,10 @@ module Prism
     # particular condition.
     #
     #     node.breadth_first_search { |node| node.node_id == node_id }
-    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T.nilable(Node)) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(::T.nilable(Node)) }
     def breadth_first_search(&blk); end
 
-    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T.nilable(Node)) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(::T.nilable(Node)) }
     def find(&blk); end
 
     # Returns all of the nodes that match the given block when visited in a
@@ -172,10 +172,10 @@ module Prism
     # particular condition.
     #
     #     node.breadth_first_search_all { |node| node.is_a?(Prism::CallNode) }
-    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
     def breadth_first_search_all(&blk); end
 
-    sig { params(blk: T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
     def find_all(&blk); end
 
     # Returns a list of the fields that exist for this node class. Fields
@@ -185,22 +185,22 @@ module Prism
     def self.fields; end
 
     # Accepts a visitor and calls back into the specialized visit function.
-    sig { abstract.params(visitor: Visitor).returns(T.untyped) }
+    sig { abstract.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # Returns an array of child nodes, including `nil`s in the place of optional
     # nodes that were not present.
-    sig { abstract.returns(T::Array[T.nilable(Node)]) }
+    sig { abstract.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
-    sig { abstract.returns(T::Array[T.nilable(Node)]) }
+    sig { abstract.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
     # With a block given, yields each child node. Without a block, returns
     # an enumerator that contains each child node. Excludes any `nil`s in
     # the place of optional nodes that were not present.
     sig { abstract.returns(T::Enumerator[Node]) }
-    sig { abstract.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { abstract.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # Returns an array of child nodes, excluding any `nil`s in the place of
@@ -210,7 +210,7 @@ module Prism
 
     # Returns an array of child nodes and locations that could potentially have
     # comments attached to them.
-    sig { abstract.returns(T::Array[T.any(Node, Location)]) }
+    sig { abstract.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Returns a string representation of the node.
@@ -246,20 +246,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^
   class AliasGlobalVariableNode < Node
     # Initialize a new AliasGlobalVariableNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, new_name, old_name, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -267,17 +267,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, new_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).returns(AliasGlobalVariableNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).returns(AliasGlobalVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -295,14 +295,14 @@ module Prism
     #
     #     alias $foo $bar
     #           ^^^^
-    sig { returns(T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
+    sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def new_name; end
 
     # Represents the old name of the global variable that can be used before aliasing.
     #
     #     alias $foo $bar
     #                ^^^^
-    sig { returns(T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode)) }
+    sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode)) }
     def old_name; end
 
     # The Location of the `alias` keyword.
@@ -314,14 +314,14 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -331,20 +331,20 @@ module Prism
   #     ^^^^^^^^^^^^^
   class AliasMethodNode < Node
     # Initialize a new AliasMethodNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: T.any(SymbolNode, InterpolatedSymbolNode), old_name: T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, new_name, old_name, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -352,17 +352,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, new_name: T.any(SymbolNode, InterpolatedSymbolNode), old_name: T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).returns(AliasMethodNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).returns(AliasMethodNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -386,7 +386,7 @@ module Prism
     #
     #     alias :"#{foo}" :"#{bar}"
     #           ^^^^^^^^^
-    sig { returns(T.any(SymbolNode, InterpolatedSymbolNode)) }
+    sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode)) }
     def new_name; end
 
     # Represents the old name of the method that will be aliased.
@@ -399,7 +399,7 @@ module Prism
     #
     #     alias :"#{foo}" :"#{bar}"
     #                     ^^^^^^^^^
-    sig { returns(T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode)) }
+    sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode)) }
     def old_name; end
 
     # Represents the Location of the `alias` keyword.
@@ -411,14 +411,14 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -432,16 +432,16 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -449,17 +449,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(AlternationPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -496,14 +496,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -517,16 +517,16 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -534,17 +534,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(AndNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -587,14 +587,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -608,16 +608,16 @@ module Prism
     def initialize(source, node_id, location, flags, arguments); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -625,17 +625,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T::Array[Node]).returns(ArgumentsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -676,7 +676,7 @@ module Prism
     sig { returns(T::Array[Node]) }
     def arguments; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -686,20 +686,20 @@ module Prism
   #     ^^^^^^^^^
   class ArrayNode < Node
     # Initialize a new ArrayNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, elements, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -707,17 +707,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(ArrayNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(ArrayNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), elements: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -745,12 +745,12 @@ module Prism
     #     %w[foo bar baz]         # "%w["
     #     %I(apple orange banana) # "%I("
     #     foo = 1, 2, 3           # nil
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Represents the optional source Location for the closing token.
@@ -759,23 +759,23 @@ module Prism
     #     %w[foo bar baz]         # "]"
     #     %I(apple orange banana) # ")"
     #     foo = 1, 2, 3           # nil
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -797,20 +797,20 @@ module Prism
   #            ^^^^^^^^^^^^
   class ArrayPatternNode < Node
     # Initialize a new ArrayPatternNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: T.nilable(Node), posts: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(Node), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, constant, requireds, rest, posts, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -818,17 +818,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: T.nilable(Node), posts: T::Array[Node], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(ArrayPatternNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(Node), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(ArrayPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), requireds: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -852,7 +852,7 @@ module Prism
     #
     #     foo in Bar::Baz[1, 2, 3]
     #            ^^^^^^^^
-    sig { returns(T.nilable(T.any(ConstantPathNode, ConstantReadNode))) }
+    sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the required elements of the array pattern.
@@ -866,7 +866,7 @@ module Prism
     #
     #     foo in *bar
     #            ^^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def rest; end
 
     # Represents the elements after the rest element of the array pattern.
@@ -880,35 +880,35 @@ module Prism
     #
     #     foo in [1, 2]
     #            ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Represents the closing Location of the array pattern.
     #
     #     foo in [1, 2]
     #                 ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -918,20 +918,20 @@ module Prism
   #       ^^^^^^
   class AssocNode < Node
     # Initialize a new AssocNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, key, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -939,17 +939,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: T.nilable(Location)).returns(AssocNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: ::T.nilable(Location)).returns(AssocNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), key: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -990,19 +990,19 @@ module Prism
     #
     #     { foo => bar }
     #           ^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def operator_loc; end
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1012,20 +1012,20 @@ module Prism
   #       ^^^^^
   class AssocSplatNode < Node
     # Initialize a new AssocSplatNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: T.nilable(Node), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.nilable(Node), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1033,17 +1033,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, value: T.nilable(Node), operator_loc: Location).returns(AssocSplatNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, value: ::T.nilable(Node), operator_loc: Location).returns(AssocSplatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1061,7 +1061,7 @@ module Prism
     #
     #     { **foo }
     #         ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def value; end
 
     # The Location of the `**` operator.
@@ -1073,14 +1073,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1094,16 +1094,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1111,17 +1111,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(BackReferenceReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1143,7 +1143,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1155,20 +1155,20 @@ module Prism
   #     ^^^^^
   class BeginNode < Node
     # Initialize a new BeginNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), rescue_clause: T.nilable(RescueNode), else_clause: T.nilable(ElseNode), ensure_clause: T.nilable(EnsureNode), end_keyword_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), rescue_clause: ::T.nilable(RescueNode), else_clause: ::T.nilable(ElseNode), ensure_clause: ::T.nilable(EnsureNode), end_keyword_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, begin_keyword_loc, statements, rescue_clause, else_clause, ensure_clause, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1176,17 +1176,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), rescue_clause: T.nilable(RescueNode), else_clause: T.nilable(ElseNode), ensure_clause: T.nilable(EnsureNode), end_keyword_loc: T.nilable(Location)).returns(BeginNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), rescue_clause: ::T.nilable(RescueNode), else_clause: ::T.nilable(ElseNode), ensure_clause: ::T.nilable(EnsureNode), end_keyword_loc: ::T.nilable(Location)).returns(BeginNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), begin_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), rescue_clause: T.unsafe(nil), else_clause: T.unsafe(nil), ensure_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1204,63 +1204,63 @@ module Prism
     #
     #     begin x end
     #     ^^^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def begin_keyword_loc; end
 
     # Save the begin_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_begin_keyword_loc(repository); end
 
     # Represents the statements within the begin block.
     #
     #     begin x end
     #           ^
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Represents the rescue clause within the begin block.
     #
     #     begin x; rescue y; end
     #              ^^^^^^^^
-    sig { returns(T.nilable(RescueNode)) }
+    sig { returns(::T.nilable(RescueNode)) }
     def rescue_clause; end
 
     # Represents the else clause within the begin block.
     #
     #     begin x; rescue y; else z; end
     #                        ^^^^^^^^^^^
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the ensure clause within the begin block.
     #
     #     begin x; ensure y; end
     #              ^^^^^^^^
-    sig { returns(T.nilable(EnsureNode)) }
+    sig { returns(::T.nilable(EnsureNode)) }
     def ensure_clause; end
 
     # Represents the Location of the `end` keyword.
     #
     #     begin x end
     #             ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of begin_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def begin_keyword; end
 
     # Slice the location of end_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1270,20 +1270,20 @@ module Prism
   #         ^^^^^
   class BlockArgumentNode < Node
     # Initialize a new BlockArgumentNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: T.nilable(Node), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: ::T.nilable(Node), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, expression, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1291,17 +1291,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, expression: T.nilable(Node), operator_loc: Location).returns(BlockArgumentNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, expression: ::T.nilable(Node), operator_loc: Location).returns(BlockArgumentNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1319,7 +1319,7 @@ module Prism
     #
     #     foo(&args)
     #          ^^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def expression; end
 
     # Represents the Location of the `&` operator.
@@ -1331,14 +1331,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1352,16 +1352,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1369,17 +1369,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(BlockLocalVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1404,7 +1404,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1414,20 +1414,20 @@ module Prism
   #                    ^^^^^^^^^^^^^^
   class BlockNode < Node
     # Initialize a new BlockNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).void }
     def initialize(source, node_id, location, flags, locals, parameters, body, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1435,17 +1435,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).returns(BlockNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).returns(BlockNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1474,14 +1474,14 @@ module Prism
     #                    ^^^^^^^^^^^
     #     [1, 2, 3].each { puts it }
     #                    ^^^^^^^^^^^
-    sig { returns(T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
+    sig { returns(::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
     def parameters; end
 
     # The body of the block.
     #
     #     [1, 2, 3].each { |i| puts x }
     #                          ^^^^^^
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Represents the Location of the opening `{` or `do`.
@@ -1493,7 +1493,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Represents the Location of the closing `}` or `end`.
@@ -1505,7 +1505,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -1516,7 +1516,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1527,20 +1527,20 @@ module Prism
   #     end
   class BlockParameterNode < Node
     # Initialize a new BlockParameterNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1548,17 +1548,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(BlockParameterNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).returns(BlockParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1581,19 +1581,19 @@ module Prism
     #     def a(&b) # name `:b`
     #            ^
     #     end
-    sig { returns(T.nilable(Symbol)) }
+    sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # Represents the Location of the block parameter name.
     #
     #     def a(&b)
     #            ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def name_loc; end
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_name_loc(repository); end
 
     # Represents the Location of the `&` operator.
@@ -1606,14 +1606,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1627,20 +1627,20 @@ module Prism
   #     end
   class BlockParametersNode < Node
     # Initialize a new BlockParametersNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parameters: T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parameters: ::T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, parameters, locals, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1648,17 +1648,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, parameters: T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(BlockParametersNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, parameters: ::T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(BlockParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parameters: T.unsafe(nil), locals: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1680,7 +1680,7 @@ module Prism
     #     foo do |a, b = 1; local|
     #             ^^^^^^^^
     #     end
-    sig { returns(T.nilable(ParametersNode)) }
+    sig { returns(::T.nilable(ParametersNode)) }
     def parameters; end
 
     # Represents the local variables of the block.
@@ -1702,12 +1702,12 @@ module Prism
     #     foo do |a, b = 1; local|
     #            ^
     #     end
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Represents the closing Location of the block parameters.
@@ -1718,23 +1718,23 @@ module Prism
     #     foo do |a, b = 1; local|
     #                            ^
     #     end
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1744,20 +1744,20 @@ module Prism
   #     ^^^^^^^^^
   class BreakNode < Node
     # Initialize a new BreakNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, arguments, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1765,17 +1765,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).returns(BreakNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).returns(BreakNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1793,7 +1793,7 @@ module Prism
     #
     #     break foo
     #           ^^^
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # The Location of the `break` keyword.
@@ -1805,14 +1805,14 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1822,20 +1822,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^
   class CallAndWriteNode < Node
     # Initialize a new CallAndWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -1843,17 +1843,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallAndWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -1887,31 +1887,31 @@ module Prism
     #
     #     foo.bar &&= value
     #     ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
     #     foo.bar &&= value
     #        ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Represents the Location of the message.
     #
     #     foo.bar &&= value
     #         ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
     # Save the message_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_message_loc(repository); end
 
     # Represents the name of the method being called.
@@ -1937,7 +1937,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Represents the value being assigned.
@@ -1948,18 +1948,18 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of message_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def message; end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -1984,20 +1984,20 @@ module Prism
   #     ^^^^^^^^
   class CallNode < Node
     # Initialize a new CallNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), name: Symbol, message_loc: T.nilable(Location), opening_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), closing_loc: T.nilable(Location), equal_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), name: Symbol, message_loc: ::T.nilable(Location), opening_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), closing_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, name, message_loc, opening_loc, arguments, closing_loc, equal_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2005,17 +2005,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), name: Symbol, message_loc: T.nilable(Location), opening_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), closing_loc: T.nilable(Location), equal_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).returns(CallNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), name: Symbol, message_loc: ::T.nilable(Location), opening_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), closing_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).returns(CallNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), name: T.unsafe(nil), message_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), equal_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2055,7 +2055,7 @@ module Prism
     #
     #     foo + bar
     #     ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
@@ -2065,12 +2065,12 @@ module Prism
     #
     #     foo&.bar
     #        ^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Represents the name of the method being called.
@@ -2084,43 +2084,43 @@ module Prism
     #
     #     foo.bar
     #         ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
     # Save the message_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_message_loc(repository); end
 
     # Represents the Location of the left parenthesis.
     #
     #     foo(bar)
     #        ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Represents the arguments to the method call. These can be any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
     #     foo(bar)
     #         ^^^
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Represents the Location of the right parenthesis.
     #
     #     foo(bar)
     #            ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Represents the Location of the equal sign, in the case that this is an attribute write.
@@ -2130,42 +2130,42 @@ module Prism
     #
     #     foo[bar] = value
     #              ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def equal_loc; end
 
     # Save the equal_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_equal_loc(repository); end
 
     # Represents the block that is being passed to the method.
     #
     #     foo { |a| a }
     #         ^^^^^^^^^
-    sig { returns(T.nilable(T.any(BlockNode, BlockArgumentNode))) }
+    sig { returns(::T.nilable(::T.any(BlockNode, BlockArgumentNode))) }
     def block; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of message_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def message; end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
     # Slice the location of equal_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def equal; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2175,20 +2175,20 @@ module Prism
   #     ^^^^^^^^^^^^^^
   class CallOperatorWriteNode < Node
     # Initialize a new CallOperatorWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, binary_operator, binary_operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2196,17 +2196,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(CallOperatorWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(CallOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), binary_operator: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2240,31 +2240,31 @@ module Prism
     #
     #     foo.bar += value
     #     ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
     #     foo.bar += value
     #        ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Represents the Location of the message.
     #
     #     foo.bar += value
     #         ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
     # Save the message_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_message_loc(repository); end
 
     # Represents the name of the method being called.
@@ -2297,7 +2297,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Represents the value being assigned.
@@ -2308,14 +2308,14 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of message_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def message; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2325,20 +2325,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^
   class CallOrWriteNode < Node
     # Initialize a new CallOrWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, message_loc, read_name, write_name, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2346,17 +2346,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), message_loc: T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallOrWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).returns(CallOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), message_loc: T.unsafe(nil), read_name: T.unsafe(nil), write_name: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2390,31 +2390,31 @@ module Prism
     #
     #     foo.bar ||= value
     #     ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
     #     foo.bar ||= value
     #        ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Represents the Location of the message.
     #
     #     foo.bar ||= value
     #         ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
     # Save the message_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_message_loc(repository); end
 
     # Represents the name of the method being called.
@@ -2440,7 +2440,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Represents the value being assigned.
@@ -2451,18 +2451,18 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of message_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def message; end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2484,16 +2484,16 @@ module Prism
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, name, message_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2501,17 +2501,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, receiver: Node, call_operator_loc: Location, name: Symbol, message_loc: Location).returns(CallTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), name: T.unsafe(nil), message_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2557,7 +2557,7 @@ module Prism
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_call_operator_loc(repository); end
 
     # Represents the name of the method being called.
@@ -2576,7 +2576,7 @@ module Prism
 
     # Save the message_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_message_loc(repository); end
 
     # Slice the location of call_operator_loc from the source.
@@ -2587,7 +2587,7 @@ module Prism
     sig { returns(String) }
     def message; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2601,16 +2601,16 @@ module Prism
     def initialize(source, node_id, location, flags, value, target, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2618,17 +2618,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, target: LocalVariableTargetNode, operator_loc: Location).returns(CapturePatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2665,14 +2665,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2684,20 +2684,20 @@ module Prism
   #     ^^^^^^^^^
   class CaseMatchNode < Node
     # Initialize a new CaseMatchNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[InNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[InNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, predicate, conditions, else_clause, case_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2705,17 +2705,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[InNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseMatchNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[InNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseMatchNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), predicate: T.unsafe(nil), conditions: T.unsafe(nil), else_clause: T.unsafe(nil), case_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2733,7 +2733,7 @@ module Prism
     #
     #     case true; in false; end
     #          ^^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def predicate; end
 
     # Represents the conditions of the case match.
@@ -2747,7 +2747,7 @@ module Prism
     #
     #     case true; in false; else; end
     #                          ^^^^^^^^^
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the Location of the `case` keyword.
@@ -2759,7 +2759,7 @@ module Prism
 
     # Save the case_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_case_keyword_loc(repository); end
 
     # Represents the Location of the `end` keyword.
@@ -2771,7 +2771,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of case_keyword_loc from the source.
@@ -2782,7 +2782,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2794,20 +2794,20 @@ module Prism
   #     ^^^^^^^^^^
   class CaseNode < Node
     # Initialize a new CaseNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[WhenNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[WhenNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, predicate, conditions, else_clause, case_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2815,17 +2815,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, predicate: T.nilable(Node), conditions: T::Array[WhenNode], else_clause: T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[WhenNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).returns(CaseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), predicate: T.unsafe(nil), conditions: T.unsafe(nil), else_clause: T.unsafe(nil), case_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2843,7 +2843,7 @@ module Prism
     #
     #     case true; when false; end
     #          ^^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def predicate; end
 
     # Represents the conditions of the case statement.
@@ -2857,7 +2857,7 @@ module Prism
     #
     #     case true; when false; else; end
     #                            ^^^^^^^^^
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the Location of the `case` keyword.
@@ -2869,7 +2869,7 @@ module Prism
 
     # Save the case_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_case_keyword_loc(repository); end
 
     # Represents the Location of the `end` keyword.
@@ -2881,7 +2881,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of case_keyword_loc from the source.
@@ -2892,7 +2892,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -2902,20 +2902,20 @@ module Prism
   #     ^^^^^^^^^^^^^
   class ClassNode < Node
     # Initialize a new ClassNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: T.nilable(Location), superclass: T.nilable(Node), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
     def initialize(source, node_id, location, flags, locals, class_keyword_loc, constant_path, inheritance_operator_loc, superclass, body, end_keyword_loc, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -2923,17 +2923,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: T.nilable(Location), superclass: T.nilable(Node), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ClassNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ClassNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), class_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), inheritance_operator_loc: T.unsafe(nil), superclass: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -2960,37 +2960,37 @@ module Prism
 
     # Save the class_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_class_keyword_loc(repository); end
 
     # Returns the `constant_path` attribute.
-    sig { returns(T.any(ConstantReadNode, ConstantPathNode, CallNode)) }
+    sig { returns(::T.any(ConstantReadNode, ConstantPathNode, CallNode)) }
     def constant_path; end
 
     # Represents the Location of the `<` operator.
     #
     #     class Foo < Bar
     #               ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def inheritance_operator_loc; end
 
     # Save the inheritance_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_inheritance_operator_loc(repository); end
 
     # Represents the superclass of the class.
     #
     #     class Foo < Bar
     #                 ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def superclass; end
 
     # Represents the body of the class.
     #
     #     class Foo; bar; end
     #                ^^^
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Represents the Location of the `end` keyword.
@@ -3002,7 +3002,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # The name of the class.
@@ -3016,14 +3016,14 @@ module Prism
     def class_keyword; end
 
     # Slice the location of inheritance_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def inheritance_operator; end
 
     # Slice the location of end_keyword_loc from the source.
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3037,16 +3037,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3054,17 +3054,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ClassVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3094,7 +3094,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Represents the Location of the `&&=` operator.
@@ -3106,7 +3106,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Represents the value being assigned. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -3120,7 +3120,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3134,16 +3134,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3151,17 +3151,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ClassVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3185,7 +3185,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `binary_operator_loc`.
@@ -3194,7 +3194,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3205,7 +3205,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3219,16 +3219,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3236,17 +3236,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ClassVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3270,7 +3270,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -3279,7 +3279,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3290,7 +3290,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3304,16 +3304,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3321,17 +3321,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ClassVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3353,7 +3353,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3367,16 +3367,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3384,17 +3384,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ClassVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3412,7 +3412,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3426,16 +3426,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3443,17 +3443,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(ClassVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3484,7 +3484,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # The value to write to the class variable. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -3506,14 +3506,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3527,16 +3527,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3544,17 +3544,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ConstantAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3578,7 +3578,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -3587,7 +3587,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3598,7 +3598,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3612,16 +3612,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3629,17 +3629,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ConstantOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3663,7 +3663,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `binary_operator_loc`.
@@ -3672,7 +3672,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3683,7 +3683,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3697,16 +3697,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3714,17 +3714,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(ConstantOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3748,7 +3748,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -3757,7 +3757,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3768,7 +3768,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3782,16 +3782,16 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3799,17 +3799,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3833,7 +3833,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -3844,7 +3844,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3854,20 +3854,20 @@ module Prism
   #     ^^^^^^^^
   class ConstantPathNode < Node
     # Initialize a new ConstantPathNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
     def initialize(source, node_id, location, flags, parent, name, delimiter_loc, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3875,17 +3875,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parent: T.unsafe(nil), name: T.unsafe(nil), delimiter_loc: T.unsafe(nil), name_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -3909,11 +3909,11 @@ module Prism
     #
     #     a.b::C
     #     ^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def parent; end
 
     # The name of the constant being accessed. This could be `nil` in the event of a syntax error.
-    sig { returns(T.nilable(Symbol)) }
+    sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # The Location of the `::` delimiter.
@@ -3928,7 +3928,7 @@ module Prism
 
     # Save the delimiter_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_delimiter_loc(repository); end
 
     # The Location of the name of the constant.
@@ -3943,14 +3943,14 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Slice the location of delimiter_loc from the source.
     sig { returns(String) }
     def delimiter; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -3964,16 +3964,16 @@ module Prism
     def initialize(source, node_id, location, flags, target, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -3981,17 +3981,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(ConstantPathOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4015,7 +4015,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -4026,7 +4026,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4040,16 +4040,16 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4057,17 +4057,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4091,7 +4091,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -4102,7 +4102,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4112,20 +4112,20 @@ module Prism
   #     ^^^^^^^^  ^^^^^^^^
   class ConstantPathTargetNode < Node
     # Initialize a new ConstantPathTargetNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
     def initialize(source, node_id, location, flags, parent, name, delimiter_loc, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4133,17 +4133,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, parent: T.nilable(Node), name: T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathTargetNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).returns(ConstantPathTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), parent: T.unsafe(nil), name: T.unsafe(nil), delimiter_loc: T.unsafe(nil), name_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4158,11 +4158,11 @@ module Prism
     def inspect; end
 
     # Returns the `parent` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def parent; end
 
     # Returns the `name` attribute.
-    sig { returns(T.nilable(Symbol)) }
+    sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # Returns the Location represented by `delimiter_loc`.
@@ -4171,7 +4171,7 @@ module Prism
 
     # Save the delimiter_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_delimiter_loc(repository); end
 
     # Returns the Location represented by `name_loc`.
@@ -4180,14 +4180,14 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Slice the location of delimiter_loc from the source.
     sig { returns(String) }
     def delimiter; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4207,16 +4207,16 @@ module Prism
     def initialize(source, node_id, location, flags, target, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4224,17 +4224,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).returns(ConstantPathWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), target: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4267,7 +4267,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # The value to write to the constant path. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -4281,7 +4281,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4295,16 +4295,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4312,17 +4312,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ConstantReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4344,7 +4344,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4358,16 +4358,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4375,17 +4375,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(ConstantTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4403,7 +4403,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4417,16 +4417,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4434,17 +4434,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(ConstantWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4475,7 +4475,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # The value to write to the constant. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -4497,14 +4497,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4515,20 +4515,20 @@ module Prism
   #     ^^^^^^^^^^
   class DefNode < Node
     # Initialize a new DefNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: T.nilable(Node), parameters: T.nilable(ParametersNode), body: T.nilable(T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: T.nilable(Location), lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), equal_loc: T.nilable(Location), end_keyword_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: ::T.nilable(Node), parameters: ::T.nilable(ParametersNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: ::T.nilable(Location), lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, name, name_loc, receiver, parameters, body, locals, def_keyword_loc, operator_loc, lparen_loc, rparen_loc, equal_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4536,17 +4536,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: T.nilable(Node), parameters: T.nilable(ParametersNode), body: T.nilable(T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: T.nilable(Location), lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), equal_loc: T.nilable(Location), end_keyword_loc: T.nilable(Location)).returns(DefNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: ::T.nilable(Node), parameters: ::T.nilable(ParametersNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: ::T.nilable(Location), lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location)).returns(DefNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), receiver: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil), locals: T.unsafe(nil), def_keyword_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil), equal_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4570,19 +4570,19 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the `receiver` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Returns the `parameters` attribute.
-    sig { returns(T.nilable(ParametersNode)) }
+    sig { returns(::T.nilable(ParametersNode)) }
     def parameters; end
 
     # Returns the `body` attribute.
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Returns the `locals` attribute.
@@ -4595,52 +4595,52 @@ module Prism
 
     # Save the def_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_def_keyword_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def operator_loc; end
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_operator_loc(repository); end
 
     # Returns the Location represented by `lparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # Returns the Location represented by `rparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # Returns the Location represented by `equal_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def equal_loc; end
 
     # Save the equal_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_equal_loc(repository); end
 
     # Returns the Location represented by `end_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of def_keyword_loc from the source.
@@ -4648,26 +4648,26 @@ module Prism
     def def_keyword; end
 
     # Slice the location of operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def operator; end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
     # Slice the location of equal_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def equal; end
 
     # Slice the location of end_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4677,20 +4677,20 @@ module Prism
   #     ^^^^^^^^^^^
   class DefinedNode < Node
     # Initialize a new DefinedNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lparen_loc: T.nilable(Location), value: Node, rparen_loc: T.nilable(Location), keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lparen_loc: ::T.nilable(Location), value: Node, rparen_loc: ::T.nilable(Location), keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, lparen_loc, value, rparen_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4698,17 +4698,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, lparen_loc: T.nilable(Location), value: Node, rparen_loc: T.nilable(Location), keyword_loc: Location).returns(DefinedNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, lparen_loc: ::T.nilable(Location), value: Node, rparen_loc: ::T.nilable(Location), keyword_loc: Location).returns(DefinedNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lparen_loc: T.unsafe(nil), value: T.unsafe(nil), rparen_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4723,12 +4723,12 @@ module Prism
     def inspect; end
 
     # Returns the Location represented by `lparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # Returns the `value` attribute.
@@ -4736,12 +4736,12 @@ module Prism
     def value; end
 
     # Returns the Location represented by `rparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # Returns the Location represented by `keyword_loc`.
@@ -4750,22 +4750,22 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4775,20 +4775,20 @@ module Prism
   #                 ^^^^^^^^^^
   class ElseNode < Node
     # Initialize a new ElseNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, else_keyword_loc, statements, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4796,17 +4796,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: T.nilable(Location)).returns(ElseNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: ::T.nilable(Location)).returns(ElseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), else_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4826,20 +4826,20 @@ module Prism
 
     # Save the else_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_else_keyword_loc(repository); end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `end_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of else_keyword_loc from the source.
@@ -4847,10 +4847,10 @@ module Prism
     def else_keyword; end
 
     # Slice the location of end_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4860,20 +4860,20 @@ module Prism
   #          ^^^^^^
   class EmbeddedStatementsNode < Node
     # Initialize a new EmbeddedStatementsNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: T.nilable(StatementsNode), closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: ::T.nilable(StatementsNode), closing_loc: Location).void }
     def initialize(source, node_id, location, flags, opening_loc, statements, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4881,17 +4881,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: T.nilable(StatementsNode), closing_loc: Location).returns(EmbeddedStatementsNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: ::T.nilable(StatementsNode), closing_loc: Location).returns(EmbeddedStatementsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), statements: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4911,11 +4911,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `closing_loc`.
@@ -4924,7 +4924,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -4935,7 +4935,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -4945,20 +4945,20 @@ module Prism
   #          ^^^^^
   class EmbeddedVariableNode < Node
     # Initialize a new EmbeddedVariableNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: ::T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).void }
     def initialize(source, node_id, location, flags, operator_loc, variable); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -4966,17 +4966,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).returns(EmbeddedVariableNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: ::T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).returns(EmbeddedVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), variable: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -4996,18 +4996,18 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `variable` attribute.
-    sig { returns(T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
+    sig { returns(::T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def variable; end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5021,20 +5021,20 @@ module Prism
   #     end
   class EnsureNode < Node
     # Initialize a new EnsureNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, ensure_keyword_loc, statements, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5042,17 +5042,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: T.nilable(StatementsNode), end_keyword_loc: Location).returns(EnsureNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: Location).returns(EnsureNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), ensure_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5072,11 +5072,11 @@ module Prism
 
     # Save the ensure_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_ensure_keyword_loc(repository); end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `end_keyword_loc`.
@@ -5085,7 +5085,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of ensure_keyword_loc from the source.
@@ -5096,7 +5096,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5110,16 +5110,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5127,17 +5127,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(FalseNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5151,7 +5151,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5170,20 +5170,20 @@ module Prism
   #            ^^^^^^^^^^^^^^^
   class FindPatternNode < Node
     # Initialize a new FindPatternNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: T.any(SplatNode, MissingNode), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: ::T.any(SplatNode, MissingNode), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, constant, left, requireds, right, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5191,17 +5191,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: T.any(SplatNode, MissingNode), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(FindPatternNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: ::T.any(SplatNode, MissingNode), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(FindPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), left: T.unsafe(nil), requireds: T.unsafe(nil), right: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5219,7 +5219,7 @@ module Prism
     #
     #     foo in Foo(*bar, baz, *qux)
     #            ^^^
-    sig { returns(T.nilable(T.any(ConstantPathNode, ConstantReadNode))) }
+    sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the first wildcard node in the pattern.
@@ -5249,7 +5249,7 @@ module Prism
     #
     #     foo in Foo(*bar, baz, *qux)
     #                           ^^^^
-    sig { returns(T.any(SplatNode, MissingNode)) }
+    sig { returns(::T.any(SplatNode, MissingNode)) }
     def right; end
 
     # The Location of the opening brace.
@@ -5259,12 +5259,12 @@ module Prism
     #
     #     foo in Foo(*bar, baz, *qux)
     #               ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # The Location of the closing brace.
@@ -5274,23 +5274,23 @@ module Prism
     #
     #     foo in Foo(*bar, baz, *qux)
     #                               ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5300,20 +5300,20 @@ module Prism
   #            ^^^^^^^^^^
   class FlipFlopNode < Node
     # Initialize a new FlipFlopNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5321,17 +5321,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).returns(FlipFlopNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).returns(FlipFlopNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5350,11 +5350,11 @@ module Prism
     def exclude_end?; end
 
     # Returns the `left` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def left; end
 
     # Returns the `right` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def right; end
 
     # Returns the Location represented by `operator_loc`.
@@ -5363,14 +5363,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5384,16 +5384,16 @@ module Prism
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5401,17 +5401,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Float).returns(FloatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5429,7 +5429,7 @@ module Prism
     sig { returns(Float) }
     def value; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5439,20 +5439,20 @@ module Prism
   #     ^^^^^^^^^^^^^^
   class ForNode < Node
     # Initialize a new ForNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: T.nilable(Location), end_keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, index, collection, statements, for_keyword_loc, in_keyword_loc, do_keyword_loc, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5460,17 +5460,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, index: T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: T.nilable(Location), end_keyword_loc: Location).returns(ForNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).returns(ForNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), index: T.unsafe(nil), collection: T.unsafe(nil), statements: T.unsafe(nil), for_keyword_loc: T.unsafe(nil), in_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5488,7 +5488,7 @@ module Prism
     #
     #     for i in a end
     #         ^
-    sig { returns(T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)) }
+    sig { returns(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)) }
     def index; end
 
     # The collection to iterate over.
@@ -5504,7 +5504,7 @@ module Prism
     #       foo(i)
     #       ^^^^^^
     #     end
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # The Location of the `for` keyword.
@@ -5516,7 +5516,7 @@ module Prism
 
     # Save the for_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_for_keyword_loc(repository); end
 
     # The Location of the `in` keyword.
@@ -5528,19 +5528,19 @@ module Prism
 
     # Save the in_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_in_keyword_loc(repository); end
 
     # The Location of the `do` keyword, if present.
     #
     #     for i in a do end
     #                ^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def do_keyword_loc; end
 
     # Save the do_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_do_keyword_loc(repository); end
 
     # The Location of the `end` keyword.
@@ -5552,7 +5552,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of for_keyword_loc from the source.
@@ -5564,14 +5564,14 @@ module Prism
     def in_keyword; end
 
     # Slice the location of do_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def do_keyword; end
 
     # Slice the location of end_keyword_loc from the source.
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5587,16 +5587,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5604,17 +5604,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ForwardingArgumentsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5628,7 +5628,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5643,16 +5643,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5660,17 +5660,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ForwardingParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5684,7 +5684,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5699,20 +5699,20 @@ module Prism
   # If it has any other arguments, it would be a `SuperNode` instead.
   class ForwardingSuperNode < Node
     # Initialize a new ForwardingSuperNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, block: T.nilable(BlockNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, block: ::T.nilable(BlockNode)).void }
     def initialize(source, node_id, location, flags, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5720,17 +5720,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, block: T.nilable(BlockNode)).returns(ForwardingSuperNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, block: ::T.nilable(BlockNode)).returns(ForwardingSuperNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), block: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5745,10 +5745,10 @@ module Prism
     def inspect; end
 
     # All other arguments are forwarded as normal, except the original block is replaced with the new block.
-    sig { returns(T.nilable(BlockNode)) }
+    sig { returns(::T.nilable(BlockNode)) }
     def block; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5762,16 +5762,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5779,17 +5779,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(GlobalVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5813,7 +5813,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -5822,7 +5822,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -5833,7 +5833,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5847,16 +5847,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5864,17 +5864,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(GlobalVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5898,7 +5898,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `binary_operator_loc`.
@@ -5907,7 +5907,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -5918,7 +5918,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -5932,16 +5932,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -5949,17 +5949,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(GlobalVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -5983,7 +5983,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -5992,7 +5992,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -6003,7 +6003,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6017,16 +6017,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6034,17 +6034,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(GlobalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6066,7 +6066,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6080,16 +6080,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6097,17 +6097,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(GlobalVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6125,7 +6125,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6139,16 +6139,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6156,17 +6156,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(GlobalVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6197,7 +6197,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # The value to write to the global variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -6219,14 +6219,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6236,20 +6236,20 @@ module Prism
   #     ^^^^^^^^^^
   class HashNode < Node
     # Initialize a new HashNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[T.any(AssocNode, AssocSplatNode)], closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[::T.any(AssocNode, AssocSplatNode)], closing_loc: Location).void }
     def initialize(source, node_id, location, flags, opening_loc, elements, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6257,17 +6257,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[T.any(AssocNode, AssocSplatNode)], closing_loc: Location).returns(HashNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[::T.any(AssocNode, AssocSplatNode)], closing_loc: Location).returns(HashNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), elements: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6290,7 +6290,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # The elements of the hash. These can be either `AssocNode`s or `AssocSplatNode`s.
@@ -6300,7 +6300,7 @@ module Prism
     #
     #     { **foo }
     #       ^^^^^
-    sig { returns(T::Array[T.any(AssocNode, AssocSplatNode)]) }
+    sig { returns(T::Array[::T.any(AssocNode, AssocSplatNode)]) }
     def elements; end
 
     # The Location of the closing brace.
@@ -6312,7 +6312,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -6323,7 +6323,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6342,20 +6342,20 @@ module Prism
   #            ^^^^^^^^^^^^^^
   class HashPatternNode < Node
     # Initialize a new HashPatternNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: T.nilable(T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: ::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, constant, elements, rest, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6363,17 +6363,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, constant: T.nilable(T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: T.nilable(T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: T.nilable(Location), closing_loc: T.nilable(Location)).returns(HashPatternNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: ::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(HashPatternNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), elements: T.unsafe(nil), rest: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6394,7 +6394,7 @@ module Prism
     #
     #     foo => Bar::Baz[a: 1, b: 2]
     #          ^^^^^^^^
-    sig { returns(T.nilable(T.any(ConstantPathNode, ConstantReadNode))) }
+    sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the explicit named hash keys and values.
@@ -6414,7 +6414,7 @@ module Prism
     #
     #     foo => { a: 1, b:, **nil }
     #                        ^^^^^
-    sig { returns(T.nilable(T.any(AssocSplatNode, NoKeywordsParameterNode))) }
+    sig { returns(::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode))) }
     def rest; end
 
     # The Location of the opening brace.
@@ -6424,12 +6424,12 @@ module Prism
     #
     #     foo => Bar[a: 1]
     #               ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # The Location of the closing brace.
@@ -6439,23 +6439,23 @@ module Prism
     #
     #     foo => Bar[a: 1]
     #                    ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6471,20 +6471,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^
   class IfNode < Node
     # Initialize a new IfNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, if_keyword_loc: T.nilable(Location), predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(T.any(ElseNode, IfNode)), end_keyword_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, if_keyword_loc: ::T.nilable(Location), predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(::T.any(ElseNode, IfNode)), end_keyword_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, if_keyword_loc, predicate, then_keyword_loc, statements, subsequent, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6492,17 +6492,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, if_keyword_loc: T.nilable(Location), predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(T.any(ElseNode, IfNode)), end_keyword_loc: T.nilable(Location)).returns(IfNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, if_keyword_loc: ::T.nilable(Location), predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(::T.any(ElseNode, IfNode)), end_keyword_loc: ::T.nilable(Location)).returns(IfNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), if_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), subsequent: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6522,12 +6522,12 @@ module Prism
     #         ^^
     #
     # The `if_keyword_loc` field will be `nil` when the `IfNode` represents a ternary expression.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def if_keyword_loc; end
 
     # Save the if_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_if_keyword_loc(repository); end
 
     # The node for the condition the `IfNode` is testing.
@@ -6552,12 +6552,12 @@ module Prism
     #
     #     a ? b : c
     #       ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
     # Save the then_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_then_keyword_loc(repository); end
 
     # Represents the body of statements that will be executed when the predicate is evaluated as truthy. Will be `nil` when no body is provided.
@@ -6568,7 +6568,7 @@ module Prism
     #       baz
     #       ^^^
     #     end
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Represents an `ElseNode` or an `IfNode` when there is an `else` or an `elsif` in the `if` statement.
@@ -6584,7 +6584,7 @@ module Prism
     #
     #     if foo then bar else baz end
     #                     ^^^^^^^^^^^^
-    sig { returns(T.nilable(T.any(ElseNode, IfNode))) }
+    sig { returns(::T.nilable(::T.any(ElseNode, IfNode))) }
     def subsequent; end
 
     # The Location of the `end` keyword if present, `nil` otherwise.
@@ -6593,27 +6593,27 @@ module Prism
     #       bar
     #     end
     #     ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of if_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def if_keyword; end
 
     # Slice the location of then_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
     # Slice the location of end_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6623,20 +6623,20 @@ module Prism
   #     ^^^^
   class ImaginaryNode < Node
     # Initialize a new ImaginaryNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numeric: T.any(FloatNode, IntegerNode, RationalNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numeric: ::T.any(FloatNode, IntegerNode, RationalNode)).void }
     def initialize(source, node_id, location, flags, numeric); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6644,17 +6644,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, numeric: T.any(FloatNode, IntegerNode, RationalNode)).returns(ImaginaryNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, numeric: ::T.any(FloatNode, IntegerNode, RationalNode)).returns(ImaginaryNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), numeric: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6669,10 +6669,10 @@ module Prism
     def inspect; end
 
     # Returns the `numeric` attribute.
-    sig { returns(T.any(FloatNode, IntegerNode, RationalNode)) }
+    sig { returns(::T.any(FloatNode, IntegerNode, RationalNode)) }
     def numeric; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6688,20 +6688,20 @@ module Prism
   #              ^^^^
   class ImplicitNode < Node
     # Initialize a new ImplicitNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6709,17 +6709,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, value: T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6734,10 +6734,10 @@ module Prism
     def inspect; end
 
     # Returns the `value` attribute.
-    sig { returns(T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)) }
+    sig { returns(::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)) }
     def value; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6760,16 +6760,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6777,17 +6777,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ImplicitRestNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6801,7 +6801,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6811,20 +6811,20 @@ module Prism
   #             ^^^^^^^^^^^
   class InNode < Node
     # Initialize a new InNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: T.nilable(StatementsNode), in_loc: Location, then_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_loc: Location, then_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, pattern, statements, in_loc, then_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6832,17 +6832,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: T.nilable(StatementsNode), in_loc: Location, then_loc: T.nilable(Location)).returns(InNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_loc: Location, then_loc: ::T.nilable(Location)).returns(InNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), pattern: T.unsafe(nil), statements: T.unsafe(nil), in_loc: T.unsafe(nil), then_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6861,7 +6861,7 @@ module Prism
     def pattern; end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `in_loc`.
@@ -6870,16 +6870,16 @@ module Prism
 
     # Save the in_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_in_loc(repository); end
 
     # Returns the Location represented by `then_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def then_loc; end
 
     # Save the then_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_then_loc(repository); end
 
     # Slice the location of in_loc from the source.
@@ -6887,10 +6887,10 @@ module Prism
     def in; end
 
     # Slice the location of then_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def then; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -6900,20 +6900,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^
   class IndexAndWriteNode < Node
     # Initialize a new IndexAndWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -6921,17 +6921,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexAndWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -6962,16 +6962,16 @@ module Prism
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Returns the Location represented by `call_operator_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -6980,11 +6980,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `closing_loc`.
@@ -6993,11 +6993,11 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(BlockArgumentNode)) }
+    sig { returns(::T.nilable(BlockArgumentNode)) }
     def block; end
 
     # Returns the Location represented by `operator_loc`.
@@ -7006,7 +7006,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7014,7 +7014,7 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of opening_loc from the source.
@@ -7029,7 +7029,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7039,20 +7039,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^
   class IndexOperatorWriteNode < Node
     # Initialize a new IndexOperatorWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, binary_operator, binary_operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7060,17 +7060,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(IndexOperatorWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).returns(IndexOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), binary_operator: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7101,16 +7101,16 @@ module Prism
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Returns the Location represented by `call_operator_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -7119,11 +7119,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `closing_loc`.
@@ -7132,11 +7132,11 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(BlockArgumentNode)) }
+    sig { returns(::T.nilable(BlockArgumentNode)) }
     def block; end
 
     # Returns the `binary_operator` attribute.
@@ -7149,7 +7149,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7157,7 +7157,7 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of opening_loc from the source.
@@ -7168,7 +7168,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7178,20 +7178,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^
   class IndexOrWriteNode < Node
     # Initialize a new IndexOrWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, receiver, call_operator_loc, opening_loc, arguments, closing_loc, block, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7199,17 +7199,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: T.nilable(Node), call_operator_loc: T.nilable(Location), opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexOrWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).returns(IndexOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), call_operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7240,16 +7240,16 @@ module Prism
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Returns the Location represented by `call_operator_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
     # Save the call_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_call_operator_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -7258,11 +7258,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `closing_loc`.
@@ -7271,11 +7271,11 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(BlockArgumentNode)) }
+    sig { returns(::T.nilable(BlockArgumentNode)) }
     def block; end
 
     # Returns the Location represented by `operator_loc`.
@@ -7284,7 +7284,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7292,7 +7292,7 @@ module Prism
     def value; end
 
     # Slice the location of call_operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def call_operator; end
 
     # Slice the location of opening_loc from the source.
@@ -7307,7 +7307,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7325,20 +7325,20 @@ module Prism
   #         ^^^^^^^^
   class IndexTargetNode < Node
     # Initialize a new IndexTargetNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode)).void }
     def initialize(source, node_id, location, flags, receiver, opening_loc, arguments, closing_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7346,17 +7346,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: T.nilable(ArgumentsNode), closing_loc: Location, block: T.nilable(BlockArgumentNode)).returns(IndexTargetNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode)).returns(IndexTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), receiver: T.unsafe(nil), opening_loc: T.unsafe(nil), arguments: T.unsafe(nil), closing_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7396,11 +7396,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `closing_loc`.
@@ -7409,11 +7409,11 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(BlockArgumentNode)) }
+    sig { returns(::T.nilable(BlockArgumentNode)) }
     def block; end
 
     # Slice the location of opening_loc from the source.
@@ -7424,7 +7424,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7438,16 +7438,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7455,17 +7455,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(InstanceVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7489,7 +7489,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -7498,7 +7498,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7509,7 +7509,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7523,16 +7523,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, binary_operator_loc, value, binary_operator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7540,17 +7540,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).returns(InstanceVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), binary_operator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7574,7 +7574,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `binary_operator_loc`.
@@ -7583,7 +7583,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7594,7 +7594,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7608,16 +7608,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7625,17 +7625,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(InstanceVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7659,7 +7659,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -7668,7 +7668,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -7679,7 +7679,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7693,16 +7693,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7710,17 +7710,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(InstanceVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7742,7 +7742,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7756,16 +7756,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7773,17 +7773,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(InstanceVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7801,7 +7801,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7815,16 +7815,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7832,17 +7832,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).returns(InstanceVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7873,7 +7873,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # The value to write to the instance variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -7895,14 +7895,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7916,16 +7916,16 @@ module Prism
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -7933,17 +7933,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Integer).returns(IntegerNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -7977,7 +7977,7 @@ module Prism
     sig { returns(Integer) }
     def value; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -7987,20 +7987,20 @@ module Prism
   #        ^^^^^^^^^^^^^^^^
   class InterpolatedMatchLastLineNode < Node
     # Initialize a new InterpolatedMatchLastLineNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8008,17 +8008,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedMatchLastLineNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedMatchLastLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8082,11 +8082,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `parts` attribute.
-    sig { returns(T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
+    sig { returns(T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
     def parts; end
 
     # Returns the Location represented by `closing_loc`.
@@ -8095,7 +8095,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -8106,7 +8106,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8116,20 +8116,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^
   class InterpolatedRegularExpressionNode < Node
     # Initialize a new InterpolatedRegularExpressionNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8137,17 +8137,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedRegularExpressionNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedRegularExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8211,11 +8211,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `parts` attribute.
-    sig { returns(T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
+    sig { returns(T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
     def parts; end
 
     # Returns the Location represented by `closing_loc`.
@@ -8224,7 +8224,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -8235,7 +8235,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8245,20 +8245,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^
   class InterpolatedStringNode < Node
     # Initialize a new InterpolatedStringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8266,17 +8266,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: T.nilable(Location)).returns(InterpolatedStringNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: ::T.nilable(Location)).returns(InterpolatedStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8299,36 +8299,36 @@ module Prism
     def mutable?; end
 
     # Returns the Location represented by `opening_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Returns the `parts` attribute.
-    sig { returns(T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)]) }
+    sig { returns(T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)]) }
     def parts; end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8338,20 +8338,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^
   class InterpolatedSymbolNode < Node
     # Initialize a new InterpolatedSymbolNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8359,17 +8359,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: T.nilable(Location)).returns(InterpolatedSymbolNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: ::T.nilable(Location)).returns(InterpolatedSymbolNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8384,36 +8384,36 @@ module Prism
     def inspect; end
 
     # Returns the Location represented by `opening_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Returns the `parts` attribute.
-    sig { returns(T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
+    sig { returns(T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
     def parts; end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8423,20 +8423,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^
   class InterpolatedXStringNode < Node
     # Initialize a new InterpolatedXStringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
     def initialize(source, node_id, location, flags, opening_loc, parts, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8444,17 +8444,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedXStringNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).returns(InterpolatedXStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8474,11 +8474,11 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the `parts` attribute.
-    sig { returns(T::Array[T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
+    sig { returns(T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)]) }
     def parts; end
 
     # Returns the Location represented by `closing_loc`.
@@ -8487,7 +8487,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -8498,7 +8498,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8512,16 +8512,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8529,17 +8529,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ItLocalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8553,7 +8553,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8567,16 +8567,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8584,17 +8584,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(ItParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8608,7 +8608,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8618,20 +8618,20 @@ module Prism
   #         ^^^^
   class KeywordHashNode < Node
     # Initialize a new KeywordHashNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[T.any(AssocNode, AssocSplatNode)]).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[::T.any(AssocNode, AssocSplatNode)]).void }
     def initialize(source, node_id, location, flags, elements); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8639,17 +8639,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[T.any(AssocNode, AssocSplatNode)]).returns(KeywordHashNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, elements: T::Array[::T.any(AssocNode, AssocSplatNode)]).returns(KeywordHashNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), elements: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8668,10 +8668,10 @@ module Prism
     def symbol_keys?; end
 
     # Returns the `elements` attribute.
-    sig { returns(T::Array[T.any(AssocNode, AssocSplatNode)]) }
+    sig { returns(T::Array[::T.any(AssocNode, AssocSplatNode)]) }
     def elements; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8682,20 +8682,20 @@ module Prism
   #     end
   class KeywordRestParameterNode < Node
     # Initialize a new KeywordRestParameterNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8703,17 +8703,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(KeywordRestParameterNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).returns(KeywordRestParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8732,16 +8732,16 @@ module Prism
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
-    sig { returns(T.nilable(Symbol)) }
+    sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # Returns the Location represented by `name_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def name_loc; end
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -8750,14 +8750,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8767,20 +8767,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^^
   class LambdaNode < Node
     # Initialize a new LambdaNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode))).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode))).void }
     def initialize(source, node_id, location, flags, locals, operator_loc, opening_loc, closing_loc, parameters, body); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8788,17 +8788,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: T.nilable(T.any(StatementsNode, BeginNode))).returns(LambdaNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode))).returns(LambdaNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), operator_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), parameters: T.unsafe(nil), body: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8822,7 +8822,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -8831,7 +8831,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -8840,15 +8840,15 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `parameters` attribute.
-    sig { returns(T.nilable(T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
+    sig { returns(::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
     def parameters; end
 
     # Returns the `body` attribute.
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Slice the location of operator_loc from the source.
@@ -8863,7 +8863,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8877,16 +8877,16 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, operator_loc, value, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8894,17 +8894,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).returns(LocalVariableAndWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -8924,7 +8924,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -8933,7 +8933,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -8952,7 +8952,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -8966,16 +8966,16 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, binary_operator_loc, value, name, binary_operator, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -8983,17 +8983,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, binary_operator_loc: Location, value: Node, name: Symbol, binary_operator: Symbol, depth: Integer).returns(LocalVariableOperatorWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), binary_operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), binary_operator: T.unsafe(nil), depth: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9013,7 +9013,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `binary_operator_loc`.
@@ -9022,7 +9022,7 @@ module Prism
 
     # Save the binary_operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_binary_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -9041,7 +9041,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9055,16 +9055,16 @@ module Prism
     def initialize(source, node_id, location, flags, name_loc, operator_loc, value, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9072,17 +9072,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).returns(LocalVariableOrWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9102,7 +9102,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -9111,7 +9111,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -9130,7 +9130,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9144,16 +9144,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9161,17 +9161,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).returns(LocalVariableReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9207,7 +9207,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9224,16 +9224,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9241,17 +9241,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).returns(LocalVariableTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9273,7 +9273,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9287,16 +9287,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, depth, name_loc, value, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9304,17 +9304,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer, name_loc: Location, value: Node, operator_loc: Location).returns(LocalVariableWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9355,7 +9355,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # The value to write to the local variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -9381,14 +9381,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9402,16 +9402,16 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9419,17 +9419,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9493,7 +9493,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `content_loc`.
@@ -9502,7 +9502,7 @@ module Prism
 
     # Save the content_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_content_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -9511,7 +9511,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `unescaped` attribute.
@@ -9530,7 +9530,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9544,16 +9544,16 @@ module Prism
     def initialize(source, node_id, location, flags, value, pattern, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9561,17 +9561,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).returns(MatchPredicateNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9599,14 +9599,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9620,16 +9620,16 @@ module Prism
     def initialize(source, node_id, location, flags, value, pattern, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9637,17 +9637,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).returns(MatchRequiredNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9723,14 +9723,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9744,16 +9744,16 @@ module Prism
     def initialize(source, node_id, location, flags, call, targets); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9761,17 +9761,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, call: CallNode, targets: T::Array[LocalVariableTargetNode]).returns(MatchWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), call: T.unsafe(nil), targets: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9793,7 +9793,7 @@ module Prism
     sig { returns(T::Array[LocalVariableTargetNode]) }
     def targets; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9804,16 +9804,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9821,17 +9821,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(MissingNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9845,7 +9845,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9855,20 +9855,20 @@ module Prism
   #     ^^^^^^^^^^^^^^
   class ModuleNode < Node
     # Initialize a new ModuleNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
     def initialize(source, node_id, location, flags, locals, module_keyword_loc, constant_path, body, end_keyword_loc, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9876,17 +9876,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ModuleNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ModuleNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), module_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -9910,15 +9910,15 @@ module Prism
 
     # Save the module_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_module_keyword_loc(repository); end
 
     # Returns the `constant_path` attribute.
-    sig { returns(T.any(ConstantReadNode, ConstantPathNode, MissingNode)) }
+    sig { returns(::T.any(ConstantReadNode, ConstantPathNode, MissingNode)) }
     def constant_path; end
 
     # Returns the `body` attribute.
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Returns the Location represented by `end_keyword_loc`.
@@ -9927,7 +9927,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Returns the `name` attribute.
@@ -9942,7 +9942,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -9957,20 +9957,20 @@ module Prism
   #         ^^^^
   class MultiTargetNode < Node
     # Initialize a new MultiTargetNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, lefts, rest, rights, lparen_loc, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -9978,17 +9978,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location)).returns(MultiTargetNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).returns(MultiTargetNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10011,7 +10011,7 @@ module Prism
     #
     #     a, (b, c) = 1, 2, 3, 4, 5
     #         ^^^^
-    sig { returns(T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
+    sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
     def lefts; end
 
     # Represents a splat node in the target expression.
@@ -10028,49 +10028,49 @@ module Prism
     #
     #     a, (b,) = 1, 2, 3, 4
     #          ^
-    sig { returns(T.nilable(T.any(ImplicitRestNode, SplatNode))) }
+    sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
     # Represents the targets expressions after a splat node.
     #
     #     a, (*, b, c) = 1, 2, 3, 4, 5
     #            ^^^^
-    sig { returns(T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
+    sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
     def rights; end
 
     # The Location of the opening parenthesis.
     #
     #     a, (b, c) = 1, 2, 3
     #        ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # The Location of the closing parenthesis.
     #
     #     a, (b, c) = 1, 2, 3
     #             ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10080,20 +10080,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^
   class MultiWriteNode < Node
     # Initialize a new MultiWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), operator_loc: Location, value: Node).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).void }
     def initialize(source, node_id, location, flags, lefts, rest, rights, lparen_loc, rparen_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10101,17 +10101,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: T.nilable(T.any(ImplicitRestNode, SplatNode)), rights: T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: T.nilable(Location), rparen_loc: T.nilable(Location), operator_loc: Location, value: Node).returns(MultiWriteNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).returns(MultiWriteNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10134,7 +10134,7 @@ module Prism
     #
     #     a, b, c = 1, 2, 3, 4, 5
     #     ^^^^^^^
-    sig { returns(T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
+    sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
     def lefts; end
 
     # Represents a splat node in the target expression.
@@ -10151,38 +10151,38 @@ module Prism
     #
     #     a, b, = 1, 2, 3, 4
     #         ^
-    sig { returns(T.nilable(T.any(ImplicitRestNode, SplatNode))) }
+    sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
     # Represents the targets expressions after a splat node.
     #
     #     a, *, b, c = 1, 2, 3, 4, 5
     #           ^^^^
-    sig { returns(T::Array[T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
+    sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)]) }
     def rights; end
 
     # The Location of the opening parenthesis.
     #
     #     (a, b, c) = 1, 2, 3
     #     ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # The Location of the closing parenthesis.
     #
     #     (a, b, c) = 1, 2, 3
     #             ^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # The Location of the operator.
@@ -10194,7 +10194,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # The value to write to the targets. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -10205,18 +10205,18 @@ module Prism
     def value; end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10226,20 +10226,20 @@ module Prism
   #     ^^^^^^
   class NextNode < Node
     # Initialize a new NextNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, arguments, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10247,17 +10247,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, arguments: T.nilable(ArgumentsNode), keyword_loc: Location).returns(NextNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).returns(NextNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), arguments: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10272,7 +10272,7 @@ module Prism
     def inspect; end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `keyword_loc`.
@@ -10281,14 +10281,14 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10302,16 +10302,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10319,17 +10319,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(NilNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10343,7 +10343,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10358,16 +10358,16 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10375,17 +10375,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).returns(NoBlockParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10405,7 +10405,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the Location represented by `keyword_loc`.
@@ -10414,7 +10414,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of operator_loc from the source.
@@ -10425,7 +10425,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10440,16 +10440,16 @@ module Prism
     def initialize(source, node_id, location, flags, operator_loc, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10457,17 +10457,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).returns(NoKeywordsParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10487,7 +10487,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the Location represented by `keyword_loc`.
@@ -10496,7 +10496,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of operator_loc from the source.
@@ -10507,7 +10507,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10521,16 +10521,16 @@ module Prism
     def initialize(source, node_id, location, flags, maximum); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10538,17 +10538,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, maximum: Integer).returns(NumberedParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), maximum: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10566,7 +10566,7 @@ module Prism
     sig { returns(Integer) }
     def maximum; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10580,16 +10580,16 @@ module Prism
     def initialize(source, node_id, location, flags, number); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10597,17 +10597,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, number: Integer).returns(NumberedReferenceReadNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), number: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10631,7 +10631,7 @@ module Prism
     sig { returns(Integer) }
     def number; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10646,16 +10646,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10663,17 +10663,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node).returns(OptionalKeywordParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10701,14 +10701,14 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the `value` attribute.
     sig { returns(Node) }
     def value; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10723,16 +10723,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc, value); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10740,17 +10740,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(OptionalParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10778,7 +10778,7 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -10787,7 +10787,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `value` attribute.
@@ -10798,7 +10798,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10812,16 +10812,16 @@ module Prism
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10829,17 +10829,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).returns(OrNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10882,14 +10882,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10900,20 +10900,20 @@ module Prism
   #     end
   class ParametersNode < Node
     # Initialize a new ParametersNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: T.nilable(T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: T.nilable(T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: T.nilable(T.any(BlockParameterNode, NoBlockParameterNode))).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).void }
     def initialize(source, node_id, location, flags, requireds, optionals, rest, posts, keywords, keyword_rest, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -10921,17 +10921,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, requireds: T::Array[T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: T.nilable(T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: T.nilable(T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: T.nilable(T.any(BlockParameterNode, NoBlockParameterNode))).returns(ParametersNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).returns(ParametersNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), requireds: T.unsafe(nil), optionals: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), keywords: T.unsafe(nil), keyword_rest: T.unsafe(nil), block: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -10946,7 +10946,7 @@ module Prism
     def inspect; end
 
     # Returns the `requireds` attribute.
-    sig { returns(T::Array[T.any(RequiredParameterNode, MultiTargetNode)]) }
+    sig { returns(T::Array[::T.any(RequiredParameterNode, MultiTargetNode)]) }
     def requireds; end
 
     # Returns the `optionals` attribute.
@@ -10954,26 +10954,26 @@ module Prism
     def optionals; end
 
     # Returns the `rest` attribute.
-    sig { returns(T.nilable(T.any(RestParameterNode, ImplicitRestNode))) }
+    sig { returns(::T.nilable(::T.any(RestParameterNode, ImplicitRestNode))) }
     def rest; end
 
     # Returns the `posts` attribute.
-    sig { returns(T::Array[T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)]) }
+    sig { returns(T::Array[::T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)]) }
     def posts; end
 
     # Returns the `keywords` attribute.
-    sig { returns(T::Array[T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)]) }
+    sig { returns(T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)]) }
     def keywords; end
 
     # Returns the `keyword_rest` attribute.
-    sig { returns(T.nilable(T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode))) }
+    sig { returns(::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode))) }
     def keyword_rest; end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(T.any(BlockParameterNode, NoBlockParameterNode))) }
+    sig { returns(::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))) }
     def block; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -10983,20 +10983,20 @@ module Prism
   #     ^^^^^^^^^
   class ParenthesesNode < Node
     # Initialize a new ParenthesesNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: T.nilable(Node), opening_loc: Location, closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: ::T.nilable(Node), opening_loc: Location, closing_loc: Location).void }
     def initialize(source, node_id, location, flags, body, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11004,17 +11004,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, body: T.nilable(Node), opening_loc: Location, closing_loc: Location).returns(ParenthesesNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, body: ::T.nilable(Node), opening_loc: Location, closing_loc: Location).returns(ParenthesesNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), body: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11033,7 +11033,7 @@ module Prism
     def multiple_statements?; end
 
     # Returns the `body` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def body; end
 
     # Returns the Location represented by `opening_loc`.
@@ -11042,7 +11042,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -11051,7 +11051,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of opening_loc from the source.
@@ -11062,7 +11062,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11076,16 +11076,16 @@ module Prism
     def initialize(source, node_id, location, flags, expression, operator_loc, lparen_loc, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11093,17 +11093,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, expression: Node, operator_loc: Location, lparen_loc: Location, rparen_loc: Location).returns(PinnedExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), operator_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11133,7 +11133,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # The Location of the opening parenthesis.
@@ -11145,7 +11145,7 @@ module Prism
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_lparen_loc(repository); end
 
     # The Location of the closing parenthesis.
@@ -11157,7 +11157,7 @@ module Prism
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_rparen_loc(repository); end
 
     # Slice the location of operator_loc from the source.
@@ -11172,7 +11172,7 @@ module Prism
     sig { returns(String) }
     def rparen; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11182,20 +11182,20 @@ module Prism
   #            ^^^^
   class PinnedVariableNode < Node
     # Initialize a new PinnedVariableNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, variable, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11203,17 +11203,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, variable: T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).returns(PinnedVariableNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).returns(PinnedVariableNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), variable: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11231,7 +11231,7 @@ module Prism
     #
     #     foo in ^bar
     #             ^^^
-    sig { returns(T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode)) }
+    sig { returns(::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode)) }
     def variable; end
 
     # The Location of the `^` operator
@@ -11243,14 +11243,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11260,20 +11260,20 @@ module Prism
   #     ^^^^^^^^^^^
   class PostExecutionNode < Node
     # Initialize a new PostExecutionNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
     def initialize(source, node_id, location, flags, statements, keyword_loc, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11281,17 +11281,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PostExecutionNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PostExecutionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), statements: T.unsafe(nil), keyword_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11306,7 +11306,7 @@ module Prism
     def inspect; end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `keyword_loc`.
@@ -11315,7 +11315,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -11324,7 +11324,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -11333,7 +11333,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
@@ -11348,7 +11348,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11358,20 +11358,20 @@ module Prism
   #     ^^^^^^^^^^^^^
   class PreExecutionNode < Node
     # Initialize a new PreExecutionNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
     def initialize(source, node_id, location, flags, statements, keyword_loc, opening_loc, closing_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11379,17 +11379,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, statements: T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PreExecutionNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).returns(PreExecutionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), statements: T.unsafe(nil), keyword_loc: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11404,7 +11404,7 @@ module Prism
     def inspect; end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the Location represented by `keyword_loc`.
@@ -11413,7 +11413,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `opening_loc`.
@@ -11422,7 +11422,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -11431,7 +11431,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
@@ -11446,7 +11446,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11457,16 +11457,16 @@ module Prism
     def initialize(source, node_id, location, flags, locals, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11474,17 +11474,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], statements: StatementsNode).returns(ProgramNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), statements: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11506,7 +11506,7 @@ module Prism
     sig { returns(StatementsNode) }
     def statements; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11519,20 +11519,20 @@ module Prism
   #          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   class RangeNode < Node
     # Initialize a new RangeNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, left, right, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11540,17 +11540,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, left: T.nilable(Node), right: T.nilable(Node), operator_loc: Location).returns(RangeNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).returns(RangeNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11575,7 +11575,7 @@ module Prism
     #
     #     hello...goodbye
     #     ^^^^^
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def left; end
 
     # The right-hand side of the range, if present. It can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -11586,7 +11586,7 @@ module Prism
     #     1...foo
     #         ^^^
     # If neither right-hand or left-hand side was included, this will be a MissingNode.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def right; end
 
     # The Location of the `..` or `...` operator.
@@ -11595,14 +11595,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11616,16 +11616,16 @@ module Prism
     def initialize(source, node_id, location, flags, numerator, denominator); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11633,17 +11633,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, numerator: Integer, denominator: Integer).returns(RationalNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), numerator: T.unsafe(nil), denominator: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11685,7 +11685,7 @@ module Prism
     sig { returns(Integer) }
     def denominator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11699,16 +11699,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11716,17 +11716,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(RedoNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11740,7 +11740,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11754,16 +11754,16 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11771,17 +11771,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11845,7 +11845,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `content_loc`.
@@ -11854,7 +11854,7 @@ module Prism
 
     # Save the content_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_content_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -11863,7 +11863,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `unescaped` attribute.
@@ -11882,7 +11882,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11897,16 +11897,16 @@ module Prism
     def initialize(source, node_id, location, flags, name, name_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11914,17 +11914,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location).returns(RequiredKeywordParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -11952,10 +11952,10 @@ module Prism
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -11970,16 +11970,16 @@ module Prism
     def initialize(source, node_id, location, flags, name); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -11987,17 +11987,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, name: Symbol).returns(RequiredParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12019,7 +12019,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12033,16 +12033,16 @@ module Prism
     def initialize(source, node_id, location, flags, expression, keyword_loc, rescue_expression); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12050,17 +12050,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, expression: Node, keyword_loc: Location, rescue_expression: Node).returns(RescueModifierNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), keyword_loc: T.unsafe(nil), rescue_expression: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12084,7 +12084,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the `rescue_expression` attribute.
@@ -12095,7 +12095,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12110,20 +12110,20 @@ module Prism
   # `Foo, *splat, Bar` are in the `exceptions` field. `ex` is in the `reference` field.
   class RescueNode < Node
     # Initialize a new RescueNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: T.nilable(Location), reference: T.nilable(T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(RescueNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: ::T.nilable(Location), reference: ::T.nilable(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(RescueNode)).void }
     def initialize(source, node_id, location, flags, keyword_loc, exceptions, operator_loc, reference, then_keyword_loc, statements, subsequent); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12131,17 +12131,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: T.nilable(Location), reference: T.nilable(T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), subsequent: T.nilable(RescueNode)).returns(RescueNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: ::T.nilable(Location), reference: ::T.nilable(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(RescueNode)).returns(RescueNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), exceptions: T.unsafe(nil), operator_loc: T.unsafe(nil), reference: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), subsequent: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12161,7 +12161,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the `exceptions` attribute.
@@ -12169,33 +12169,33 @@ module Prism
     def exceptions; end
 
     # Returns the Location represented by `operator_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def operator_loc; end
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_operator_loc(repository); end
 
     # Returns the `reference` attribute.
-    sig { returns(T.nilable(T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode))) }
+    sig { returns(::T.nilable(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode))) }
     def reference; end
 
     # Returns the Location represented by `then_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
     # Save the then_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_then_keyword_loc(repository); end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Returns the `subsequent` attribute.
-    sig { returns(T.nilable(RescueNode)) }
+    sig { returns(::T.nilable(RescueNode)) }
     def subsequent; end
 
     # Slice the location of keyword_loc from the source.
@@ -12203,14 +12203,14 @@ module Prism
     def keyword; end
 
     # Slice the location of operator_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def operator; end
 
     # Slice the location of then_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12221,20 +12221,20 @@ module Prism
   #     end
   class RestParameterNode < Node
     # Initialize a new RestParameterNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
     def initialize(source, node_id, location, flags, name, name_loc, operator_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12242,17 +12242,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, name: T.nilable(Symbol), name_loc: T.nilable(Location), operator_loc: Location).returns(RestParameterNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).returns(RestParameterNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), name_loc: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12271,16 +12271,16 @@ module Prism
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
-    sig { returns(T.nilable(Symbol)) }
+    sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # Returns the Location represented by `name_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def name_loc; end
 
     # Save the name_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_name_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -12289,14 +12289,14 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12310,16 +12310,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12327,17 +12327,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(RetryNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12351,7 +12351,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12361,20 +12361,20 @@ module Prism
   #     ^^^^^^^^
   class ReturnNode < Node
     # Initialize a new ReturnNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: T.nilable(ArgumentsNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: ::T.nilable(ArgumentsNode)).void }
     def initialize(source, node_id, location, flags, keyword_loc, arguments); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12382,17 +12382,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: T.nilable(ArgumentsNode)).returns(ReturnNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: ::T.nilable(ArgumentsNode)).returns(ReturnNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), arguments: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12412,18 +12412,18 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12437,16 +12437,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12454,17 +12454,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SelfNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12478,7 +12478,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12489,20 +12489,20 @@ module Prism
   #     ^^^^^^^^^^^^
   class ShareableConstantNode < Node
     # Initialize a new ShareableConstantNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, write: T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, write: ::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).void }
     def initialize(source, node_id, location, flags, write); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12510,17 +12510,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, write: T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).returns(ShareableConstantNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, write: ::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).returns(ShareableConstantNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), write: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12547,10 +12547,10 @@ module Prism
     def experimental_copy?; end
 
     # The constant write that should be modified with the shareability state.
-    sig { returns(T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)) }
+    sig { returns(::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)) }
     def write; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12560,20 +12560,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^
   class SingletonClassNode < Node
     # Initialize a new SingletonClassNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, locals, class_keyword_loc, operator_loc, expression, body, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12581,17 +12581,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: T.nilable(T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).returns(SingletonClassNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).returns(SingletonClassNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), class_keyword_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), expression: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12615,7 +12615,7 @@ module Prism
 
     # Save the class_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_class_keyword_loc(repository); end
 
     # Returns the Location represented by `operator_loc`.
@@ -12624,7 +12624,7 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `expression` attribute.
@@ -12632,7 +12632,7 @@ module Prism
     def expression; end
 
     # Returns the `body` attribute.
-    sig { returns(T.nilable(T.any(StatementsNode, BeginNode))) }
+    sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Returns the Location represented by `end_keyword_loc`.
@@ -12641,7 +12641,7 @@ module Prism
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of class_keyword_loc from the source.
@@ -12656,7 +12656,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12670,16 +12670,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12687,17 +12687,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SourceEncodingNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12711,7 +12711,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12725,16 +12725,16 @@ module Prism
     def initialize(source, node_id, location, flags, filepath); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12742,17 +12742,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, filepath: String).returns(SourceFileNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), filepath: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12786,7 +12786,7 @@ module Prism
     sig { returns(String) }
     def filepath; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12800,16 +12800,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12817,17 +12817,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(SourceLineNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12841,7 +12841,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12851,20 +12851,20 @@ module Prism
   #      ^^
   class SplatNode < Node
     # Initialize a new SplatNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: T.nilable(Node)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: ::T.nilable(Node)).void }
     def initialize(source, node_id, location, flags, operator_loc, expression); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12872,17 +12872,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: T.nilable(Node)).returns(SplatNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: ::T.nilable(Node)).returns(SplatNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), operator_loc: T.unsafe(nil), expression: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12902,18 +12902,18 @@ module Prism
 
     # Save the operator_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_operator_loc(repository); end
 
     # Returns the `expression` attribute.
-    sig { returns(T.nilable(Node)) }
+    sig { returns(::T.nilable(Node)) }
     def expression; end
 
     # Slice the location of operator_loc from the source.
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12927,16 +12927,16 @@ module Prism
     def initialize(source, node_id, location, flags, body); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -12944,17 +12944,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, body: T::Array[Node]).returns(StatementsNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), body: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -12972,7 +12972,7 @@ module Prism
     sig { returns(T::Array[Node]) }
     def body; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -12988,20 +12988,20 @@ module Prism
   #      ^^^^      ^^^^
   class StringNode < Node
     # Initialize a new StringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), content_loc: Location, closing_loc: T.nilable(Location), unescaped: String).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13009,17 +13009,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), content_loc: Location, closing_loc: T.nilable(Location), unescaped: String).returns(StringNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(StringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13050,12 +13050,12 @@ module Prism
     def mutable?; end
 
     # Returns the Location represented by `opening_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `content_loc`.
@@ -13064,16 +13064,16 @@ module Prism
 
     # Save the content_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_content_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Returns the `unescaped` attribute.
@@ -13081,7 +13081,7 @@ module Prism
     def unescaped; end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of content_loc from the source.
@@ -13089,10 +13089,10 @@ module Prism
     def content; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13107,20 +13107,20 @@ module Prism
   # If no arguments are provided (except for a block), it would be a `ForwardingSuperNode` instead.
   class SuperNode < Node
     # Initialize a new SuperNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).void }
     def initialize(source, node_id, location, flags, keyword_loc, lparen_loc, arguments, rparen_loc, block); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13128,17 +13128,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location), block: T.nilable(T.any(BlockNode, BlockArgumentNode))).returns(SuperNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).returns(SuperNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), arguments: T.unsafe(nil), rparen_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13158,33 +13158,33 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `lparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # Can be only `nil` when there are empty parentheses, like `super()`.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `rparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # Returns the `block` attribute.
-    sig { returns(T.nilable(T.any(BlockNode, BlockArgumentNode))) }
+    sig { returns(::T.nilable(::T.any(BlockNode, BlockArgumentNode))) }
     def block; end
 
     # Slice the location of keyword_loc from the source.
@@ -13192,14 +13192,14 @@ module Prism
     def keyword; end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13212,20 +13212,20 @@ module Prism
   #        ^^^
   class SymbolNode < Node
     # Initialize a new SymbolNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), value_loc: T.nilable(Location), closing_loc: T.nilable(Location), unescaped: String).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), unescaped: String).void }
     def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13233,17 +13233,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: T.nilable(Location), value_loc: T.nilable(Location), closing_loc: T.nilable(Location), unescaped: String).returns(SymbolNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), unescaped: String).returns(SymbolNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13270,30 +13270,30 @@ module Prism
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `value_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def value_loc; end
 
     # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_value_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Returns the `unescaped` attribute.
@@ -13301,18 +13301,18 @@ module Prism
     def unescaped; end
 
     # Slice the location of opening_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def opening; end
 
     # Slice the location of value_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def value; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13326,16 +13326,16 @@ module Prism
     def initialize(source, node_id, location, flags); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13343,17 +13343,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer).returns(TrueNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13367,7 +13367,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13377,20 +13377,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^
   class UndefNode < Node
     # Initialize a new UndefNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, names: T::Array[T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, names: T::Array[::T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).void }
     def initialize(source, node_id, location, flags, names, keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13398,17 +13398,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, names: T::Array[T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).returns(UndefNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, names: T::Array[::T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).returns(UndefNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), names: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13423,7 +13423,7 @@ module Prism
     def inspect; end
 
     # Returns the `names` attribute.
-    sig { returns(T::Array[T.any(SymbolNode, InterpolatedSymbolNode)]) }
+    sig { returns(T::Array[::T.any(SymbolNode, InterpolatedSymbolNode)]) }
     def names; end
 
     # Returns the Location represented by `keyword_loc`.
@@ -13432,14 +13432,14 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13452,20 +13452,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^^
   class UnlessNode < Node
     # Initialize a new UnlessNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), else_clause: T.nilable(ElseNode), end_keyword_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, keyword_loc, predicate, then_keyword_loc, statements, else_clause, end_keyword_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13473,17 +13473,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode), else_clause: T.nilable(ElseNode), end_keyword_loc: T.nilable(Location)).returns(UnlessNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).returns(UnlessNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), else_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13509,7 +13509,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # The condition to be evaluated for the unless expression. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -13526,12 +13526,12 @@ module Prism
     #
     #     unless cond then bar end
     #                 ^^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
     # Save the then_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_then_keyword_loc(repository); end
 
     # The body of statements that will executed if the unless condition is
@@ -13539,26 +13539,26 @@ module Prism
     #
     #     unless cond then bar end
     #                      ^^^
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # The else clause of the unless expression, if present.
     #
     #     unless cond then bar else baz end
     #                          ^^^^^^^^^^^^
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # The Location of the `end` keyword, if present.
     #
     #     unless cond then bar end
     #                          ^^^
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
     # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
@@ -13566,14 +13566,14 @@ module Prism
     def keyword; end
 
     # Slice the location of then_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
     # Slice the location of end_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13586,20 +13586,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^
   class UntilNode < Node
     # Initialize a new UntilNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
     def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13607,17 +13607,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).returns(UntilNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(UntilNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13641,25 +13641,25 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `do_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def do_keyword_loc; end
 
     # Save the do_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_do_keyword_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Returns the `predicate` attribute.
@@ -13667,7 +13667,7 @@ module Prism
     def predicate; end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Slice the location of keyword_loc from the source.
@@ -13675,14 +13675,14 @@ module Prism
     def keyword; end
 
     # Slice the location of do_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def do_keyword; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13694,20 +13694,20 @@ module Prism
   #     end
   class WhenNode < Node
     # Initialize a new WhenNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).void }
     def initialize(source, node_id, location, flags, keyword_loc, conditions, then_keyword_loc, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13715,17 +13715,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: T.nilable(Location), statements: T.nilable(StatementsNode)).returns(WhenNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).returns(WhenNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), conditions: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13745,7 +13745,7 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the `conditions` attribute.
@@ -13753,16 +13753,16 @@ module Prism
     def conditions; end
 
     # Returns the Location represented by `then_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
     # Save the then_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_then_keyword_loc(repository); end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Slice the location of keyword_loc from the source.
@@ -13770,10 +13770,10 @@ module Prism
     def keyword; end
 
     # Slice the location of then_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13786,20 +13786,20 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^
   class WhileNode < Node
     # Initialize a new WhileNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
     def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13807,17 +13807,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: T.nilable(Location), closing_loc: T.nilable(Location), predicate: Node, statements: T.nilable(StatementsNode)).returns(WhileNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(WhileNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13841,25 +13841,25 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `do_keyword_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def do_keyword_loc; end
 
     # Save the do_keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_do_keyword_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_closing_loc(repository); end
 
     # Returns the `predicate` attribute.
@@ -13867,7 +13867,7 @@ module Prism
     def predicate; end
 
     # Returns the `statements` attribute.
-    sig { returns(T.nilable(StatementsNode)) }
+    sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Slice the location of keyword_loc from the source.
@@ -13875,14 +13875,14 @@ module Prism
     def keyword; end
 
     # Slice the location of do_keyword_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def do_keyword; end
 
     # Slice the location of closing_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13896,16 +13896,16 @@ module Prism
     def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -13913,17 +13913,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
     sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -13951,7 +13951,7 @@ module Prism
 
     # Save the opening_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
     # Returns the Location represented by `content_loc`.
@@ -13960,7 +13960,7 @@ module Prism
 
     # Save the content_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_content_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
@@ -13969,7 +13969,7 @@ module Prism
 
     # Save the closing_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_closing_loc(repository); end
 
     # Returns the `unescaped` attribute.
@@ -13988,7 +13988,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
@@ -13998,20 +13998,20 @@ module Prism
   #     ^^^^^^^
   class YieldNode < Node
     # Initialize a new YieldNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location)).void }
     def initialize(source, node_id, location, flags, keyword_loc, lparen_loc, arguments, rparen_loc); end
 
     # See Node.accept.
-    sig { override.params(visitor: Visitor).returns(T.untyped) }
+    sig { override.params(visitor: Visitor).returns(::T.untyped) }
     def accept(visitor); end
 
     # See Node.child_nodes.
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def child_nodes; end
 
     # See Node.each_child_node.
     sig { override.returns(T::Enumerator[Node]) }
-    sig { override.params(blk: T.proc.params(arg0: Node).void).void }
+    sig { override.params(blk: ::T.proc.params(arg0: Node).void).void }
     def each_child_node(&blk); end
 
     # See Node.compact_child_nodes.
@@ -14019,17 +14019,17 @@ module Prism
     def compact_child_nodes; end
 
     # See Node.comment_targets.
-    sig { override.returns(T::Array[T.any(Node, Location)]) }
+    sig { override.returns(T::Array[::T.any(Node, Location)]) }
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: T.nilable(Location), arguments: T.nilable(ArgumentsNode), rparen_loc: T.nilable(Location)).returns(YieldNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location)).returns(YieldNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), arguments: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
 
-    sig { override.returns(T::Array[T.nilable(Node)]) }
+    sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
 
-    sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+    sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
 
     # See `Node#type`.
@@ -14049,29 +14049,29 @@ module Prism
 
     # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(Relocation::Entry) }
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_keyword_loc(repository); end
 
     # Returns the Location represented by `lparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
     # Save the lparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_lparen_loc(repository); end
 
     # Returns the `arguments` attribute.
-    sig { returns(T.nilable(ArgumentsNode)) }
+    sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Returns the Location represented by `rparen_loc`.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
     # Save the rparen_loc location using the given saved source so that
     # it can be retrieved later.
-    sig { params(repository: T.untyped).returns(T.nilable(Relocation::Entry)) }
+    sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_rparen_loc(repository); end
 
     # Slice the location of keyword_loc from the source.
@@ -14079,192 +14079,192 @@ module Prism
     def keyword; end
 
     # Slice the location of lparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def lparen; end
 
     # Slice the location of rparen_loc from the source.
-    sig { returns(T.nilable(String)) }
+    sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: T.untyped).returns(T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
   end
 
   # Flags for arguments nodes.
   module ArgumentsNodeFlags
     # if the arguments contain forwarding
-    CONTAINS_FORWARDING = T.let(nil, T.untyped)
+    CONTAINS_FORWARDING = T.let(nil, ::T.untyped)
 
     # if the arguments contain keywords
-    CONTAINS_KEYWORDS = T.let(nil, T.untyped)
+    CONTAINS_KEYWORDS = T.let(nil, ::T.untyped)
 
     # if the arguments contain a keyword splat
-    CONTAINS_KEYWORD_SPLAT = T.let(nil, T.untyped)
+    CONTAINS_KEYWORD_SPLAT = T.let(nil, ::T.untyped)
 
     # if the arguments contain a splat
-    CONTAINS_SPLAT = T.let(nil, T.untyped)
+    CONTAINS_SPLAT = T.let(nil, ::T.untyped)
 
     # if the arguments contain multiple splats
-    CONTAINS_MULTIPLE_SPLATS = T.let(nil, T.untyped)
+    CONTAINS_MULTIPLE_SPLATS = T.let(nil, ::T.untyped)
   end
 
   # Flags for array nodes.
   module ArrayNodeFlags
     # if array contains splat nodes
-    CONTAINS_SPLAT = T.let(nil, T.untyped)
+    CONTAINS_SPLAT = T.let(nil, ::T.untyped)
   end
 
   # Flags for call nodes.
   module CallNodeFlags
     # &. operator
-    SAFE_NAVIGATION = T.let(nil, T.untyped)
+    SAFE_NAVIGATION = T.let(nil, ::T.untyped)
 
     # a call that could have been a local variable
-    VARIABLE_CALL = T.let(nil, T.untyped)
+    VARIABLE_CALL = T.let(nil, ::T.untyped)
 
     # a call that is an attribute write, so the value being written should be returned
-    ATTRIBUTE_WRITE = T.let(nil, T.untyped)
+    ATTRIBUTE_WRITE = T.let(nil, ::T.untyped)
 
     # a call that ignores method visibility
-    IGNORE_VISIBILITY = T.let(nil, T.untyped)
+    IGNORE_VISIBILITY = T.let(nil, ::T.untyped)
   end
 
   # Flags for nodes that have unescaped content.
   module EncodingFlags
     # internal bytes forced the encoding to UTF-8
-    FORCED_UTF8_ENCODING = T.let(nil, T.untyped)
+    FORCED_UTF8_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to binary
-    FORCED_BINARY_ENCODING = T.let(nil, T.untyped)
+    FORCED_BINARY_ENCODING = T.let(nil, ::T.untyped)
   end
 
   # Flags for integer nodes that correspond to the base of the integer.
   module IntegerBaseFlags
     # 0b prefix
-    BINARY = T.let(nil, T.untyped)
+    BINARY = T.let(nil, ::T.untyped)
 
     # 0d or no prefix
-    DECIMAL = T.let(nil, T.untyped)
+    DECIMAL = T.let(nil, ::T.untyped)
 
     # 0o or 0 prefix
-    OCTAL = T.let(nil, T.untyped)
+    OCTAL = T.let(nil, ::T.untyped)
 
     # 0x prefix
-    HEXADECIMAL = T.let(nil, T.untyped)
+    HEXADECIMAL = T.let(nil, ::T.untyped)
   end
 
   # Flags for interpolated string nodes that indicated mutability if they are also marked as literals.
   module InterpolatedStringNodeFlags
     # frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`
-    FROZEN = T.let(nil, T.untyped)
+    FROZEN = T.let(nil, ::T.untyped)
 
     # mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`
-    MUTABLE = T.let(nil, T.untyped)
+    MUTABLE = T.let(nil, ::T.untyped)
   end
 
   # Flags for keyword hash nodes.
   module KeywordHashNodeFlags
     # a keyword hash which only has `AssocNode` elements all with symbol keys, which means the elements can be treated as keyword arguments
-    SYMBOL_KEYS = T.let(nil, T.untyped)
+    SYMBOL_KEYS = T.let(nil, ::T.untyped)
   end
 
   # Flags for while and until loop nodes.
   module LoopFlags
     # a loop after a begin statement, so the body is executed first before the condition
-    BEGIN_MODIFIER = T.let(nil, T.untyped)
+    BEGIN_MODIFIER = T.let(nil, ::T.untyped)
   end
 
   # Flags for parameter nodes.
   module ParameterFlags
     # a parameter name that has been repeated in the method signature
-    REPEATED_PARAMETER = T.let(nil, T.untyped)
+    REPEATED_PARAMETER = T.let(nil, ::T.untyped)
   end
 
   # Flags for parentheses nodes.
   module ParenthesesNodeFlags
     # parentheses that contain multiple potentially void statements
-    MULTIPLE_STATEMENTS = T.let(nil, T.untyped)
+    MULTIPLE_STATEMENTS = T.let(nil, ::T.untyped)
   end
 
   # Flags for range and flip-flop nodes.
   module RangeFlags
     # ... operator
-    EXCLUDE_END = T.let(nil, T.untyped)
+    EXCLUDE_END = T.let(nil, ::T.untyped)
   end
 
   # Flags for regular expression and match last line nodes.
   module RegularExpressionFlags
     # i - ignores the case of characters when matching
-    IGNORE_CASE = T.let(nil, T.untyped)
+    IGNORE_CASE = T.let(nil, ::T.untyped)
 
     # x - ignores whitespace and allows comments in regular expressions
-    EXTENDED = T.let(nil, T.untyped)
+    EXTENDED = T.let(nil, ::T.untyped)
 
     # m - allows $ to match the end of lines within strings
-    MULTI_LINE = T.let(nil, T.untyped)
+    MULTI_LINE = T.let(nil, ::T.untyped)
 
     # o - only interpolates values into the regular expression once
-    ONCE = T.let(nil, T.untyped)
+    ONCE = T.let(nil, ::T.untyped)
 
     # e - forces the EUC-JP encoding
-    EUC_JP = T.let(nil, T.untyped)
+    EUC_JP = T.let(nil, ::T.untyped)
 
     # n - forces the ASCII-8BIT encoding
-    ASCII_8BIT = T.let(nil, T.untyped)
+    ASCII_8BIT = T.let(nil, ::T.untyped)
 
     # s - forces the Windows-31J encoding
-    WINDOWS_31J = T.let(nil, T.untyped)
+    WINDOWS_31J = T.let(nil, ::T.untyped)
 
     # u - forces the UTF-8 encoding
-    UTF_8 = T.let(nil, T.untyped)
+    UTF_8 = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to UTF-8
-    FORCED_UTF8_ENCODING = T.let(nil, T.untyped)
+    FORCED_UTF8_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to binary
-    FORCED_BINARY_ENCODING = T.let(nil, T.untyped)
+    FORCED_BINARY_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to US-ASCII
-    FORCED_US_ASCII_ENCODING = T.let(nil, T.untyped)
+    FORCED_US_ASCII_ENCODING = T.let(nil, ::T.untyped)
   end
 
   # Flags for shareable constant nodes.
   module ShareableConstantNodeFlags
     # constant writes that should be modified with shareable constant value literal
-    LITERAL = T.let(nil, T.untyped)
+    LITERAL = T.let(nil, ::T.untyped)
 
     # constant writes that should be modified with shareable constant value experimental everything
-    EXPERIMENTAL_EVERYTHING = T.let(nil, T.untyped)
+    EXPERIMENTAL_EVERYTHING = T.let(nil, ::T.untyped)
 
     # constant writes that should be modified with shareable constant value experimental copy
-    EXPERIMENTAL_COPY = T.let(nil, T.untyped)
+    EXPERIMENTAL_COPY = T.let(nil, ::T.untyped)
   end
 
   # Flags for string nodes.
   module StringFlags
     # internal bytes forced the encoding to UTF-8
-    FORCED_UTF8_ENCODING = T.let(nil, T.untyped)
+    FORCED_UTF8_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to binary
-    FORCED_BINARY_ENCODING = T.let(nil, T.untyped)
+    FORCED_BINARY_ENCODING = T.let(nil, ::T.untyped)
 
     # frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`
-    FROZEN = T.let(nil, T.untyped)
+    FROZEN = T.let(nil, ::T.untyped)
 
     # mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`
-    MUTABLE = T.let(nil, T.untyped)
+    MUTABLE = T.let(nil, ::T.untyped)
   end
 
   # Flags for symbol nodes.
   module SymbolFlags
     # internal bytes forced the encoding to UTF-8
-    FORCED_UTF8_ENCODING = T.let(nil, T.untyped)
+    FORCED_UTF8_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to binary
-    FORCED_BINARY_ENCODING = T.let(nil, T.untyped)
+    FORCED_BINARY_ENCODING = T.let(nil, ::T.untyped)
 
     # internal bytes forced the encoding to US-ASCII
-    FORCED_US_ASCII_ENCODING = T.let(nil, T.untyped)
+    FORCED_US_ASCII_ENCODING = T.let(nil, ::T.untyped)
   end
 
   # The flags that are common to all nodes.

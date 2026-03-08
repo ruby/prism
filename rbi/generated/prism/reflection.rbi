@@ -83,7 +83,7 @@ module Prism
     end
 
     # Returns the fields for the given node.
-    sig { params(node: T.class_of(Node)).returns(T::Array[Field]) }
+    sig { params(node: ::T.class_of(Node)).returns(T::Array[Field]) }
     def self.fields_for(node); end
   end
 end

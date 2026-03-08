@@ -49,14 +49,14 @@ module Prism
       sig { returns(Integer) }
       attr_reader :size
 
-      sig { params(input: String, serialized: String, base: Integer, size: Integer).void }
-      def initialize(input, serialized, base, size); end
+      sig { params(serialized: String, base: Integer, size: Integer).void }
+      def initialize(serialized, base, size); end
 
       sig { params(index: Integer, encoding: Encoding).returns(Symbol) }
       def get(index, encoding); end
     end
 
-    FastStringIO = T.let(nil, T.untyped)
+    FastStringIO = T.let(nil, ::T.untyped)
 
     class Loader
       sig { returns(String) }
@@ -126,11 +126,8 @@ module Prism
       sig { returns(Integer) }
       def load_uint32; end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(T.nilable(Node)) }
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(::T.nilable(Node)) }
       def load_optional_node(constant_pool, encoding, freeze); end
-
-      sig { params(encoding: Encoding).returns(String) }
-      def load_embedded_string(encoding); end
 
       sig { params(encoding: Encoding).returns(String) }
       def load_string(encoding); end
@@ -147,16 +144,16 @@ module Prism
       # Load an optional location object from the serialized data if it is
       # present. Note that we are lying about the signature a bit here, because
       # we sometimes load it as a packed integer instead of an object.
-      sig { params(freeze: T::Boolean).returns(T.nilable(Location)) }
+      sig { params(freeze: T::Boolean).returns(::T.nilable(Location)) }
       def load_optional_location(freeze); end
 
-      sig { params(freeze: T::Boolean).returns(T.nilable(Location)) }
+      sig { params(freeze: T::Boolean).returns(::T.nilable(Location)) }
       def load_optional_location_object(freeze); end
 
       sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(Symbol) }
       def load_constant(constant_pool, encoding); end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(T.nilable(Symbol)) }
+      sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(::T.nilable(Symbol)) }
       def load_optional_constant(constant_pool, encoding); end
 
       sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(Node) }
@@ -167,6 +164,6 @@ module Prism
     end
 
     # The token types that can be indexed by their enum values.
-    TOKEN_TYPES = T.let(nil, T::Array[T.nilable(Symbol)])
+    TOKEN_TYPES = T.let(nil, T::Array[::T.nilable(Symbol)])
   end
 end

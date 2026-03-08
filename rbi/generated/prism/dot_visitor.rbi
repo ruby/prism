@@ -8,13 +8,13 @@ module Prism
       sig { returns(String) }
       attr_reader :name
 
-      sig { returns(T.nilable(String)) }
+      sig { returns(::T.nilable(String)) }
       attr_reader :value
 
       sig { returns(T::Boolean) }
       attr_reader :port
 
-      sig { params(name: String, value: T.nilable(String), port: T::Boolean).void }
+      sig { params(name: String, value: ::T.nilable(String), port: T::Boolean).void }
       def initialize(name, value, port); end
 
       sig { returns(String) }
@@ -31,7 +31,7 @@ module Prism
       sig { params(name: String).void }
       def initialize(name); end
 
-      sig { params(name: String, value: T.nilable(String), port: T::Boolean).void }
+      sig { params(name: String, value: ::T.nilable(String), port: T::Boolean).void }
       def field(name, value = T.unsafe(nil), port: T.unsafe(nil)); end
 
       sig { returns(String) }
@@ -552,7 +552,7 @@ module Prism
 
     # Inspect a node that has call_node_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(CallAndWriteNode, CallNode, CallOperatorWriteNode, CallOrWriteNode, CallTargetNode, IndexAndWriteNode, IndexOperatorWriteNode, IndexOrWriteNode, IndexTargetNode)).returns(String) }
+    sig { params(node: ::T.any(CallAndWriteNode, CallNode, CallOperatorWriteNode, CallOrWriteNode, CallTargetNode, IndexAndWriteNode, IndexOperatorWriteNode, IndexOrWriteNode, IndexTargetNode)).returns(String) }
     private def call_node_flags_inspect(node); end
 
     # Inspect a node that has encoding_flags flags to display the flags as a
@@ -562,7 +562,7 @@ module Prism
 
     # Inspect a node that has integer_base_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(IntegerNode, RationalNode)).returns(String) }
+    sig { params(node: ::T.any(IntegerNode, RationalNode)).returns(String) }
     private def integer_base_flags_inspect(node); end
 
     # Inspect a node that has interpolated_string_node_flags flags to display the flags as a
@@ -577,12 +577,12 @@ module Prism
 
     # Inspect a node that has loop_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(UntilNode, WhileNode)).returns(String) }
+    sig { params(node: ::T.any(UntilNode, WhileNode)).returns(String) }
     private def loop_flags_inspect(node); end
 
     # Inspect a node that has parameter_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(BlockLocalVariableNode, BlockParameterNode, KeywordRestParameterNode, OptionalKeywordParameterNode, OptionalParameterNode, RequiredKeywordParameterNode, RequiredParameterNode, RestParameterNode)).returns(String) }
+    sig { params(node: ::T.any(BlockLocalVariableNode, BlockParameterNode, KeywordRestParameterNode, OptionalKeywordParameterNode, OptionalParameterNode, RequiredKeywordParameterNode, RequiredParameterNode, RestParameterNode)).returns(String) }
     private def parameter_flags_inspect(node); end
 
     # Inspect a node that has parentheses_node_flags flags to display the flags as a
@@ -592,12 +592,12 @@ module Prism
 
     # Inspect a node that has range_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(FlipFlopNode, RangeNode)).returns(String) }
+    sig { params(node: ::T.any(FlipFlopNode, RangeNode)).returns(String) }
     private def range_flags_inspect(node); end
 
     # Inspect a node that has regular_expression_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(InterpolatedMatchLastLineNode, InterpolatedRegularExpressionNode, MatchLastLineNode, RegularExpressionNode)).returns(String) }
+    sig { params(node: ::T.any(InterpolatedMatchLastLineNode, InterpolatedRegularExpressionNode, MatchLastLineNode, RegularExpressionNode)).returns(String) }
     private def regular_expression_flags_inspect(node); end
 
     # Inspect a node that has shareable_constant_node_flags flags to display the flags as a
@@ -607,7 +607,7 @@ module Prism
 
     # Inspect a node that has string_flags flags to display the flags as a
     # comma-separated list.
-    sig { params(node: T.any(SourceFileNode, StringNode)).returns(String) }
+    sig { params(node: ::T.any(SourceFileNode, StringNode)).returns(String) }
     private def string_flags_inspect(node); end
 
     # Inspect a node that has symbol_flags flags to display the flags as a

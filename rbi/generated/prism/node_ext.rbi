@@ -45,25 +45,25 @@ module Prism
 
   module HeredocQuery
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { params(opening: T.nilable(String)).returns(T.nilable(T::Boolean)) }
+    sig { params(opening: ::T.nilable(String)).returns(::T.nilable(T::Boolean)) }
     def self.heredoc?(opening); end
   end
 
   class InterpolatedStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(T::Boolean)) }
     def heredoc?; end
   end
 
   class InterpolatedXStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(T::Boolean)) }
     def heredoc?; end
   end
 
   class StringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(T::Boolean)) }
     def heredoc?; end
 
     # Occasionally it's helpful to treat a string as if it were interpolated so
@@ -74,7 +74,7 @@ module Prism
 
   class XStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(T::Boolean)) }
     def heredoc?; end
 
     # Occasionally it's helpful to treat a string as if it were interpolated so
@@ -96,7 +96,7 @@ module Prism
 
     # Returns the value of the node as an IntegerNode or a FloatNode. This
     # method is deprecated in favor of #value or #numerator/#denominator.
-    sig { returns(T.any(IntegerNode, FloatNode)) }
+    sig { returns(::T.any(IntegerNode, FloatNode)) }
     def numeric; end
   end
 
@@ -148,7 +148,7 @@ module Prism
     # Previously, we had a child node on this class that contained either a
     # constant read or a missing node. To not cause a breaking change, we
     # continue to supply that API.
-    sig { returns(T.any(ConstantReadNode, MissingNode)) }
+    sig { returns(::T.any(ConstantReadNode, MissingNode)) }
     def child; end
   end
 
@@ -165,7 +165,7 @@ module Prism
     # Previously, we had a child node on this class that contained either a
     # constant read or a missing node. To not cause a breaking change, we
     # continue to supply that API.
-    sig { returns(T.any(ConstantReadNode, MissingNode)) }
+    sig { returns(::T.any(ConstantReadNode, MissingNode)) }
     def child; end
   end
 
@@ -182,7 +182,7 @@ module Prism
 
   class ParametersNode < Node
     # Mirrors the Method#parameters method.
-    sig { returns(T::Array[T.any([Symbol, Symbol], [Symbol])]) }
+    sig { returns(T::Array[::T.any([Symbol, Symbol], [Symbol])]) }
     def signature; end
   end
 
@@ -196,7 +196,7 @@ module Prism
     # can be any amount of space between the message and the = sign. However,
     # sometimes you want the location of the full message including the inner
     # space and the = sign. This method provides that.
-    sig { returns(T.nilable(Location)) }
+    sig { returns(::T.nilable(Location)) }
     def full_message_loc; end
   end
 
@@ -299,35 +299,35 @@ module Prism
   class CaseMatchNode < Node
     # Returns the else clause of the case match node. This method is deprecated
     # in favor of #else_clause.
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def consequent; end
   end
 
   class CaseNode < Node
     # Returns the else clause of the case node. This method is deprecated in
     # favor of #else_clause.
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def consequent; end
   end
 
   class IfNode < Node
     # Returns the subsequent if/elsif/else clause of the if node. This method is
     # deprecated in favor of #subsequent.
-    sig { returns(T.nilable(T.any(IfNode, ElseNode))) }
+    sig { returns(::T.nilable(::T.any(IfNode, ElseNode))) }
     def consequent; end
   end
 
   class RescueNode < Node
     # Returns the subsequent rescue clause of the rescue node. This method is
     # deprecated in favor of #subsequent.
-    sig { returns(T.nilable(RescueNode)) }
+    sig { returns(::T.nilable(RescueNode)) }
     def consequent; end
   end
 
   class UnlessNode < Node
     # Returns the else clause of the unless node. This method is deprecated in
     # favor of #else_clause.
-    sig { returns(T.nilable(ElseNode)) }
+    sig { returns(::T.nilable(ElseNode)) }
     def consequent; end
   end
 end

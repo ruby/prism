@@ -4,7 +4,7 @@ module Prism
   class DesugarAndWriteNode
     include DSL
 
-    sig { returns(T.any(ClassVariableAndWriteNode, ConstantAndWriteNode, GlobalVariableAndWriteNode, InstanceVariableAndWriteNode, LocalVariableAndWriteNode)) }
+    sig { returns(::T.any(ClassVariableAndWriteNode, ConstantAndWriteNode, GlobalVariableAndWriteNode, InstanceVariableAndWriteNode, LocalVariableAndWriteNode)) }
     attr_reader :node
 
     sig { returns(Source) }
@@ -16,10 +16,10 @@ module Prism
     sig { returns(Symbol) }
     attr_reader :write_class
 
-    sig { returns(T::Hash[Symbol, T.untyped]) }
+    sig { returns(T::Hash[Symbol, ::T.untyped]) }
     attr_reader :arguments
 
-    sig { params(node: T.any(ClassVariableAndWriteNode, ConstantAndWriteNode, GlobalVariableAndWriteNode, InstanceVariableAndWriteNode, LocalVariableAndWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: T.untyped).void }
+    sig { params(node: ::T.any(ClassVariableAndWriteNode, ConstantAndWriteNode, GlobalVariableAndWriteNode, InstanceVariableAndWriteNode, LocalVariableAndWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: ::T.untyped).void }
     def initialize(node, default_source, read_class, write_class, **arguments); end
 
     # Desugar `x &&= y` to `x && x = y`
@@ -30,7 +30,7 @@ module Prism
   class DesugarOrWriteDefinedNode
     include DSL
 
-    sig { returns(T.any(ClassVariableOrWriteNode, ConstantOrWriteNode, GlobalVariableOrWriteNode)) }
+    sig { returns(::T.any(ClassVariableOrWriteNode, ConstantOrWriteNode, GlobalVariableOrWriteNode)) }
     attr_reader :node
 
     sig { returns(Source) }
@@ -42,10 +42,10 @@ module Prism
     sig { returns(Symbol) }
     attr_reader :write_class
 
-    sig { returns(T::Hash[Symbol, T.untyped]) }
+    sig { returns(T::Hash[Symbol, ::T.untyped]) }
     attr_reader :arguments
 
-    sig { params(node: T.any(ClassVariableOrWriteNode, ConstantOrWriteNode, GlobalVariableOrWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: T.untyped).void }
+    sig { params(node: ::T.any(ClassVariableOrWriteNode, ConstantOrWriteNode, GlobalVariableOrWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: ::T.untyped).void }
     def initialize(node, default_source, read_class, write_class, **arguments); end
 
     # Desugar `x ||= y` to `defined?(x) ? x : x = y`
@@ -56,7 +56,7 @@ module Prism
   class DesugarOperatorWriteNode
     include DSL
 
-    sig { returns(T.any(ClassVariableOperatorWriteNode, ConstantOperatorWriteNode, GlobalVariableOperatorWriteNode, InstanceVariableOperatorWriteNode, LocalVariableOperatorWriteNode)) }
+    sig { returns(::T.any(ClassVariableOperatorWriteNode, ConstantOperatorWriteNode, GlobalVariableOperatorWriteNode, InstanceVariableOperatorWriteNode, LocalVariableOperatorWriteNode)) }
     attr_reader :node
 
     sig { returns(Source) }
@@ -68,10 +68,10 @@ module Prism
     sig { returns(Symbol) }
     attr_reader :write_class
 
-    sig { returns(T::Hash[Symbol, T.untyped]) }
+    sig { returns(T::Hash[Symbol, ::T.untyped]) }
     attr_reader :arguments
 
-    sig { params(node: T.any(ClassVariableOperatorWriteNode, ConstantOperatorWriteNode, GlobalVariableOperatorWriteNode, InstanceVariableOperatorWriteNode, LocalVariableOperatorWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: T.untyped).void }
+    sig { params(node: ::T.any(ClassVariableOperatorWriteNode, ConstantOperatorWriteNode, GlobalVariableOperatorWriteNode, InstanceVariableOperatorWriteNode, LocalVariableOperatorWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: ::T.untyped).void }
     def initialize(node, default_source, read_class, write_class, **arguments); end
 
     # Desugar `x += y` to `x = x + y`
@@ -82,7 +82,7 @@ module Prism
   class DesugarOrWriteNode
     include DSL
 
-    sig { returns(T.any(InstanceVariableOrWriteNode, LocalVariableOrWriteNode)) }
+    sig { returns(::T.any(InstanceVariableOrWriteNode, LocalVariableOrWriteNode)) }
     attr_reader :node
 
     sig { returns(Source) }
@@ -94,10 +94,10 @@ module Prism
     sig { returns(Symbol) }
     attr_reader :write_class
 
-    sig { returns(T::Hash[Symbol, T.untyped]) }
+    sig { returns(T::Hash[Symbol, ::T.untyped]) }
     attr_reader :arguments
 
-    sig { params(node: T.any(InstanceVariableOrWriteNode, LocalVariableOrWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: T.untyped).void }
+    sig { params(node: ::T.any(InstanceVariableOrWriteNode, LocalVariableOrWriteNode), default_source: Source, read_class: Symbol, write_class: Symbol, arguments: ::T.untyped).void }
     def initialize(node, default_source, read_class, write_class, **arguments); end
 
     # Desugar `x ||= y` to `x || x = y`

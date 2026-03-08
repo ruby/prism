@@ -22,7 +22,7 @@ module Prism
 
     # The list of commands that we need to execute in order to compose the
     # final string.
-    sig { returns(T::Array[[T.any(String, Node, Replace), String]]) }
+    sig { returns(T::Array[[::T.any(String, Node, Replace), String]]) }
     attr_reader :commands
 
     sig { params(indent: String).void }
@@ -497,7 +497,7 @@ module Prism
     private def inspect_node(name, node); end
 
     # Compose a string representing the given inner location field.
-    sig { params(location: T.nilable(Location)).returns(String) }
+    sig { params(location: ::T.nilable(Location)).returns(String) }
     private def inspect_location(location); end
   end
 end

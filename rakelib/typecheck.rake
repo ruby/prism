@@ -345,11 +345,14 @@ namespace :typecheck do
 
   desc "Typecheck with Sorbet"
   task sorbet: :templates do
+    require "fileutils"
+
     locals = {
       polyfills: Dir["lib/prism/polyfill/**/*.rb"],
       gem_rbis: Dir["sorbet/rbi/**/*.rbi"]
     }
 
+    FileUtils.mkdir_p("sorbet")
     File.write("sorbet/typed_overrides.yml", ERB.new(<<~YAML, trim_mode: "-").result_with_hash(locals))
       false:
         - ./lib/prism/lex_compat.rb
