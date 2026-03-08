@@ -23,7 +23,7 @@ task compile_no_debug: %i[make_no_debug compile]
 task compile_minimal: %i[make_minimal compile]
 
 # decorate the gem build task with prerequisites
-task build: [:check_manifest, :templates]
+task build: [:check_manifest, :templates, "typecheck:rbs_inline", "typecheck:rbi"]
 
 # the C extension
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created

@@ -50,6 +50,8 @@ jobs:
       with:
         ruby-version: "3.4"
         bundler-cache: true
+    - name: Generate types
+      run: bundle exec rake typecheck:rbs_inline typecheck:rbi
     - name: Check Sorbet
       run: bundle exec rake typecheck:tapioca typecheck:sorbet
     - name: Check Steep
