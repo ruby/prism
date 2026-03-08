@@ -45,7 +45,7 @@ elsif RUBY_ENGINE == "jruby"
     ext.name = "prism"
     ext.ext_dir = "java"
     ext.lib_dir = "tmp"
-    ext.release = "8"
+    ext.release = "21"
     ext.gem_spec = Gem::Specification.load("prism.gemspec")
   end
 end
