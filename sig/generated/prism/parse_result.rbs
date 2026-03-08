@@ -697,6 +697,8 @@ module Prism
     # token of an unclosed construct rather than at the end of the source. These
     # errors always indicate incomplete input regardless of their byte position,
     # so they are checked by type rather than by location.
+    # --
+    # : Array[Symbol]
     CONTINUABLE: untyped
 
     # Create a code units cache for the given encoding.

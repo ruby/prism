@@ -63,7 +63,7 @@ module Prism
     # matches the pattern. If no block is given, an enumerator will be returned
     # that will yield each node that matches the pattern.
     sig { params(root: Node).returns(T::Enumerator[Node]) }
-    sig { params(root: Node, blk: T.proc.params(arg0: Node).void).void }
+    sig { params(root: Node, blk: ::T.proc.params(arg0: Node).void).void }
     def scan(root, &blk); end
 
     # Shortcut for combining two procs into one that returns true if both return
@@ -79,7 +79,7 @@ module Prism
     # Raise an error because the given node is not supported. Note purposefully
     # not typing this method since it is a no return method that Steep does not
     # understand.
-    sig { params(node: Node).returns(T.noreturn) }
+    sig { params(node: Node).returns(::T.noreturn) }
     private def compile_error(node); end
 
     # in [foo, bar, baz]
@@ -100,7 +100,7 @@ module Prism
     private def compile_constant_read_node(node); end
 
     # Compile a name associated with a constant.
-    sig { params(node: T.any(ConstantPathNode, ConstantReadNode), name: Symbol).returns(Proc) }
+    sig { params(node: ::T.any(ConstantPathNode, ConstantReadNode), name: Symbol).returns(Proc) }
     private def compile_constant_name(node, name); end
 
     # in InstanceVariableReadNode[name: Symbol]

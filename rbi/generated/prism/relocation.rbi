@@ -102,26 +102,26 @@ module Prism
       # Reify the values on this entry with the given values. This is an
       # internal-only API that is called from the repository when it is time to
       # reify the values.
-      sig { params(values: T::Hash[Symbol, T.untyped]).void }
+      sig { params(values: T::Hash[Symbol, ::T.untyped]).void }
       def reify!(values); end
 
       # Fetch a value from the entry, raising an error if it is missing.
-      sig { params(name: Symbol).returns(T.untyped) }
+      sig { params(name: Symbol).returns(::T.untyped) }
       private def fetch_value(name); end
 
       # Return the values from the repository, reifying them if necessary.
-      sig { returns(T::Hash[Symbol, T.untyped]) }
+      sig { returns(T::Hash[Symbol, ::T.untyped]) }
       private def values; end
     end
 
     # Represents the source of a repository that will be reparsed.
     class Source
       # The value that will need to be reparsed.
-      sig { returns(T.untyped) }
+      sig { returns(::T.untyped) }
       attr_reader :value
 
       # Initialize the source with the given value.
-      sig { params(value: T.untyped).void }
+      sig { params(value: ::T.untyped).void }
       def initialize(value); end
 
       # Reparse the value and return the parse result.
@@ -129,7 +129,7 @@ module Prism
       def result; end
 
       # Create a code units cache for the given encoding.
-      sig { params(encoding: Encoding).returns(T.untyped) }
+      sig { params(encoding: Encoding).returns(::T.untyped) }
       def code_units_cache(encoding); end
     end
 
@@ -158,28 +158,28 @@ module Prism
       def initialize(value); end
 
       # Fetch the file path.
-      sig { params(_value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(_value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(_value); end
     end
 
     # A field representing the start and end lines.
     class LinesField
       # Fetches the start and end line of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
     # A field representing the start and end byte offsets.
     class OffsetsField
       # Fetches the start and end byte offset of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
     # A field representing the start and end character offsets.
     class CharacterOffsetsField
       # Fetches the start and end character offset of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
@@ -200,25 +200,25 @@ module Prism
 
       # Fetches the start and end code units offset of a value for a particular
       # encoding.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
 
       # Lazily create a code units cache for the associated encoding.
-      sig { returns(T.untyped) }
+      sig { returns(::T.untyped) }
       private def cache; end
     end
 
     # A field representing the start and end byte columns.
     class ColumnsField
       # Fetches the start and end byte column of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
     # A field representing the start and end character columns.
     class CharacterColumnsField
       # Fetches the start and end character column of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
@@ -240,11 +240,11 @@ module Prism
 
       # Fetches the start and end code units column of a value for a particular
       # encoding.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
 
       # Lazily create a code units cache for the associated encoding.
-      sig { returns(T.untyped) }
+      sig { returns(::T.untyped) }
       private def cache; end
     end
 
@@ -263,21 +263,21 @@ module Prism
       end
 
       # Create comment objects from the given values.
-      sig { params(values: T.untyped).returns(T::Array[Comment]) }
+      sig { params(values: ::T.untyped).returns(T::Array[Comment]) }
       private def comments(values); end
     end
 
     # A field representing the leading comments.
     class LeadingCommentsField < CommentsField
       # Fetches the leading comments of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
     # A field representing the trailing comments.
     class TrailingCommentsField < CommentsField
       # Fetches the trailing comments of a value.
-      sig { params(value: T.untyped).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
       def fields(value); end
     end
 
@@ -294,7 +294,7 @@ module Prism
       attr_reader :source
 
       # The fields that have been configured on this repository.
-      sig { returns(T::Hash[Symbol, T.untyped]) }
+      sig { returns(T::Hash[Symbol, ::T.untyped]) }
       attr_reader :fields
 
       # The entries that have been saved on this repository.
@@ -306,58 +306,58 @@ module Prism
       def initialize(source); end
 
       # Create a code units cache for the given encoding from the source.
-      sig { params(encoding: Encoding).returns(T.untyped) }
+      sig { params(encoding: Encoding).returns(::T.untyped) }
       def code_units_cache(encoding); end
 
       # Configure the filepath field for this repository and return self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def filepath; end
 
       # Configure the lines field for this repository and return self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def lines; end
 
       # Configure the offsets field for this repository and return self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def offsets; end
 
       # Configure the character offsets field for this repository and return
       # self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def character_offsets; end
 
       # Configure the code unit offsets field for this repository for a specific
       # encoding and return self.
-      sig { params(encoding: Encoding).returns(T.self_type) }
+      sig { params(encoding: Encoding).returns(::T.self_type) }
       def code_unit_offsets(encoding); end
 
       # Configure the columns field for this repository and return self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def columns; end
 
       # Configure the character columns field for this repository and return
       # self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def character_columns; end
 
       # Configure the code unit columns field for this repository for a specific
       # encoding and return self.
-      sig { params(encoding: Encoding).returns(T.self_type) }
+      sig { params(encoding: Encoding).returns(::T.self_type) }
       def code_unit_columns(encoding); end
 
       # Configure the leading comments field for this repository and return
       # self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def leading_comments; end
 
       # Configure the trailing comments field for this repository and return
       # self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def trailing_comments; end
 
       # Configure both the leading and trailing comment fields for this
       # repository and return self.
-      sig { returns(T.self_type) }
+      sig { returns(::T.self_type) }
       def comments; end
 
       # This method is called from nodes and locations when they want to enter
@@ -374,7 +374,7 @@ module Prism
 
       # Append the given field to the repository and return the repository so
       # that these calls can be chained.
-      sig { params(name: Symbol, arg0: T.untyped).returns(T.self_type) }
+      sig { params(name: Symbol, arg0: ::T.untyped).returns(::T.self_type) }
       private def field(name, arg0); end
     end
 

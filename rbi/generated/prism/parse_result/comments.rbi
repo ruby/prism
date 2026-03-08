@@ -83,7 +83,7 @@ module Prism
 
       # Responsible for finding the nearest targets to the given comment within
       # the context of the given encapsulating node.
-      sig { params(node: Node, comment: Comment).returns([T.untyped, T.untyped, T.untyped]) }
+      sig { params(node: Node, comment: Comment).returns([::T.untyped, ::T.untyped, ::T.untyped]) }
       private def nearest_targets(node, comment); end
     end
   end

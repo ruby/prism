@@ -35,7 +35,7 @@ module Prism
   class Dispatcher < Visitor
     # A hash mapping event names to arrays of listeners that should be notified
     # when that event is fired.
-    sig { returns(T::Hash[Symbol, T::Array[T.untyped]]) }
+    sig { returns(T::Hash[Symbol, T::Array[::T.untyped]]) }
     attr_reader :listeners
 
     # Initialize a new dispatcher.
@@ -43,20 +43,20 @@ module Prism
     def initialize; end
 
     # Register a listener for one or more events.
-    sig { params(arg0: T.untyped, args: Symbol).void }
+    sig { params(arg0: ::T.untyped, args: Symbol).void }
     def register(arg0, *args); end
 
     # Register all public methods of a listener that match the pattern
     # `on_<node_name>_(enter|leave)`.
-    sig { params(arg0: T.untyped).void }
+    sig { params(arg0: ::T.untyped).void }
     def register_public_methods(arg0); end
 
     # Register a listener for the given events.
-    sig { params(arg0: T.untyped, arg1: T::Array[Symbol]).void }
+    sig { params(arg0: ::T.untyped, arg1: T::Array[Symbol]).void }
     def register_events(arg0, arg1); end
 
     # Walks `root` dispatching events to all registered listeners.
-    sig { params(node: T.nilable(Node)).returns(T.untyped) }
+    sig { params(node: ::T.nilable(Node)).returns(::T.untyped) }
     def dispatch(node); end
 
     # Dispatches a single event for `node` to all registered listeners.
@@ -520,10 +520,10 @@ module Prism
     def visit_yield_node(node); end
 
     class DispatchOnce < Visitor
-      sig { returns(T::Hash[Symbol, T::Array[T.untyped]]) }
+      sig { returns(T::Hash[Symbol, T::Array[::T.untyped]]) }
       attr_reader :listeners
 
-      sig { params(listeners: T::Hash[Symbol, T::Array[T.untyped]]).void }
+      sig { params(listeners: T::Hash[Symbol, T::Array[::T.untyped]]).void }
       def initialize(listeners); end
 
       # Dispatch enter and leave events for AliasGlobalVariableNode nodes.

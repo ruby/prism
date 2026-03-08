@@ -8,11 +8,11 @@ module Prism
   class BasicVisitor
     # Calls `accept` on the given node if it is not `nil`, which in turn should
     # call back into this visitor by calling the appropriate `visit_*` method.
-    sig { params(node: T.nilable(Node)).void }
+    sig { params(node: ::T.nilable(Node)).void }
     def visit(node); end
 
     # Visits each node in `nodes` by calling `accept` on each one.
-    sig { params(nodes: T::Array[T.nilable(Node)]).void }
+    sig { params(nodes: T::Array[::T.nilable(Node)]).void }
     def visit_all(nodes); end
 
     # Visits the child nodes of `node` by calling `accept` on each one.

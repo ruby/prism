@@ -32,22 +32,22 @@ module Prism
     # A result class specialized for holding tokens produced by the lexer.
     class Result < Prism::Result
       # The list of tokens that were produced by the lexer.
-      sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+      sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
       attr_reader :value
 
       # Create a new lex compat result object with the given values.
-      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
+      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
       def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
 
       # Implement the hash pattern matching interface for Result.
-      sig { params(keys: T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, T.untyped]) }
+      sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
       def deconstruct_keys(keys); end
     end
 
     # This is a mapping of prism token types to Ripper token types. This is a
     # many-to-one mapping because we split up our token types, whereas Ripper
     # tends to group them.
-    RIPPER = T.let(nil, T.untyped)
+    RIPPER = T.let(nil, ::T.untyped)
 
     # A heredoc in this case is a list of tokens that belong to the body of the
     # heredoc that should be appended onto the list of tokens when the heredoc
@@ -58,16 +58,16 @@ module Prism
       # order back into the token stream and set the state of the last token to
       # the state that the heredoc was opened in.
       class PlainHeredoc
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         attr_reader :tokens
 
         sig { void }
         def initialize; end
 
-        sig { params(token: [[Integer, Integer], Symbol, String, T.untyped]).void }
+        sig { params(token: [[Integer, Integer], Symbol, String, ::T.untyped]).void }
         def <<(token); end
 
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         def to_a; end
       end
 
@@ -78,16 +78,16 @@ module Prism
         sig { returns(T::Boolean) }
         attr_reader :split
 
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         attr_reader :tokens
 
         sig { params(split: T::Boolean).void }
         def initialize(split); end
 
-        sig { params(token: [[Integer, Integer], Symbol, String, T.untyped]).void }
+        sig { params(token: [[Integer, Integer], Symbol, String, ::T.untyped]).void }
         def <<(token); end
 
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         def to_a; end
       end
 
@@ -104,13 +104,13 @@ module Prism
       class DedentingHeredoc
         TAB_WIDTH = T.let(nil, Integer)
 
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         attr_reader :tokens
 
         sig { returns(T::Boolean) }
         attr_reader :dedent_next
 
-        sig { returns(T.nilable(Integer)) }
+        sig { returns(::T.nilable(Integer)) }
         attr_reader :dedent
 
         sig { returns(Integer) }
@@ -123,33 +123,33 @@ module Prism
         # whitespace on plain string content tokens. This allows us to later
         # remove that amount of whitespace from the beginning of each line.
         #
-        sig { params(token: [[Integer, Integer], Symbol, String, T.untyped]).void }
+        sig { params(token: [[Integer, Integer], Symbol, String, ::T.untyped]).void }
         def <<(token); end
 
-        sig { returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+        sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         def to_a; end
       end
 
       # Here we will split between the two types of heredocs and return the
       # object that will store their tokens.
-      sig { params(opening: [[Integer, Integer], Symbol, String, T.untyped]).returns(T.any(PlainHeredoc, DashHeredoc, DedentingHeredoc)) }
+      sig { params(opening: [[Integer, Integer], Symbol, String, ::T.untyped]).returns(::T.any(PlainHeredoc, DashHeredoc, DedentingHeredoc)) }
       def self.build(opening); end
     end
 
     # In previous versions of Ruby, Ripper wouldn't flush the bom before the
     # first token, so we had to have a hack in place to account for that.
-    BOM_FLUSHED = T.let(nil, T.untyped)
+    BOM_FLUSHED = T.let(nil, ::T.untyped)
 
-    sig { returns(T::Hash[Symbol, T.untyped]) }
+    sig { returns(T::Hash[Symbol, ::T.untyped]) }
     attr_reader :options
 
-    sig { params(source: String, options: T.untyped).void }
+    sig { params(source: String, options: ::T.untyped).void }
     def initialize(source, **options); end
 
     sig { returns(Result) }
     def result; end
 
-    sig { params(tokens: T::Array[[[Integer, Integer], Symbol, String, T.untyped]], source: Source, data_loc: T.nilable(Location), bom: T::Boolean, eof_token: T.nilable(Token)).returns(T::Array[[[Integer, Integer], Symbol, String, T.untyped]]) }
+    sig { params(tokens: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], source: Source, data_loc: ::T.nilable(Location), bom: T::Boolean, eof_token: ::T.nilable(Token)).returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
     private def post_process_tokens(tokens, source, data_loc, bom, eof_token); end
   end
 end

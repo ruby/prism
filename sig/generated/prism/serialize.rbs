@@ -53,16 +53,14 @@ module Prism
       # :nodoc:
       attr_reader size: Integer
 
-      @input: String
-
       @serialized: String
 
       @base: Integer
 
       @pool: Array[Symbol?]
 
-      # : (String input, String serialized, Integer base, Integer size) -> void
-      def initialize: (String input, String serialized, Integer base, Integer size) -> void
+      # : (String serialized, Integer base, Integer size) -> void
+      def initialize: (String serialized, Integer base, Integer size) -> void
 
       # : (Integer index, Encoding encoding) -> Symbol
       def get: (Integer index, Encoding encoding) -> Symbol
@@ -139,9 +137,6 @@ module Prism
 
       # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
       def load_optional_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
-
-      # : (Encoding encoding) -> String
-      def load_embedded_string: (Encoding encoding) -> String
 
       # : (Encoding encoding) -> String
       def load_string: (Encoding encoding) -> String
