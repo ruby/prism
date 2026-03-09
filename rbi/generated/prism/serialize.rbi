@@ -123,6 +123,9 @@ module Prism
       sig { returns(Float) }
       def load_double; end
 
+      sig { returns(T::Boolean) }
+      def load_bool; end
+
       sig { returns(Integer) }
       def load_uint32; end
 

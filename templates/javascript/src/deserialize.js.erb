@@ -334,10 +334,12 @@ export function deserialize(array) {
     level: warningLevels[buffer.readByte()]
   }));
 
+  const continuable = buffer.readByte() !== 0;
+
   const constantPoolOffset = buffer.readUint32();
   const constants = Array.from({ length: buffer.readVarInt() }, () => null);
 
-  return new ParseResult(readRequiredNode(), comments, magicComments, dataLoc, errors, warnings);
+  return new ParseResult(readRequiredNode(), comments, magicComments, dataLoc, errors, warnings, continuable);
 
   function readRequiredNode() {
     const type = buffer.readByte();

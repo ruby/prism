@@ -558,8 +558,8 @@ module Prism
     attr_reader :source
 
     # Create a new result object with the given values.
-    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
-    def initialize(comments, magic_comments, data_loc, errors, warnings, source); end
+    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for Result.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -602,12 +602,6 @@ module Prism
     sig { returns(T::Boolean) }
     def continuable?; end
 
-    # The set of error types whose location the parser places at the opening
-    # token of an unclosed construct rather than at the end of the source. These
-    # errors always indicate incomplete input regardless of their byte position,
-    # so they are checked by type rather than by location.
-    CONTINUABLE = T.let(nil, ::T.untyped)
-
     # Create a code units cache for the given encoding.
     sig { params(encoding: Encoding).returns(::T.untyped) }
     def code_units_cache(encoding); end
@@ -620,8 +614,8 @@ module Prism
     attr_reader :value
 
     # Create a new parse result object with the given values.
-    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -649,8 +643,8 @@ module Prism
     attr_reader :value
 
     # Create a new lex result object with the given values.
-    sig { params(value: T::Array[[Token, Integer]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+    sig { params(value: T::Array[[Token, Integer]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for LexResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -665,8 +659,8 @@ module Prism
     attr_reader :value
 
     # Create a new parse lex result object with the given values.
-    sig { params(value: [ProgramNode, T::Array[[Token, Integer]]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+    sig { params(value: [ProgramNode, T::Array[[Token, Integer]]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseLexResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }

@@ -644,8 +644,8 @@ module Prism
 
     # Create a new result object with the given values.
     # --
-    # : (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
-    def initialize: (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    # : (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for Result.
     # --
@@ -693,14 +693,6 @@ module Prism
     # : () -> bool
     def continuable?: () -> bool
 
-    # The set of error types whose location the parser places at the opening
-    # token of an unclosed construct rather than at the end of the source. These
-    # errors always indicate incomplete input regardless of their byte position,
-    # so they are checked by type rather than by location.
-    # --
-    # : Array[Symbol]
-    CONTINUABLE: untyped
-
     # Create a code units cache for the given encoding.
     # --
     # : (Encoding encoding) -> _CodeUnitsCache
@@ -714,8 +706,8 @@ module Prism
 
     # Create a new parse result object with the given values.
     # --
-    # : (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
-    def initialize: (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    # : (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for ParseResult.
     # --
@@ -747,8 +739,8 @@ module Prism
 
     # Create a new lex result object with the given values.
     # --
-    # : (Array[[Token, Integer]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
-    def initialize: (Array[[ Token, Integer ]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    # : (Array[[Token, Integer]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (Array[[ Token, Integer ]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for LexResult.
     # --
@@ -764,8 +756,8 @@ module Prism
 
     # Create a new parse lex result object with the given values.
     # --
-    # : ([ProgramNode, Array[[Token, Integer]]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
-    def initialize: ([ ProgramNode, Array[[ Token, Integer ]] ] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, Source source) -> void
+    # : ([ProgramNode, Array[[Token, Integer]]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: ([ ProgramNode, Array[[ Token, Integer ]] ] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for ParseLexResult.
     # --

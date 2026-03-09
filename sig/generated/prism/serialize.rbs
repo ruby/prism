@@ -132,6 +132,9 @@ module Prism
       # : () -> Float
       def load_double: () -> Float
 
+      # : () -> bool
+      def load_bool: () -> bool
+
       # : () -> Integer
       def load_uint32: () -> Integer
 
