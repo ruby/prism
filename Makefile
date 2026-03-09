@@ -54,7 +54,12 @@ javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 java-wasm/src/test/resources/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 	$(ECHO) "building $@"
 	$(Q) $(MAKEDIRS) $(@D)
-	$(Q) $(WASI_SDK_PATH)/bin/clang $(DEBUG_FLAGS) -DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN -lwasi-emulated-mman $(CPPFLAGS) $(JAVA_WASM_CFLAGS) -Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi -o $@ $(SOURCES)
+	$(Q) $(WASI_SDK_PATH)/bin/clang \
+	    $(DEBUG_FLAGS) \
+	    -DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN \
+	    -lwasi-emulated-mman $(CPPFLAGS) $(JAVA_WASM_CFLAGS) \
+	    -Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
+	    -o $@ $(SOURCES)
 
 build/shared/%.o: src/%.c Makefile $(HEADERS)
 	$(ECHO) "compiling $@"
