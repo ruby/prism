@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jruby</groupId>
-  <artifactId>chicory-prism</artifactId>
+  <groupId>org.ruby-lang</groupId>
+  <artifactId>prism-parser-wasm</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Java Prism</name>
+  <name>Java WASM Prism</name>
   <description>Pure Java Prism using Chicory WASM runtime</description>
 
 
@@ -184,7 +184,7 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.jruby.parser.prism.wasm.PrismParser</name>
+              <name>org.ruby_lang.prism.wasm.PrismParser</name>
               <wasmFile>src/test/resources/prism.wasm</wasmFile>
             </configuration>
           </execution>

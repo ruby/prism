@@ -1,9 +1,9 @@
 package org.jruby.parser.prism;
 
 import org.jruby.Ruby;
-import org.jruby.parser.prism.wasm.Prism;
 import org.junit.jupiter.api.Test;
 import org.ruby_lang.prism.ParsingOptions;
+import org.ruby_lang.prism.wasm.Prism;
 
 import java.io.DataInputStream;
 import java.io.InputStream;
@@ -108,7 +108,7 @@ public class JRubyTest {
             try (InputStream fileIn = Ruby.getClassLoader().getResourceAsStream(file)) {
                 DataInputStream dis = new DataInputStream(fileIn);
                 int read = dis.read(src);
-                prism.serialize(options, src, read);
+                prism.parse(src, 0, read, options);
             }
         }
     }
