@@ -36,8 +36,8 @@ module Prism
       attr_reader :value
 
       # Create a new lex compat result object with the given values.
-      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], source: Source).void }
-      def initialize(value, comments, magic_comments, data_loc, errors, warnings, source); end
+      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+      def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
       # Implement the hash pattern matching interface for Result.
       sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
