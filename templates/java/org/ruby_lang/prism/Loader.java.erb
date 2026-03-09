@@ -59,10 +59,7 @@ public class Loader {
                 int length = buffer.getInt(offset + 4);
 
                 byte[] bytes = new byte[length];
-                int position = buffer.position();
-                buffer.position(start);
-                buffer.get(bytes, 0, length);
-                buffer.position(position);
+                buffer.get(start, bytes);
 
                 constant = loader.bytesToName(bytes);
                 cache[index] = constant;
