@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+VERSION = "1.9.0"
+
 Gem::Specification.new do |spec|
   spec.name = "prism"
-  spec.version = "1.9.0"
+  spec.version = VERSION
   spec.authors = ["Shopify"]
   spec.email = ["ruby@shopify.com"]
 
@@ -163,6 +165,17 @@ Gem::Specification.new do |spec|
   ]
 
   spec.extensions = ["ext/prism/extconf.rb"]
+
+  if Gem::Platform === spec.platform and spec.platform =~ 'java'
+    spec.files
+      .delete_if {|f| f.start_with?("ext/")}
+      .delete_if {|f| f.start_with?("src/")}
+      .delete_if {|f| f.match?(/makefile/i)}
+    spec.extensions.clear
+    spec.requirements = "jar org.ruby-lang:prism-parser-wasm, 0.0.1-SNAPSHOT"
+    spec.add_dependency 'jar-dependencies', '>= 0.1.7'
+  end
+
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["source_code_uri"] = "https://github.com/ruby/prism"
   spec.metadata["changelog_uri"] = "https://github.com/ruby/prism/blob/main/CHANGELOG.md"
