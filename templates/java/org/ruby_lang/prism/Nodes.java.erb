@@ -142,7 +142,7 @@ public abstract class Nodes {
 
         protected abstract String toString(String indent);
     }
-<%# FLAGS -%>
+<%-# FLAGS -%>
     <%- flags.each do |flag| -%>
 
     /**
@@ -194,7 +194,7 @@ public abstract class Nodes {
         <%- end -%>
     }
 <%- end -%>
-<%# NODES -%>
+<%-# NODES -%>
     <%- nodes.each do |node| -%>
 
     /**
@@ -207,6 +207,7 @@ public abstract class Nodes {
     public static final class <%= node.name -%> extends Node {
         <%- if node.needs_serialized_length? -%>
         public final int serializedLength;
+        public final Loader loader;
         <%- end -%>
         <%- if node.flags -%>
         public final short flags;
@@ -234,7 +235,10 @@ public abstract class Nodes {
           params = []
           params << "int nodeId" if Prism::Template::INCLUDE_NODE_ID
           params << "int startOffset" << "int length"
-          params << "int serializedLength" if node.needs_serialized_length?
+          if node.needs_serialized_length?
+            params << "int serializedLength"
+            params << "Loader loader"
+        end
           params << "short flags" if node.flags
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
@@ -246,6 +250,7 @@ public abstract class Nodes {
         <%- end -%>
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
+            this.loader = loader;
         <%- end -%>
         <%- if node.flags -%>
             this.flags = flags;
@@ -254,7 +259,22 @@ public abstract class Nodes {
             this.<%= field.name %> = <%= field.name %>;
         <%- end -%>
         }
-        <%# methods for flags -%>
+        <%-# extra methods for DefNode -%>
+        <%- if node.needs_serialized_length? -%>
+
+        public boolean isLazy() {
+            return serializedLength < 0;
+        }
+
+        public <%= node.name -%> getNonLazy() {
+            if (isLazy()) {
+                return loader.createDefNodeFromSavedPosition(<%= "nodeId, " if Prism::Template::INCLUDE_NODE_ID %>startOffset, length, -serializedLength);
+            } else {
+                return this;
+            }
+        }
+        <%- end -%>
+        <%-# methods for flags -%>
         <%- if (node_flags = node.flags) -%>
         <%- node_flags.values.each do |value| -%>
 
@@ -263,7 +283,7 @@ public abstract class Nodes {
         }
         <%- end -%>
         <%- end -%>
-        <%# potential override of setNewLineFlag() -%>
+        <%-# potential override of setNewLineFlag() -%>
         <%- if node.newline == false -%>
 
         @Override
