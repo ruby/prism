@@ -79,6 +79,19 @@ void * pm_arena_zalloc(pm_arena_t *arena, size_t size, size_t alignment);
 void * pm_arena_memdup(pm_arena_t *arena, const void *src, size_t size, size_t alignment);
 
 /**
+ * Resets the arena.  If no memory has been allocated from this arena, this
+ * call is a no-op.
+ *
+ * Otherwise, a single block is retained and other blocks are freed.
+ *
+ * After this call, all pointers returned by pm_arena_alloc and
+ * pm_arena_zalloc are invalid.
+ *
+ * @param arena The arena to reset.
+ */
+void pm_arena_reset(pm_arena_t *arena);
+
+/**
  * Free all blocks in the arena. After this call, all pointers returned by
  * pm_arena_alloc and pm_arena_zalloc are invalid.
  *

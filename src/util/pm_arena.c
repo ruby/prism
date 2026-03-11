@@ -88,18 +88,42 @@ pm_arena_memdup(pm_arena_t *arena, const void *src, size_t size, size_t alignmen
     return dst;
 }
 
-/**
- * Free all blocks in the arena.
- */
 void
-pm_arena_free(pm_arena_t *arena) {
-    pm_arena_block_t *block = arena->current;
-
+free_blocks(pm_arena_block_t *block) {
     while (block != NULL) {
         pm_arena_block_t *prev = block->prev;
         xfree_sized(block, PM_ARENA_BLOCK_SIZE(block->capacity));
         block = prev;
     }
+}
+
+/**
+ * Free all but one block in the arena and mark the block as freshly allocated.
+ *
+ * Does nothing if the arena has never been used.
+ */
+void
+pm_arena_reset(pm_arena_t *arena) {
+    pm_arena_block_t *block = arena->current;
+
+    if (block == NULL) {
+        return;
+    }
+
+    free_blocks(block->prev);
+
+    block->prev = NULL;
+    block->used = 0;
+
+    arena->block_count = 1;
+}
+
+/**
+ * Free all blocks in the arena.
+ */
+void
+pm_arena_free(pm_arena_t *arena) {
+    free_blocks(arena->current);
 
     *arena = (pm_arena_t) { 0 };
 }
