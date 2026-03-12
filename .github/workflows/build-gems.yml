@@ -1,0 +1,100 @@
+name: Build gems
+on:
+  workflow_call:
+    inputs:
+      release:
+        description: "Pass --release to .github/scripts/gem-build (skip timestamp version)"
+        type: boolean
+        default: false
+      artifact_prefix:
+        description: "Prefix for artifact names (e.g., 'release-v1.10.0-')"
+        type: string
+        default: ""
+      ref:
+        description: "Git ref to check out (e.g., a version tag). Defaults to the caller's ref."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  build_source_gem:
+    name: "source gem"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+          bundler-cache: true
+      - name: Build source gem
+        run: |
+          ./.github/scripts/gem-build ${RELEASE_FLAG} gems ruby
+        env:
+          RELEASE_FLAG: ${{ inputs.release && '--release' || '' }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: "${{ inputs.artifact_prefix }}source-gem"
+          path: gems
+          retention-days: 1
+
+  build_native_setup:
+    name: "setup"
+    runs-on: ubuntu-latest
+    outputs:
+      rcd_image_version: ${{ steps.rcd_image_version.outputs.rcd_image_version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+          bundler-cache: true
+      - id: rcd_image_version
+        run: bundle exec ruby -e 'require "rake_compiler_dock"; puts "rcd_image_version=#{RakeCompilerDock::IMAGE_VERSION}"' >> "$GITHUB_OUTPUT"
+
+  build_native_gem:
+    needs: build_native_setup
+    name: "native gem ${{ matrix.platform }}"
+    strategy:
+      # In test runs, surface every platform's failure (fail-fast: false).
+      # In release runs, stop on first failure to avoid pushing a partial set of gems.
+      fail-fast: ${{ inputs.release }}
+      matrix:
+        platform:
+          - aarch64-linux-gnu
+          - aarch64-linux-musl
+          - aarch64-mingw-ucrt
+          - arm-linux-gnu
+          - arm-linux-musl
+          - arm64-darwin
+          - x64-mingw-ucrt
+          - x86_64-darwin
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
+      - name: Build native gem
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work \
+            "ghcr.io/rake-compiler/rake-compiler-dock-image:${RCD_IMAGE_VERSION}-mri-${PLATFORM}" \
+            ./.github/scripts/gem-build ${RELEASE_FLAG} gems "${PLATFORM}"
+        env:
+          RCD_IMAGE_VERSION: ${{ needs.build_native_setup.outputs.rcd_image_version }}
+          RELEASE_FLAG: ${{ inputs.release && '--release' || '' }}
+          PLATFORM: ${{ matrix.platform }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: "${{ inputs.artifact_prefix }}cruby-${{ matrix.platform }}-gem"
+          path: gems
+          retention-days: 1
