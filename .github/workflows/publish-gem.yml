@@ -1,26 +1,41 @@
 name: Publish gem to rubygems.org
+concurrency:
+  group: "release-${{ inputs.version_tag || github.ref }}"
+  cancel-in-progress: false
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: "Version tag to release (e.g., v1.10.0)"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
+  build:
+    uses: ./.github/workflows/build-gems.yml
+    with:
+      release: true
+      artifact_prefix: "release-${{ inputs.version_tag || github.ref_name }}-"
+      ref: ${{ inputs.version_tag || github.ref }}
+
   push:
+    name: "Push gems and create GitHub release"
+    needs: build
     if: github.repository == 'ruby/prism'
     runs-on: ubuntu-latest
-
     environment:
       name: rubygems.org
       url: https://rubygems.org/gems/prism
-
     permissions:
-      contents: write
-      id-token: write
-
+      contents: write # create/update GitHub releases and upload .gem assets
+      id-token: write # OIDC token for rubygems.org trusted publishing
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
@@ -28,6 +43,9 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.version_tag || github.ref }}
+          persist-credentials: false
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -35,5 +53,35 @@ jobs:
           ruby-version: ruby
           bundler-cache: true
 
-      - name: Publish to RubyGems
-        uses: rubygems/release-gem@v1
+      - uses: actions/download-artifact@v8
+        with:
+          path: gems
+          pattern: "release-${{ inputs.version_tag || github.ref_name }}-*"
+          merge-multiple: true
+
+      - name: Print and record checksums
+        run: |
+          cd gems
+          sha256sum ./*.gem | tee CHECKSUMS.txt
+
+      - uses: rubygems/configure-rubygems-credentials@v2
+
+      # TODO: once RubyGems >= 4.1 is in setup-ruby, `gem push` will auto-attest (ruby/rubygems#9325).
+      - name: Push gems to RubyGems.org
+        run: |
+          for gem in gems/*.gem; do
+            echo "Pushing ${gem} ..."
+            gem push "${gem}" || echo "WARNING: Failed to push ${gem} (may already exist)"
+          done
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.version_tag || github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1 ; then
+            gh release upload "$TAG" --repo "$REPO" --clobber gems/*.gem gems/CHECKSUMS.txt
+          else
+            gh release create "$TAG" --repo "$REPO" --title "$TAG" --generate-notes gems/*.gem gems/CHECKSUMS.txt
+          fi

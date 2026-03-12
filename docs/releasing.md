@@ -71,5 +71,74 @@ git push
 
 ## Publishing
 
-* Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
-* Push a new tag to the GitHub repository, following the `vX.Y.Z` format.
+### Automatic (Github Actions)
+
+The [`publish-gem.yml`](../.github/workflows/publish-gem.yml) workflow handles publishing. It triggers either on a `v*` tag push or via manual `workflow_dispatch`. In both cases it:
+
+- Builds the source gem and all native gems (calling the reusable [`build-gems.yml`](../.github/workflows/build-gems.yml) workflow with `--release`).
+- Pushes every gem to RubyGems.org using OIDC trusted publishing (no API key required).
+- Creates (or updates) a GitHub release for the tag, attaches the `.gem` files and a `CHECKSUMS.txt`, and auto-generates release notes.
+
+The `push` job is gated on `github.repository == 'ruby/prism'` and runs in the `rubygems.org` GitHub environment, which is the trust anchor for OIDC publishing to RubyGems.org. Pushes that already exist on RubyGems.org are reported as warnings rather than failing the run, so re-runs after a partial failure are safe.
+
+#### 1. Trigger the release pipeline
+
+After the preparation commit is on `main`, tag and push:
+
+```sh
+git tag "v${PRISM_VERSION}"
+git push origin "v${PRISM_VERSION}"
+```
+
+The `v*` tag push triggers `publish-gem.yml` automatically.
+
+If you need to re-trigger the workflow against an existing tag — for example, if the tag-push run failed partway through and you've fixed the cause — go to the Actions tab and use "Run workflow" on `Publish gem to rubygems.org`, passing the tag (e.g. `v1.10.0`) as the `version_tag` input. The workflow will check out that tag, rebuild, and push.
+
+#### 2. Edit the release notes
+
+The workflow creates the GitHub release with auto-generated notes. Edit it to paste in the relevant section of `CHANGELOG.md`.
+
+### Manually
+
+If for whatever reason (like an emergency), you need to release a version and the Github Actions pipelines aren't available, here's how you can build the full set of native gems.
+
+#### 1. Build gems
+
+```sh
+bin/build-gems
+```
+
+This script will:
+- Run `bundle update` and `bundle package` to vendor dependencies
+- Run a safety check (`compile` and `test`)
+- Build all gems via `rake gem:all` (source gem + native gems for all platforms using rake-compiler-dock)
+- Place all gems in `./gems/`
+- Verify all built gems with `test/prism/packaging/test-gem-file-contents`
+- Print SHA256 checksums for inclusion in release notes
+
+#### 2. Push gems
+
+Push the native gems first, then the source gem last (so that when users see the new version, native gems are already available):
+
+```sh
+# push native gems first
+for gem in gems/prism-*-*.gem ; do
+  gem push "$gem"
+done
+
+# push source gem last
+gem push gems/prism-${PRISM_VERSION}.gem
+```
+
+#### 3. Push tag
+
+Push a new tag to the GitHub repository, following the `vX.Y.Z` format:
+
+```sh
+git tag "v${PRISM_VERSION}"
+git push origin "v${PRISM_VERSION}"
+```
+
+#### 4. Create a release
+
+Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file, including the SHA256 checksums from the build output.
