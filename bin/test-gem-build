@@ -1,0 +1,34 @@
+#! /usr/bin/env bash
+#
+#  run as part of CI
+#
+if [[ $# -lt 2 ]] ; then
+  echo "usage: $(basename $0) <output_dir> <platform>"
+  exit 1
+fi
+
+set -e -u
+
+OUTPUT_DIR=$1
+BUILD_NATIVE_GEM=$2
+
+test -e /etc/os-release && cat /etc/os-release
+
+set -x
+
+bundle config set without development
+bundle config set frozen false
+bundle install --local || bundle install
+bundle exec rake set-version-to-timestamp
+
+if [[ "${BUILD_NATIVE_GEM}" == "ruby" ]] ; then
+  bundle exec rake build
+else
+  bundle exec rake gem:${BUILD_NATIVE_GEM}:build
+fi
+
+./bin/test-gem-file-contents pkg/*.gem
+
+mkdir -p ${OUTPUT_DIR}
+cp -v pkg/*.gem ${OUTPUT_DIR}
+ls -l ${OUTPUT_DIR}/*

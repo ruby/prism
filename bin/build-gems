@@ -1,0 +1,53 @@
+#! /usr/bin/env bash
+#
+#  script to build gems for all relevant platforms
+#
+set -o errexit
+set -o nounset
+set -x
+
+rm -rf tmp pkg gems
+mkdir -p gems
+
+# prelude: vendor dependencies
+bundle update
+bundle package
+
+# safety check: let's check that things work
+bundle exec rake clean clobber
+bundle exec rake compile test
+
+# package the gems, including precompiled native
+bundle exec rake clean clobber
+bundle exec rake gem:all
+cp -v pkg/prism*.gem gems
+
+# test those gem files!
+for gemfile in gems/*.gem ; do
+  ./bin/test-gem-file-contents "$gemfile"
+done
+
+# smoke test: install and load the native gem for the host platform
+host_gem=$(ruby -e '
+  platform = Gem::Platform.local
+  # normalize: remove version from platform string (e.g., "x86_64-linux-gnu" not "x86_64-linux-gnu6.2")
+  normalized = [platform.cpu, platform.os, platform.version].compact.join("-")
+  gem = Dir.glob("gems/prism-*-#{normalized}.gem").first
+  gem ||= Dir.glob("gems/prism-*-#{platform.cpu}-#{platform.os}*.gem").first
+  puts gem.to_s
+')
+if [ -n "$host_gem" ] ; then
+  echo "--- smoke test: install and load $host_gem ---"
+  test_dir=$(mktemp -d)
+  GEM_HOME="$test_dir" GEM_PATH="$test_dir" gem install --no-document "$host_gem"
+  GEM_HOME="$test_dir" GEM_PATH="$test_dir" ruby -e 'require "prism"; Prism.parse("1 + 2"); puts "smoke test passed: #{Prism::VERSION}"'
+  rm -rf "$test_dir"
+  echo "--- smoke test passed ---"
+else
+  echo "--- skipping install smoke test (no native gem for this host platform) ---"
+fi
+
+# checksums should be included in the release notes
+pushd gems
+  ls *.gem | sort | xargs shasum -a 256
+popd

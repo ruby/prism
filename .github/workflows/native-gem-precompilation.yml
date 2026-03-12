@@ -1,0 +1,204 @@
+name: Native gem precompilation
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
+    paths:
+      - Rakefile
+      - Gemfile
+      - Gemfile.lock
+      - prism.gemspec
+      - ext/prism/**
+      - lib/prism.rb
+      - bin/test-gem-*
+      - bin/build-gems
+      - .github/workflows/native-gem-precompilation.yml
+  workflow_dispatch:
+
+jobs:
+  native_setup:
+    name: "Setup"
+    runs-on: ubuntu-latest
+    outputs:
+      rcd_image_version: ${{ steps.rcd_image_version.outputs.rcd_image_version }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      - id: rcd_image_version
+        run: bundle exec ruby -e 'require "rake_compiler_dock"; puts "rcd_image_version=#{RakeCompilerDock::IMAGE_VERSION}"' >> $GITHUB_OUTPUT
+
+  build_source_gem:
+    name: "build source"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      - run: ./bin/test-gem-build gems ruby
+      - uses: actions/upload-artifact@v7
+        with:
+          name: source-gem
+          path: gems
+          retention-days: 1
+
+  install_source_gem:
+    needs: build_source_gem
+    name: "test source ${{ matrix.os }} ${{ matrix.ruby }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos, windows]
+        ruby: ["3.3", "3.4", "4.0"]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - if: matrix.os == 'windows'
+        name: configure git crlf
+        run: |
+          git config --system core.autocrlf false
+          git config --system core.eol lf
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: source-gem
+          path: gems
+      - run: ./bin/test-gem-install gems
+        shell: sh
+
+  build_native_gem:
+    needs: native_setup
+    name: "build native ${{ matrix.platform }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - aarch64-linux-gnu
+          - aarch64-linux-musl
+          - aarch64-mingw-ucrt
+          - arm-linux-gnu
+          - arm-linux-musl
+          - arm64-darwin
+          - x64-mingw-ucrt
+          - x86_64-darwin
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: |
+          docker run --rm -v $PWD:/work -w /work \
+            ghcr.io/rake-compiler/rake-compiler-dock-image:${{ needs.native_setup.outputs.rcd_image_version }}-mri-${{ matrix.platform }} \
+            ./bin/test-gem-build gems ${{ matrix.platform }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: "cruby-${{ matrix.platform }}-gem"
+          path: gems
+          retention-days: 1
+
+  test_linux_native:
+    name: "${{ matrix.platform }} ${{ matrix.ruby }}"
+    needs: build_native_gem
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - aarch64-linux-gnu
+          - aarch64-linux-musl
+          - arm-linux-gnu
+          - arm-linux-musl
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
+        ruby: ["3.3", "3.4", "4.0"]
+        include:
+          # musl platforms need alpine image and build-base
+          - { platform: aarch64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base linux-headers yaml-dev &&" }
+          - { platform: arm-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base linux-headers yaml-dev &&" }
+          - { platform: x86_64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base linux-headers yaml-dev &&" }
+          # docker platform for each platform
+          - { platform: aarch64-linux-gnu, runner: ubuntu-24.04-arm, docker_platform: "--platform=linux/arm64" }
+          - { platform: aarch64-linux-musl, runner: ubuntu-24.04-arm, docker_platform: "--platform=linux/arm64" }
+          - { platform: arm-linux-gnu, runner: ubuntu-24.04-arm, docker_platform: "--platform=linux/arm/v7" }
+          - { platform: arm-linux-musl, runner: ubuntu-24.04-arm, docker_platform: "--platform=linux/arm/v7" }
+    runs-on: ${{ matrix.runner || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          name: cruby-${{ matrix.platform }}-gem
+          path: gems
+      - run: |
+          docker run --rm -v $PWD:/work -w /work \
+            ${{ matrix.docker_platform }} ruby:${{ matrix.ruby }}${{ matrix.docker_tag }} \
+            sh -c "
+              ${{ matrix.bootstrap }}
+              ./bin/test-gem-install ./gems
+            "
+
+  test_darwin_native:
+    name: "${{ matrix.platform }} ${{ matrix.ruby }}"
+    needs: build_native_gem
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+        ruby: ["3.3", "3.4", "4.0"]
+        include:
+          - os: macos-15
+            platform: arm64-darwin
+          - os: macos-15-intel
+            platform: x86_64-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ matrix.ruby }}"
+      - uses: actions/download-artifact@v8
+        with:
+          name: cruby-${{ matrix.platform }}-gem
+          path: gems
+      - run: ./bin/test-gem-install gems
+
+  test_windows_native:
+    name: "${{ matrix.platform }} ${{ matrix.ruby }}"
+    needs: build_native_gem
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64-mingw-ucrt, aarch64-mingw-ucrt]
+        ruby: ["3.3", "3.4", "4.0"]
+        include:
+          - { platform: x64-mingw-ucrt, os: windows-latest }
+          - { platform: aarch64-mingw-ucrt, os: windows-11-arm }
+        exclude:
+          - { platform: aarch64-mingw-ucrt, ruby: "3.3" }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: configure git crlf
+        run: |
+          git config --system core.autocrlf false
+          git config --system core.eol lf
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ matrix.ruby }}"
+      - uses: actions/download-artifact@v8
+        with:
+          name: cruby-${{ matrix.platform }}-gem
+          path: gems
+      - run: ./bin/test-gem-install gems
+        shell: sh

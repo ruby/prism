@@ -71,5 +71,36 @@ git push
 
 ## Publishing
 
-* Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file.
-* Push a new tag to the GitHub repository, following the `vX.Y.Z` format.
+* Build all gems (source + native) locally:
+
+```sh
+bin/build-gems
+```
+
+This script will:
+1. Run `bundle update` and `bundle package` to vendor dependencies.
+2. Run a safety check (`compile` and `test`).
+3. Build all gems via `rake gem:all` (source gem + native gems for all platforms using rake-compiler-dock).
+4. Verify all built gems with `bin/test-gem-file-contents`.
+5. Print SHA256 checksums for inclusion in release notes.
+
+* Push native gems first, then the source gem last (so that when users see the new version, native gems are already available):
+
+```sh
+# push native gems first
+for gem in gems/prism-*-*.gem ; do
+  gem push "$gem"
+done
+
+# push source gem last
+gem push gems/prism-${PRISM_VERSION}.gem
+```
+
+* Push a new tag to the GitHub repository, following the `vX.Y.Z` format:
+
+```sh
+git tag "v${PRISM_VERSION}"
+git push origin "v${PRISM_VERSION}"
+```
+
+* Update the GitHub release page with a copy of the latest entry in the `CHANGELOG.md` file, including the SHA256 checksums from the build output.
