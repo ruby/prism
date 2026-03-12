@@ -1,0 +1,45 @@
+#! /usr/bin/env bash
+#
+#  run as part of CI, or as part of the release pipeline with --release
+#
+RELEASE=false
+if [[ "${1:-}" == "--release" ]] ; then
+  RELEASE=true
+  shift
+fi
+
+if [[ $# -lt 2 ]] ; then
+  echo "usage: $(basename $0) [--release] <output_dir> <platform>"
+  exit 1
+fi
+
+set -e -u
+
+OUTPUT_DIR=$1
+BUILD_NATIVE_GEM=$2
+
+test -e /etc/os-release && cat /etc/os-release
+
+set -x
+
+bundle config set without development
+
+if [[ "${RELEASE}" == "true" ]] ; then
+  bundle install --local || bundle install
+else
+  bundle config set frozen false
+  bundle install --local || bundle install
+  bundle exec rake gemspec:fake-version
+fi
+
+if [[ "${BUILD_NATIVE_GEM}" == "ruby" ]] ; then
+  bundle exec rake build
+else
+  bundle exec rake gem:${BUILD_NATIVE_GEM}:build
+fi
+
+./test/prism/packaging/test-gem-file-contents pkg/*.gem
+
+mkdir -p ${OUTPUT_DIR}
+cp -v pkg/*.gem ${OUTPUT_DIR}
+ls -l ${OUTPUT_DIR}/*

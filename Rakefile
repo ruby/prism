@@ -3,6 +3,15 @@
 require "bundler/gem_tasks"
 require "rake/clean"
 
+begin
+  require "rake_compiler_dock"
+rescue LoadError
+  # rake_compiler_dock is not available in versioned Gemfiles (gemfiles/2.7/, etc.)
+  # that don't include the gem. The native gem tasks will not be defined.
+end
+
+PRISM_SPEC = Bundler.load_gemspec("prism.gemspec")
+
 task default: %i[compile test]
 
 require_relative "templates/template"
@@ -28,14 +37,55 @@ task build: [:check_manifest, :templates]
 # the C extension
 task "compile:prism" => ["templates"] # must be before the ExtensionTask is created
 
+RCD_CROSS_PLATFORMS = %w[
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  aarch64-mingw-ucrt
+  arm-linux-gnu
+  arm-linux-musl
+  arm64-darwin
+  x64-mingw-ucrt
+  x86_64-darwin
+  x86_64-linux-gnu
+  x86_64-linux-musl
+]
+
+if defined?(RakeCompilerDock)
+  RakeCompilerDock.set_ruby_cc_version(">= 3.3")
+
+  namespace "gem" do
+    RCD_CROSS_PLATFORMS.each do |platform|
+      desc "build native gem for #{platform}"
+      task platform do
+        RakeCompilerDock.sh(<<~EOF, platform: platform, verbose: true)
+          gem install bundler --no-document &&
+          bundle &&
+          bundle exec rake gem:#{platform}:build
+        EOF
+      end
+
+      namespace platform do
+        # this runs in the rake-compiler-dock docker container
+        task "build" => ["templates"] do
+          Rake::Task["native:#{platform}"].invoke
+          Rake::Task["pkg/#{PRISM_SPEC.full_name}-#{Gem::Platform.new(platform)}.gem"].invoke
+        end
+      end
+    end
+
+    desc "build native gem for all platforms"
+    task "all" => [RCD_CROSS_PLATFORMS, "build"].flatten
+  end
+end
+
 if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   require "rake/extensiontask"
 
-  Rake::ExtensionTask.new(:compile) do |ext|
-    ext.name = "prism"
+  Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
     ext.ext_dir = "ext/prism"
     ext.lib_dir = "lib/prism"
-    ext.gem_spec = Gem::Specification.load("prism.gemspec")
+    ext.cross_compile = true
+    ext.cross_platform = RCD_CROSS_PLATFORMS
   end
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
@@ -46,7 +96,7 @@ elsif RUBY_ENGINE == "jruby"
     ext.ext_dir = "java/api"
     ext.lib_dir = "tmp"
     ext.release = "21"
-    ext.gem_spec = Gem::Specification.load("prism.gemspec")
+    ext.gem_spec = PRISM_SPEC
   end
 end
 
