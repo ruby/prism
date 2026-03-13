@@ -448,7 +448,7 @@ mod tests {
     }
 
     #[test]
-    fn location_test() {
+    fn location_slice_test() {
         let source = "111 + 222 + 333";
         let result = parse(source.as_ref());
 
@@ -500,6 +500,48 @@ mod tests {
         let slice = std::str::from_utf8(location.as_slice()).unwrap();
 
         assert_eq!(slice, "222");
+    }
+
+    #[test]
+    fn location_line_column_test() {
+        let source = "first\nsecond\nthird";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let program = node.as_program_node().unwrap();
+        let statements = program.statements().body();
+        let mut iter = statements.iter();
+
+        let _first = iter.next().unwrap();
+        let second = iter.next().unwrap();
+        let third = iter.next().unwrap();
+
+        let second_loc = second.location();
+        assert_eq!(second_loc.start_line(), 2);
+        assert_eq!(second_loc.end_line(), 2);
+        assert_eq!(second_loc.start_column(), 0);
+        assert_eq!(second_loc.end_column(), 6);
+
+        let third_loc = third.location();
+        assert_eq!(third_loc.start_line(), 3);
+        assert_eq!(third_loc.end_line(), 3);
+        assert_eq!(third_loc.start_column(), 0);
+        assert_eq!(third_loc.end_column(), 5);
+    }
+
+    #[test]
+    fn location_chop_test() {
+        let result = parse(b"foo");
+        let mut location = result.node().as_program_node().unwrap().location();
+
+        assert_eq!(location.chop().as_slice(), b"fo");
+        assert_eq!(location.chop().chop().chop().as_slice(), b"");
+
+        // Check that we don't go negative.
+        for _ in 0..10 {
+            location = location.chop();
+        }
+        assert_eq!(location.as_slice(), b"");
     }
 
     #[test]
