@@ -16,7 +16,7 @@ import java.util.Locale;
 public class Loader {
 
     public static ParseResult load(byte[] serialized, byte[] sourceBytes) {
-        return new Loader(serialized, sourceBytes).load();
+        return new Loader(serialized).load(sourceBytes);
     }
 
     // Overridable methods
@@ -71,19 +71,21 @@ public class Loader {
     }
 
     private final ByteBuffer buffer;
-    private final Nodes.Source source;
     protected String encodingName;
     <%- if string_type == "String" -%>
     private Charset encodingCharset;
     <%- end -%>
     private ConstantPool constantPool;
 
-    protected Loader(byte[] serialized, byte[] sourceBytes) {
+    protected Loader(byte[] serialized) {
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
-        this.source = new Nodes.Source(sourceBytes);
     }
 
-    protected ParseResult load() {
+    // We pass sourceBytes here and not in the constructor to avoid keeping
+    // the sourceBytes in memory unnecessarily with lazy DefNode's which hold on the Loader.
+    protected ParseResult load(byte[] sourceBytes) {
+        Nodes.Source source = new Nodes.Source(sourceBytes);
+
         expect((byte) 'P', "incorrect prism header");
         expect((byte) 'R', "incorrect prism header");
         expect((byte) 'I', "incorrect prism header");
@@ -332,6 +334,10 @@ public class Loader {
         return negative ? result.negate() : result;
     }
 
+    <%-
+    base_params = [*("nodeId" if Prism::Template::INCLUDE_NODE_ID), "startOffset", "length"]
+    base_params_sig = base_params.map { "int #{_1}" }.join(", ")
+    -%>
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         <%- if Prism::Template::INCLUDE_NODE_ID -%>
@@ -348,7 +354,7 @@ public class Loader {
             params = []
             params << "nodeId" if Prism::Template::INCLUDE_NODE_ID
             params << "startOffset" << "length"
-            params << "buffer.getInt()" if node.needs_serialized_length?
+            params << "buffer.getInt()" << "null" if node.needs_serialized_length?
             params << "loadFlags()" if node.flags
             params.concat node.semantic_fields.map { |field|
               case field
@@ -371,11 +377,42 @@ public class Loader {
               else raise
               end
             }
+            $DefNode_params = params if node.name == "DefNode"
             -%>
+                <%- if node.name == "DefNode" -%>
+                return loadDefNode(<%= base_params.join(", ") -%>);
+                <%- else -%>
                 return new Nodes.<%= node.name %>(<%= params.join(", ") -%>);
+                <%- end -%>
             <%- end -%>
             default:
                 throw new Error("Unknown node type: " + type);
+        }
+    }
+
+    // Can be overridden to use createLazyDefNode instead
+    protected Nodes.DefNode loadDefNode(<%= base_params_sig -%>) {
+        return createDefNode(<%= base_params.join(", ") -%>);
+    }
+
+    protected Nodes.DefNode createLazyDefNode(<%= base_params_sig -%>) {
+        int bufferPosition = buffer.position();
+        int serializedLength = buffer.getInt();
+        // Load everything except the body and locals, because the name, receiver, parameters are still needed for lazily defining the method
+        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_STRING_ARRAY);
+        buffer.position(bufferPosition + serializedLength); // skip past the serialized DefNode
+        return lazyDefNode;
+    }
+
+    protected Nodes.DefNode createDefNode(<%= base_params_sig -%>) {
+        return new Nodes.DefNode(<%= $DefNode_params.join(", ") -%>);
+    }
+
+    Nodes.DefNode createDefNodeFromSavedPosition(<%= base_params_sig -%>, int bufferPosition) {
+        // This method mutates the buffer position and may be called from different threads so we must synchronize
+        synchronized (this) {
+            buffer.position(bufferPosition);
+            return createDefNode(<%= base_params.join(", ") -%>);
         }
     }
     <%- array_types.uniq.each do |type| -%>
