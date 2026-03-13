@@ -16,6 +16,7 @@ mod bindings {
 mod node;
 mod parse_result;
 
+use std::ffi::CString;
 use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
@@ -23,7 +24,328 @@ pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
-use ruby_prism_sys::{pm_arena_t, pm_parse, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{
+    pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_partial_script_set, pm_options_scope_forwarding_set,
+    pm_options_scope_get, pm_options_scope_init, pm_options_scope_local_get, pm_options_scopes_init, pm_options_t, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
+};
+
+/// The version of Ruby syntax to parse with.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Version {
+    /// Use the latest version of prism.
+    Latest,
+    /// The vendored version of prism in `CRuby` 3.3.x.
+    CRuby3_3,
+    /// The vendored version of prism in `CRuby` 3.4.x.
+    CRuby3_4,
+    /// The vendored version of prism in `CRuby` 3.5.x / 4.0.x.
+    CRuby3_5,
+    /// The vendored version of prism in `CRuby` 4.1.x.
+    CRuby4_1,
+}
+
+impl From<Version> for ruby_prism_sys::pm_options_version_t {
+    fn from(version: Version) -> Self {
+        match version {
+            Version::Latest => Self::PM_OPTIONS_VERSION_LATEST,
+            Version::CRuby3_3 => Self::PM_OPTIONS_VERSION_CRUBY_3_3,
+            Version::CRuby3_4 => Self::PM_OPTIONS_VERSION_CRUBY_3_4,
+            Version::CRuby3_5 => Self::PM_OPTIONS_VERSION_CRUBY_3_5,
+            Version::CRuby4_1 => Self::PM_OPTIONS_VERSION_CRUBY_4_1,
+        }
+    }
+}
+
+/// A command line option that affects parsing behavior.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CommandLineFlag {
+    /// `-a`: splits the input line `$_` into `$F`.
+    A,
+    /// `-e`: specifies a script to be executed.
+    E,
+    /// `-l`: chomps the input line by default.
+    L,
+    /// `-n`: wraps the script in a `while gets` loop.
+    N,
+    /// `-p`: prints the value of `$_` at the end of each loop.
+    P,
+    /// `-x`: searches the input file for a shebang.
+    X,
+}
+
+impl From<CommandLineFlag> for u8 {
+    fn from(flag: CommandLineFlag) -> Self {
+        match flag {
+            CommandLineFlag::A => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_A,
+            CommandLineFlag::E => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_E,
+            CommandLineFlag::L => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_L,
+            CommandLineFlag::N => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_N,
+            CommandLineFlag::P => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_P,
+            CommandLineFlag::X => ruby_prism_sys::PM_OPTIONS_COMMAND_LINE_X,
+        }
+    }
+}
+
+/// A forwarding parameter for a scope.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ScopeForwardingFlag {
+    /// Forwarding with the `*` parameter.
+    Positionals,
+    /// Forwarding with the `**` parameter.
+    Keywords,
+    /// Forwarding with the `&` parameter.
+    Block,
+    /// Forwarding with the `...` parameter.
+    All,
+}
+
+impl From<ScopeForwardingFlag> for u8 {
+    fn from(flag: ScopeForwardingFlag) -> Self {
+        match flag {
+            ScopeForwardingFlag::Positionals => ruby_prism_sys::PM_OPTIONS_SCOPE_FORWARDING_POSITIONALS,
+            ScopeForwardingFlag::Keywords => ruby_prism_sys::PM_OPTIONS_SCOPE_FORWARDING_KEYWORDS,
+            ScopeForwardingFlag::Block => ruby_prism_sys::PM_OPTIONS_SCOPE_FORWARDING_BLOCK,
+            ScopeForwardingFlag::All => ruby_prism_sys::PM_OPTIONS_SCOPE_FORWARDING_ALL,
+        }
+    }
+}
+
+/// A scope of locals surrounding the code that is being parsed.
+#[derive(Debug, Clone, Default)]
+pub struct Scope {
+    locals: Vec<Vec<u8>>,
+    forwarding: Vec<ScopeForwardingFlag>,
+}
+
+impl Scope {
+    /// Sets the local variable names in this scope.
+    #[must_use]
+    pub fn locals(mut self, locals: Vec<Vec<u8>>) -> Self {
+        self.locals = locals;
+        self
+    }
+
+    /// Sets the forwarding parameters in this scope.
+    #[must_use]
+    pub fn forwarding(mut self, forwarding: Vec<ScopeForwardingFlag>) -> Self {
+        self.forwarding = forwarding;
+        self
+    }
+}
+
+/// Options that can be passed to the parser.
+#[derive(Debug, Clone, Default)]
+pub struct Options {
+    filepath: Option<String>,
+    line: Option<i32>,
+    encoding: Option<String>,
+    encoding_locked: bool,
+    frozen_string_literal: Option<bool>,
+    command_line: Vec<CommandLineFlag>,
+    version: Option<Version>,
+    main_script: bool,
+    partial_script: bool,
+    scopes: Vec<Scope>,
+}
+
+impl Options {
+    /// Sets the filepath option.
+    #[must_use]
+    pub fn filepath(mut self, filepath: &str) -> Self {
+        self.filepath = Some(filepath.to_string());
+        self
+    }
+
+    /// Sets the line option.
+    #[must_use]
+    pub const fn line(mut self, line: i32) -> Self {
+        self.line = Some(line);
+        self
+    }
+
+    /// Sets the encoding option.
+    #[must_use]
+    pub fn encoding(mut self, encoding: &str) -> Self {
+        self.encoding = Some(encoding.to_string());
+        self
+    }
+
+    /// Sets the encoding locked option.
+    #[must_use]
+    pub const fn encoding_locked(mut self, locked: bool) -> Self {
+        self.encoding_locked = locked;
+        self
+    }
+
+    /// Sets the frozen string literal option. `Some(true)` freezes string
+    /// literals, `Some(false)` keeps them mutable, and `None` leaves the
+    /// option unset.
+    #[must_use]
+    pub const fn frozen_string_literal(mut self, frozen: Option<bool>) -> Self {
+        self.frozen_string_literal = frozen;
+        self
+    }
+
+    /// Sets the command line flags.
+    #[must_use]
+    pub fn command_line(mut self, command_line: Vec<CommandLineFlag>) -> Self {
+        self.command_line = command_line;
+        self
+    }
+
+    /// Sets the version option.
+    #[must_use]
+    pub const fn version(mut self, version: Version) -> Self {
+        self.version = Some(version);
+        self
+    }
+
+    /// Sets the main script option.
+    #[must_use]
+    pub const fn main_script(mut self, main_script: bool) -> Self {
+        self.main_script = main_script;
+        self
+    }
+
+    /// Sets the partial script option.
+    #[must_use]
+    pub const fn partial_script(mut self, partial_script: bool) -> Self {
+        self.partial_script = partial_script;
+        self
+    }
+
+    /// Adds a scope to the options.
+    #[must_use]
+    pub fn scope(mut self, scope: Scope) -> Self {
+        self.scopes.push(scope);
+        self
+    }
+
+    /// Sets the scopes, replacing any previously added scopes.
+    #[must_use]
+    pub fn scopes(mut self, scopes: Vec<Scope>) -> Self {
+        self.scopes = scopes;
+        self
+    }
+
+    /// Builds the C-level parse options from these options. The returned
+    /// `ParseOptions` must outlive any `ParseResult` created from it.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `filepath` or `encoding` contain interior null bytes.
+    #[must_use]
+    pub fn build(self) -> ParseOptions {
+        let mut opts = pm_options_t::default();
+
+        let c_filepath = self.filepath.map(|filepath| {
+            let cstring = CString::new(filepath).unwrap();
+            unsafe { pm_options_filepath_set(&raw mut opts, cstring.as_ptr()) };
+            cstring
+        });
+
+        if let Some(line) = self.line {
+            unsafe { pm_options_line_set(&raw mut opts, line) };
+        }
+
+        let c_encoding = self.encoding.map(|encoding| {
+            let cstring = CString::new(encoding).unwrap();
+            unsafe { pm_options_encoding_set(&raw mut opts, cstring.as_ptr()) };
+            cstring
+        });
+
+        if self.encoding_locked {
+            unsafe { pm_options_encoding_locked_set(&raw mut opts, true) };
+        }
+
+        if let Some(frozen) = self.frozen_string_literal {
+            unsafe { pm_options_frozen_string_literal_set(&raw mut opts, frozen) };
+        }
+
+        let command_line = self.command_line.iter().fold(0u8, |acc, &flag| acc | u8::from(flag));
+        if command_line != 0 {
+            unsafe { pm_options_command_line_set(&raw mut opts, command_line) };
+        }
+
+        if let Some(version) = self.version {
+            opts.version = version.into();
+        }
+
+        if self.main_script {
+            unsafe { pm_options_main_script_set(&raw mut opts, true) };
+        }
+
+        if self.partial_script {
+            unsafe { pm_options_partial_script_set(&raw mut opts, true) };
+        }
+
+        if !self.scopes.is_empty() {
+            unsafe { pm_options_scopes_init(&raw mut opts, self.scopes.len()) };
+
+            for (scope_index, scope) in self.scopes.iter().enumerate() {
+                let pm_scope = unsafe { pm_options_scope_get(&raw const opts, scope_index).cast_mut() };
+                unsafe { pm_options_scope_init(pm_scope, scope.locals.len()) };
+
+                for (local_index, local) in scope.locals.iter().enumerate() {
+                    let pm_local = unsafe { pm_options_scope_local_get(pm_scope, local_index).cast_mut() };
+                    unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast::<i8>(), local.len()) };
+                }
+
+                let forwarding = scope.forwarding.iter().fold(0u8, |acc, &flag| acc | u8::from(flag));
+                if forwarding != 0 {
+                    unsafe { pm_options_scope_forwarding_set(pm_scope, forwarding) };
+                }
+            }
+        }
+
+        ParseOptions {
+            options: opts,
+            _filepath: c_filepath,
+            _encoding: c_encoding,
+            _scopes: self.scopes,
+        }
+    }
+}
+
+/// The C-level parse options. Created from [`Options::build`]. Must outlive
+/// any [`ParseResult`] created with [`parse_with_options`].
+#[derive(Debug)]
+pub struct ParseOptions {
+    options: pm_options_t,
+    // These CStrings back the constant pm_string_t values inside `options`.
+    // They must not be dropped before `options` is freed.
+    _filepath: Option<CString>,
+    _encoding: Option<CString>,
+    // The scopes data that pm_string_t values point into.
+    _scopes: Vec<Scope>,
+}
+
+impl Drop for ParseOptions {
+    fn drop(&mut self) {
+        unsafe { pm_options_free(&raw mut self.options) };
+    }
+}
+
+/// Initializes a parser, parses the source, and returns the result.
+///
+/// # Safety
+///
+/// `options` must be a valid pointer to a `pm_options_t` or null.
+unsafe fn parse_impl(source: &[u8], options: *const pm_options_t) -> ParseResult<'_> {
+    let mut arena = Box::new(MaybeUninit::<pm_arena_t>::zeroed().assume_init());
+    let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
+    let uninit = Box::into_raw(uninit);
+
+    pm_parser_init(arena.as_mut(), (*uninit).as_mut_ptr(), source.as_ptr(), source.len(), options);
+
+    let parser = (*uninit).assume_init_mut();
+    let parser = NonNull::new_unchecked(parser);
+
+    let node = pm_parse(parser.as_ptr());
+    let node = NonNull::new_unchecked(node);
+
+    ParseResult::new(source, arena, parser, node)
+}
 
 /// Parses the given source string and returns a parse result.
 ///
@@ -33,21 +355,19 @@ use ruby_prism_sys::{pm_arena_t, pm_parse, pm_parser_init, pm_parser_t};
 ///
 #[must_use]
 pub fn parse(source: &[u8]) -> ParseResult<'_> {
-    unsafe {
-        let mut arena = Box::new(MaybeUninit::<pm_arena_t>::zeroed().assume_init());
-        let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
-        let uninit = Box::into_raw(uninit);
+    unsafe { parse_impl(source, std::ptr::null()) }
+}
 
-        pm_parser_init(arena.as_mut(), (*uninit).as_mut_ptr(), source.as_ptr(), source.len(), std::ptr::null());
-
-        let parser = (*uninit).assume_init_mut();
-        let parser = NonNull::new_unchecked(parser);
-
-        let node = pm_parse(parser.as_ptr());
-        let node = NonNull::new_unchecked(node);
-
-        ParseResult::new(source, arena, parser, node)
-    }
+/// Parses the given source string with the given options and returns a parse
+/// result. The `options` must outlive the returned `ParseResult`.
+///
+/// # Panics
+///
+/// Panics if the parser fails to initialize.
+///
+#[must_use]
+pub fn parse_with_options<'a>(source: &'a [u8], options: &'a ParseOptions) -> ParseResult<'a> {
+    unsafe { parse_impl(source, &raw const options.options) }
 }
 
 #[cfg(test)]
@@ -741,6 +1061,55 @@ end
         let mut extractor = Extract::default();
         extractor.push_scope(node.as_program_node().unwrap().statements().body().iter().next().unwrap());
         assert_eq!(3, extractor.scopes.len());
+    }
+
+    #[test]
+    fn parse_with_options_frozen_string_literal_test() {
+        use super::{parse_with_options, Options};
+
+        let source = b"\"foo\"";
+        let options = Options::default().frozen_string_literal(Some(true)).build();
+        let result = parse_with_options(source, &options);
+
+        let node = result.node();
+        let string = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let string = string.as_string_node().unwrap();
+        assert!(string.is_frozen());
+    }
+
+    #[test]
+    fn parse_with_options_filepath_test() {
+        use super::{parse_with_options, Options};
+
+        let source = b"__FILE__";
+        let options = Options::default().filepath("test.rb").build();
+        let result = parse_with_options(source, &options);
+        assert!(result.errors().next().is_none());
+    }
+
+    #[test]
+    fn parse_with_options_line_test() {
+        use super::{parse_with_options, Options};
+
+        let source = b"1 + 2";
+        let options = Options::default().line(10).build();
+        let result = parse_with_options(source, &options);
+        assert!(result.errors().next().is_none());
+    }
+
+    #[test]
+    fn parse_with_options_scopes_test() {
+        use super::{parse_with_options, Options, Scope};
+
+        let source = b"x";
+        let scope = Scope::default().locals(vec![b"x".to_vec()]);
+        let options = Options::default().scope(scope).build();
+        let result = parse_with_options(source, &options);
+        assert!(result.errors().next().is_none());
+
+        let node = result.node();
+        let stmt = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        assert!(stmt.as_local_variable_read_node().is_some());
     }
 
     #[test]
