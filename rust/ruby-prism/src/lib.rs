@@ -14,6 +14,7 @@ mod bindings {
 }
 
 mod node;
+mod node_ext;
 mod parse_result;
 
 use std::ffi::CString;
@@ -22,6 +23,7 @@ use std::ptr::NonNull;
 
 pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
+pub use self::node_ext::{ConstantPathError, FullName};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
 use ruby_prism_sys::{
