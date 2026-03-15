@@ -48,26 +48,11 @@ enum NodeFieldType {
 }
 
 #[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct OnErrorType {
-    #[serde(rename = "on error")]
-    kind: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(untagged)]
-#[allow(dead_code)]
-enum UnionKind {
-    OnSuccess(String),
-    OnError(OnErrorType),
-}
-
-#[derive(Debug, Deserialize)]
 #[serde(untagged)]
 #[allow(dead_code)]
 enum NodeFieldKind {
     Concrete(String),
-    Union(Vec<UnionKind>),
+    Union(Vec<String>),
 }
 
 #[derive(Debug, Deserialize)]

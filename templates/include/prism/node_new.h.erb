@@ -10,6 +10,10 @@
 
 #include "prism/node.h"
 
+#ifdef PRISM_NODE_TYPE_ASSERTIONS
+#include <assert.h>
+#endif
+
 <%- nodes.each do |node| -%>
 <%- params = node.fields.map(&:c_param) -%>
 /**
@@ -26,6 +30,23 @@
  */
 static inline pm_<%= node.human %>_t *
 pm_<%= node.human %>_new(pm_arena_t *arena, uint32_t node_id, pm_node_flags_t flags, pm_location_t location<%= params.empty? ? "" : ", #{params.join(", ")}" %>) {
+<%- assertions = node.fields.filter_map do |field| -%>
+<%-   next unless field.is_a?(Prism::Template::NodeKindField) -%>
+<%-   next if field.specific_kind -%>
+<%-   next unless (types = field.assertion_types) -%>
+<%-   check = types.map { |t| "PM_NODE_TYPE_P(#{field.name}, #{t})" }.join(" || ") -%>
+<%-   if field.is_a?(Prism::Template::NodeField) -%>
+<%-     "    assert(#{check});" -%>
+<%-   elsif field.is_a?(Prism::Template::OptionalNodeField) -%>
+<%-     "    assert(#{field.name} == NULL || #{check});" -%>
+<%-   end -%>
+<%- end -%>
+<%- unless assertions.empty? -%>
+#ifdef PRISM_NODE_TYPE_ASSERTIONS
+<%= assertions.join("\n") %>
+#endif
+
+<%- end -%>
     pm_<%= node.human %>_t *node = (pm_<%= node.human %>_t *) pm_arena_alloc(arena, sizeof(pm_<%= node.human %>_t), PRISM_ALIGNOF(pm_<%= node.human %>_t));
 
     *node = (pm_<%= node.human %>_t) {
