@@ -153,10 +153,10 @@ module Prism
     class DynamicPartsInConstantPathError < StandardError
     end
 
-    # An error class raised when missing nodes are found while computing a
+    # An error class raised when error recovery nodes are found while computing a
     # constant path's full name. For example:
     # Foo:: -> raises because the constant path is missing the last part
-    class MissingNodesInConstantPathError < StandardError
+    class ErrorRecoveryNodesInConstantPathError < StandardError
     end
 
     # Returns the list of parts for the full name of this constant path.
@@ -174,8 +174,8 @@ module Prism
     # constant read or a missing node. To not cause a breaking change, we
     # continue to supply that API.
     # --
-    # : () -> (ConstantReadNode | MissingNode)
-    def child: () -> (ConstantReadNode | MissingNode)
+    # : () -> (ConstantReadNode | ErrorRecoveryNode)
+    def child: () -> (ConstantReadNode | ErrorRecoveryNode)
   end
 
   class ConstantPathTargetNode < Node
@@ -194,8 +194,8 @@ module Prism
     # constant read or a missing node. To not cause a breaking change, we
     # continue to supply that API.
     # --
-    # : () -> (ConstantReadNode | MissingNode)
-    def child: () -> (ConstantReadNode | MissingNode)
+    # : () -> (ConstantReadNode | ErrorRecoveryNode)
+    def child: () -> (ConstantReadNode | ErrorRecoveryNode)
   end
 
   class ConstantTargetNode < Node

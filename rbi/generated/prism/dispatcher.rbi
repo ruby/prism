@@ -213,6 +213,9 @@ module Prism
     sig { params(node: EnsureNode).void }
     def visit_ensure_node(node); end
 
+    sig { params(node: ErrorRecoveryNode).void }
+    def visit_error_recovery_node(node); end
+
     sig { params(node: FalseNode).void }
     def visit_false_node(node); end
 
@@ -368,9 +371,6 @@ module Prism
 
     sig { params(node: MatchWriteNode).void }
     def visit_match_write_node(node); end
-
-    sig { params(node: MissingNode).void }
-    def visit_missing_node(node); end
 
     sig { params(node: ModuleNode).void }
     def visit_module_node(node); end
@@ -726,6 +726,10 @@ module Prism
       sig { params(node: EnsureNode).void }
       def visit_ensure_node(node); end
 
+      # Dispatch enter and leave events for ErrorRecoveryNode nodes.
+      sig { params(node: ErrorRecoveryNode).void }
+      def visit_error_recovery_node(node); end
+
       # Dispatch enter and leave events for FalseNode nodes.
       sig { params(node: FalseNode).void }
       def visit_false_node(node); end
@@ -933,10 +937,6 @@ module Prism
       # Dispatch enter and leave events for MatchWriteNode nodes.
       sig { params(node: MatchWriteNode).void }
       def visit_match_write_node(node); end
-
-      # Dispatch enter and leave events for MissingNode nodes.
-      sig { params(node: MissingNode).void }
-      def visit_missing_node(node); end
 
       # Dispatch enter and leave events for ModuleNode nodes.
       sig { params(node: ModuleNode).void }

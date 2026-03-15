@@ -8,7 +8,6 @@ require "yaml"
 module Prism
   module Template # :nodoc: all
     SERIALIZE_ONLY_SEMANTICS_FIELDS = ENV.fetch("PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS", false)
-    REMOVE_ON_ERROR_TYPES = SERIALIZE_ONLY_SEMANTICS_FIELDS
     CHECK_FIELD_KIND = ENV.fetch("CHECK_FIELD_KIND", false)
 
     JAVA_BACKEND = ENV["PRISM_JAVA_BACKEND"] || "truffleruby"
@@ -145,6 +144,14 @@ module Prism
 
       def union_kind
         @kind if @kind.is_a?(Array)
+      end
+
+      # Returns the list of PM_* node type constants for assertion checks,
+      # or nil if the field accepts any node type.
+      def assertion_types
+        return nil if @kind.nil?
+        kinds = @kind.is_a?(Array) ? @kind : [@kind]
+        kinds.map { |k| "PM_#{k.gsub(/(?<=.)[A-Z]/, "_\\0").upcase}" }
       end
     end
 
@@ -493,9 +500,6 @@ module Prism
                 when "pattern expression"
                   # the list of all possible types is too long with 37+ different classes
                   "Node"
-                when Hash
-                  kind = kind.fetch("on error")
-                  REMOVE_ON_ERROR_TYPES ? nil : kind
                 else
                   kind
                 end
