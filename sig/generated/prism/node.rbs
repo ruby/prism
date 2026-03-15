@@ -294,14 +294,14 @@ module Prism
   class AliasGlobalVariableNode < Node
     @keyword_loc: Location
 
-    @old_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode
+    @old_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode
 
     @new_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode
 
     # Initialize a new AliasGlobalVariableNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode) new_name, (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode) old_name, Location keyword_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode new_name, GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode old_name, Location keyword_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode) new_name, (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode) old_name, Location keyword_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode new_name, GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode old_name, Location keyword_loc) -> void
 
     # See Node.accept.
     # --
@@ -335,8 +335,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode), ?old_name: (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode), ?keyword_loc: Location) -> AliasGlobalVariableNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode, ?old_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode, ?keyword_loc: Location) -> AliasGlobalVariableNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode), ?old_name: (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode), ?keyword_loc: Location) -> AliasGlobalVariableNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode, ?old_name: GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode, ?keyword_loc: Location) -> AliasGlobalVariableNode
 
     alias deconstruct child_nodes
 
@@ -368,15 +368,15 @@ module Prism
     def new_name: () -> (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode)
 
     # :call-seq:
-    #   old_name -> GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode
+    #   old_name -> GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode
     #
     # Represents the old name of the global variable that can be used before aliasing.
     #
     #     alias $foo $bar
     #                ^^^^
     # --
-    # : () -> (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode)
-    def old_name: () -> (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | SymbolNode | MissingNode)
+    # : () -> (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode)
+    def old_name: () -> (GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode)
 
     # :category: Locations
     # :call-seq:
@@ -416,14 +416,14 @@ module Prism
   class AliasMethodNode < Node
     @keyword_loc: Location
 
-    @old_name: SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode
+    @old_name: SymbolNode | InterpolatedSymbolNode
 
     @new_name: SymbolNode | InterpolatedSymbolNode
 
     # Initialize a new AliasMethodNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, (SymbolNode | InterpolatedSymbolNode) new_name, (SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode) old_name, Location keyword_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, SymbolNode | InterpolatedSymbolNode new_name, SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode old_name, Location keyword_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (SymbolNode | InterpolatedSymbolNode) new_name, (SymbolNode | InterpolatedSymbolNode) old_name, Location keyword_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, SymbolNode | InterpolatedSymbolNode new_name, SymbolNode | InterpolatedSymbolNode old_name, Location keyword_loc) -> void
 
     # See Node.accept.
     # --
@@ -457,8 +457,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: (SymbolNode | InterpolatedSymbolNode), ?old_name: (SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode), ?keyword_loc: Location) -> AliasMethodNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: SymbolNode | InterpolatedSymbolNode, ?old_name: SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode, ?keyword_loc: Location) -> AliasMethodNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: (SymbolNode | InterpolatedSymbolNode), ?old_name: (SymbolNode | InterpolatedSymbolNode), ?keyword_loc: Location) -> AliasMethodNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?new_name: SymbolNode | InterpolatedSymbolNode, ?old_name: SymbolNode | InterpolatedSymbolNode, ?keyword_loc: Location) -> AliasMethodNode
 
     alias deconstruct child_nodes
 
@@ -496,7 +496,7 @@ module Prism
     def new_name: () -> (SymbolNode | InterpolatedSymbolNode)
 
     # :call-seq:
-    #   old_name -> SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode
+    #   old_name -> SymbolNode | InterpolatedSymbolNode
     #
     # Represents the old name of the method that will be aliased.
     #
@@ -509,8 +509,8 @@ module Prism
     #     alias :"#{foo}" :"#{bar}"
     #                     ^^^^^^^^^
     # --
-    # : () -> (SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode)
-    def old_name: () -> (SymbolNode | InterpolatedSymbolNode | GlobalVariableReadNode | MissingNode)
+    # : () -> (SymbolNode | InterpolatedSymbolNode)
+    def old_name: () -> (SymbolNode | InterpolatedSymbolNode)
 
     # :category: Locations
     # :call-seq:
@@ -4187,7 +4187,7 @@ module Prism
 
     @inheritance_operator_loc: Location?
 
-    @constant_path: ConstantReadNode | ConstantPathNode | CallNode
+    @constant_path: ConstantReadNode | ConstantPathNode
 
     @class_keyword_loc: Location
 
@@ -4195,8 +4195,8 @@ module Prism
 
     # Initialize a new ClassNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location class_keyword_loc, (ConstantReadNode | ConstantPathNode | CallNode) constant_path, Location? inheritance_operator_loc, Prism::node? superclass, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location class_keyword_loc, ConstantReadNode | ConstantPathNode | CallNode constant_path, Location? inheritance_operator_loc, Prism::node? superclass, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location class_keyword_loc, (ConstantReadNode | ConstantPathNode) constant_path, Location? inheritance_operator_loc, Prism::node? superclass, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location class_keyword_loc, ConstantReadNode | ConstantPathNode constant_path, Location? inheritance_operator_loc, Prism::node? superclass, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
 
     # See Node.accept.
     # --
@@ -4230,8 +4230,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?class_keyword_loc: Location, ?constant_path: (ConstantReadNode | ConstantPathNode | CallNode), ?inheritance_operator_loc: Location?, ?superclass: Prism::node?, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ClassNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?class_keyword_loc: Location, ?constant_path: ConstantReadNode | ConstantPathNode | CallNode, ?inheritance_operator_loc: Location?, ?superclass: Prism::node?, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ClassNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?class_keyword_loc: Location, ?constant_path: (ConstantReadNode | ConstantPathNode), ?inheritance_operator_loc: Location?, ?superclass: Prism::node?, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ClassNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?class_keyword_loc: Location, ?constant_path: ConstantReadNode | ConstantPathNode, ?inheritance_operator_loc: Location?, ?superclass: Prism::node?, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ClassNode
 
     alias deconstruct child_nodes
 
@@ -4279,12 +4279,12 @@ module Prism
     def save_class_keyword_loc: (_Repository repository) -> Relocation::Entry
 
     # :call-seq:
-    #   constant_path -> ConstantReadNode | ConstantPathNode | CallNode
+    #   constant_path -> ConstantReadNode | ConstantPathNode
     #
     # Returns the `constant_path` attribute.
     # --
-    # : () -> (ConstantReadNode | ConstantPathNode | CallNode)
-    def constant_path: () -> (ConstantReadNode | ConstantPathNode | CallNode)
+    # : () -> (ConstantReadNode | ConstantPathNode)
+    def constant_path: () -> (ConstantReadNode | ConstantPathNode)
 
     # :category: Locations
     # :call-seq:
@@ -7492,6 +7492,80 @@ module Prism
     def ===: (untyped other) -> boolish
   end
 
+  # Represents a node that is either missing or unexpected and results in a syntax error.
+  class ErrorRecoveryNode < Node
+    @unexpected: Prism::node?
+
+    # Initialize a new ErrorRecoveryNode node.
+    # --
+    # : (Source source, Integer node_id, Location location, Integer flags, Prism::node? unexpected) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Prism::node? unexpected) -> void
+
+    # See Node.accept.
+    # --
+    # : (_Visitor visitor) -> untyped
+    def accept: (_Visitor visitor) -> untyped
+
+    # See Node.child_nodes.
+    # --
+    # : () -> Array[node?]
+    def child_nodes: () -> Array[node?]
+
+    # See Node.each_child_node.
+    # --
+    # : () -> Enumerator[node, void]
+    # : () { (node) -> void } -> void
+    def each_child_node: () -> Enumerator[node, void]
+                       | () { (node) -> void } -> void
+
+    # See Node.compact_child_nodes.
+    # --
+    # : () -> Array[node]
+    def compact_child_nodes: () -> Array[node]
+
+    # See Node.comment_targets.
+    # --
+    # : () -> Array[node | Location]
+    def comment_targets: () -> Array[node | Location]
+
+    # :call-seq:
+    #   copy(**fields) -> ErrorRecoveryNode
+    #
+    # Creates a copy of self with the given fields, using self as the template.
+    # --
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?unexpected: Prism::node?) -> ErrorRecoveryNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?unexpected: Prism::node?) -> ErrorRecoveryNode
+
+    alias deconstruct child_nodes
+
+    # : (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
+
+    # See `Node#type`.
+    # --
+    # : () -> :error_recovery_node
+    def type: () -> :error_recovery_node
+
+    # See `Node.type`.
+    # --
+    # : () -> :error_recovery_node
+    def self.type: () -> :error_recovery_node
+
+    # : () -> String
+    def inspect: () -> String
+
+    # :call-seq:
+    #   unexpected -> Node | nil
+    #
+    # The unexpected node that was found in the tree, if there was one.
+    # --
+    # : () -> Prism::node?
+    def unexpected: () -> Prism::node?
+
+    # : (untyped other) -> boolish
+    def ===: (untyped other) -> boolish
+  end
+
   # Represents the use of the literal `false` keyword.
   #
   #     false
@@ -7577,7 +7651,7 @@ module Prism
 
     @opening_loc: Location?
 
-    @right: SplatNode | MissingNode
+    @right: SplatNode
 
     @requireds: Array[Prism::node]
 
@@ -7587,8 +7661,8 @@ module Prism
 
     # Initialize a new FindPatternNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, (ConstantPathNode | ConstantReadNode)? constant, SplatNode left, Array[Prism::node] requireds, (SplatNode | MissingNode) right, Location? opening_loc, Location? closing_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, (ConstantPathNode | ConstantReadNode)? constant, SplatNode left, Array[Prism::node] requireds, SplatNode | MissingNode right, Location? opening_loc, Location? closing_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (ConstantPathNode | ConstantReadNode)? constant, SplatNode left, Array[Prism::node] requireds, SplatNode right, Location? opening_loc, Location? closing_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, (ConstantPathNode | ConstantReadNode)? constant, SplatNode left, Array[Prism::node] requireds, SplatNode right, Location? opening_loc, Location? closing_loc) -> void
 
     # See Node.accept.
     # --
@@ -7622,8 +7696,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?constant: (ConstantPathNode | ConstantReadNode)?, ?left: SplatNode, ?requireds: Array[Prism::node], ?right: (SplatNode | MissingNode), ?opening_loc: Location?, ?closing_loc: Location?) -> FindPatternNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?constant: (ConstantPathNode | ConstantReadNode)?, ?left: SplatNode, ?requireds: Array[Prism::node], ?right: SplatNode | MissingNode, ?opening_loc: Location?, ?closing_loc: Location?) -> FindPatternNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?constant: (ConstantPathNode | ConstantReadNode)?, ?left: SplatNode, ?requireds: Array[Prism::node], ?right: SplatNode, ?opening_loc: Location?, ?closing_loc: Location?) -> FindPatternNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?constant: (ConstantPathNode | ConstantReadNode)?, ?left: SplatNode, ?requireds: Array[Prism::node], ?right: SplatNode, ?opening_loc: Location?, ?closing_loc: Location?) -> FindPatternNode
 
     alias deconstruct child_nodes
 
@@ -7683,7 +7757,7 @@ module Prism
     def requireds: () -> Array[Prism::node]
 
     # :call-seq:
-    #   right -> SplatNode | MissingNode
+    #   right -> SplatNode
     #
     # Represents the second wildcard node in the pattern.
     #
@@ -7693,8 +7767,8 @@ module Prism
     #     foo in Foo(*bar, baz, *qux)
     #                           ^^^^
     # --
-    # : () -> (SplatNode | MissingNode)
-    def right: () -> (SplatNode | MissingNode)
+    # : () -> SplatNode
+    def right: () -> SplatNode
 
     # :category: Locations
     # :call-seq:
@@ -7973,12 +8047,12 @@ module Prism
 
     @collection: Prism::node
 
-    @index: LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode
+    @index: LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode
 
     # Initialize a new ForNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode) index, Prism::node collection, StatementsNode? statements, Location for_keyword_loc, Location in_keyword_loc, Location? do_keyword_loc, Location end_keyword_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode index, Prism::node collection, StatementsNode? statements, Location for_keyword_loc, Location in_keyword_loc, Location? do_keyword_loc, Location end_keyword_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode) index, Prism::node collection, StatementsNode? statements, Location for_keyword_loc, Location in_keyword_loc, Location? do_keyword_loc, Location end_keyword_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode index, Prism::node collection, StatementsNode? statements, Location for_keyword_loc, Location in_keyword_loc, Location? do_keyword_loc, Location end_keyword_loc) -> void
 
     # See Node.accept.
     # --
@@ -8012,8 +8086,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?index: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode), ?collection: Prism::node, ?statements: StatementsNode?, ?for_keyword_loc: Location, ?in_keyword_loc: Location, ?do_keyword_loc: Location?, ?end_keyword_loc: Location) -> ForNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?index: LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode, ?collection: Prism::node, ?statements: StatementsNode?, ?for_keyword_loc: Location, ?in_keyword_loc: Location, ?do_keyword_loc: Location?, ?end_keyword_loc: Location) -> ForNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?index: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode), ?collection: Prism::node, ?statements: StatementsNode?, ?for_keyword_loc: Location, ?in_keyword_loc: Location, ?do_keyword_loc: Location?, ?end_keyword_loc: Location) -> ForNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?index: LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode, ?collection: Prism::node, ?statements: StatementsNode?, ?for_keyword_loc: Location, ?in_keyword_loc: Location, ?do_keyword_loc: Location?, ?end_keyword_loc: Location) -> ForNode
 
     alias deconstruct child_nodes
 
@@ -8034,15 +8108,15 @@ module Prism
     def inspect: () -> String
 
     # :call-seq:
-    #   index -> LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode
+    #   index -> LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode
     #
     # The index expression for `for` loops.
     #
     #     for i in a end
     #         ^
     # --
-    # : () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)
-    def index: () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)
+    # : () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode)
+    def index: () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode)
 
     # :call-seq:
     #   collection -> Node
@@ -12116,14 +12190,14 @@ module Prism
   class InterpolatedStringNode < Node
     @closing_loc: Location?
 
-    @parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode]
+    @parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode]
 
     @opening_loc: Location?
 
     # Initialize a new InterpolatedStringNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode] parts, Location? closing_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode] parts, Location? closing_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode] parts, Location? closing_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode] parts, Location? closing_loc) -> void
 
     # See Node.accept.
     # --
@@ -12157,8 +12231,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode], ?closing_loc: Location?) -> InterpolatedStringNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode], ?closing_loc: Location?) -> InterpolatedStringNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode], ?closing_loc: Location?) -> InterpolatedStringNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?parts: Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode], ?closing_loc: Location?) -> InterpolatedStringNode
 
     alias deconstruct child_nodes
 
@@ -12207,12 +12281,12 @@ module Prism
     def save_opening_loc: (_Repository repository) -> Relocation::Entry?
 
     # :call-seq:
-    #   parts -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode]
+    #   parts -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode]
     #
     # Returns the `parts` attribute.
     # --
-    # : () -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode]
-    def parts: () -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode | XStringNode | InterpolatedXStringNode | SymbolNode | InterpolatedSymbolNode]
+    # : () -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode]
+    def parts: () -> Array[StringNode | EmbeddedStatementsNode | EmbeddedVariableNode | InterpolatedStringNode]
 
     # :category: Locations
     # :call-seq:
@@ -14393,70 +14467,6 @@ module Prism
     def ===: (untyped other) -> boolish
   end
 
-  # Represents a node that is missing from the source and results in a syntax error.
-  class MissingNode < Node
-    # Initialize a new MissingNode node.
-    # --
-    # : (Source source, Integer node_id, Location location, Integer flags, ) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags) -> void
-
-    # See Node.accept.
-    # --
-    # : (_Visitor visitor) -> untyped
-    def accept: (_Visitor visitor) -> untyped
-
-    # See Node.child_nodes.
-    # --
-    # : () -> Array[node?]
-    def child_nodes: () -> Array[node?]
-
-    # See Node.each_child_node.
-    # --
-    # : () -> Enumerator[node, void]
-    # : () { (node) -> void } -> void
-    def each_child_node: () -> Enumerator[node, void]
-                       | () { (node) -> void } -> void
-
-    # See Node.compact_child_nodes.
-    # --
-    # : () -> Array[node]
-    def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    # --
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
-    # :call-seq:
-    #   copy(**fields) -> MissingNode
-    #
-    # Creates a copy of self with the given fields, using self as the template.
-    # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ) -> MissingNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer) -> MissingNode
-
-    alias deconstruct child_nodes
-
-    # : (Array[Symbol]? keys) -> Hash[Symbol, untyped]
-    def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
-
-    # See `Node#type`.
-    # --
-    # : () -> :missing_node
-    def type: () -> :missing_node
-
-    # See `Node.type`.
-    # --
-    # : () -> :missing_node
-    def self.type: () -> :missing_node
-
-    # : () -> String
-    def inspect: () -> String
-
-    # : (untyped other) -> boolish
-    def ===: (untyped other) -> boolish
-  end
-
   # Represents a module declaration involving the `module` keyword.
   #
   #     module Foo end
@@ -14468,7 +14478,7 @@ module Prism
 
     @body: (StatementsNode | BeginNode)?
 
-    @constant_path: ConstantReadNode | ConstantPathNode | MissingNode
+    @constant_path: ConstantReadNode | ConstantPathNode
 
     @module_keyword_loc: Location
 
@@ -14476,8 +14486,8 @@ module Prism
 
     # Initialize a new ModuleNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location module_keyword_loc, (ConstantReadNode | ConstantPathNode | MissingNode) constant_path, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location module_keyword_loc, ConstantReadNode | ConstantPathNode | MissingNode constant_path, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location module_keyword_loc, (ConstantReadNode | ConstantPathNode) constant_path, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[Symbol] locals, Location module_keyword_loc, ConstantReadNode | ConstantPathNode constant_path, (StatementsNode | BeginNode)? body, Location end_keyword_loc, Symbol name) -> void
 
     # See Node.accept.
     # --
@@ -14511,8 +14521,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?module_keyword_loc: Location, ?constant_path: (ConstantReadNode | ConstantPathNode | MissingNode), ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ModuleNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?module_keyword_loc: Location, ?constant_path: ConstantReadNode | ConstantPathNode | MissingNode, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ModuleNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?module_keyword_loc: Location, ?constant_path: (ConstantReadNode | ConstantPathNode), ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ModuleNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?locals: Array[Symbol], ?module_keyword_loc: Location, ?constant_path: ConstantReadNode | ConstantPathNode, ?body: (StatementsNode | BeginNode)?, ?end_keyword_loc: Location, ?name: Symbol) -> ModuleNode
 
     alias deconstruct child_nodes
 
@@ -14557,12 +14567,12 @@ module Prism
     def save_module_keyword_loc: (_Repository repository) -> Relocation::Entry
 
     # :call-seq:
-    #   constant_path -> ConstantReadNode | ConstantPathNode | MissingNode
+    #   constant_path -> ConstantReadNode | ConstantPathNode
     #
     # Returns the `constant_path` attribute.
     # --
-    # : () -> (ConstantReadNode | ConstantPathNode | MissingNode)
-    def constant_path: () -> (ConstantReadNode | ConstantPathNode | MissingNode)
+    # : () -> (ConstantReadNode | ConstantPathNode)
+    def constant_path: () -> (ConstantReadNode | ConstantPathNode)
 
     # :call-seq:
     #   body -> StatementsNode | BeginNode | nil
@@ -14630,16 +14640,16 @@ module Prism
 
     @lparen_loc: Location?
 
-    @rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    @rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
 
     @rest: (ImplicitRestNode | SplatNode)?
 
-    @lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    @lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
 
     # Initialize a new MultiTargetNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode] rights, Location? lparen_loc, Location? rparen_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode] rights, Location? lparen_loc, Location? rparen_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode] rights, Location? lparen_loc, Location? rparen_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode] rights, Location? lparen_loc, Location? rparen_loc) -> void
 
     # See Node.accept.
     # --
@@ -14673,8 +14683,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode], ?lparen_loc: Location?, ?rparen_loc: Location?) -> MultiTargetNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode], ?lparen_loc: Location?, ?rparen_loc: Location?) -> MultiTargetNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode], ?lparen_loc: Location?, ?rparen_loc: Location?) -> MultiTargetNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode], ?lparen_loc: Location?, ?rparen_loc: Location?) -> MultiTargetNode
 
     alias deconstruct child_nodes
 
@@ -14695,7 +14705,7 @@ module Prism
     def inspect: () -> String
 
     # :call-seq:
-    #   lefts -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    #   lefts -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
     #
     # Represents the targets expressions before a splat node.
     #
@@ -14707,8 +14717,8 @@ module Prism
     #     a, (b, c) = 1, 2, 3, 4, 5
     #         ^^^^
     # --
-    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
-    def lefts: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
+    def lefts: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
 
     # :call-seq:
     #   rest -> ImplicitRestNode | SplatNode | nil
@@ -14732,15 +14742,15 @@ module Prism
     def rest: () -> (ImplicitRestNode | SplatNode)?
 
     # :call-seq:
-    #   rights -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    #   rights -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
     #
     # Represents the targets expressions after a splat node.
     #
     #     a, (*, b, c) = 1, 2, 3, 4, 5
     #            ^^^^
     # --
-    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
-    def rights: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
+    def rights: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | RequiredParameterNode]
 
     # :category: Locations
     # :call-seq:
@@ -14813,16 +14823,16 @@ module Prism
 
     @lparen_loc: Location?
 
-    @rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    @rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
 
     @rest: (ImplicitRestNode | SplatNode)?
 
-    @lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    @lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
 
     # Initialize a new MultiWriteNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode] rights, Location? lparen_loc, Location? rparen_loc, Location operator_loc, Prism::node value) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode] rights, Location? lparen_loc, Location? rparen_loc, Location operator_loc, Prism::node value) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode] rights, Location? lparen_loc, Location? rparen_loc, Location operator_loc, Prism::node value) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode] lefts, (ImplicitRestNode | SplatNode)? rest, Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode] rights, Location? lparen_loc, Location? rparen_loc, Location operator_loc, Prism::node value) -> void
 
     # See Node.accept.
     # --
@@ -14856,8 +14866,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode], ?lparen_loc: Location?, ?rparen_loc: Location?, ?operator_loc: Location, ?value: Prism::node) -> MultiWriteNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode], ?lparen_loc: Location?, ?rparen_loc: Location?, ?operator_loc: Location, ?value: Prism::node) -> MultiWriteNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode], ?lparen_loc: Location?, ?rparen_loc: Location?, ?operator_loc: Location, ?value: Prism::node) -> MultiWriteNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?lefts: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode], ?rest: (ImplicitRestNode | SplatNode)?, ?rights: Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode], ?lparen_loc: Location?, ?rparen_loc: Location?, ?operator_loc: Location, ?value: Prism::node) -> MultiWriteNode
 
     alias deconstruct child_nodes
 
@@ -14878,7 +14888,7 @@ module Prism
     def inspect: () -> String
 
     # :call-seq:
-    #   lefts -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    #   lefts -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
     #
     # Represents the targets expressions before a splat node.
     #
@@ -14890,8 +14900,8 @@ module Prism
     #     a, b, c = 1, 2, 3, 4, 5
     #     ^^^^^^^
     # --
-    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
-    def lefts: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
+    def lefts: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
 
     # :call-seq:
     #   rest -> ImplicitRestNode | SplatNode | nil
@@ -14915,15 +14925,15 @@ module Prism
     def rest: () -> (ImplicitRestNode | SplatNode)?
 
     # :call-seq:
-    #   rights -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    #   rights -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
     #
     # Represents the targets expressions after a splat node.
     #
     #     a, *, b, c = 1, 2, 3, 4, 5
     #           ^^^^
     # --
-    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
-    def rights: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode | BackReferenceReadNode | NumberedReferenceReadNode]
+    # : () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
+    def rights: () -> Array[LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | MultiTargetNode]
 
     # :category: Locations
     # :call-seq:
@@ -15981,7 +15991,7 @@ module Prism
 
     @keywords: Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode]
 
-    @posts: Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode]
+    @posts: Array[RequiredParameterNode | MultiTargetNode]
 
     @rest: (RestParameterNode | ImplicitRestNode)?
 
@@ -15991,8 +16001,8 @@ module Prism
 
     # Initialize a new ParametersNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Array[RequiredParameterNode | MultiTargetNode] requireds, Array[OptionalParameterNode] optionals, (RestParameterNode | ImplicitRestNode)? rest, Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode] posts, Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode] keywords, (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)? keyword_rest, (BlockParameterNode | NoBlockParameterNode)? block) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[RequiredParameterNode | MultiTargetNode] requireds, Array[OptionalParameterNode] optionals, (RestParameterNode | ImplicitRestNode)? rest, Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode] posts, Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode] keywords, (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)? keyword_rest, (BlockParameterNode | NoBlockParameterNode)? block) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Array[RequiredParameterNode | MultiTargetNode] requireds, Array[OptionalParameterNode] optionals, (RestParameterNode | ImplicitRestNode)? rest, Array[RequiredParameterNode | MultiTargetNode] posts, Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode] keywords, (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)? keyword_rest, (BlockParameterNode | NoBlockParameterNode)? block) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Array[RequiredParameterNode | MultiTargetNode] requireds, Array[OptionalParameterNode] optionals, (RestParameterNode | ImplicitRestNode)? rest, Array[RequiredParameterNode | MultiTargetNode] posts, Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode] keywords, (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)? keyword_rest, (BlockParameterNode | NoBlockParameterNode)? block) -> void
 
     # See Node.accept.
     # --
@@ -16026,8 +16036,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?requireds: Array[RequiredParameterNode | MultiTargetNode], ?optionals: Array[OptionalParameterNode], ?rest: (RestParameterNode | ImplicitRestNode)?, ?posts: Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode], ?keywords: Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode], ?keyword_rest: (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)?, ?block: (BlockParameterNode | NoBlockParameterNode)?) -> ParametersNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?requireds: Array[RequiredParameterNode | MultiTargetNode], ?optionals: Array[OptionalParameterNode], ?rest: (RestParameterNode | ImplicitRestNode)?, ?posts: Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode], ?keywords: Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode], ?keyword_rest: (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)?, ?block: (BlockParameterNode | NoBlockParameterNode)?) -> ParametersNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?requireds: Array[RequiredParameterNode | MultiTargetNode], ?optionals: Array[OptionalParameterNode], ?rest: (RestParameterNode | ImplicitRestNode)?, ?posts: Array[RequiredParameterNode | MultiTargetNode], ?keywords: Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode], ?keyword_rest: (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)?, ?block: (BlockParameterNode | NoBlockParameterNode)?) -> ParametersNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?requireds: Array[RequiredParameterNode | MultiTargetNode], ?optionals: Array[OptionalParameterNode], ?rest: (RestParameterNode | ImplicitRestNode)?, ?posts: Array[RequiredParameterNode | MultiTargetNode], ?keywords: Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode], ?keyword_rest: (KeywordRestParameterNode | ForwardingParameterNode | NoKeywordsParameterNode)?, ?block: (BlockParameterNode | NoBlockParameterNode)?) -> ParametersNode
 
     alias deconstruct child_nodes
 
@@ -16072,12 +16082,12 @@ module Prism
     def rest: () -> (RestParameterNode | ImplicitRestNode)?
 
     # :call-seq:
-    #   posts -> Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode]
+    #   posts -> Array[RequiredParameterNode | MultiTargetNode]
     #
     # Returns the `posts` attribute.
     # --
-    # : () -> Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode]
-    def posts: () -> Array[RequiredParameterNode | MultiTargetNode | KeywordRestParameterNode | NoKeywordsParameterNode | ForwardingParameterNode | BlockParameterNode | NoBlockParameterNode]
+    # : () -> Array[RequiredParameterNode | MultiTargetNode]
+    def posts: () -> Array[RequiredParameterNode | MultiTargetNode]
 
     # :call-seq:
     #   keywords -> Array[RequiredKeywordParameterNode | OptionalKeywordParameterNode]
@@ -16416,12 +16426,12 @@ module Prism
   class PinnedVariableNode < Node
     @operator_loc: Location
 
-    @variable: LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode
+    @variable: LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode
 
     # Initialize a new PinnedVariableNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode) variable, Location operator_loc) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode variable, Location operator_loc) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode) variable, Location operator_loc) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode variable, Location operator_loc) -> void
 
     # See Node.accept.
     # --
@@ -16455,8 +16465,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?variable: (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode), ?operator_loc: Location) -> PinnedVariableNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?variable: LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode, ?operator_loc: Location) -> PinnedVariableNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?variable: (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode), ?operator_loc: Location) -> PinnedVariableNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?variable: LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode, ?operator_loc: Location) -> PinnedVariableNode
 
     alias deconstruct child_nodes
 
@@ -16477,15 +16487,15 @@ module Prism
     def inspect: () -> String
 
     # :call-seq:
-    #   variable -> LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode
+    #   variable -> LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode
     #
     # The variable used in the pinned expression
     #
     #     foo in ^bar
     #             ^^^
     # --
-    # : () -> (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode)
-    def variable: () -> (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode | MissingNode)
+    # : () -> (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode)
+    def variable: () -> (LocalVariableReadNode | InstanceVariableReadNode | ClassVariableReadNode | GlobalVariableReadNode | BackReferenceReadNode | NumberedReferenceReadNode | ItLocalVariableReadNode)
 
     # :category: Locations
     # :call-seq:
@@ -17014,7 +17024,7 @@ module Prism
     #
     #     1...foo
     #         ^^^
-    # If neither right-hand or left-hand side was included, this will be a MissingNode.
+    # If neither right-hand or left-hand side was included, this will be an ErrorRecoveryNode.
     # --
     # : () -> Prism::node?
     def right: () -> Prism::node?
@@ -17765,7 +17775,7 @@ module Prism
 
     @then_keyword_loc: Location?
 
-    @reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)?
+    @reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)?
 
     @operator_loc: Location?
 
@@ -17775,8 +17785,8 @@ module Prism
 
     # Initialize a new RescueNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, Array[Prism::node] exceptions, Location? operator_loc, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)? reference, Location? then_keyword_loc, StatementsNode? statements, RescueNode? subsequent) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, Array[Prism::node] exceptions, Location? operator_loc, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)? reference, Location? then_keyword_loc, StatementsNode? statements, RescueNode? subsequent) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, Array[Prism::node] exceptions, Location? operator_loc, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)? reference, Location? then_keyword_loc, StatementsNode? statements, RescueNode? subsequent) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, Array[Prism::node] exceptions, Location? operator_loc, (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)? reference, Location? then_keyword_loc, StatementsNode? statements, RescueNode? subsequent) -> void
 
     # See Node.accept.
     # --
@@ -17810,8 +17820,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?exceptions: Array[Prism::node], ?operator_loc: Location?, ?reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)?, ?then_keyword_loc: Location?, ?statements: StatementsNode?, ?subsequent: RescueNode?) -> RescueNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?exceptions: Array[Prism::node], ?operator_loc: Location?, ?reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)?, ?then_keyword_loc: Location?, ?statements: StatementsNode?, ?subsequent: RescueNode?) -> RescueNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?exceptions: Array[Prism::node], ?operator_loc: Location?, ?reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)?, ?then_keyword_loc: Location?, ?statements: StatementsNode?, ?subsequent: RescueNode?) -> RescueNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?exceptions: Array[Prism::node], ?operator_loc: Location?, ?reference: (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)?, ?then_keyword_loc: Location?, ?statements: StatementsNode?, ?subsequent: RescueNode?) -> RescueNode
 
     alias deconstruct child_nodes
 
@@ -17872,12 +17882,12 @@ module Prism
     def save_operator_loc: (_Repository repository) -> Relocation::Entry?
 
     # :call-seq:
-    #   reference -> LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode | nil
+    #   reference -> LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | nil
     #
     # Returns the `reference` attribute.
     # --
-    # : () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)?
-    def reference: () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode | BackReferenceReadNode | NumberedReferenceReadNode | MissingNode)?
+    # : () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)?
+    def reference: () -> (LocalVariableTargetNode | InstanceVariableTargetNode | ClassVariableTargetNode | GlobalVariableTargetNode | ConstantTargetNode | ConstantPathTargetNode | CallTargetNode | IndexTargetNode)?
 
     # :category: Locations
     # :call-seq:

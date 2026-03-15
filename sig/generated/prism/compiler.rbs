@@ -183,6 +183,9 @@ module Prism
     # : (EnsureNode) -> Array[untyped]
     def visit_ensure_node: (EnsureNode) -> Array[untyped]
 
+    # : (ErrorRecoveryNode) -> Array[untyped]
+    def visit_error_recovery_node: (ErrorRecoveryNode) -> Array[untyped]
+
     # : (FalseNode) -> Array[untyped]
     def visit_false_node: (FalseNode) -> Array[untyped]
 
@@ -338,9 +341,6 @@ module Prism
 
     # : (MatchWriteNode) -> Array[untyped]
     def visit_match_write_node: (MatchWriteNode) -> Array[untyped]
-
-    # : (MissingNode) -> Array[untyped]
-    def visit_missing_node: (MissingNode) -> Array[untyped]
 
     # : (ModuleNode) -> Array[untyped]
     def visit_module_node: (ModuleNode) -> Array[untyped]

@@ -62,11 +62,11 @@ module Prism
     def location(source: T.unsafe(nil), start_offset: T.unsafe(nil), length: T.unsafe(nil)); end
 
     # Create a new AliasGlobalVariableNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, SymbolNode, MissingNode), keyword_loc: Location).returns(AliasGlobalVariableNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), keyword_loc: Location).returns(AliasGlobalVariableNode) }
     def alias_global_variable_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
     # Create a new AliasMethodNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode, GlobalVariableReadNode, MissingNode), keyword_loc: Location).returns(AliasMethodNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode), keyword_loc: Location).returns(AliasMethodNode) }
     def alias_method_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), new_name: T.unsafe(nil), old_name: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
     # Create a new AlternationPatternNode node.
@@ -162,7 +162,7 @@ module Prism
     def case_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), predicate: T.unsafe(nil), conditions: T.unsafe(nil), else_clause: T.unsafe(nil), case_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
     # Create a new ClassNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, CallNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ClassNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ClassNode) }
     def class_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), class_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), inheritance_operator_loc: T.unsafe(nil), superclass: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
 
     # Create a new ClassVariableAndWriteNode node.
@@ -261,12 +261,16 @@ module Prism
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: Location).returns(EnsureNode) }
     def ensure_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), ensure_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
+    # Create a new ErrorRecoveryNode node.
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, unexpected: ::T.nilable(Node)).returns(ErrorRecoveryNode) }
+    def error_recovery_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), unexpected: T.unsafe(nil)); end
+
     # Create a new FalseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).returns(FalseNode) }
     def false_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
     # Create a new FindPatternNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: ::T.any(SplatNode, MissingNode), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(FindPatternNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: SplatNode, opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(FindPatternNode) }
     def find_pattern_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), left: T.unsafe(nil), requireds: T.unsafe(nil), right: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
     # Create a new FlipFlopNode node.
@@ -278,7 +282,7 @@ module Prism
     def float_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
     # Create a new ForNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).returns(ForNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).returns(ForNode) }
     def for_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), index: T.unsafe(nil), collection: T.unsafe(nil), statements: T.unsafe(nil), for_keyword_loc: T.unsafe(nil), in_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
     # Create a new ForwardingArgumentsNode node.
@@ -398,7 +402,7 @@ module Prism
     def interpolated_regular_expression_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
     # Create a new InterpolatedStringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode, XStringNode, InterpolatedXStringNode, SymbolNode, InterpolatedSymbolNode)], closing_loc: ::T.nilable(Location)).returns(InterpolatedStringNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode)], closing_loc: ::T.nilable(Location)).returns(InterpolatedStringNode) }
     def interpolated_string_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), parts: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
     # Create a new InterpolatedSymbolNode node.
@@ -469,20 +473,16 @@ module Prism
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, call: CallNode, targets: T::Array[LocalVariableTargetNode]).returns(MatchWriteNode) }
     def match_write_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), call: T.unsafe(nil), targets: T.unsafe(nil)); end
 
-    # Create a new MissingNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).returns(MissingNode) }
-    def missing_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
-
     # Create a new ModuleNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode, MissingNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ModuleNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).returns(ModuleNode) }
     def module_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), locals: T.unsafe(nil), module_keyword_loc: T.unsafe(nil), constant_path: T.unsafe(nil), body: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), name: T.unsafe(nil)); end
 
     # Create a new MultiTargetNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).returns(MultiTargetNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).returns(MultiTargetNode) }
     def multi_target_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
 
     # Create a new MultiWriteNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, BackReferenceReadNode, NumberedReferenceReadNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).returns(MultiWriteNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).returns(MultiWriteNode) }
     def multi_write_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), lefts: T.unsafe(nil), rest: T.unsafe(nil), rights: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil), operator_loc: T.unsafe(nil), value: T.unsafe(nil)); end
 
     # Create a new NextNode node.
@@ -522,7 +522,7 @@ module Prism
     def or_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), left: T.unsafe(nil), right: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
     # Create a new ParametersNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode, KeywordRestParameterNode, NoKeywordsParameterNode, ForwardingParameterNode, BlockParameterNode, NoBlockParameterNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).returns(ParametersNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).returns(ParametersNode) }
     def parameters_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), requireds: T.unsafe(nil), optionals: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), keywords: T.unsafe(nil), keyword_rest: T.unsafe(nil), block: T.unsafe(nil)); end
 
     # Create a new ParenthesesNode node.
@@ -534,7 +534,7 @@ module Prism
     def pinned_expression_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), operator_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), rparen_loc: T.unsafe(nil)); end
 
     # Create a new PinnedVariableNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode, MissingNode), operator_loc: Location).returns(PinnedVariableNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode), operator_loc: Location).returns(PinnedVariableNode) }
     def pinned_variable_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), variable: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
     # Create a new PostExecutionNode node.
@@ -578,7 +578,7 @@ module Prism
     def rescue_modifier_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), expression: T.unsafe(nil), keyword_loc: T.unsafe(nil), rescue_expression: T.unsafe(nil)); end
 
     # Create a new RescueNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: ::T.nilable(Location), reference: ::T.nilable(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, BackReferenceReadNode, NumberedReferenceReadNode, MissingNode)), then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(RescueNode)).returns(RescueNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, exceptions: T::Array[Node], operator_loc: ::T.nilable(Location), reference: ::T.nilable(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode)), then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(RescueNode)).returns(RescueNode) }
     def rescue_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), exceptions: T.unsafe(nil), operator_loc: T.unsafe(nil), reference: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), subsequent: T.unsafe(nil)); end
 
     # Create a new RestParameterNode node.

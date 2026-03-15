@@ -112,6 +112,6 @@ The following table shows how the various CRuby nodes are mapped to prism nodes.
 | `NODE_ARYPTN` | `PM_ARRAY_PATTERN_NODE` |
 | `NODE_HSHPTN` | `PM_HASH_PATTERN_NODE` |
 | `NODE_FNDPTN` | `PM_FIND_PATTERN_NODE` |
-| `NODE_ERROR` | `PM_MISSING_NODE` |
+| `NODE_ERROR` | `PM_ERROR_RECOVERY_NODE` |
 | `NODE_LAST` | |
 ```
