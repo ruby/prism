@@ -12,8 +12,8 @@ use crate::{ConstantPathNode, ConstantPathTargetNode, ConstantReadNode, Constant
 pub enum ConstantPathError {
     /// The constant path contains dynamic parts (e.g., `var::Bar::Baz`).
     DynamicParts,
-    /// The constant path contains missing nodes (e.g., `Foo::`).
-    MissingNodes,
+    /// The constant path contains error recovery nodes (e.g., `Foo::`).
+    ErrorRecoveryNodes,
 }
 
 impl fmt::Display for ConstantPathError {
@@ -22,8 +22,8 @@ impl fmt::Display for ConstantPathError {
             Self::DynamicParts => {
                 write!(f, "Constant path contains dynamic parts. Cannot compute full name")
             },
-            Self::MissingNodes => {
-                write!(f, "Constant path contains missing nodes. Cannot compute full name")
+            Self::ErrorRecoveryNodes => {
+                write!(f, "Constant path contains error recovery nodes. Cannot compute full name")
             },
         }
     }
@@ -42,7 +42,7 @@ pub trait FullName<'pr> {
     /// # Errors
     ///
     /// Returns [`ConstantPathError`] if the path contains dynamic parts or
-    /// missing nodes.
+    /// error recovery nodes.
     fn full_name_parts(&self) -> Result<Vec<&'pr [u8]>, ConstantPathError>;
 
     /// Returns the full name of this constant.
@@ -50,7 +50,7 @@ pub trait FullName<'pr> {
     /// # Errors
     ///
     /// Returns [`ConstantPathError`] if the path contains dynamic parts or
-    /// missing nodes.
+    /// error recovery nodes.
     fn full_name(&self) -> Result<Vec<u8>, ConstantPathError> {
         let parts = self.full_name_parts()?;
         let mut result = Vec::new();
@@ -80,7 +80,7 @@ fn full_name_parts_for_node<'pr>(node: &Node<'pr>) -> Result<Vec<&'pr [u8]>, Con
 /// Computes `full_name_parts` for a constant path node given its name and
 /// parent.
 fn constant_path_full_name_parts<'pr>(name: Option<crate::ConstantId<'pr>>, parent: Option<Node<'pr>>) -> Result<Vec<&'pr [u8]>, ConstantPathError> {
-    let name = name.ok_or(ConstantPathError::MissingNodes)?;
+    let name = name.ok_or(ConstantPathError::ErrorRecoveryNodes)?;
 
     let mut parts = match parent {
         Some(parent) => full_name_parts_for_node(&parent)?,
@@ -210,7 +210,7 @@ foo::
         let node = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap();
         let constant_path = node.as_constant_path_node().unwrap();
 
-        assert_eq!(constant_path.full_name().unwrap_err(), ConstantPathError::MissingNodes);
+        assert_eq!(constant_path.full_name().unwrap_err(), ConstantPathError::ErrorRecoveryNodes);
     }
 
     #[test]

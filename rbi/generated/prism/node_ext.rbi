@@ -126,10 +126,10 @@ module Prism
     # local variable
     class DynamicPartsInConstantPathError < StandardError; end
 
-    # An error class raised when missing nodes are found while computing a
+    # An error class raised when error recovery nodes are found while computing a
     # constant path's full name. For example:
     # Foo:: -> raises because the constant path is missing the last part
-    class MissingNodesInConstantPathError < StandardError; end
+    class ErrorRecoveryNodesInConstantPathError < StandardError; end
 
     # Returns the list of parts for the full name of this constant path.
     # For example: [:Foo, :Bar]

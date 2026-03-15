@@ -155,6 +155,9 @@ module Prism
     sig { params(arg0: EnsureNode).returns(::T.nilable(Node)) }
     def visit_ensure_node(arg0); end
 
+    sig { params(arg0: ErrorRecoveryNode).returns(::T.nilable(Node)) }
+    def visit_error_recovery_node(arg0); end
+
     sig { params(arg0: FalseNode).returns(::T.nilable(Node)) }
     def visit_false_node(arg0); end
 
@@ -310,9 +313,6 @@ module Prism
 
     sig { params(arg0: MatchWriteNode).returns(::T.nilable(Node)) }
     def visit_match_write_node(arg0); end
-
-    sig { params(arg0: MissingNode).returns(::T.nilable(Node)) }
-    def visit_missing_node(arg0); end
 
     sig { params(arg0: ModuleNode).returns(::T.nilable(Node)) }
     def visit_module_node(arg0); end

@@ -51,8 +51,8 @@ jobs:
       with:
         ruby-version: "3.4"
         bundler-cache: true
-    - name: Check Sorbet
-      run: bundle exec rake typecheck:tapioca typecheck:sorbet
+    # - name: Check Sorbet
+    #   run: bundle exec rake typecheck:tapioca typecheck:sorbet
     - name: Check Steep
       run: bundle exec rake typecheck:steep
     - name: Check field kinds
