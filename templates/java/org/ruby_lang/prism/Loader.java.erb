@@ -15,8 +15,8 @@ import java.util.Locale;
 // @formatter:off
 public class Loader {
 
-    public static ParseResult load(byte[] serialized, byte[] sourceBytes) {
-        return new Loader(serialized).load(sourceBytes);
+    public static ParseResult load(byte[] serialized) {
+        return new Loader(serialized).load();
     }
 
     // Overridable methods
@@ -81,10 +81,8 @@ public class Loader {
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
     }
 
-    // We pass sourceBytes here and not in the constructor to avoid keeping
-    // the sourceBytes in memory unnecessarily with lazy DefNode's which hold on the Loader.
-    protected ParseResult load(byte[] sourceBytes) {
-        Nodes.Source source = new Nodes.Source(sourceBytes);
+    protected ParseResult load() {
+        Nodes.Source source = new Nodes.Source();
 
         expect((byte) 'P', "incorrect prism header");
         expect((byte) 'R', "incorrect prism header");

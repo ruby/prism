@@ -25,8 +25,7 @@ task "test:java_loader:internal" => :compile do
     puts
     puts path
     serialized = Prism.dump_file(path)
-    source_bytes = File.binread(path).unpack('c*')
-    parse_result = org.ruby_lang.prism.Loader.load(serialized.unpack('c*'), source_bytes)
+    parse_result = org.ruby_lang.prism.Loader.load(serialized.unpack('c*'))
     puts parse_result.value
   end
 end
