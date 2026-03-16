@@ -1,8 +1,6 @@
 <%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
 package org.ruby_lang.prism;
 
-import org.ruby_lang.prism.Nodes;
-
 import java.lang.Short;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -76,13 +74,14 @@ public class Loader {
     private Charset encodingCharset;
     <%- end -%>
     private ConstantPool constantPool;
+    private Nodes.Source source = null;
 
     protected Loader(byte[] serialized) {
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
     }
 
     protected ParseResult load() {
-        Nodes.Source source = new Nodes.Source();
+        this.source = new Nodes.Source();
 
         expect((byte) 'P', "incorrect prism header");
         expect((byte) 'R', "incorrect prism header");
@@ -127,8 +126,7 @@ public class Loader {
                 throw new Error("Expected to consume all bytes while deserializing but there were " + left + " bytes left");
             }
 
-            boolean[] newlineMarked = new boolean[1 + source.getLineCount()];
-            MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
+            MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source);
             node.accept(visitor);
         } else {
             node = null;
@@ -407,11 +405,17 @@ public class Loader {
     }
 
     Nodes.DefNode createDefNodeFromSavedPosition(<%= base_params_sig -%>, int bufferPosition) {
+        Nodes.DefNode node;
         // This method mutates the buffer position and may be called from different threads so we must synchronize
         synchronized (this) {
             buffer.position(bufferPosition);
-            return createDefNode(<%= base_params.join(", ") -%>);
+            node = createDefNode(<%= base_params.join(", ") -%>);
         }
+
+        MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source);
+        node.accept(visitor);
+
+        return node;
     }
     <%- array_types.uniq.each do |type| -%>
 
