@@ -1,7 +1,7 @@
 name: Sync ruby
 on:
   push:
-    branches: [main]
+    branches: [main, ruby-4.0]
 jobs:
   sync:
     name: Sync ruby
@@ -9,6 +9,14 @@ jobs:
     if: ${{ github.repository_owner == 'ruby' }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Set ruby/ruby target branch
+        id: target
+        run: |
+          case "$GITHUB_REF_NAME" in
+            main)      echo "ref=master" >> "$GITHUB_OUTPUT" ;;
+            ruby-4.0)  echo "ref=ruby_4_0" >> "$GITHUB_OUTPUT" ;;
+          esac
 
       - name: Create GitHub App token
         id: app-token
@@ -26,7 +34,7 @@ jobs:
           repo: ruby
           workflow_file_name: sync_default_gems.yml
           github_token: ${{ steps.app-token.outputs.token }}
-          ref: master
+          ref: ${{ steps.target.outputs.ref }}
           client_payload: |
             {"gem":"${{ github.event.repository.name }}","before":"${{ github.event.before }}","after":"${{ github.event.after }}"}
           propagate_failure: true
