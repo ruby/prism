@@ -465,6 +465,7 @@ mod tests {
 
         assert_eq!(slice, "222");
         assert_eq!(6, location.start);
+        assert_eq!(location.start, location.start());
         assert_eq!(9, location.end());
 
         let recv_loc = plus.receiver().unwrap().location();
