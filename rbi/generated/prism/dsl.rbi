@@ -4,7 +4,7 @@ module Prism
   # The DSL module provides a set of methods that can be used to create prism
   # nodes in a more concise manner. For example, instead of writing:
   #
-  #     source = Prism::Source.for("[1]", 1, [])
+  #     source = Prism::Source.for("[1]", 1, [0])
   #
   #     Prism::ArrayNode.new(
   #       source,
@@ -743,5 +743,9 @@ module Prism
     # required node field.
     sig { params(source: Source, location: Location).returns(Node) }
     private def default_node(source, location); end
+
+    # Build the newline byte offset array for the given source string.
+    sig { params(source: String).returns(T::Array[Integer]) }
+    private def build_offsets(source); end
   end
 end
