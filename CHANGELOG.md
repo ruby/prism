@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.8.1] - 2026-03-16
+
+### Changed
+
+- Fix `not` binding power in endless methods.
+- Correctly handle `and?` and similar on Ruby 4.0.
+- Fix error message for block/lambda with `...` argument.
+- Fix `in` handling.
+
 ## [1.8.0] - 2026-01-12
 
 ### Added
@@ -18,8 +29,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Fix denominator of rational float literal.
 - Decouple ripper translator from ripper library.
 - Sync Prism::Translation::ParserCurrent with Ruby 4.0.
-
-## [Unreleased]
 
 ## [1.7.0] - 2025-12-18
 
@@ -731,7 +740,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.8.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.8.1...HEAD
+[1.8.1]: https://github.com/ruby/prism/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0
