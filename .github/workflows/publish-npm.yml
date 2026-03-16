@@ -51,7 +51,7 @@ jobs:
             echo "tag=latest" >> "$GITHUB_OUTPUT"
           else
             MINOR=$(echo "$PACKAGE_VERSION" | cut -d. -f1,2)
-            echo "tag=v$MINOR" >> "$GITHUB_OUTPUT"
+            echo "tag=stable-$MINOR" >> "$GITHUB_OUTPUT"
           fi
 
       - run: npm publish --tag ${{ steps.npm-tag.outputs.tag }}
