@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.ruby-lang</groupId>
-  <artifactId>prism-parser-wasm</artifactId>
+  <artifactId>prism-parser</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Java WASM Prism</name>
-  <description>Pure Java Prism API using Chicory WASM AOT runtime</description>
+  <name>Java Prism</name>
+  <description>Java API for the Prism Ruby language parser</description>
 
 
   <properties>
