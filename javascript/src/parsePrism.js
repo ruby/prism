@@ -31,9 +31,7 @@ export function parsePrism(prism, source, options = {}) {
 
   const packedOptions = dumpOptions(options);
   const optionsPointer = prism.calloc(1, packedOptions.length);
-
-  const bufferPointer = prism.calloc(prism.pm_buffer_sizeof(), 1);
-  prism.pm_buffer_init(bufferPointer);
+  const bufferPointer = prism.pm_buffer_new();
 
   const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, sourceArray.length);
   sourceView.set(sourceArray);
@@ -45,9 +43,8 @@ export function parsePrism(prism, source, options = {}) {
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
   const result = deserialize(serializedView);
 
-  prism.pm_buffer_cleanup(bufferPointer);
+  prism.pm_buffer_free(bufferPointer);
   prism.free(sourcePointer);
-  prism.free(bufferPointer);
   prism.free(optionsPointer);
   return result;
 }
