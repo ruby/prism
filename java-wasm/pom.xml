@@ -62,13 +62,14 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-stdlib</artifactId>
-      <version>10.1.0.0-SNAPSHOT</version>
+      <version>10.0.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-base</artifactId>
-      <version>10.1.0.0-SNAPSHOT</version>
+      <version>10.0.4.0</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
