@@ -44,6 +44,12 @@ impl<'pr> Location<'pr> {
         }
     }
 
+    /// Returns the start offset from the beginning of the parsed source.
+    #[must_use]
+    pub const fn start(&self) -> u32 {
+        self.start
+    }
+
     /// Returns the end offset from the beginning of the parsed source.
     #[must_use]
     pub const fn end(&self) -> u32 {
