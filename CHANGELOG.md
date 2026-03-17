@@ -19,6 +19,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Fixed location of opening tokens when invalid syntax is parsed.
 - Fix RBI for parsing options.
 
+## [1.8.1] - 2026-03-16 (Ruby 4.0.2 maintenance release)
+
+### Changed
+
+- Fix `not` binding power in endless methods.
+- Correctly handle `and?` and similar on Ruby 4.0.
+- Fix error message for block/lambda with `...` argument.
+- Fix `in` handling.
+
 ## [1.8.0] - 2026-01-12
 
 ### Added
@@ -746,6 +755,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [unreleased]: https://github.com/ruby/prism/compare/v1.9.0...HEAD
 [1.9.0]: https://github.com/ruby/prism/compare/v1.8.0...v1.9.0
+[1.8.1]: https://github.com/ruby/prism/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ruby/prism/compare/v1.5.2...v1.6.0
