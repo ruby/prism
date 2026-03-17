@@ -118,10 +118,7 @@ def add_libprism_source(path)
   src_list path
 end
 
-$srcs = src_list("$(srcdir)") +
-  add_libprism_source("$(srcdir)/../../src") +
-  add_libprism_source("$(srcdir)/../../src/util")
-
+$srcs = src_list("$(srcdir)") + add_libprism_source("$(srcdir)/../../src")
 $headers += Dir["#{$srcdir}/../../include/**/*.h"]
 
 # Finally, we'll create the `Makefile` that is going to be used to configure and
