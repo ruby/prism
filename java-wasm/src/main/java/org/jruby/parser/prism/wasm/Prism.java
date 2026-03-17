@@ -83,7 +83,7 @@ public class Prism implements AutoCloseable {
     public ParseResult serializeParse(byte[] packedOptions, String source) {
         var sourceBytes = source.getBytes(StandardCharsets.ISO_8859_1);
         byte[] result = serialize(packedOptions, sourceBytes, sourceBytes.length);
-        return Loader.load(result, sourceBytes);
+        return Loader.load(result);
     }
 
     @Override

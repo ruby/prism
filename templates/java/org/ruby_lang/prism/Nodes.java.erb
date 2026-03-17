@@ -47,12 +47,10 @@ public abstract class Nodes {
     }
 
     public static final class Source {
-        public final byte[] bytes;
         private int startLine = 1;
         private int[] lineOffsets = null;
 
-        Source(byte[] bytes) {
-          this.bytes = bytes;
+        Source() {
         }
 
         void setStartLine(int startLine) {
@@ -70,7 +68,6 @@ public abstract class Nodes {
 
         // 0-based
         public int findLine(int byteOffset) {
-            if (byteOffset >= bytes.length) byteOffset = bytes.length - 1;
             assert byteOffset >= 0 : byteOffset;
             int index = Arrays.binarySearch(lineOffsets, byteOffset);
             int line;
