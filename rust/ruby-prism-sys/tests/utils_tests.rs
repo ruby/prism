@@ -1,7 +1,4 @@
-use std::{
-    ffi::{CStr, CString},
-    mem::MaybeUninit,
-};
+use std::ffi::{CStr, CString};
 
 #[test]
 fn version_test() {
@@ -13,21 +10,6 @@ fn version_test() {
     };
 
     assert_eq!(&cstring.to_string_lossy(), "1.9.0");
-}
-
-#[test]
-fn list_test() {
-    use ruby_prism_sys::{pm_list_empty_p, pm_list_free, pm_list_t};
-
-    let mut list = MaybeUninit::<pm_list_t>::zeroed();
-
-    unsafe {
-        let list = list.assume_init_mut();
-
-        assert!(pm_list_empty_p(list));
-
-        pm_list_free(list);
-    }
 }
 
 mod string {

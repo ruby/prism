@@ -149,8 +149,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Functions
         .allowlist_function("pm_arena_free")
         .allowlist_function("pm_line_offset_list_line_column")
-        .allowlist_function("pm_list_empty_p")
-        .allowlist_function("pm_list_free")
         .allowlist_function("pm_options_command_line_set")
         .allowlist_function("pm_options_encoding_locked_set")
         .allowlist_function("pm_options_encoding_set")
