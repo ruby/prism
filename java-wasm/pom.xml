@@ -6,7 +6,7 @@
   <artifactId>prism-parser-wasm</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Java WASM Prism</name>
-  <description>Pure Java Prism using Chicory WASM runtime</description>
+  <description>Pure Java Prism API using Chicory WASM AOT runtime</description>
 
 
   <properties>
@@ -15,7 +15,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
 
-    <chicory.version>1.7.2</chicory.version>
+    <chicory.version>1.7.3</chicory.version>
     <junit.version>6.0.3</junit.version>
   </properties>
 
