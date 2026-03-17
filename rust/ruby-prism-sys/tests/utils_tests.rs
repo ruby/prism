@@ -14,7 +14,7 @@ fn version_test() {
 
 mod string {
     use ruby_prism_sys::{
-        pm_string_free, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1, PM_STRING_CONSTANT,
+        pm_string_cleanup, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1, PM_STRING_CONSTANT,
         PM_STRING_MAPPED, PM_STRING_OWNED, PM_STRING_SHARED,
     };
 
@@ -54,7 +54,7 @@ mod string {
             let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.start_ptr(), result_start);
 
-            pm_string_free(&raw mut s.pm_string);
+            pm_string_cleanup(&raw mut s.pm_string);
         }
     }
 
@@ -84,7 +84,7 @@ mod string {
             let result_start = pm_string_source(&raw const s.pm_string);
             assert_eq!(s.pm_string.source, result_start);
 
-            pm_string_free(&raw mut s.pm_string);
+            pm_string_cleanup(&raw mut s.pm_string);
         }
     }
 
