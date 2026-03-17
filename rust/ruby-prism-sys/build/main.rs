@@ -115,7 +115,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .derive_default(true)
         .generate_block(true)
         .generate_comments(true)
-        .header(ruby_include_path.join("prism/defines.h").to_str().unwrap())
         .header(ruby_include_path.join("prism.h").to_str().unwrap())
         .clang_arg(format!("-I{}", ruby_include_path.to_str().unwrap()))
         .clang_arg("-fparse-all-comments")
