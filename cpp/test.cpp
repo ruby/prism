@@ -17,7 +17,7 @@ int main() {
 
     std::cout << buffer.value << std::endl;
 
-    pm_buffer_free(&buffer);
+    pm_buffer_cleanup(&buffer);
     pm_parser_free(&parser);
     pm_arena_free(&arena);
 

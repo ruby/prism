@@ -159,8 +159,8 @@ typedef struct {
   size_t capacity;
 } pm_buffer_t;
 
-// Free the memory associated with the buffer.
-void pm_buffer_free(pm_buffer_t *);
+// Free the memory held by the buffer.
+void pm_buffer_cleanup(pm_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
@@ -177,7 +177,7 @@ serialize(const uint8_t *source, size_t length) {
 
   // Do something with the serialized string.
 
-  pm_buffer_free(&buffer);
+  pm_buffer_cleanup(&buffer);
 }
 ```
 
