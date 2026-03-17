@@ -152,7 +152,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_function("pm_options_encoding_locked_set")
         .allowlist_function("pm_options_encoding_set")
         .allowlist_function("pm_options_filepath_set")
-        .allowlist_function("pm_options_free")
+        .allowlist_function("pm_options_cleanup")
         .allowlist_function("pm_options_frozen_string_literal_set")
         .allowlist_function("pm_options_line_set")
         .allowlist_function("pm_options_main_script_set")

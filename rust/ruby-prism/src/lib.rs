@@ -27,7 +27,7 @@ pub use self::node_ext::{ConstantPathError, FullName};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
 use ruby_prism_sys::{
-    pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_partial_script_set, pm_options_scope_forwarding_set,
+    pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_cleanup, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_partial_script_set, pm_options_scope_forwarding_set,
     pm_options_scope_get, pm_options_scope_init, pm_options_scope_local_get, pm_options_scopes_init, pm_options_t, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
 };
 
@@ -324,7 +324,7 @@ pub struct ParseOptions {
 
 impl Drop for ParseOptions {
     fn drop(&mut self) {
-        unsafe { pm_options_free(&raw mut self.options) };
+        unsafe { pm_options_cleanup(&raw mut self.options) };
     }
 }
 
