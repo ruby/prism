@@ -18,7 +18,7 @@ int main() {
     std::cout << view << std::endl;
 
     pm_buffer_free(buffer);
-    pm_parser_free(&parser);
+    pm_parser_cleanup(&parser);
     pm_arena_free(&arena);
 
     return 0;

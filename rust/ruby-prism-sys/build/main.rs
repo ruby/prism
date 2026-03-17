@@ -163,7 +163,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_function("pm_options_scope_local_get")
         .allowlist_function("pm_options_scopes_init")
         .allowlist_function("pm_parse")
-        .allowlist_function("pm_parser_free")
+        .allowlist_function("pm_parser_cleanup")
         .allowlist_function("pm_parser_init")
         .allowlist_function("pm_size_to_native")
         .allowlist_function("pm_string_constant_init")

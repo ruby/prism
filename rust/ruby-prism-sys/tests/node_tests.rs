@@ -1,7 +1,7 @@
 use std::{ffi::CString, mem::MaybeUninit};
 
 use ruby_prism_sys::{pm_arena_free, pm_arena_t, pm_node_type};
-use ruby_prism_sys::{pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_parse, pm_parser_cleanup, pm_parser_init, pm_parser_t};
 
 #[test]
 fn node_test() {
@@ -23,7 +23,7 @@ fn node_test() {
 
         assert_eq!((*parsed_node).type_, pm_node_type::PM_PROGRAM_NODE as u16);
 
-        pm_parser_free(parser);
+        pm_parser_cleanup(parser);
         pm_arena_free(arena.as_mut_ptr());
     }
 }
