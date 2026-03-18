@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-return if !(RUBY_ENGINE == "ruby" && RUBY_VERSION >= "3.2.0")
-
 require_relative "test_helper"
 require "ripper"
 

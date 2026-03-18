@@ -108,8 +108,6 @@ module Prism
   #    def self.parse_file_failure?: (String filepath,                   ?command_line: String, ?encoding: Encoding | false, ?freeze: bool, ?frozen_string_literal: bool, ?line: Integer, ?main_script: bool, ?partial_script: bool, ?scopes: Array[Array[Symbol]], ?version: String) -> bool
 end
 
-require_relative "prism/polyfill/byteindex"
-require_relative "prism/polyfill/warn"
 require_relative "prism/node"
 require_relative "prism/node_ext"
 require_relative "prism/parse_result"

@@ -27,13 +27,13 @@ jobs:
   template:
     runs-on: ubuntu-latest
     env:
-      BUNDLE_GEMFILE: gemfiles/2.7/Gemfile
+      BUNDLE_GEMFILE: gemfiles/3.2/Gemfile
     steps:
     - uses: actions/checkout@v6
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.7.0"
+        ruby-version: "3.2.0"
         bundler-cache: true
     - name: Generate templates
       run: bundle exec rake templates
@@ -270,9 +270,6 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - { ruby: "2.7", os: "ubuntu-latest", gemfile: "2.7" }
-          - { ruby: "3.0", os: "ubuntu-latest", gemfile: "3.0" }
-          - { ruby: "3.1", os: "ubuntu-latest", gemfile: "3.1" }
           - { ruby: "3.2", os: "ubuntu-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "ubuntu-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "ubuntu-latest", gemfile: "3.4" }
@@ -281,9 +278,6 @@ jobs:
           - { ruby: "jruby", os: "ubuntu-latest", gemfile: ".." }
           - { ruby: "truffleruby", os: "ubuntu-latest", gemfile: ".." }
 
-          - { ruby: "2.7", os: "macos-latest", gemfile: "2.7" }
-          - { ruby: "3.0", os: "macos-latest", gemfile: "3.0" }
-          - { ruby: "3.1", os: "macos-latest", gemfile: "3.1" }
           - { ruby: "3.2", os: "macos-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "macos-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "macos-latest", gemfile: "3.4" }
@@ -292,9 +286,6 @@ jobs:
           - { ruby: "jruby", os: "macos-latest", gemfile: ".." }
           - { ruby: "truffleruby", os: "macos-latest", gemfile: ".." }
 
-          - { ruby: "2.7", os: "windows-latest", gemfile: "2.7" }
-          - { ruby: "3.0", os: "windows-latest", gemfile: "3.0" }
-          - { ruby: "3.1", os: "windows-latest", gemfile: "3.1" }
           - { ruby: "3.2", os: "windows-latest", gemfile: "3.2" }
           - { ruby: "3.3", os: "windows-latest", gemfile: "3.3" }
           - { ruby: "3.4", os: "windows-latest", gemfile: "3.4" }

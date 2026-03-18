@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-return if RUBY_VERSION < "3.2"
-
 require_relative "../test_helper"
 
 module Prism

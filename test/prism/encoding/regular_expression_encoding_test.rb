@@ -2,7 +2,6 @@
 
 return unless defined?(RubyVM::InstructionSequence)
 return if RubyVM::InstructionSequence.compile("").to_a[4][:parser] == :prism
-return if RUBY_VERSION < "3.2"
 
 require_relative "../test_helper"
 

@@ -3,7 +3,6 @@
 require_relative "test_helper"
 
 return if Prism::BACKEND == :FFI
-return if RUBY_VERSION < "3.1.0"
 return if RUBY_VERSION >= "3.4.0"
 
 module Prism

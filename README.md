@@ -60,7 +60,7 @@ To compile the shared library, you will need:
 
 * C99 compiler
 * GNU make
-* Ruby 2.7.0 or later
+* Ruby 3.2.0 or later
 
 Once you have these dependencies, run:
 

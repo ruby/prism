@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/ruby/prism"
   spec.license = "MIT"
 
-  spec.required_ruby_version = ">= 2.7.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.require_paths = ["lib"]
   spec.files = [
@@ -88,10 +88,7 @@ Gem::Specification.new do |spec|
     "lib/prism/parse_result/newlines.rb",
     "lib/prism/pattern.rb",
     "lib/prism/polyfill/append_as_bytes.rb",
-    "lib/prism/polyfill/byteindex.rb",
     "lib/prism/polyfill/scan_byte.rb",
-    "lib/prism/polyfill/unpack1.rb",
-    "lib/prism/polyfill/warn.rb",
     "lib/prism/reflection.rb",
     "lib/prism/relocation.rb",
     "lib/prism/serialize.rb",

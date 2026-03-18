@@ -47,7 +47,7 @@ bundle install
 * Update the version-specific lockfiles:
 
 ```sh
-for VERSION in "2.7" "3.0" "3.1" "3.2" "3.3" "3.4" "4.0"; do docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/$VERSION/Gemfile" "ruby:$VERSION" bundle update; done
+for VERSION in "3.2" "3.3" "3.4" "4.0"; do docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app -e BUNDLE_GEMFILE="gemfiles/$VERSION/Gemfile" "ruby:$VERSION" bundle update; done
 chruby ruby-4.1.0-dev && BUNDLE_GEMFILE=gemfiles/4.1/Gemfile bundle install
 ```
 
