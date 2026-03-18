@@ -1,14 +1,14 @@
 //! Parse result types for the prism parser.
-//!
-//! This module contains types related to the result of parsing, including
-//! the main `ParseResult` struct, location tracking, comments, and diagnostics.
 
 mod comments;
 mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_arena_cleanup, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_cleanup, pm_parser_t};
+use ruby_prism_sys::{
+    pm_arena_free, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_comments_each, pm_parser_comments_size, pm_parser_data_loc, pm_parser_errors_each, pm_parser_errors_size, pm_parser_free,
+    pm_parser_frozen_string_literal, pm_parser_line_offsets, pm_parser_magic_comments_each, pm_parser_magic_comments_size, pm_parser_start, pm_parser_start_line, pm_parser_t, pm_parser_warnings_each, pm_parser_warnings_size,
+};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -17,7 +17,7 @@ use crate::Node;
 
 /// A range in the source file, represented as a start offset and length.
 pub struct Location<'pr> {
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
     pub(crate) start: u32,
     pub(crate) length: u32,
     marker: std::marker::PhantomData<&'pr [u8]>,
@@ -28,14 +28,14 @@ impl<'pr> Location<'pr> {
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {
         unsafe {
-            let parser_start = (*self.parser.as_ptr()).start;
+            let parser_start = pm_parser_start(self.parser);
             std::slice::from_raw_parts(parser_start.add(self.start as usize), self.length as usize)
         }
     }
 
     /// Return a Location from the given `pm_location_t`.
     #[must_use]
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, location: &'pr pm_location_t) -> Self {
+    pub(crate) const fn new(parser: *const pm_parser_t, location: &'pr pm_location_t) -> Self {
         Location {
             parser,
             start: location.start,
@@ -114,11 +114,10 @@ impl Location<'_> {
 
     /// Returns the line and column number for the given byte offset.
     fn line_column(&self, cursor: u32) -> (i32, u32) {
-        // SAFETY: We read the line_offsets and start_line from the parser,
-        // which is valid for the lifetime of this Location.
         unsafe {
-            let parser = self.parser.as_ptr();
-            let result = pm_line_offset_list_line_column(&raw const (*parser).line_offsets, cursor, (*parser).start_line);
+            let line_offsets = pm_parser_line_offsets(self.parser);
+            let start_line = pm_parser_start_line(self.parser);
+            let result = pm_line_offset_list_line_column(line_offsets, cursor, start_line);
             (result.line, result.column)
         }
     }
@@ -141,17 +140,35 @@ impl std::fmt::Debug for Location<'_> {
     }
 }
 
+// C callback that collects comment pointers into a Vec
+unsafe extern "C" fn collect_comment(comment: *const pm_comment_t, data: *mut std::ffi::c_void) {
+    let vec = &mut *(data.cast::<Vec<*const pm_comment_t>>());
+    vec.push(comment);
+}
+
+// C callback that collects magic comment pointers into a Vec
+unsafe extern "C" fn collect_magic_comment(comment: *const pm_magic_comment_t, data: *mut std::ffi::c_void) {
+    let vec = &mut *(data.cast::<Vec<*const pm_magic_comment_t>>());
+    vec.push(comment);
+}
+
+// C callback that collects diagnostic pointers into a Vec
+unsafe extern "C" fn collect_diagnostic(diagnostic: *const pm_diagnostic_t, data: *mut std::ffi::c_void) {
+    let vec = &mut *(data.cast::<Vec<*const pm_diagnostic_t>>());
+    vec.push(diagnostic);
+}
+
 /// The result of parsing a source string.
 #[derive(Debug)]
 pub struct ParseResult<'pr> {
     source: &'pr [u8],
-    arena: Box<pm_arena_t>,
-    parser: NonNull<pm_parser_t>,
+    arena: *mut pm_arena_t,
+    parser: *mut pm_parser_t,
     node: NonNull<pm_node_t>,
 }
 
 impl<'pr> ParseResult<'pr> {
-    pub(crate) const unsafe fn new(source: &'pr [u8], arena: Box<pm_arena_t>, parser: NonNull<pm_parser_t>, node: NonNull<pm_node_t>) -> Self {
+    pub(crate) const unsafe fn new(source: &'pr [u8], arena: *mut pm_arena_t, parser: *mut pm_parser_t, node: NonNull<pm_node_t>) -> Self {
         ParseResult { source, arena, parser, node }
     }
 
@@ -164,7 +181,7 @@ impl<'pr> ParseResult<'pr> {
     /// Returns whether we found a `frozen_string_literal` magic comment with a true value.
     #[must_use]
     pub fn frozen_string_literals(&self) -> bool {
-        unsafe { (*self.parser.as_ptr()).frozen_string_literal == 1 }
+        unsafe { pm_parser_frozen_string_literal(self.parser) == 1 }
     }
 
     /// Returns a slice of the source string that was parsed using the given
@@ -181,54 +198,63 @@ impl<'pr> ParseResult<'pr> {
     #[must_use]
     pub fn line_offsets(&self) -> &'pr [u32] {
         unsafe {
-            let list = &(*self.parser.as_ptr()).line_offsets;
+            let list = &*pm_parser_line_offsets(self.parser);
             std::slice::from_raw_parts(list.offsets, list.size)
         }
     }
+
     /// Returns an iterator that can be used to iterate over the errors in the
     /// parse result.
     #[must_use]
     pub fn errors(&self) -> Diagnostics<'_> {
+        let size = unsafe { pm_parser_errors_size(self.parser) };
+        let mut ptrs: Vec<*const pm_diagnostic_t> = Vec::with_capacity(size);
         unsafe {
-            let list = &mut (*self.parser.as_ptr()).error_list;
-            Diagnostics::new(list.head.cast::<pm_diagnostic_t>(), self.parser)
+            pm_parser_errors_each(self.parser, Some(collect_diagnostic), (&raw mut ptrs).cast());
         }
+        Diagnostics::new(ptrs, self.parser)
     }
 
     /// Returns an iterator that can be used to iterate over the warnings in the
     /// parse result.
     #[must_use]
     pub fn warnings(&self) -> Diagnostics<'_> {
+        let size = unsafe { pm_parser_warnings_size(self.parser) };
+        let mut ptrs: Vec<*const pm_diagnostic_t> = Vec::with_capacity(size);
         unsafe {
-            let list = &mut (*self.parser.as_ptr()).warning_list;
-            Diagnostics::new(list.head.cast::<pm_diagnostic_t>(), self.parser)
+            pm_parser_warnings_each(self.parser, Some(collect_diagnostic), (&raw mut ptrs).cast());
         }
+        Diagnostics::new(ptrs, self.parser)
     }
 
     /// Returns an iterator that can be used to iterate over the comments in the
     /// parse result.
     #[must_use]
     pub fn comments(&self) -> Comments<'_> {
+        let size = unsafe { pm_parser_comments_size(self.parser) };
+        let mut ptrs: Vec<*const pm_comment_t> = Vec::with_capacity(size);
         unsafe {
-            let list = &mut (*self.parser.as_ptr()).comment_list;
-            Comments::new(list.head.cast::<pm_comment_t>(), self.parser)
+            pm_parser_comments_each(self.parser, Some(collect_comment), (&raw mut ptrs).cast());
         }
+        Comments::new(ptrs, self.parser)
     }
 
     /// Returns an iterator that can be used to iterate over the magic comments in the
     /// parse result.
     #[must_use]
     pub fn magic_comments(&self) -> MagicComments<'_> {
+        let size = unsafe { pm_parser_magic_comments_size(self.parser) };
+        let mut ptrs: Vec<*const pm_magic_comment_t> = Vec::with_capacity(size);
         unsafe {
-            let list = &mut (*self.parser.as_ptr()).magic_comment_list;
-            MagicComments::new(self.parser, list.head.cast::<pm_magic_comment_t>())
+            pm_parser_magic_comments_each(self.parser, Some(collect_magic_comment), (&raw mut ptrs).cast());
         }
+        MagicComments::new(ptrs, self.parser)
     }
 
     /// Returns an optional location of the __END__ marker and the rest of the content of the file.
     #[must_use]
     pub fn data_loc(&self) -> Option<Location<'_>> {
-        let location = unsafe { &(*self.parser.as_ptr()).data_loc };
+        let location = unsafe { &*pm_parser_data_loc(self.parser) };
         if location.length == 0 {
             None
         } else {
@@ -260,9 +286,8 @@ impl<'pr> ParseResult<'pr> {
 impl Drop for ParseResult<'_> {
     fn drop(&mut self) {
         unsafe {
-            pm_parser_cleanup(self.parser.as_ptr());
-            drop(Box::from_raw(self.parser.as_ptr()));
-            pm_arena_cleanup(self.arena.as_mut());
+            pm_parser_free(self.parser);
+            pm_arena_free(self.arena);
         }
     }
 }

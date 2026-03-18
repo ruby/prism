@@ -8,6 +8,8 @@
 // that doesn't follow the clippy rules. We don't want to see those warnings.
 #[allow(clippy::too_many_lines, clippy::use_self)]
 mod bindings {
+    use std::ptr::NonNull;
+
     // In `build.rs`, we generate bindings based on the config.yml file. Here is
     // where we pull in those bindings and make them part of our library.
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -18,7 +20,6 @@ mod node_ext;
 mod parse_result;
 
 use std::ffi::CString;
-use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
@@ -27,8 +28,8 @@ pub use self::node_ext::{ConstantPathError, FullName};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
 use ruby_prism_sys::{
-    pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set, pm_options_scope_forwarding_set,
-    pm_options_scope_mut, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
+    pm_arena_new, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set,
+    pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_constant_init,
 };
 
 /// The version of Ruby syntax to parse with.
@@ -51,11 +52,21 @@ impl Version {
     /// `Latest` passes `NULL` to get the default behavior.
     unsafe fn set_on(self, opts: *mut pm_options_t) {
         match self {
-            Version::Latest => { pm_options_version_set(opts, std::ptr::null(), 0); },
-            Version::CRuby3_3 => { pm_options_version_set(opts, c"3.3".as_ptr(), 3); },
-            Version::CRuby3_4 => { pm_options_version_set(opts, c"3.4".as_ptr(), 3); },
-            Version::CRuby3_5 => { pm_options_version_set(opts, c"3.5".as_ptr(), 3); },
-            Version::CRuby4_1 => { pm_options_version_set(opts, c"4.1".as_ptr(), 3); },
+            Self::Latest => {
+                pm_options_version_set(opts, std::ptr::null(), 0);
+            },
+            Self::CRuby3_3 => {
+                pm_options_version_set(opts, c"3.3".as_ptr(), 3);
+            },
+            Self::CRuby3_4 => {
+                pm_options_version_set(opts, c"3.4".as_ptr(), 3);
+            },
+            Self::CRuby3_5 => {
+                pm_options_version_set(opts, c"3.5".as_ptr(), 3);
+            },
+            Self::CRuby4_1 => {
+                pm_options_version_set(opts, c"4.1".as_ptr(), 3);
+            },
         }
     }
 }
@@ -335,18 +346,9 @@ impl Drop for ParseOptions {
 ///
 /// `options` must be a valid pointer to a `pm_options_t` or null.
 unsafe fn parse_impl(source: &[u8], options: *const pm_options_t) -> ParseResult<'_> {
-    let mut arena = Box::new(MaybeUninit::<pm_arena_t>::zeroed().assume_init());
-    let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
-    let uninit = Box::into_raw(uninit);
-
-    pm_parser_init(arena.as_mut(), (*uninit).as_mut_ptr(), source.as_ptr(), source.len(), options);
-
-    let parser = (*uninit).assume_init_mut();
-    let parser = NonNull::new_unchecked(parser);
-
-    let node = pm_parse(parser.as_ptr());
-    let node = NonNull::new_unchecked(node);
-
+    let arena = pm_arena_new();
+    let parser = pm_parser_new(arena, source.as_ptr(), source.len(), options);
+    let node = NonNull::new_unchecked(pm_parse(parser));
     ParseResult::new(source, arena, parser, node)
 }
 

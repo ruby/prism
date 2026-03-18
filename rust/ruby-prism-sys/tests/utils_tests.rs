@@ -14,8 +14,8 @@ fn version_test() {
 
 mod string {
     use ruby_prism_sys::{
-        pm_string_cleanup, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1, PM_STRING_CONSTANT,
-        PM_STRING_MAPPED, PM_STRING_OWNED, PM_STRING_SHARED,
+        pm_string_cleanup, pm_string_length, pm_string_source, pm_string_t, pm_string_t__bindgen_ty_1,
+        PM_STRING_CONSTANT, PM_STRING_MAPPED, PM_STRING_OWNED, PM_STRING_SHARED,
     };
 
     use super::*;

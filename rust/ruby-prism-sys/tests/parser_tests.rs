@@ -1,13 +1,23 @@
-use std::{
-    ffi::{CStr, CString},
-    mem::MaybeUninit,
-    path::Path,
-};
+use std::ffi::{CStr, CString};
+use std::path::Path;
 
 use ruby_prism_sys::{
-    pm_arena_cleanup, pm_arena_t, pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_parse, pm_parser_cleanup,
-    pm_parser_init, pm_parser_t,
+    pm_arena_free, pm_arena_new, pm_comment_location, pm_comment_type, pm_comment_type_t, pm_diagnostic_location,
+    pm_diagnostic_message, pm_parse, pm_parser_comments_each, pm_parser_errors_each, pm_parser_free, pm_parser_new,
 };
+
+unsafe extern "C" fn collect_comment(comment: *const ruby_prism_sys::pm_comment_t, data: *mut std::ffi::c_void) {
+    let vec = &mut *(data.cast::<Vec<*const ruby_prism_sys::pm_comment_t>>());
+    vec.push(comment);
+}
+
+unsafe extern "C" fn collect_diagnostic(
+    diagnostic: *const ruby_prism_sys::pm_diagnostic_t,
+    data: *mut std::ffi::c_void,
+) {
+    let vec = &mut *(data.cast::<Vec<*const ruby_prism_sys::pm_diagnostic_t>>());
+    vec.push(diagnostic);
+}
 
 fn ruby_file_contents() -> (CString, usize) {
     let rust_path = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -22,86 +32,75 @@ fn ruby_file_contents() -> (CString, usize) {
 fn init_test() {
     let (ruby_file_contents, len) = ruby_file_contents();
     let source = ruby_file_contents.as_ptr().cast::<u8>();
-    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
-    let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
-        pm_parser_init(arena.as_mut_ptr(), parser.as_mut_ptr(), source, len, std::ptr::null());
-        let parser = parser.assume_init_mut();
+        let arena = pm_arena_new();
+        let parser = pm_parser_new(arena, source, len, std::ptr::null());
 
-        pm_parser_cleanup(parser);
-        pm_arena_cleanup(arena.as_mut_ptr());
+        pm_parser_free(parser);
+        pm_arena_free(arena);
     }
 }
 
 #[test]
 fn comments_test() {
     let source = CString::new("# Meow!").unwrap();
-    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
-    let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
-        pm_parser_init(
-            arena.as_mut_ptr(),
-            parser.as_mut_ptr(),
+        let arena = pm_arena_new();
+        let parser = pm_parser_new(
+            arena,
             source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );
-        let parser = parser.assume_init_mut();
         let _node = pm_parse(parser);
 
-        let comment_list = &parser.comment_list;
-        let comment = comment_list.head as *const pm_comment_t;
-        assert_eq!((*comment).type_, pm_comment_type_t::PM_COMMENT_INLINE);
+        let mut comments: Vec<*const ruby_prism_sys::pm_comment_t> = Vec::new();
+        pm_parser_comments_each(parser, Some(collect_comment), (&raw mut comments).cast());
 
-        let location = {
-            let start = (*comment).location.start;
-            let end = (*comment).location.start + (*comment).location.length;
-            start..end
-        };
-        assert_eq!(location, 0..7);
+        assert_eq!(comments.len(), 1);
+        let comment = comments[0];
+        assert_eq!(pm_comment_type(comment), pm_comment_type_t::PM_COMMENT_INLINE);
 
-        pm_parser_cleanup(parser);
-        pm_arena_cleanup(arena.as_mut_ptr());
+        let location = pm_comment_location(comment);
+        assert_eq!(location.start..location.start + location.length, 0..7);
+
+        pm_parser_free(parser);
+        pm_arena_free(arena);
     }
 }
 
 #[test]
 fn diagnostics_test() {
     let source = CString::new("class Foo;").unwrap();
-    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
-    let mut parser = MaybeUninit::<pm_parser_t>::uninit();
 
     unsafe {
-        pm_parser_init(
-            arena.as_mut_ptr(),
-            parser.as_mut_ptr(),
+        let arena = pm_arena_new();
+        let parser = pm_parser_new(
+            arena,
             source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );
-        let parser = parser.assume_init_mut();
         let _node = pm_parse(parser);
 
-        let error_list = &parser.error_list;
-        assert!(!error_list.head.is_null());
+        let mut errors: Vec<*const ruby_prism_sys::pm_diagnostic_t> = Vec::new();
+        pm_parser_errors_each(parser, Some(collect_diagnostic), (&raw mut errors).cast());
 
-        let error = error_list.head as *const pm_diagnostic_t;
-        let message = CStr::from_ptr((*error).message);
+        assert!(!errors.is_empty());
+        let error = errors[0];
+
+        let message = CStr::from_ptr(pm_diagnostic_message(error));
         assert_eq!(
             message.to_string_lossy(),
             "unexpected end-of-input, assuming it is closing the parent top level context"
         );
 
-        let location = {
-            let start = (*error).location.start;
-            let end = (*error).location.start + (*error).location.length;
-            start..end
-        };
-        assert_eq!(location, 10..10);
+        let location = pm_diagnostic_location(error);
+        assert_eq!(location.start..location.start + location.length, 10..10);
 
-        pm_parser_cleanup(parser);
-        pm_arena_cleanup(arena.as_mut_ptr());
+        pm_parser_free(parser);
+        pm_arena_free(arena);
     }
 }
