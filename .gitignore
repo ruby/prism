@@ -57,7 +57,7 @@ out.svg
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c
-/src/token_type.c
+/src/tokens.c
 /src/**/*.o
 /rbi/prism/dsl.rbi
 /rbi/prism/node.rbi
