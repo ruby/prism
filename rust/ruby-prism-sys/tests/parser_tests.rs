@@ -5,7 +5,7 @@ use std::{
 };
 
 use ruby_prism_sys::{
-    pm_arena_free, pm_arena_t, pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_parse, pm_parser_cleanup,
+    pm_arena_cleanup, pm_arena_t, pm_comment_t, pm_comment_type_t, pm_diagnostic_t, pm_parse, pm_parser_cleanup,
     pm_parser_init, pm_parser_t,
 };
 
@@ -30,7 +30,7 @@ fn init_test() {
         let parser = parser.assume_init_mut();
 
         pm_parser_cleanup(parser);
-        pm_arena_free(arena.as_mut_ptr());
+        pm_arena_cleanup(arena.as_mut_ptr());
     }
 }
 
@@ -63,7 +63,7 @@ fn comments_test() {
         assert_eq!(location, 0..7);
 
         pm_parser_cleanup(parser);
-        pm_arena_free(arena.as_mut_ptr());
+        pm_arena_cleanup(arena.as_mut_ptr());
     }
 }
 
@@ -102,6 +102,6 @@ fn diagnostics_test() {
         assert_eq!(location, 10..10);
 
         pm_parser_cleanup(parser);
-        pm_arena_free(arena.as_mut_ptr());
+        pm_arena_cleanup(arena.as_mut_ptr());
     }
 }

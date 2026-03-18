@@ -8,7 +8,7 @@ mod diagnostics;
 
 use std::ptr::NonNull;
 
-use ruby_prism_sys::{pm_arena_free, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_cleanup, pm_parser_t};
+use ruby_prism_sys::{pm_arena_cleanup, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_cleanup, pm_parser_t};
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
@@ -262,7 +262,7 @@ impl Drop for ParseResult<'_> {
         unsafe {
             pm_parser_cleanup(self.parser.as_ptr());
             drop(Box::from_raw(self.parser.as_ptr()));
-            pm_arena_free(self.arena.as_mut());
+            pm_arena_cleanup(self.arena.as_mut());
         }
     }
 }

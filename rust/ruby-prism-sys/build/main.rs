@@ -144,7 +144,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .rustified_non_exhaustive_enum(r"pm_\w+_flags")
         .rustified_non_exhaustive_enum("pm_node_type")
         // Functions
-        .allowlist_function("pm_arena_free")
+        .allowlist_function("pm_arena_cleanup")
         .allowlist_function("pm_line_offset_list_line_column")
         .allowlist_function("pm_options_command_line_set")
         .allowlist_function("pm_options_encoding_locked_set")

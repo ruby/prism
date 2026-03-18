@@ -18,7 +18,7 @@ int main() {
 
     pm_buffer_free(buffer);
     pm_parser_free(parser);
-    pm_arena_free(&arena);
+    pm_arena_cleanup(&arena);
 
     return 0;
 }
