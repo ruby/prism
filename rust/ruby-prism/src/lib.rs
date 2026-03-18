@@ -28,7 +28,7 @@ pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnos
 
 use ruby_prism_sys::{
     pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set, pm_options_scope_forwarding_set,
-    pm_options_scope_get_mut, pm_options_scope_init, pm_options_scope_local_get_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
+    pm_options_scope_mut, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
 };
 
 /// The version of Ruby syntax to parse with.
@@ -287,11 +287,11 @@ impl Options {
             unsafe { pm_options_scopes_init(opts, self.scopes.len()) };
 
             for (scope_index, scope) in self.scopes.iter().enumerate() {
-                let pm_scope = unsafe { pm_options_scope_get_mut(opts, scope_index) };
+                let pm_scope = unsafe { pm_options_scope_mut(opts, scope_index) };
                 unsafe { pm_options_scope_init(pm_scope, scope.locals.len()) };
 
                 for (local_index, local) in scope.locals.iter().enumerate() {
-                    let pm_local = unsafe { pm_options_scope_local_get_mut(pm_scope, local_index) };
+                    let pm_local = unsafe { pm_options_scope_local_mut(pm_scope, local_index) };
                     unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast::<i8>(), local.len()) };
                 }
 
