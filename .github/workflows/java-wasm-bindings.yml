@@ -9,6 +9,7 @@ on:
       - "*akefile*"
     branches:
       - main
+      - ruby-4.0
   pull_request:
 
 jobs:
