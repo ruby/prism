@@ -31,7 +31,6 @@ out.svg
 /fuzz/output/
 /gemfiles/typecheck/bin/
 /include/prism/ast.h
-/include/prism/node_new.h
 /include/prism/internal/diagnostic.h
 /javascript/node_modules/
 /javascript/package-lock.json
@@ -56,7 +55,6 @@ out.svg
 /sorbet/
 /src/diagnostic.c
 /src/node.c
-/src/node_new.c
 /src/prettyprint.c
 /src/serialize.c
 /src/token_type.c
