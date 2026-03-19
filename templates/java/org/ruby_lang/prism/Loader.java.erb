@@ -1,4 +1,4 @@
-<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
+<%- string_type = Prism::Template::JAVA_IDENTIFIER_TYPE -%>
 package org.ruby_lang.prism;
 
 import java.lang.Short;
@@ -31,7 +31,7 @@ public class Loader {
         <%- if string_type == "String" -%>
         return new String(bytes, encodingCharset).intern();
         <%- else -%>
-        return null; // Must be implemented by subclassing Loader
+        return bytes; // Must be implemented by subclassing Loader
         <%- end -%>
     }
 
@@ -229,7 +229,7 @@ public class Loader {
     private <%= string_type %>[] loadConstants() {
         int length = loadVarUInt();
         if (length == 0) {
-            return Nodes.EMPTY_STRING_ARRAY;
+            return Nodes.EMPTY_IDENTIFIER_ARRAY;
         }
         <%= string_type %>[] constants = new <%= string_type %>[length];
         for (int i = 0; i < length; i++) {
@@ -395,7 +395,7 @@ public class Loader {
         int bufferPosition = buffer.position();
         int serializedLength = buffer.getInt();
         // Load everything except the body and locals, because the name, receiver, parameters are still needed for lazily defining the method
-        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_STRING_ARRAY);
+        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_IDENTIFIER_ARRAY);
         buffer.position(bufferPosition + serializedLength); // skip past the serialized DefNode
         return lazyDefNode;
     }
