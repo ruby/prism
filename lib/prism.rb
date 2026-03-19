@@ -141,5 +141,10 @@ else
   # The FFI backend is used on other Ruby implementations.
   Prism::BACKEND = :FFI
 
-  require_relative "prism/ffi"
+  begin
+    require_relative "prism/ffi"
+  rescue LoadError
+    raise $! unless RUBY_ENGINE == "jruby"
+    require_relative "prism/wasm"
+  end
 end
