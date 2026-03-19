@@ -200,7 +200,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_function("pm_parser_warnings_each")
         .allowlist_function("pm_parser_warnings_size")
         .allowlist_function("pm_size_to_native")
-        .allowlist_function("pm_string_cleanup")
         .allowlist_function("pm_string_constant_init")
         .allowlist_function("pm_string_length")
         .allowlist_function("pm_string_source")
