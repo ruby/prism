@@ -28,12 +28,16 @@ module Prism
     sig { returns(Integer) }
     attr_reader :start_line
 
-    # The list of newline byte offsets in the source code.
+    # The list of newline byte offsets in the source code. When initialized from
+    # the C extension, this may be a packed binary string of uint32_t values
+    # that is lazily unpacked on first access.
     sig { returns(T::Array[Integer]) }
-    attr_reader :offsets
+    def offsets; end
 
-    # Create a new source object with the given source code.
-    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).void }
+    # Create a new source object with the given source code. The offsets
+    # parameter can be either an Array of Integer byte offsets or a packed
+    # binary string of uint32_t values (from the C extension).
+    sig { params(source: String, start_line: Integer, offsets: ::T.any(T::Array[Integer], String)).void }
     def initialize(source, start_line, offsets); end
 
     # Replace the value of start_line with the given value.
