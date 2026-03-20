@@ -387,12 +387,12 @@ public abstract class Nodes {
             builder.append('"').append(asString(this.<%= field.name %>)).append('"');
             builder.append('\n');
             <%- when Prism::Template::OptionalConstantField -%>
-            builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
+            builder.append(this.<%= field.name %> == null ? "null" : "\"" + asString(this.<%= field.name %>) + "\"");
             builder.append('\n');
             <%- when Prism::Template::ConstantListField -%>
             builder.append('\n');
             for (<%= id_type %> constant : this.<%= field.name %>) {
-                builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
+                builder.append(nextNextIndent).append('"').append(asString(constant)).append('"').append('\n');
             }
             <%- when Prism::Template::Flags -%>
             builder.append(flags);
