@@ -19,19 +19,11 @@ public class Loader {
 
     // Overridable methods
 
-    public Charset getEncodingCharset(String encodingName) {
-        encodingName = encodingName.toLowerCase(Locale.ROOT);
-        if (encodingName.equals("ascii-8bit")) {
-            return StandardCharsets.US_ASCII;
-        }
-        return Charset.forName(encodingName);
-    }
-
     public <%= id_type %> bytesToName(byte[] bytes) {
-        <%- if id_type == "String" -%>
-        return new String(bytes, encodingCharset).intern();
-        <%- else -%>
+        <%- if id_type == "byte[]" -%>
         return bytes;
+        <%- else -%>
+        throw new AbstractMethodError("Loader.bytesToName(<%= id_type %>) is not implemented");
         <%- end -%>
     }
 
@@ -74,9 +66,6 @@ public class Loader {
 
     private final ByteBuffer buffer;
     protected String encodingName;
-    <%- if id_type == "String" -%>
-    private Charset encodingCharset;
-    <%- end -%>
     private ConstantPool constantPool;
     private Nodes.Source source = null;
 
@@ -104,9 +93,6 @@ public class Loader {
         byte[] encodingNameBytes = new byte[encodingLength];
         buffer.get(encodingNameBytes);
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
-        <%- if id_type == "String" -%>
-        this.encodingCharset = getEncodingCharset(this.encodingName);
-        <%- end -%>
 
         source.setStartLine(loadVarSInt());
         source.setLineOffsets(loadLineOffsets());
