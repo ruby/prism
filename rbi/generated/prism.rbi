@@ -23,6 +23,13 @@ module Prism
   sig { params(source: String, serialized: String, freeze: T::Boolean).returns(ParseResult) }
   def self.load(source, serialized, freeze = T.unsafe(nil)); end
 
+  # Given a Method, UnboundMethod, Proc, or Thread::Backtrace::Location,
+  # returns the Prism node representing it. On CRuby, this uses node_id for
+  # an exact match. On other implementations, it falls back to best-effort
+  # matching by source location line number.
+  sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location), rubyvm: T::Boolean).returns(::T.nilable(Node)) }
+  def self.find(callable, rubyvm: T.unsafe(nil)); end
+
   VERSION = T.let(nil, String)
   BACKEND = T.let(nil, Symbol)
 

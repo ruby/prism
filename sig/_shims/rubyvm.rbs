@@ -1,0 +1,6 @@
+class RubyVM
+  class InstructionSequence
+    def self.of: (Method | UnboundMethod | Proc) -> RubyVM::InstructionSequence?
+    def to_a: () -> Array[untyped]
+  end
+end
