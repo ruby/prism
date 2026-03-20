@@ -1,16 +1,16 @@
 package org.jruby.parser.prism;
 
-import org.jruby.parser.prism.wasm.Prism;
 import org.junit.jupiter.api.Test;
 import org.ruby_lang.prism.ParseResult;
 import org.ruby_lang.prism.ParsingOptions;
+import org.ruby_lang.prism.wasm.Prism;
 
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DummyTest {
+public class WASMTest {
 
     private static final byte[] packedOptions = ParsingOptions.serialize(
         new byte[] {},
@@ -87,5 +87,12 @@ public class DummyTest {
         System.out.println("Nodes:");
         System.out.println(pr.value.childNodes()[0]);
         assertTrue(pr.value.childNodes()[0].toString().contains("CallNode"));
+    }
+
+    @Test
+    public void testVersion() {
+        try (Prism prism = new Prism()) {
+            assertEquals("1.9.0", prism.version());
+        }
     }
 }

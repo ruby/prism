@@ -7,6 +7,8 @@ on:
       - "include/"
       - "src/"
       - "*akefile*"
+      - "java/"
+      - "java-wasm/"
     branches:
       - main
       - ruby-4.0
