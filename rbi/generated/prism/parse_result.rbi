@@ -16,7 +16,8 @@ module Prism
     # source is a subset of a larger source or if this is an eval. offsets is an
     # array of byte offsets for the start of each line in the source code, which
     # can be calculated by iterating through the source code and recording the
-    # byte offset whenever a newline character is encountered.
+    # byte offset whenever a newline character is encountered.  The first
+    # element is always 0 to mark the first line.
     sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).returns(Source) }
     def self.for(source, start_line, offsets); end
 
