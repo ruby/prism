@@ -358,6 +358,7 @@ namespace :typecheck do
         - ./lib/prism/lex_compat.rb
         - ./lib/prism/node.rb
         - ./lib/prism/node_ext.rb
+        - ./lib/prism/node_find.rb
         - ./lib/prism/parse_result.rb
         - ./lib/prism/pattern.rb
         - ./lib/prism/visitor.rb
