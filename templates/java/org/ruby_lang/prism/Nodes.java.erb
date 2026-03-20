@@ -139,6 +139,14 @@ public abstract class Nodes {
 
         protected abstract String toString(String indent);
     }
+
+    protected static String asString(Object value) {
+        return value.toString();
+    }
+
+    protected static String asString(byte[] value) {
+        return new String(value, StandardCharsets.ISO_8859_1);
+    }
 <%-# FLAGS -%>
     <%- flags.each do |flag| -%>
 
@@ -376,7 +384,7 @@ public abstract class Nodes {
             builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
             builder.append('\n');
             <%- when Prism::Template::ConstantField -%>
-            builder.append('"').append(this.<%= field.name %>).append('"');
+            builder.append('"').append(asString(this.<%= field.name %>)).append('"');
             builder.append('\n');
             <%- when Prism::Template::OptionalConstantField -%>
             builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
