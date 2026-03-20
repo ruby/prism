@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Parse Ruby code in your browser using Prism, a portable, error-tolerant Ruby parser.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval' 'self'; style-src https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline' 'self'; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src https://unpkg.com https://cdn.jsdelivr.net; worker-src blob:; img-src 'self' data:;">
+    <title>Prism - Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="playground.css">
+  </head>
+  <body>
+    <a href="#editor" class="skip-link">Skip to editor</a>
+
+    <nav aria-label="Playground navigation">
+      <div class="nav-left">
+        <h1>Prism Playground</h1>
+        <span id="version" class="nav-version"></span>
+      </div>
+      <div class="nav-right">
+        <select id="examples" class="nav-select" aria-label="Load example">
+          <option value="" disabled selected>Examples</option>
+          <option value="fibonacci">Fibonacci</option>
+          <option value="pattern">Pattern matching</option>
+          <option value="heredoc">Heredocs</option>
+          <option value="blocks">Blocks &amp; procs</option>
+          <option value="class">Class definition</option>
+        </select>
+        <button id="share" class="nav-button">Share</button>
+        <a href="index.html">&larr; Back</a>
+      </div>
+    </nav>
+
+    <main>
+      <div id="loading" role="status" aria-live="polite">Loading&hellip;</div>
+      <noscript>
+        <div class="noscript-message">JavaScript is required to use the playground.</div>
+      </noscript>
+
+      <div class="editor" id="editor">
+        <div id="monaco-container"></div>
+        <div class="output-panel">
+          <div class="tabs" role="tablist" aria-label="Output views">
+            <button class="active" role="tab" id="tab-ast" aria-selected="true" aria-controls="output" data-tab="ast" tabindex="0">AST</button>
+            <button role="tab" id="tab-diagnostics" aria-selected="false" aria-controls="output" data-tab="diagnostics" tabindex="-1">Diagnostics</button>
+            <span class="tabs-spacer"></span>
+            <button id="collapse-all" class="tab-action" aria-label="Collapse all nodes" title="Collapse all">Collapse</button>
+            <button id="expand-all" class="tab-action" aria-label="Expand all nodes" title="Expand all">Expand</button>
+          </div>
+          <div id="output" role="tabpanel" aria-labelledby="tab-ast"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="toast" class="share-toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
+    <script type="module" src="playground.js"></script>
+  </body>
+</html>
