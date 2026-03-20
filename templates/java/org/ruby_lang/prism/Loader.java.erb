@@ -19,21 +19,9 @@ public class Loader {
 
     // Overridable methods
 
-    public Charset getEncodingCharset(String encodingName) {
-        encodingName = encodingName.toLowerCase(Locale.ROOT);
-        if (encodingName.equals("ascii-8bit")) {
-            return StandardCharsets.US_ASCII;
-        }
-        return Charset.forName(encodingName);
-    }
-
-    public <%= id_type %> bytesToName(byte[] bytes) {
-        <%- if id_type == "String" -%>
-        return new String(bytes, encodingCharset).intern();
-        <%- else -%>
-        return bytes;
-        <%- end -%>
-    }
+    <%- if id_type == "String" -%>
+    public abstract <%= id_type %> bytesToName(byte[] bytes);
+    <%- end -%>
 
     private static final class ConstantPool {
 
@@ -63,7 +51,11 @@ public class Loader {
                 byte[] bytes = new byte[length];
                 buffer.get(start, bytes);
 
+                <%- if id_type == "byte[]" -%>
+                constant = bytes;
+                <%- else %>
                 constant = loader.bytesToName(bytes);
+                <%- end %>
                 cache[index] = constant;
             }
 
@@ -74,9 +66,6 @@ public class Loader {
 
     private final ByteBuffer buffer;
     protected String encodingName;
-    <%- if id_type == "String" -%>
-    private Charset encodingCharset;
-    <%- end -%>
     private ConstantPool constantPool;
     private Nodes.Source source = null;
 
@@ -104,9 +93,6 @@ public class Loader {
         byte[] encodingNameBytes = new byte[encodingLength];
         buffer.get(encodingNameBytes);
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
-        <%- if id_type == "String" -%>
-        this.encodingCharset = getEncodingCharset(this.encodingName);
-        <%- end -%>
 
         source.setStartLine(loadVarSInt());
         source.setLineOffsets(loadLineOffsets());
