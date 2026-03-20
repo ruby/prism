@@ -8,6 +8,8 @@
 // that doesn't follow the clippy rules. We don't want to see those warnings.
 #[allow(clippy::too_many_lines, clippy::use_self)]
 mod bindings {
+    use std::ptr::NonNull;
+
     // In `build.rs`, we generate bindings based on the config.yml file. Here is
     // where we pull in those bindings and make them part of our library.
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -18,7 +20,6 @@ mod node_ext;
 mod parse_result;
 
 use std::ffi::CString;
-use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 pub use self::bindings::*;
@@ -27,8 +28,8 @@ pub use self::node_ext::{ConstantPathError, FullName};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
 
 use ruby_prism_sys::{
-    pm_arena_t, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_partial_script_set, pm_options_scope_forwarding_set,
-    pm_options_scope_get, pm_options_scope_init, pm_options_scope_local_get, pm_options_scopes_init, pm_options_t, pm_parse, pm_parser_init, pm_parser_t, pm_string_constant_init,
+    pm_arena_new, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set,
+    pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_constant_init,
 };
 
 /// The version of Ruby syntax to parse with.
@@ -46,14 +47,26 @@ pub enum Version {
     CRuby4_1,
 }
 
-impl From<Version> for ruby_prism_sys::pm_options_version_t {
-    fn from(version: Version) -> Self {
-        match version {
-            Version::Latest => Self::PM_OPTIONS_VERSION_LATEST,
-            Version::CRuby3_3 => Self::PM_OPTIONS_VERSION_CRUBY_3_3,
-            Version::CRuby3_4 => Self::PM_OPTIONS_VERSION_CRUBY_3_4,
-            Version::CRuby3_5 => Self::PM_OPTIONS_VERSION_CRUBY_3_5,
-            Version::CRuby4_1 => Self::PM_OPTIONS_VERSION_CRUBY_4_1,
+impl Version {
+    /// Calls `pm_options_version_set` with the appropriate version string.
+    /// `Latest` passes `NULL` to get the default behavior.
+    unsafe fn set_on(self, opts: *mut pm_options_t) {
+        match self {
+            Self::Latest => {
+                pm_options_version_set(opts, std::ptr::null(), 0);
+            },
+            Self::CRuby3_3 => {
+                pm_options_version_set(opts, c"3.3".as_ptr(), 3);
+            },
+            Self::CRuby3_4 => {
+                pm_options_version_set(opts, c"3.4".as_ptr(), 3);
+            },
+            Self::CRuby3_5 => {
+                pm_options_version_set(opts, c"3.5".as_ptr(), 3);
+            },
+            Self::CRuby4_1 => {
+                pm_options_version_set(opts, c"4.1".as_ptr(), 3);
+            },
         }
     }
 }
@@ -238,58 +251,58 @@ impl Options {
     /// Panics if `filepath` or `encoding` contain interior null bytes.
     #[must_use]
     pub fn build(self) -> ParseOptions {
-        let mut opts = pm_options_t::default();
+        let opts = unsafe { pm_options_new() };
 
         let c_filepath = self.filepath.map(|filepath| {
             let cstring = CString::new(filepath).unwrap();
-            unsafe { pm_options_filepath_set(&raw mut opts, cstring.as_ptr()) };
+            unsafe { pm_options_filepath_set(opts, cstring.as_ptr()) };
             cstring
         });
 
         if let Some(line) = self.line {
-            unsafe { pm_options_line_set(&raw mut opts, line) };
+            unsafe { pm_options_line_set(opts, line) };
         }
 
         let c_encoding = self.encoding.map(|encoding| {
             let cstring = CString::new(encoding).unwrap();
-            unsafe { pm_options_encoding_set(&raw mut opts, cstring.as_ptr()) };
+            unsafe { pm_options_encoding_set(opts, cstring.as_ptr()) };
             cstring
         });
 
         if self.encoding_locked {
-            unsafe { pm_options_encoding_locked_set(&raw mut opts, true) };
+            unsafe { pm_options_encoding_locked_set(opts, true) };
         }
 
         if let Some(frozen) = self.frozen_string_literal {
-            unsafe { pm_options_frozen_string_literal_set(&raw mut opts, frozen) };
+            unsafe { pm_options_frozen_string_literal_set(opts, frozen) };
         }
 
         let command_line = self.command_line.iter().fold(0u8, |acc, &flag| acc | u8::from(flag));
         if command_line != 0 {
-            unsafe { pm_options_command_line_set(&raw mut opts, command_line) };
+            unsafe { pm_options_command_line_set(opts, command_line) };
         }
 
         if let Some(version) = self.version {
-            opts.version = version.into();
+            unsafe { version.set_on(opts) };
         }
 
         if self.main_script {
-            unsafe { pm_options_main_script_set(&raw mut opts, true) };
+            unsafe { pm_options_main_script_set(opts, true) };
         }
 
         if self.partial_script {
-            unsafe { pm_options_partial_script_set(&raw mut opts, true) };
+            unsafe { pm_options_partial_script_set(opts, true) };
         }
 
         if !self.scopes.is_empty() {
-            unsafe { pm_options_scopes_init(&raw mut opts, self.scopes.len()) };
+            unsafe { pm_options_scopes_init(opts, self.scopes.len()) };
 
             for (scope_index, scope) in self.scopes.iter().enumerate() {
-                let pm_scope = unsafe { pm_options_scope_get(&raw const opts, scope_index).cast_mut() };
+                let pm_scope = unsafe { pm_options_scope_mut(opts, scope_index) };
                 unsafe { pm_options_scope_init(pm_scope, scope.locals.len()) };
 
                 for (local_index, local) in scope.locals.iter().enumerate() {
-                    let pm_local = unsafe { pm_options_scope_local_get(pm_scope, local_index).cast_mut() };
+                    let pm_local = unsafe { pm_options_scope_local_mut(pm_scope, local_index) };
                     unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast::<i8>(), local.len()) };
                 }
 
@@ -311,9 +324,8 @@ impl Options {
 
 /// The C-level parse options. Created from [`Options::build`]. Must outlive
 /// any [`ParseResult`] created with [`parse_with_options`].
-#[derive(Debug)]
 pub struct ParseOptions {
-    options: pm_options_t,
+    options: *mut pm_options_t,
     // These CStrings back the constant pm_string_t values inside `options`.
     // They must not be dropped before `options` is freed.
     _filepath: Option<CString>,
@@ -324,7 +336,7 @@ pub struct ParseOptions {
 
 impl Drop for ParseOptions {
     fn drop(&mut self) {
-        unsafe { pm_options_free(&raw mut self.options) };
+        unsafe { pm_options_free(self.options) };
     }
 }
 
@@ -334,18 +346,9 @@ impl Drop for ParseOptions {
 ///
 /// `options` must be a valid pointer to a `pm_options_t` or null.
 unsafe fn parse_impl(source: &[u8], options: *const pm_options_t) -> ParseResult<'_> {
-    let mut arena = Box::new(MaybeUninit::<pm_arena_t>::zeroed().assume_init());
-    let uninit = Box::new(MaybeUninit::<pm_parser_t>::uninit());
-    let uninit = Box::into_raw(uninit);
-
-    pm_parser_init(arena.as_mut(), (*uninit).as_mut_ptr(), source.as_ptr(), source.len(), options);
-
-    let parser = (*uninit).assume_init_mut();
-    let parser = NonNull::new_unchecked(parser);
-
-    let node = pm_parse(parser.as_ptr());
-    let node = NonNull::new_unchecked(node);
-
+    let arena = pm_arena_new();
+    let parser = pm_parser_new(arena, source.as_ptr(), source.len(), options);
+    let node = NonNull::new_unchecked(pm_parse(parser));
     ParseResult::new(source, arena, parser, node)
 }
 
@@ -369,7 +372,7 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
 ///
 #[must_use]
 pub fn parse_with_options<'a>(source: &'a [u8], options: &'a ParseOptions) -> ParseResult<'a> {
-    unsafe { parse_impl(source, &raw const options.options) }
+    unsafe { parse_impl(source, options.options) }
 }
 
 #[cfg(test)]

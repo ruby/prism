@@ -1,5 +1,0 @@
-# for now, we ignore the encoding functions as they
-# can read out of bounds
-[address]
-src:src/enc/*
-

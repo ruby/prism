@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-desc "Generate the lookup tables for pm_char.c"
+desc "Generate the lookup tables for char.c"
 namespace :generate do
   task :char do
     puts "static const uint8_t pm_char_table[256] = {"

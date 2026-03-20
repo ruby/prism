@@ -235,7 +235,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
 
     writeln!(file, "pub struct {}<'pr> {{", node.name)?;
     writeln!(file, "    /// The pointer to the parser this node came from.")?;
-    writeln!(file, "    parser: NonNull<pm_parser_t>,")?;
+    writeln!(file, "    parser: *const pm_parser_t,")?;
     writeln!(file)?;
     writeln!(file, "    /// The raw pointer to the node allocated by prism.")?;
     writeln!(file, "    pointer: *mut pm{}_t,", struct_name(&node.name))?;
@@ -554,7 +554,6 @@ fn write_bindings(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         file,
         r"
 use std::marker::PhantomData;
-use std::ptr::NonNull;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
@@ -581,7 +580,7 @@ use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
         writeln!(file, "    /// The `{}` node", node.name)?;
         writeln!(file, "    {} {{", node.name)?;
         writeln!(file, "        /// The pointer to the associated parser this node came from.")?;
-        writeln!(file, "        parser: NonNull<pm_parser_t>,")?;
+        writeln!(file, "        parser: *const pm_parser_t,")?;
         writeln!(file)?;
         writeln!(file, "        /// The raw pointer to the node allocated by prism.")?;
         writeln!(file, "        pointer: *mut pm{}_t,", struct_name(&node.name))?;
@@ -606,7 +605,7 @@ impl<'pr> Node<'pr> {{
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
     #[allow(clippy::cast_ptr_alignment)]
-    pub(crate) fn new(parser: NonNull<pm_parser_t>, node: *mut pm_node_t) -> Self {{
+    pub(crate) fn new(parser: *const pm_parser_t, node: *mut pm_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{"
     )?;
 

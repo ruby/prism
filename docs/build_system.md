@@ -87,7 +87,7 @@ If you need to use memory allocation functions implemented outside of the standa
 * Additionally, include `-I [path/to/custom_allocator]` where your `prism_xallocator.h` is located
 * Link the implementation of `prism_xallocator.c` that contains functions declared in `prism_xallocator.h`
 
-For further clarity, refer to `include/prism/defines.h`.
+For further clarity, refer to `include/prism/internal/allocator.h`.
 
 ### Building prism from source as a C library
 

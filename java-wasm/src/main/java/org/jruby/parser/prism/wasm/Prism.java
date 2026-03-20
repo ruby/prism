@@ -40,8 +40,7 @@ public class Prism implements AutoCloseable {
         preOptionsPointer = exports.calloc(1, PACKED_OPTIONS_BUFFER_SIZE);
         preSourcePointer = exports.calloc(1, SOURCE_SIZE);
 
-        bufferPointer = exports.calloc(exports.pmBufferSizeof(), 1);
-        exports.pmBufferInit(bufferPointer);
+        bufferPointer = exports.pmBufferNew();
     }
 
     public byte[] serialize(byte[] packedOptions, byte[] sourceBytes, int sourceLength) {
@@ -60,7 +59,8 @@ public class Prism implements AutoCloseable {
                 exports.calloc(1, packedOptions.length) : preOptionsPointer;
             instance.memory().write(optionsPointer, packedOptions);
 
-            exports.pmBufferClear(bufferPointer);
+            exports.pmBufferFree(bufferPointer);
+            bufferPointer = exports.pmBufferNew();
 
             exports.pmSerializeParse(
                 bufferPointer, sourcePointer, sourceLength, optionsPointer);

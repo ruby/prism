@@ -159,8 +159,8 @@ typedef struct {
   size_t capacity;
 } pm_buffer_t;
 
-// Free the memory associated with the buffer.
-void pm_buffer_free(pm_buffer_t *);
+// Free the memory held by the buffer.
+void pm_buffer_cleanup(pm_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
@@ -172,12 +172,12 @@ Typically you would use a stack-allocated `pm_buffer_t` and call `pm_serialize_p
 ```c
 void
 serialize(const uint8_t *source, size_t length) {
-  pm_buffer_t buffer = { 0 };
-  pm_serialize_parse(&buffer, source, length, NULL);
+  pm_buffer_t *buffer = pm_buffer_new();
+  pm_serialize_parse(buffer, source, length, NULL);
 
   // Do something with the serialized string.
 
-  pm_buffer_free(&buffer);
+  pm_buffer_free(buffer);
 }
 ```
 

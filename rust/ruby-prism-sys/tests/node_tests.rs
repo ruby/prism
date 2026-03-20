@@ -1,29 +1,25 @@
-use std::{ffi::CString, mem::MaybeUninit};
+use std::ffi::CString;
 
-use ruby_prism_sys::{pm_arena_free, pm_arena_t, pm_node_type};
-use ruby_prism_sys::{pm_parse, pm_parser_free, pm_parser_init, pm_parser_t};
+use ruby_prism_sys::{pm_arena_free, pm_arena_new, pm_node_type};
+use ruby_prism_sys::{pm_parse, pm_parser_free, pm_parser_new};
 
 #[test]
 fn node_test() {
-    let mut arena = MaybeUninit::<pm_arena_t>::zeroed();
-    let mut parser = MaybeUninit::<pm_parser_t>::uninit();
     let code = CString::new("class Foo; end").unwrap();
 
     unsafe {
-        pm_parser_init(
-            arena.as_mut_ptr(),
-            parser.as_mut_ptr(),
+        let arena = pm_arena_new();
+        let parser = pm_parser_new(
+            arena,
             code.as_ptr().cast::<u8>(),
             code.as_bytes().len(),
             std::ptr::null(),
         );
+        let node = pm_parse(parser);
 
-        let parser = parser.assume_init_mut();
-        let parsed_node = pm_parse(parser);
-
-        assert_eq!((*parsed_node).type_, pm_node_type::PM_PROGRAM_NODE as u16);
+        assert_eq!((*node).type_, pm_node_type::PM_PROGRAM_NODE as u16);
 
         pm_parser_free(parser);
-        pm_arena_free(arena.as_mut_ptr());
+        pm_arena_free(arena);
     }
 }

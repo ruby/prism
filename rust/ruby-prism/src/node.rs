@@ -18,7 +18,7 @@ use crate::Node;
 
 /// An iterator over the nodes in a list.
 pub struct NodeListIter<'pr> {
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
     pub(crate) pointer: NonNull<pm_node_list>,
     pub(crate) index: usize,
     pub(crate) marker: PhantomData<&'pr mut pm_node_list>,
@@ -40,7 +40,7 @@ impl<'pr> Iterator for NodeListIter<'pr> {
 
 /// A list of nodes.
 pub struct NodeList<'pr> {
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
     pub(crate) pointer: NonNull<pm_node_list>,
     pub(crate) marker: PhantomData<&'pr mut pm_node_list>,
 }
@@ -115,13 +115,13 @@ impl std::fmt::Debug for NodeList<'_> {
 
 /// A handle for a constant ID.
 pub struct ConstantId<'pr> {
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
     pub(crate) id: pm_constant_id_t,
     pub(crate) marker: PhantomData<&'pr mut pm_constant_id_t>,
 }
 
 impl<'pr> ConstantId<'pr> {
-    pub(crate) const fn new(parser: NonNull<pm_parser_t>, id: pm_constant_id_t) -> Self {
+    pub(crate) const fn new(parser: *const pm_parser_t, id: pm_constant_id_t) -> Self {
         ConstantId { parser, id, marker: PhantomData }
     }
 
@@ -133,9 +133,10 @@ impl<'pr> ConstantId<'pr> {
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {
         unsafe {
-            let pool = &(*self.parser.as_ptr()).constant_pool;
-            let constant = &(*pool.constants.add((self.id - 1).try_into().unwrap()));
-            std::slice::from_raw_parts(constant.start, constant.length)
+            let constant = ruby_prism_sys::pm_parser_constant(self.parser, self.id);
+            let start = ruby_prism_sys::pm_constant_start(constant);
+            let length = ruby_prism_sys::pm_constant_length(constant);
+            std::slice::from_raw_parts(start, length)
         }
     }
 }
@@ -148,7 +149,7 @@ impl std::fmt::Debug for ConstantId<'_> {
 
 /// An iterator over the constants in a list.
 pub struct ConstantListIter<'pr> {
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
     pub(crate) pointer: NonNull<pm_constant_id_list_t>,
     pub(crate) index: usize,
     pub(crate) marker: PhantomData<&'pr mut pm_constant_id_list_t>,
@@ -171,7 +172,7 @@ impl<'pr> Iterator for ConstantListIter<'pr> {
 /// A list of constants.
 pub struct ConstantList<'pr> {
     /// The raw pointer to the parser where this list came from.
-    pub(crate) parser: NonNull<pm_parser_t>,
+    pub(crate) parser: *const pm_parser_t,
 
     /// The raw pointer to the list allocated by prism.
     pub(crate) pointer: NonNull<pm_constant_id_list_t>,

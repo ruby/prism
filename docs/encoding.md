@@ -107,7 +107,7 @@ For each of these encodings, prism provides functions for checking if the subseq
 
 ## Getting notified when the encoding changes
 
-You may want to get notified when the encoding changes based on the result of parsing an encoding comment. We use this internally for our `lex` function in order to provide the correct encodings for the tokens that are returned. For that you can register a callback with `pm_parser_register_encoding_changed_callback`. The callback will be called with a pointer to the parser. The encoding can be accessed through `parser->encoding`.
+You may want to get notified when the encoding changes based on the result of parsing an encoding comment. We use this internally for our `lex` function in order to provide the correct encodings for the tokens that are returned. For that you can register a callback with `pm_parser_encoding_changed_callback_set`. The callback will be called with a pointer to the parser. The encoding can be accessed through `parser->encoding`.
 
 ```c
 // When the encoding that is being used to parse the source is changed by prism,
@@ -117,5 +117,5 @@ typedef void (*pm_encoding_changed_callback_t)(pm_parser_t *parser);
 // Register a callback that will be called whenever prism changes the encoding
 // it is using to parse based on the magic comment.
 PRISM_EXPORTED_FUNCTION void
-pm_parser_register_encoding_changed_callback(pm_parser_t *parser, pm_encoding_changed_callback_t callback);
+pm_parser_encoding_changed_callback_set(pm_parser_t *parser, pm_encoding_changed_callback_t callback);
 ```
