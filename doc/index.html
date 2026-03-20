@@ -2,37 +2,86 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Prism</title>
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic&amp;subset=latin,cyrillic,greek,vietnamese" rel="stylesheet" type="text/css">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta name="description" content="Prism is a portable, error-tolerant Ruby parser. Bundled with CRuby 3.3+ and available as a gem.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src https://fonts.googleapis.com 'self'; font-src https://fonts.gstatic.com; img-src 'self';">
+    <title>Prism Ruby Parser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="index.css">
   </head>
   <body>
     <header>
-      <h1>Prism Ruby parser</h1>
+      <h1>Prism</h1>
+      <p>A portable, error-tolerant Ruby parser</p>
     </header>
     <main>
-      <a class="reference" href="c/index.html">
-        <img src="images/c.svg" alt="C">
-        <h2>C reference</h2>
-      </a>
-      <a class="reference" href="rb/index.html">
-        <img src="images/ruby.svg" alt="Ruby">
-        <h2>Ruby reference</h2>
-      </a>
-      <a class="reference" href="rust/doc/ruby_prism/index.html">
-        <img src="images/rust.svg" alt="Rust">
-        <h2>Rust reference</h2>
-      </a>
-      <a class="reference" href="java/index.html">
-        <img src="images/java.png" alt="Java">
-        <h2>Java reference</h2>
-      </a>
+      <section>
+        <h2>Try it</h2>
+        <p>Parse Ruby code in your browser — no installation required.</p>
+        <a class="playground-link" href="playground.html">Open playground &rarr;</a>
+      </section>
+
+      <section>
+        <h2>Getting started</h2>
+        <p>Prism is bundled with CRuby 3.3+ and available as a gem for earlier versions.</p>
+        <pre><code>gem install prism</code></pre>
+      </section>
+
+      <section>
+        <h2>API Reference</h2>
+        <div class="grid">
+          <a class="reference" href="c/index.html">
+            <img src="images/c.svg" alt="C">
+            <div>
+              <h3>C Reference</h3>
+              <span>Core library API documentation</span>
+            </div>
+          </a>
+          <a class="reference" href="rb/index.html">
+            <img src="images/ruby.svg" alt="Ruby">
+            <div>
+              <h3>Ruby Reference</h3>
+              <span>Ruby gem API documentation</span>
+            </div>
+          </a>
+          <a class="reference" href="rust/doc/ruby_prism/index.html">
+            <img src="images/rust.svg" alt="Rust">
+            <div>
+              <h3>Rust Reference</h3>
+              <span>Rust crate API documentation</span>
+            </div>
+          </a>
+          <a class="reference" href="java/index.html">
+            <img src="images/java.png" alt="Java">
+            <div>
+              <h3>Java Reference</h3>
+              <span>Java package API documentation</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <h2>Guides</h2>
+        <div class="grid">
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/mapping.md">AST mapping</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/build_system.md">Build system</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/configuration.md">Configuration</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/design.md">Design</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/encoding.md">Encoding</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/parser_translation.md">Parser translation</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/ruby_api.md">Ruby API</a>
+          <a class="guide" href="https://github.com/ruby/prism/blob/main/docs/serialization.md">Serialization</a>
+        </div>
+      </section>
     </main>
     <footer>
-      <img id="logo" src="images/prism.png" alt="Prism">
+      <a href="https://github.com/ruby/prism">GitHub</a>
+      <a href="https://github.com/ruby/prism/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://rubygems.org/gems/prism">RubyGems</a>
     </footer>
   </body>
 </html>
