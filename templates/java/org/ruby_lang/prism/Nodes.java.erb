@@ -145,7 +145,15 @@ public abstract class Nodes {
     }
 
     protected static String asString(byte[] value) {
-        return new String(value, StandardCharsets.ISO_8859_1);
+        StringBuilder buf = new StringBuilder(value.length);
+        for (byte b : value) {
+            if (b >= 0x20 && b <= 0x7e) {
+                buf.append((char) b);
+            } else {
+                buf.append(String.format("\\x%02x", Byte.toUnsignedInt(b)));
+            }
+        }
+        return buf.toString();
     }
 <%-# FLAGS -%>
     <%- flags.each do |flag| -%>
@@ -381,7 +389,7 @@ public abstract class Nodes {
                 builder.append(nextNextIndent).append(child.toString(nextNextIndent));
             }
             <%- when Prism::Template::StringField -%>
-            builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
+            builder.append('"' + asString(this.<%= field.name %>) + '"');
             builder.append('\n');
             <%- when Prism::Template::ConstantField -%>
             builder.append('"').append(asString(this.<%= field.name %>)).append('"');
