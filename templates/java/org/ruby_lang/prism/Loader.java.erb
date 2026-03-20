@@ -1,4 +1,4 @@
-<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
+<%- id_type = Prism::Template::JAVA_IDENTIFIER_TYPE -%>
 package org.ruby_lang.prism;
 
 import java.lang.Short;
@@ -19,37 +19,29 @@ public class Loader {
 
     // Overridable methods
 
-    public Charset getEncodingCharset(String encodingName) {
-        encodingName = encodingName.toLowerCase(Locale.ROOT);
-        if (encodingName.equals("ascii-8bit")) {
-            return StandardCharsets.US_ASCII;
-        }
-        return Charset.forName(encodingName);
-    }
-
-    public <%= string_type %> bytesToName(byte[] bytes) {
-        <%- if string_type == "String" -%>
-        return new String(bytes, encodingCharset).intern();
-        <%- else -%>
-        return null; // Must be implemented by subclassing Loader
-        <%- end -%>
-    }
+    <%- if id_type == "String" -%>
+    public abstract <%= id_type %> bytesToName(byte[] bytes);
+    <%- end -%>
 
     private static final class ConstantPool {
 
         private final Loader loader;
         private final int bufferOffset;
-        private final <%= string_type %>[] cache;
+        private final <%= id_type %>[] cache;
 
         ConstantPool(Loader loader, int bufferOffset, int length) {
             this.loader = loader;
             this.bufferOffset = bufferOffset;
-            cache = new <%= string_type %>[length];
+            <%- if id_type == "String" -%>
+            cache = new <%= id_type %>[length];
+            <%- else -%>
+            cache = new byte[length][];
+            <%- end -%>
         }
 
-        <%= string_type %> get(ByteBuffer buffer, int oneBasedIndex) {
+        <%= id_type %> get(ByteBuffer buffer, int oneBasedIndex) {
             int index = oneBasedIndex - 1;
-            <%= string_type %> constant = cache[index];
+            <%= id_type %> constant = cache[index];
 
             if (constant == null) {
                 int offset = bufferOffset + index * 8;
@@ -59,7 +51,11 @@ public class Loader {
                 byte[] bytes = new byte[length];
                 buffer.get(start, bytes);
 
+                <%- if id_type == "byte[]" -%>
+                constant = bytes;
+                <%- else %>
                 constant = loader.bytesToName(bytes);
+                <%- end %>
                 cache[index] = constant;
             }
 
@@ -70,9 +66,6 @@ public class Loader {
 
     private final ByteBuffer buffer;
     protected String encodingName;
-    <%- if string_type == "String" -%>
-    private Charset encodingCharset;
-    <%- end -%>
     private ConstantPool constantPool;
     private Nodes.Source source = null;
 
@@ -100,9 +93,6 @@ public class Loader {
         byte[] encodingNameBytes = new byte[encodingLength];
         buffer.get(encodingNameBytes);
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
-        <%- if string_type == "String" -%>
-        this.encodingCharset = getEncodingCharset(this.encodingName);
-        <%- end -%>
 
         source.setStartLine(loadVarSInt());
         source.setLineOffsets(loadLineOffsets());
@@ -213,11 +203,11 @@ public class Loader {
         }
     }
 
-    private <%= string_type %> loadConstant() {
+    private <%= id_type %> loadConstant() {
         return constantPool.get(buffer, loadVarUInt());
     }
 
-    private <%= string_type %> loadOptionalConstant() {
+    private <%= id_type %> loadOptionalConstant() {
         if (buffer.get(buffer.position()) != 0) {
             return loadConstant();
         } else {
@@ -226,12 +216,16 @@ public class Loader {
         }
     }
 
-    private <%= string_type %>[] loadConstants() {
+    private <%= id_type %>[] loadConstants() {
         int length = loadVarUInt();
         if (length == 0) {
-            return Nodes.EMPTY_STRING_ARRAY;
+            return Nodes.EMPTY_IDENTIFIER_ARRAY;
         }
-        <%= string_type %>[] constants = new <%= string_type %>[length];
+        <%- if id_type == "String" -%>
+        <%= id_type %>[] constants = new <%= id_type %>[length];
+        <%- else -%>
+        <%= id_type %>[] constants = new byte[length][];
+        <%- end -%>
         for (int i = 0; i < length; i++) {
             constants[i] = constantPool.get(buffer, loadVarUInt());
         }
@@ -395,7 +389,7 @@ public class Loader {
         int bufferPosition = buffer.position();
         int serializedLength = buffer.getInt();
         // Load everything except the body and locals, because the name, receiver, parameters are still needed for lazily defining the method
-        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_STRING_ARRAY);
+        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_IDENTIFIER_ARRAY);
         buffer.position(bufferPosition + serializedLength); // skip past the serialized DefNode
         return lazyDefNode;
     }
