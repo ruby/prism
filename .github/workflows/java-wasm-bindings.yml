@@ -52,36 +52,3 @@ jobs:
         with:
           name: prism.wasm
           path: java-wasm/src/test/resources/prism.wasm
-
-  build-truffleruby:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: head
-          bundler-cache: true
-
-      - name: rake templates
-        run: PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 PRISM_JAVA_BACKEND=truffleruby bundle exec rake templates
-
-      - name: Set up WASI-SDK
-        run: |
-          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-x86_64-linux.tar.gz
-          tar xvf wasi-sdk-25.0-x86_64-linux.tar.gz
-
-      - name: Build the project
-        run: make java-wasm WASI_SDK_PATH=$(pwd)/wasi-sdk-25.0-x86_64-linux
-
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: maven
-
-      - name: Confirm compilation succeeds
-        run: mvn -B -DskipTests package
-        working-directory: java-wasm
