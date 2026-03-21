@@ -1,4 +1,4 @@
-<%- string_type = Prism::Template::JAVA_STRING_TYPE -%>
+<%- id_type = Prism::Template::JAVA_IDENTIFIER_TYPE -%>
 package org.ruby_lang.prism;
 
 import java.lang.Override;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 // @formatter:off
 public abstract class Nodes {
 
-    public static final <%= string_type %>[] EMPTY_STRING_ARRAY = {};
+    public static final <%= id_type %>[] EMPTY_IDENTIFIER_ARRAY = {};
 
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.SOURCE)
@@ -138,6 +138,22 @@ public abstract class Nodes {
         }
 
         protected abstract String toString(String indent);
+    }
+
+    protected static String asString(Object value) {
+        return value.toString();
+    }
+
+    protected static String asString(byte[] value) {
+        StringBuilder buf = new StringBuilder(value.length);
+        for (byte b : value) {
+            if (b >= 0x20 && b <= 0x7e) {
+                buf.append((char) b);
+            } else {
+                buf.append(String.format("\\x%02x", Byte.toUnsignedInt(b)));
+            }
+        }
+        return buf.toString();
     }
 <%-# FLAGS -%>
     <%- flags.each do |flag| -%>
@@ -373,18 +389,18 @@ public abstract class Nodes {
                 builder.append(nextNextIndent).append(child.toString(nextNextIndent));
             }
             <%- when Prism::Template::StringField -%>
-            builder.append('"' + new String(this.<%= field.name %>, StandardCharsets.UTF_8) + '"');
+            builder.append('"' + asString(this.<%= field.name %>) + '"');
             builder.append('\n');
             <%- when Prism::Template::ConstantField -%>
-            builder.append('"').append(this.<%= field.name %>).append('"');
+            builder.append('"').append(asString(this.<%= field.name %>)).append('"');
             builder.append('\n');
             <%- when Prism::Template::OptionalConstantField -%>
-            builder.append(this.<%= field.name %> == null ? "null" : "\"" + this.<%= field.name %> + "\"");
+            builder.append(this.<%= field.name %> == null ? "null" : "\"" + asString(this.<%= field.name %>) + "\"");
             builder.append('\n');
             <%- when Prism::Template::ConstantListField -%>
             builder.append('\n');
-            for (<%= string_type %> constant : this.<%= field.name %>) {
-                builder.append(nextNextIndent).append('"').append(constant).append('"').append('\n');
+            for (<%= id_type %> constant : this.<%= field.name %>) {
+                builder.append(nextNextIndent).append('"').append(asString(constant)).append('"').append('\n');
             }
             <%- when Prism::Template::Flags -%>
             builder.append(flags);

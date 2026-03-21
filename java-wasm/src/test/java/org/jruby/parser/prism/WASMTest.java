@@ -5,6 +5,7 @@ import org.ruby_lang.prism.ParseResult;
 import org.ruby_lang.prism.ParsingOptions;
 import org.ruby_lang.prism.wasm.Prism;
 
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,22 +43,6 @@ public class WASMTest {
     }
 
     @Test
-    public void test1Aot() {
-        // The Ruby source code to be processed
-        var source = "1 + 1";
-
-        ParseResult pr = null;
-        try (Prism prism = new Prism()) {
-            pr = prism.serializeParse(packedOptions, source);
-        }
-
-        assertEquals(1, pr.value.childNodes().length);
-        System.out.println("Nodes:");
-        System.out.println(pr.value.childNodes()[0]);
-        assertTrue(pr.value.childNodes()[0].toString().contains("IntegerNode"));
-    }
-
-    @Test
     public void test2() {
         // The Ruby source code to be processed
         var source = "puts \"h\ne\nl\nl\no\n\"";
@@ -74,19 +59,19 @@ public class WASMTest {
     }
 
     @Test
-    public void test2Aot() {
+    public void testMBCIdentifier() {
         // The Ruby source code to be processed
-        var source = "puts \"h\ne\nl\nl\no\n\"";
+        var source = new String("hellø = \"hello\"".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
 
         ParseResult pr = null;
         try (Prism prism = new Prism()) {
             pr = prism.serializeParse(packedOptions, source);
         }
 
-        assertEquals(1, pr.value.childNodes().length);
         System.out.println("Nodes:");
+        System.out.println(pr);
         System.out.println(pr.value.childNodes()[0]);
-        assertTrue(pr.value.childNodes()[0].toString().contains("CallNode"));
+        assertTrue(pr.value.childNodes()[0].toString().contains("hell\\xc3\\xb8"));
     }
 
     @Test

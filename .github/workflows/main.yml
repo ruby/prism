@@ -188,6 +188,18 @@ jobs:
     - name: Run Java Loader test
       run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
 
+  build-java-truffleruby:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up JRuby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: jruby
+        bundler-cache: true
+    - name: Run Java Loader test
+      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 PRISM_JAVA_BACKEND=truffleruby bundle exec rake compile
+
   lex-ruby:
     runs-on: ubuntu-latest
     steps:

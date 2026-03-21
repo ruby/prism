@@ -15,7 +15,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-wasm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
