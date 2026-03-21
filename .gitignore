@@ -55,6 +55,7 @@ out.svg
 /lib/prism/visitor.rb
 /sorbet/
 /src/diagnostic.c
+/src/json.c
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c
