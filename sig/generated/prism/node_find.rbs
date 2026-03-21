@@ -18,6 +18,7 @@ module Prism
     class Find
       private
 
+      # Parse the given file path, returning a ParseResult or nil.
       # --
       # : (String? file) -> ParseResult?
       def parse_file: (String? file) -> ParseResult?
@@ -26,6 +27,7 @@ module Prism
     # Finds the AST node for a Method, UnboundMethod, or Proc using the node_id
     # from the instruction sequence.
     class RubyVMCallableFind < Find
+      # Find the node for the given callable using the ISeq node_id.
       # --
       # : (Method | UnboundMethod | Proc callable) -> Node?
       def find: (Method | UnboundMethod | Proc callable) -> Node?
@@ -34,6 +36,7 @@ module Prism
     # Finds the AST node for a Thread::Backtrace::Location using the node_id
     # from the backtrace location.
     class RubyVMBacktraceLocationFind < Find
+      # Find the node for the given backtrace location using node_id.
       # --
       # : (Thread::Backtrace::Location location) -> Node?
       def find: (Thread::Backtrace::Location location) -> Node?
@@ -42,6 +45,7 @@ module Prism
     # Finds the AST node for a Method or UnboundMethod using best-effort line
     # matching. Used on non-CRuby implementations.
     class LineMethodFind < Find
+      # Find the node for the given method by matching on name and line.
       # --
       # : (Method | UnboundMethod callable) -> Node?
       def find: (Method | UnboundMethod callable) -> Node?
@@ -50,6 +54,7 @@ module Prism
     # Finds the AST node for a lambda using best-effort line matching. Used
     # on non-CRuby implementations.
     class LineLambdaFind < Find
+      # Find the node for the given lambda by matching on line.
       # --
       # : (Proc callable) -> Node?
       def find: (Proc callable) -> Node?
@@ -58,6 +63,7 @@ module Prism
     # Finds the AST node for a non-lambda Proc using best-effort line
     # matching. Used on non-CRuby implementations.
     class LineProcFind < Find
+      # Find the node for the given proc by matching on line.
       # --
       # : (Proc callable) -> Node?
       def find: (Proc callable) -> Node?
@@ -66,6 +72,7 @@ module Prism
     # Finds the AST node for a Thread::Backtrace::Location using best-effort
     # line matching. Used on non-CRuby implementations.
     class LineBacktraceLocationFind < Find
+      # Find the node for the given backtrace location by matching on line.
       # --
       # : (Thread::Backtrace::Location location) -> Node?
       def find: (Thread::Backtrace::Location location) -> Node?
