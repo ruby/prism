@@ -5,7 +5,7 @@ This dir contains the chicory-prism artifact, a version of prism compiled to WAS
 Generate the templated sources:
 
 ```
-PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 PRISM_JAVA_BACKEND=jruby bundle exec rake templates
+PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
 ```
 
 Compile to WASM using WASI SDK version 25:
