@@ -7,7 +7,25 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>Java Prism</name>
   <description>Java API for the Prism Ruby language parser</description>
+  <url>https://github.com/ruby/prism</url>
 
+  <licenses>
+    <license>
+      <name>MIT</name>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Charles Oliver Nutter</name>
+      <email>headius@headius.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/ruby/prism</url>
+    <connection>https://github.com/ruby/prism.git</connection>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
