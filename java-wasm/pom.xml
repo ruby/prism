@@ -4,7 +4,7 @@
 
   <groupId>org.ruby-lang</groupId>
   <artifactId>prism-parser</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>Java Prism</name>
   <description>Java API for the Prism Ruby language parser</description>
   <url>https://github.com/ruby/prism</url>
