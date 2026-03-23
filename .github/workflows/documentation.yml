@@ -35,16 +35,8 @@ jobs:
       run: bundle exec rake rdoc:coverage
     - name: Check C coverage
       run: doxygen Doxyfile
-
-    - name: Set up Java
-      uses: actions/setup-java@v5
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-        cache: maven
     - name: Check Java coverage
-      run: mvn -f java/pom.xml -pl api -pl native install
-
+      run: javadoc -Xdoclint:all,-missing -d doc/java -sourcepath java/api/target/generated-sources/java/:java/api/src/main/java org.ruby_lang.prism
     - name: Generate Rust documentation
       run: |
         bundle exec rake cargo:build
