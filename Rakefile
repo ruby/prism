@@ -43,7 +43,7 @@ elsif RUBY_ENGINE == "jruby"
   # This compiles java to make sure any templating changes produces valid code.
   Rake::JavaExtensionTask.new(:compile) do |ext|
     ext.name = "prism"
-    ext.ext_dir = "java"
+    ext.ext_dir = "java/api"
     ext.lib_dir = "tmp"
     ext.release = "21"
     ext.gem_spec = Gem::Specification.load("prism.gemspec")
