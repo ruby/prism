@@ -44,9 +44,13 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Run the tests
-        run: mvn -B install
-        working-directory: java/wasm
+      - name: Build the Java artifacts
+        run: mvn install
+        working-directory: java
+
+      - name: Run the tests from the WASM module
+        run: mvn -pl wasm test
+        working-directory: java
 
       - uses: actions/upload-artifact@v7
         with:

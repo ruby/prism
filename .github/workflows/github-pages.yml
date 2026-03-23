@@ -52,7 +52,7 @@ jobs:
         run: doxygen Doxyfile
       - name: Build with JavaDoc
         run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
-        working-directory: java
+        working-directory: java/api
       - name: Build with rustdoc
         run: |
           bundle exec rake cargo:build

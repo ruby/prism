@@ -37,7 +37,7 @@ jobs:
       run: doxygen Doxyfile
     - name: Check Java coverage
       run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
-      working-directory: java
+      working-directory: java/api
     - name: Generate Rust documentation
       run: |
         bundle exec rake cargo:build
