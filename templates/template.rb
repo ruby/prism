@@ -566,6 +566,54 @@ module Prism
       end
     end
 
+    # Represents a comment attachment type with its fields.
+    class CommentType
+      # Represents a field in a comment attachment type.
+      class Field
+        attr_reader :name, :type, :comment
+
+        def initialize(config)
+          @name = config.fetch("name")
+          @type = config.fetch("type") # "comment" or "list"
+          @comment = config.fetch("comment")
+        end
+
+        def comment?
+          type == "comment"
+        end
+
+        def list?
+          type == "list"
+        end
+
+        def each_comment_line(&block)
+          ConfigComment.new(comment).each_line(&block)
+        end
+      end
+
+      attr_reader :name, :comment, :fields
+
+      def initialize(config)
+        @name = config.fetch("name")
+        @comment = config.fetch("comment")
+        @fields = config.fetch("fields").map { |field| Field.new(field) }
+      end
+
+      def each_comment_line(&block)
+        ConfigComment.new(comment).each_line(&block)
+      end
+
+      # The SCREAMING_SNAKE_CASE enum name (e.g., "ALIAS" from "AliasMethodComments").
+      def enum_name
+        @enum_name ||= name.sub(/Comments$/, "").gsub(/([a-z])([A-Z])/, '\1_\2').upcase
+      end
+
+      # The snake_case C struct name (e.g., "pm_alias_method_comments_t").
+      def c_type
+        @c_type ||= "pm_#{name.gsub(/([a-z])([A-Z])/, '\1_\2').downcase}_t"
+      end
+    end
+
     # Represents a set of flags that should be internally represented with an enum.
     class Flags
       # Represents an individual flag within a set of flags.
@@ -671,7 +719,8 @@ module Prism
               warnings: config.fetch("warnings").map { |name| Warning.new(name) },
               nodes: config.fetch("nodes").map { |node| NodeType.new(node, flags) }.sort_by(&:name),
               tokens: config.fetch("tokens").map { |token| Token.new(token) },
-              flags: flags.values
+              flags: flags.values,
+              comments: config.fetch("comments", []).map { |c| CommentType.new(c) }
             }
           end
       end
@@ -680,6 +729,7 @@ module Prism
     TEMPLATES = [
       "ext/prism/api_node.c",
       "include/prism/ast.h",
+      "include/prism/comments.h",
       "include/prism/internal/diagnostic.h",
       "javascript/src/deserialize.js",
       "javascript/src/nodes.js",
@@ -687,6 +737,7 @@ module Prism
       "java/api/src/main/java-templates/org/ruby_lang/prism/Loader.java",
       "java/api/src/main/java-templates/org/ruby_lang/prism/Nodes.java",
       "java/api/src/main/java-templates/org/ruby_lang/prism/AbstractNodeVisitor.java",
+      "lib/prism/comments.rb",
       "lib/prism/compiler.rb",
       "lib/prism/dispatcher.rb",
       "lib/prism/dot_visitor.rb",

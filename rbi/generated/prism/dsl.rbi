@@ -86,7 +86,7 @@ module Prism
     def array_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), elements: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
     # Create a new ArrayPatternNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(Node), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(ArrayPatternNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).returns(ArrayPatternNode) }
     def array_pattern_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), constant: T.unsafe(nil), requireds: T.unsafe(nil), rest: T.unsafe(nil), posts: T.unsafe(nil), opening_loc: T.unsafe(nil), closing_loc: T.unsafe(nil)); end
 
     # Create a new AssocNode node.

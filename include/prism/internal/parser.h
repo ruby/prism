@@ -4,6 +4,7 @@
 #include "prism/compiler/accel.h"
 
 #include "prism/internal/arena.h"
+#include "prism/internal/comments.h"
 #include "prism/internal/constant_pool.h"
 #include "prism/internal/encoding.h"
 #include "prism/internal/list.h"
@@ -862,6 +863,9 @@ struct pm_parser_t {
      */
     bool partial_script;
 
+    /** Whether to run comment attachment after parsing. */
+    bool attach_comments;
+
     /* Whether or not we're at the beginning of a command. */
     bool command_start;
 
@@ -939,6 +943,12 @@ struct pm_parser_t {
         uint64_t table[4];
     } strpbrk_cache;
 #endif
+
+    /**
+     * The comments map, populated by pm_parse when the attach_comments option
+     * is set.
+     */
+    pm_comments_map_t *comments_map;
 };
 
 /*

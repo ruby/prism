@@ -336,6 +336,9 @@ export function deserialize(array) {
 
   const continuable = buffer.readByte() !== 0;
 
+  // Skip the attached comments map (always empty for JavaScript).
+  buffer.readVarInt();
+
   const constantPoolOffset = buffer.readUint32();
   const constants = Array.from({ length: buffer.readVarInt() }, () => null);
 

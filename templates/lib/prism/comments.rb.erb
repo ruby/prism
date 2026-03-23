@@ -1,0 +1,33 @@
+#--
+# rbs_inline: enabled
+
+module Prism
+  # The module containing definitions of all of the various comment attachment
+  # objects.
+  module Comments
+    # The base class for all comment attachment types.
+    class Base
+    end
+<%- comments.each do |comment| -%>
+
+<%- comment.each_comment_line do |line| -%>
+    #<%= line %>
+<%- end -%>
+    class <%= comment.name %> < Base
+<%- comment.fields.each do |field| -%>
+<%- field.each_comment_line do |line| -%>
+      #<%= line %>
+<%- end -%>
+      attr_reader :<%= field.name %> #: <%= field.list? ? "Array[Comment]" : "Comment?" %>
+
+<%- end -%>
+      #: (<%= comment.fields.map { |f| "#{f.list? ? "Array[Comment]" : "Comment?"} #{f.name}" }.join(", ") %>) -> void
+      def initialize(<%= comment.fields.map(&:name).join(", ") %>)
+<%- comment.fields.each do |field| -%>
+        @<%= field.name %> = <%= field.name %>
+<%- end -%>
+      end
+    end
+<%- end -%>
+  end
+end

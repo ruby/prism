@@ -31,6 +31,7 @@ VALUE rb_cPrismCurrentVersionError;
 
 VALUE rb_cPrismDebugEncoding;
 
+ID rb_id_option_attach_comments;
 ID rb_id_option_command_line;
 ID rb_id_option_encoding;
 ID rb_id_option_filepath;
@@ -233,6 +234,8 @@ build_options_i(VALUE key, VALUE value, VALUE argument) {
         if (!NIL_P(value)) pm_options_partial_script_set(options, RTEST(value));
     } else if (key_id == rb_id_option_freeze) {
         if (!NIL_P(value)) pm_options_freeze_set(options, RTEST(value));
+    } else if (key_id == rb_id_option_attach_comments) {
+        if (!NIL_P(value)) pm_options_attach_comments_set(options, RTEST(value));
     } else {
         rb_raise(rb_eArgError, "unknown keyword: %" PRIsVALUE, key);
     }
@@ -900,7 +903,6 @@ parse_input(const uint8_t *input, size_t input_length, const pm_options_t *optio
     if (freeze) {
         rb_obj_freeze(source);
     }
-
     pm_parser_free(parser);
     pm_arena_free(arena);
 
@@ -1437,6 +1439,7 @@ Init_prism(void) {
 
     // Intern all of the IDs eagerly that we support so that we don't have to do
     // it every time we parse.
+    rb_id_option_attach_comments = rb_intern_const("attach_comments");
     rb_id_option_command_line = rb_intern_const("command_line");
     rb_id_option_encoding = rb_intern_const("encoding");
     rb_id_option_filepath = rb_intern_const("filepath");

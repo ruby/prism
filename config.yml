@@ -4738,3 +4738,505 @@ nodes:
 
           yield 1
           ^^^^^^^
+comments:
+  - name: AliasMethodComments
+    comment: |
+      Comments for alias method nodes, which can have comments between the
+      two arguments.
+
+          alias a
+            # comment
+            # comment
+            b
+    fields:
+      - name: gap_comments
+        type: list
+        comment: The comments in the gap between the two arguments.
+  - name: ArgumentsComments
+    comment: |
+      Comments for argument list nodes, which can have comments between
+      arguments.
+
+          foo(a,
+            # comment
+            b)
+    fields:
+      - name: inner_comments
+        type: list
+        comment: The comments between arguments.
+  - name: BinaryComments
+    comment: |
+      Comments for binary expressions like &&. Captures a comment trailing the
+      operator and any comments in the gap between the operator and the
+      right-hand side.
+
+          a && # comment
+            # comment
+            b
+    fields:
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the operator.
+      - name: gap_comments
+        type: list
+        comment: The comments in the gap between the operator and the right-hand side.
+  - name: BodyComments
+    comment: |
+      Comments for nodes with a body delimited by a keyword and end, such as
+      begin, while, until, if, unless, and similar nodes. The opening comment
+      trails the keyword (or the last token on the opening line).
+
+          begin # opening comment
+            bar
+          end # trailing comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening keyword.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: CallComments
+    comment: |
+      Comments for call nodes with a call operator (e.g., dot or &.).
+      Captures a trailing comment, gap comments between the receiver and
+      operator, the operator comment, and gap comments between the operator
+      and the message.
+
+          foo
+            # receiver gap comment
+            . # operator comment
+            # message gap comment
+            bar # trailing comment
+    fields:
+      - name: trailing_comment
+        type: comment
+        comment: The comment trailing the call.
+      - name: receiver_gap_comments
+        type: list
+        comment: The comments between the receiver and the call operator.
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the call operator.
+      - name: message_gap_comments
+        type: list
+        comment: The comments between the call operator and the message.
+  - name: CallWriteComments
+    comment: |
+      Comments for call-write nodes (e.g., foo.bar = 1, foo.bar += 1) which
+      have both a call operator and an assignment operator with potential
+      comments on each.
+
+          foo. # call operator comment
+            # call gap comment
+            bar += # operator comment
+            # operator gap comment
+            1
+    fields:
+      - name: call_operator_comment
+        type: comment
+        comment: The comment trailing the call operator.
+      - name: call_gap_comments
+        type: list
+        comment: The comments between the call operator and the message.
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the assignment operator.
+      - name: operator_gap_comments
+        type: list
+        comment: The comments between the assignment operator and the value.
+  - name: CaseComments
+    comment: |
+      Comments for case/case-in nodes. Captures the comment on the case
+      keyword, comments between the keyword and predicate, comments between
+      the predicate and the first when/in clause, and the trailing comment
+      on end.
+
+          case # opening comment
+            # keyword gap comment
+            foo
+            # predicate gap comment
+          when bar
+            baz
+          end # end comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the case keyword.
+      - name: keyword_gap_comments
+        type: list
+        comment: The comments between the case keyword and the predicate.
+      - name: predicate_gap_comments
+        type: list
+        comment: The comments between the predicate and the first when/in clause.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: ClassComments
+    comment: |
+      Comments for class nodes, which can have comments on the class keyword,
+      in the gap between the keyword and the constant, on the inheritance
+      operator, in the gap between the operator and the superclass, and on
+      the end keyword.
+
+          class # opening comment
+            # keyword gap comment
+            Foo < # inheritance operator comment
+            # inheritance gap comment
+            Bar
+            baz
+          end # end comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the class keyword.
+      - name: keyword_gap_comments
+        type: list
+        comment: The comments between the class keyword and the constant.
+      - name: inheritance_operator_comment
+        type: comment
+        comment: The comment trailing the inheritance operator.
+      - name: inheritance_gap_comments
+        type: list
+        comment: The comments between the inheritance operator and the superclass.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: ClauseComments
+    comment: |
+      Comments for clause nodes such as when, in, rescue, else, and ensure
+      that have a single opening keyword.
+
+          when foo # opening comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: CollectionComments
+    comment: |
+      Comments for collection nodes with opening and closing delimiters,
+      such as arrays, hashes, block parameters, and similar nodes.
+
+          [ # opening comment
+            1, 2, 3
+          ] # closing comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening delimiter.
+      - name: closing_comment
+        type: comment
+        comment: The comment trailing the closing delimiter.
+      - name: inner_comments
+        type: list
+        comment: The comments between elements of the collection.
+  - name: DefComments
+    comment: |
+      Comments for def nodes, which can have comments on the def keyword,
+      in the gap between the keyword and the method name, the opening and
+      closing parentheses of the parameter list, and a trailing comment on
+      end.
+
+          def # opening comment
+            # keyword gap comment
+            foo( # lparen comment
+              a, b
+            ) # rparen comment
+            bar
+          end # end comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the def keyword.
+      - name: keyword_gap_comments
+        type: list
+        comment: The comments between the def keyword and the method name.
+      - name: lparen_comment
+        type: comment
+        comment: The comment trailing the opening parenthesis.
+      - name: rparen_comment
+        type: comment
+        comment: The comment trailing the closing parenthesis.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: EmbeddedStatementsComments
+    comment: |
+      Comments for embedded statements nodes (e.g., string interpolation).
+
+          "foo #{ # opening comment
+            bar
+          }"
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening delimiter.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: EndlessDefComments
+    comment: |
+      Comments for endless def nodes (def foo = body), which can have
+      comments on the def keyword, in the gap between the keyword and the
+      method name, the parentheses, and the = operator.
+
+          def # opening comment
+            # keyword gap comment
+            foo( # lparen comment
+              a
+            ) = # operator comment
+            bar
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the def keyword.
+      - name: keyword_gap_comments
+        type: list
+        comment: The comments between the def keyword and the method name.
+      - name: lparen_comment
+        type: comment
+        comment: The comment trailing the opening parenthesis.
+      - name: rparen_comment
+        type: comment
+        comment: The comment trailing the closing parenthesis.
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the = operator.
+  - name: FindPatternComments
+    comment: |
+      Comments for find pattern nodes (e.g., [*a, b, *c] in pattern matching),
+      which have opening and closing delimiters and gap comments around the
+      left and right splat operators.
+
+          in [ # opening comment
+            # pre left gap comment
+            *a, b,
+            # post right gap comment
+          ] # closing comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening delimiter.
+      - name: closing_comment
+        type: comment
+        comment: The comment trailing the closing delimiter.
+      - name: pre_left_gap_comments
+        type: list
+        comment: The comments before the left splat operator.
+      - name: post_right_gap_comments
+        type: list
+        comment: The comments after the right splat operator.
+      - name: inner_comments
+        type: list
+        comment: The comments between elements of the pattern.
+  - name: ForComments
+    comment: |
+      Comments for for loop nodes, which have for, in, and optionally do
+      keywords, each of which may have a trailing comment.
+
+          for a in # in comment
+            b
+          do # do comment
+            c
+          end # end comment
+    fields:
+      - name: for_comment
+        type: comment
+        comment: The comment trailing the for keyword.
+      - name: in_comment
+        type: comment
+        comment: The comment trailing the in keyword.
+      - name: do_comment
+        type: comment
+        comment: The comment trailing the do keyword.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: HashPatternComments
+    comment: |
+      Comments for hash pattern nodes (e.g., { a:, **b } in pattern matching),
+      which have opening and closing delimiters and gap comments after the
+      rest operator.
+
+          in { a:, **b,
+            # post rest gap comment
+          } # closing comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening delimiter.
+      - name: closing_comment
+        type: comment
+        comment: The comment trailing the closing delimiter.
+      - name: post_rest_gap_comments
+        type: list
+        comment: The comments after the rest operator.
+      - name: inner_comments
+        type: list
+        comment: The comments between elements of the pattern.
+  - name: KeywordCallComments
+    comment: |
+      Comments for keyword call nodes with parentheses, such as yield and
+      super.
+
+          yield( # lparen comment
+            foo
+          ) # rparen comment
+    fields:
+      - name: lparen_comment
+        type: comment
+        comment: The comment trailing the opening parenthesis.
+      - name: rparen_comment
+        type: comment
+        comment: The comment trailing the closing parenthesis.
+  - name: KeywordHashComments
+    comment: |
+      Comments for keyword hash nodes (implicit hashes in argument lists),
+      which can have comments between elements.
+
+          foo(a: 1,
+            # comment
+            b: 2)
+    fields:
+      - name: inner_comments
+        type: list
+        comment: The comments between elements of the keyword hash.
+  - name: LeafComments
+    comment: |
+      Comments for leaf nodes that can only have a trailing comment on the
+      same line (e.g., variable reads, literals, break/next/return keywords).
+
+          foo # trailing comment
+    fields:
+      - name: trailing_comment
+        type: comment
+        comment: The comment trailing the node.
+  - name: LogicalKeywordComments
+    comment: |
+      Comments for logical keyword operators (and, or) which have comments
+      in the gaps before and after the keyword operator.
+
+          a
+          # left gap comment
+          and # operator comment
+          # right gap comment
+          b
+    fields:
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the operator keyword.
+      - name: left_gap_comments
+        type: list
+        comment: The comments between the left operand and the operator.
+      - name: right_gap_comments
+        type: list
+        comment: The comments between the operator and the right operand.
+  - name: ModuleComments
+    comment: |
+      Comments for module nodes, which can have comments on the module keyword,
+      in the gap between the keyword and the constant, and on the end keyword.
+
+          module # opening comment
+            # keyword gap comment
+            Foo
+            bar
+          end # end comment
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the module keyword.
+      - name: keyword_gap_comments
+        type: list
+        comment: The comments between the module keyword and the constant.
+      - name: end_comment
+        type: comment
+        comment: The comment trailing the end keyword.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: ParametersComments
+    comment: |
+      Comments for parameter list nodes, which can have comments between
+      parameters.
+
+          def foo(a,
+            # comment
+            b)
+          end
+    fields:
+      - name: inner_comments
+        type: list
+        comment: The comments between parameters.
+  - name: ParenthesizedComments
+    comment: |
+      Comments for nodes wrapped in parentheses, such as parenthesized
+      expressions or ternary if/unless with parenthesized predicates.
+
+          ( # opening comment
+            # opening gap comment
+            foo
+            # closing gap comment
+          )
+    fields:
+      - name: opening_comment
+        type: comment
+        comment: The comment trailing the opening parenthesis.
+      - name: opening_gap_comments
+        type: list
+        comment: The comments between the opening parenthesis and the body.
+      - name: closing_gap_comments
+        type: list
+        comment: The comments between the body and the closing parenthesis.
+      - name: body_comments
+        type: list
+        comment: The comments within the body of the node.
+  - name: PrefixComments
+    comment: |
+      Comments for prefix operator nodes (e.g., !, ~, not, splat, block
+      argument) where a comment can trail the operator and gap comments can
+      appear before the operand.
+
+          ! # operator comment
+            # gap comment
+            foo
+    fields:
+      - name: operator_comment
+        type: comment
+        comment: The comment trailing the operator.
+      - name: gap_comments
+        type: list
+        comment: The comments between the operator and the operand.
+  - name: UndefComments
+    comment: |
+      Comments for undef nodes, which can have a comment trailing the keyword
+      and comments between the names.
+
+          undef # keyword comment
+            foo,
+            # comment
+            bar
+    fields:
+      - name: keyword_comment
+        type: comment
+        comment: The comment trailing the undef keyword.
+      - name: inner_comments
+        type: list
+        comment: The comments between the names.

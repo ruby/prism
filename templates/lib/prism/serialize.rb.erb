@@ -30,26 +30,27 @@ module Prism
       source = Source.for(input, 1, [])
       loader = Loader.new(source, serialized)
 
-                       loader.load_header
-      encoding =       loader.load_encoding
-      start_line =     loader.load_varsint
-      offsets =        loader.load_line_offsets(freeze)
+                          loader.load_header
+      encoding =          loader.load_encoding
+      start_line =        loader.load_varsint
+      offsets =           loader.load_line_offsets(freeze)
 
       source.replace_start_line(start_line)
       source.replace_offsets(offsets)
 
-      comments =       loader.load_comments(freeze)
-      magic_comments = loader.load_magic_comments(freeze)
-      data_loc =       loader.load_optional_location_object(freeze)
-      errors =         loader.load_errors(encoding, freeze)
-      warnings =       loader.load_warnings(encoding, freeze)
-      continuable =    loader.load_bool
-      cpool_base =     loader.load_uint32
-      cpool_size =     loader.load_varuint
+      comments =          loader.load_comments(freeze)
+      magic_comments =    loader.load_magic_comments(freeze)
+      data_loc =          loader.load_optional_location_object(freeze)
+      errors =            loader.load_errors(encoding, freeze)
+      warnings =          loader.load_warnings(encoding, freeze)
+      continuable =       loader.load_bool
+      attached_comments = loader.load_attached_comments(comments, freeze)
+      cpool_base =        loader.load_uint32
+      cpool_size =        loader.load_varuint
 
       constant_pool = ConstantPool.new(serialized, cpool_base, cpool_size)
 
-      node =           loader.load_node(constant_pool, encoding, freeze) #: ProgramNode
+      node =           loader.load_node(constant_pool, encoding, freeze, attached_comments) #: ProgramNode
                        loader.load_constant_pool(constant_pool)
       raise unless     loader.eof?
 
@@ -156,29 +157,30 @@ module Prism
       source = Source.for(input, 1, [])
       loader = Loader.new(source, serialized)
 
-      tokens =         loader.load_tokens
-                       loader.load_header
-      encoding =       loader.load_encoding
-      start_line =     loader.load_varsint
-      offsets =        loader.load_line_offsets(freeze)
+      tokens =            loader.load_tokens
+                          loader.load_header
+      encoding =          loader.load_encoding
+      start_line =        loader.load_varsint
+      offsets =           loader.load_line_offsets(freeze)
 
       source.replace_start_line(start_line)
       source.replace_offsets(offsets)
 
-      comments =       loader.load_comments(freeze)
-      magic_comments = loader.load_magic_comments(freeze)
-      data_loc =       loader.load_optional_location_object(freeze)
-      errors =         loader.load_errors(encoding, freeze)
-      warnings =       loader.load_warnings(encoding, freeze)
-      continuable =    loader.load_bool
-      cpool_base =     loader.load_uint32
-      cpool_size =     loader.load_varuint
+      comments =          loader.load_comments(freeze)
+      magic_comments =    loader.load_magic_comments(freeze)
+      data_loc =          loader.load_optional_location_object(freeze)
+      errors =            loader.load_errors(encoding, freeze)
+      warnings =          loader.load_warnings(encoding, freeze)
+      continuable =       loader.load_bool
+      attached_comments = loader.load_attached_comments(comments, freeze)
+      cpool_base =        loader.load_uint32
+      cpool_size =        loader.load_varuint
 
       constant_pool = ConstantPool.new(serialized, cpool_base, cpool_size)
 
-      node =           loader.load_node(constant_pool, encoding, freeze) #: ProgramNode
-                       loader.load_constant_pool(constant_pool)
-      raise unless     loader.eof?
+      node =              loader.load_node(constant_pool, encoding, freeze, attached_comments) #: ProgramNode
+                          loader.load_constant_pool(constant_pool)
+      raise unless        loader.eof?
 
       value = [node, tokens] #: [ProgramNode, Array[[Token, Integer]]]
       result = ParseLexResult.new(value, comments, magic_comments, data_loc, errors, warnings, continuable, source)
@@ -281,7 +283,41 @@ module Prism
         io.eof?
       end
 
-      #: (ConstantPool constant_pool) -> void
+      #: (Array[Comment] comments, bool freeze) -> Hash[Integer, Comments::Base]?
+      def load_attached_comments(comments, freeze)
+        count = load_varuint
+        return nil if count == 0
+
+        comment_lookup = {} #: Hash[Integer, Comment]
+        comments.each { |c| comment_lookup[c.location.start_offset] = c }
+
+        load_comment = -> {
+          if io.getbyte == 1
+            comment_lookup[load_varuint]
+          end
+        }
+
+        load_comment_list = -> {
+          Array.new(load_varuint) { comment_lookup[load_varuint] }.tap { |a| a.freeze if freeze }
+        }
+
+        comments_by_node_id = {} #: Hash[Integer, Comments::Base]
+        count.times do
+          node_id = load_varuint
+          type = io.getbyte
+
+          obj = case type
+          <%- comments.each_with_index do |comment, index| -%>
+          when <%= index + 1 %> then Comments::<%= comment.name %>.new(<%= comment.fields.map { |f| f.list? ? "load_comment_list.call" : "load_comment.call" }.join(", ") %>)
+          <%- end -%>
+          end
+
+          comments_by_node_id[node_id] = obj if obj
+        end
+
+        comments_by_node_id
+      end
+
       def load_constant_pool(constant_pool)
         trailer = 0
 
@@ -500,11 +536,11 @@ module Prism
         (io.read(4) or raise).unpack1("L") #: Integer
       end
 
-      #: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
-      def load_optional_node(constant_pool, encoding, freeze)
+      #: (ConstantPool constant_pool, Encoding encoding, bool freeze, ?Hash[Integer, Comments::Base]? comments) -> node?
+      def load_optional_node(constant_pool, encoding, freeze, comments = nil)
         if io.getbyte != 0
           io.pos -= 1
-          load_node(constant_pool, encoding, freeze)
+          load_node(constant_pool, encoding, freeze, comments)
         end
       end
 
@@ -557,8 +593,8 @@ module Prism
       end
 
       if RUBY_ENGINE == "ruby"
-        #: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node
-        def load_node(constant_pool, encoding, freeze)
+        #: (ConstantPool constant_pool, Encoding encoding, bool freeze, Hash[Integer, Comments::Base]? comments) -> node
+        def load_node(constant_pool, encoding, freeze, comments = nil)
           type = io.getbyte
           node_id = load_varuint
           location = load_location(freeze) #: Location
@@ -574,17 +610,18 @@ module Prism
                 node_id,
                 location,
                 load_varuint,
+                comments&.[](node_id),
                 <%- node.fields.each do |field| -%>
                 <%- case field -%>
                 <%- when Prism::Template::NodeField -%>
-                load_node(constant_pool, encoding, freeze), #: <%= field.rbs_class %>
+                load_node(constant_pool, encoding, freeze, comments), #: <%= field.rbs_class %>
                 <%- when Prism::Template::OptionalNodeField -%>
-                load_optional_node(constant_pool, encoding, freeze), #: <%= field.rbs_class %>
+                load_optional_node(constant_pool, encoding, freeze, comments), #: <%= field.rbs_class %>
                 <%- when Prism::Template::StringField -%>
                 load_string(encoding),
                 <%- when Prism::Template::NodeListField -%>
                 Array.new(load_varuint) do
-                  load_node(constant_pool, encoding, freeze) #: <%= field.element_rbs_class %>
+                  load_node(constant_pool, encoding, freeze, comments) #: <%= field.element_rbs_class %>
                 end.tap { |nodes| nodes.freeze if freeze },
                 <%- when Prism::Template::ConstantField -%>
                 load_constant(constant_pool, encoding),
@@ -618,8 +655,8 @@ module Prism
         end
       else
         # @rbs skip
-        def load_node(constant_pool, encoding, freeze)
-          @load_node_lambdas[(io.getbyte or raise)].call(constant_pool, encoding, freeze)
+        def load_node(constant_pool, encoding, freeze, comments = nil)
+          @load_node_lambdas[(io.getbyte or raise)].call(constant_pool, encoding, freeze, comments)
         end
 
         # @rbs skip
@@ -627,7 +664,7 @@ module Prism
           @load_node_lambdas = [
             nil,
             <%- nodes.each do |node| -%>
-            -> (constant_pool, encoding, freeze) {
+            -> (constant_pool, encoding, freeze, comments) {
               node_id = load_varuint
               location = load_location(freeze)
               <%- if node.needs_serialized_length? -%>
@@ -639,17 +676,18 @@ module Prism
                   node_id,
                   location,
                   load_varuint,
+                  comments&.[](node_id),
                   <%- node.fields.map do |field| -%>
                   <%- case field -%>
                   <%- when Prism::Template::NodeField -%>
-                  load_node(constant_pool, encoding, freeze), #: <%= field.rbs_class %>
+                  load_node(constant_pool, encoding, freeze, comments), #: <%= field.rbs_class %>
                   <%- when Prism::Template::OptionalNodeField -%>
-                  load_optional_node(constant_pool, encoding, freeze), #: <%= field.rbs_class %>
+                  load_optional_node(constant_pool, encoding, freeze, comments), #: <%= field.rbs_class %>
                   <%- when Prism::Template::StringField -%>
                   load_string(encoding),
                   <%- when Prism::Template::NodeListField -%>
                   Array.new(load_varuint) do
-                    load_node(constant_pool, encoding, freeze) #: <%= field.element_rbs_class %>
+                    load_node(constant_pool, encoding, freeze, comments) #: <%= field.element_rbs_class %>
                   end,
                   <%- when Prism::Template::ConstantField -%>
                   load_constant(constant_pool, encoding),
@@ -677,6 +715,7 @@ module Prism
               value
             },
             <%- end -%>
+            nil, # PM_SCOPE_NODE
           ]
         end
       end

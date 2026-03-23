@@ -228,29 +228,6 @@ module Prism
     sig { params(source: Source, start_offset: Integer, length: Integer).void }
     def initialize(source, start_offset, length); end
 
-    # These are the comments that are associated with this location that exist
-    # before the start of this location.
-    sig { returns(T::Array[Comment]) }
-    def leading_comments; end
-
-    # Attach a comment to the leading comments of this location.
-    sig { params(comment: Comment).void }
-    def leading_comment(comment); end
-
-    # These are the comments that are associated with this location that exist
-    # after the end of this location.
-    sig { returns(T::Array[Comment]) }
-    def trailing_comments; end
-
-    # Attach a comment to the trailing comments of this location.
-    sig { params(comment: Comment).void }
-    def trailing_comment(comment); end
-
-    # Returns all comments that are associated with this location (both leading
-    # and trailing comments).
-    sig { returns(T::Array[Comment]) }
-    def comments; end
-
     # Create a new location object with the given options.
     sig { params(source: Source, start_offset: Integer, length: Integer).returns(Location) }
     def copy(source: T.unsafe(nil), start_offset: T.unsafe(nil), length: T.unsafe(nil)); end
@@ -396,6 +373,16 @@ module Prism
     # Create a new comment object with the given location.
     sig { params(location: Location).void }
     def initialize(location); end
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment starts.
+    sig { returns(Integer) }
+    def start_offset; end
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment ends.
+    sig { returns(Integer) }
+    def end_offset; end
 
     # Implement the hash pattern matching interface for Comment.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -625,10 +612,6 @@ module Prism
     # Implement the hash pattern matching interface for ParseResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
-
-    # Attach the list of comments to their respective locations in the tree.
-    sig { void }
-    def attach_comments!; end
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating
     # the behavior of CRuby's `:line` tracepoint event.

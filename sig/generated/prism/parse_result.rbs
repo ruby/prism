@@ -269,43 +269,11 @@ module Prism
     # The length of this location in bytes.
     attr_reader length: Integer
 
-    @trailing_comments: Array[Comment]?
-
-    @leading_comments: Array[Comment]?
-
     # Create a new location object with the given source, start byte offset, and
     # byte length.
     # --
     # : (Source source, Integer start_offset, Integer length) -> void
     def initialize: (Source source, Integer start_offset, Integer length) -> void
-
-    # These are the comments that are associated with this location that exist
-    # before the start of this location.
-    # --
-    # : () -> Array[Comment]
-    def leading_comments: () -> Array[Comment]
-
-    # Attach a comment to the leading comments of this location.
-    # --
-    # : (Comment comment) -> void
-    def leading_comment: (Comment comment) -> void
-
-    # These are the comments that are associated with this location that exist
-    # after the end of this location.
-    # --
-    # : () -> Array[Comment]
-    def trailing_comments: () -> Array[Comment]
-
-    # Attach a comment to the trailing comments of this location.
-    # --
-    # : (Comment comment) -> void
-    def trailing_comment: (Comment comment) -> void
-
-    # Returns all comments that are associated with this location (both leading
-    # and trailing comments).
-    # --
-    # : () -> Array[Comment]
-    def comments: () -> Array[Comment]
 
     # Create a new location object with the given options.
     # --
@@ -481,6 +449,18 @@ module Prism
     # --
     # : (Location location) -> void
     def initialize: (Location location) -> void
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment starts.
+    # --
+    # : () -> Integer
+    def start_offset: () -> Integer
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment ends.
+    # --
+    # : () -> Integer
+    def end_offset: () -> Integer
 
     # Implement the hash pattern matching interface for Comment.
     # --
@@ -720,11 +700,6 @@ module Prism
     # --
     # : (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
-
-    # Attach the list of comments to their respective locations in the tree.
-    # --
-    # : () -> void
-    def attach_comments!: () -> void
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating
     # the behavior of CRuby's `:line` tracepoint event.

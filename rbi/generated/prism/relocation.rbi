@@ -87,18 +87,6 @@ module Prism
       sig { returns(Integer) }
       def end_code_units_column; end
 
-      # Fetch the leading comments of the value.
-      sig { returns(T::Array[CommentsField::Comment]) }
-      def leading_comments; end
-
-      # Fetch the trailing comments of the value.
-      sig { returns(T::Array[CommentsField::Comment]) }
-      def trailing_comments; end
-
-      # Fetch the leading and trailing comments of the value.
-      sig { returns(T::Array[CommentsField::Comment]) }
-      def comments; end
-
       # Reify the values on this entry with the given values. This is an
       # internal-only API that is called from the repository when it is time to
       # reify the values.
@@ -248,39 +236,6 @@ module Prism
       private def cache; end
     end
 
-    # An abstract field used as the parent class of the two comments fields.
-    class CommentsField
-      # An object that represents a slice of a comment.
-      class Comment
-        # The slice of the comment.
-        sig { returns(String) }
-        attr_reader :slice
-
-        # Initialize a new comment with the given slice.
-        #
-        sig { params(slice: String).void }
-        def initialize(slice); end
-      end
-
-      # Create comment objects from the given values.
-      sig { params(values: ::T.untyped).returns(T::Array[Comment]) }
-      private def comments(values); end
-    end
-
-    # A field representing the leading comments.
-    class LeadingCommentsField < CommentsField
-      # Fetches the leading comments of a value.
-      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
-      def fields(value); end
-    end
-
-    # A field representing the trailing comments.
-    class TrailingCommentsField < CommentsField
-      # Fetches the trailing comments of a value.
-      sig { params(value: ::T.untyped).returns(T::Hash[Symbol, ::T.untyped]) }
-      def fields(value); end
-    end
-
     # A repository is a configured collection of fields and a set of entries
     # that knows how to reparse a source and reify the values.
     class Repository
@@ -344,21 +299,6 @@ module Prism
       # encoding and return self.
       sig { params(encoding: Encoding).returns(::T.self_type) }
       def code_unit_columns(encoding); end
-
-      # Configure the leading comments field for this repository and return
-      # self.
-      sig { returns(::T.self_type) }
-      def leading_comments; end
-
-      # Configure the trailing comments field for this repository and return
-      # self.
-      sig { returns(::T.self_type) }
-      def trailing_comments; end
-
-      # Configure both the leading and trailing comment fields for this
-      # repository and return self.
-      sig { returns(::T.self_type) }
-      def comments; end
 
       # This method is called from nodes and locations when they want to enter
       # themselves into the repository. It it internal-only and meant to be

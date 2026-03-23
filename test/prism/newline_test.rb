@@ -7,6 +7,7 @@ return unless defined?(RubyVM::InstructionSequence)
 module Prism
   class NewlineTest < TestCase
     skips = %w[
+      comments_test.rb
       errors_test.rb
       locals_test.rb
       regexp_test.rb
