@@ -17,12 +17,12 @@ make java-wasm WASI_SDK_PATH=.../wasi-sdk-25.0-arm64-macos
 Build the AOT-compiled machine and wrapper library:
 
 ```
-mvn -f java-wasm/pom.xml clean package
+mvn -f java/wasm/pom.xml clean package
 ```
 
 This should build the chicory-wasm jar file and pass some basic tests.
 
-The jar will be under `java-wasm/target/chicory-prism-#####-SNAPSHOT.jar` or can be installed by using `install` instead of `pacakge` in the `mvn` command line above.
+The jar will be under `java/wasm/target/chicory-prism-#####-SNAPSHOT.jar` or can be installed by using `install` instead of `pacakge` in the `mvn` command line above.
 
 ## Releasing
 
