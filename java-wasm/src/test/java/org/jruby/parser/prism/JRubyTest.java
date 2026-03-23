@@ -1,6 +1,5 @@
 package org.jruby.parser.prism;
 
-import org.jruby.Ruby;
 import org.junit.jupiter.api.Test;
 import org.ruby_lang.prism.ParsingOptions;
 import org.ruby_lang.prism.wasm.Prism;
@@ -132,7 +131,7 @@ public class JRubyTest {
                 new byte[][][]{}
             );
 
-            try (InputStream fileIn = Ruby.getClassLoader().getResourceAsStream(file)) {
+            try (InputStream fileIn = JRubyTest.class.getClassLoader().getResourceAsStream(file)) {
                 assertNotNull(fileIn, "Could not find file: " + file);
                 DataInputStream dis = new DataInputStream(fileIn);
                 int read = dis.read(src);

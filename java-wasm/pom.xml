@@ -4,10 +4,40 @@
 
   <groupId>org.ruby-lang</groupId>
   <artifactId>prism-parser</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>Java Prism</name>
   <description>Java API for the Prism Ruby language parser</description>
+  <url>https://github.com/ruby/prism</url>
 
+  <licenses>
+    <license>
+      <name>MIT</name>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Kevin Newton</name>
+      <email>kddnewton@gmail.com</email>
+    </developer>
+    <developer>
+      <name>Benoit Daloze</name>
+      <email>eregontp@gmail.com</email>
+    </developer>
+    <developer>
+      <name>Charles Oliver Nutter</name>
+      <email>headius@headius.com</email>
+    </developer>
+    <developer>
+      <name>Thomas E Enebo</name>
+      <email>tom.enebo@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/ruby/prism</url>
+    <connection>https://github.com/ruby/prism.git</connection>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,15 +91,9 @@
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
-      <artifactId>jruby-stdlib</artifactId>
+      <artifactId>jruby-complete</artifactId>
       <version>10.0.4.0</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-base</artifactId>
-      <version>10.0.4.0</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 
