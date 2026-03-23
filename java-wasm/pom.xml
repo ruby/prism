@@ -17,8 +17,20 @@
 
   <developers>
     <developer>
+      <name>Kevin Newton</name>
+      <email>kddnewton@gmail.com</email>
+    </developer>
+    <developer>
+      <name>Benoit Daloze</name>
+      <email>eregontp@gmail.com</email>
+    </developer>
+    <developer>
       <name>Charles Oliver Nutter</name>
       <email>headius@headius.com</email>
+    </developer>
+    <developer>
+      <name>Thomas E Enebo</name>
+      <email>tom.enebo@gmail.com</email>
     </developer>
   </developers>
 
