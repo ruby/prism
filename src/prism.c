@@ -17761,6 +17761,224 @@ pm_block_call_p(const pm_node_t *node) {
 }
 
 /**
+ * Parse a case expression (the `case` keyword). This handles both case-when and
+ * case-in (pattern matching) forms.
+ */
+static pm_node_t *
+parse_case(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
+    size_t opening_newline_index = token_newline_index(parser);
+    parser_lex(parser);
+
+    pm_token_t case_keyword = parser->previous;
+    pm_node_t *predicate = NULL;
+
+    pm_node_list_t current_block_exits = { 0 };
+    pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+
+    if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
+        while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
+        predicate = NULL;
+    } else if (match3(parser, PM_TOKEN_KEYWORD_WHEN, PM_TOKEN_KEYWORD_IN, PM_TOKEN_KEYWORD_END)) {
+        predicate = NULL;
+     } else if (!token_begins_expression_p(parser->current.type)) {
+        predicate = NULL;
+    } else {
+        predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CASE_EXPRESSION_AFTER_CASE, (uint16_t) (depth + 1));
+        while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
+    }
+
+    if (match1(parser, PM_TOKEN_KEYWORD_END)) {
+        parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, false);
+        parser_lex(parser);
+        pop_block_exits(parser, previous_block_exits);
+        pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
+        return UP(pm_case_node_create(parser, &case_keyword, predicate, &parser->previous));
+    }
+
+    /* At this point we can create a case node, though we don't yet know if it
+     * is a case-in or case-when node. */
+    pm_node_t *node;
+
+    if (match1(parser, PM_TOKEN_KEYWORD_WHEN)) {
+        pm_case_node_t *case_node = pm_case_node_create(parser, &case_keyword, predicate, NULL);
+        pm_static_literals_t literals = { 0 };
+
+        /* At this point we've seen a when keyword, so we know this is a
+         * case-when node. We will continue to parse the when nodes until we hit
+         * the end of the list. */
+        while (match1(parser, PM_TOKEN_KEYWORD_WHEN)) {
+            parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, true);
+            parser_lex(parser);
+
+            pm_token_t when_keyword = parser->previous;
+            pm_when_node_t *when_node = pm_when_node_create(parser, &when_keyword);
+
+            do {
+                if (accept1(parser, PM_TOKEN_USTAR)) {
+                    pm_token_t operator = parser->previous;
+                    pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_EXPECT_EXPRESSION_AFTER_STAR, (uint16_t) (depth + 1));
+
+                    pm_splat_node_t *splat_node = pm_splat_node_create(parser, &operator, expression);
+                    pm_when_node_conditions_append(parser->arena, when_node, UP(splat_node));
+
+                    if (PM_NODE_TYPE_P(expression, PM_ERROR_RECOVERY_NODE)) break;
+                } else {
+                    pm_node_t *condition = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CASE_EXPRESSION_AFTER_WHEN, (uint16_t) (depth + 1));
+                    pm_when_node_conditions_append(parser->arena, when_node, condition);
+
+                    /* If we found a missing node, then this is a syntax error
+                     * and we should stop looping. */
+                    if (PM_NODE_TYPE_P(condition, PM_ERROR_RECOVERY_NODE)) break;
+
+                    /* If this is a string node, then we need to mark it as
+                     * frozen because when clause strings are frozen. */
+                    if (PM_NODE_TYPE_P(condition, PM_STRING_NODE)) {
+                        pm_node_flag_set(condition, PM_STRING_FLAGS_FROZEN | PM_NODE_FLAG_STATIC_LITERAL);
+                    } else if (PM_NODE_TYPE_P(condition, PM_SOURCE_FILE_NODE)) {
+                        pm_node_flag_set(condition, PM_NODE_FLAG_STATIC_LITERAL);
+                    }
+
+                    pm_when_clause_static_literals_add(parser, &literals, condition);
+                }
+            } while (accept1(parser, PM_TOKEN_COMMA));
+
+            if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
+                if (accept1(parser, PM_TOKEN_KEYWORD_THEN)) {
+                    pm_when_node_then_keyword_loc_set(parser, when_node, &parser->previous);
+                }
+            } else {
+                expect1(parser, PM_TOKEN_KEYWORD_THEN, PM_ERR_EXPECT_WHEN_DELIMITER);
+                pm_when_node_then_keyword_loc_set(parser, when_node, &parser->previous);
+            }
+
+            if (!match3(parser, PM_TOKEN_KEYWORD_WHEN, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+                pm_statements_node_t *statements = parse_statements(parser, PM_CONTEXT_CASE_WHEN, (uint16_t) (depth + 1));
+                if (statements != NULL) {
+                    pm_when_node_statements_set(when_node, statements);
+                }
+            }
+
+            pm_case_node_condition_append(parser->arena, case_node, UP(when_node));
+        }
+
+        /* If we didn't parse any conditions (in or when) then we need to
+         * indicate that we have an error. */
+        if (case_node->conditions.size == 0) {
+            pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
+        }
+
+        pm_static_literals_free(&literals);
+        node = UP(case_node);
+    } else {
+        pm_case_match_node_t *case_node = pm_case_match_node_create(parser, &case_keyword, predicate);
+
+        /* If this is a case-match node (i.e., it is a pattern matching case
+         * statement) then we must have a predicate. */
+        if (predicate == NULL) {
+            pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MATCH_MISSING_PREDICATE);
+        }
+
+        /* At this point we expect that we're parsing a case-in node. We will
+         * continue to parse the in nodes until we hit the end of the list. */
+        while (match1(parser, PM_TOKEN_KEYWORD_IN)) {
+            parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, true);
+
+            bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
+            parser->pattern_matching_newlines = true;
+
+            lex_state_set(parser, PM_LEX_STATE_BEG | PM_LEX_STATE_LABEL);
+            parser->command_start = false;
+            parser_lex(parser);
+
+            pm_token_t in_keyword = parser->previous;
+
+            pm_constant_id_list_t captures = { 0 };
+            pm_node_t *pattern = parse_pattern(parser, &captures, PM_PARSE_PATTERN_TOP | PM_PARSE_PATTERN_MULTI, PM_ERR_PATTERN_EXPRESSION_AFTER_IN, (uint16_t) (depth + 1));
+
+            parser->pattern_matching_newlines = previous_pattern_matching_newlines;
+
+            /* Since we're in the top-level of the case-in node we need to
+             * check for guard clauses in the form of `if` or `unless`
+             * statements. */
+            if (accept1(parser, PM_TOKEN_KEYWORD_IF_MODIFIER)) {
+                pm_token_t keyword = parser->previous;
+                pm_node_t *predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CONDITIONAL_IF_PREDICATE, (uint16_t) (depth + 1));
+                pattern = UP(pm_if_node_modifier_create(parser, pattern, &keyword, predicate));
+            } else if (accept1(parser, PM_TOKEN_KEYWORD_UNLESS_MODIFIER)) {
+                pm_token_t keyword = parser->previous;
+                pm_node_t *predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CONDITIONAL_UNLESS_PREDICATE, (uint16_t) (depth + 1));
+                pattern = UP(pm_unless_node_modifier_create(parser, pattern, &keyword, predicate));
+            }
+
+            /* Now we need to check for the terminator of the in node's pattern.
+             * It can be a newline or semicolon optionally followed by a `then`
+             * keyword. */
+            pm_token_t then_keyword = { 0 };
+            if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
+                if (accept1(parser, PM_TOKEN_KEYWORD_THEN)) {
+                    then_keyword = parser->previous;
+                }
+            } else {
+                expect1(parser, PM_TOKEN_KEYWORD_THEN, PM_ERR_EXPECT_IN_DELIMITER);
+                then_keyword = parser->previous;
+            }
+
+            /* Now we can actually parse the statements associated with the in
+             * node. */
+            pm_statements_node_t *statements;
+            if (match3(parser, PM_TOKEN_KEYWORD_IN, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+                statements = NULL;
+            } else {
+                statements = parse_statements(parser, PM_CONTEXT_CASE_IN, (uint16_t) (depth + 1));
+            }
+
+            /* Now that we have the full pattern and statements, we can create
+             * the node and attach it to the case node. */
+            pm_node_t *condition = UP(pm_in_node_create(parser, pattern, statements, &in_keyword, NTOK2PTR(then_keyword)));
+            pm_case_match_node_condition_append(parser->arena, case_node, condition);
+        }
+
+        /* If we didn't parse any conditions (in or when) then we need to
+         * indicate that we have an error. */
+        if (case_node->conditions.size == 0) {
+            pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
+        }
+
+        node = UP(case_node);
+    }
+
+    accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
+    if (accept1(parser, PM_TOKEN_KEYWORD_ELSE)) {
+        pm_token_t else_keyword = parser->previous;
+        pm_else_node_t *else_node;
+
+        if (!match1(parser, PM_TOKEN_KEYWORD_END)) {
+            else_node = pm_else_node_create(parser, &else_keyword, parse_statements(parser, PM_CONTEXT_ELSE, (uint16_t) (depth + 1)), &parser->current);
+        } else {
+            else_node = pm_else_node_create(parser, &else_keyword, NULL, &parser->current);
+        }
+
+        if (PM_NODE_TYPE_P(node, PM_CASE_NODE)) {
+            pm_case_node_else_clause_set((pm_case_node_t *) node, else_node);
+        } else {
+            pm_case_match_node_else_clause_set((pm_case_match_node_t *) node, else_node);
+        }
+    }
+
+    parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, false);
+    expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CASE_TERM, &case_keyword);
+
+    if (PM_NODE_TYPE_P(node, PM_CASE_NODE)) {
+        pm_case_node_end_keyword_loc_set(parser, (pm_case_node_t *) node, &parser->previous);
+    } else {
+        pm_case_match_node_end_keyword_loc_set(parser, (pm_case_match_node_t *) node, &parser->previous);
+    }
+
+    pop_block_exits(parser, previous_block_exits);
+    return node;
+}
+
+/**
  * Parse a method definition expression (the `def` keyword).
  */
 static pm_node_t *
@@ -18886,219 +19104,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
                     return UP(pm_alias_method_node_create(parser, &keyword, new_name, old_name));
             }
         }
-        case PM_TOKEN_KEYWORD_CASE: {
-            size_t opening_newline_index = token_newline_index(parser);
-            parser_lex(parser);
-
-            pm_token_t case_keyword = parser->previous;
-            pm_node_t *predicate = NULL;
-
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
-
-            if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
-                while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
-                predicate = NULL;
-            } else if (match3(parser, PM_TOKEN_KEYWORD_WHEN, PM_TOKEN_KEYWORD_IN, PM_TOKEN_KEYWORD_END)) {
-                predicate = NULL;
-             } else if (!token_begins_expression_p(parser->current.type)) {
-                predicate = NULL;
-            } else {
-                predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CASE_EXPRESSION_AFTER_CASE, (uint16_t) (depth + 1));
-                while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
-            }
-
-            if (match1(parser, PM_TOKEN_KEYWORD_END)) {
-                parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, false);
-                parser_lex(parser);
-                pop_block_exits(parser, previous_block_exits);
-                pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
-                return UP(pm_case_node_create(parser, &case_keyword, predicate, &parser->previous));
-            }
-
-            // At this point we can create a case node, though we don't yet know
-            // if it is a case-in or case-when node.
-            pm_node_t *node;
-
-            if (match1(parser, PM_TOKEN_KEYWORD_WHEN)) {
-                pm_case_node_t *case_node = pm_case_node_create(parser, &case_keyword, predicate, NULL);
-                pm_static_literals_t literals = { 0 };
-
-                // At this point we've seen a when keyword, so we know this is a
-                // case-when node. We will continue to parse the when nodes
-                // until we hit the end of the list.
-                while (match1(parser, PM_TOKEN_KEYWORD_WHEN)) {
-                    parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, true);
-                    parser_lex(parser);
-
-                    pm_token_t when_keyword = parser->previous;
-                    pm_when_node_t *when_node = pm_when_node_create(parser, &when_keyword);
-
-                    do {
-                        if (accept1(parser, PM_TOKEN_USTAR)) {
-                            pm_token_t operator = parser->previous;
-                            pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_EXPECT_EXPRESSION_AFTER_STAR, (uint16_t) (depth + 1));
-
-                            pm_splat_node_t *splat_node = pm_splat_node_create(parser, &operator, expression);
-                            pm_when_node_conditions_append(parser->arena, when_node, UP(splat_node));
-
-                            if (PM_NODE_TYPE_P(expression, PM_ERROR_RECOVERY_NODE)) break;
-                        } else {
-                            pm_node_t *condition = parse_value_expression(parser, PM_BINDING_POWER_DEFINED, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CASE_EXPRESSION_AFTER_WHEN, (uint16_t) (depth + 1));
-                            pm_when_node_conditions_append(parser->arena, when_node, condition);
-
-                            // If we found a missing node, then this is a syntax
-                            // error and we should stop looping.
-                            if (PM_NODE_TYPE_P(condition, PM_ERROR_RECOVERY_NODE)) break;
-
-                            // If this is a string node, then we need to mark it
-                            // as frozen because when clause strings are frozen.
-                            if (PM_NODE_TYPE_P(condition, PM_STRING_NODE)) {
-                                pm_node_flag_set(condition, PM_STRING_FLAGS_FROZEN | PM_NODE_FLAG_STATIC_LITERAL);
-                            } else if (PM_NODE_TYPE_P(condition, PM_SOURCE_FILE_NODE)) {
-                                pm_node_flag_set(condition, PM_NODE_FLAG_STATIC_LITERAL);
-                            }
-
-                            pm_when_clause_static_literals_add(parser, &literals, condition);
-                        }
-                    } while (accept1(parser, PM_TOKEN_COMMA));
-
-                    if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
-                        if (accept1(parser, PM_TOKEN_KEYWORD_THEN)) {
-                            pm_when_node_then_keyword_loc_set(parser, when_node, &parser->previous);
-                        }
-                    } else {
-                        expect1(parser, PM_TOKEN_KEYWORD_THEN, PM_ERR_EXPECT_WHEN_DELIMITER);
-                        pm_when_node_then_keyword_loc_set(parser, when_node, &parser->previous);
-                    }
-
-                    if (!match3(parser, PM_TOKEN_KEYWORD_WHEN, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                        pm_statements_node_t *statements = parse_statements(parser, PM_CONTEXT_CASE_WHEN, (uint16_t) (depth + 1));
-                        if (statements != NULL) {
-                            pm_when_node_statements_set(when_node, statements);
-                        }
-                    }
-
-                    pm_case_node_condition_append(parser->arena, case_node, UP(when_node));
-                }
-
-                // If we didn't parse any conditions (in or when) then we need
-                // to indicate that we have an error.
-                if (case_node->conditions.size == 0) {
-                    pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
-                }
-
-                pm_static_literals_free(&literals);
-                node = UP(case_node);
-            } else {
-                pm_case_match_node_t *case_node = pm_case_match_node_create(parser, &case_keyword, predicate);
-
-                // If this is a case-match node (i.e., it is a pattern matching
-                // case statement) then we must have a predicate.
-                if (predicate == NULL) {
-                    pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MATCH_MISSING_PREDICATE);
-                }
-
-                // At this point we expect that we're parsing a case-in node. We
-                // will continue to parse the in nodes until we hit the end of
-                // the list.
-                while (match1(parser, PM_TOKEN_KEYWORD_IN)) {
-                    parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, true);
-
-                    bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
-                    parser->pattern_matching_newlines = true;
-
-                    lex_state_set(parser, PM_LEX_STATE_BEG | PM_LEX_STATE_LABEL);
-                    parser->command_start = false;
-                    parser_lex(parser);
-
-                    pm_token_t in_keyword = parser->previous;
-
-                    pm_constant_id_list_t captures = { 0 };
-                    pm_node_t *pattern = parse_pattern(parser, &captures, PM_PARSE_PATTERN_TOP | PM_PARSE_PATTERN_MULTI, PM_ERR_PATTERN_EXPRESSION_AFTER_IN, (uint16_t) (depth + 1));
-
-                    parser->pattern_matching_newlines = previous_pattern_matching_newlines;
-
-                    // Since we're in the top-level of the case-in node we need
-                    // to check for guard clauses in the form of `if` or
-                    // `unless` statements.
-                    if (accept1(parser, PM_TOKEN_KEYWORD_IF_MODIFIER)) {
-                        pm_token_t keyword = parser->previous;
-                        pm_node_t *predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CONDITIONAL_IF_PREDICATE, (uint16_t) (depth + 1));
-                        pattern = UP(pm_if_node_modifier_create(parser, pattern, &keyword, predicate));
-                    } else if (accept1(parser, PM_TOKEN_KEYWORD_UNLESS_MODIFIER)) {
-                        pm_token_t keyword = parser->previous;
-                        pm_node_t *predicate = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CONDITIONAL_UNLESS_PREDICATE, (uint16_t) (depth + 1));
-                        pattern = UP(pm_unless_node_modifier_create(parser, pattern, &keyword, predicate));
-                    }
-
-                    // Now we need to check for the terminator of the in node's
-                    // pattern. It can be a newline or semicolon optionally
-                    // followed by a `then` keyword.
-                    pm_token_t then_keyword = { 0 };
-                    if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
-                        if (accept1(parser, PM_TOKEN_KEYWORD_THEN)) {
-                            then_keyword = parser->previous;
-                        }
-                    } else {
-                        expect1(parser, PM_TOKEN_KEYWORD_THEN, PM_ERR_EXPECT_IN_DELIMITER);
-                        then_keyword = parser->previous;
-                    }
-
-                    // Now we can actually parse the statements associated with
-                    // the in node.
-                    pm_statements_node_t *statements;
-                    if (match3(parser, PM_TOKEN_KEYWORD_IN, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                        statements = NULL;
-                    } else {
-                        statements = parse_statements(parser, PM_CONTEXT_CASE_IN, (uint16_t) (depth + 1));
-                    }
-
-                    // Now that we have the full pattern and statements, we can
-                    // create the node and attach it to the case node.
-                    pm_node_t *condition = UP(pm_in_node_create(parser, pattern, statements, &in_keyword, NTOK2PTR(then_keyword)));
-                    pm_case_match_node_condition_append(parser->arena, case_node, condition);
-                }
-
-                // If we didn't parse any conditions (in or when) then we need
-                // to indicate that we have an error.
-                if (case_node->conditions.size == 0) {
-                    pm_parser_err_token(parser, &case_keyword, PM_ERR_CASE_MISSING_CONDITIONS);
-                }
-
-                node = UP(case_node);
-            }
-
-            accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
-            if (accept1(parser, PM_TOKEN_KEYWORD_ELSE)) {
-                pm_token_t else_keyword = parser->previous;
-                pm_else_node_t *else_node;
-
-                if (!match1(parser, PM_TOKEN_KEYWORD_END)) {
-                    else_node = pm_else_node_create(parser, &else_keyword, parse_statements(parser, PM_CONTEXT_ELSE, (uint16_t) (depth + 1)), &parser->current);
-                } else {
-                    else_node = pm_else_node_create(parser, &else_keyword, NULL, &parser->current);
-                }
-
-                if (PM_NODE_TYPE_P(node, PM_CASE_NODE)) {
-                    pm_case_node_else_clause_set((pm_case_node_t *) node, else_node);
-                } else {
-                    pm_case_match_node_else_clause_set((pm_case_match_node_t *) node, else_node);
-                }
-            }
-
-            parser_warn_indentation_mismatch(parser, opening_newline_index, &case_keyword, false, false);
-            expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CASE_TERM, &case_keyword);
-
-            if (PM_NODE_TYPE_P(node, PM_CASE_NODE)) {
-                pm_case_node_end_keyword_loc_set(parser, (pm_case_node_t *) node, &parser->previous);
-            } else {
-                pm_case_match_node_end_keyword_loc_set(parser, (pm_case_match_node_t *) node, &parser->previous);
-            }
-
-            pop_block_exits(parser, previous_block_exits);
-            return node;
-        }
+        case PM_TOKEN_KEYWORD_CASE:
+            return parse_case(parser, flags, depth);
         case PM_TOKEN_KEYWORD_BEGIN: {
             size_t opening_newline_index = token_newline_index(parser);
             parser_lex(parser);
