@@ -35,3 +35,4 @@ updates:
           - "*"
     ignore:
       - dependency-name: "sorbet"
+      - dependency-name: "tapioca"
