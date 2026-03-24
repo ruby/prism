@@ -18345,6 +18345,211 @@ parse_def(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t flags, 
 }
 
 /**
+ * Parse a parenthesized expression, which could be a grouping, a multi-target
+ * assignment, or a set of statements.
+ */
+static pm_node_t *
+parse_parentheses(pm_parser_t *parser, pm_binding_power_t binding_power, uint16_t depth) {
+    pm_token_t opening = parser->current;
+    pm_node_flags_t paren_flags = 0;
+
+    pm_node_list_t current_block_exits = { 0 };
+    pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+
+    parser_lex(parser);
+    while (true) {
+        if (accept1(parser, PM_TOKEN_SEMICOLON)) {
+            paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
+        } else if (!accept1(parser, PM_TOKEN_NEWLINE)) {
+            break;
+        }
+    }
+
+    /* If this is the end of the file or we match a right parenthesis, then we
+     * have an empty parentheses node, and we can immediately return. */
+    if (match2(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_TOKEN_EOF)) {
+        expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
+        pop_block_exits(parser, previous_block_exits);
+        return UP(pm_parentheses_node_create(parser, &opening, NULL, &parser->previous, paren_flags));
+    }
+
+    /* Otherwise, we're going to parse the first statement in the list of
+     * statements within the parentheses. */
+    pm_accepts_block_stack_push(parser, true);
+    context_push(parser, PM_CONTEXT_PARENS);
+    pm_node_t *statement = parse_expression(parser, PM_BINDING_POWER_STATEMENT, PM_PARSE_ACCEPTS_COMMAND_CALL | PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CANNOT_PARSE_EXPRESSION, (uint16_t) (depth + 1));
+    context_pop(parser);
+
+    /* Determine if this statement is followed by a terminator. In the case of a
+     * single statement, this is fine. But in the case of multiple statements
+     * it's required. */
+    bool terminator_found = false;
+
+    if (accept1(parser, PM_TOKEN_SEMICOLON)) {
+        terminator_found = true;
+        paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
+    } else if (accept1(parser, PM_TOKEN_NEWLINE)) {
+        terminator_found = true;
+    }
+
+    if (terminator_found) {
+        while (true) {
+            if (accept1(parser, PM_TOKEN_SEMICOLON)) {
+                paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
+            } else if (!accept1(parser, PM_TOKEN_NEWLINE)) {
+                break;
+            }
+        }
+    }
+
+    /* If we hit a right parenthesis, then we're done parsing the parentheses
+     * node, and we can check which kind of node we should return. */
+    if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
+        if (opening.type == PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES) {
+            lex_state_set(parser, PM_LEX_STATE_ENDARG);
+        }
+
+        parser_lex(parser);
+        pm_accepts_block_stack_pop(parser);
+        pop_block_exits(parser, previous_block_exits);
+
+        if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) || PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
+            /* If we have a single statement and are ending on a right
+             * parenthesis, then we need to check if this is possibly a multiple
+             * target node. */
+            pm_multi_target_node_t *multi_target;
+
+            if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) && ((pm_multi_target_node_t *) statement)->lparen_loc.length == 0) {
+                multi_target = (pm_multi_target_node_t *) statement;
+            } else {
+                multi_target = pm_multi_target_node_create(parser);
+                pm_multi_target_node_targets_append(parser, multi_target, statement);
+            }
+
+            multi_target->lparen_loc = TOK2LOC(parser, &opening);
+            multi_target->rparen_loc = TOK2LOC(parser, &parser->previous);
+            PM_NODE_START_SET_TOKEN(parser, multi_target, &opening);
+            PM_NODE_LENGTH_SET_TOKEN(parser, multi_target, &parser->previous);
+
+            pm_node_t *result;
+            if (match1(parser, PM_TOKEN_COMMA) && (binding_power == PM_BINDING_POWER_STATEMENT)) {
+                result = parse_targets(parser, UP(multi_target), PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
+                accept1(parser, PM_TOKEN_NEWLINE);
+            } else {
+                result = UP(multi_target);
+            }
+
+            if (context_p(parser, PM_CONTEXT_MULTI_TARGET)) {
+                /* All set, this is explicitly allowed by the parent context. */
+            } else if (context_p(parser, PM_CONTEXT_FOR_INDEX) && match1(parser, PM_TOKEN_KEYWORD_IN)) {
+                /* All set, we're inside a for loop and we're parsing multiple
+                 * targets. */
+            } else if (binding_power != PM_BINDING_POWER_STATEMENT) {
+                /* Multi targets are not allowed when it's not a statement
+                 * level. */
+                pm_parser_err_node(parser, result, PM_ERR_WRITE_TARGET_UNEXPECTED);
+            } else if (!match2(parser, PM_TOKEN_EQUAL, PM_TOKEN_PARENTHESIS_RIGHT)) {
+                /* Multi targets must be followed by an equal sign in order to
+                 * be valid (or a right parenthesis if they are nested). */
+                pm_parser_err_node(parser, result, PM_ERR_WRITE_TARGET_UNEXPECTED);
+            }
+
+            return result;
+        }
+
+        /* If we have a single statement and are ending on a right parenthesis
+         * and we didn't return a multiple assignment node, then we can return a
+         * regular parentheses node now. */
+        pm_statements_node_t *statements = pm_statements_node_create(parser);
+        pm_statements_node_body_append(parser, statements, statement, true);
+
+        return UP(pm_parentheses_node_create(parser, &opening, UP(statements), &parser->previous, paren_flags));
+    }
+
+    /* If we have more than one statement in the set of parentheses, then we are
+     * going to parse all of them as a list of statements. We'll do that here.
+     */
+    context_push(parser, PM_CONTEXT_PARENS);
+    paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
+
+    pm_statements_node_t *statements = pm_statements_node_create(parser);
+    pm_statements_node_body_append(parser, statements, statement, true);
+
+    /* If we didn't find a terminator and we didn't find a right parenthesis,
+     * then this is a syntax error. */
+    if (!terminator_found && !match1(parser, PM_TOKEN_EOF)) {
+        PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
+    }
+
+    /* Parse each statement within the parentheses. */
+    while (true) {
+        pm_node_t *node = parse_expression(parser, PM_BINDING_POWER_STATEMENT, PM_PARSE_ACCEPTS_COMMAND_CALL | PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CANNOT_PARSE_EXPRESSION, (uint16_t) (depth + 1));
+        pm_statements_node_body_append(parser, statements, node, true);
+
+        /* If we're recovering from a syntax error, then we need to stop parsing
+         * the statements now. */
+        if (parser->recovering) {
+            /* If this is the level of context where the recovery has happened,
+             * then we can mark the parser as done recovering. */
+            if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) parser->recovering = false;
+            break;
+        }
+
+        /* If we couldn't parse an expression at all, then we need to bail out
+         * of the loop. */
+        if (PM_NODE_TYPE_P(node, PM_ERROR_RECOVERY_NODE)) break;
+
+        /* If we successfully parsed a statement, then we are going to need a
+         * terminator to delimit them. */
+        if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
+            while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
+            if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) break;
+        } else if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
+            break;
+        } else if (!match1(parser, PM_TOKEN_EOF)) {
+            /* If we're at the end of the file, then we're going to add an error
+             * after this for the ) anyway. */
+            PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
+        }
+    }
+
+    context_pop(parser);
+    pm_accepts_block_stack_pop(parser);
+    expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
+
+    /* When we're parsing multi targets, we allow them to be followed by a right
+     * parenthesis if they are at the statement level. This is only possible if
+     * they are the final statement in a parentheses. We need to explicitly
+     * reject that here. */
+    {
+        pm_node_t *statement = statements->body.nodes[statements->body.size - 1];
+
+        if (PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
+            pm_multi_target_node_t *multi_target = pm_multi_target_node_create(parser);
+            pm_multi_target_node_targets_append(parser, multi_target, statement);
+
+            statement = UP(multi_target);
+            statements->body.nodes[statements->body.size - 1] = statement;
+        }
+
+        if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE)) {
+            const uint8_t *offset = parser->start + PM_NODE_END(statement);
+            pm_token_t operator = { .type = PM_TOKEN_EQUAL, .start = offset, .end = offset };
+            pm_node_t *value = UP(pm_error_recovery_node_create(parser, PM_NODE_END(statement), 0));
+
+            statement = UP(pm_multi_write_node_create(parser, (pm_multi_target_node_t *) statement, &operator, value));
+            statements->body.nodes[statements->body.size - 1] = statement;
+
+            pm_parser_err_node(parser, statement, PM_ERR_WRITE_TARGET_UNEXPECTED);
+        }
+    }
+
+    pop_block_exits(parser, previous_block_exits);
+    pm_void_statements_check(parser, statements, true);
+    return UP(pm_parentheses_node_create(parser, &opening, UP(statements), &parser->previous, paren_flags));
+}
+
+/**
  * Parse an expression that begins with the previous node that we just lexed.
  */
 static PRISM_INLINE pm_node_t *
@@ -18464,208 +18669,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             return UP(array);
         }
         case PM_TOKEN_PARENTHESIS_LEFT:
-        case PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES: {
-            pm_token_t opening = parser->current;
-            pm_node_flags_t paren_flags = 0;
-
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
-
-            parser_lex(parser);
-            while (true) {
-                if (accept1(parser, PM_TOKEN_SEMICOLON)) {
-                    paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
-                } else if (!accept1(parser, PM_TOKEN_NEWLINE)) {
-                    break;
-                }
-            }
-
-            // If this is the end of the file or we match a right parenthesis, then
-            // we have an empty parentheses node, and we can immediately return.
-            if (match2(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_TOKEN_EOF)) {
-                expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
-                pop_block_exits(parser, previous_block_exits);
-                return UP(pm_parentheses_node_create(parser, &opening, NULL, &parser->previous, paren_flags));
-            }
-
-            // Otherwise, we're going to parse the first statement in the list
-            // of statements within the parentheses.
-            pm_accepts_block_stack_push(parser, true);
-            context_push(parser, PM_CONTEXT_PARENS);
-            pm_node_t *statement = parse_expression(parser, PM_BINDING_POWER_STATEMENT, PM_PARSE_ACCEPTS_COMMAND_CALL | PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CANNOT_PARSE_EXPRESSION, (uint16_t) (depth + 1));
-            context_pop(parser);
-
-            // Determine if this statement is followed by a terminator. In the
-            // case of a single statement, this is fine. But in the case of
-            // multiple statements it's required.
-            bool terminator_found = false;
-
-            if (accept1(parser, PM_TOKEN_SEMICOLON)) {
-                terminator_found = true;
-                paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
-            } else if (accept1(parser, PM_TOKEN_NEWLINE)) {
-                terminator_found = true;
-            }
-
-            if (terminator_found) {
-                while (true) {
-                    if (accept1(parser, PM_TOKEN_SEMICOLON)) {
-                        paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
-                    } else if (!accept1(parser, PM_TOKEN_NEWLINE)) {
-                        break;
-                    }
-                }
-            }
-
-            // If we hit a right parenthesis, then we're done parsing the
-            // parentheses node, and we can check which kind of node we should
-            // return.
-            if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-                if (opening.type == PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES) {
-                    lex_state_set(parser, PM_LEX_STATE_ENDARG);
-                }
-
-                parser_lex(parser);
-                pm_accepts_block_stack_pop(parser);
-                pop_block_exits(parser, previous_block_exits);
-
-                if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) || PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
-                    // If we have a single statement and are ending on a right
-                    // parenthesis, then we need to check if this is possibly a
-                    // multiple target node.
-                    pm_multi_target_node_t *multi_target;
-
-                    if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) && ((pm_multi_target_node_t *) statement)->lparen_loc.length == 0) {
-                        multi_target = (pm_multi_target_node_t *) statement;
-                    } else {
-                        multi_target = pm_multi_target_node_create(parser);
-                        pm_multi_target_node_targets_append(parser, multi_target, statement);
-                    }
-
-                    multi_target->lparen_loc = TOK2LOC(parser, &opening);
-                    multi_target->rparen_loc = TOK2LOC(parser, &parser->previous);
-                    PM_NODE_START_SET_TOKEN(parser, multi_target, &opening);
-                    PM_NODE_LENGTH_SET_TOKEN(parser, multi_target, &parser->previous);
-
-                    pm_node_t *result;
-                    if (match1(parser, PM_TOKEN_COMMA) && (binding_power == PM_BINDING_POWER_STATEMENT)) {
-                        result = parse_targets(parser, UP(multi_target), PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
-                        accept1(parser, PM_TOKEN_NEWLINE);
-                    } else {
-                        result = UP(multi_target);
-                    }
-
-                    if (context_p(parser, PM_CONTEXT_MULTI_TARGET)) {
-                        // All set, this is explicitly allowed by the parent
-                        // context.
-                    } else if (context_p(parser, PM_CONTEXT_FOR_INDEX) && match1(parser, PM_TOKEN_KEYWORD_IN)) {
-                        // All set, we're inside a for loop and we're parsing
-                        // multiple targets.
-                    } else if (binding_power != PM_BINDING_POWER_STATEMENT) {
-                        // Multi targets are not allowed when it's not a
-                        // statement level.
-                        pm_parser_err_node(parser, result, PM_ERR_WRITE_TARGET_UNEXPECTED);
-                    } else if (!match2(parser, PM_TOKEN_EQUAL, PM_TOKEN_PARENTHESIS_RIGHT)) {
-                        // Multi targets must be followed by an equal sign in
-                        // order to be valid (or a right parenthesis if they are
-                        // nested).
-                        pm_parser_err_node(parser, result, PM_ERR_WRITE_TARGET_UNEXPECTED);
-                    }
-
-                    return result;
-                }
-
-                // If we have a single statement and are ending on a right parenthesis
-                // and we didn't return a multiple assignment node, then we can return a
-                // regular parentheses node now.
-                pm_statements_node_t *statements = pm_statements_node_create(parser);
-                pm_statements_node_body_append(parser, statements, statement, true);
-
-                return UP(pm_parentheses_node_create(parser, &opening, UP(statements), &parser->previous, paren_flags));
-            }
-
-            // If we have more than one statement in the set of parentheses,
-            // then we are going to parse all of them as a list of statements.
-            // We'll do that here.
-            context_push(parser, PM_CONTEXT_PARENS);
-            paren_flags |= PM_PARENTHESES_NODE_FLAGS_MULTIPLE_STATEMENTS;
-
-            pm_statements_node_t *statements = pm_statements_node_create(parser);
-            pm_statements_node_body_append(parser, statements, statement, true);
-
-            // If we didn't find a terminator and we didn't find a right
-            // parenthesis, then this is a syntax error.
-            if (!terminator_found && !match1(parser, PM_TOKEN_EOF)) {
-                PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
-            }
-
-            // Parse each statement within the parentheses.
-            while (true) {
-                pm_node_t *node = parse_expression(parser, PM_BINDING_POWER_STATEMENT, PM_PARSE_ACCEPTS_COMMAND_CALL | PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CANNOT_PARSE_EXPRESSION, (uint16_t) (depth + 1));
-                pm_statements_node_body_append(parser, statements, node, true);
-
-                // If we're recovering from a syntax error, then we need to stop
-                // parsing the statements now.
-                if (parser->recovering) {
-                    // If this is the level of context where the recovery has
-                    // happened, then we can mark the parser as done recovering.
-                    if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) parser->recovering = false;
-                    break;
-                }
-
-                // If we couldn't parse an expression at all, then we need to
-                // bail out of the loop.
-                if (PM_NODE_TYPE_P(node, PM_ERROR_RECOVERY_NODE)) break;
-
-                // If we successfully parsed a statement, then we are going to
-                // need terminator to delimit them.
-                if (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
-                    while (accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON));
-                    if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) break;
-                } else if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-                    break;
-                } else if (!match1(parser, PM_TOKEN_EOF)) {
-                    // If we're at the end of the file, then we're going to add
-                    // an error after this for the ) anyway.
-                    PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
-                }
-            }
-
-            context_pop(parser);
-            pm_accepts_block_stack_pop(parser);
-            expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
-
-            // When we're parsing multi targets, we allow them to be followed by
-            // a right parenthesis if they are at the statement level. This is
-            // only possible if they are the final statement in a parentheses.
-            // We need to explicitly reject that here.
-            {
-                pm_node_t *statement = statements->body.nodes[statements->body.size - 1];
-
-                if (PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
-                    pm_multi_target_node_t *multi_target = pm_multi_target_node_create(parser);
-                    pm_multi_target_node_targets_append(parser, multi_target, statement);
-
-                    statement = UP(multi_target);
-                    statements->body.nodes[statements->body.size - 1] = statement;
-                }
-
-                if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE)) {
-                    const uint8_t *offset = parser->start + PM_NODE_END(statement);
-                    pm_token_t operator = { .type = PM_TOKEN_EQUAL, .start = offset, .end = offset };
-                    pm_node_t *value = UP(pm_error_recovery_node_create(parser, PM_NODE_END(statement), 0));
-
-                    statement = UP(pm_multi_write_node_create(parser, (pm_multi_target_node_t *) statement, &operator, value));
-                    statements->body.nodes[statements->body.size - 1] = statement;
-
-                    pm_parser_err_node(parser, statement, PM_ERR_WRITE_TARGET_UNEXPECTED);
-                }
-            }
-
-            pop_block_exits(parser, previous_block_exits);
-            pm_void_statements_check(parser, statements, true);
-            return UP(pm_parentheses_node_create(parser, &opening, UP(statements), &parser->previous, paren_flags));
-        }
+        case PM_TOKEN_PARENTHESIS_LEFT_PARENTHESES:
+            return parse_parentheses(parser, binding_power, depth);
         case PM_TOKEN_BRACE_LEFT: {
             // If we were passed a current_hash_keys via the parser, then that
             // means we're already parsing a hash and we want to share the set
