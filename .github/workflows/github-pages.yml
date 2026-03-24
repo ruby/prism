@@ -51,8 +51,7 @@ jobs:
       - name: Build with Doxygen
         run: doxygen Doxyfile
       - name: Build with JavaDoc
-        run: javadoc -Xdoclint:all,-missing -d ../doc/java -subpackages *
-        working-directory: java/api
+        run: javadoc -Xdoclint:all,-missing -d doc/java -sourcepath java/api/target/generated-sources/java/:java/api/src/main/java org.ruby_lang.prism
       - name: Build with rustdoc
         run: |
           bundle exec rake cargo:build
