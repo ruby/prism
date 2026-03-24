@@ -9,7 +9,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: 'maven'
-    directory: '/java-wasm'
+    directory: '/java/wasm'
     schedule:
       interval: 'weekly'
     groups:

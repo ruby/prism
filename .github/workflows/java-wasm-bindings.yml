@@ -8,7 +8,7 @@ on:
       - "src/"
       - "*akefile*"
       - "java/"
-      - "java-wasm/"
+      - "java/wasm/"
     branches:
       - main
       - ruby-4.0
@@ -44,11 +44,15 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Run the tests
-        run: mvn -B install
-        working-directory: java-wasm
+      - name: Build the Java artifacts
+        run: mvn -ntp install
+        working-directory: java
+
+      - name: Run the tests from the WASM module
+        run: mvn -ntp test
+        working-directory: java
 
       - uses: actions/upload-artifact@v7
         with:
           name: prism.wasm
-          path: java-wasm/src/test/resources/prism.wasm
+          path: java/wasm/src/test/resources/prism.wasm

@@ -29,8 +29,10 @@ The repository contains the infrastructure for both a shared library (libprism) 
 ├── include
 │   ├── prism             header files for the shared library
 │   └── prism.h           main header file for the shared library
-├── java                  Java bindings for the shared library
-├── java-wasm             Java WASM bindings for the shared library
+├── java
+|   ├── api               Java API for Prism
+|   ├── native            Java native bindings for the shared library
+|   └── wasm              Java WASM bindings for the shared library
 ├── javascript            JavaScript WASM bindings for the shared library
 ├── lib
 │   ├── prism             Ruby library files

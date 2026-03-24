@@ -43,7 +43,7 @@ elsif RUBY_ENGINE == "jruby"
   # This compiles java to make sure any templating changes produces valid code.
   Rake::JavaExtensionTask.new(:compile) do |ext|
     ext.name = "prism"
-    ext.ext_dir = "java"
+    ext.ext_dir = "java/api"
     ext.lib_dir = "tmp"
     ext.release = "21"
     ext.gem_spec = Gem::Specification.load("prism.gemspec")
@@ -54,7 +54,7 @@ end
 CLOBBER.concat(Prism::Template::TEMPLATES)
 CLOBBER.concat(["build"])
 CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
-CLOBBER << "java-wasm/src/main/resources/prism.wasm"
+CLOBBER << "java/wasm/src/main/resources/prism.wasm"
 
 Prism::Template::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"

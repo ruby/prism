@@ -19,7 +19,7 @@ task check_manifest: :templates do
     gemfiles
     javascript
     java
-    java-wasm
+    java/wasm
     pkg
     rakelib
     rust
