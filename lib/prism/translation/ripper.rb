@@ -2359,6 +2359,8 @@ module Prism
                 visit(node.parameters.parameters)
               end
 
+            visit_all(node.parameters.locals)
+
             if node.parameters.opening_loc.nil?
               params
             else
