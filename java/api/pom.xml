@@ -69,7 +69,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>../java</source>
+                <source>target/generated-sources/java</source>
               </sources>
             </configuration>
           </execution>

@@ -45,11 +45,11 @@ jobs:
           cache: maven
 
       - name: Build the Java artifacts
-        run: mvn install
+        run: mvn -ntp install
         working-directory: java
 
       - name: Run the tests from the WASM module
-        run: mvn -pl wasm test
+        run: mvn -ntp test
         working-directory: java
 
       - uses: actions/upload-artifact@v7
