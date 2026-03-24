@@ -16772,15 +16772,23 @@ parse_pattern_hash(pm_parser_t *parser, pm_constant_id_list_t *captures, pm_node
         case PM_NO_KEYWORDS_PARAMETER_NODE:
             rest = first_node;
             break;
+        case PM_INTERPOLATED_SYMBOL_NODE:
         case PM_SYMBOL_NODE: {
             if (pm_symbol_node_label_p(parser, first_node)) {
-                parse_pattern_hash_key(parser, &keys, first_node);
+                if (PM_NODE_TYPE_P(first_node, PM_INTERPOLATED_SYMBOL_NODE)) {
+                    pm_parser_err_node(parser, first_node, PM_ERR_PATTERN_HASH_KEY_INTERPOLATED);
+                } else {
+                    parse_pattern_hash_key(parser, &keys, first_node);
+                }
+
                 pm_node_t *value;
 
                 if (match8(parser, PM_TOKEN_COMMA, PM_TOKEN_KEYWORD_THEN, PM_TOKEN_BRACE_RIGHT, PM_TOKEN_BRACKET_RIGHT, PM_TOKEN_PARENTHESIS_RIGHT, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_TOKEN_EOF)) {
-                    // Otherwise, we will create an implicit local variable
-                    // target for the value.
-                    value = parse_pattern_hash_implicit_value(parser, captures, (pm_symbol_node_t *) first_node);
+                    if (PM_NODE_TYPE_P(first_node, PM_SYMBOL_NODE)) {
+                        value = parse_pattern_hash_implicit_value(parser, captures, (pm_symbol_node_t *) first_node);
+                    } else {
+                        value = UP(pm_error_recovery_node_create(parser, PM_NODE_END(first_node), 0));
+                    }
                 } else {
                     // Here we have a value for the first assoc in the list, so
                     // we will parse it now.
