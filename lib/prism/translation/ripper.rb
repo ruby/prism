@@ -1582,7 +1582,6 @@ module Prism
       # ^^^^^^^^^^^^^^^
       def visit_constant_path_operator_write_node(node)
         target = visit_constant_path_write_node_target(node.target)
-        value = visit(node.value)
 
         bounds(node.binary_operator_loc)
         operator = on_op("#{node.binary_operator}=")
@@ -1596,7 +1595,6 @@ module Prism
       # ^^^^^^^^^^^^^^^^
       def visit_constant_path_and_write_node(node)
         target = visit_constant_path_write_node_target(node.target)
-        value = visit(node.value)
 
         bounds(node.operator_loc)
         operator = on_op("&&=")
@@ -1610,7 +1608,6 @@ module Prism
       # ^^^^^^^^^^^^^^^^
       def visit_constant_path_or_write_node(node)
         target = visit_constant_path_write_node_target(node.target)
-        value = visit(node.value)
 
         bounds(node.operator_loc)
         operator = on_op("||=")

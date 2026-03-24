@@ -135,7 +135,7 @@ module Prism
       end
     end
 
-    UNSUPPORTED_EVENTS = %i[backtick comma heredoc_beg heredoc_end ident ignored_nl int kw label_end lbrace lbracket lparen nl op rbrace rbracket rparen semicolon sp symbeg tstring_beg tstring_end words_sep ignored_sp]
+    UNSUPPORTED_EVENTS = %i[backtick comma heredoc_beg heredoc_end ident ignored_nl kw label_end lbrace lbracket lparen nl op rbrace rbracket rparen semicolon sp symbeg tstring_beg tstring_end words_sep ignored_sp]
     SUPPORTED_EVENTS = Translation::Ripper::EVENTS - UNSUPPORTED_EVENTS
 
     module Events
