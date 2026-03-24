@@ -13423,7 +13423,13 @@ parse_targets(pm_parser_t *parser, pm_node_t *first_target, pm_binding_power_t b
 static pm_node_t *
 parse_targets_validate(pm_parser_t *parser, pm_node_t *first_target, pm_binding_power_t binding_power, uint16_t depth) {
     pm_node_t *result = parse_targets(parser, first_target, binding_power, depth);
-    accept1(parser, PM_TOKEN_NEWLINE);
+
+    // If we're inside parentheses, then we allow a newline before the
+    // closing parenthesis or equals sign. Outside of parentheses, a newline
+    // is not allowed (e.g., `a, b\n= 1, 2` is not valid).
+    if (context_p(parser, PM_CONTEXT_PARENS) || context_p(parser, PM_CONTEXT_MULTI_TARGET)) {
+        accept1(parser, PM_TOKEN_NEWLINE);
+    }
 
     // Ensure that we have either an = or a ) after the targets.
     if (!match2(parser, PM_TOKEN_EQUAL, PM_TOKEN_PARENTHESIS_RIGHT)) {
