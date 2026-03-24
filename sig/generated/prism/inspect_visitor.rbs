@@ -188,6 +188,9 @@ module Prism
     # : (EnsureNode node) -> void
     def visit_ensure_node: (EnsureNode node) -> void
 
+    # : (ErrorRecoveryNode node) -> void
+    def visit_error_recovery_node: (ErrorRecoveryNode node) -> void
+
     # : (FalseNode node) -> void
     def visit_false_node: (FalseNode node) -> void
 
@@ -343,9 +346,6 @@ module Prism
 
     # : (MatchWriteNode node) -> void
     def visit_match_write_node: (MatchWriteNode node) -> void
-
-    # : (MissingNode node) -> void
-    def visit_missing_node: (MissingNode node) -> void
 
     # : (ModuleNode node) -> void
     def visit_module_node: (ModuleNode node) -> void

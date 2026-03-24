@@ -239,6 +239,10 @@ module Prism
     sig { params(node: EnsureNode).void }
     def visit_ensure_node(node); end
 
+    # Visit a ErrorRecoveryNode node
+    sig { params(node: ErrorRecoveryNode).void }
+    def visit_error_recovery_node(node); end
+
     # Visit a FalseNode node
     sig { params(node: FalseNode).void }
     def visit_false_node(node); end
@@ -446,10 +450,6 @@ module Prism
     # Visit a MatchWriteNode node
     sig { params(node: MatchWriteNode).void }
     def visit_match_write_node(node); end
-
-    # Visit a MissingNode node
-    sig { params(node: MissingNode).void }
-    def visit_missing_node(node); end
 
     # Visit a ModuleNode node
     sig { params(node: ModuleNode).void }
