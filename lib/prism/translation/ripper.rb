@@ -513,7 +513,12 @@ module Prism
           bounds(location)
 
           if comment.is_a?(InlineComment)
-            on_comment(comment.slice)
+            # Inline comments always contain a newline if the line itself contains it
+            if result.source.source.bytesize > comment.location.end_offset
+              on_comment("#{comment.slice}\n")
+            else
+              on_comment(comment.slice)
+            end
           else
             offset = location.start_offset
             lines = comment.slice.lines
