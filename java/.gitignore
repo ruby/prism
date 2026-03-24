@@ -1,4 +1,7 @@
+api/src/main/java-templates
 api/target
 native/target
+wasm/src/main/wasm
 wasm/target
+target
 .idea

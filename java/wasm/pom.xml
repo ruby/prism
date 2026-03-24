@@ -79,8 +79,8 @@
             </goals>
             <configuration>
               <name>org.ruby_lang.prism.wasm.PrismParser</name>
-              <wasmFile>src/test/resources/prism.wasm</wasmFile>
               <moduleInterface>org.ruby_lang.prism.wasm.Prism</moduleInterface>
+              <wasmFile>src/main/wasm/prism.wasm</wasmFile>
             </configuration>
           </execution>
         </executions>

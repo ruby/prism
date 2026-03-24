@@ -36,7 +36,7 @@ jobs:
     - name: Check C coverage
       run: doxygen Doxyfile
     - name: Check Java coverage
-      run: javadoc -Xdoclint:all,-missing -d doc/java -sourcepath java/api/target/generated-sources/java/:java/api/src/main/java org.ruby_lang.prism
+      run: javadoc -Xdoclint:all,-missing -d doc/java -sourcepath java/api/src/main/java-templates/:java/api/src/main/java org.ruby_lang.prism
     - name: Generate Rust documentation
       run: |
         bundle exec rake cargo:build

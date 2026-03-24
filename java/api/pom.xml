@@ -27,7 +27,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>target/generated-sources/java</source>
+                <source>src/main/java-templates</source>
               </sources>
             </configuration>
           </execution>
