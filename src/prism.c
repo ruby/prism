@@ -17761,6 +17761,372 @@ pm_block_call_p(const pm_node_t *node) {
 }
 
 /**
+ * Parse a method definition expression (the `def` keyword).
+ */
+static pm_node_t *
+parse_def(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t flags, uint16_t depth) {
+    pm_node_list_t current_block_exits = { 0 };
+    pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+
+    pm_token_t def_keyword = parser->current;
+    size_t opening_newline_index = token_newline_index(parser);
+
+    pm_node_t *receiver = NULL;
+    pm_token_t operator = { 0 };
+    pm_token_t name;
+
+    /* This context is necessary for lexing `...` in a bare params correctly. It
+     * must be pushed before lexing the first param, so it is here. */
+    context_push(parser, PM_CONTEXT_DEF_PARAMS);
+    parser_lex(parser);
+
+    /* This will be false if the method name is not a valid identifier but could
+     * be followed by an operator. */
+    bool valid_name = true;
+
+    switch (parser->current.type) {
+        case PM_CASE_OPERATOR:
+            pm_parser_scope_push(parser, true);
+            lex_state_set(parser, PM_LEX_STATE_ENDFN);
+            parser_lex(parser);
+
+            name = parser->previous;
+            break;
+        case PM_TOKEN_IDENTIFIER: {
+            parser_lex(parser);
+
+            if (match2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON)) {
+                receiver = parse_variable_call(parser);
+
+                pm_parser_scope_push(parser, true);
+                lex_state_set(parser, PM_LEX_STATE_FNAME);
+                parser_lex(parser);
+
+                operator = parser->previous;
+                name = parse_method_definition_name(parser);
+            } else {
+                pm_refute_numbered_parameter(parser, PM_TOKEN_START(parser, &parser->previous), PM_TOKEN_LENGTH(&parser->previous));
+                pm_parser_scope_push(parser, true);
+
+                name = parser->previous;
+            }
+
+            break;
+        }
+        case PM_TOKEN_INSTANCE_VARIABLE:
+        case PM_TOKEN_CLASS_VARIABLE:
+        case PM_TOKEN_GLOBAL_VARIABLE:
+            valid_name = false;
+            PRISM_FALLTHROUGH
+        case PM_TOKEN_CONSTANT:
+        case PM_TOKEN_KEYWORD_NIL:
+        case PM_TOKEN_KEYWORD_SELF:
+        case PM_TOKEN_KEYWORD_TRUE:
+        case PM_TOKEN_KEYWORD_FALSE:
+        case PM_TOKEN_KEYWORD___FILE__:
+        case PM_TOKEN_KEYWORD___LINE__:
+        case PM_TOKEN_KEYWORD___ENCODING__: {
+            pm_parser_scope_push(parser, true);
+            parser_lex(parser);
+
+            pm_token_t identifier = parser->previous;
+
+            if (match2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON)) {
+                lex_state_set(parser, PM_LEX_STATE_FNAME);
+                parser_lex(parser);
+                operator = parser->previous;
+
+                switch (identifier.type) {
+                    case PM_TOKEN_CONSTANT:
+                        receiver = UP(pm_constant_read_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_INSTANCE_VARIABLE:
+                        receiver = UP(pm_instance_variable_read_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_CLASS_VARIABLE:
+                        receiver = UP(pm_class_variable_read_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_GLOBAL_VARIABLE:
+                        receiver = UP(pm_global_variable_read_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD_NIL:
+                        receiver = UP(pm_nil_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD_SELF:
+                        receiver = UP(pm_self_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD_TRUE:
+                        receiver = UP(pm_true_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD_FALSE:
+                        receiver = UP(pm_false_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD___FILE__:
+                        receiver = UP(pm_source_file_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD___LINE__:
+                        receiver = UP(pm_source_line_node_create(parser, &identifier));
+                        break;
+                    case PM_TOKEN_KEYWORD___ENCODING__:
+                        receiver = UP(pm_source_encoding_node_create(parser, &identifier));
+                        break;
+                    default:
+                        break;
+                }
+
+                name = parse_method_definition_name(parser);
+            } else {
+                if (!valid_name) {
+                    PM_PARSER_ERR_TOKEN_FORMAT(parser, &identifier, PM_ERR_DEF_NAME, pm_token_str(identifier.type));
+                }
+
+                name = identifier;
+            }
+            break;
+        }
+        case PM_TOKEN_PARENTHESIS_LEFT: {
+            /* The current context is `PM_CONTEXT_DEF_PARAMS`, however the inner
+             * expression of this parenthesis should not be processed under this
+             * context. Thus, the context is popped here. */
+            context_pop(parser);
+            parser_lex(parser);
+
+            pm_token_t lparen = parser->previous;
+            pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_DEF_RECEIVER, (uint16_t) (depth + 1));
+
+            accept1(parser, PM_TOKEN_NEWLINE);
+            expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
+            pm_token_t rparen = parser->previous;
+
+            lex_state_set(parser, PM_LEX_STATE_FNAME);
+            expect2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON, PM_ERR_DEF_RECEIVER_TERM);
+
+            operator = parser->previous;
+            receiver = UP(pm_parentheses_node_create(parser, &lparen, expression, &rparen, 0));
+
+            /* To push `PM_CONTEXT_DEF_PARAMS` again is for the same reason as
+             * described the above. */
+            pm_parser_scope_push(parser, true);
+            context_push(parser, PM_CONTEXT_DEF_PARAMS);
+            name = parse_method_definition_name(parser);
+            break;
+        }
+        default:
+            pm_parser_scope_push(parser, true);
+            name = parse_method_definition_name(parser);
+            break;
+    }
+
+    pm_token_t lparen = { 0 };
+    pm_token_t rparen = { 0 };
+    pm_parameters_node_t *params;
+
+    bool accept_endless_def = true;
+    switch (parser->current.type) {
+        case PM_TOKEN_PARENTHESIS_LEFT: {
+            parser_lex(parser);
+            lparen = parser->previous;
+
+            if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
+                params = NULL;
+            } else {
+                /* https://bugs.ruby-lang.org/issues/19107 */
+                bool allow_trailing_comma = parser->version >= PM_OPTIONS_VERSION_CRUBY_4_1;
+                params = parse_parameters(
+                    parser,
+                    PM_BINDING_POWER_DEFINED,
+                    true,
+                    allow_trailing_comma,
+                    true,
+                    true,
+                    false,
+                    PM_ERR_ARGUMENT_NO_FORWARDING_ELLIPSES,
+                    (uint16_t) (depth + 1)
+                );
+            }
+
+            lex_state_set(parser, PM_LEX_STATE_BEG);
+            parser->command_start = true;
+
+            context_pop(parser);
+            if (!accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
+                PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_DEF_PARAMS_TERM_PAREN, pm_token_str(parser->current.type));
+                parser->previous.start = parser->previous.end;
+                parser->previous.type = 0;
+            }
+
+            rparen = parser->previous;
+            break;
+        }
+        case PM_CASE_PARAMETER: {
+            /* If we're about to lex a label, we need to add the label state to
+             * make sure the next newline is ignored. */
+            if (parser->current.type == PM_TOKEN_LABEL) {
+                lex_state_set(parser, parser->lex_state | PM_LEX_STATE_LABEL);
+            }
+
+            params = parse_parameters(
+                parser,
+                PM_BINDING_POWER_DEFINED,
+                false,
+                false,
+                true,
+                true,
+                false,
+                PM_ERR_ARGUMENT_NO_FORWARDING_ELLIPSES,
+                (uint16_t) (depth + 1)
+            );
+
+            /* Reject `def * = 1` and similar. We have to specifically check for
+             * them because they create ambiguity with optional arguments. */
+            accept_endless_def = false;
+
+            context_pop(parser);
+            break;
+        }
+        default: {
+            params = NULL;
+            context_pop(parser);
+            break;
+        }
+    }
+
+    pm_node_t *statements = NULL;
+    pm_token_t equal = { 0 };
+    pm_token_t end_keyword = { 0 };
+
+    if (accept1(parser, PM_TOKEN_EQUAL)) {
+        if (token_is_setter_name(&name)) {
+            pm_parser_err_token(parser, &name, PM_ERR_DEF_ENDLESS_SETTER);
+        }
+        if (!accept_endless_def) {
+            pm_parser_err_previous(parser, PM_ERR_DEF_ENDLESS_PARAMETERS);
+        }
+        if (
+            parser->current_context->context == PM_CONTEXT_DEFAULT_PARAMS &&
+            parser->current_context->prev->context == PM_CONTEXT_BLOCK_PARAMETERS
+        ) {
+            PM_PARSER_ERR_FORMAT(parser, PM_TOKEN_START(parser, &def_keyword), PM_TOKENS_LENGTH(&def_keyword, &parser->previous), PM_ERR_UNEXPECTED_PARAMETER_DEFAULT_VALUE, "endless method definition");
+        }
+        equal = parser->previous;
+
+        context_push(parser, PM_CONTEXT_DEF);
+        pm_do_loop_stack_push(parser, false);
+        statements = UP(pm_statements_node_create(parser));
+
+        uint8_t allow_flags;
+        if (parser->version >= PM_OPTIONS_VERSION_CRUBY_4_0) {
+            allow_flags = flags & PM_PARSE_ACCEPTS_COMMAND_CALL;
+        } else {
+            /* Allow `def foo = puts "Hello"` but not
+             * `private def foo = puts "Hello"` */
+            allow_flags = (binding_power == PM_BINDING_POWER_ASSIGNMENT || binding_power < PM_BINDING_POWER_COMPOSITION) ? PM_PARSE_ACCEPTS_COMMAND_CALL : 0;
+        }
+
+        /* Inside a def body, we push true onto the accepts_block_stack so that
+         * `do` is lexed as PM_TOKEN_KEYWORD_DO (which can only start a block
+         * for primary-level constructs, not commands). During command argument
+         * parsing, the stack is pushed to false, causing `do` to be lexed as
+         * PM_TOKEN_KEYWORD_DO_BLOCK, which is not consumed inside the endless
+         * def body and instead left for the outer context. */
+        pm_accepts_block_stack_push(parser, true);
+        pm_node_t *statement = parse_expression(parser, PM_BINDING_POWER_DEFINED + 1, allow_flags | PM_PARSE_IN_ENDLESS_DEF, PM_ERR_DEF_ENDLESS, (uint16_t) (depth + 1));
+        pm_accepts_block_stack_pop(parser);
+
+        /* If an unconsumed PM_TOKEN_KEYWORD_DO follows the body, it is an error
+         * (e.g., `def f = 1 do end`). PM_TOKEN_KEYWORD_DO_BLOCK is
+         * intentionally not caught here — it should bubble up to the outer
+         * context (e.g., `private def f = puts "Hello" do end` where the block
+         * attaches to `private`). */
+        if (accept1(parser, PM_TOKEN_KEYWORD_DO)) {
+            pm_block_node_t *block = parse_block(parser, (uint16_t) (depth + 1));
+            pm_parser_err_node(parser, UP(block), PM_ERR_DEF_ENDLESS_DO_BLOCK);
+        }
+
+        if (accept1(parser, PM_TOKEN_KEYWORD_RESCUE_MODIFIER)) {
+            context_push(parser, PM_CONTEXT_RESCUE_MODIFIER);
+
+            pm_token_t rescue_keyword = parser->previous;
+
+            /* In the Ruby grammar, the rescue value of an endless method
+             * command excludes and/or and in/=>. */
+            pm_node_t *value = parse_expression(parser, PM_BINDING_POWER_MATCH + 1, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
+            context_pop(parser);
+
+            statement = UP(pm_rescue_modifier_node_create(parser, statement, &rescue_keyword, value));
+        }
+
+        /* A nested endless def whose body is a command call (e.g.,
+         * `def f = def g = foo bar`) is a command assignment and cannot appear
+         * as a def body. */
+        if (PM_NODE_TYPE_P(statement, PM_DEF_NODE) && pm_command_call_value_p(statement)) {
+            PM_PARSER_ERR_NODE_FORMAT(parser, statement, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
+        }
+
+        pm_statements_node_body_append(parser, (pm_statements_node_t *) statements, statement, false);
+        pm_do_loop_stack_pop(parser);
+        context_pop(parser);
+    } else {
+        if (lparen.start == NULL) {
+            lex_state_set(parser, PM_LEX_STATE_BEG);
+            parser->command_start = true;
+            expect2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_DEF_PARAMS_TERM);
+        } else {
+            accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
+        }
+
+        pm_accepts_block_stack_push(parser, true);
+        pm_do_loop_stack_push(parser, false);
+
+        if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+            pm_accepts_block_stack_push(parser, true);
+            statements = UP(parse_statements(parser, PM_CONTEXT_DEF, (uint16_t) (depth + 1)));
+            pm_accepts_block_stack_pop(parser);
+        }
+
+        if (match3(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE)) {
+            assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
+            statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &def_keyword, def_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_DEF, (uint16_t) (depth + 1)));
+        } else {
+            parser_warn_indentation_mismatch(parser, opening_newline_index, &def_keyword, false, false);
+        }
+
+        pm_accepts_block_stack_pop(parser);
+        pm_do_loop_stack_pop(parser);
+
+        expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_DEF_TERM, &def_keyword);
+        end_keyword = parser->previous;
+    }
+
+    pm_constant_id_list_t locals;
+    pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
+    pm_parser_scope_pop(parser);
+
+    /* If the final character is `@` as is the case when defining methods to
+     * override the unary operators, we should ignore the @ in the same way we
+     * do for symbols. */
+    pm_constant_id_t name_id = pm_parser_constant_id_raw(parser, name.start, parse_operator_symbol_name(&name));
+
+    flush_block_exits(parser, previous_block_exits);
+
+    return UP(pm_def_node_create(
+        parser,
+        name_id,
+        &name,
+        receiver,
+        params,
+        statements,
+        &locals,
+        &def_keyword,
+        NTOK2PTR(operator),
+        NTOK2PTR(lparen),
+        NTOK2PTR(rparen),
+        NTOK2PTR(equal),
+        NTOK2PTR(end_keyword)
+    ));
+}
+
+/**
  * Parse an expression that begins with the previous node that we just lexed.
  */
 static PRISM_INLINE pm_node_t *
@@ -18979,373 +19345,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             pop_block_exits(parser, previous_block_exits);
             return UP(pm_class_node_create(parser, &locals, &class_keyword, constant_path, &name, NTOK2PTR(inheritance_operator), superclass, statements, &parser->previous));
         }
-        case PM_TOKEN_KEYWORD_DEF: {
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
-
-            pm_token_t def_keyword = parser->current;
-            size_t opening_newline_index = token_newline_index(parser);
-
-            pm_node_t *receiver = NULL;
-            pm_token_t operator = { 0 };
-            pm_token_t name;
-
-            // This context is necessary for lexing `...` in a bare params
-            // correctly. It must be pushed before lexing the first param, so it
-            // is here.
-            context_push(parser, PM_CONTEXT_DEF_PARAMS);
-            parser_lex(parser);
-
-            // This will be false if the method name is not a valid identifier
-            // but could be followed by an operator.
-            bool valid_name = true;
-
-            switch (parser->current.type) {
-                case PM_CASE_OPERATOR:
-                    pm_parser_scope_push(parser, true);
-                    lex_state_set(parser, PM_LEX_STATE_ENDFN);
-                    parser_lex(parser);
-
-                    name = parser->previous;
-                    break;
-                case PM_TOKEN_IDENTIFIER: {
-                    parser_lex(parser);
-
-                    if (match2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON)) {
-                        receiver = parse_variable_call(parser);
-
-                        pm_parser_scope_push(parser, true);
-                        lex_state_set(parser, PM_LEX_STATE_FNAME);
-                        parser_lex(parser);
-
-                        operator = parser->previous;
-                        name = parse_method_definition_name(parser);
-                    } else {
-                        pm_refute_numbered_parameter(parser, PM_TOKEN_START(parser, &parser->previous), PM_TOKEN_LENGTH(&parser->previous));
-                        pm_parser_scope_push(parser, true);
-
-                        name = parser->previous;
-                    }
-
-                    break;
-                }
-                case PM_TOKEN_INSTANCE_VARIABLE:
-                case PM_TOKEN_CLASS_VARIABLE:
-                case PM_TOKEN_GLOBAL_VARIABLE:
-                    valid_name = false;
-                    PRISM_FALLTHROUGH
-                case PM_TOKEN_CONSTANT:
-                case PM_TOKEN_KEYWORD_NIL:
-                case PM_TOKEN_KEYWORD_SELF:
-                case PM_TOKEN_KEYWORD_TRUE:
-                case PM_TOKEN_KEYWORD_FALSE:
-                case PM_TOKEN_KEYWORD___FILE__:
-                case PM_TOKEN_KEYWORD___LINE__:
-                case PM_TOKEN_KEYWORD___ENCODING__: {
-                    pm_parser_scope_push(parser, true);
-                    parser_lex(parser);
-
-                    pm_token_t identifier = parser->previous;
-
-                    if (match2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON)) {
-                        lex_state_set(parser, PM_LEX_STATE_FNAME);
-                        parser_lex(parser);
-                        operator = parser->previous;
-
-                        switch (identifier.type) {
-                            case PM_TOKEN_CONSTANT:
-                                receiver = UP(pm_constant_read_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_INSTANCE_VARIABLE:
-                                receiver = UP(pm_instance_variable_read_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_CLASS_VARIABLE:
-                                receiver = UP(pm_class_variable_read_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_GLOBAL_VARIABLE:
-                                receiver = UP(pm_global_variable_read_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD_NIL:
-                                receiver = UP(pm_nil_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD_SELF:
-                                receiver = UP(pm_self_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD_TRUE:
-                                receiver = UP(pm_true_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD_FALSE:
-                                receiver = UP(pm_false_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD___FILE__:
-                                receiver = UP(pm_source_file_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD___LINE__:
-                                receiver = UP(pm_source_line_node_create(parser, &identifier));
-                                break;
-                            case PM_TOKEN_KEYWORD___ENCODING__:
-                                receiver = UP(pm_source_encoding_node_create(parser, &identifier));
-                                break;
-                            default:
-                                break;
-                        }
-
-                        name = parse_method_definition_name(parser);
-                    } else {
-                        if (!valid_name) {
-                            PM_PARSER_ERR_TOKEN_FORMAT(parser, &identifier, PM_ERR_DEF_NAME, pm_token_str(identifier.type));
-                        }
-
-                        name = identifier;
-                    }
-                    break;
-                }
-                case PM_TOKEN_PARENTHESIS_LEFT: {
-                    // The current context is `PM_CONTEXT_DEF_PARAMS`, however
-                    // the inner expression of this parenthesis should not be
-                    // processed under this context. Thus, the context is popped
-                    // here.
-                    context_pop(parser);
-                    parser_lex(parser);
-
-                    pm_token_t lparen = parser->previous;
-                    pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_DEF_RECEIVER, (uint16_t) (depth + 1));
-
-                    accept1(parser, PM_TOKEN_NEWLINE);
-                    expect1(parser, PM_TOKEN_PARENTHESIS_RIGHT, PM_ERR_EXPECT_RPAREN);
-                    pm_token_t rparen = parser->previous;
-
-                    lex_state_set(parser, PM_LEX_STATE_FNAME);
-                    expect2(parser, PM_TOKEN_DOT, PM_TOKEN_COLON_COLON, PM_ERR_DEF_RECEIVER_TERM);
-
-                    operator = parser->previous;
-                    receiver = UP(pm_parentheses_node_create(parser, &lparen, expression, &rparen, 0));
-
-                    // To push `PM_CONTEXT_DEF_PARAMS` again is for the same
-                    // reason as described the above.
-                    pm_parser_scope_push(parser, true);
-                    context_push(parser, PM_CONTEXT_DEF_PARAMS);
-                    name = parse_method_definition_name(parser);
-                    break;
-                }
-                default:
-                    pm_parser_scope_push(parser, true);
-                    name = parse_method_definition_name(parser);
-                    break;
-            }
-
-            pm_token_t lparen = { 0 };
-            pm_token_t rparen = { 0 };
-            pm_parameters_node_t *params;
-
-            bool accept_endless_def = true;
-            switch (parser->current.type) {
-                case PM_TOKEN_PARENTHESIS_LEFT: {
-                    parser_lex(parser);
-                    lparen = parser->previous;
-
-                    if (match1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-                        params = NULL;
-                    } else {
-                        // https://bugs.ruby-lang.org/issues/19107
-                        bool allow_trailing_comma = parser->version >= PM_OPTIONS_VERSION_CRUBY_4_1;
-                        params = parse_parameters(
-                            parser,
-                            PM_BINDING_POWER_DEFINED,
-                            true,
-                            allow_trailing_comma,
-                            true,
-                            true,
-                            false,
-                            PM_ERR_ARGUMENT_NO_FORWARDING_ELLIPSES,
-                            (uint16_t) (depth + 1)
-                        );
-                    }
-
-                    lex_state_set(parser, PM_LEX_STATE_BEG);
-                    parser->command_start = true;
-
-                    context_pop(parser);
-                    if (!accept1(parser, PM_TOKEN_PARENTHESIS_RIGHT)) {
-                        PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_DEF_PARAMS_TERM_PAREN, pm_token_str(parser->current.type));
-                        parser->previous.start = parser->previous.end;
-                        parser->previous.type = 0;
-                    }
-
-                    rparen = parser->previous;
-                    break;
-                }
-                case PM_CASE_PARAMETER: {
-                    // If we're about to lex a label, we need to add the label
-                    // state to make sure the next newline is ignored.
-                    if (parser->current.type == PM_TOKEN_LABEL) {
-                        lex_state_set(parser, parser->lex_state | PM_LEX_STATE_LABEL);
-                    }
-
-                    params = parse_parameters(
-                        parser,
-                        PM_BINDING_POWER_DEFINED,
-                        false,
-                        false,
-                        true,
-                        true,
-                        false,
-                        PM_ERR_ARGUMENT_NO_FORWARDING_ELLIPSES,
-                        (uint16_t) (depth + 1)
-                    );
-
-                    // Reject `def * = 1` and similar. We have to specifically check
-                    // for them because they create ambiguity with optional arguments.
-                    accept_endless_def = false;
-
-                    context_pop(parser);
-                    break;
-                }
-                default: {
-                    params = NULL;
-                    context_pop(parser);
-                    break;
-                }
-            }
-
-            pm_node_t *statements = NULL;
-            pm_token_t equal = { 0 };
-            pm_token_t end_keyword = { 0 };
-
-            if (accept1(parser, PM_TOKEN_EQUAL)) {
-                if (token_is_setter_name(&name)) {
-                    pm_parser_err_token(parser, &name, PM_ERR_DEF_ENDLESS_SETTER);
-                }
-                if (!accept_endless_def) {
-                    pm_parser_err_previous(parser, PM_ERR_DEF_ENDLESS_PARAMETERS);
-                }
-                if (
-                    parser->current_context->context == PM_CONTEXT_DEFAULT_PARAMS &&
-                    parser->current_context->prev->context == PM_CONTEXT_BLOCK_PARAMETERS
-                ) {
-                    PM_PARSER_ERR_FORMAT(parser, PM_TOKEN_START(parser, &def_keyword), PM_TOKENS_LENGTH(&def_keyword, &parser->previous), PM_ERR_UNEXPECTED_PARAMETER_DEFAULT_VALUE, "endless method definition");
-                }
-                equal = parser->previous;
-
-                context_push(parser, PM_CONTEXT_DEF);
-                pm_do_loop_stack_push(parser, false);
-                statements = UP(pm_statements_node_create(parser));
-
-                uint8_t allow_flags;
-                if (parser->version >= PM_OPTIONS_VERSION_CRUBY_4_0) {
-                    allow_flags = flags & PM_PARSE_ACCEPTS_COMMAND_CALL;
-                } else {
-                    // Allow `def foo = puts "Hello"` but not `private def foo = puts "Hello"`
-                    allow_flags = (binding_power == PM_BINDING_POWER_ASSIGNMENT || binding_power < PM_BINDING_POWER_COMPOSITION) ? PM_PARSE_ACCEPTS_COMMAND_CALL : 0;
-                }
-
-                // Inside a def body, we push true onto the
-                // accepts_block_stack so that `do` is lexed as
-                // PM_TOKEN_KEYWORD_DO (which can only start a block for
-                // primary-level constructs, not commands). During command
-                // argument parsing, the stack is pushed to false, causing
-                // `do` to be lexed as PM_TOKEN_KEYWORD_DO_BLOCK, which
-                // is not consumed inside the endless def body and instead
-                // left for the outer context.
-                pm_accepts_block_stack_push(parser, true);
-                pm_node_t *statement = parse_expression(parser, PM_BINDING_POWER_DEFINED + 1, allow_flags | PM_PARSE_IN_ENDLESS_DEF, PM_ERR_DEF_ENDLESS, (uint16_t) (depth + 1));
-                pm_accepts_block_stack_pop(parser);
-
-                // If an unconsumed PM_TOKEN_KEYWORD_DO follows the body,
-                // it is an error (e.g., `def f = 1 do end`).
-                // PM_TOKEN_KEYWORD_DO_BLOCK is intentionally not caught
-                // here — it should bubble up to the outer context (e.g.,
-                // `private def f = puts "Hello" do end` where the block
-                // attaches to `private`).
-                if (accept1(parser, PM_TOKEN_KEYWORD_DO)) {
-                    pm_block_node_t *block = parse_block(parser, (uint16_t) (depth + 1));
-                    pm_parser_err_node(parser, UP(block), PM_ERR_DEF_ENDLESS_DO_BLOCK);
-                }
-
-                if (accept1(parser, PM_TOKEN_KEYWORD_RESCUE_MODIFIER)) {
-                    context_push(parser, PM_CONTEXT_RESCUE_MODIFIER);
-
-                    pm_token_t rescue_keyword = parser->previous;
-
-                    // In the Ruby grammar, the rescue value of an endless
-                    // method command excludes and/or and in/=>.
-                    pm_node_t *value = parse_expression(parser, PM_BINDING_POWER_MATCH + 1, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
-                    context_pop(parser);
-
-                    statement = UP(pm_rescue_modifier_node_create(parser, statement, &rescue_keyword, value));
-                }
-
-                // A nested endless def whose body is a command call (e.g.,
-                // `def f = def g = foo bar`) is a command assignment and
-                // cannot appear as a def body.
-                if (PM_NODE_TYPE_P(statement, PM_DEF_NODE) && pm_command_call_value_p(statement)) {
-                    PM_PARSER_ERR_NODE_FORMAT(parser, statement, PM_ERR_EXPECT_EOL_AFTER_STATEMENT, pm_token_str(parser->current.type));
-                }
-
-                pm_statements_node_body_append(parser, (pm_statements_node_t *) statements, statement, false);
-                pm_do_loop_stack_pop(parser);
-                context_pop(parser);
-            } else {
-                if (lparen.start == NULL) {
-                    lex_state_set(parser, PM_LEX_STATE_BEG);
-                    parser->command_start = true;
-                    expect2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_DEF_PARAMS_TERM);
-                } else {
-                    accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
-                }
-
-                pm_accepts_block_stack_push(parser, true);
-                pm_do_loop_stack_push(parser, false);
-
-                if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                    pm_accepts_block_stack_push(parser, true);
-                    statements = UP(parse_statements(parser, PM_CONTEXT_DEF, (uint16_t) (depth + 1)));
-                    pm_accepts_block_stack_pop(parser);
-                }
-
-                if (match3(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE)) {
-                    assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
-                    statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &def_keyword, def_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_DEF, (uint16_t) (depth + 1)));
-                } else {
-                    parser_warn_indentation_mismatch(parser, opening_newline_index, &def_keyword, false, false);
-                }
-
-                pm_accepts_block_stack_pop(parser);
-                pm_do_loop_stack_pop(parser);
-
-                expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_DEF_TERM, &def_keyword);
-                end_keyword = parser->previous;
-            }
-
-            pm_constant_id_list_t locals;
-            pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
-            pm_parser_scope_pop(parser);
-
-            /**
-             * If the final character is `@` as is the case when defining
-             * methods to override the unary operators, we should ignore
-             * the @ in the same way we do for symbols.
-             */
-            pm_constant_id_t name_id = pm_parser_constant_id_raw(parser, name.start, parse_operator_symbol_name(&name));
-
-            flush_block_exits(parser, previous_block_exits);
-
-            return UP(pm_def_node_create(
-                parser,
-                name_id,
-                &name,
-                receiver,
-                params,
-                statements,
-                &locals,
-                &def_keyword,
-                NTOK2PTR(operator),
-                NTOK2PTR(lparen),
-                NTOK2PTR(rparen),
-                NTOK2PTR(equal),
-                NTOK2PTR(end_keyword)
-            ));
-        }
+        case PM_TOKEN_KEYWORD_DEF:
+            return parse_def(parser, binding_power, flags, depth);
         case PM_TOKEN_KEYWORD_DEFINED: {
             parser_lex(parser);
 
