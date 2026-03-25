@@ -355,8 +355,8 @@ module Prism
 
     # Create a new ForwardingSuperNode node.
     # --
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?block: BlockNode?) -> ForwardingSuperNode
-    def forwarding_super_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?block: BlockNode?) -> ForwardingSuperNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?block: BlockNode?) -> ForwardingSuperNode
+    def forwarding_super_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?block: BlockNode?) -> ForwardingSuperNode
 
     # Create a new GlobalVariableAndWriteNode node.
     # --

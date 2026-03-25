@@ -4379,6 +4379,7 @@ pm_forwarding_super_node_create(pm_parser_t *parser, const pm_token_t *token, pm
         ++parser->node_id,
         0,
         (block == NULL) ? PM_LOCATION_INIT_TOKEN(parser, token) : PM_LOCATION_INIT_TOKEN_NODE(parser, token, block),
+        PM_LOCATION_INIT_TOKEN(parser, token),
         block
     );
 }

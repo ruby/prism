@@ -8403,10 +8403,12 @@ module Prism
   class ForwardingSuperNode < Node
     @block: BlockNode?
 
+    @keyword_loc: Location
+
     # Initialize a new ForwardingSuperNode node.
     # --
-    # : (Source source, Integer node_id, Location location, Integer flags, BlockNode? block) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, BlockNode? block) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, BlockNode? block) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location keyword_loc, BlockNode? block) -> void
 
     # See Node.accept.
     # --
@@ -8440,8 +8442,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     # --
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?block: BlockNode?) -> ForwardingSuperNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?block: BlockNode?) -> ForwardingSuperNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?block: BlockNode?) -> ForwardingSuperNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?keyword_loc: Location, ?block: BlockNode?) -> ForwardingSuperNode
 
     alias deconstruct child_nodes
 
@@ -8461,6 +8463,26 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
+    # :category: Locations
+    # :call-seq:
+    #   keyword_loc -> Location
+    #
+    # super
+    # ^^^^^
+    #
+    # super { 123 }
+    # ^^^^^
+    # --
+    # : () -> Location
+    def keyword_loc: () -> Location
+
+    # :category: Repository
+    # Save the keyword_loc location using the given saved source so that
+    # it can be retrieved later.
+    # --
+    # : (_Repository repository) -> Relocation::Entry
+    def save_keyword_loc: (_Repository repository) -> Relocation::Entry
+
     # :call-seq:
     #   block -> BlockNode | nil
     #
@@ -8468,6 +8490,14 @@ module Prism
     # --
     # : () -> BlockNode?
     def block: () -> BlockNode?
+
+    # :call-seq:
+    #   keyword -> String
+    #
+    # Slice the location of keyword_loc from the source.
+    # --
+    # : () -> String
+    def keyword: () -> String
 
     # : (untyped other) -> boolish
     def ===: (untyped other) -> boolish
