@@ -1,6 +1,5 @@
 package org.ruby_lang.prism.wasm;
 
-import com.dylibso.chicory.annotations.WasmModuleInterface;
 import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
@@ -11,7 +10,6 @@ import org.ruby_lang.prism.ParseResult;
 
 import java.nio.charset.StandardCharsets;
 
-@WasmModuleInterface(WasmResource.absoluteFile)
 public class Prism implements AutoCloseable {
     private final WasiPreview1 wasi;
     protected final Prism_ModuleExports exports;
