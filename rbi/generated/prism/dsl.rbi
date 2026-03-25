@@ -294,8 +294,8 @@ module Prism
     def forwarding_parameter_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
     # Create a new ForwardingSuperNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, block: ::T.nilable(BlockNode)).returns(ForwardingSuperNode) }
-    def forwarding_super_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), block: T.unsafe(nil)); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, block: ::T.nilable(BlockNode)).returns(ForwardingSuperNode) }
+    def forwarding_super_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
     # Create a new GlobalVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).returns(GlobalVariableAndWriteNode) }

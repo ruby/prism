@@ -5755,8 +5755,8 @@ module Prism
   # If it has any other arguments, it would be a `SuperNode` instead.
   class ForwardingSuperNode < Node
     # Initialize a new ForwardingSuperNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, block: ::T.nilable(BlockNode)).void }
-    def initialize(source, node_id, location, flags, block); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, block: ::T.nilable(BlockNode)).void }
+    def initialize(source, node_id, location, flags, keyword_loc, block); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -5780,8 +5780,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, block: ::T.nilable(BlockNode)).returns(ForwardingSuperNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), block: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, block: ::T.nilable(BlockNode)).returns(ForwardingSuperNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -5800,9 +5800,26 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
+    # super
+    # ^^^^^
+    #
+    # super { 123 }
+    # ^^^^^
+    sig { returns(Location) }
+    def keyword_loc; end
+
+    # Save the keyword_loc location using the given saved source so that
+    # it can be retrieved later.
+    sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
+    def save_keyword_loc(repository); end
+
     # All other arguments are forwarded as normal, except the original block is replaced with the new block.
     sig { returns(::T.nilable(BlockNode)) }
     def block; end
+
+    # Slice the location of keyword_loc from the source.
+    sig { returns(String) }
+    def keyword; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
