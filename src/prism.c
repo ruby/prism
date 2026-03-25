@@ -17979,6 +17979,122 @@ parse_case(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
 }
 
 /**
+ * Parse a class definition expression (the `class` keyword). This handles both
+ * regular class definitions and singleton class definitions (`class << expr`).
+ */
+static pm_node_t *
+parse_class(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
+    size_t opening_newline_index = token_newline_index(parser);
+    parser_lex(parser);
+
+    pm_token_t class_keyword = parser->previous;
+    pm_do_loop_stack_push(parser, false);
+
+    pm_node_list_t current_block_exits = { 0 };
+    pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+
+    if (accept1(parser, PM_TOKEN_LESS_LESS)) {
+        pm_token_t operator = parser->previous;
+        pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_EXPECT_EXPRESSION_AFTER_LESS_LESS, (uint16_t) (depth + 1));
+
+        pm_parser_scope_push(parser, true);
+        if (!match2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
+            PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_SINGLETON_CLASS_DELIMITER, pm_token_str(parser->current.type));
+        }
+
+        pm_node_t *statements = NULL;
+        if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+            pm_accepts_block_stack_push(parser, true);
+            statements = UP(parse_statements(parser, PM_CONTEXT_SCLASS, (uint16_t) (depth + 1)));
+            pm_accepts_block_stack_pop(parser);
+        }
+
+        if (match2(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE)) {
+            assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
+            statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &class_keyword, class_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_SCLASS, (uint16_t) (depth + 1)));
+        } else {
+            parser_warn_indentation_mismatch(parser, opening_newline_index, &class_keyword, false, false);
+        }
+
+        expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CLASS_TERM, &class_keyword);
+
+        pm_constant_id_list_t locals;
+        pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
+
+        pm_parser_scope_pop(parser);
+        pm_do_loop_stack_pop(parser);
+
+        flush_block_exits(parser, previous_block_exits);
+        return UP(pm_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous));
+    }
+
+    pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CLASS_NAME, (uint16_t) (depth + 1));
+    pm_token_t name = parser->previous;
+    if (name.type != PM_TOKEN_CONSTANT) {
+        pm_parser_err_token(parser, &name, PM_ERR_CLASS_NAME);
+    }
+
+    pm_token_t inheritance_operator = { 0 };
+    pm_node_t *superclass;
+
+    if (match1(parser, PM_TOKEN_LESS)) {
+        inheritance_operator = parser->current;
+        lex_state_set(parser, PM_LEX_STATE_BEG);
+
+        parser->command_start = true;
+        parser_lex(parser);
+
+        superclass = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CLASS_SUPERCLASS, (uint16_t) (depth + 1));
+    } else {
+        superclass = NULL;
+    }
+
+    pm_parser_scope_push(parser, true);
+
+    if (inheritance_operator.start != NULL) {
+        expect2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_CLASS_UNEXPECTED_END);
+    } else {
+        accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
+    }
+    pm_node_t *statements = NULL;
+
+    if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+        pm_accepts_block_stack_push(parser, true);
+        statements = UP(parse_statements(parser, PM_CONTEXT_CLASS, (uint16_t) (depth + 1)));
+        pm_accepts_block_stack_pop(parser);
+    }
+
+    if (match2(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE)) {
+        assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
+        statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &class_keyword, class_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_CLASS, (uint16_t) (depth + 1)));
+    } else {
+        parser_warn_indentation_mismatch(parser, opening_newline_index, &class_keyword, false, false);
+    }
+
+    expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CLASS_TERM, &class_keyword);
+
+    if (context_def_p(parser)) {
+        pm_parser_err_token(parser, &class_keyword, PM_ERR_CLASS_IN_METHOD);
+    }
+
+    pm_constant_id_list_t locals;
+    pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
+
+    pm_parser_scope_pop(parser);
+    pm_do_loop_stack_pop(parser);
+
+    if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
+        pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
+        if (!PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
+            constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
+        }
+    }
+
+    pop_block_exits(parser, previous_block_exits);
+    return UP(pm_class_node_create(parser, &locals, &class_keyword, constant_path, &name, NTOK2PTR(inheritance_operator), superclass, statements, &parser->previous));
+}
+
+/**
  * Parse a method definition expression (the `def` keyword).
  */
 static pm_node_t *
@@ -18342,6 +18458,81 @@ parse_def(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t flags, 
         NTOK2PTR(equal),
         NTOK2PTR(end_keyword)
     ));
+}
+
+/**
+ * Parse a module definition expression (the `module` keyword).
+ */
+static pm_node_t *
+parse_module(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
+    pm_node_list_t current_block_exits = { 0 };
+    pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
+
+    size_t opening_newline_index = token_newline_index(parser);
+    parser_lex(parser);
+    pm_token_t module_keyword = parser->previous;
+
+    pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_MODULE_NAME, (uint16_t) (depth + 1));
+    pm_token_t name;
+
+    /* If we can recover from a syntax error that occurred while parsing the
+     * name of the module, then we'll handle that here. */
+    if (PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
+        pop_block_exits(parser, previous_block_exits);
+
+        pm_token_t missing = (pm_token_t) { .type = 0, .start = parser->previous.end, .end = parser->previous.end };
+        return UP(pm_module_node_create(parser, NULL, &module_keyword, constant_path, &missing, NULL, &missing));
+    }
+
+    while (accept1(parser, PM_TOKEN_COLON_COLON)) {
+        pm_token_t double_colon = parser->previous;
+
+        expect1(parser, PM_TOKEN_CONSTANT, PM_ERR_CONSTANT_PATH_COLON_COLON_CONSTANT);
+        constant_path = UP(pm_constant_path_node_create(parser, constant_path, &double_colon, &parser->previous));
+    }
+
+    /* Here we retrieve the name of the module. If it wasn't a constant, then
+     * it's possible that `module foo` was passed, which is a syntax error. We
+     * handle that here as well. */
+    name = parser->previous;
+    if (name.type != PM_TOKEN_CONSTANT) {
+        pm_parser_err_token(parser, &name, PM_ERR_MODULE_NAME);
+    }
+
+    if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE) && !PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
+        constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
+    }
+
+    pm_parser_scope_push(parser, true);
+    accept2(parser, PM_TOKEN_SEMICOLON, PM_TOKEN_NEWLINE);
+    pm_node_t *statements = NULL;
+
+    if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
+        pm_accepts_block_stack_push(parser, true);
+        statements = UP(parse_statements(parser, PM_CONTEXT_MODULE, (uint16_t) (depth + 1)));
+        pm_accepts_block_stack_pop(parser);
+    }
+
+    if (match3(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE)) {
+        assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
+        statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &module_keyword, module_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_MODULE, (uint16_t) (depth + 1)));
+    } else {
+        parser_warn_indentation_mismatch(parser, opening_newline_index, &module_keyword, false, false);
+    }
+
+    pm_constant_id_list_t locals;
+    pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
+
+    pm_parser_scope_pop(parser);
+    expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_MODULE_TERM, &module_keyword);
+
+    if (context_def_p(parser)) {
+        pm_parser_err_token(parser, &module_keyword, PM_ERR_MODULE_IN_METHOD);
+    }
+
+    pop_block_exits(parser, previous_block_exits);
+
+    return UP(pm_module_node_create(parser, &locals, &module_keyword, constant_path, &name, statements, &parser->previous));
 }
 
 /**
@@ -19547,116 +19738,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
 
             return node;
         }
-        case PM_TOKEN_KEYWORD_CLASS: {
-            size_t opening_newline_index = token_newline_index(parser);
-            parser_lex(parser);
-
-            pm_token_t class_keyword = parser->previous;
-            pm_do_loop_stack_push(parser, false);
-
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
-
-            if (accept1(parser, PM_TOKEN_LESS_LESS)) {
-                pm_token_t operator = parser->previous;
-                pm_node_t *expression = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_EXPECT_EXPRESSION_AFTER_LESS_LESS, (uint16_t) (depth + 1));
-
-                pm_parser_scope_push(parser, true);
-                if (!match2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON)) {
-                    PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_EXPECT_SINGLETON_CLASS_DELIMITER, pm_token_str(parser->current.type));
-                }
-
-                pm_node_t *statements = NULL;
-                if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                    pm_accepts_block_stack_push(parser, true);
-                    statements = UP(parse_statements(parser, PM_CONTEXT_SCLASS, (uint16_t) (depth + 1)));
-                    pm_accepts_block_stack_pop(parser);
-                }
-
-                if (match2(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE)) {
-                    assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
-                    statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &class_keyword, class_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_SCLASS, (uint16_t) (depth + 1)));
-                } else {
-                    parser_warn_indentation_mismatch(parser, opening_newline_index, &class_keyword, false, false);
-                }
-
-                expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CLASS_TERM, &class_keyword);
-
-                pm_constant_id_list_t locals;
-                pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
-
-                pm_parser_scope_pop(parser);
-                pm_do_loop_stack_pop(parser);
-
-                flush_block_exits(parser, previous_block_exits);
-                return UP(pm_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous));
-            }
-
-            pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_CLASS_NAME, (uint16_t) (depth + 1));
-            pm_token_t name = parser->previous;
-            if (name.type != PM_TOKEN_CONSTANT) {
-                pm_parser_err_token(parser, &name, PM_ERR_CLASS_NAME);
-            }
-
-            pm_token_t inheritance_operator = { 0 };
-            pm_node_t *superclass;
-
-            if (match1(parser, PM_TOKEN_LESS)) {
-                inheritance_operator = parser->current;
-                lex_state_set(parser, PM_LEX_STATE_BEG);
-
-                parser->command_start = true;
-                parser_lex(parser);
-
-                superclass = parse_value_expression(parser, PM_BINDING_POWER_COMPOSITION, (flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL, PM_ERR_CLASS_SUPERCLASS, (uint16_t) (depth + 1));
-            } else {
-                superclass = NULL;
-            }
-
-            pm_parser_scope_push(parser, true);
-
-            if (inheritance_operator.start != NULL) {
-                expect2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON, PM_ERR_CLASS_UNEXPECTED_END);
-            } else {
-                accept2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_SEMICOLON);
-            }
-            pm_node_t *statements = NULL;
-
-            if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                pm_accepts_block_stack_push(parser, true);
-                statements = UP(parse_statements(parser, PM_CONTEXT_CLASS, (uint16_t) (depth + 1)));
-                pm_accepts_block_stack_pop(parser);
-            }
-
-            if (match2(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE)) {
-                assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
-                statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &class_keyword, class_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_CLASS, (uint16_t) (depth + 1)));
-            } else {
-                parser_warn_indentation_mismatch(parser, opening_newline_index, &class_keyword, false, false);
-            }
-
-            expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_CLASS_TERM, &class_keyword);
-
-            if (context_def_p(parser)) {
-                pm_parser_err_token(parser, &class_keyword, PM_ERR_CLASS_IN_METHOD);
-            }
-
-            pm_constant_id_list_t locals;
-            pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
-
-            pm_parser_scope_pop(parser);
-            pm_do_loop_stack_pop(parser);
-
-            if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
-                pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
-                if (!PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
-                    constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
-                }
-            }
-
-            pop_block_exits(parser, previous_block_exits);
-            return UP(pm_class_node_create(parser, &locals, &class_keyword, constant_path, &name, NTOK2PTR(inheritance_operator), superclass, statements, &parser->previous));
-        }
+        case PM_TOKEN_KEYWORD_CLASS:
+            return parse_class(parser, flags, depth);
         case PM_TOKEN_KEYWORD_DEF:
             return parse_def(parser, binding_power, flags, depth);
         case PM_TOKEN_KEYWORD_DEFINED: {
@@ -19873,76 +19956,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
 
             return parse_conditional(parser, PM_CONTEXT_UNLESS, opening_newline_index, false, (uint16_t) (depth + 1));
         }
-        case PM_TOKEN_KEYWORD_MODULE: {
-            pm_node_list_t current_block_exits = { 0 };
-            pm_node_list_t *previous_block_exits = push_block_exits(parser, &current_block_exits);
-
-            size_t opening_newline_index = token_newline_index(parser);
-            parser_lex(parser);
-            pm_token_t module_keyword = parser->previous;
-
-            pm_node_t *constant_path = parse_expression(parser, PM_BINDING_POWER_INDEX, flags & PM_PARSE_ACCEPTS_DO_BLOCK, PM_ERR_MODULE_NAME, (uint16_t) (depth + 1));
-            pm_token_t name;
-
-            // If we can recover from a syntax error that occurred while parsing
-            // the name of the module, then we'll handle that here.
-            if (PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
-                pop_block_exits(parser, previous_block_exits);
-
-                pm_token_t missing = (pm_token_t) { .type = 0, .start = parser->previous.end, .end = parser->previous.end };
-                return UP(pm_module_node_create(parser, NULL, &module_keyword, constant_path, &missing, NULL, &missing));
-            }
-
-            while (accept1(parser, PM_TOKEN_COLON_COLON)) {
-                pm_token_t double_colon = parser->previous;
-
-                expect1(parser, PM_TOKEN_CONSTANT, PM_ERR_CONSTANT_PATH_COLON_COLON_CONSTANT);
-                constant_path = UP(pm_constant_path_node_create(parser, constant_path, &double_colon, &parser->previous));
-            }
-
-            // Here we retrieve the name of the module. If it wasn't a constant,
-            // then it's possible that `module foo` was passed, which is a
-            // syntax error. We handle that here as well.
-            name = parser->previous;
-            if (name.type != PM_TOKEN_CONSTANT) {
-                pm_parser_err_token(parser, &name, PM_ERR_MODULE_NAME);
-            }
-
-            if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE) && !PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
-                constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
-            }
-
-            pm_parser_scope_push(parser, true);
-            accept2(parser, PM_TOKEN_SEMICOLON, PM_TOKEN_NEWLINE);
-            pm_node_t *statements = NULL;
-
-            if (!match4(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE, PM_TOKEN_KEYWORD_END)) {
-                pm_accepts_block_stack_push(parser, true);
-                statements = UP(parse_statements(parser, PM_CONTEXT_MODULE, (uint16_t) (depth + 1)));
-                pm_accepts_block_stack_pop(parser);
-            }
-
-            if (match3(parser, PM_TOKEN_KEYWORD_RESCUE, PM_TOKEN_KEYWORD_ENSURE, PM_TOKEN_KEYWORD_ELSE)) {
-                assert(statements == NULL || PM_NODE_TYPE_P(statements, PM_STATEMENTS_NODE));
-                statements = UP(parse_rescues_implicit_begin(parser, opening_newline_index, &module_keyword, module_keyword.start, (pm_statements_node_t *) statements, PM_RESCUES_MODULE, (uint16_t) (depth + 1)));
-            } else {
-                parser_warn_indentation_mismatch(parser, opening_newline_index, &module_keyword, false, false);
-            }
-
-            pm_constant_id_list_t locals;
-            pm_locals_order(parser, &parser->current_scope->locals, &locals, false);
-
-            pm_parser_scope_pop(parser);
-            expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_MODULE_TERM, &module_keyword);
-
-            if (context_def_p(parser)) {
-                pm_parser_err_token(parser, &module_keyword, PM_ERR_MODULE_IN_METHOD);
-            }
-
-            pop_block_exits(parser, previous_block_exits);
-
-            return UP(pm_module_node_create(parser, &locals, &module_keyword, constant_path, &name, statements, &parser->previous));
-        }
+        case PM_TOKEN_KEYWORD_MODULE:
+            return parse_module(parser, flags, depth);
         case PM_TOKEN_KEYWORD_NIL:
             parser_lex(parser);
             return UP(pm_nil_node_create(parser, &parser->previous));
