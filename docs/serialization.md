@@ -153,21 +153,13 @@ The relevant APIs and struct definitions are listed below:
 // A pm_buffer_t is a simple memory buffer that stores data in a contiguous
 // block of memory. It is used to store the serialized representation of a
 // prism tree.
-typedef struct {
-  char *value;
-  size_t length;
-  size_t capacity;
-} pm_buffer_t;
-
-// Free the memory held by the buffer.
-void pm_buffer_cleanup(pm_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
 void pm_serialize_parse(pm_buffer_t *buffer, const uint8_t *source, size_t length, const char *data);
 ```
 
-Typically you would use a stack-allocated `pm_buffer_t` and call `pm_serialize_parse`, as in:
+Typically you would allocate a `pm_buffer_t` and call `pm_serialize_parse`, as in:
 
 ```c
 void
