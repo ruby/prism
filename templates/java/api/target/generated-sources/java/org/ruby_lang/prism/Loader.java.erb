@@ -19,8 +19,10 @@ public class Loader {
 
     // Overridable methods
 
-    public <%= id_type %> bytesToName(byte[] bytes) {
+    public <%= id_type %> bytesToName(byte[] serialized, int offset, int length) {
         <%- if id_type == "byte[]" -%>
+        byte[] bytes = new byte[length];
+        System.arraycopy(serialized, offset, bytes, 0, length);
         return bytes;
         <%- else -%>
         throw new AbstractMethodError("Loader.bytesToName(<%= id_type %>) is not implemented");
@@ -37,9 +39,9 @@ public class Loader {
             this.loader = loader;
             this.bufferOffset = bufferOffset;
             <%- if id_type == "String" -%>
-            cache = new <%= id_type %>[length];
+            this.cache = new <%= id_type %>[length];
             <%- else -%>
-            cache = new byte[length][];
+            this.cache = new byte[length][];
             <%- end -%>
         }
 
@@ -52,10 +54,7 @@ public class Loader {
                 int start = buffer.getInt(offset);
                 int length = buffer.getInt(offset + 4);
 
-                byte[] bytes = new byte[length];
-                buffer.get(start, bytes);
-
-                constant = loader.bytesToName(bytes);
+                constant = loader.bytesToName(loader.serialized, start, length);
                 cache[index] = constant;
             }
 
@@ -64,12 +63,14 @@ public class Loader {
 
     }
 
+    private final byte[] serialized;
     private final ByteBuffer buffer;
     protected String encodingName;
     private ConstantPool constantPool;
     private Nodes.Source source = null;
 
     protected Loader(byte[] serialized) {
+        this.serialized = serialized;
         this.buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
     }
 
