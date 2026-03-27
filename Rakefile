@@ -76,3 +76,21 @@ namespace :build do
   desc "Build a development version of the gem"
   task dev: ["build:dev_version_set", "build", "build:dev_version_clear"]
 end
+
+task :build_in_docker => :templates do
+  # Versions from https://github.com/ruby/ruby/blob/master/.github/workflows/compilers.yml
+  compilers = (7..15).map { |v| "gcc-#{v}" }
+  compilers.each do |compiler|
+    dockerfile = <<~DOCKERFILE
+    FROM ghcr.io/ruby/ruby-ci-image:#{compiler}
+    USER root
+    ADD . /prism
+    WORKDIR /prism
+    RUN #{compiler} --version
+    RUN make CC=#{compiler}
+    DOCKERFILE
+    File.write 'Dockerfile', dockerfile
+    sh "docker build ."
+    rm 'Dockerfile'
+  end
+end
