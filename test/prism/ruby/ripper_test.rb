@@ -106,6 +106,7 @@ module Prism
       "variables.txt",
       "whitequark/dedenting_heredoc.txt",
       "whitequark/masgn_nested.txt",
+      "whitequark/newline_in_hash_argument.txt",
       "whitequark/numparam_ruby_bug_19025.txt",
       "whitequark/op_asgn_cmd.txt",
       "whitequark/parser_drops_truncated_parts_of_squiggly_heredoc.txt",
@@ -135,7 +136,7 @@ module Prism
       end
     end
 
-    UNSUPPORTED_EVENTS = %i[backtick comma heredoc_beg heredoc_end ignored_nl kw label_end lbrace lbracket lparen nl op rbrace rbracket rparen semicolon sp symbeg tstring_beg tstring_end words_sep ignored_sp]
+    UNSUPPORTED_EVENTS = %i[comma ignored_nl kw label_end lbrace lbracket lparen nl op rbrace rbracket rparen semicolon sp words_sep ignored_sp]
     SUPPORTED_EVENTS = Translation::Ripper::EVENTS - UNSUPPORTED_EVENTS
 
     module Events
