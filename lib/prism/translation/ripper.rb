@@ -66,7 +66,7 @@ module Prism
       #          [[1, 13], :on_kw,     "end", END      ]]
       #
       def self.lex(src, filename = "-", lineno = 1, raise_errors: false)
-        result = Prism.lex_compat(src, filepath: filename, line: lineno, version: "current")
+        result = Prism.lex_compat(coerce_source(src), filepath: filename, line: lineno, version: "current")
 
         if result.failure? && raise_errors
           raise SyntaxError, result.errors.first.message
@@ -86,6 +86,21 @@ module Prism
       #
       def self.tokenize(...)
         lex(...).map { |token| token[2] }
+      end
+
+      # Mirros the various lex_types that ripper supports
+      def self.coerce_source(source) # :nodoc:
+        if source.is_a?(IO)
+          source.read
+        elsif source.respond_to?(:gets)
+          src = +""
+          while line = source.gets
+            src << line
+          end
+          src
+        else
+          source.to_str
+        end
       end
 
       # This contains a table of all of the parser events and their
@@ -477,17 +492,7 @@ module Prism
 
       # Create a new Translation::Ripper object with the given source.
       def initialize(source, filename = "(ripper)", lineno = 1)
-        if source.is_a?(IO)
-          @source = source.read
-        elsif source.respond_to?(:gets)
-          @source = +""
-          while line = source.gets
-            @source << line
-          end
-        else
-          @source = source.to_str
-        end
-
+        @source = Ripper.coerce_source(source)
         @filename = filename
         @lineno = lineno
         @column = 0

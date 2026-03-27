@@ -244,6 +244,14 @@ module Prism
       end
     end
 
+    def test_lex_coersion
+      string_like = Object.new
+      def string_like.to_str
+        "a"
+      end
+      assert_equal Ripper.lex(string_like), Translation::Ripper.lex(string_like)
+    end
+
     # Check that the hardcoded values don't change without us noticing.
     def test_internals
       actual = Translation::Ripper.constants.select { |name| name.start_with?("EXPR_") }.sort
