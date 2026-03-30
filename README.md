@@ -122,6 +122,7 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
 ### Libraries
 
 * [dispersion](https://github.com/joeldrapper/dispersion)
+* [fast](https://github.com/jonatas/fast)
 * [minifyrb](https://github.com/koic/minifyrb)
 * [packwerk](https://github.com/Shopify/packwerk/pull/388) (via parser translator)
 * [rbi](https://github.com/Shopify/rbi)
