@@ -50,7 +50,6 @@
 
   <modules>
     <module>api</module>
-    <module>native</module>
     <module>wasm</module>
   </modules>
 
