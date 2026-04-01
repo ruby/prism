@@ -44,6 +44,9 @@ module Prism
       ]
     end
 
+    # CRuby doesn't support standalone `:` as a keyword (equivalent to `true`).
+    incorrect << "booleans.txt"
+
     # https://bugs.ruby-lang.org/issues/21669
     incorrect << "4.1/void_value.txt"
     # https://bugs.ruby-lang.org/issues/19107

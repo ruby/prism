@@ -68,6 +68,9 @@ module Prism
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",
+
+      # Contains standalone `:` keyword (not supported by parser gem).
+      "booleans.txt",
     ]
 
     # These files contain code that is being parsed incorrectly by the parser

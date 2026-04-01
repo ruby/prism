@@ -1,11 +1,13 @@
-@ ProgramNode (location: (1,0)-(3,4))
+@ ProgramNode (location: (1,0)-(5,1))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(3,4))
+    @ StatementsNode (location: (1,0)-(5,1))
     ├── flags: ∅
-    └── body: (length: 2)
+    └── body: (length: 3)
         ├── @ FalseNode (location: (1,0)-(1,5))
         │   └── flags: newline, static_literal
-        └── @ TrueNode (location: (3,0)-(3,4))
+        ├── @ TrueNode (location: (3,0)-(3,4))
+        │   └── flags: newline, static_literal
+        └── @ TrueNode (location: (5,0)-(5,1))
             └── flags: newline, static_literal

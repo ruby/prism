@@ -88,6 +88,9 @@ module Prism
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",
+
+      # Contains standalone `:` keyword (not supported by ruby_parser).
+      "booleans.txt",
     ]
 
     Fixture.each_for_version(version: "3.3", except: failures) do |fixture|

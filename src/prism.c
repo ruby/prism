@@ -6889,7 +6889,7 @@ pm_symbol_node_to_string_node(pm_parser_t *parser, pm_symbol_node_t *node) {
  */
 static pm_true_node_t *
 pm_true_node_create(pm_parser_t *parser, const pm_token_t *token) {
-    assert(token->type == PM_TOKEN_KEYWORD_TRUE);
+    assert(token->type == PM_TOKEN_KEYWORD_TRUE || token->type == PM_TOKEN_COLON);
 
     return pm_true_node_new(
         parser->arena,
@@ -11009,7 +11009,7 @@ parser_lex(pm_parser_t *parser) {
                         LEX(PM_TOKEN_COLON_COLON);
                     }
 
-                    if (lex_state_end_p(parser) || pm_char_is_whitespace(peek(parser)) || peek(parser) == '#') {
+                    if (lex_state_end_p(parser) || pm_char_is_whitespace(peek(parser)) || peek(parser) == '#' || peek(parser) == '\0') {
                         lex_state_set(parser, PM_LEX_STATE_BEG);
                         LEX(PM_TOKEN_COLON);
                     }
@@ -19989,6 +19989,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
         case PM_TOKEN_KEYWORD_SELF:
             parser_lex(parser);
             return UP(pm_self_node_create(parser, &parser->previous));
+        case PM_TOKEN_COLON:
         case PM_TOKEN_KEYWORD_TRUE:
             parser_lex(parser);
             return UP(pm_true_node_create(parser, &parser->previous));
