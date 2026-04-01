@@ -18,7 +18,7 @@ Sources under `api` are generated from templates in `../templates`. Those source
 $ PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
 ```
 
-The files go under `api/target/generated-sources/java` and will be removed with `mvn clean`.
+The files are generated under `api/src/main/java-templates` and will not be removed with `mvn clean`.
 
 ### WASM build of Prism
 
@@ -28,7 +28,7 @@ The `wasm` project needs a WASM build of Prism to be generated with the followin
 $ make java-wasm WASI_SDK_PATH=<path to WASI sdk>
 ```
 
-The files go under `wasm/target/generated-sources/wasm` and will be removed with `mvn clean`.
+The build is generated under `wasm/src/main/wasm` and will not be removed with `mvn clean`.
 
 ### Build and install
 
