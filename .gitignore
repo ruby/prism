@@ -61,9 +61,6 @@ out.svg
 /src/serialize.c
 /src/tokens.c
 /src/**/*.o
-/rbi/prism/dsl.rbi
-/rbi/prism/node.rbi
-/rbi/prism/visitor.rbi
 
 compile_commands.json
 .cache/
