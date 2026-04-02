@@ -4,6 +4,7 @@ task check_manifest: :templates do
 
   ignore_directories = %w[
     .bundle
+    .claude
     .idea
     .git
     .github
