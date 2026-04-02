@@ -55,8 +55,8 @@ task check_manifest: :templates do
     compile_commands.json
     include/prism/config.h
     lib/prism/prism.{so,bundle,jar}
-    sig/_*/*.rbs
-    sig/**/_*/*.rbs
+    rbi/_shims/*.rbi
+    sig/_shims/*.rbs
     tags
   ]
 
