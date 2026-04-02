@@ -268,11 +268,13 @@ PRISM_EXPORTED_FUNCTION pm_<%= node.human %>_t * pm_<%= node.human %>_new(pm_are
 <%- end -%>
 
 /**
- * When we're serializing to Java, we want to skip serializing the location
- * fields as they won't be used by JRuby or TruffleRuby. This boolean allows us
- * to specify that through the environment. It will never be true except for in
- * those build systems.
- */
-#define PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS <%= Prism::Template::SERIALIZE_ONLY_SEMANTICS_FIELDS ? 1 : 0 %>
+* When we're serializing to Java, we want to skip serializing the location
+* fields as they won't be used by JRuby or TruffleRuby. This boolean allows us
+* to specify that through the environment. It will never be true except for in
+* those build systems.
+*/
+#ifndef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
+#define PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS 0
+#endif
 
 #endif
