@@ -2169,12 +2169,12 @@ module Prism
         # This is a special case where we're not going to call on_in directly
         # because we don't have access to the subsequent. Instead, we'll return
         # the component parts and let the parent node handle it.
-        bounds(node.in_loc)
+        bounds(node.in_keyword_loc)
         on_kw("in")
 
         pattern = visit_pattern_node(node.pattern)
-        if node.then_loc
-          bounds(node.then_loc)
+        if node.then_keyword_loc
+          bounds(node.then_keyword_loc)
           on_kw("then")
         end
         statements =
@@ -2633,7 +2633,7 @@ module Prism
       # ^^^^^^^^^^
       def visit_match_predicate_node(node)
         value = visit(node.value)
-        bounds(node.operator_loc)
+        bounds(node.keyword_loc)
         on_kw("in")
         pattern = on_in(visit_pattern_node(node.pattern), nil, nil)
 
@@ -3430,7 +3430,7 @@ module Prism
       # ^^^^^^^^^^^^^^
       def visit_unless_node(node)
         if node.statements.nil? || (node.predicate.location.start_offset < node.statements.location.start_offset)
-          bounds(node.keyword_loc)
+          bounds(node.unless_keyword_loc)
           on_kw("unless")
           predicate = visit(node.predicate)
           if node.then_keyword_loc
@@ -3455,7 +3455,7 @@ module Prism
           on_unless(predicate, statements, else_clause)
         else
           statements = visit(node.statements.body.first)
-          bounds(node.keyword_loc)
+          bounds(node.unless_keyword_loc)
           on_kw("unless")
           predicate = visit(node.predicate)
 
@@ -3470,7 +3470,7 @@ module Prism
       # bar until foo
       # ^^^^^^^^^^^^^
       def visit_until_node(node)
-        bounds(node.keyword_loc)
+        bounds(node.until_keyword_loc)
         on_kw("until")
 
         if node.statements.nil? || (node.predicate.location.start_offset < node.statements.location.start_offset)
@@ -3487,8 +3487,8 @@ module Prism
               visit(node.statements)
             end
 
-          if node.closing_loc
-            bounds(node.closing_loc)
+          if node.end_keyword_loc
+            bounds(node.end_keyword_loc)
             on_kw("end")
           end
 
@@ -3509,7 +3509,7 @@ module Prism
         # This is a special case where we're not going to call on_when directly
         # because we don't have access to the subsequent. Instead, we'll return
         # the component parts and let the parent node handle it.
-        bounds(node.keyword_loc)
+        bounds(node.when_keyword_loc)
         on_kw("when")
 
         conditions = visit_arguments(node.conditions)
@@ -3535,15 +3535,15 @@ module Prism
       # ^^^^^^^^^^^^^
       def visit_while_node(node)
         if node.statements.nil? || (node.predicate.location.start_offset < node.statements.location.start_offset)
-          bounds(node.keyword_loc)
+          bounds(node.while_keyword_loc)
           on_kw("while")
           if node.do_keyword_loc
             bounds(node.do_keyword_loc)
             on_kw("do")
           end
           predicate = visit(node.predicate)
-          if node.closing_loc
-            bounds(node.closing_loc)
+          if node.end_keyword_loc
+            bounds(node.end_keyword_loc)
             on_kw("end")
           end
           statements =
@@ -3558,7 +3558,7 @@ module Prism
           on_while(predicate, statements)
         else
           statements = visit(node.statements.body.first)
-          bounds(node.keyword_loc)
+          bounds(node.while_keyword_loc)
           on_kw("while")
           predicate = visit(node.predicate)
 
