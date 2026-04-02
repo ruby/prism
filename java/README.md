@@ -15,7 +15,7 @@ Some files need to be generated before the Maven artifacts can build:
 Sources under `api` are generated from templates in `../templates`. Those sources are generated using the follow command line:
 
 ```
-$ PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
+$ PRISM_EXCLUDE_PRETTYPRINT=1 bundle exec rake templates
 ```
 
 The files are generated under `api/src/main/java-templates` and will not be removed with `mvn clean`.

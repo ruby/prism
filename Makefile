@@ -56,7 +56,7 @@ java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) $(WASI_SDK_PATH)/bin/clang \
 		$(DEBUG_FLAGS) \
-		-DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN \
+		-DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN -DPRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 \
 		-lwasi-emulated-mman $(CPPFLAGS) $(JAVA_WASM_CFLAGS) \
 		-Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
 		-o $@ $(SOURCES)

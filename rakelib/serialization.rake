@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 task "test:java_loader" do
-  # Recompile with PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1
-  # Due to some JRuby bug this does not get propagated to the compile task, so require the caller to set the env var
-  # ENV["PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS"] = "1"
-  raise "this task requires $SERIALIZE_ONLY_SEMANTICS_FIELDS to be set" unless ENV["PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS"]
-
   Rake::Task["clobber"].invoke
+  # All Java API consumers want semantic-only build
+  ENV["CFLAGS"] = "-DPRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1"
   Rake::Task["test:java_loader:internal"].invoke
 end
 
