@@ -83,7 +83,9 @@ task :build_in_docker => :templates do
   versions.each do |version|
     dockerfile = <<~DOCKERFILE
     FROM docker.io/library/gcc:#{version}
-    ADD . /prism
+    COPY Makefile /prism/
+    COPY src /prism/src
+    COPY include /prism/include
     WORKDIR /prism
     RUN gcc --version
     RUN make SOEXT=so
