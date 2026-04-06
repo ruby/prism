@@ -36,7 +36,7 @@ public abstract class ParsingOptions {
      *
      * NOTE: positions should match PM_OPTIONS_COMMAND_LINE_* constants values
      */
-    public enum CommandLine { A, E, L, N, P, X };
+    public enum CommandLine { A, E, L, N, P, X }
 
     /**
      * The forwarding options for a given scope in the parser.
@@ -57,7 +57,7 @@ public abstract class ParsingOptions {
         public byte getValue() {
             return (byte) value;
         }
-    };
+    }
 
     /**
      * Represents a scope in the parser.

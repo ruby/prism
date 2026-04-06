@@ -8,7 +8,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -321,6 +320,7 @@ public abstract class Nodes {
         }
         <%- end -%>
 
+        @Override
         public <T> void visitChildNodes(AbstractNodeVisitor<T> visitor) {
           <%- node.semantic_fields.each do |field| -%>
             <%- case field -%>
@@ -338,6 +338,7 @@ public abstract class Nodes {
           <%- end -%>
         }
 
+        @Override
         public Node[] childNodes() {
           <%- if node.semantic_fields.none?(Prism::Template::NodeListField) and node.semantic_fields.none?(Prism::Template::NodeKindField) -%>
             return EMPTY_ARRAY;
@@ -359,6 +360,7 @@ public abstract class Nodes {
           <%- end -%>
         }
 
+        @Override
         public <T> T accept(AbstractNodeVisitor<T> visitor) {
             return visitor.visit<%= node.name -%>(this);
         }
@@ -371,11 +373,13 @@ public abstract class Nodes {
                 builder.append("[Li]");
             }
             builder.append('\n');
+            <%- unless [*node.flags, *node.semantic_fields].empty? -%>
             String nextIndent = indent + "  ";
+            <%- end -%>
             <%- if node.fields.any?(Prism::Template::NodeListField) or node.fields.any?(Prism::Template::ConstantListField) -%>
             String nextNextIndent = nextIndent + "  ";
             <%- end -%>
-            <%- [*node.flags, *node.fields.grep_v(Prism::Template::LocationField).grep_v(Prism::Template::OptionalLocationField)].each do |field| -%>
+            <%- [*node.flags, *node.semantic_fields].each do |field| -%>
             builder.append(nextIndent);
             builder.append("<%= field.name %>: ");
             <%- case field -%>
