@@ -79,15 +79,14 @@ end
 
 task :build_in_docker => :templates do
   # Versions from https://github.com/ruby/ruby/blob/master/.github/workflows/compilers.yml
-  compilers = (7..15).map { |v| "gcc-#{v}" }
-  compilers.each do |compiler|
+  versions = (7..15).to_a
+  versions.each do |version|
     dockerfile = <<~DOCKERFILE
-    FROM ghcr.io/ruby/ruby-ci-image:#{compiler}
-    USER root
+    FROM docker.io/library/gcc:#{version}
     ADD . /prism
     WORKDIR /prism
-    RUN #{compiler} --version
-    RUN make CC=#{compiler}
+    RUN gcc --version
+    RUN make SOEXT=so
     DOCKERFILE
     File.write 'Dockerfile', dockerfile
     sh "docker build ."
