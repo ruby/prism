@@ -4,7 +4,7 @@
 
 module Prism
 
-  class Common
+  class Common # :nodoc:
     def dump(string, options) # :nodoc:
       with_buffer do |buffer|
         parse_only(buffer, string, options)
@@ -178,27 +178,27 @@ module Prism
 
     # Required APIs below
 
-    def with_buffer(&b)
+    def with_buffer(&b) # :nodoc:
       raise NotImplementedError
     end
 
-    def with_string(string, &b)
+    def with_string(string, &b) # :nodoc:
       raise NotImplementedError
     end
 
-    def with_file(string, &b)
+    def with_file(string, &b) # :nodoc:
       raise NotImplementedError
     end
 
-    def lex_only(buffer, string, options)
+    def lex_only(buffer, string, options) # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_only(buffer, string, options)
+    def parse_only(buffer, string, options) # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_stream(buffer, callback, eof_callback, options, source)
+    def parse_stream(buffer, callback, eof_callback, options, source) # :nodoc:
       raise NotImplementedError
     end
 
@@ -214,15 +214,15 @@ module Prism
       raise NotImplementedError
     end
 
-    def string_query_method_name(string)
+    def string_query_method_name(string) # :nodoc:
       raise NotImplementedError
     end
 
-    def string_query_constant(string)
+    def string_query_constant(string) # :nodoc:
       raise NotImplementedError
     end
 
-    def string_query_local(string)
+    def string_query_local(string) # :nodoc:
       raise NotImplementedError
     end
   end
