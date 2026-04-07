@@ -94,9 +94,9 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
             <%- if node.flags -%>
             pm_buffer_append_varuint(buffer, (uint32_t) node->flags);
             <%- else -%>
-            if (!PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS) {
+            #ifndef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
                 pm_buffer_append_varuint(buffer, (uint32_t) node->flags);
-            }
+            #endif
             <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field -%>
@@ -126,15 +126,15 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
             }
             <%- when Prism::Template::LocationField -%>
             <%- unless field.semantic_field? -%>
-            if (!PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS) {
+            #ifndef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
             <%- end -%>
             pm_serialize_location(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             <%- unless field.semantic_field? -%>
-            }
+            #endif
             <%- end -%>
             <%- when Prism::Template::OptionalLocationField -%>
             <%- unless field.semantic_field? -%>
-              if (!PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS) {
+            #ifndef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
             <%- end -%>
             if (((pm_<%= node.human %>_t *)node)-><%= field.name %>.length == 0) {
                 pm_buffer_append_byte(buffer, 0);
@@ -143,7 +143,7 @@ pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
                 pm_serialize_location(&((pm_<%= node.human %>_t *)node)-><%= field.name %>, buffer);
             }
             <%- unless field.semantic_field? -%>
-              }
+            #endif
             <%- end -%>
             <%- when Prism::Template::UInt8Field -%>
             pm_buffer_append_byte(buffer, ((pm_<%= node.human %>_t *)node)-><%= field.name %>);
@@ -273,9 +273,9 @@ pm_serialize_metadata(pm_parser_t *parser, pm_buffer_t *buffer) {
     pm_serialize_encoding(parser->encoding, buffer);
     pm_buffer_append_varsint(buffer, parser->start_line);
     pm_serialize_line_offset_list(&parser->line_offsets, buffer);
-    if (!PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS) {
+    #ifndef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
         pm_serialize_comment_list(&parser->comment_list, buffer);
-    }
+    #endif
     pm_serialize_magic_comment_list(&parser->magic_comment_list, buffer);
     pm_serialize_data_loc(parser, buffer);
     pm_serialize_diagnostic_list(&parser->error_list, buffer);
