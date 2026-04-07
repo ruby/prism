@@ -320,6 +320,6 @@ module Prism # :nodoc:
     end
   end
 
-  FFICommon = NativeCommon.new
+  FFICommon = NativeCommon.new.freeze
   private_constant(:FFICommon)
 end
