@@ -55,6 +55,7 @@ CLOBBER.concat(Prism::Template::TEMPLATES)
 CLOBBER.concat(["build"])
 CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
 CLOBBER << "java/wasm/src/main/resources/prism.wasm"
+CLOBBER << "java/wasm-full/src/main/resources/prism-full.wasm"
 
 Prism::Template::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"
