@@ -326,12 +326,12 @@ public class Loader {
     }
 
     <%-
-    base_params = [*("nodeId" unless Prism::Template::OMIT_NODE_ID), "startOffset", "length"]
+    base_params = [*("nodeId" if Prism::Template::INCLUDE_NODE_ID), "startOffset", "length"]
     base_params_sig = base_params.map { "int #{_1}" }.join(", ")
     -%>
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        <%- unless Prism::Template::OMIT_NODE_ID -%>
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
         int nodeId = loadVarUInt();
         <%- end -%>
         int startOffset = loadVarUInt();
@@ -343,7 +343,7 @@ public class Loader {
             case <%= index + 1 %>:
             <%-
             params = []
-            params << "nodeId" unless Prism::Template::OMIT_NODE_ID
+            params << "nodeId" if Prism::Template::INCLUDE_NODE_ID
             params << "startOffset" << "length"
             params << "buffer.getInt()" << "null" if node.needs_serialized_length?
             params << "loadFlags()" if node.flags

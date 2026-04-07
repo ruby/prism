@@ -11,7 +11,7 @@ module Prism
 
     JAVA_BACKEND = ENV["PRISM_JAVA_BACKEND"] || "default"
     JAVA_IDENTIFIER_TYPE = JAVA_BACKEND == "truffleruby" ? "String" : "byte[]"
-    OMIT_NODE_ID = ENV.fetch("PRISM_OMIT_NODE_ID", false)
+    INCLUDE_NODE_ID = ENV.fetch("PRISM_INCLUDE_NODE_ID", "true") != "false"
 
     COMMON_FLAGS_COUNT = 2
 

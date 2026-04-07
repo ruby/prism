@@ -89,14 +89,14 @@ public abstract class Nodes {
 
         public static final Node[] EMPTY_ARRAY = {};
 
-        <%- unless Prism::Template::OMIT_NODE_ID -%>
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
         public final int nodeId;
         <%- end -%>
         public final int startOffset;
         public final int length;
         private boolean newLineFlag = false;
 
-        <%- unless Prism::Template::OMIT_NODE_ID -%>
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
         public Node(int nodeId, int startOffset, int length) {
             this.nodeId = nodeId;
         <%- else -%>
@@ -246,7 +246,7 @@ public abstract class Nodes {
 
         <%-
           params = []
-          params << "int nodeId" unless Prism::Template::OMIT_NODE_ID
+          params << "int nodeId" if Prism::Template::INCLUDE_NODE_ID
           params << "int startOffset" << "int length"
           if node.needs_serialized_length?
             params << "int serializedLength"
@@ -256,7 +256,7 @@ public abstract class Nodes {
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
         public <%= node.name -%>(<%= params.join(", ") %>) {
-        <%- unless Prism::Template::OMIT_NODE_ID -%>
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
             super(nodeId, startOffset, length);
         <%- else -%>
             super(startOffset, length);
@@ -281,7 +281,7 @@ public abstract class Nodes {
 
         public <%= node.name -%> getNonLazy() {
             if (isLazy()) {
-                return loader.createDefNodeFromSavedPosition(<%= "nodeId, " unless Prism::Template::OMIT_NODE_ID %>startOffset, length, -serializedLength);
+                return loader.createDefNodeFromSavedPosition(<%= "nodeId, " if Prism::Template::INCLUDE_NODE_ID %>startOffset, length, -serializedLength);
             } else {
                 return this;
             }
