@@ -19,7 +19,7 @@ require_jar('com.dylibso.chicory', 'wasm', '1.6.1')
 require_jar('com.dylibso.chicory', 'log', '1.6.1')
 
 module Prism # :nodoc:
-  class WASMCommon < Common
+  class WASMCommon < Common # :nodoc:
     java_import org.ruby_lang.prism.wasm.Prism
 
     # TODO: concurrency
@@ -30,48 +30,27 @@ module Prism # :nodoc:
       WASM::PRISM.version
     end
 
-    # Prototype WASM code
-    # def dump(source, **options)
-    #   parsed = WASM::PRISM.parse(source.to_java_bytes, dump_options(options).to_java_bytes)
-    # end
-    #
-    # # Mirror the Prism.dump_file API by using the serialization API.
-    # def dump_file(filepath, **options)
-    #   dump_file(File.read(filepath), filepath: filepath, **options)
-    # end
-    #
-    # # Mirror the Prism.lex API by using the serialization API.
-    # def lex(source, **options)
-    #   lexed = WASM::PRISM.lex(source.to_java_bytes, dump_options(options).to_java_bytes)
-    #   Serialize.load_lex(source, lexed, options.fetch(:freeze, false))
-    # end
-    #
-    # # Mirror the Prism.lex_file API by using the serialization API.
-    # def lex_file(filepath, **options)
-    #   lex_file(File.read(filepath), filepath: filepath, **options)
-    # end
-
-    def with_buffer(&b)
+    def with_buffer(&b) # :nodoc:
       raise NotImplementedError
     end
 
-    def with_string(string, &b)
+    def with_string(string, &b) # :nodoc:
       raise NotImplementedError
     end
 
-    def with_file(string, &b)
+    def with_file(string, &b) # :nodoc:
       raise NotImplementedError
     end
 
-    def lex_only(buffer, string, options)
+    def lex_only(buffer, string, options) # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_only(buffer, string, options)
+    def parse_only(buffer, string, options) # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_stream(buffer, callback, eof_callback, options, source)
+    def parse_stream(buffer, callback, eof_callback, options, source) # :nodoc:
       raise NotImplementedError
     end
 
@@ -87,15 +66,15 @@ module Prism # :nodoc:
       raise NotImplementedError
     end
 
-    def string_query_method_name(string)
+    def string_query_method_name(string) # :nodoc:
       raise NotImplementedError
     end
 
-    def string_query_constant(string)
+    def string_query_constant(string) # :nodoc:
       raise NotImplementedError
     end
 
-    def string_query_local(string)
+    def string_query_local(string) # :nodoc:
       raise NotImplementedError
     end
   end

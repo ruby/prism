@@ -250,34 +250,34 @@ module Prism # :nodoc:
   # the prism module.
   private_constant :LibRubyParser
 
-  class NativeCommon < Common
+  class NativeCommon < Common # :nodoc:
 
     # The version constant is set by reading the result of calling pm_version.
     def version
       LibRubyParser.pm_version.read_string.freeze
     end
 
-    def with_buffer(&b)
+    def with_buffer(&b) # :nodoc:
       LibRubyParser::NativeBuffer.with(&b)
     end
 
-    def with_string(string, &b)
+    def with_string(string, &b) # :nodoc:
       LibRubyParser::NativeSource.with_string(string, &b)
     end
 
-    def with_file(string, &b)
+    def with_file(string, &b) # :nodoc:
       LibRubyParser::NativeSource.with_file(string, &b)
     end
 
-    def lex_only(buffer, string, options)
+    def lex_only(buffer, string, options) # :nodoc:
       LibRubyParser.pm_serialize_lex(buffer.pointer, string.pointer, string.length, dump_options(options))
     end
 
-    def parse_only(buffer, string, options)
+    def parse_only(buffer, string, options) # :nodoc:
       LibRubyParser.pm_serialize_parse(buffer.pointer, string.pointer, string.length, dump_options(options))
     end
 
-    def parse_stream(buffer, callback, eof_callback, options, source)
+    def parse_stream(buffer, callback, eof_callback, options, source) # :nodoc:
       pm_source = LibRubyParser.pm_source_stream_new(nil, callback, eof_callback)
       begin
         LibRubyParser.pm_serialize_parse_stream(buffer.pointer, pm_source, dump_options(options))
@@ -305,15 +305,15 @@ module Prism # :nodoc:
       LibRubyParser.pm_serialize_parse_success_p(string.pointer, string.length, dump_options(options))
     end
 
-    def string_query_method_name(string)
+    def string_query_method_name(string) # :nodoc:
       LibRubyParser.pm_string_query_method_name(string, string.bytesize, string.encoding.name)
     end
 
-    def string_query_constant(string)
+    def string_query_constant(string) # :nodoc:
       LibRubyParser.pm_string_query_constant(string, string.bytesize, string.encoding.name)
     end
 
-    def string_query_local(string)
+    def string_query_local(string) # :nodoc:
       LibRubyParser.pm_string_query_local(string, string.bytesize, string.encoding.name)
     end
   end
