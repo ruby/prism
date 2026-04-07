@@ -73,7 +73,7 @@ static void
 pm_serialize_node(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     pm_buffer_append_byte(buffer, (uint8_t) PM_NODE_TYPE(node));
 
-    <%- unless Prism::Template::OMIT_NODE_ID -%>
+    <%- if Prism::Template::INCLUDE_NODE_ID -%>
     pm_buffer_append_varuint(buffer, node->node_id);
     <%- end -%>
     pm_serialize_location(&node->location, buffer);
