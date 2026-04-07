@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 # :markup: markdown
+# --
 # typed: ignore
+
+# This file is responsible for mirroring the API provided by the C extension. There
+# are two backends:
+#
+# * Native FFI based on the 'ffi' gem
+# * WASM compiled to JVM bytecode (JRuby only)
 
 require_relative "ffi/common"
 
