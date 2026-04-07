@@ -6,7 +6,7 @@
   <artifactId>prism-parser</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Java Prism</name>
+  <name>Java Prism parent</name>
   <description>Java API for the Prism Ruby language parser</description>
   <url>https://github.com/ruby/prism</url>
 
@@ -51,6 +51,7 @@
   <modules>
     <module>api</module>
     <module>wasm</module>
+    <module>wasm-full</module>
   </modules>
 
   <profiles>

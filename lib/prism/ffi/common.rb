@@ -178,6 +178,10 @@ module Prism
 
     # Required APIs below
 
+    def version # :nodoc:
+      raise NotImplementedError
+    end
+
     def with_buffer(&b) # :nodoc:
       raise NotImplementedError
     end

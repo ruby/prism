@@ -31,7 +31,7 @@ all: shared static
 shared: build/libprism.$(SOEXT)
 static: build/libprism.a
 wasm: javascript/src/prism.wasm
-java-wasm: java/wasm/src/main/wasm/prism.wasm
+java-wasm: java/wasm/src/main/wasm/prism.wasm java/wasm-full/src/main/wasm/prism-full.wasm
 
 build/libprism.$(SOEXT): $(SHARED_OBJECTS)
 	$(ECHO) "linking $@ with $(CC)"
@@ -57,6 +57,17 @@ java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 	$(Q) $(WASI_SDK_PATH)/bin/clang \
 		$(DEBUG_FLAGS) \
 		-DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN -DPRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 \
+		-DPRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS \
+		-lwasi-emulated-mman $(CPPFLAGS) $(JAVA_WASM_CFLAGS) \
+		-Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
+		-o $@ $(SOURCES)
+
+java/wasm-full/src/main/wasm/prism-full.wasm: Makefile $(SOURCES) $(HEADERS)
+	$(ECHO) "building $@"
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) $(WASI_SDK_PATH)/bin/clang \
+		$(DEBUG_FLAGS) \
+		-DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXPORT_SYMBOLS -D_WASI_EMULATED_MMAN \
 		-lwasi-emulated-mman $(CPPFLAGS) $(JAVA_WASM_CFLAGS) \
 		-Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
 		-o $@ $(SOURCES)
