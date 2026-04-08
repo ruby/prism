@@ -63,14 +63,19 @@
       <version>10.0.5.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.roastedroot</groupId>
+      <artifactId>redline</artifactId>
+      <version>0.0.1</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>com.dylibso.chicory</groupId>
-        <artifactId>chicory-compiler-maven-plugin</artifactId>
-        <version>${chicory.version}</version>
+        <groupId>io.roastedroot</groupId>
+        <artifactId>redline-compiler-maven-plugin</artifactId>
+        <version>0.0.1</version>
         <executions>
           <execution>
             <id>prism</id>

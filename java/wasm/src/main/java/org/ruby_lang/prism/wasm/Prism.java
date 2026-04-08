@@ -2,7 +2,7 @@ package org.ruby_lang.prism.wasm;
 
 import com.dylibso.chicory.runtime.ByteArrayMemory;
 import com.dylibso.chicory.runtime.ImportValues;
-import com.dylibso.chicory.runtime.Instance;
+import io.roastedroot.redline.api.RedlineInstance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
 import org.ruby_lang.prism.Loader;
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class Prism implements AutoCloseable {
     private final WasiPreview1 wasi;
     protected final Prism_ModuleExports exports;
-    private final Instance instance;
+    private final RedlineInstance instance;
 
     public Prism() {
         this(WasiOptions.builder().build());
@@ -21,12 +21,10 @@ public class Prism implements AutoCloseable {
 
     public Prism(WasiOptions wasiOpts) {
         wasi = WasiPreview1.builder().withOptions(wasiOpts).build();
-        instance = Instance.builder(PrismParser.load())
-            .withMemoryFactory(ByteArrayMemory::new)
-            .withMachineFactory(PrismParser::create)
+        instance = PrismParser.builder()
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
-        exports = new Prism_ModuleExports(instance);
+        exports = new Prism_ModuleExports(instance.instance());
     }
 
     public String version() {
@@ -150,6 +148,9 @@ public class Prism implements AutoCloseable {
 
     @Override
     public void close() {
+        if (instance != null) {
+            instance.close();
+        }
         if (wasi != null) {
             wasi.close();
         }
