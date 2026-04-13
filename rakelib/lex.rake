@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 # typed: ignore
 
-require "ripper"
-
 module Prism
   # This class is responsible for lexing files with both prism and
   # ripper and ensuring they match up. It keeps track of the files which
@@ -150,6 +148,7 @@ TARGETS.each do |name, target|
   task "lex:#{name}" => [dirpath, :compile] do
     $:.unshift(File.expand_path("../lib", __dir__))
     require "prism"
+    require "ripper"
 
     plain_text = ENV.fetch("CI", false)
     warn_failing = ENV.fetch("VERBOSE", false)
@@ -192,6 +191,7 @@ desc "Lex files and compare with lex_compat"
 task lex: :compile do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "prism"
+  require "ripper"
 
   plain_text = ENV.fetch("CI", false)
   warn_failing = ENV.fetch("VERBOSE", false)
@@ -225,6 +225,7 @@ task "lex:rubygems": [:compile, "tmp/failing"] do
   require "rubygems/package"
   require "tmpdir"
   require "prism"
+  require "ripper"
 
   items = []
   Gem::SpecFetcher.new.available_specs(:latest).first.each do |source, gems|
@@ -366,6 +367,7 @@ task "lex:topgems": ["download:topgems", :compile] do
   require "rubygems/package"
   require "tmpdir"
   require "prism"
+  require "ripper"
 
   gem_names = YAML.safe_load_file(TOP_100_GEM_FILENAME)
   failing_files = {}
