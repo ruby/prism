@@ -15,6 +15,7 @@
 
   <properties>
     <chicory.version>1.7.5</chicory.version>
+    <redline.version>0.0.2</redline.version>
   </properties>
 
   <dependencyManagement>
@@ -66,7 +67,7 @@
     <dependency>
       <groupId>io.roastedroot</groupId>
       <artifactId>redline</artifactId>
-      <version>0.0.1</version>
+      <version>${redline.version}</version>
     </dependency>
   </dependencies>
 
@@ -75,7 +76,7 @@
       <plugin>
         <groupId>io.roastedroot</groupId>
         <artifactId>redline-compiler-maven-plugin</artifactId>
-        <version>0.0.1</version>
+        <version>${redline.version}</version>
         <executions>
           <execution>
             <id>prism</id>
