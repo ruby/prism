@@ -22,16 +22,9 @@ module Prism
     # - on_comma
     # - on_ignored_nl
     # - on_ignored_sp
-    # - on_kw
     # - on_label_end
-    # - on_lbrace
-    # - on_lbracket
-    # - on_lparen
     # - on_nl
     # - on_operator_ambiguous
-    # - on_rbrace
-    # - on_rbracket
-    # - on_rparen
     # - on_semicolon
     # - on_sp
     #
@@ -660,7 +653,13 @@ module Prism
       # parenthesis node that can be used to wrap patterns.
       private def visit_pattern_node(node)
         if node.is_a?(ParenthesesNode)
-          visit(node.body)
+          bounds(node.opening_loc)
+          on_lparen("(")
+          result = visit(node.body)
+          bounds(node.closing_loc)
+          on_rparen(")")
+
+          result
         else
           visit(node)
         end
@@ -848,6 +847,12 @@ module Prism
       #        ^^^^^
       def visit_array_pattern_node(node)
         constant = visit(node.constant)
+
+        if node.opening_loc
+          bounds(node.opening_loc)
+          node.opening == "[" ? on_lbracket("[") : on_lparen("(")
+        end
+
         requireds = visit_all(node.requireds) if node.requireds.any?
         rest =
           if (rest_node = node.rest).is_a?(SplatNode)
@@ -864,6 +869,10 @@ module Prism
 
         posts = visit_all(node.posts) if node.posts.any?
 
+        if node.closing_loc
+          bounds(node.closing_loc)
+          node.closing == "]" ? on_rbracket("]") : on_rparen(")")
+        end
         bounds(node.location)
         on_aryptn(constant, requireds, rest, posts)
       end
@@ -871,7 +880,7 @@ module Prism
       # foo(bar)
       #     ^^^
       def visit_arguments_node(node)
-        arguments, _, _ = visit_call_node_arguments(node, nil, false)
+        arguments, _ = visit_call_node_arguments(node, nil, false)
         arguments
       end
 
@@ -1008,8 +1017,10 @@ module Prism
       # Visit a BlockNode.
       def visit_block_node(node)
         braces = node.opening == "{"
-        unless braces
-          bounds(node.opening_loc)
+        bounds(node.opening_loc)
+        if braces
+          on_lbrace("{")
+        else
           on_kw("do")
         end
 
@@ -1036,7 +1047,10 @@ module Prism
             raise
           end
 
-        unless braces
+        if braces
+          bounds(node.closing_loc)
+          on_rbrace("}")
+        else
           bounds(node.closing_loc)
           on_kw("end")
         end
@@ -1127,12 +1141,21 @@ module Prism
           case node.name
           when :[]
             receiver = visit(node.receiver)
-            arguments, block, has_ripper_block = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+            bounds(node.opening_loc)
+            on_lbracket("[")
+
+            arguments, block_node = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+            bounds(node.closing_loc)
+            on_rbracket("]")
+
+            block = visit(block_node)
 
             bounds(node.location)
             call = on_aref(receiver, arguments)
 
-            if has_ripper_block
+            if block_node
               bounds(node.location)
               on_method_add_block(call, block)
             else
@@ -1140,6 +1163,9 @@ module Prism
             end
           when :[]=
             receiver = visit(node.receiver)
+
+            bounds(node.opening_loc)
+            on_lbracket("[")
 
             *arguments, last_argument = node.arguments.arguments
             arguments << node.block if !node.block.nil?
@@ -1156,6 +1182,8 @@ module Prism
                 end
               end
 
+            bounds(node.closing_loc)
+            on_rbracket("]")
             bounds(node.equal_loc)
             on_op("=")
 
@@ -1177,11 +1205,27 @@ module Prism
             if node.message == "not"
               on_kw("not")
 
+              if node.opening_loc
+                bounds(node.opening_loc)
+                on_lparen("(")
+              end
+
               receiver =
-                if !node.receiver.is_a?(ParenthesesNode) || !node.receiver.body.nil?
+                if node.receiver.is_a?(ParenthesesNode) && node.receiver.body.nil?
+                  # The parens in `not()` just emit parens and nothing else.
+                  bounds(node.receiver.opening_loc)
+                  on_lparen("(")
+                  bounds(node.receiver.closing_loc)
+                  on_rparen(")")
+                  nil
+                else
                   visit(node.receiver)
                 end
 
+              if node.closing_loc
+                bounds(node.closing_loc)
+                on_rparen(")")
+              end
               bounds(node.location)
               on_unary(:not, receiver)
             else
@@ -1209,7 +1253,19 @@ module Prism
             if node.variable_call?
               on_vcall(message)
             else
-              arguments, block, has_ripper_block = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc || node.location))
+              if node.opening_loc
+                bounds(node.opening_loc)
+                on_lparen("(")
+              end
+
+              arguments, block_node = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc || node.location))
+
+              if node.closing_loc
+                bounds(node.closing_loc)
+                on_rparen(")")
+              end
+
+              block = visit(block_node)
               call =
                 if node.opening_loc.nil? && get_arguments_and_block(node.arguments, node.block).first.any?
                   bounds(node.location)
@@ -1222,7 +1278,7 @@ module Prism
                   on_method_add_arg(on_fcall(message), on_args_new)
                 end
 
-              if has_ripper_block
+              if block_node
                 bounds(node.block.location)
                 on_method_add_block(call, block)
               else
@@ -1255,7 +1311,19 @@ module Prism
             bounds(node.location)
             on_assign(on_field(receiver, call_operator, message), value)
           else
-            arguments, block, has_ripper_block = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc || node.location))
+            if node.opening_loc
+              bounds(node.opening_loc)
+              on_lparen("(")
+            end
+
+            arguments, block_node = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc || node.location))
+
+            if node.closing_loc
+              bounds(node.closing_loc)
+              on_rparen(")")
+            end
+
+            block = visit(block_node)
             call =
               if node.opening_loc.nil?
                 bounds(node.location)
@@ -1273,7 +1341,7 @@ module Prism
                 on_method_add_arg(on_call(receiver, call_operator, message), arguments)
               end
 
-            if has_ripper_block
+            if block_node
               bounds(node.block.location)
               on_method_add_block(call, block)
             else
@@ -1315,8 +1383,7 @@ module Prism
               on_args_add_block(args, false)
             end
           end,
-          visit(block),
-          block != nil,
+          block,
         ]
       end
 
@@ -1799,6 +1866,11 @@ module Prism
         bounds(node.name_loc)
         name = visit_token(node.name_loc.slice)
 
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
         parameters =
           if node.parameters.nil?
             bounds(node.location)
@@ -1808,6 +1880,8 @@ module Prism
           end
 
         if !node.lparen_loc.nil?
+          bounds(node.rparen_loc)
+          on_rparen(")")
           bounds(node.lparen_loc)
           parameters = on_paren(parameters)
         end
@@ -1849,7 +1923,17 @@ module Prism
         bounds(node.keyword_loc)
         on_kw("defined?")
 
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
         expression = visit(node.value)
+
+        if node.rparen_loc
+          bounds(node.rparen_loc)
+          on_rparen(")")
+        end
 
         # Very weird circumstances here where something like:
         #
@@ -1956,6 +2040,10 @@ module Prism
       def visit_find_pattern_node(node)
         constant = visit(node.constant)
 
+        if node.opening_loc
+          bounds(node.opening_loc)
+          node.opening == "[" ? on_lbracket("[") : on_lparen("(")
+        end
         bounds(node.left.operator_loc)
         on_op("*")
 
@@ -1980,6 +2068,10 @@ module Prism
             visit(node.right.expression)
           end
 
+        if node.closing_loc
+          bounds(node.closing_loc)
+          node.closing == "]" ? on_rbracket("]") : on_rparen(")")
+        end
         bounds(node.location)
         on_fndptn(constant, left, requireds, right)
       end
@@ -2151,6 +2243,9 @@ module Prism
       # {}
       # ^^
       def visit_hash_node(node)
+        bounds(node.opening_loc)
+        on_lbrace("{")
+
         elements =
           if node.elements.any?
             args = visit_all(node.elements)
@@ -2159,6 +2254,8 @@ module Prism
             on_assoclist_from_args(args)
           end
 
+        bounds(node.closing_loc)
+        on_rbrace("}")
         bounds(node.location)
         on_hash(elements)
       end
@@ -2167,6 +2264,15 @@ module Prism
       #        ^^
       def visit_hash_pattern_node(node)
         constant = visit(node.constant)
+
+        if node.constant
+          bounds(node.opening_loc)
+          node.opening == "[" ? on_lbracket("[") : on_lparen("(")
+        elsif node.opening_loc
+          bounds(node.opening_loc)
+          on_lbrace("{")
+        end
+
         elements =
           if node.elements.any? || !node.rest.nil?
             node.elements.map do |element|
@@ -2197,6 +2303,13 @@ module Prism
             on_var_field(visit(node.rest))
           end
 
+        if node.constant
+          bounds(node.closing_loc)
+          node.closing == "]" ? on_rbracket("]") : on_rparen(")")
+        elsif node.closing_loc
+          bounds(node.closing_loc)
+          on_rbrace("}")
+        end
         bounds(node.location)
         on_hshptn(constant, elements, rest)
       end
@@ -2311,7 +2424,14 @@ module Prism
       # ^^^^^^^^^^^^^^^
       def visit_index_operator_write_node(node)
         receiver = visit(node.receiver)
-        arguments, _, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.opening_loc)
+        on_lbracket("[")
+
+        arguments, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.closing_loc)
+        on_rbracket("]")
 
         bounds(node.location)
         target = on_aref_field(receiver, arguments)
@@ -2328,7 +2448,14 @@ module Prism
       # ^^^^^^^^^^^^^^^^
       def visit_index_and_write_node(node)
         receiver = visit(node.receiver)
-        arguments, _, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.opening_loc)
+        on_lbracket("[")
+
+        arguments, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.closing_loc)
+        on_rbracket("]")
 
         bounds(node.location)
         target = on_aref_field(receiver, arguments)
@@ -2345,7 +2472,14 @@ module Prism
       # ^^^^^^^^^^^^^^^^
       def visit_index_or_write_node(node)
         receiver = visit(node.receiver)
-        arguments, _, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.opening_loc)
+        on_lbracket("[")
+
+        arguments, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.closing_loc)
+        on_rbracket("]")
 
         bounds(node.location)
         target = on_aref_field(receiver, arguments)
@@ -2362,7 +2496,14 @@ module Prism
       # ^^^^^^^^
       def visit_index_target_node(node)
         receiver = visit(node.receiver)
-        arguments, _, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.opening_loc)
+        on_lbracket("[")
+
+        arguments, _ = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.closing_loc))
+
+        bounds(node.closing_loc)
+        on_rbracket("]")
 
         bounds(node.location)
         on_aref_field(receiver, arguments)
@@ -2609,6 +2750,11 @@ module Prism
 
         parameters =
           if node.parameters.is_a?(BlockParametersNode)
+            if node.parameters.opening_loc
+              bounds(node.parameters.opening_loc)
+              on_lparen("(")
+            end
+
             # Ripper does not track block-locals within lambdas, so we skip
             # directly to the parameters here.
             params =
@@ -2620,6 +2766,11 @@ module Prism
               end
 
             visit_all(node.parameters.locals)
+
+            if node.parameters.closing_loc
+              bounds(node.parameters.closing_loc)
+              on_rparen(")")
+            end
 
             if node.parameters.opening_loc.nil?
               params
@@ -2633,13 +2784,10 @@ module Prism
           end
 
         braces = node.opening == "{"
+        bounds(node.opening_loc)
         if braces
-          bounds(node.opening_loc)
           on_tlambeg(node.opening)
-        end
-
-        unless braces
-          bounds(node.opening_loc)
+        else
           on_kw("do")
         end
 
@@ -2664,8 +2812,10 @@ module Prism
             raise
           end
 
-        unless braces
           bounds(node.closing_loc)
+        if braces
+          on_rbrace("}")
+        else
           on_kw("end")
         end
 
@@ -2821,8 +2971,18 @@ module Prism
       # (foo, bar), bar = qux
       # ^^^^^^^^^^
       def visit_multi_target_node(node)
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
         bounds(node.location)
         targets = visit_multi_target_node_targets(node.lefts, node.rest, node.rights, true)
+
+        if node.rparen_loc
+          bounds(node.rparen_loc)
+          on_rparen(")")
+        end
 
         if node.lparen_loc.nil?
           targets
@@ -2875,8 +3035,18 @@ module Prism
       # foo, bar = baz
       # ^^^^^^^^^^^^^^
       def visit_multi_write_node(node)
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
         bounds(node.location)
         targets = visit_multi_target_node_targets(node.lefts, node.rest, node.rights, true)
+
+        if node.rparen_loc
+          bounds(node.rparen_loc)
+          on_rparen(")")
+        end
 
         bounds(node.operator_loc)
         on_op("=")
@@ -3014,8 +3184,18 @@ module Prism
 
       # Visit a destructured positional parameter node.
       private def visit_destructured_parameter_node(node)
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
         bounds(node.location)
         targets = visit_multi_target_node_targets(node.lefts, node.rest, node.rights, false)
+
+        if node.rparen_loc
+          bounds(node.rparen_loc)
+          on_rparen(")")
+        end
 
         bounds(node.lparen_loc)
         on_mlhs_paren(targets)
@@ -3027,6 +3207,9 @@ module Prism
       # (1)
       # ^^^
       def visit_parentheses_node(node)
+        bounds(node.opening_loc)
+        on_lparen("(")
+
         body =
           if node.body.nil?
             on_stmts_add(on_stmts_new, on_void_stmt)
@@ -3034,6 +3217,8 @@ module Prism
             visit(node.body)
           end
 
+        bounds(node.closing_loc)
+        on_rparen(")")
         bounds(node.location)
         on_paren(body)
       end
@@ -3043,9 +3228,13 @@ module Prism
       def visit_pinned_expression_node(node)
         bounds(node.operator_loc)
         on_op("^")
+        bounds(node.lparen_loc)
+        on_lparen("(")
 
         expression = visit(node.expression)
 
+        bounds(node.rparen_loc)
+        on_rparen(")")
         bounds(node.location)
         on_begin(expression)
       end
@@ -3064,6 +3253,8 @@ module Prism
       def visit_post_execution_node(node)
         bounds(node.keyword_loc)
         on_kw("END")
+        bounds(node.opening_loc)
+        on_lbrace("{")
 
         statements =
           if node.statements.nil?
@@ -3073,6 +3264,8 @@ module Prism
             visit(node.statements)
           end
 
+        bounds(node.closing_loc)
+        on_rbrace("}")
         bounds(node.location)
         on_END(statements)
       end
@@ -3082,6 +3275,8 @@ module Prism
       def visit_pre_execution_node(node)
         bounds(node.keyword_loc)
         on_kw("BEGIN")
+        bounds(node.opening_loc)
+        on_lbrace("{")
 
         statements =
           if node.statements.nil?
@@ -3091,6 +3286,8 @@ module Prism
             visit(node.statements)
           end
 
+        bounds(node.closing_loc)
+        on_rbrace("}")
         bounds(node.location)
         on_BEGIN(statements)
       end
@@ -3532,7 +3729,19 @@ module Prism
         bounds(node.keyword_loc)
         on_kw("super")
 
-        arguments, block, has_ripper_block = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.rparen_loc || node.location))
+        if node.lparen_loc
+          bounds(node.lparen_loc)
+          on_lparen("(")
+        end
+
+        arguments, block_node = visit_call_node_arguments(node.arguments, node.block, trailing_comma?(node.arguments&.location || node.location, node.rparen_loc || node.location))
+
+        if node.rparen_loc
+          bounds(node.rparen_loc)
+          on_rparen(")")
+        end
+
+        block = visit(block_node)
 
         if !node.lparen_loc.nil?
           bounds(node.lparen_loc)
@@ -3542,7 +3751,7 @@ module Prism
         bounds(node.location)
         call = on_super(arguments)
 
-        if has_ripper_block
+        if block_node
           bounds(node.block.location)
           on_method_add_block(call, block)
         else
@@ -3773,6 +3982,11 @@ module Prism
           bounds(node.location)
           on_yield0
         else
+          if node.lparen_loc
+            bounds(node.lparen_loc)
+            on_lparen("(")
+          end
+
           arguments =
             if node.arguments.nil?
               bounds(node.location)
@@ -3782,6 +3996,8 @@ module Prism
             end
 
           unless node.lparen_loc.nil?
+            bounds(node.rparen_loc)
+            on_rparen(")")
             bounds(node.lparen_loc)
             arguments = on_paren(arguments)
           end
