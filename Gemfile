@@ -20,3 +20,9 @@ platforms :mri, :windows do
 end
 
 gem "onigmo", platforms: :ruby
+
+# Until a nokogiri release includes sparklemotion/nokogiri#3530, aarch64-mingw-ucrt
+# source-builds of libxml2 fail in libtool. Pin to main on that platform only.
+if RUBY_PLATFORM =~ /aarch64.*mingw/
+  gem "nokogiri", github: "sparklemotion/nokogiri", branch: "main"
+end
