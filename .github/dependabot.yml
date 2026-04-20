@@ -26,13 +26,10 @@ updates:
       - '/gemfiles/3.4'
       - '/gemfiles/4.0'
       - '/gemfiles/4.1'
-      - '/gemfiles/typecheck'
+      # - '/gemfiles/typecheck'
     schedule:
       interval: 'weekly'
     groups:
       ruby-deps:
         patterns:
           - "*"
-    ignore:
-      - dependency-name: "sorbet"
-      - dependency-name: "tapioca"
