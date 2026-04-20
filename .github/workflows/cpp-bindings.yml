@@ -2,7 +2,7 @@ name: C++ bindings
 
 on:
   push:
-    paths:
+    paths: &paths
       - ".github/workflows/cpp-bindings.yml"
       - "include/"
       - "src/"
@@ -12,6 +12,7 @@ on:
       - main
       - ruby-4.0
   pull_request:
+    paths: *paths
 
 jobs:
   test:

@@ -2,7 +2,7 @@ name: Rust bindings
 
 on:
   push:
-    paths:
+    paths: &paths
       - ".github/workflows/rust-bindings.yml"
       - "include/"
       - "src/"
@@ -12,6 +12,7 @@ on:
       - main
       - ruby-4.0
   pull_request:
+    paths: *paths
 
 env:
   RUSTFLAGS: "-D warnings"
