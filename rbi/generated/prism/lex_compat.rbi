@@ -20,6 +20,14 @@ module Prism
           def self.[](value); end
         end
       end
+
+      class LineAndColumnCache
+        sig { params(source: Source).void }
+        def initialize(source); end
+
+        sig { params(byte_offset: Integer).returns([Integer, Integer]) }
+        def line_and_column(byte_offset); end
+      end
     end
   end
 

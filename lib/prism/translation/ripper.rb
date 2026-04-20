@@ -446,6 +446,64 @@ module Prism
       autoload :SexpBuilder, "prism/translation/ripper/sexp"
       autoload :SexpBuilderPP, "prism/translation/ripper/sexp"
 
+      # Provides optimized access to line and column information.
+      # Ripper bounds are mostly accessed in a linear fashion, so
+      # we can try a linear scan first and fall back to binary search.
+      class LineAndColumnCache # :nodoc:
+        # How many should it look ahead/behind before falling back to binary searching.
+        WINDOW = 8
+        private_constant :WINDOW
+
+        #: (Source source) -> void
+        def initialize(source)
+          @source = source
+          @offsets = source.offsets
+          @hint = 0
+        end
+
+        #: (Integer byte_offset) -> [Integer, Integer]
+        def line_and_column(byte_offset)
+          @hint = new_hint(byte_offset) || @source.find_line(byte_offset)
+          return [@hint + @source.start_line, byte_offset - @offsets[@hint]]
+        end
+
+        private
+
+        def new_hint(byte_offset)
+          if @offsets[@hint] <= byte_offset
+            # Same line?
+            if (@hint + 1 >= @offsets.size || @offsets[@hint + 1] > byte_offset)
+              return @hint
+            end
+
+            # Scan forwards
+            limit = [@hint + WINDOW + 1, @offsets.size].min
+            idx = @hint + 1
+            while idx < limit
+              if @offsets[idx] > byte_offset
+                return idx - 1
+              end
+              if @offsets[idx] == byte_offset
+                return idx
+              end
+              idx += 1
+            end
+          else
+            # Scan backwards
+            limit = @hint > WINDOW ? @hint - WINDOW : 0
+            idx = @hint
+            while idx >= limit + 1
+              if @offsets[idx - 1] <= byte_offset
+                return idx - 1
+              end
+              idx -= 1
+            end
+          end
+
+          nil
+        end
+      end
+
       # :stopdoc:
       # This is not part of the public API but used by some gems.
 
@@ -489,6 +547,7 @@ module Prism
         @lineno = lineno
         @column = 0
         @result = nil
+        @line_and_column_cache = nil
       end
 
       ##########################################################################
@@ -4014,6 +4073,10 @@ module Prism
         @result ||= Prism.parse(source, partial_script: true, version: "current")
       end
 
+      def line_and_column_cache
+        @line_and_column_cache ||= LineAndColumnCache.new(result.source)
+      end
+
       ##########################################################################
       # Helpers
       ##########################################################################
@@ -4114,12 +4177,8 @@ module Prism
 
       # This method is responsible for updating lineno and column information
       # to reflect the current node.
-      #
-      # This method could be drastically improved with some caching on the start
-      # of every line, but for now it's good enough.
       def bounds(location)
-        @lineno = location.start_line
-        @column = location.start_column
+        @lineno, @column = line_and_column_cache.line_and_column(location.start_offset)
       end
 
       # :startdoc:
