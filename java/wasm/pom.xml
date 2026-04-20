@@ -15,7 +15,7 @@
 
   <properties>
     <chicory.version>1.7.5</chicory.version>
-    <redline.version>0.0.2</redline.version>
+    <redline.version>0.0.3</redline.version>
   </properties>
 
   <dependencyManagement>
