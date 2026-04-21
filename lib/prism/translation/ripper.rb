@@ -347,7 +347,7 @@ module Prism
         "__ENCODING__",
         "__FILE__",
         "__LINE__"
-      ]
+      ].to_set
 
       # A list of all of the Ruby binary operators.
       BINARY_OPERATORS = [
@@ -372,7 +372,7 @@ module Prism
         :/,
         :*,
         :**
-      ]
+      ].to_set
 
       private_constant :KEYWORDS, :BINARY_OPERATORS
 
@@ -1295,7 +1295,7 @@ module Prism
               bounds(node.location)
               on_unary(:!, receiver)
             end
-          when *BINARY_OPERATORS
+          when BINARY_OPERATORS
             receiver = visit(node.receiver)
 
             bounds(node.message_loc)
@@ -4095,24 +4095,23 @@ module Prism
       # Visit the string content of a particular node. This method is used to
       # split into the various token types.
       def visit_token(token, allow_keywords = true)
-        case token
-        when "."
+        if token == "."
           on_period(token)
-        when "`"
+        elsif token == "`"
           on_backtick(token)
-        when *(allow_keywords ? KEYWORDS : [])
+        elsif allow_keywords && KEYWORDS.include?(token)
           on_kw(token)
-        when /^_/
+        elsif token.start_with?("_")
           on_ident(token)
-        when /^[[:upper:]]\w*$/
+        elsif token.match?(/^[[:upper:]]\w*$/)
           on_const(token)
-        when /^@@/
+        elsif token.start_with?("@@")
           on_cvar(token)
-        when /^@/
+        elsif token.start_with?("@")
           on_ivar(token)
-        when /^\$/
+        elsif token.start_with?("$")
           on_gvar(token)
-        when /^[[:punct:]]/
+        elsif token.match?(/^[[:punct:]]/)
           on_op(token)
         else
           on_ident(token)
