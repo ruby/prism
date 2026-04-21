@@ -2,7 +2,7 @@ name: JavaScript bindings
 
 on:
   push:
-    paths:
+    paths: &paths
       - ".github/workflows/javascript-bindings.yml"
       - "include/"
       - "src/"
@@ -11,6 +11,7 @@ on:
       - main
       - ruby-4.0
   pull_request:
+    paths: *paths
 
 jobs:
   build:

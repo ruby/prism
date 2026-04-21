@@ -2,7 +2,7 @@ name: Java WASM bindings
 
 on:
   push:
-    paths:
+    paths: &paths
       - ".github/workflows/java-wasm-bindings.yml"
       - "include/"
       - "src/"
@@ -13,6 +13,7 @@ on:
       - main
       - ruby-4.0
   pull_request:
+    paths: *paths
 
 jobs:
   build-wasm:
