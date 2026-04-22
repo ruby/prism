@@ -135,6 +135,13 @@ struct pm_options_t {
      * between concurrency primitives.
      */
     bool freeze;
+
+    /*
+     * Whether or not the parser should attach comments to the AST nodes after
+     * parsing. When this is set to true, comments will be attached to the
+     * nearest relevant nodes in the tree.
+     */
+    bool attach_comments;
 };
 
 /* Free the internal memory associated with the options. */

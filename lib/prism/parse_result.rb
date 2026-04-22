@@ -392,9 +392,6 @@ module Prism
     # The length of this location in bytes.
     attr_reader :length #: Integer
 
-    # @rbs @leading_comments: Array[Comment]?
-    # @rbs @trailing_comments: Array[Comment]?
-
     # Create a new location object with the given source, start byte offset, and
     # byte length.
     #--
@@ -403,50 +400,6 @@ module Prism
       @source = source
       @start_offset = start_offset
       @length = length
-
-      # These are used to store comments that are associated with this location.
-      # They are initialized to `nil` to save on memory when there are no
-      # comments to be attached and/or the comment-related APIs are not used.
-      @leading_comments = nil
-      @trailing_comments = nil
-    end
-
-    # These are the comments that are associated with this location that exist
-    # before the start of this location.
-    #--
-    #: () -> Array[Comment]
-    def leading_comments
-      @leading_comments ||= []
-    end
-
-    # Attach a comment to the leading comments of this location.
-    #--
-    #: (Comment comment) -> void
-    def leading_comment(comment)
-      leading_comments << comment
-    end
-
-    # These are the comments that are associated with this location that exist
-    # after the end of this location.
-    #--
-    #: () -> Array[Comment]
-    def trailing_comments
-      @trailing_comments ||= []
-    end
-
-    # Attach a comment to the trailing comments of this location.
-    #--
-    #: (Comment comment) -> void
-    def trailing_comment(comment)
-      trailing_comments << comment
-    end
-
-    # Returns all comments that are associated with this location (both leading
-    # and trailing comments).
-    #--
-    #: () -> Array[Comment]
-    def comments
-      [*@leading_comments, *@trailing_comments] #: Array[Comment]
     end
 
     # Create a new location object with the given options.
@@ -695,6 +648,22 @@ module Prism
     #: (Location location) -> void
     def initialize(location)
       @location = location
+    end
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment starts.
+    #--
+    #: () -> Integer
+    def start_offset
+      location.start_offset
+    end
+
+    # Returns the byte offset from the beginning of the source where this
+    # comment ends.
+    #--
+    #: () -> Integer
+    def end_offset
+      location.end_offset
     end
 
     # Implement the hash pattern matching interface for Comment.
@@ -986,11 +955,9 @@ module Prism
 
   # This is a result specific to the `parse` and `parse_file` methods.
   class ParseResult < Result
-    autoload :Comments, "prism/parse_result/comments"
     autoload :Errors, "prism/parse_result/errors"
     autoload :Newlines, "prism/parse_result/newlines"
 
-    private_constant :Comments
     private_constant :Errors
     private_constant :Newlines
 
@@ -1010,13 +977,6 @@ module Prism
     #: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def deconstruct_keys(keys) # :nodoc:
       super.merge!(value: value)
-    end
-
-    # Attach the list of comments to their respective locations in the tree.
-    #--
-    #: () -> void
-    def attach_comments!
-      Comments.new(self).attach! # steep:ignore
     end
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating

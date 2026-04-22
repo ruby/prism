@@ -22381,6 +22381,7 @@ pm_parser_init(pm_arena_t *arena, pm_parser_t *parser, const uint8_t *source, si
         .command_line = 0,
         .parsing_eval = false,
         .partial_script = false,
+        .attach_comments = false,
         .command_start = true,
         .recovering = false,
         .continuable = true,
@@ -22445,6 +22446,9 @@ pm_parser_init(pm_arena_t *arena, pm_parser_t *parser, const uint8_t *source, si
 
         // partial_script
         parser->partial_script = options->partial_script;
+
+        // attach_comments
+        parser->attach_comments = options->attach_comments;
 
         // scopes option
         parser->parsing_eval = options->scopes_count > 0;
@@ -22629,6 +22633,16 @@ pm_parser_cleanup(pm_parser_t *parser) {
 }
 
 /**
+ * Returns the comment attachment data for the given node_id.
+ */
+const pm_comments_t *
+pm_parser_comments(const pm_parser_t *parser, uint32_t node_id) {
+    const pm_comments_map_t *map = parser->comments_map;
+    if (map == NULL || node_id >= map->size) return NULL;
+    return map->entries[node_id];
+}
+
+/**
  * Free both the memory held by the given parser and the parser itself.
  */
 void
@@ -22806,6 +22820,11 @@ pm_node_t *
 pm_parse(pm_parser_t *parser) {
     pm_node_t *node = parse_program(parser);
     pm_parse_continuable(parser);
+
+    if (parser->attach_comments) {
+        pm_attach_comments(parser, node);
+    }
+
     return node;
 }
 

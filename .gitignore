@@ -31,6 +31,7 @@ out.svg
 /fuzz/output/
 /gemfiles/typecheck/bin/
 /include/prism/ast.h
+/include/prism/comments.h
 /include/prism/internal/diagnostic.h
 /javascript/node_modules/
 /javascript/package-lock.json
@@ -43,6 +44,7 @@ out.svg
 /java/org/ruby_lang/prism/Loader.java
 /java/org/ruby_lang/prism/Nodes.java
 /java/wasm/src/main/wasm/prism.wasm
+/lib/prism/comments.rb
 /lib/prism/compiler.rb
 /lib/prism/dispatcher.rb
 /lib/prism/dot_visitor.rb

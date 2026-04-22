@@ -160,6 +160,11 @@ function dumpOptions(options) {
   template.push("C");
   values.push(dumpBooleanOption(options.partial_script));
 
+  // freeze
+  template.push("C");
+  values.push(0);
+
+  // attach_comments
   template.push("C");
   values.push(0);
 

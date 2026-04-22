@@ -40,4 +40,55 @@ PRISM_EXPORTED_FUNCTION pm_location_t pm_comment_location(const pm_comment_t *co
  */
 PRISM_EXPORTED_FUNCTION pm_comment_type_t pm_comment_type(const pm_comment_t *comment) PRISM_NONNULL(1);
 
+/**
+ * The type of comment attachment on a node.
+ */
+typedef enum {
+    PM_COMMENTS_NONE = 0,
+<%- comments.each do |comment| -%>
+    PM_COMMENTS_<%= comment.enum_name %>,
+<%- end -%>
+} pm_comments_type_t;
+
+/**
+ * A list of comment pointers.
+ */
+typedef struct {
+    /** The array of comment pointers. */
+    const pm_comment_t **comments;
+
+    /** The number of comments in the list. */
+    size_t size;
+} pm_comments_list_t;
+
+/**
+ * Base type for comment attachment data on a node. Cast to the specific type
+ * based on the `type` field.
+ */
+typedef struct {
+    /** The type of comment attachment. */
+    pm_comments_type_t type;
+} pm_comments_t;
+
+<%- comments.each do |comment| -%>
+/**
+<%- comment.each_comment_line do |line| -%>
+ *<%= line %>
+<%- end -%>
+ */
+typedef struct {
+    /** The base comment attachment data. */
+    pm_comments_t base;
+<%- comment.fields.each do |field| -%>
+
+    /** <%= field.comment %> */
+<%- if field.list? -%>
+    pm_comments_list_t <%= field.name %>;
+<%- else -%>
+    const pm_comment_t *<%= field.name %>;
+<%- end -%>
+<%- end -%>
+} <%= comment.c_type %>;
+
+<%- end -%>
 #endif

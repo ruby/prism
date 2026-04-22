@@ -124,6 +124,7 @@ end
 
 require_relative "prism/polyfill/byteindex"
 require_relative "prism/polyfill/warn"
+require_relative "prism/comments"
 require_relative "prism/node"
 require_relative "prism/node_ext"
 require_relative "prism/parse_result"
