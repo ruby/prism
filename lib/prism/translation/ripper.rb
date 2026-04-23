@@ -704,6 +704,8 @@ module Prism
             previous = element
           end
 
+          visit_words_sep(opening_loc, node.elements.last, node.closing_loc)
+
           bounds(node.closing_loc)
           on_tstring_end(node.closing)
         when /^%i/
@@ -722,6 +724,8 @@ module Prism
 
             previous = element
           end
+
+          visit_words_sep(opening_loc, node.elements.last, node.closing_loc)
 
           bounds(node.closing_loc)
           on_tstring_end(node.closing)
@@ -760,6 +764,8 @@ module Prism
             previous = element
           end
 
+          visit_words_sep(opening_loc, node.elements.last, node.closing_loc)
+
           bounds(node.closing_loc)
           on_tstring_end(node.closing)
         when /^%I/
@@ -797,6 +803,8 @@ module Prism
             previous = element
           end
 
+          visit_words_sep(opening_loc, node.elements.last, node.closing_loc)
+
           bounds(node.closing_loc)
           on_tstring_end(node.closing)
         else
@@ -813,15 +821,21 @@ module Prism
         on_array(elements)
       end
 
-      # Dispatch a words_sep event that contains the space between the elements
+      # Dispatch words_sep events that contains the whitespace between the elements
       # of list literals.
       private def visit_words_sep(opening_loc, previous, current)
-        end_offset = (previous.nil? ? opening_loc : previous.location).end_offset
-        start_offset = current.location.start_offset
+        start_offset = (previous.nil? ? opening_loc : previous.location).end_offset
+        end_offset = current.start_offset
+        length = end_offset - start_offset
 
-        if end_offset != start_offset
-          bounds(current.location.copy(start_offset: end_offset))
-          on_words_sep(source.byteslice(end_offset...start_offset))
+        if length > 0
+          whitespace = source.byteslice(start_offset, length)
+          current_offset = start_offset
+          whitespace.each_line do |part|
+            bounds(opening_loc.copy(start_offset: current_offset, length: part.bytesize))
+            on_words_sep(part)
+            current_offset += part.bytesize
+          end
         end
       end
 

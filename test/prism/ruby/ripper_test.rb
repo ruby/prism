@@ -101,6 +101,7 @@ module Prism
       "seattlerb/messy_op_asgn_lineno.txt",
       "seattlerb/op_asgn_primary_colon_const_command_call.txt",
       "seattlerb/parse_pattern_076.txt",
+      "seattlerb/pct_w_heredoc_interp_nested.txt",
       "tilde_heredocs.txt",
       "unparser/corpus/literal/assignment.txt",
       "unparser/corpus/literal/pattern.txt",
@@ -138,11 +139,11 @@ module Prism
       end
     end
 
-    UNSUPPORTED_EVENTS = %i[comma ignored_nl label_end nl semicolon sp words_sep ignored_sp]
+    UNSUPPORTED_EVENTS = %i[comma ignored_nl label_end nl semicolon sp ignored_sp]
     # Events that are currently not emitted
     SUPPORTED_EVENTS = Translation::Ripper::EVENTS - UNSUPPORTED_EVENTS
     # Events that assert against their line/column
-    CHECK_LOCATION_EVENTS = %i[kw op lbrace rbrace lbracket rbracket lparen rparen]
+    CHECK_LOCATION_EVENTS = %i[kw op lbrace rbrace lbracket rbracket lparen rparen words_sep]
 
     module Events
       attr_reader :events
