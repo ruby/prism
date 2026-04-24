@@ -22,7 +22,6 @@ module Prism
     # - on_comma
     # - on_ignored_nl
     # - on_ignored_sp
-    # - on_label_end
     # - on_nl
     # - on_operator_ambiguous
     # - on_semicolon
@@ -3633,7 +3632,13 @@ module Prism
         end
 
         result = yield
-        return result if assoc
+        if assoc
+          if node.closing != ":"
+            bounds(node.closing_loc)
+            on_label_end(node.closing)
+          end
+          return result
+        end
 
         if is_heredoc
           bounds(node.closing_loc)
