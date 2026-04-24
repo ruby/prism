@@ -139,11 +139,11 @@ module Prism
       end
     end
 
-    UNSUPPORTED_EVENTS = %i[comma ignored_nl label_end nl semicolon sp ignored_sp]
+    UNSUPPORTED_EVENTS = %i[comma ignored_nl nl semicolon sp ignored_sp]
     # Events that are currently not emitted
     SUPPORTED_EVENTS = Translation::Ripper::EVENTS - UNSUPPORTED_EVENTS
     # Events that assert against their line/column
-    CHECK_LOCATION_EVENTS = %i[kw op lbrace rbrace lbracket rbracket lparen rparen words_sep]
+    CHECK_LOCATION_EVENTS = %i[kw op lbrace rbrace lbracket rbracket lparen rparen words_sep label_end]
 
     module Events
       attr_reader :events
