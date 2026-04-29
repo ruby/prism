@@ -182,4 +182,70 @@ module Prism
     sig { returns(::T.nilable(Location)) }
     def full_message_loc; end
   end
+
+  class InNode < Node
+    sig { returns(String) }
+    def in; end
+
+    sig { returns(Location) }
+    def in_loc; end
+
+    sig { returns(::T.nilable(String)) }
+    def then; end
+
+    sig { returns(::T.nilable(Location)) }
+    def then_loc; end
+  end
+
+  class MatchPredicateNode < Node
+    sig { returns(String) }
+    def operator; end
+
+    sig { returns(Location) }
+    def operator_loc; end
+  end
+
+  class UnlessNode < Node
+    sig { returns(String) }
+    def keyword; end
+
+    sig { returns(Location) }
+    def keyword_loc; end
+  end
+
+  class UntilNode < Node
+    sig { returns(String) }
+    def keyword; end
+
+    sig { returns(Location) }
+    def keyword_loc; end
+
+    sig { returns(::T.nilable(String)) }
+    def closing; end
+
+    sig { returns(::T.nilable(Location)) }
+    def closing_loc; end
+  end
+
+  class WhenNode < Node
+    sig { returns(String) }
+    def keyword; end
+
+    sig { returns(Location) }
+    def keyword_loc; end
+  end
+
+  class WhileNode < Node
+    sig { returns(String) }
+    def keyword; end
+
+    sig { returns(Location) }
+    def keyword_loc; end
+
+    sig { returns(::T.nilable(String)) }
+    def closing; end
+
+    sig { returns(::T.nilable(Location)) }
+    def closing_loc; end
+  end
 end

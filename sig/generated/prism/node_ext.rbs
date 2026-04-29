@@ -212,4 +212,70 @@ module Prism
     # : () -> Location?
     def full_message_loc: () -> Location?
   end
+
+  class InNode < Node
+    # : () -> String
+    def in: () -> String
+
+    # : () -> Location
+    def in_loc: () -> Location
+
+    # : () -> String?
+    def then: () -> String?
+
+    # : () -> Location?
+    def then_loc: () -> Location?
+  end
+
+  class MatchPredicateNode < Node
+    # : () -> String
+    def operator: () -> String
+
+    # : () -> Location
+    def operator_loc: () -> Location
+  end
+
+  class UnlessNode < Node
+    # : () -> String
+    def keyword: () -> String
+
+    # : () -> Location
+    def keyword_loc: () -> Location
+  end
+
+  class UntilNode < Node
+    # : () -> String
+    def keyword: () -> String
+
+    # : () -> Location
+    def keyword_loc: () -> Location
+
+    # : () -> String?
+    def closing: () -> String?
+
+    # : () -> Location?
+    def closing_loc: () -> Location?
+  end
+
+  class WhenNode < Node
+    # : () -> String
+    def keyword: () -> String
+
+    # : () -> Location
+    def keyword_loc: () -> Location
+  end
+
+  class WhileNode < Node
+    # : () -> String
+    def keyword: () -> String
+
+    # : () -> Location
+    def keyword_loc: () -> Location
+
+    # : () -> String?
+    def closing: () -> String?
+
+    # : () -> Location?
+    def closing_loc: () -> Location?
+  end
 end
