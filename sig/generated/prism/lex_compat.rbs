@@ -19,6 +19,12 @@ module Prism
           def self.[]: (Integer value) -> State
         end
       end
+
+      class LineAndColumnCache
+        def initialize: (Source source) -> void
+
+        def line_and_column: (Integer byte_offset) -> [ Integer, Integer ]
+      end
     end
   end
 

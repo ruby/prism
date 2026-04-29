@@ -123,10 +123,10 @@ module Prism
     sig { void }
     def deep_freeze; end
 
-    # Binary search through the offsets to find the line number for the given
+    # Binary search through the offsets to find the index for the given
     # byte offset.
     sig { params(byte_offset: Integer).returns(Integer) }
-    private def find_line(byte_offset); end
+    def find_line(byte_offset); end
   end
 
   # A cache that can be used to quickly compute code unit offsets from byte

@@ -223,9 +223,7 @@ module Prism
       freeze
     end
 
-    private
-
-    # Binary search through the offsets to find the line number for the given
+    # Binary search through the offsets to find the index for the given
     # byte offset.
     #--
     #: (Integer byte_offset) -> Integer
