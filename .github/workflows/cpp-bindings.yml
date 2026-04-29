@@ -4,9 +4,9 @@ on:
   push:
     paths: &paths
       - ".github/workflows/cpp-bindings.yml"
-      - "include/"
-      - "src/"
-      - "cpp/"
+      - "include/**"
+      - "src/**"
+      - "cpp/**"
       - "*akefile*"
     branches:
       - main
