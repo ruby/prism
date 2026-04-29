@@ -4,11 +4,11 @@ on:
   push:
     paths: &paths
       - ".github/workflows/java-wasm-bindings.yml"
-      - "include/"
-      - "src/"
+      - "include/**"
+      - "src/**"
       - "*akefile*"
-      - "java/"
-      - "java/wasm/"
+      - "java/**"
+      - "java/wasm/**"
     branches:
       - main
       - ruby-4.0

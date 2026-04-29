@@ -4,8 +4,8 @@ on:
   push:
     paths: &paths
       - ".github/workflows/javascript-bindings.yml"
-      - "include/"
-      - "src/"
+      - "include/**"
+      - "src/**"
       - "*akefile*"
     branches:
       - main

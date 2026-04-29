@@ -4,9 +4,9 @@ on:
   push:
     paths: &paths
       - ".github/workflows/rust-bindings.yml"
-      - "include/"
-      - "src/"
-      - "rust/"
+      - "include/**"
+      - "src/**"
+      - "rust/**"
       - "*akefile*"
     branches:
       - main
