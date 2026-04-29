@@ -50,7 +50,7 @@ jobs:
         run: |
           ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
           autoconf
-          ./configure -C --disable-install-doc --with-parser=${{ matrix.parser }}
+          ./configure -C --disable-install-doc --with-parser=${{ matrix.parser }} --with-gcc 'debugflags=-save-temps=obj -g'
           make -j$(nproc)
         working-directory: ruby/ruby
       - name: make test-all
@@ -59,3 +59,11 @@ jobs:
           EXCLUDES: ${{ matrix.parser == 'parse.y' && './test/.excludes-parsey' }}
         run: make -j$(nproc) -s test-all
         working-directory: ruby/ruby
+
+      - name: Update depend files
+        run: make fix-depends
+        working-directory: ruby/ruby
+      - name: Check depend is up-to-date
+        run: git diff --color --no-ext-diff --ignore-submodules --exit-code -- depend
+        working-directory: ruby/ruby
+
