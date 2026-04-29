@@ -169,6 +169,12 @@ module Prism
   #   introduce some kind of LRU cache to limit the number of entries, but this
   #   has not yet been implemented.
   class CodeUnitsCache
+    # Counter used for UTF-8, where one code unit equals one byte.
+    class UTF8Counter
+      # : (Integer byte_offset, Integer byte_length) -> Integer
+      def count: (Integer byte_offset, Integer byte_length) -> Integer
+    end
+
     class UTF16Counter
       @source: String
 
@@ -181,7 +187,10 @@ module Prism
       def count: (Integer byte_offset, Integer byte_length) -> Integer
     end
 
-    class LengthCounter
+    # Counter used for UTF-32, where one code unit equals one code point and
+    # matches String#length. Also used as a best-effort fallback for any other
+    # encoding that does not have a dedicated counter.
+    class UTF32Counter
       @source: String
 
       @encoding: Encoding
@@ -195,7 +204,7 @@ module Prism
 
     @source: String
 
-    @counter: UTF16Counter | LengthCounter
+    @counter: UTF8Counter | UTF16Counter | UTF32Counter
 
     @cache: Hash[Integer, Integer]
 
