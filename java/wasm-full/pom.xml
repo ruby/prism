@@ -5,17 +5,16 @@
   <parent>
     <groupId>org.ruby-lang</groupId>
     <artifactId>prism-parser</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>prism-parser-wasm</artifactId>
-  <name>Java Prism WASM with semantic-only content</name>
+  <artifactId>prism-parser-wasm-full</artifactId>
+  <name>Java Prism WASM with full parsed content</name>
   <description>Java WASM bindings for the Prism parser shared library</description>
   <url>https://github.com/ruby/prism</url>
 
   <properties>
     <chicory.version>1.7.5</chicory.version>
-    <redline.version>0.0.3</redline.version>
   </properties>
 
   <dependencyManagement>
@@ -31,11 +30,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.ruby-lang</groupId>
-      <artifactId>prism-parser-api</artifactId>
-      <version>0.0.4-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>com.dylibso.chicory</groupId>
       <artifactId>runtime</artifactId>
@@ -58,25 +52,14 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>10.0.5.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.roastedroot</groupId>
-      <artifactId>redline</artifactId>
-      <version>${redline.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>io.roastedroot</groupId>
-        <artifactId>redline-compiler-maven-plugin</artifactId>
-        <version>${redline.version}</version>
+        <groupId>com.dylibso.chicory</groupId>
+        <artifactId>chicory-compiler-maven-plugin</artifactId>
+        <version>${chicory.version}</version>
         <executions>
           <execution>
             <id>prism</id>
@@ -84,9 +67,9 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <name>org.ruby_lang.prism.wasm.PrismParser</name>
-              <moduleInterface>org.ruby_lang.prism.wasm.Prism</moduleInterface>
-              <wasmFile>src/main/wasm/prism.wasm</wasmFile>
+              <name>org.ruby_lang.prism.wasm.full.PrismParser</name>
+              <moduleInterface>org.ruby_lang.prism.wasm.full.Prism</moduleInterface>
+              <wasmFile>src/main/wasm/prism-full.wasm</wasmFile>
             </configuration>
           </execution>
         </executions>

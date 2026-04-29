@@ -267,12 +267,4 @@ typedef enum pm_<%= flag.human %> {
 PRISM_EXPORTED_FUNCTION pm_<%= node.human %>_t * pm_<%= node.human %>_new(pm_arena_t *arena, uint32_t node_id, pm_node_flags_t flags, pm_location_t location<%= params.empty? ? "" : ", #{params.join(", ")}" %>);
 <%- end -%>
 
-/**
- * When we're serializing to Java, we want to skip serializing the location
- * fields as they won't be used by JRuby or TruffleRuby. This boolean allows us
- * to specify that through the environment. It will never be true except for in
- * those build systems.
- */
-#define PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS <%= Prism::Template::SERIALIZE_ONLY_SEMANTICS_FIELDS ? 1 : 0 %>
-
 #endif

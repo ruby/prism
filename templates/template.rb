@@ -7,12 +7,11 @@ require "yaml"
 
 module Prism
   module Template # :nodoc: all
-    SERIALIZE_ONLY_SEMANTICS_FIELDS = ENV.fetch("PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS", false)
     CHECK_FIELD_KIND = ENV.fetch("CHECK_FIELD_KIND", false)
 
     JAVA_BACKEND = ENV["PRISM_JAVA_BACKEND"] || "default"
     JAVA_IDENTIFIER_TYPE = JAVA_BACKEND == "truffleruby" ? "String" : "byte[]"
-    INCLUDE_NODE_ID = !SERIALIZE_ONLY_SEMANTICS_FIELDS || JAVA_BACKEND == "jruby"
+    INCLUDE_NODE_ID = ENV.fetch("PRISM_INCLUDE_NODE_ID", "true") != "false"
 
     COMMON_FLAGS_COUNT = 2
 
@@ -94,10 +93,6 @@ module Prism
 
       def semantic_field?
         true
-      end
-
-      def should_be_serialized?
-        SERIALIZE_ONLY_SEMANTICS_FIELDS ? semantic_field? : true
       end
     end
 

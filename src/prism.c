@@ -22862,7 +22862,11 @@ pm_serialize_header(pm_buffer_t *buffer) {
     pm_buffer_append_byte(buffer, PRISM_VERSION_MAJOR);
     pm_buffer_append_byte(buffer, PRISM_VERSION_MINOR);
     pm_buffer_append_byte(buffer, PRISM_VERSION_PATCH);
-    pm_buffer_append_byte(buffer, PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS ? 1 : 0);
+    #ifdef PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS
+        pm_buffer_append_byte(buffer, 1);
+    #else
+        pm_buffer_append_byte(buffer, 0);
+    #endif
 }
 
 /**

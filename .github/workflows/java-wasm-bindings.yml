@@ -28,7 +28,7 @@ jobs:
           bundler-cache: true
 
       - name: rake templates
-        run: PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake templates
+        run: PRISM_EXCLUDE_PRETTYPRINT=1 PRISM_INCLUDE_NODE_ID=false bundle exec rake templates
 
       - name: Set up WASI-SDK
         run: |
