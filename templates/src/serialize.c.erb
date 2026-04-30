@@ -279,9 +279,59 @@ void
 pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) {
     pm_serialize_metadata(parser, buffer);
 
-    // Here we're going to leave space for the offset of the constant pool in
-    // the buffer.
-    size_t offset = buffer->length;
+    // Serialize the comments map before the nodes so the deserializer can
+    // read it first and pass comments into node constructors.
+    const pm_comments_map_t *comments_map = parser->comments_map;
+    if (comments_map != NULL) {
+        // Count non-NONE entries.
+        uint32_t count = 0;
+        for (size_t index = 0; index < comments_map->size; index++) {
+            if (comments_map->entries[index] != NULL) count++;
+        }
+        pm_buffer_append_varuint(buffer, count);
+
+        for (size_t index = 0; index < comments_map->size; index++) {
+            const pm_comments_t *entry = comments_map->entries[index];
+            if (entry == NULL) continue;
+
+            pm_buffer_append_varuint(buffer, (uint32_t) index); // node_id
+            pm_buffer_append_byte(buffer, (uint8_t) entry->type);
+
+            // Serialize fields based on type. Single comments are serialized
+            // as a boolean + start_offset. Lists are count + start_offsets.
+            #define SERIALIZE_COMMENT(c) do { \
+                if (c) { pm_buffer_append_byte(buffer, 1); pm_buffer_append_varuint(buffer, (c)->location.start); } \
+                else { pm_buffer_append_byte(buffer, 0); } \
+            } while (0)
+            #define SERIALIZE_LIST(l) do { \
+                pm_buffer_append_varuint(buffer, (uint32_t) (l).size); \
+                for (size_t _i = 0; _i < (l).size; _i++) { \
+                    pm_buffer_append_varuint(buffer, (l).comments[_i]->location.start); \
+                } \
+            } while (0)
+
+            switch (entry->type) {
+                case PM_COMMENTS_NONE: break;
+                <%- comments.each do |comment| -%>
+                case PM_COMMENTS_<%= comment.enum_name %>: {
+                    const <%= comment.c_type %> *t = (const <%= comment.c_type %> *) entry;
+                    <%- comment.fields.each do |field| -%>
+                    <%= field.list? ? "SERIALIZE_LIST" : "SERIALIZE_COMMENT" %>(t-><%= field.name %>);
+                    <%- end -%>
+                    break;
+                }
+                <%- end -%>
+            }
+
+            #undef SERIALIZE_COMMENT
+            #undef SERIALIZE_LIST
+        }
+    } else {
+        pm_buffer_append_varuint(buffer, 0);
+    }
+
+    // Leave space for the offset of the constant pool.
+    size_t cpool_offset_location = buffer->length;
     pm_buffer_append_zeroes(buffer, 4);
 
     // Next, encode the length of the constant pool.
@@ -292,11 +342,11 @@ pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) 
 
     // Now we're going to serialize the offset of the constant pool back where
     // we left space for it.
-    uint32_t length = pm_sizet_to_u32(buffer->length);
-    memcpy(buffer->value + offset, &length, sizeof(uint32_t));
+    uint32_t cpool_offset = pm_sizet_to_u32(buffer->length);
+    memcpy(buffer->value + cpool_offset_location, &cpool_offset, sizeof(uint32_t));
 
     // Now we're going to serialize the constant pool.
-    offset = buffer->length;
+    size_t cpool_data_offset = buffer->length;
     pm_buffer_append_zeroes(buffer, parser->constant_pool.size * 8);
 
     for (uint32_t index = 0; index < parser->constant_pool.capacity; index++) {
@@ -306,7 +356,7 @@ pm_serialize_content(pm_parser_t *parser, pm_node_t *node, pm_buffer_t *buffer) 
         // index in the buffer.
         if (bucket->id != 0) {
             pm_constant_t *constant = &parser->constant_pool.constants[bucket->id - 1];
-            size_t buffer_offset = offset + ((((size_t)bucket->id) - 1) * 8);
+            size_t buffer_offset = cpool_data_offset + ((((size_t)bucket->id) - 1) * 8);
 
             // Write the constant contents into the buffer after the constant
             // pool. In place of the source offset, we store a buffer offset.

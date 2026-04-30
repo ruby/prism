@@ -74,7 +74,10 @@ module Prism
       sig { returns(T::Boolean) }
       def eof?; end
 
-      sig { params(constant_pool: ConstantPool).void }
+      sig { params(comments: T::Array[Comment], freeze: T::Boolean).returns(::T.nilable(T::Hash[Integer, Comments::Base])) }
+      def load_attached_comments(comments, freeze); end
+
+      sig { params(constant_pool: ::T.untyped).returns(::T.untyped) }
       def load_constant_pool(constant_pool); end
 
       sig { void }
@@ -129,8 +132,8 @@ module Prism
       sig { returns(Integer) }
       def load_uint32; end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(::T.nilable(Node)) }
-      def load_optional_node(constant_pool, encoding, freeze); end
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean, comments: ::T.nilable(T::Hash[Integer, Comments::Base])).returns(::T.nilable(Node)) }
+      def load_optional_node(constant_pool, encoding, freeze, comments = T.unsafe(nil)); end
 
       sig { params(encoding: Encoding).returns(String) }
       def load_string(encoding); end
@@ -159,8 +162,8 @@ module Prism
       sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(::T.nilable(Symbol)) }
       def load_optional_constant(constant_pool, encoding); end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(Node) }
-      def load_node(constant_pool, encoding, freeze); end
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean, comments: ::T.nilable(T::Hash[Integer, Comments::Base])).returns(Node) }
+      def load_node(constant_pool, encoding, freeze, comments); end
 
       sig { void }
       def define_load_node_lambdas; end

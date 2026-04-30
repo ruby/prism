@@ -38,7 +38,7 @@ static void
 prettyprint_node(pm_buffer_t *output_buffer, const pm_parser_t *parser, const pm_node_t *node, pm_buffer_t *prefix_buffer) {
     switch (PM_NODE_TYPE(node)) {
         case PM_SCOPE_NODE:
-            // We do not need to print a ScopeNode as it's not part of the AST.
+            // We do not need to print this as it's not a standard AST node.
             return;
         <%- nodes.each do |node| -%>
         case <%= node.type %>: {

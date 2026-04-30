@@ -338,6 +338,16 @@ PRISM_EXPORTED_FUNCTION void pm_parser_constants_each(const pm_parser_t *parser,
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_parser_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) PRISM_NONNULL(1);
 
 /**
+ * Returns the comments object for the given node_id, or NULL if the node has no
+ * attached comments or comment attachment was not requested.
+ *
+ * @param parser the parser to query
+ * @param node_id the node_id to look up
+ * @returns the comments object for the given node_id, or NULL
+ */
+PRISM_EXPORTED_FUNCTION const pm_comments_t *pm_parser_comments(const pm_parser_t *parser, uint32_t node_id) PRISM_NONNULL(1);
+
+/**
  * Initiate the parser with the given parser.
  *
  * @param parser The parser to use.

@@ -1,0 +1,562 @@
+# Generated from lib/prism/comments.rb with RBS::Inline
+
+module Prism
+  # The module containing definitions of all of the various comment attachment
+  # objects.
+  module Comments
+    # The base class for all comment attachment types.
+    class Base
+    end
+
+    # Comments for alias method nodes, which can have comments between the
+    # two arguments.
+    #
+    #     alias a
+    #       # comment
+    #       # comment
+    #       b
+    class AliasMethodComments < Base
+      # The comments in the gap between the two arguments.
+      attr_reader gap_comments: Array[Comment]
+
+      # : (Array[Comment] gap_comments) -> void
+      def initialize: (Array[Comment] gap_comments) -> void
+    end
+
+    # Comments for argument list nodes, which can have comments between
+    # arguments.
+    #
+    #     foo(a,
+    #       # comment
+    #       b)
+    class ArgumentsComments < Base
+      # The comments between arguments.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Array[Comment] inner_comments) -> void
+      def initialize: (Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for binary expressions like &&. Captures a comment trailing the
+    # operator and any comments in the gap between the operator and the
+    # right-hand side.
+    #
+    #     a && # comment
+    #       # comment
+    #       b
+    class BinaryComments < Base
+      # The comment trailing the operator.
+      attr_reader operator_comment: Comment?
+
+      # The comments in the gap between the operator and the right-hand side.
+      attr_reader gap_comments: Array[Comment]
+
+      # : (Comment? operator_comment, Array[Comment] gap_comments) -> void
+      def initialize: (Comment? operator_comment, Array[Comment] gap_comments) -> void
+    end
+
+    # Comments for nodes with a body delimited by a keyword and end, such as
+    # begin, while, until, if, unless, and similar nodes. The opening comment
+    # trails the keyword (or the last token on the opening line).
+    #
+    #     begin # opening comment
+    #       bar
+    #     end # trailing comment
+    class BodyComments < Base
+      # The comment trailing the opening keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for call nodes with a call operator (e.g., dot or &.).
+    # Captures a trailing comment, gap comments between the receiver and
+    # operator, the operator comment, and gap comments between the operator
+    # and the message.
+    #
+    #     foo
+    #       # receiver gap comment
+    #       . # operator comment
+    #       # message gap comment
+    #       bar # trailing comment
+    class CallComments < Base
+      # The comment trailing the call.
+      attr_reader trailing_comment: Comment?
+
+      # The comments between the receiver and the call operator.
+      attr_reader receiver_gap_comments: Array[Comment]
+
+      # The comment trailing the call operator.
+      attr_reader operator_comment: Comment?
+
+      # The comments between the call operator and the message.
+      attr_reader message_gap_comments: Array[Comment]
+
+      # : (Comment? trailing_comment, Array[Comment] receiver_gap_comments, Comment? operator_comment, Array[Comment] message_gap_comments) -> void
+      def initialize: (Comment? trailing_comment, Array[Comment] receiver_gap_comments, Comment? operator_comment, Array[Comment] message_gap_comments) -> void
+    end
+
+    # Comments for call-write nodes (e.g., foo.bar = 1, foo.bar += 1) which
+    # have both a call operator and an assignment operator with potential
+    # comments on each.
+    #
+    #     foo. # call operator comment
+    #       # call gap comment
+    #       bar += # operator comment
+    #       # operator gap comment
+    #       1
+    class CallWriteComments < Base
+      # The comment trailing the call operator.
+      attr_reader call_operator_comment: Comment?
+
+      # The comments between the call operator and the message.
+      attr_reader call_gap_comments: Array[Comment]
+
+      # The comment trailing the assignment operator.
+      attr_reader operator_comment: Comment?
+
+      # The comments between the assignment operator and the value.
+      attr_reader operator_gap_comments: Array[Comment]
+
+      # : (Comment? call_operator_comment, Array[Comment] call_gap_comments, Comment? operator_comment, Array[Comment] operator_gap_comments) -> void
+      def initialize: (Comment? call_operator_comment, Array[Comment] call_gap_comments, Comment? operator_comment, Array[Comment] operator_gap_comments) -> void
+    end
+
+    # Comments for case/case-in nodes. Captures the comment on the case
+    # keyword, comments between the keyword and predicate, comments between
+    # the predicate and the first when/in clause, and the trailing comment
+    # on end.
+    #
+    #     case # opening comment
+    #       # keyword gap comment
+    #       foo
+    #       # predicate gap comment
+    #     when bar
+    #       baz
+    #     end # end comment
+    class CaseComments < Base
+      # The comment trailing the case keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the case keyword and the predicate.
+      attr_reader keyword_gap_comments: Array[Comment]
+
+      # The comments between the predicate and the first when/in clause.
+      attr_reader predicate_gap_comments: Array[Comment]
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] keyword_gap_comments, Array[Comment] predicate_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] keyword_gap_comments, Array[Comment] predicate_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for class nodes, which can have comments on the class keyword,
+    # in the gap between the keyword and the constant, on the inheritance
+    # operator, in the gap between the operator and the superclass, and on
+    # the end keyword.
+    #
+    #     class # opening comment
+    #       # keyword gap comment
+    #       Foo < # inheritance operator comment
+    #       # inheritance gap comment
+    #       Bar
+    #       baz
+    #     end # end comment
+    class ClassComments < Base
+      # The comment trailing the class keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the class keyword and the constant.
+      attr_reader keyword_gap_comments: Array[Comment]
+
+      # The comment trailing the inheritance operator.
+      attr_reader inheritance_operator_comment: Comment?
+
+      # The comments between the inheritance operator and the superclass.
+      attr_reader inheritance_gap_comments: Array[Comment]
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? inheritance_operator_comment, Array[Comment] inheritance_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? inheritance_operator_comment, Array[Comment] inheritance_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for clause nodes such as when, in, rescue, else, and ensure
+    # that have a single opening keyword.
+    #
+    #     when foo # opening comment
+    class ClauseComments < Base
+      # The comment trailing the opening keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for collection nodes with opening and closing delimiters,
+    # such as arrays, hashes, block parameters, and similar nodes.
+    #
+    #     [ # opening comment
+    #       1, 2, 3
+    #     ] # closing comment
+    class CollectionComments < Base
+      # The comment trailing the opening delimiter.
+      attr_reader opening_comment: Comment?
+
+      # The comment trailing the closing delimiter.
+      attr_reader closing_comment: Comment?
+
+      # The comments between elements of the collection.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Comment? closing_comment, Array[Comment] inner_comments) -> void
+      def initialize: (Comment? opening_comment, Comment? closing_comment, Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for def nodes, which can have comments on the def keyword,
+    # in the gap between the keyword and the method name, the opening and
+    # closing parentheses of the parameter list, and a trailing comment on
+    # end.
+    #
+    #     def # opening comment
+    #       # keyword gap comment
+    #       foo( # lparen comment
+    #         a, b
+    #       ) # rparen comment
+    #       bar
+    #     end # end comment
+    class DefComments < Base
+      # The comment trailing the def keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the def keyword and the method name.
+      attr_reader keyword_gap_comments: Array[Comment]
+
+      # The comment trailing the opening parenthesis.
+      attr_reader lparen_comment: Comment?
+
+      # The comment trailing the closing parenthesis.
+      attr_reader rparen_comment: Comment?
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? lparen_comment, Comment? rparen_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? lparen_comment, Comment? rparen_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for embedded statements nodes (e.g., string interpolation).
+    #
+    #     "foo #{ # opening comment
+    #       bar
+    #     }"
+    class EmbeddedStatementsComments < Base
+      # The comment trailing the opening delimiter.
+      attr_reader opening_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for endless def nodes (def foo = body), which can have
+    # comments on the def keyword, in the gap between the keyword and the
+    # method name, the parentheses, and the = operator.
+    #
+    #     def # opening comment
+    #       # keyword gap comment
+    #       foo( # lparen comment
+    #         a
+    #       ) = # operator comment
+    #       bar
+    class EndlessDefComments < Base
+      # The comment trailing the def keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the def keyword and the method name.
+      attr_reader keyword_gap_comments: Array[Comment]
+
+      # The comment trailing the opening parenthesis.
+      attr_reader lparen_comment: Comment?
+
+      # The comment trailing the closing parenthesis.
+      attr_reader rparen_comment: Comment?
+
+      # The comment trailing the = operator.
+      attr_reader operator_comment: Comment?
+
+      # : (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? lparen_comment, Comment? rparen_comment, Comment? operator_comment) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? lparen_comment, Comment? rparen_comment, Comment? operator_comment) -> void
+    end
+
+    # Comments for find pattern nodes (e.g., [*a, b, *c] in pattern matching),
+    # which have opening and closing delimiters and gap comments around the
+    # left and right splat operators.
+    #
+    #     in [ # opening comment
+    #       # pre left gap comment
+    #       *a, b,
+    #       # post right gap comment
+    #     ] # closing comment
+    class FindPatternComments < Base
+      # The comment trailing the opening delimiter.
+      attr_reader opening_comment: Comment?
+
+      # The comment trailing the closing delimiter.
+      attr_reader closing_comment: Comment?
+
+      # The comments before the left splat operator.
+      attr_reader pre_left_gap_comments: Array[Comment]
+
+      # The comments after the right splat operator.
+      attr_reader post_right_gap_comments: Array[Comment]
+
+      # The comments between elements of the pattern.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Comment? closing_comment, Array[Comment] pre_left_gap_comments, Array[Comment] post_right_gap_comments, Array[Comment] inner_comments) -> void
+      def initialize: (Comment? opening_comment, Comment? closing_comment, Array[Comment] pre_left_gap_comments, Array[Comment] post_right_gap_comments, Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for for loop nodes, which have for, in, and optionally do
+    # keywords, each of which may have a trailing comment.
+    #
+    #     for a in # in comment
+    #       b
+    #     do # do comment
+    #       c
+    #     end # end comment
+    class ForComments < Base
+      # The comment trailing the for keyword.
+      attr_reader for_comment: Comment?
+
+      # The comment trailing the in keyword.
+      attr_reader in_comment: Comment?
+
+      # The comment trailing the do keyword.
+      attr_reader do_comment: Comment?
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? for_comment, Comment? in_comment, Comment? do_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? for_comment, Comment? in_comment, Comment? do_comment, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for hash pattern nodes (e.g., { a:, **b } in pattern matching),
+    # which have opening and closing delimiters and gap comments after the
+    # rest operator.
+    #
+    #     in { a:, **b,
+    #       # post rest gap comment
+    #     } # closing comment
+    class HashPatternComments < Base
+      # The comment trailing the opening delimiter.
+      attr_reader opening_comment: Comment?
+
+      # The comment trailing the closing delimiter.
+      attr_reader closing_comment: Comment?
+
+      # The comments after the rest operator.
+      attr_reader post_rest_gap_comments: Array[Comment]
+
+      # The comments between elements of the pattern.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Comment? closing_comment, Array[Comment] post_rest_gap_comments, Array[Comment] inner_comments) -> void
+      def initialize: (Comment? opening_comment, Comment? closing_comment, Array[Comment] post_rest_gap_comments, Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for keyword call nodes with parentheses, such as yield and
+    # super.
+    #
+    #     yield( # lparen comment
+    #       foo
+    #     ) # rparen comment
+    class KeywordCallComments < Base
+      # The comment trailing the opening parenthesis.
+      attr_reader lparen_comment: Comment?
+
+      # The comment trailing the closing parenthesis.
+      attr_reader rparen_comment: Comment?
+
+      # : (Comment? lparen_comment, Comment? rparen_comment) -> void
+      def initialize: (Comment? lparen_comment, Comment? rparen_comment) -> void
+    end
+
+    # Comments for keyword hash nodes (implicit hashes in argument lists),
+    # which can have comments between elements.
+    #
+    #     foo(a: 1,
+    #       # comment
+    #       b: 2)
+    class KeywordHashComments < Base
+      # The comments between elements of the keyword hash.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Array[Comment] inner_comments) -> void
+      def initialize: (Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for leaf nodes that can only have a trailing comment on the
+    # same line (e.g., variable reads, literals, break/next/return keywords).
+    #
+    #     foo # trailing comment
+    class LeafComments < Base
+      # The comment trailing the node.
+      attr_reader trailing_comment: Comment?
+
+      # : (Comment? trailing_comment) -> void
+      def initialize: (Comment? trailing_comment) -> void
+    end
+
+    # Comments for logical keyword operators (and, or) which have comments
+    # in the gaps before and after the keyword operator.
+    #
+    #     a
+    #     # left gap comment
+    #     and # operator comment
+    #     # right gap comment
+    #     b
+    class LogicalKeywordComments < Base
+      # The comment trailing the operator keyword.
+      attr_reader operator_comment: Comment?
+
+      # The comments between the left operand and the operator.
+      attr_reader left_gap_comments: Array[Comment]
+
+      # The comments between the operator and the right operand.
+      attr_reader right_gap_comments: Array[Comment]
+
+      # : (Comment? operator_comment, Array[Comment] left_gap_comments, Array[Comment] right_gap_comments) -> void
+      def initialize: (Comment? operator_comment, Array[Comment] left_gap_comments, Array[Comment] right_gap_comments) -> void
+    end
+
+    # Comments for module nodes, which can have comments on the module keyword,
+    # in the gap between the keyword and the constant, and on the end keyword.
+    #
+    #     module # opening comment
+    #       # keyword gap comment
+    #       Foo
+    #       bar
+    #     end # end comment
+    class ModuleComments < Base
+      # The comment trailing the module keyword.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the module keyword and the constant.
+      attr_reader keyword_gap_comments: Array[Comment]
+
+      # The comment trailing the end keyword.
+      attr_reader end_comment: Comment?
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] keyword_gap_comments, Comment? end_comment, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for parameter list nodes, which can have comments between
+    # parameters.
+    #
+    #     def foo(a,
+    #       # comment
+    #       b)
+    #     end
+    class ParametersComments < Base
+      # The comments between parameters.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Array[Comment] inner_comments) -> void
+      def initialize: (Array[Comment] inner_comments) -> void
+    end
+
+    # Comments for nodes wrapped in parentheses, such as parenthesized
+    # expressions or ternary if/unless with parenthesized predicates.
+    #
+    #     ( # opening comment
+    #       # opening gap comment
+    #       foo
+    #       # closing gap comment
+    #     )
+    class ParenthesizedComments < Base
+      # The comment trailing the opening parenthesis.
+      attr_reader opening_comment: Comment?
+
+      # The comments between the opening parenthesis and the body.
+      attr_reader opening_gap_comments: Array[Comment]
+
+      # The comments between the body and the closing parenthesis.
+      attr_reader closing_gap_comments: Array[Comment]
+
+      # The comments within the body of the node.
+      attr_reader body_comments: Array[Comment]
+
+      # : (Comment? opening_comment, Array[Comment] opening_gap_comments, Array[Comment] closing_gap_comments, Array[Comment] body_comments) -> void
+      def initialize: (Comment? opening_comment, Array[Comment] opening_gap_comments, Array[Comment] closing_gap_comments, Array[Comment] body_comments) -> void
+    end
+
+    # Comments for prefix operator nodes (e.g., !, ~, not, splat, block
+    # argument) where a comment can trail the operator and gap comments can
+    # appear before the operand.
+    #
+    #     ! # operator comment
+    #       # gap comment
+    #       foo
+    class PrefixComments < Base
+      # The comment trailing the operator.
+      attr_reader operator_comment: Comment?
+
+      # The comments between the operator and the operand.
+      attr_reader gap_comments: Array[Comment]
+
+      # : (Comment? operator_comment, Array[Comment] gap_comments) -> void
+      def initialize: (Comment? operator_comment, Array[Comment] gap_comments) -> void
+    end
+
+    # Comments for undef nodes, which can have a comment trailing the keyword
+    # and comments between the names.
+    #
+    #     undef # keyword comment
+    #       foo,
+    #       # comment
+    #       bar
+    class UndefComments < Base
+      # The comment trailing the undef keyword.
+      attr_reader keyword_comment: Comment?
+
+      # The comments between the names.
+      attr_reader inner_comments: Array[Comment]
+
+      # : (Comment? keyword_comment, Array[Comment] inner_comments) -> void
+      def initialize: (Comment? keyword_comment, Array[Comment] inner_comments) -> void
+    end
+  end
+end

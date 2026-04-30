@@ -243,6 +243,22 @@ pm_options_freeze_set(pm_options_t *options, bool freeze) {
     options->freeze = freeze;
 }
 
+/**
+ * Return the attach_comments option on the given options struct.
+ */
+bool
+pm_options_attach_comments(const pm_options_t *options) {
+    return options->attach_comments;
+}
+
+/**
+ * Set the attach_comments option on the given options struct.
+ */
+void
+pm_options_attach_comments_set(pm_options_t *options, bool attach_comments) {
+    options->attach_comments = attach_comments;
+}
+
 // For some reason, GCC analyzer thinks we're leaking allocated scopes and
 // locals here, even though we definitely aren't. This is a false positive.
 // Ideally we wouldn't need to suppress this.
@@ -387,6 +403,7 @@ pm_options_read(pm_options_t *options, const char *data) {
     options->main_script = ((uint8_t) *data++) > 0;
     options->partial_script = ((uint8_t) *data++) > 0;
     options->freeze = ((uint8_t) *data++) > 0;
+    options->attach_comments = ((uint8_t) *data++) > 0;
 
     uint32_t scopes_count = pm_options_read_u32(data);
     data += 4;

@@ -29,6 +29,10 @@ module Prism
     # will be consistent across multiple parses of the same source code.
     attr_reader :node_id #: Integer
 
+    # The comments attached to this node, or nil if comment attachment was
+    # not requested during parsing.
+    attr_reader :comments #: Comments::Base?
+
     # The location associated with this node. For lazily loading Location
     # objects, we keep it as a packed integer until it is accessed.
     # @rbs @location: Location | Integer
@@ -168,27 +172,6 @@ module Prism
     #: (_CodeUnitsCache cache) -> Integer
     def cached_end_code_units_column(cache)
       location.cached_end_code_units_column(cache)
-    end
-
-    # Delegates to [`leading_comments`](rdoc-ref:Location#leading_comments) of the associated location object.
-    #--
-    #: () -> Array[Comment]
-    def leading_comments
-      location.leading_comments
-    end
-
-    # Delegates to [`trailing_comments`](rdoc-ref:Location#trailing_comments) of the associated location object.
-    #--
-    #: () -> Array[Comment]
-    def trailing_comments
-      location.trailing_comments
-    end
-
-    # Delegates to [`comments`](rdoc-ref:Location#comments) of the associated location object.
-    #--
-    #: () -> Array[Comment]
-    def comments
-      location.comments
     end
 
     # :section:
@@ -380,14 +363,6 @@ module Prism
       raise NoMethodError, "undefined method `compact_child_nodes' for #{inspect}"
     end
 
-    # Returns an array of child nodes and locations that could potentially have
-    # comments attached to them.
-    #--
-    #: () -> Array[node | Location]
-    def comment_targets
-      raise NoMethodError, "undefined method `comment_targets' for #{inspect}"
-    end
-
     # Returns a string representation of the node.
     #--
     #: () -> String
@@ -435,12 +410,13 @@ module Prism
 
     # Initialize a new <%= node.name %> node.
     #--
-    #: (Source source, Integer node_id, Location location, Integer flags, <%= node.fields.map { |field| "#{field.rbs_class} #{field.name}" }.join(", ") %>) -> void
-    def initialize(<%= ["source", "node_id", "location", "flags", *node.fields.map(&:name)].join(", ") %>)
+    #: (Source source, Integer node_id, Location location, Integer flags, Comments::Base? comments, <%= node.fields.map { |field| "#{field.rbs_class} #{field.name}" }.join(", ") %>) -> void
+    def initialize(<%= ["source", "node_id", "location", "flags", "comments", *node.fields.map(&:name)].join(", ") %>)
       @source = source
       @node_id = node_id
       @location = location
       @flags = flags
+      @comments = comments
       <%- node.fields.each do |field| -%>
       <%- if Prism::Template::CHECK_FIELD_KIND && field.respond_to?(:check_field_kind) -%>
       raise "<%= node.name %>#<%= field.name %> was of unexpected type:\n#{<%= field.name %>.inspect}" unless <%= field.check_field_kind %>
@@ -525,26 +501,14 @@ module Prism
       <%- end -%>
     end
 
-    # See Node.comment_targets.
-    #--
-    #: () -> Array[node | Location]
-    def comment_targets
-      [<%= node.fields.map { |field|
-        case field
-        when Prism::Template::NodeField, Prism::Template::LocationField then field.name
-        when Prism::Template::OptionalNodeField, Prism::Template::NodeListField, Prism::Template::OptionalLocationField then "*#{field.name}"
-        end
-      }.compact.join(", ") %>] #: Array[Prism::node | Location]
-    end
-
     # :call-seq:
     #   copy(**fields) -> <%= node.name %>
     #
     # Creates a copy of self with the given fields, using self as the template.
     #--
-    #: (?node_id: Integer, ?location: Location, ?flags: Integer, <%= node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" }.join(", ") %>) -> <%= node.name %>
-    def copy(<%= (["node_id", "location", "flags"] + node.fields.map(&:name)).map { |field| "#{field}: self.#{field}" }.join(", ") %>)
-      <%= node.name %>.new(<%= ["source", "node_id", "location", "flags", *node.fields.map(&:name)].join(", ") %>)
+    #: (?node_id: Integer, ?location: Location, ?flags: Integer, ?comments: Comments::Base?, <%= node.fields.map { |field| "?#{field.name}: #{field.rbs_class}" }.join(", ") %>) -> <%= node.name %>
+    def copy(<%= (["node_id", "location", "flags", "comments"] + node.fields.map(&:name)).map { |field| "#{field}: self.#{field}" }.join(", ") %>)
+      <%= node.name %>.new(<%= ["source", "node_id", "location", "flags", "comments", *node.fields.map(&:name)].join(", ") %>)
     end
 
     alias deconstruct child_nodes

@@ -524,6 +524,9 @@ module Prism # :nodoc:
       template << "C"
       values << (options.fetch(:freeze, false) ? 1 : 0)
 
+      template << "C"
+      values << (options.fetch(:attach_comments, false) ? 1 : 0)
+
       template << "L"
       if (scopes = options[:scopes])
         values << scopes.length

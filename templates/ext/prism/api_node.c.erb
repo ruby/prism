@@ -148,6 +148,78 @@ pm_ast_constants_each(const pm_constant_t *constant, void *data) {
     rb_ary_push(constants_data->constants, value);
 }
 
+// ---------------------------------------------------------------------------
+// Comment attachment application
+// ---------------------------------------------------------------------------
+
+#include "prism/comments.h"
+
+static VALUE
+pm_comments_make_ruby_comment(const pm_comment_t *comment, VALUE source, bool freeze) {
+    if (comment == NULL) return Qnil;
+    extern VALUE rb_cPrismInlineComment;
+    extern VALUE rb_cPrismEmbDocComment;
+    VALUE location_argv[] = { source, LONG2FIX(pm_comment_location(comment).start), LONG2FIX(pm_comment_location(comment).length) };
+    VALUE loc = rb_class_new_instance(3, location_argv, rb_cPrismLocation);
+    if (freeze) rb_obj_freeze(loc);
+    VALUE argv[] = { loc };
+    VALUE comment_class = (pm_comment_type(comment) == PM_COMMENT_EMBDOC) ? rb_cPrismEmbDocComment : rb_cPrismInlineComment;
+    VALUE val = rb_class_new_instance(1, argv, comment_class);
+    if (freeze) rb_obj_freeze(val);
+    return val;
+}
+
+static VALUE
+pm_comments_make_ruby_comment_list(const pm_comment_t **comments, size_t size, VALUE source, bool freeze) {
+    VALUE ary = rb_ary_new_capa(size);
+    for (size_t i = 0; i < size; i++) {
+        rb_ary_push(ary, pm_comments_make_ruby_comment(comments[i], source, freeze));
+    }
+    if (freeze) rb_obj_freeze(ary);
+    return ary;
+}
+
+#define RC(c) pm_comments_make_ruby_comment((c), source, freeze)
+#define RL(l) pm_comments_make_ruby_comment_list((l).comments, (l).size, source, freeze)
+
+static VALUE
+pm_comments_get_comments(const pm_parser_t *parser, uint32_t node_id, VALUE source, bool freeze) {
+    const pm_comments_t *c = pm_parser_comments(parser, node_id);
+    if (c == NULL) return Qnil;
+
+    // Cache the Comments module (initialized once).
+    static VALUE rb_mComments = Qundef;
+    if (rb_mComments == Qundef) {
+        rb_mComments = rb_const_get(rb_cPrism, rb_intern("Comments"));
+        rb_gc_register_address(&rb_mComments);
+    }
+
+    VALUE klass;
+    VALUE argv[<%= comments.map { |c| c.fields.length }.max %>];
+    int argc;
+
+    switch (c->type) {
+        <%- comments.each do |comment| -%>
+        case PM_COMMENTS_<%= comment.enum_name %>: {
+            const <%= comment.c_type %> *t = (const <%= comment.c_type %> *) c;
+            klass = rb_const_get(rb_mComments, rb_intern("<%= comment.name %>"));
+            <%- comment.fields.each_with_index do |field, index| -%>
+            argv[<%= index %>] = <%= field.list? ? "RL" : "RC" %>(t-><%= field.name %>);
+            <%- end -%>
+            argc = <%= comment.fields.length %>;
+            break;
+        }
+        <%- end -%>
+        default:
+            return Qnil;
+    }
+
+    return rb_class_new_instance(argc, argv, klass);
+}
+
+#undef RC
+#undef RL
+
 VALUE
 pm_ast_new(const pm_parser_t *parser, const pm_node_t *node, rb_encoding *encoding, VALUE source, bool freeze) {
     VALUE constants = rb_ary_new_capa(pm_parser_constants_size(parser));
@@ -204,7 +276,7 @@ pm_ast_new(const pm_parser_t *parser, const pm_node_t *node, rb_encoding *encodi
                     <%- if node.fields.any? { |field| ![Prism::Template::NodeField, Prism::Template::OptionalNodeField].include?(field.class) } -%>
                     pm_<%= node.human %>_t *cast = (pm_<%= node.human %>_t *) node;
                     <%- end -%>
-                    VALUE argv[<%= node.fields.length + 4 %>];
+                    VALUE argv[<%= node.fields.length + 5 %>];
 
                     // source
                     argv[0] = source;
@@ -217,7 +289,10 @@ pm_ast_new(const pm_parser_t *parser, const pm_node_t *node, rb_encoding *encodi
 
                     // flags
                     argv[3] = ULONG2NUM(node->flags);
-                    <%- node.fields.each.with_index(4) do |field, index| -%>
+
+                    // comments
+                    argv[4] = pm_comments_get_comments(parser, node->node_id, source, freeze);
+                    <%- node.fields.each.with_index(5) do |field, index| -%>
 
                     // <%= field.name %>
                     <%- case field -%>
@@ -271,7 +346,7 @@ pm_ast_new(const pm_parser_t *parser, const pm_node_t *node, rb_encoding *encodi
                     <%- end -%>
                     <%- end -%>
 
-                    VALUE value = rb_class_new_instance(<%= node.fields.length + 4 %>, argv, rb_cPrism<%= node.name %>);
+                    VALUE value = rb_class_new_instance(<%= node.fields.length + 5 %>, argv, rb_cPrism<%= node.name %>);
                     if (freeze) rb_obj_freeze(value);
 
                     rb_ary_push(value_stack, value);

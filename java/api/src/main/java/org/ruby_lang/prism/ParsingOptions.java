@@ -151,6 +151,9 @@ public abstract class ParsingOptions {
         // freeze
         output.write(0);
 
+        // attach_comments
+        output.write(0);
+
         // scopes
 
         // number of scopes

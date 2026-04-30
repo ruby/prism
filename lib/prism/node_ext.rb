@@ -126,6 +126,7 @@ module Prism
         -1,
         location,
         frozen? ? InterpolatedStringNodeFlags::FROZEN : 0,
+        nil,
         opening_loc,
         [copy(location: content_loc, opening_loc: nil, closing_loc: nil)],
         closing_loc
@@ -151,8 +152,9 @@ module Prism
         -1,
         location,
         flags,
+        nil,
         opening_loc,
-        [StringNode.new(source, node_id, content_loc, 0, nil, content_loc, nil, unescaped)],
+        [StringNode.new(source, node_id, content_loc, 0, nil, nil, content_loc, nil, unescaped)],
         closing_loc
       )
     end

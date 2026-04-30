@@ -102,6 +102,9 @@ public class Loader {
         ParseResult.Warning[] warnings = loadWarnings();
         boolean continuable = buffer.get() != 0;
 
+        // Skip the attached comments map (always empty for Java).
+        loadVarUInt();
+
         int constantPoolBufferOffset = buffer.getInt();
         int constantPoolLength = loadVarUInt();
         this.constantPool = new ConstantPool(this, constantPoolBufferOffset, constantPoolLength);

@@ -82,8 +82,10 @@ module Prism
       # : () -> bool
       def eof?: () -> bool
 
-      # : (ConstantPool constant_pool) -> void
-      def load_constant_pool: (ConstantPool constant_pool) -> void
+      # : (Array[Comment] comments, bool freeze) -> Hash[Integer, Comments::Base]?
+      def load_attached_comments: (Array[Comment] comments, bool freeze) -> Hash[Integer, Comments::Base]?
+
+      def load_constant_pool: (untyped constant_pool) -> untyped
 
       # : () -> void
       def load_header: () -> void
@@ -138,8 +140,8 @@ module Prism
       # : () -> Integer
       def load_uint32: () -> Integer
 
-      # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
-      def load_optional_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
+      # : (ConstantPool constant_pool, Encoding encoding, bool freeze, ?Hash[Integer, Comments::Base]? comments) -> node?
+      def load_optional_node: (ConstantPool constant_pool, Encoding encoding, bool freeze, ?Hash[Integer, Comments::Base]? comments) -> node?
 
       # : (Encoding encoding) -> String
       def load_string: (Encoding encoding) -> String
@@ -170,8 +172,8 @@ module Prism
       # : (ConstantPool constant_pool, Encoding encoding) -> Symbol?
       def load_optional_constant: (ConstantPool constant_pool, Encoding encoding) -> Symbol?
 
-      # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node
-      def load_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node
+      # : (ConstantPool constant_pool, Encoding encoding, bool freeze, Hash[Integer, Comments::Base]? comments) -> node
+      def load_node: (ConstantPool constant_pool, Encoding encoding, bool freeze, Hash[Integer, Comments::Base]? comments) -> node
 
       @load_node_lambdas: Array[Proc]
 
