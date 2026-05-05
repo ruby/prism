@@ -6,17 +6,13 @@
     <groupId>org.ruby-lang</groupId>
     <artifactId>prism-parser</artifactId>
     <version>0.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>prism-parser-wasm</artifactId>
   <name>Java Prism WASM with semantic-only content</name>
   <description>Java WASM bindings for the Prism parser shared library</description>
   <url>https://github.com/ruby/prism</url>
-
-  <properties>
-    <chicory.version>1.7.5</chicory.version>
-    <redline.version>0.0.3</redline.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>

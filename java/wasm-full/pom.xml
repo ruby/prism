@@ -5,17 +5,14 @@
   <parent>
     <groupId>org.ruby-lang</groupId>
     <artifactId>prism-parser</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>prism-parser-wasm-full</artifactId>
   <name>Java Prism WASM with full parsed content</name>
   <description>Java WASM bindings for the Prism parser shared library</description>
   <url>https://github.com/ruby/prism</url>
-
-  <properties>
-    <chicory.version>1.7.5</chicory.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -51,6 +48,11 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.roastedroot</groupId>
+      <artifactId>redline</artifactId>
+      <version>${redline.version}</version>
     </dependency>
   </dependencies>
 

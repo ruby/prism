@@ -6,6 +6,7 @@
     <groupId>org.ruby-lang</groupId>
     <artifactId>prism-parser</artifactId>
     <version>0.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>prism-parser-api</artifactId>

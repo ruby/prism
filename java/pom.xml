@@ -46,6 +46,8 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <junit.version>6.0.3</junit.version>
+    <chicory.version>1.7.5</chicory.version>
+    <redline.version>0.0.4</redline.version>
   </properties>
 
   <modules>
