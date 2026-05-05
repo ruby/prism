@@ -126,7 +126,7 @@ module Prism # :nodoc:
 
     # Mirror the Prism.parse_success? API by using the serialization API.
     def parse_success?(code, **options)
-      FFICommon.with_string(code) { |string| FFICommon.parse_file_success(string, options) }
+      FFICommon.with_string(code) { |string| FFICommon.parse_success(string, options) }
     end
 
     # Mirror the Prism.parse_failure? API by using the serialization API.
@@ -137,7 +137,12 @@ module Prism # :nodoc:
     # Mirror the Prism.parse_file_success? API by using the serialization API.
     def parse_file_success?(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.parse_file_success(string, options) }
+      FFICommon.with_file(filepath) do |file|
+        code = file.read
+        FFICommon.with_string(code) do |string|
+          FFICommon.parse_success(string, options)
+        end
+      end
     end
 
     # Mirror the Prism.parse_file_failure? API by using the serialization API.

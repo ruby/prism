@@ -83,8 +83,8 @@ module Prism # :nodoc:
       String.from_java_bytes(PRISM.parse_lex(buffer, string, PRISM.new_options(dump_options(options).to_java_bytes)))
     end
 
-    def parse_file_success(string, options) # :nodoc:
-      raise NotImplementedError
+    def parse_success(string, options) # :nodoc:
+      PRISM.parse_success(string, PRISM.new_options(dump_options(options).to_java_bytes))
     end
 
     def string_query_method_name(string) # :nodoc:

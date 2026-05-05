@@ -298,7 +298,7 @@ module Prism # :nodoc:
       LibRubyParser.pm_serialize_parse_lex(buffer.pointer, string.pointer, string.length, dump_options(options))
     end
 
-    def parse_file_success(string, options) # :nodoc:
+    def parse_success(string, options) # :nodoc:
       LibRubyParser.pm_serialize_parse_success_p(string.pointer, string.length, dump_options(options))
     end
 

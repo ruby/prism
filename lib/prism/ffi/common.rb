@@ -221,7 +221,7 @@ module Prism
       raise NotImplementedError
     end
 
-    def parse_file_success(string, options) # :nodoc:
+    def parse_success(string, options) # :nodoc:
       raise NotImplementedError
     end
 

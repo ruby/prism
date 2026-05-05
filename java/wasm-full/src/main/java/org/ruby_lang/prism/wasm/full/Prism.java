@@ -84,6 +84,10 @@ public class Prism implements AutoCloseable {
         return buffer.readBytes();
     }
 
+    public boolean parseSuccess(Source source, Options options) {
+        return exports.pmSerializeParseSuccessP(source.pointer, source.length, options.pointer) != 0;
+    }
+
     public class Buffer implements AutoCloseable {
         final int pointer;
 
