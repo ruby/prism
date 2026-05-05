@@ -35,6 +35,13 @@ module Prism
       end
     end
 
+    def parse_comments(string, code, options) # :nodoc:
+      with_buffer do |buffer|
+        parse_comments_only(buffer, string, options)
+        Serialize.load_parse_comments(code, buffer.read, options.fetch(:freeze, false))
+      end
+    end
+
     # Return the value that should be dumped for the command_line option.
     def dump_options_command_line(options)
       command_line = options.fetch(:command_line, "")
@@ -217,7 +224,7 @@ module Prism
       raise NotImplementedError
     end
 
-    def parse_comments(string, code, options) # :nodoc:
+    def parse_comments_only(string, code, options) # :nodoc:
       raise NotImplementedError
     end
 

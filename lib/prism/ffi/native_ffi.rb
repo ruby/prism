@@ -287,11 +287,8 @@ module Prism # :nodoc:
       end
     end
 
-    def parse_comments(string, code, options) # :nodoc:
-      with_buffer do |buffer|
-        LibRubyParser.pm_serialize_parse_comments(buffer.pointer, string.pointer, string.length, dump_options(options))
-        Serialize.load_parse_comments(code, buffer.read, options.fetch(:freeze, false))
-      end
+    def parse_comments_only(buffer, string, options) # :nodoc:
+      LibRubyParser.pm_serialize_parse_comments(buffer.pointer, string.pointer, string.length, dump_options(options))
     end
 
     def parse_lex_only(buffer, string, options) # :nodoc:

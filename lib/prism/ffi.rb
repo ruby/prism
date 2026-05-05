@@ -105,7 +105,12 @@ module Prism # :nodoc:
     # to use mmap when it is available.
     def parse_file_comments(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.parse_comments(string, string.read, options) }
+      FFICommon.with_file(filepath) do |file|
+        code = file.read
+        FFICommon.with_string(code) do |string|
+          FFICommon.parse_comments(string, code, options)
+        end
+      end
     end
 
     # Mirror the Prism.parse_lex API by using the serialization API.

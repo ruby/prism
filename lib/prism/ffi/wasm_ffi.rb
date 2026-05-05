@@ -75,8 +75,8 @@ module Prism # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_comments(string, code, options) # :nodoc:
-      raise NotImplementedError
+    def parse_comments_only(buffer, string, options) # :nodoc:
+      PRISM.parse_comments(buffer, string, PRISM.new_options(dump_options(options).to_java_bytes))
     end
 
     def parse_lex_only(buffer, string, options) # :nodoc:
