@@ -12,11 +12,14 @@ require "prism/serialize" if defined?(Ractor)
 
 # Load the prism-parser-wasm jar
 require 'jar-dependencies'
-require_jar('org.ruby-lang', 'prism-parser-wasm-full', '0.0.2-SNAPSHOT')
-require_jar('com.dylibso.chicory', 'runtime', '1.6.1')
-require_jar('com.dylibso.chicory', 'wasi', '1.6.1')
-require_jar('com.dylibso.chicory', 'wasm', '1.6.1')
-require_jar('com.dylibso.chicory', 'log', '1.6.1')
+require_jar('org.ruby-lang', 'prism-parser-wasm-full', '0.0.4-SNAPSHOT')
+chicory_version = '1.7.5'
+redline_version = '0.0.4'
+require_jar('com.dylibso.chicory', 'runtime', chicory_version)
+require_jar('com.dylibso.chicory', 'wasi', chicory_version)
+require_jar('com.dylibso.chicory', 'wasm', chicory_version)
+require_jar('com.dylibso.chicory', 'log', chicory_version)
+require_jar('io.roastedroot', 'redline', redline_version)
 
 module Prism # :nodoc:
   class WASMCommon < Common # :nodoc:
@@ -31,7 +34,7 @@ module Prism # :nodoc:
     end
 
     def with_buffer(&b) # :nodoc:
-      buffer = Prism::Buffer.new
+      buffer = PRISM.new_buffer
       begin
         b.call(buffer)
       ensure
@@ -39,8 +42,14 @@ module Prism # :nodoc:
       end
     end
 
+    class Java::org.ruby_lang.prism.wasm.full.Prism::Buffer
+      def read
+        String.from_java_bytes(read_bytes)
+      end
+    end
+
     def with_string(string, &b) # :nodoc:
-      source = Prism::Source.new(string.to_java_bytes)
+      source = PRISM.new_source(string.to_java_bytes)
       begin
         b.call(source)
       ensure
@@ -49,15 +58,17 @@ module Prism # :nodoc:
     end
 
     def with_file(string, &b) # :nodoc:
-      raise NotImplementedError
+      File.open(string, "rb") do |file|
+        b.call(file)
+      end
     end
 
     def lex_only(buffer, string, options) # :nodoc:
-      String.from_java_bytes(Prism.lex(buffer, string, dump_options(options)))
+      String.from_java_bytes(PRISM.lex(buffer, string, PRISM.new_options(dump_options(options).to_java_bytes)))
     end
 
     def parse_only(buffer, string, options) # :nodoc:
-      String.from_java_bytes(Prism.lex(buffer, string, dump_options(options)))
+      String.from_java_bytes(PRISM.parse(buffer, string, PRISM.new_options(dump_options(options).to_java_bytes)))
     end
 
     def parse_stream(buffer, callback, eof_callback, options, source) # :nodoc:

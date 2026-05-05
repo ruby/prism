@@ -35,7 +35,11 @@ module Prism # :nodoc:
     # Mirror the Prism.dump_file API by using the serialization API.
     def dump_file(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.dump(string, options) }
+      FFICommon.with_file(filepath) do |file|
+        FFICommon.with_string(file.read) do |string|
+          FFICommon.dump(string, options)
+        end
+      end
     end
 
     # Mirror the Prism.lex API by using the serialization API.
@@ -46,7 +50,12 @@ module Prism # :nodoc:
     # Mirror the Prism.lex_file API by using the serialization API.
     def lex_file(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.lex(string, string.read, options) }
+      FFICommon.with_file(filepath) do |file|
+        code = file.read
+        FFICommon.with_string(code) do |string|
+          FFICommon.lex(string, code, options)
+        end
+      end
     end
 
     # Mirror the Prism.parse API by using the serialization API.
@@ -59,7 +68,12 @@ module Prism # :nodoc:
     # when it is available.
     def parse_file(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.parse(string, string.read, options) }
+      FFICommon.with_file(filepath) do |file|
+        code = file.read
+        FFICommon.with_string(code) do |string|
+          FFICommon.parse(string, code, options)
+        end
+      end
     end
 
     # Mirror the Prism.parse_stream API by using the serialization API.

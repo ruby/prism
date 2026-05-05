@@ -68,14 +68,14 @@ public class Prism implements AutoCloseable {
         exports.pmSerializeParse(
             buffer.pointer, source.pointer, source.length, options.pointer);
 
-        return buffer.read();
+        return buffer.readBytes();
     }
 
     public byte[] lex(Buffer buffer, Source source, Options options) {
         exports.pmSerializeLex(
             buffer.pointer, source.pointer, source.length, options.pointer);
 
-        return buffer.read();
+        return buffer.readBytes();
     }
 
     public class Buffer implements AutoCloseable {
@@ -94,11 +94,15 @@ public class Prism implements AutoCloseable {
             exports.pmBufferFree(pointer);
         }
 
-        public byte[] read() {
+        public byte[] readBytes() {
             return instance.memory().readBytes(
                 exports.pmBufferValue(pointer),
                 exports.pmBufferLength(pointer));
         }
+    }
+
+    public Buffer newBuffer() {
+        return new Buffer();
     }
 
     public class Source implements AutoCloseable{
@@ -130,6 +134,10 @@ public class Prism implements AutoCloseable {
         }
     }
 
+    public Source newSource(byte[] bytes) {
+        return new Source(bytes);
+    }
+
     class Options implements AutoCloseable {
         final int pointer;
 
@@ -142,6 +150,10 @@ public class Prism implements AutoCloseable {
         public void close() {
             exports.free(pointer);
         }
+    }
+
+    public Options newOptions(byte[] packedOptions) {
+        return new Options(packedOptions);
     }
 
     @Override

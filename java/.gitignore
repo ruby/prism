@@ -3,5 +3,7 @@ api/target
 native/target
 wasm/src/main/wasm
 wasm/target
+wasm-full/src/main/wasm
+wasm-full/target
 target
 .idea
