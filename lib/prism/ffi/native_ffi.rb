@@ -294,11 +294,8 @@ module Prism # :nodoc:
       end
     end
 
-    def parse_lex(string, code, options) # :nodoc:
-      with_buffer do |buffer|
-        LibRubyParser.pm_serialize_parse_lex(buffer.pointer, string.pointer, string.length, dump_options(options))
-        Serialize.load_parse_lex(code, buffer.read, options.fetch(:freeze, false))
-      end
+    def parse_lex_only(buffer, string, options) # :nodoc:
+      LibRubyParser.pm_serialize_parse_lex(buffer.pointer, string.pointer, string.length, dump_options(options))
     end
 
     def parse_file_success(string, options) # :nodoc:

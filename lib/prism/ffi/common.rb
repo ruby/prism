@@ -28,6 +28,13 @@ module Prism
       end
     end
 
+    def parse_lex(string, code, options) # :nodoc:
+      with_buffer do |buffer|
+        parse_lex_only(buffer, string, options)
+        Serialize.load_parse_lex(code, buffer.read, options.fetch(:freeze, false))
+      end
+    end
+
     # Return the value that should be dumped for the command_line option.
     def dump_options_command_line(options)
       command_line = options.fetch(:command_line, "")
@@ -202,15 +209,15 @@ module Prism
       raise NotImplementedError
     end
 
+    def parse_lex_only(buffer, string, options) # :nodoc:
+      raise NotImplementedError
+    end
+
     def parse_stream(buffer, callback, eof_callback, options, source) # :nodoc:
       raise NotImplementedError
     end
 
     def parse_comments(string, code, options) # :nodoc:
-      raise NotImplementedError
-    end
-
-    def parse_lex(string, code, options) # :nodoc:
       raise NotImplementedError
     end
 

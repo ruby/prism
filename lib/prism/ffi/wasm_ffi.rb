@@ -79,8 +79,8 @@ module Prism # :nodoc:
       raise NotImplementedError
     end
 
-    def parse_lex(string, code, options) # :nodoc:
-      raise NotImplementedError
+    def parse_lex_only(buffer, string, options) # :nodoc:
+      String.from_java_bytes(PRISM.parse_lex(buffer, string, PRISM.new_options(dump_options(options).to_java_bytes)))
     end
 
     def parse_file_success(string, options) # :nodoc:

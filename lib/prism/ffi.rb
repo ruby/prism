@@ -116,7 +116,12 @@ module Prism # :nodoc:
     # Mirror the Prism.parse_lex_file API by using the serialization API.
     def parse_lex_file(filepath, **options)
       options[:filepath] = filepath
-      FFICommon.with_file(filepath) { |string| FFICommon.parse_lex(string, string.read, options) }
+      FFICommon.with_file(filepath) do |file|
+        code = file.read
+        FFICommon.with_string(code) do |string|
+          FFICommon.parse_lex(string, code, options)
+        end
+      end
     end
 
     # Mirror the Prism.parse_success? API by using the serialization API.

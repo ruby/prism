@@ -78,6 +78,12 @@ public class Prism implements AutoCloseable {
         return buffer.readBytes();
     }
 
+    public byte[] parseLex(Buffer buffer, Source source, Options options) {
+        exports.pmSerializeParseLex(buffer.pointer, source.pointer, source.length, options.pointer);
+
+        return buffer.readBytes();
+    }
+
     public class Buffer implements AutoCloseable {
         final int pointer;
 
