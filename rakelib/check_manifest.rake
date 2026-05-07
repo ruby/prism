@@ -35,6 +35,7 @@ task check_manifest: :templates do
   ]
 
   ignore_files = %w[
+    .git # in worktrees this is a file, not a directory
     .ruby-version
     .editorconfig
     .git-blame-ignore-revs
