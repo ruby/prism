@@ -1,0 +1,25 @@
+#! /usr/bin/env sh
+#
+#  run as part of CI
+#
+if [ $# -lt 1 ] ; then
+  echo "usage: $(basename $0) <gem-file>"
+  exit 1
+fi
+
+gemfile=$1
+shift
+
+test -e /etc/os-release && cat /etc/os-release
+
+set -e -x -u
+
+ls -l ${gemfile}
+gem install --no-document ${gemfile}
+gem list -d prism
+
+bundle config set without development
+bundle install --local || bundle install
+
+rm -rf lib ext # ensure we don't use the local files
+rake test
