@@ -6,10 +6,11 @@
     <groupId>org.ruby-lang</groupId>
     <artifactId>prism-parser</artifactId>
     <version>0.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>prism-parser-api</artifactId>
-  <name>Java Prism</name>
+  <name>Java Prism API</name>
   <description>Java API for the Prism Ruby language parser</description>
   <url>https://github.com/ruby/prism</url>
 

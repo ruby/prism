@@ -6,7 +6,7 @@
   <artifactId>prism-parser</artifactId>
   <version>0.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Java Prism</name>
+  <name>Java Prism parent</name>
   <description>Java API for the Prism Ruby language parser</description>
   <url>https://github.com/ruby/prism</url>
 
@@ -46,11 +46,14 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <junit.version>6.0.3</junit.version>
+    <chicory.version>1.7.5</chicory.version>
+    <redline.version>0.0.4</redline.version>
   </properties>
 
   <modules>
     <module>api</module>
     <module>wasm</module>
+    <module>wasm-full</module>
   </modules>
 
   <profiles>

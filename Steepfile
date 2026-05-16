@@ -15,4 +15,7 @@ target :lib do
 
   # Ignored because we do not want to overlap with the C extension.
   ignore "lib/prism/ffi.rb"
+  ignore "lib/prism/ffi/common.rb"
+  ignore "lib/prism/ffi/native_ffi.rb"
+  ignore "lib/prism/ffi/wasm_ffi.rb"
 end
