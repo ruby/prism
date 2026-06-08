@@ -12734,6 +12734,11 @@ expect1_opening(pm_parser_t *parser, pm_token_type_t type, pm_diagnostic_id_t di
 #define PM_PARSE_ACCEPTS_LABEL        ((uint8_t) 0x2)
 #define PM_PARSE_ACCEPTS_DO_BLOCK     ((uint8_t) 0x4)
 #define PM_PARSE_IN_ENDLESS_DEF       ((uint8_t) 0x8)
+#define PM_PARSE_ACCEPTS_MULTIPLE_ASSIGNMENT ((uint8_t) 0x10)
+
+/** Return true if a multiple assignment may begin in the current context. */
+#define PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power_, flags_) \
+    ((binding_power_) == PM_BINDING_POWER_STATEMENT || ((flags_) & PM_PARSE_ACCEPTS_MULTIPLE_ASSIGNMENT))
 
 static pm_node_t *
 parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t flags, pm_diagnostic_id_t diag_id, uint16_t depth);
@@ -19247,7 +19252,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             parser_lex(parser);
             pm_node_t *node = UP(pm_class_variable_read_node_create(parser, &parser->previous));
 
-            if (binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19272,7 +19277,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
 
             pm_node_t *node = UP(pm_constant_read_node_create(parser, &parser->previous));
 
-            if ((binding_power == PM_BINDING_POWER_STATEMENT) && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 // If we get here, then we have a comma immediately following a
                 // constant, so we're going to parse this as a multiple assignment.
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
@@ -19287,7 +19292,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             expect1(parser, PM_TOKEN_CONSTANT, PM_ERR_CONSTANT_PATH_COLON_COLON_CONSTANT);
             pm_node_t *node = UP(pm_constant_path_node_create(parser, NULL, &delimiter, &parser->previous));
 
-            if ((binding_power == PM_BINDING_POWER_STATEMENT) && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19326,7 +19331,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             parser_lex(parser);
             pm_node_t *node = UP(pm_numbered_reference_read_node_create(parser, &parser->previous));
 
-            if (binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19336,7 +19341,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             parser_lex(parser);
             pm_node_t *node = UP(pm_global_variable_read_node_create(parser, &parser->previous));
 
-            if (binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19346,7 +19351,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             parser_lex(parser);
             pm_node_t *node = UP(pm_back_reference_read_node_create(parser, &parser->previous));
 
-            if (binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19420,7 +19425,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
                 }
             }
 
-            if ((binding_power == PM_BINDING_POWER_STATEMENT) && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -19543,7 +19548,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             parser_lex(parser);
             pm_node_t *node = UP(pm_instance_variable_read_node_create(parser, &parser->previous));
 
-            if (binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 node = parse_targets_validate(parser, node, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }
 
@@ -20355,7 +20360,7 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             // * operators at the beginning of expressions are only valid in the
             // context of a multiple assignment. We enforce that here. We'll
             // still lex past it though and create a missing node place.
-            if (binding_power != PM_BINDING_POWER_STATEMENT) {
+            if (!PM_PARSE_MULTIPLE_ASSIGNMENT_P(binding_power, flags)) {
                 pm_parser_err_prefix(parser, diag_id);
                 return UP(pm_error_recovery_node_create(parser, PM_TOKEN_START(parser, &parser->previous), PM_TOKEN_LENGTH(&parser->previous)));
             }
@@ -20664,7 +20669,7 @@ parse_assignment_value_local(pm_parser_t *parser, const pm_node_t *node) {
 static pm_node_t *
 parse_assignment_values(pm_parser_t *parser, pm_binding_power_t previous_binding_power, pm_binding_power_t binding_power, uint8_t flags, pm_diagnostic_id_t diag_id, uint16_t depth) {
     bool permitted = true;
-    if (previous_binding_power != PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_USTAR)) permitted = false;
+    if (!PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) && match1(parser, PM_TOKEN_USTAR)) permitted = false;
 
     pm_node_t *value = parse_starred_expression(parser, binding_power, (uint8_t) ((flags & PM_PARSE_ACCEPTS_DO_BLOCK) | (previous_binding_power == PM_BINDING_POWER_ASSIGNMENT ? (flags & PM_PARSE_ACCEPTS_COMMAND_CALL) : (previous_binding_power < PM_BINDING_POWER_MODIFIER ? PM_PARSE_ACCEPTS_COMMAND_CALL : 0))), diag_id, (uint16_t) (depth + 1));
     if (!permitted) pm_parser_err_node(parser, value, PM_ERR_UNEXPECTED_MULTI_WRITE);
@@ -20675,7 +20680,7 @@ parse_assignment_values(pm_parser_t *parser, pm_binding_power_t previous_binding
     // Block calls (command call + do block, e.g., `foo bar do end`) cannot
     // be followed by a comma to form a multi-value RHS because each element
     // of a multi-value assignment must be an `arg`, not a `block_call`.
-    if (previous_binding_power == PM_BINDING_POWER_STATEMENT && !pm_block_call_p(value) && (PM_NODE_TYPE_P(value, PM_SPLAT_NODE) || match1(parser, PM_TOKEN_COMMA))) {
+    if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) && !pm_block_call_p(value) && (PM_NODE_TYPE_P(value, PM_SPLAT_NODE) || match1(parser, PM_TOKEN_COMMA))) {
         single_value = false;
 
         pm_array_node_t *array = pm_array_node_create(parser, NULL);
@@ -20721,7 +20726,12 @@ parse_assignment_values(pm_parser_t *parser, pm_binding_power_t previous_binding
             }
         }
 
-        pm_node_t *right = parse_expression(parser, pm_binding_powers[PM_TOKEN_KEYWORD_RESCUE_MODIFIER].right, (uint8_t) ((flags & PM_PARSE_ACCEPTS_DO_BLOCK) | (accepts_command_call_inner ? PM_PARSE_ACCEPTS_COMMAND_CALL : 0)), PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
+        uint8_t rescue_flags = (uint8_t) ((flags & PM_PARSE_ACCEPTS_DO_BLOCK) | (accepts_command_call_inner ? PM_PARSE_ACCEPTS_COMMAND_CALL : 0));
+        if (binding_power == (PM_BINDING_POWER_MULTI_ASSIGNMENT + 1)) {
+            rescue_flags |= PM_PARSE_ACCEPTS_MULTIPLE_ASSIGNMENT;
+        }
+
+        pm_node_t *right = parse_expression(parser, pm_binding_powers[PM_TOKEN_KEYWORD_RESCUE_MODIFIER].right, rescue_flags, PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
         context_pop(parser);
 
         return UP(pm_rescue_modifier_node_create(parser, value, &rescue, right));
@@ -21013,7 +21023,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     parser_lex(parser);
                     pm_node_t *value = parse_assignment_values(parser, previous_binding_power, PM_NODE_TYPE_P(node, PM_MULTI_TARGET_NODE) ? PM_BINDING_POWER_MULTI_ASSIGNMENT + 1 : binding_power, flags, PM_ERR_EXPECT_EXPRESSION_AFTER_EQUAL, (uint16_t) (depth + 1));
 
-                    if (PM_NODE_TYPE_P(node, PM_MULTI_TARGET_NODE) && previous_binding_power != PM_BINDING_POWER_STATEMENT) {
+                    if (PM_NODE_TYPE_P(node, PM_MULTI_TARGET_NODE) && !PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags)) {
                         pm_parser_err_node(parser, node, PM_ERR_UNEXPECTED_MULTI_WRITE);
                     }
 
@@ -21644,7 +21654,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             pm_call_node_t *call = pm_call_node_call_create(parser, node, &operator, &message, &arguments);
 
             if (
-                (previous_binding_power == PM_BINDING_POWER_STATEMENT) &&
+                PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) &&
                 arguments.arguments == NULL &&
                 arguments.opening_loc.length == 0 &&
                 match1(parser, PM_TOKEN_COMMA)
@@ -21760,7 +21770,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     }
 
                     // If this is followed by a comma then it is a multiple assignment.
-                    if (previous_binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+                    if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                         return parse_targets_validate(parser, path, PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
                     }
 
@@ -21780,7 +21790,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
                     pm_call_node_t *call = pm_call_node_call_create(parser, node, &delimiter, &message, &arguments);
 
                     // If this is followed by a comma then it is a multiple assignment.
-                    if (previous_binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+                    if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                         return parse_targets_validate(parser, UP(call), PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
                     }
 
@@ -21805,7 +21815,9 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
             parser_lex(parser);
             accept1(parser, PM_TOKEN_NEWLINE);
 
-            pm_node_t *value = parse_expression(parser, binding_power, (uint8_t) ((flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL), PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
+            // Keep the right binding power so statement modifiers stay outside
+            // the value, but allow the value to be a multiple assignment.
+            pm_node_t *value = parse_expression(parser, binding_power, (uint8_t) ((flags & PM_PARSE_ACCEPTS_DO_BLOCK) | PM_PARSE_ACCEPTS_COMMAND_CALL | PM_PARSE_ACCEPTS_MULTIPLE_ASSIGNMENT), PM_ERR_RESCUE_MODIFIER_VALUE, (uint16_t) (depth + 1));
             context_pop(parser);
 
             return UP(pm_rescue_modifier_node_create(parser, node, &token, value));
@@ -21827,7 +21839,7 @@ parse_expression_infix(pm_parser_t *parser, pm_node_t *node, pm_binding_power_t 
 
             // If we have a comma after the closing bracket then this is a multiple
             // assignment and we should parse the targets.
-            if (previous_binding_power == PM_BINDING_POWER_STATEMENT && match1(parser, PM_TOKEN_COMMA)) {
+            if (PM_PARSE_MULTIPLE_ASSIGNMENT_P(previous_binding_power, flags) && match1(parser, PM_TOKEN_COMMA)) {
                 pm_call_node_t *aref = pm_call_node_aref_create(parser, node, &arguments);
                 return parse_targets_validate(parser, UP(aref), PM_BINDING_POWER_INDEX, (uint16_t) (depth + 1));
             }

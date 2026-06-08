@@ -5,3 +5,19 @@ a = b rescue c if d
 a, = b rescue c if d
 
 def a = b rescue c if d
+
+a rescue b, c = 1
+
+a rescue *b, c = 1
+
+a rescue b, *c = 1
+
+a rescue b.c, d = 1
+
+a rescue b[0], c = 1
+
+a rescue b, c = 1, 2
+
+a rescue b, c = *d
+
+x, y = a rescue b, c = 1
