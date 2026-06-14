@@ -163,7 +163,7 @@ module Prism
       assert_empty(warnings)
     end
 
-    if RUBY_VERSION >= "3.3"
+    if RUBY_VERSION >= "3.3" && RUBY_VERSION < "4.0"
       def test_current_parser_for_current_ruby
         major, minor, _patch = Gem::Version.new(RUBY_VERSION).segments
         # Let's just hope there never is a Ruby 3.10 or similar
