@@ -23,6 +23,7 @@ jobs:
         with:
           repository: ruby/ruby
           path: ruby/ruby
+          ref: ruby_3_4
           fetch-depth: 1
       - name: Install libraries
         run: |
