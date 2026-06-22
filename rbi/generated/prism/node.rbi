@@ -6884,8 +6884,8 @@ module Prism
   #             ^^^^^^^^^^^
   class InNode < Node
     # Initialize a new InNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_loc: Location, then_loc: ::T.nilable(Location)).void }
-    def initialize(source, node_id, location, flags, pattern, statements, in_loc, then_loc); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_keyword_loc: Location, then_keyword_loc: ::T.nilable(Location)).void }
+    def initialize(source, node_id, location, flags, pattern, statements, in_keyword_loc, then_keyword_loc); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -6909,8 +6909,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_loc: Location, then_loc: ::T.nilable(Location)).returns(InNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), pattern: T.unsafe(nil), statements: T.unsafe(nil), in_loc: T.unsafe(nil), then_loc: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_keyword_loc: Location, then_keyword_loc: ::T.nilable(Location)).returns(InNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), pattern: T.unsafe(nil), statements: T.unsafe(nil), in_keyword_loc: T.unsafe(nil), then_keyword_loc: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -6937,31 +6937,31 @@ module Prism
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
-    # Returns the Location represented by `in_loc`.
+    # Returns the Location represented by `in_keyword_loc`.
     sig { returns(Location) }
-    def in_loc; end
+    def in_keyword_loc; end
 
-    # Save the in_loc location using the given saved source so that
+    # Save the in_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_in_loc(repository); end
+    def save_in_keyword_loc(repository); end
 
-    # Returns the Location represented by `then_loc`.
+    # Returns the Location represented by `then_keyword_loc`.
     sig { returns(::T.nilable(Location)) }
-    def then_loc; end
+    def then_keyword_loc; end
 
-    # Save the then_loc location using the given saved source so that
+    # Save the then_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
-    def save_then_loc(repository); end
+    def save_then_keyword_loc(repository); end
 
-    # Slice the location of in_loc from the source.
+    # Slice the location of in_keyword_loc from the source.
     sig { returns(String) }
-    def in; end
+    def in_keyword; end
 
-    # Slice the location of then_loc from the source.
+    # Slice the location of then_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
-    def then; end
+    def then_keyword; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
@@ -9613,8 +9613,8 @@ module Prism
   #     ^^^^^^^^^^
   class MatchPredicateNode < Node
     # Initialize a new MatchPredicateNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).void }
-    def initialize(source, node_id, location, flags, value, pattern, operator_loc); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, keyword_loc: Location).void }
+    def initialize(source, node_id, location, flags, value, pattern, keyword_loc); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -9638,8 +9638,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).returns(MatchPredicateNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, keyword_loc: Location).returns(MatchPredicateNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil), pattern: T.unsafe(nil), keyword_loc: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -9666,18 +9666,18 @@ module Prism
     sig { returns(Node) }
     def pattern; end
 
-    # Returns the Location represented by `operator_loc`.
+    # Returns the Location represented by `keyword_loc`.
     sig { returns(Location) }
-    def operator_loc; end
+    def keyword_loc; end
 
-    # Save the operator_loc location using the given saved source so that
+    # Save the keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_operator_loc(repository); end
+    def save_keyword_loc(repository); end
 
-    # Slice the location of operator_loc from the source.
+    # Slice the location of keyword_loc from the source.
     sig { returns(String) }
-    def operator; end
+    def keyword; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
@@ -13473,8 +13473,8 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^^^^
   class UnlessNode < Node
     # Initialize a new UnlessNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).void }
-    def initialize(source, node_id, location, flags, keyword_loc, predicate, then_keyword_loc, statements, else_clause, end_keyword_loc); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, unless_keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).void }
+    def initialize(source, node_id, location, flags, unless_keyword_loc, predicate, then_keyword_loc, statements, else_clause, end_keyword_loc); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13498,8 +13498,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).returns(UnlessNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), else_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, unless_keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).returns(UnlessNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), unless_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil), else_clause: T.unsafe(nil), end_keyword_loc: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13526,12 +13526,12 @@ module Prism
     #     bar unless cond
     #         ^^^^^^
     sig { returns(Location) }
-    def keyword_loc; end
+    def unless_keyword_loc; end
 
-    # Save the keyword_loc location using the given saved source so that
+    # Save the unless_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_keyword_loc(repository); end
+    def save_unless_keyword_loc(repository); end
 
     # The condition to be evaluated for the unless expression. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
@@ -13582,9 +13582,9 @@ module Prism
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_end_keyword_loc(repository); end
 
-    # Slice the location of keyword_loc from the source.
+    # Slice the location of unless_keyword_loc from the source.
     sig { returns(String) }
-    def keyword; end
+    def unless_keyword; end
 
     # Slice the location of then_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
@@ -13607,8 +13607,8 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^
   class UntilNode < Node
     # Initialize a new UntilNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
-    def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, until_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
+    def initialize(source, node_id, location, flags, until_keyword_loc, do_keyword_loc, end_keyword_loc, predicate, statements); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13632,8 +13632,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(UntilNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, until_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(UntilNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), until_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13656,14 +13656,14 @@ module Prism
     sig { returns(T::Boolean) }
     def begin_modifier?; end
 
-    # Returns the Location represented by `keyword_loc`.
+    # Returns the Location represented by `until_keyword_loc`.
     sig { returns(Location) }
-    def keyword_loc; end
+    def until_keyword_loc; end
 
-    # Save the keyword_loc location using the given saved source so that
+    # Save the until_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_keyword_loc(repository); end
+    def save_until_keyword_loc(repository); end
 
     # Returns the Location represented by `do_keyword_loc`.
     sig { returns(::T.nilable(Location)) }
@@ -13674,14 +13674,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_do_keyword_loc(repository); end
 
-    # Returns the Location represented by `closing_loc`.
+    # Returns the Location represented by `end_keyword_loc`.
     sig { returns(::T.nilable(Location)) }
-    def closing_loc; end
+    def end_keyword_loc; end
 
-    # Save the closing_loc location using the given saved source so that
+    # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
-    def save_closing_loc(repository); end
+    def save_end_keyword_loc(repository); end
 
     # Returns the `predicate` attribute.
     sig { returns(Node) }
@@ -13691,17 +13691,17 @@ module Prism
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
-    # Slice the location of keyword_loc from the source.
+    # Slice the location of until_keyword_loc from the source.
     sig { returns(String) }
-    def keyword; end
+    def until_keyword; end
 
     # Slice the location of do_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
     def do_keyword; end
 
-    # Slice the location of closing_loc from the source.
+    # Slice the location of end_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
-    def closing; end
+    def end_keyword; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
@@ -13715,8 +13715,8 @@ module Prism
   #     end
   class WhenNode < Node
     # Initialize a new WhenNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).void }
-    def initialize(source, node_id, location, flags, keyword_loc, conditions, then_keyword_loc, statements); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, when_keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).void }
+    def initialize(source, node_id, location, flags, when_keyword_loc, conditions, then_keyword_loc, statements); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13740,8 +13740,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).returns(WhenNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), conditions: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, when_keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).returns(WhenNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), when_keyword_loc: T.unsafe(nil), conditions: T.unsafe(nil), then_keyword_loc: T.unsafe(nil), statements: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13760,14 +13760,14 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    # Returns the Location represented by `keyword_loc`.
+    # Returns the Location represented by `when_keyword_loc`.
     sig { returns(Location) }
-    def keyword_loc; end
+    def when_keyword_loc; end
 
-    # Save the keyword_loc location using the given saved source so that
+    # Save the when_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_keyword_loc(repository); end
+    def save_when_keyword_loc(repository); end
 
     # Returns the `conditions` attribute.
     sig { returns(T::Array[Node]) }
@@ -13786,9 +13786,9 @@ module Prism
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
-    # Slice the location of keyword_loc from the source.
+    # Slice the location of when_keyword_loc from the source.
     sig { returns(String) }
-    def keyword; end
+    def when_keyword; end
 
     # Slice the location of then_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
@@ -13807,8 +13807,8 @@ module Prism
   #     ^^^^^^^^^^^^^^^^^^^^
   class WhileNode < Node
     # Initialize a new WhileNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
-    def initialize(source, node_id, location, flags, keyword_loc, do_keyword_loc, closing_loc, predicate, statements); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, while_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
+    def initialize(source, node_id, location, flags, while_keyword_loc, do_keyword_loc, end_keyword_loc, predicate, statements); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13832,8 +13832,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(WhileNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, while_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).returns(WhileNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), while_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13856,14 +13856,14 @@ module Prism
     sig { returns(T::Boolean) }
     def begin_modifier?; end
 
-    # Returns the Location represented by `keyword_loc`.
+    # Returns the Location represented by `while_keyword_loc`.
     sig { returns(Location) }
-    def keyword_loc; end
+    def while_keyword_loc; end
 
-    # Save the keyword_loc location using the given saved source so that
+    # Save the while_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_keyword_loc(repository); end
+    def save_while_keyword_loc(repository); end
 
     # Returns the Location represented by `do_keyword_loc`.
     sig { returns(::T.nilable(Location)) }
@@ -13874,14 +13874,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_do_keyword_loc(repository); end
 
-    # Returns the Location represented by `closing_loc`.
+    # Returns the Location represented by `end_keyword_loc`.
     sig { returns(::T.nilable(Location)) }
-    def closing_loc; end
+    def end_keyword_loc; end
 
-    # Save the closing_loc location using the given saved source so that
+    # Save the end_keyword_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
-    def save_closing_loc(repository); end
+    def save_end_keyword_loc(repository); end
 
     # Returns the `predicate` attribute.
     sig { returns(Node) }
@@ -13891,17 +13891,17 @@ module Prism
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
-    # Slice the location of keyword_loc from the source.
+    # Slice the location of while_keyword_loc from the source.
     sig { returns(String) }
-    def keyword; end
+    def while_keyword; end
 
     # Slice the location of do_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
     def do_keyword; end
 
-    # Slice the location of closing_loc from the source.
+    # Slice the location of end_keyword_loc from the source.
     sig { returns(::T.nilable(String)) }
-    def closing; end
+    def end_keyword; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
     def ===(other); end
