@@ -19047,8 +19047,11 @@ parse_parentheses(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t
             lex_state_set(parser, PM_LEX_STATE_ENDARG);
         }
 
-        parser_lex(parser);
+        /* Pop before consuming the closing `)` so the following token (e.g. a
+         * `do`) is lexed in the enclosing context rather than as a block
+         * belonging to the parenthesized expression. */
         pm_accepts_block_stack_pop(parser);
+        parser_lex(parser);
         pop_block_exits(parser, previous_block_exits);
 
         if (PM_NODE_TYPE_P(statement, PM_MULTI_TARGET_NODE) || PM_NODE_TYPE_P(statement, PM_SPLAT_NODE)) {
@@ -19319,6 +19322,13 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
 
             accept1(parser, PM_TOKEN_NEWLINE);
 
+            /* Pop before consuming the closing `]` so the following token (e.g.
+             * a `do`) is lexed in the enclosing context rather than as a block
+             * belonging to the array's interior. Otherwise a `do` block would
+             * wrongly bind to a command with an array argument, as in
+             * `foo(m [] do end)`. */
+            pm_accepts_block_stack_pop(parser);
+
             if (!accept1(parser, PM_TOKEN_BRACKET_RIGHT)) {
                 PM_PARSER_ERR_TOKEN_FORMAT(parser, &parser->current, PM_ERR_ARRAY_TERM, pm_token_str(parser->current.type));
                 parser->previous.start = parser->previous.end;
@@ -19326,7 +19336,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             }
 
             pm_array_node_close_set(parser, array, &parser->previous);
-            pm_accepts_block_stack_pop(parser);
 
             return UP(array);
         }
@@ -20645,6 +20654,11 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
                 }
 
                 parser_warn_indentation_mismatch(parser, opening_newline_index, &operator, false, false);
+
+                /* Pop before consuming the closing `}` so the following token
+                 * (e.g. a `do`) is lexed in the enclosing context rather than
+                 * as a block belonging to the lambda's interior. */
+                pm_accepts_block_stack_pop(parser);
                 expect1_opening(parser, PM_TOKEN_BRACE_RIGHT, PM_ERR_LAMBDA_TERM_BRACE, &opening);
             } else {
                 expect1(parser, PM_TOKEN_KEYWORD_DO, PM_ERR_LAMBDA_OPEN);
@@ -20661,6 +20675,8 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
                     parser_warn_indentation_mismatch(parser, opening_newline_index, &operator, false, false);
                 }
 
+                /* As with the brace case above, pop before consuming `end`. */
+                pm_accepts_block_stack_pop(parser);
                 expect1_opening(parser, PM_TOKEN_KEYWORD_END, PM_ERR_LAMBDA_TERM_END, &operator);
             }
 
@@ -20669,7 +20685,6 @@ parse_expression_prefix(pm_parser_t *parser, pm_binding_power_t binding_power, u
             pm_node_t *parameters = parse_blocklike_parameters(parser, UP(block_parameters), &operator, &parser->previous);
 
             pm_parser_scope_pop(parser);
-            pm_accepts_block_stack_pop(parser);
 
             return UP(pm_lambda_node_create(parser, &locals, &operator, &opening, &parser->previous, parameters, body));
         }
