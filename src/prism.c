@@ -17598,7 +17598,7 @@ parse_pattern(pm_parser_t *parser, pm_constant_id_list_t *captures, uint8_t flag
             // when `pattern_matching_newlines` is set, so this does not affect
             // patterns nested in brackets or parentheses.
             if (
-                match7(parser, PM_TOKEN_KEYWORD_THEN, PM_TOKEN_BRACE_RIGHT, PM_TOKEN_BRACKET_RIGHT, PM_TOKEN_PARENTHESIS_RIGHT, PM_TOKEN_SEMICOLON, PM_TOKEN_KEYWORD_AND, PM_TOKEN_KEYWORD_OR) ||
+                match8(parser, PM_TOKEN_KEYWORD_THEN, PM_TOKEN_KEYWORD_DO_LOOP, PM_TOKEN_BRACE_RIGHT, PM_TOKEN_BRACKET_RIGHT, PM_TOKEN_PARENTHESIS_RIGHT, PM_TOKEN_SEMICOLON, PM_TOKEN_KEYWORD_AND, PM_TOKEN_KEYWORD_OR) ||
                 match2(parser, PM_TOKEN_NEWLINE, PM_TOKEN_EOF)
             ) {
                 // A trailing comma forms an implicit rest pattern (`[a,]` is

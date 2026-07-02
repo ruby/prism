@@ -21,3 +21,5 @@ tap { while class << self; a = tap do end; end; break; end }
 while def foo = bar do end; end
 
 foo while bar in baz
+
+while a in b, do 1 end
