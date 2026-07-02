@@ -25,3 +25,5 @@ end
 for (a, b), *c, d in 1..10
 i
 end
+
+for x in a in b, do 1 end

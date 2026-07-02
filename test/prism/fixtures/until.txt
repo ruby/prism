@@ -11,3 +11,5 @@ return until true
 foo :a, :b until bar?
 
 foo while bar in baz
+
+until a in b, do 1 end
