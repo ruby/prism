@@ -365,27 +365,49 @@ bool
 pm_source_stream_read(pm_source_t *source) {
     pm_buffer_t *buffer = source->stream.buffer;
 
+    /*
+     * We should use rb_enc_mbmaxlen() of stream.external_encoding for
+     * the max character length but we don't want to do it here for
+     * performance. We can detect the max character length in all
+     * available encodings by the following command line in the Ruby
+     * source directory:
+     *
+     *   grep -Erh "max (enc|byte) length" enc |
+     *     grep -Eo '[0-9]+' |
+     *     sort |
+     *     tail -n1 # => 6
+     */
+#define MAX_ENC_LEN 6
+
 #define LINE_SIZE 4096
-    char line[LINE_SIZE];
 
-    while (memset(line, '\n', LINE_SIZE), source->stream.fgets(line, LINE_SIZE, source->stream.stream) != NULL) {
-        size_t length = LINE_SIZE;
-        while (length > 0 && line[length - 1] == '\n') length--;
+    /*
+     * io.gets(size) may read size or more bytes when the last
+     * character is a multi-byte character. "+ MAX_ENC_LEN" is for the
+     * case.
+     */
+    char line[LINE_SIZE + MAX_ENC_LEN];
 
-        if (length == LINE_SIZE) {
-            /*
-             * If we read a line that is the maximum size and it doesn't end
-             * with a newline, then we'll just append it to the buffer and
-             * continue reading.
-             */
-            length--;
-            pm_buffer_append_string(buffer, line, length);
-            continue;
-        }
+    /* This must not be '\0' to detect the `\0` written by fgets(). */
+#define SENTINEL_CHAR 'x'
+
+    while (memset(line, SENTINEL_CHAR, LINE_SIZE + MAX_ENC_LEN), source->stream.fgets(line, LINE_SIZE, source->stream.stream) != NULL) {
+        size_t length = LINE_SIZE + MAX_ENC_LEN;
+        while (length > 0 && line[length - 1] != '\0') length--;
+
+        /* Remove '\0' written by fgets() */
+        length -= 1;
 
         /* Append the line to the buffer. */
-        length--;
         pm_buffer_append_string(buffer, line, length);
+
+        if (line[length - 1] != '\n') {
+            /*
+             * If it doesn't end with a newline, then we'll continue
+             * reading.
+             */
+            continue;
+        }
 
         /*
          * Check if the line matches the __END__ marker. If it does, then stop
@@ -426,7 +448,9 @@ pm_source_stream_read(pm_source_t *source) {
         }
     }
 
+#undef SENTINEL_CHAR
 #undef LINE_SIZE
+#undef MAX_ENC_LEN
 
     source->stream.eof = true;
     source->source = (const uint8_t *) pm_buffer_value(buffer);

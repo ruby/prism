@@ -114,5 +114,19 @@ module Prism
       assert result.success?
       assert_equal 3, result.value.statements.body.length
     end
+
+    def test_long_line
+      # The important point of this test is that the character at 4095
+      # is a multi-byte character (U+3042 HIRAGANA LETTER A) in this
+      # case. gets(4095) may return 4095 or more bytes if the last
+      # character is a multi-byte character. For example,
+      # StringIO.new("\u3042").gets(1).bytesize is 3 not 1.
+      long_string = "\"" + ("a" * 4093) + "\u3042" + "\""
+      io = StringIO.new(long_string)
+      result = Prism.parse_stream(io)
+
+      assert result.success?
+      assert_equal long_string[1..-2], result.value.statements.body[0].content
+    end
   end
 end
