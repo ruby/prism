@@ -219,6 +219,14 @@ module Prism
       assert_equal(Ripper.lex('if;)'), Translation::Ripper.lex('if;)'))
     end
 
+    def test_unmatched_braces
+      assert_ripper_lex("} }")
+      assert_ripper_lex("{ b: 1 } }")
+      assert_ripper_lex("[].each { } }")
+      assert_ripper_lex('"#{1}" }')
+      assert_ripper_lex("-> { } }")
+    end
+
     def test_tokenize
       source = "foo;1;BAZ"
       assert_equal(Ripper.tokenize(source), Translation::Ripper.tokenize(source))

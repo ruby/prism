@@ -846,6 +846,8 @@ module Prism
 
       cache = Translation::Ripper::LineAndColumnCache.new(source)
 
+      brace_depth = 0
+
       tokens.each do |token|
         # Skip missing heredoc ends.
         next if token[1] == :on_heredoc_end && token[2] == ""
@@ -853,6 +855,24 @@ module Prism
         # Add :on_sp tokens.
         line, column = token[0]
         start_offset = source.byte_offset(line, column)
+
+        # Replicate a Ripper quirk where exactly the first unmatched closing
+        # brace is emitted as :on_embexpr_end, and any subsequent ones are :on_rbrace.
+        #
+        # Track brace nesting depth to handle unmatched closing braces.
+        # :on_lbrace (hashes/blocks), :on_embexpr_beg (interpolation), and :on_tlambeg (lambdas)
+        # all start a curly brace context balanced by a closing }.
+        case token[1]
+        when :on_lbrace, :on_embexpr_beg, :on_tlambeg
+          brace_depth += 1
+        when :on_rbrace
+          if brace_depth == 0
+            token = [token[0], :on_embexpr_end, token[2], prev_token_state]
+          end
+          brace_depth -= 1
+        when :on_embexpr_end
+          brace_depth -= 1
+        end
 
         # Ripper reports columns on line 1 without counting the BOM, so we
         # adjust to get the real offset
