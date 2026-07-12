@@ -65,7 +65,9 @@ namespace :seattlerb do
 
       def assert_parse(source, _)
         entry = caller.find { _1.include?("test_ruby_parser.rb") }
-        name = entry[/\d+:in `(?:block (?:\(\d+ levels\) )?in )?(?:assert_|test_|<module:)?(.+?)\>?'/, 1]
+
+        name = entry[/\d+:in [`'](?:block (?:\(\d+ levels\) )?in )?(?:assert_|test_|<module:)?(.+?)\>?'/, 1]
+                 .sub(/^Test.+#(?:test|assert)_/, '') # 4.x backtrace incl class
 
         COLLECTED[name] << source
         super
