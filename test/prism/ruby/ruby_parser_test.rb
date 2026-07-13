@@ -76,6 +76,7 @@ module Prism
       "whitequark/pattern_matching_single_line_allowed_omission_of_parentheses.txt",
       "whitequark/pattern_matching_single_line.txt",
       "whitequark/ruby_bug_11989.txt",
+      "whitequark/ruby_bug_15789.txt",
       "whitequark/ruby_bug_18878.txt",
       "whitequark/ruby_bug_19281.txt",
       "whitequark/slash_newline_in_heredocs.txt",
@@ -97,12 +98,27 @@ module Prism
       end
     end
 
+    def test_nil_block_parameter_syntax
+      assert_new_syntax("4.1/noblock.txt", Prism::Translation::RubyParser::V41) do
+        s(:block,
+          s(:defn, :foo,
+            s(:args, :"&nil"),
+            s(:nil)
+          ),
+          s(:iter,
+            s(:lambda),
+            s(:args, :"&nil")
+          )
+        )
+      end
+    end
+
     private
 
     def assert_ruby_parser(fixture, allowed_failure)
       source = fixture.read
-      expected = ignore_warnings { ::RubyParser.new.parse(source, fixture.path) }
-      actual = Prism::Translation::RubyParser.new.parse(source, fixture.path)
+      expected = ignore_warnings { ::RubyParser::V33.new.parse(source, fixture.path) }
+      actual = Prism::Translation::RubyParser::V33.new.parse(source, fixture.path)
       on_failure = -> { message(expected, actual) }
 
       if !allowed_failure
@@ -115,6 +131,13 @@ module Prism
       elsif expected == actual && expected.line && actual.line && expected.file == actual.file
         puts "#{name} now passes"
       end
+    end
+
+    def assert_new_syntax(path, parser, &sexp)
+      fixture_path = Pathname(__dir__).join("../../../test/prism/fixtures", path)
+      actual_ast = parser.new.parse(fixture_path.read)
+
+      assert_equal(sexp.call, actual_ast)
     end
 
     def message(expected, actual)

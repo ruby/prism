@@ -1624,16 +1624,40 @@ module Prism
 
       private_constant :Compiler
 
+      # RubyParser for Ruby 3.3.
+      class V33 < RubyParser
+        def initialize; super(version: "3.3"); end # :nodoc:
+      end
+
+      # RubyParser for Ruby 3.4.
+      class V34 < RubyParser
+        def initialize; super(version: "3.4"); end # :nodoc:
+      end
+
+      # RubyParser for Ruby 4.0.
+      class V40 < RubyParser
+        def initialize; super(version: "4.0"); end # :nodoc:
+      end
+
+      # RubyParser for Ruby 4.1.
+      class V41 < RubyParser
+        def initialize; super(version: "4.1"); end # :nodoc:
+      end
+
+      def initialize(version: "latest") # :nodoc:
+        @version = version
+      end
+
       # Parse the given source and translate it into the seattlerb/ruby_parser
       # gem's Sexp format.
       def parse(source, filepath = "(string)")
-        translate(Prism.parse(source, filepath: filepath, partial_script: true), filepath)
+        translate(Prism.parse(source, filepath: filepath, partial_script: true, version: @version), filepath)
       end
 
       # Parse the given file and translate it into the seattlerb/ruby_parser
       # gem's Sexp format.
       def parse_file(filepath)
-        translate(Prism.parse_file(filepath, partial_script: true), filepath)
+        translate(Prism.parse_file(filepath, partial_script: true, version: @version), filepath)
       end
 
       # Parse the give file and translate it into the
@@ -1645,6 +1669,16 @@ module Prism
       end
 
       class << self
+        # Returns a parser instance that will parse as the latest available syntax.
+        def latest
+          new(version: "latest")
+        end
+
+        # Returns a parser instance that will parse syntax with the version in RUBY_VERSION.
+        def for_current_ruby
+          new(version: "nearest")
+        end
+
         # Parse the given source and translate it into the seattlerb/ruby_parser
         # gem's Sexp format.
         def parse(source, filepath = "(string)")
