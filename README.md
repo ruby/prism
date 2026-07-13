@@ -115,6 +115,7 @@ Prism has been integrated into the majority of Ruby runtimes, many libraries, an
 * [CRuby](https://github.com/ruby/ruby/pull/7964) (via C)
 * [Garnet](https://github.com/camertron/garnet-js) (via WASM)
 * [JRuby](https://github.com/jruby/jruby/pull/8103) (via Java)
+* [MRuby](https://github.com/mruby/mruby) (via C)
 * [Natalie](https://github.com/natalie-lang/natalie/pull/1213) (via C++ and Ruby)
 * [Opal](https://github.com/opal/opal/pull/2642) (via Ruby and WASM)
 * [TruffleRuby](https://github.com/truffleruby/truffleruby/issues/3117) (via Java)
