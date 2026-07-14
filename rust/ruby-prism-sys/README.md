@@ -2,6 +2,17 @@
 
 Rust bindings to [ruby/prism](https://github.com/ruby/prism)'s C API.
 
+## Custom C flags
+
+Set `RUBY_PRISM_CFLAGS` to pass crate-specific arguments to both the C compiler
+and bindgen. Arguments use shell quoting, so paths containing spaces can be
+quoted. For example, a freestanding build can provide its sysroot and Prism
+configuration without changing the flags of unrelated dependencies:
+
+```sh
+RUBY_PRISM_CFLAGS='--sysroot=/path/to/sysroot -DPRISM_HAS_NO_FILESYSTEM=1' cargo build
+```
+
 ## Examples
 
 Currently the best examples are found in the integration tests (in `tests/`).
