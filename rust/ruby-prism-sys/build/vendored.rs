@@ -4,7 +4,7 @@ use std::{
 };
 
 /// Builds libprism.a from source, and configures the build script to use it.
-pub fn build() -> Result<(), Box<dyn std::error::Error>> {
+pub fn build(custom_cflags: Vec<String>) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     assert!(
         vendor_dir().exists(),
         "Prism source directory does not exist, expected: {}",
@@ -45,19 +45,23 @@ pub fn build() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    flags.extend(custom_cflags);
+
+    let mut bindgen_args = Vec::new();
+
     for (key, value) in defines {
         build.define(key, value);
-        push_bindgen_extra_clang_args(format!("-D{key}={value}"));
+        bindgen_args.push(format!("-D{key}={value}"));
     }
 
     for include in includes {
         build.include(&include);
-        push_bindgen_extra_clang_args(format!("-I{}", include.display()));
+        bindgen_args.push(format!("-I{}", include.display()));
     }
 
     for flag in flags {
         build.flag(&flag);
-        push_bindgen_extra_clang_args(flag);
+        bindgen_args.push(flag);
     }
 
     build.files(source_files(src_dir()));
@@ -67,7 +71,7 @@ pub fn build() -> Result<(), Box<dyn std::error::Error>> {
     std::env::set_var("PRISM_INCLUDE_DIR", include_dir());
     std::env::set_var("PRISM_LIB_DIR", out_dir);
 
-    Ok(())
+    Ok(bindgen_args)
 }
 
 fn version() -> &'static str {
@@ -90,16 +94,6 @@ fn src_dir() -> PathBuf {
 
 fn include_dir() -> PathBuf {
     vendor_dir().join("include")
-}
-
-fn push_bindgen_extra_clang_args<T: AsRef<str>>(arg: T) {
-    let env_var_name = format!("BINDGEN_EXTRA_CLANG_ARGS_{}", std::env::var("TARGET").unwrap());
-
-    if let Ok(preexisting_arg) = std::env::var(&env_var_name) {
-        std::env::set_var(env_var_name, format!("{} {}", preexisting_arg, arg.as_ref()));
-    } else {
-        std::env::set_var(env_var_name, arg.as_ref());
-    }
 }
 
 fn source_files<P: AsRef<Path>>(root_dir: P) -> Vec<String> {

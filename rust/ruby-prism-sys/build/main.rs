@@ -4,8 +4,10 @@ mod vendored;
 use std::path::{Path, PathBuf};
 
 fn main() {
+    let clang_args = ruby_prism_cflags();
+
     #[cfg(feature = "vendored")]
-    vendored::build().expect("failed to build Prism from source");
+    let clang_args = vendored::build(clang_args).expect("failed to build Prism from source");
 
     let ruby_build_path = prism_lib_path();
     let ruby_include_path = prism_include_path();
@@ -18,13 +20,14 @@ fn main() {
     println!("cargo:rustc-link-search=native={}", ruby_build_path.to_str().unwrap());
 
     // This is where the magic happens.
-    let bindings = generate_bindings(&ruby_include_path);
+    let bindings = generate_bindings(&ruby_include_path, &clang_args);
 
     // Write the bindings to file.
     write_bindings(&bindings);
 }
 
 fn emit_rerun_hints(ruby_include_path: &Path) {
+    println!("cargo:rerun-if-env-changed=RUBY_PRISM_CFLAGS");
     println!("cargo:rerun-if-env-changed=PRISM_INCLUDE_DIR");
     println!("cargo:rerun-if-env-changed=PRISM_LIB_DIR");
     println!("cargo:rerun-if-changed={}", ruby_include_path.display());
@@ -35,6 +38,14 @@ fn emit_rerun_hints(ruby_include_path: &Path) {
             println!("cargo:rerun-if-changed={}", src_path.display());
         }
     }
+}
+
+fn ruby_prism_cflags() -> Vec<String> {
+    let Ok(cflags) = std::env::var("RUBY_PRISM_CFLAGS") else {
+        return Vec::new();
+    };
+
+    shlex::split(&cflags).expect("RUBY_PRISM_CFLAGS contains invalid shell quoting")
 }
 
 /// Gets the path to project files (`libprism*`) at `[root]/build/`.
@@ -110,7 +121,7 @@ impl bindgen::callbacks::ParseCallbacks for Callbacks {
 ///
 /// This method only generates code in memory here--it doesn't write it to file.
 ///
-fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
+fn generate_bindings(ruby_include_path: &Path, clang_args: &[String]) -> bindgen::Bindings {
     bindgen::Builder::default()
         .derive_default(true)
         .generate_block(true)
@@ -118,6 +129,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .header(ruby_include_path.join("prism.h").to_str().unwrap())
         .clang_arg(format!("-I{}", ruby_include_path.to_str().unwrap()))
         .clang_arg("-fparse-all-comments")
+        .clang_args(clang_args)
         .impl_debug(true)
         .layout_tests(true)
         .merge_extern_blocks(true)
