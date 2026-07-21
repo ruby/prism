@@ -32,14 +32,20 @@ In addition to the Ruby prism dependencies, you shouldn't need anything else bes
 
 ### Updating bindings
 
-`build.rs` (which gets called as part of running `cargo build`, `cargo test`, etc) is where we tell
-`bindgen` which types, functions, etc. that we want it to generate for us. It's smart enough to know
-to generate dependencies for items we specify in there (ex. `pm_parser_t` has fields of type
-`pm_token_t`, but we don't need to tell `bindgen` about `pm_token_t`--it'll figure it out and
-generate bindings for that type too).
+The bindings are pregenerated and committed at `src/bindings.rs`, so building this crate does not
+require `bindgen` or libclang. `build/main.rs` is where we tell `bindgen` which types, functions,
+etc. that we want it to generate for us. It's smart enough to know to generate dependencies for
+items we specify in there (ex. `pm_parser_t` has fields of type `pm_token_t`, but we don't need to
+tell `bindgen` about `pm_token_t`--it'll figure it out and generate bindings for that type too).
 
-If you want to generate new bindings, update `build.rs` accordingly, then run `cargo doc` and check
-the docs; that should tell you if `bindgen` generated all the things you need or not.
+If you want to generate new bindings, update the allowlist in `build/main.rs` accordingly, then run
+`bundle exec rake cargo:bindings` from the repository root (this requires libclang) to regenerate
+`src/bindings.rs`. CI regenerates the bindings and fails if the committed file is stale.
+
+The `buildtime_bindgen` feature is the escape hatch that regenerates the bindings with `bindgen` at
+build time instead of using the pregenerated file. It's needed when `RUBY_PRISM_CFLAGS` contains
+defines that change the API surface, since the pregenerated bindings only reflect the default
+configuration.
 
 ### Testing
 

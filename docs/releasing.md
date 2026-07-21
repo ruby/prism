@@ -57,6 +57,8 @@ chruby ruby-4.1.0-dev && BUNDLE_GEMFILE=gemfiles/4.1/Gemfile bundle install
 bundle exec rake cargo:build
 ```
 
+* Regenerate `rust/ruby-prism-sys/src/bindings.rs` with `bundle exec rake cargo:bindings`. CI fails if the committed file is stale.
+
 * Commit all of the updated files:
 
 ```sh
