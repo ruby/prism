@@ -10,6 +10,7 @@ test/prism/snapshots/**/*.txt linguist-generated
 
 rbi/generated/**/*.rbi linguist-generated
 sig/generated/**/*.rbs linguist-generated
+rust/ruby-prism-sys/src/bindings.rs linguist-generated
 
 # All .rb files should have LF line ending, even on Windows, regardless of the git config core.autocrlf value.
 # All .txt should have their line endings as committed in the repository (there are some intentional CR in there),
