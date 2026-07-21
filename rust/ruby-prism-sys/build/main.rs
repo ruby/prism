@@ -19,15 +19,30 @@ fn main() {
     // Add `[root]/build/` to the search paths, so it can find `libprism.a`.
     println!("cargo:rustc-link-search=native={}", ruby_build_path.to_str().unwrap());
 
-    // This is where the magic happens.
-    let bindings = generate_bindings(&ruby_include_path, &clang_args);
+    #[cfg(not(feature = "buildtime_bindgen"))]
+    let _ = clang_args;
 
-    // Write the bindings to file.
-    write_bindings(&bindings);
+    #[cfg(feature = "buildtime_bindgen")]
+    {
+        // This is where the magic happens.
+        let bindings = generate_bindings(&ruby_include_path, &clang_args, true);
+
+        // Write the bindings to file.
+        write_bindings(&bindings);
+
+        // The pregenerated copy omits layout tests, which hardcode the host
+        // target's sizes and would break other pointer widths (e.g. wasm32).
+        if let Some(path) = std::env::var_os("PRISM_GENERATE_BINDINGS") {
+            generate_bindings(&ruby_include_path, &clang_args, false)
+                .write_to_file(&path)
+                .expect("Couldn't write pregenerated bindings!");
+        }
+    }
 }
 
 fn emit_rerun_hints(ruby_include_path: &Path) {
     println!("cargo:rerun-if-env-changed=RUBY_PRISM_CFLAGS");
+    println!("cargo:rerun-if-env-changed=PRISM_GENERATE_BINDINGS");
     println!("cargo:rerun-if-env-changed=PRISM_INCLUDE_DIR");
     println!("cargo:rerun-if-env-changed=PRISM_LIB_DIR");
     println!("cargo:rerun-if-changed={}", ruby_include_path.display());
@@ -73,9 +88,11 @@ fn cargo_manifest_path() -> PathBuf {
     PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
 
+#[cfg(feature = "buildtime_bindgen")]
 #[derive(Debug)]
 struct Callbacks;
 
+#[cfg(feature = "buildtime_bindgen")]
 impl bindgen::callbacks::ParseCallbacks for Callbacks {
     /// Accept a string that is a comment on a node. Replace any internal code
     /// examples that are indented by 4 spaces with a fenced code block.
@@ -121,9 +138,11 @@ impl bindgen::callbacks::ParseCallbacks for Callbacks {
 ///
 /// This method only generates code in memory here--it doesn't write it to file.
 ///
-fn generate_bindings(ruby_include_path: &Path, clang_args: &[String]) -> bindgen::Bindings {
+#[cfg(feature = "buildtime_bindgen")]
+fn generate_bindings(ruby_include_path: &Path, clang_args: &[String], layout_tests: bool) -> bindgen::Bindings {
     bindgen::Builder::default()
         .derive_default(true)
+        .formatter(bindgen::Formatter::Prettyplease)
         .generate_block(true)
         .generate_comments(true)
         .header(ruby_include_path.join("prism.h").to_str().unwrap())
@@ -131,7 +150,7 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String]) -> bindgen
         .clang_arg("-fparse-all-comments")
         .clang_args(clang_args)
         .impl_debug(true)
-        .layout_tests(true)
+        .layout_tests(layout_tests)
         .merge_extern_blocks(true)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .parse_callbacks(Box::new(Callbacks))
@@ -226,6 +245,7 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String]) -> bindgen
 
 /// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into
 /// the actual library in `src/lib.rs`.
+#[cfg(feature = "buildtime_bindgen")]
 fn write_bindings(bindings: &bindgen::Bindings) {
     let out_path = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
