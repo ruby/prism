@@ -47,9 +47,39 @@ jobs:
       - name: Run tests
         run: bundle exec rake cargo:test
 
+      - name: Run tests with buildtime_bindgen
+        run: cargo test --features buildtime_bindgen -- --nocapture
+        working-directory: rust/ruby-prism-sys
+
+      - name: Check pregenerated bindings on wasm32-wasip1
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: cargo check --target wasm32-wasip1 --no-default-features
+        working-directory: rust/ruby-prism-sys
+        env:
+          PRISM_LIB_DIR: "."
+
       - name: Run examples
         if: ${{ matrix.os != 'windows-latest' }}
         run: bundle exec rake cargo:examples
+
+  sys-bindings:
+    name: cargo:bindings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+          bundler-cache: true
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.91.1"
+      - name: rake cargo:bindings
+        run: bundle exec rake cargo:bindings
+      - name: Check that the pregenerated bindings are up to date
+        run: git diff --color --no-ext-diff --exit-code -- rust/ruby-prism-sys/src/bindings.rs
 
   lint:
     name: cargo:lint
