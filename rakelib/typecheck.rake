@@ -213,6 +213,8 @@ namespace :typecheck do
       case type
       when RBS::Types::Literal
         case type.literal
+        when TrueClass
+          RBI::Type.simple("TrueClass")
         when FalseClass
           RBI::Type.simple("FalseClass")
         when Symbol
