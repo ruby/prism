@@ -8716,6 +8716,13 @@ lex_identifier(pm_parser_t *parser, bool previous_command_start) {
     if (encoding_changed) {
         return parser->encoding->isupper_char(current_start, end - current_start) ? PM_TOKEN_CONSTANT : PM_TOKEN_IDENTIFIER;
     }
+
+    /* Identifiers usually start with an ASCII byte, for which the uppercase
+     * check is a simple range comparison. This avoids the call into the
+     * encoding module for every identifier. */
+    if (*current_start < 0x80) {
+        return (*current_start >= 'A' && *current_start <= 'Z') ? PM_TOKEN_CONSTANT : PM_TOKEN_IDENTIFIER;
+    }
     return pm_encoding_utf_8_isupper_char(current_start, end - current_start) ? PM_TOKEN_CONSTANT : PM_TOKEN_IDENTIFIER;
 }
 
@@ -10093,7 +10100,11 @@ parser_lex(pm_parser_t *parser) {
             // token. Skip runs of inline whitespace in bulk to avoid per-character
             // stores back to parser->current.end.
             bool chomping = true;
-            while (parser->current.end < parser->end && chomping) {
+            while (chomping) {
+                /* Skip the run of inline whitespace in bulk, then decide what
+                 * to do based on the first byte after it. Handling both in a
+                 * single pass avoids re-entering the scan when the run was
+                 * non-empty, which is the common case. */
                 {
                     static const uint8_t inline_whitespace[256] = {
                         [' '] = 1, ['\t'] = 1, ['\f'] = 1, ['\v'] = 1
@@ -10103,8 +10114,8 @@ parser_lex(pm_parser_t *parser) {
                     if (scan > parser->current.end) {
                         parser->current.end = scan;
                         space_seen = true;
-                        continue;
                     }
+                    if (scan >= parser->end) break;
                 }
 
                 switch (*parser->current.end) {
