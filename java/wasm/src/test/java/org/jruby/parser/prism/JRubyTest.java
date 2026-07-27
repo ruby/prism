@@ -41,7 +41,6 @@ public class JRubyTest {
         "META-INF/jruby.home/lib/ruby/stdlib/rubygems.rb",
         "META-INF/jruby.home/lib/ruby/stdlib/rbconfig.rb",
         "jruby/kernel/rbconfig.rb",
-        "META-INF/jruby.home/lib/ruby/stdlib/rubygems/compatibility.rb",
         "META-INF/jruby.home/lib/ruby/stdlib/rubygems/defaults.rb",
         "META-INF/jruby.home/lib/ruby/stdlib/rubygems/deprecate.rb",
         "META-INF/jruby.home/lib/ruby/stdlib/rubygems/errors.rb",
