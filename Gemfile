@@ -26,3 +26,5 @@ gem "onigmo", platforms: :ruby
 if RUBY_PLATFORM =~ /aarch64.*mingw/
   gem "nokogiri", github: "sparklemotion/nokogiri", branch: "main"
 end
+
+gem "lrama"
