@@ -27,6 +27,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jar-dependencies (0.5.5)
+    lrama (0.8.0)
     mini_portile2 (2.8.9)
     nokogiri (1.19.1)
       mini_portile2 (~> 2.8.2)
@@ -96,6 +97,7 @@ DEPENDENCIES
   benchmark-ips
   ffi
   irb
+  lrama
   onigmo
   parser
   prism!
