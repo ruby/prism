@@ -2,11 +2,20 @@ import test from "node:test";
 import assert from "node:assert";
 import { loadPrism } from "./src/index.js";
 import * as nodes from "./src/nodes.js";
+import { Visitor } from "./src/visitor.js";
 
 const parse = await loadPrism();
 
 function statement(result) {
   return result.value.statements.body[0];
+}
+
+function eachNode(node, callback) {
+  callback(node);
+
+  for (const child of node.childNodes()) {
+    if (child) eachNode(child, callback);
+  }
 }
 
 test("node", () => {
@@ -207,4 +216,46 @@ test("scopes", () => {
 
   result = parse("foo(*)", { scopes: [{ forwarding: ["*"] }] });
   assert(result.errors.length === 0);
+});
+
+test("compactChildNodes() matches childNodes() without the nulls", () => {
+  const sources = [
+    "case a\nwhen b\n  c\nend",
+    "case a\nin [b]\n  c\nend",
+    "a, b = 1, 2",
+    "def foo(a, b = 1, *c, d:, &e); end",
+    "begin\n  a\nrescue B, C\n  d\nend",
+    "case a\nin { b: Integer => c }\n  d\nend"
+  ];
+
+  for (const source of sources) {
+    eachNode(parse(source).value, (node) => {
+      assert.deepStrictEqual(
+        node.compactChildNodes(),
+        node.childNodes().filter((child) => child !== null),
+        `${node.constructor.name} in ${JSON.stringify(source)}`
+      );
+    });
+  }
+});
+
+test("visitor visits nodes inside node list fields", () => {
+  class CallCollector extends Visitor {
+    names = [];
+
+    visitCallNode(node) {
+      this.names.push(node.name);
+      super.visitCallNode(node);
+    }
+  }
+
+  function collect(source) {
+    const visitor = new CallCollector();
+    visitor.visit(parse(source).value);
+    return visitor.names;
+  }
+
+  assert.deepStrictEqual(collect("case a\nwhen b\n  c\nend"), ["a", "b", "c"]);
+  assert.deepStrictEqual(collect("begin\n  a\nrescue B\n  c\nend"), ["a", "c"]);
+  assert.deepStrictEqual(collect("def foo(a = b); end"), ["b"]);
 });
