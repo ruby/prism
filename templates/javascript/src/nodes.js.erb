@@ -159,7 +159,7 @@ export class <%= node.name -%> {
       compact.push(this.<%= prop(field) %>);
     }
     <%- when Prism::Template::NodeListField -%>
-    compact.concat(this.<%= prop(field) %>);
+    compact.push(...this.<%= prop(field) %>);
     <%- end -%>
     <%- end -%>
 
