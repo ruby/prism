@@ -123,6 +123,27 @@ module Prism
       end
     end
 
+    def test_encodings_are_not_leaked_into_undef_and_alias
+      {
+        ["ascii-8bit", "undef :\"\\u00E9\", foo"] => [Encoding::UTF_8, Encoding::US_ASCII],
+        ["ascii-8bit", "undef foo, :\"\\u00E9\""] => [Encoding::US_ASCII, Encoding::UTF_8],
+        ["ascii-8bit", "alias :\"\\u00E9\" foo"]  => [Encoding::UTF_8, Encoding::US_ASCII],
+        ["ascii-8bit", "alias foo :\"\\u00E9\""]  => [Encoding::US_ASCII, Encoding::UTF_8],
+        # A US-ASCII source is the only one that forces a symbol to binary, so
+        # it is the only place the binary branch can leak into the bare name.
+        ["us-ascii", "undef :\"\\xE9\", foo"]     => [Encoding::ASCII_8BIT, Encoding::US_ASCII],
+        ["us-ascii", "alias :\"\\xE9\" foo"]      => [Encoding::ASCII_8BIT, Encoding::US_ASCII]
+      }.each do |(encoding, expression), expected|
+        result = Prism.parse("# encoding: #{encoding}\n#{expression}")
+        assert_predicate result, :success?, "failed to parse: #{expression}"
+
+        node = result.statement
+        names = node.is_a?(UndefNode) ? node.names : [node.new_name, node.old_name]
+
+        assert_equal expected, names.map { |name| binary_node_encoding(name) }, "#{encoding} #{expression}"
+      end
+    end
+
     private
 
     def binary_node_encoding(node)

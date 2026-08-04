@@ -6767,6 +6767,21 @@ pm_symbol_node_create_current_string(pm_parser_t *parser, const pm_token_t *open
 }
 
 /**
+ * Allocate and initialize a new SymbolNode node from a bare name. This covers
+ * every symbol whose contents are shared straight from the source: method
+ * names, keywords, constants, identifiers, instance/class/global variables, and
+ * numbered or back references. None of them hold escapes, so the encoding is
+ * determined entirely by those contents.
+ */
+static pm_symbol_node_t *
+pm_symbol_node_bare_create(pm_parser_t *parser, const pm_token_t *opening, const pm_token_t *value) {
+    pm_string_t unescaped;
+    pm_string_shared_init(&unescaped, value->start, value->end);
+
+    return pm_symbol_node_create_unescaped(parser, opening, value, NULL, &unescaped, parse_symbol_encoding(parser, NULL, value, &unescaped, false));
+}
+
+/**
  * Allocate and initialize a new SymbolNode node from a label.
  */
 static pm_symbol_node_t *
@@ -6779,7 +6794,7 @@ pm_symbol_node_label_create(pm_parser_t *parser, const pm_token_t *token) {
 
     assert((label.end - label.start) >= 0);
     pm_string_shared_init(&node->unescaped, label.start, label.end);
-    pm_node_flag_set(UP(node), parse_symbol_encoding(parser, parser->explicit_encoding, &label, &node->unescaped, false));
+    pm_node_flag_set(UP(node), parse_symbol_encoding(parser, NULL, &label, &node->unescaped, false));
 
     return node;
 }
@@ -16240,11 +16255,7 @@ parse_symbol(pm_parser_t *parser, pm_lex_mode_t *lex_mode, pm_lex_state_t next_s
                 break;
         }
 
-        pm_symbol_node_t *symbol = pm_symbol_node_create(parser, &opening, &parser->previous, NULL);
-        pm_string_shared_init(&symbol->unescaped, parser->previous.start, parser->previous.end);
-        pm_node_flag_set(UP(symbol), parse_symbol_encoding(parser, parser->explicit_encoding, &parser->previous, &symbol->unescaped, false));
-
-        return UP(symbol);
+        return UP(pm_symbol_node_bare_create(parser, &opening, &parser->previous));
     }
 
     if (lex_mode->as.string.interpolation) {
@@ -16361,11 +16372,7 @@ parse_undef_argument(pm_parser_t *parser, uint16_t depth) {
         case PM_TOKEN_METHOD_NAME: {
             parser_lex(parser);
 
-            pm_symbol_node_t *symbol = pm_symbol_node_create(parser, NULL, &parser->previous, NULL);
-            pm_string_shared_init(&symbol->unescaped, parser->previous.start, parser->previous.end);
-            pm_node_flag_set(UP(symbol), parse_symbol_encoding(parser, parser->explicit_encoding, &parser->previous, &symbol->unescaped, false));
-
-            return UP(symbol);
+            return UP(pm_symbol_node_bare_create(parser, NULL, &parser->previous));
         }
         case PM_TOKEN_SYMBOL_BEGIN: {
             pm_lex_mode_t lex_mode = *parser->lex_modes.current;
@@ -16397,11 +16404,7 @@ parse_alias_argument(pm_parser_t *parser, bool first, uint16_t depth) {
             if (first) lex_state_set(parser, PM_LEX_STATE_FNAME | PM_LEX_STATE_FITEM);
             parser_lex(parser);
 
-            pm_symbol_node_t *symbol = pm_symbol_node_create(parser, NULL, &parser->previous, NULL);
-            pm_string_shared_init(&symbol->unescaped, parser->previous.start, parser->previous.end);
-            pm_node_flag_set(UP(symbol), parse_symbol_encoding(parser, parser->explicit_encoding, &parser->previous, &symbol->unescaped, false));
-
-            return UP(symbol);
+            return UP(pm_symbol_node_bare_create(parser, NULL, &parser->previous));
         }
         case PM_TOKEN_SYMBOL_BEGIN: {
             pm_lex_mode_t lex_mode = *parser->lex_modes.current;
