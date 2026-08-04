@@ -46,16 +46,17 @@ return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 # Don't bother trying to configure memcheck on old versions of Ruby.
 return if RUBY_VERSION < "3.0"
 
-# Only attempt to configure memcheck if the gem is installed.
-begin
-  require "ruby_memcheck"
-rescue LoadError
-  return
-end
-
 namespace :test do
-  RubyMemcheck.config(use_only_ruby_free_at_exit: false)
-  RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
+  begin
+    require "ruby_memcheck"
+    RubyMemcheck.config(use_only_ruby_free_at_exit: false)
+    RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
+  rescue LoadError
+    task :valgrind_internal do
+      puts "\e[31mruby_memcheck gem not available. Try running with BUNDLE_WITH=memcheck\e[0m"
+      exit 1
+    end
+  end
 
   # Hide test:valgrind_internal from rake -T
   Rake::Task["test:valgrind_internal"].clear_comments

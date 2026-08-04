@@ -259,7 +259,8 @@ jobs:
   memcheck:
     runs-on: ubuntu-24.04
     env:
-      BUNDLER_VERSION: '0' # https://github.com/ruby/ruby/pull/16909
+      BUNDLE_WITH: 'memcheck'
+      BUNDLER_VERSION: '0'
     steps:
     - uses: actions/checkout@v7
     - name: Install valgrind
