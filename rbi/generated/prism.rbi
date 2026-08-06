@@ -27,8 +27,8 @@ module Prism
   # returns the Prism node representing it. On CRuby, this uses node_id for
   # an exact match. On other implementations, it falls back to best-effort
   # matching by source location line number.
-  sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location), rubyvm: T::Boolean).returns(::T.nilable(Node)) }
-  def self.find(callable, rubyvm: T.unsafe(nil)); end
+  sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location)).returns(::T.nilable(Node)) }
+  def self.find(callable); end
 
   VERSION = T.let(nil, String)
   BACKEND = T.let(nil, Symbol)
