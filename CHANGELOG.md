@@ -6,6 +6,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-08-07
+
+### Added
+
+- Support `version: "nearest"` to parse with the latest known Ruby version.
+- Support the no-block-parameter syntax (`&nil`) for Ruby 4.1+.
+- Allow trailing commas in method signatures ([Feature #19107]).
+- Add `Prism::ParseResult#continuable?` to determine if parsing can meaningfully continue after errors.
+- Add location slices to `Node#deconstruct_keys` for use in pattern matching.
+- Add `keyword_loc` to `ForwardingSuperNode`.
+- Many additions to the Ripper translation layer: `encoding`/`end_seen?`, `on_label_end`, `on_op`, `on_kw`, bracket/brace and string start/end events, and comments that include newlines.
+- Rust: expose parse options, line offsets, and node start offsets; add `ParseResult#is_success`/`is_failure`, `Location` line/column helpers and `chop`, and `full_name` for constant nodes.
+- Rust: ship pregenerated bindings in ruby-prism-sys so bindgen is no longer required to build, and allow custom C flags.
+- Java: split the artifact into components published to Maven Central, including a WASM parser.
+- Support precompiled native gems.
+
+### Changed
+
+- Reorganize the C API: the parser, options, buffer, and comment types are now opaque, and public headers are split from internal ones.
+- Significant lexing and parsing performance improvements: arena-based allocation, SIMD/SWAR whitespace scanning, a faster constant pool, and fast paths for ASCII identifiers.
+- Fix binding power and precedence for `not` in endless methods, `in`/`not`/`do` on and after command calls, infix operators after commands, and rescue modifiers.
+- Fix many pattern matching edge cases: trailing commas, duplicate rest patterns, hash pattern keys at EOF, and rejecting pinned back references and pinned numbered references.
+- Port the diagnostics format from CRuby.
+- Respect the `encoding` option in `Prism.lex` and use the string's encoding as the initial encoding in the Ripper translator.
+- Fix `Prism.parse_comments` locations for the FFI backend.
+- Fix lexing of unterminated strings and heredocs, and a stack-use-after-return with unterminated heredocs.
+- Track newlines in character escape sequences.
+- Correctly handle `and?` and similar on Ruby 4.0.
+- Fix the error message for block/lambda with a `...` argument.
+- Reject `END { break }` and `END { next }` for Ruby 4.0.
+- Thoroughly implement void value expression checks ([Bug #21669]).
+- Accept a nested target as the first `for` loop index.
+- Generate RBI files from RBS using rbs-inline.
+- JavaScript: fix `compactChildNodes` dropping node list fields.
+- Require arguments to `Source.for` and fix `Source#offsets` with `freeze: true`.
+
 ## [1.9.0] - 2026-01-27
 
 ### Added
@@ -753,7 +789,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.9.0...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/ruby/prism/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/ruby/prism/compare/v1.8.0...v1.9.0
 [1.8.1]: https://github.com/ruby/prism/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
