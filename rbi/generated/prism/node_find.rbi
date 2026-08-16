@@ -10,8 +10,8 @@ module Prism
   # pay for its definition.
   module NodeFind
     # Find the node for the given callable or backtrace location.
-    sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location), rubyvm: T::Boolean).returns(::T.nilable(Node)) }
-    def self.find(callable, rubyvm); end
+    sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location)).returns(::T.nilable(Node)) }
+    def self.find(callable); end
 
     # Base class that handles parsing a file.
     class Find

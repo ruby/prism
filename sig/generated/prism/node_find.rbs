@@ -11,8 +11,8 @@ module Prism
   module NodeFind
     # Find the node for the given callable or backtrace location.
     # --
-    # : (Method | UnboundMethod | Proc | Thread::Backtrace::Location callable, bool rubyvm) -> Node?
-    def self.find: (Method | UnboundMethod | Proc | Thread::Backtrace::Location callable, bool rubyvm) -> Node?
+    # : (Method | UnboundMethod | Proc | Thread::Backtrace::Location callable) -> Node?
+    def self.find: (Method | UnboundMethod | Proc | Thread::Backtrace::Location callable) -> Node?
 
     # Base class that handles parsing a file.
     class Find
