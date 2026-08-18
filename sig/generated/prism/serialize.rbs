@@ -114,8 +114,8 @@ module Prism
       # : (Encoding encoding, bool freeze) -> Array[ParseWarning]
       def load_warnings: (Encoding encoding, bool freeze) -> Array[ParseWarning]
 
-      # : () -> Array[[Token, Integer]]
-      def load_tokens: () -> Array[[ Token, Integer ]]
+      # : () -> Array[Token]
+      def load_tokens: () -> Array[Token]
 
       # variable-length integer using https://en.wikipedia.org/wiki/LEB128
       # This is also what protobuf uses: https://protobuf.dev/programming-guides/encoding/#varints

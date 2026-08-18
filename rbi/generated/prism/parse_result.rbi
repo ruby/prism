@@ -653,11 +653,11 @@ module Prism
   # This is a result specific to the `lex` and `lex_file` methods.
   class LexResult < Result
     # The list of tokens that were parsed from the source code.
-    sig { returns(T::Array[[Token, Integer]]) }
+    sig { returns(T::Array[Token]) }
     attr_reader :value
 
     # Create a new lex result object with the given values.
-    sig { params(value: T::Array[[Token, Integer]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(value: T::Array[Token], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for LexResult.
@@ -669,11 +669,11 @@ module Prism
   class ParseLexResult < Result
     # A tuple of the syntax tree and the list of tokens that were parsed from
     # the source code.
-    sig { returns([ProgramNode, T::Array[[Token, Integer]]]) }
+    sig { returns([ProgramNode, T::Array[Token]]) }
     attr_reader :value
 
     # Create a new parse lex result object with the given values.
-    sig { params(value: [ProgramNode, T::Array[[Token, Integer]]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(value: [ProgramNode, T::Array[Token]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseLexResult.
@@ -696,8 +696,8 @@ module Prism
     attr_reader :value
 
     # Create a new token object with the given type, value, and location.
-    sig { params(source: Source, type: Symbol, value: String, location: ::T.any(Location, Integer)).void }
-    def initialize(source, type, value, location); end
+    sig { params(source: Source, type: Symbol, value: String, location: ::T.any(Location, Integer), state: Integer).void }
+    def initialize(source, type, value, location, state); end
 
     # Implement the hash pattern matching interface for Token.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -722,6 +722,16 @@ module Prism
     # Freeze this object and the objects it contains.
     sig { void }
     def deep_freeze; end
+
+    # For internal use only.
+    sig { returns(Integer) }
+    def _ripper_state; end
+
+    sig { params(index: Integer).returns(Token) }
+    def [](index); end
+
+    sig { returns(Token) }
+    def first; end
   end
 
   # This object is passed to the various Prism.* methods that accept the

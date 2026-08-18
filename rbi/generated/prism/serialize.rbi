@@ -106,7 +106,7 @@ module Prism
       sig { params(encoding: Encoding, freeze: T::Boolean).returns(T::Array[ParseWarning]) }
       def load_warnings(encoding, freeze); end
 
-      sig { returns(T::Array[[Token, Integer]]) }
+      sig { returns(T::Array[Token]) }
       def load_tokens; end
 
       # variable-length integer using https://en.wikipedia.org/wiki/LEB128
