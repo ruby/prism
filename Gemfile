@@ -16,9 +16,16 @@ platforms :mri, :windows do
   gem "ffi"
   gem "irb"
   gem "rdoc"
+end
 
-  group :memcheck, optional: true do
-    gem "ruby_memcheck"
+platforms :mri do
+  group :typecheck do
+    gem "rbs", "< 4.1.0" # Until https://github.com/soutaro/steep/issues/2268 is fixed
+    gem "rbi"
+    gem "rbs-inline"
+    gem "sorbet"
+    gem "steep", ">= 2.1.0.dev.1"
+    gem "tapioca"
   end
 end
 

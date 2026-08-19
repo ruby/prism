@@ -26,7 +26,7 @@ updates:
       - '/gemfiles/3.4'
       - '/gemfiles/4.0'
       - '/gemfiles/4.1'
-      # - '/gemfiles/typecheck'
+      - '/gemfiles/memcheck'
     schedule:
       interval: 'weekly'
     groups:

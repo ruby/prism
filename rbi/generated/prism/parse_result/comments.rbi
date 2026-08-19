@@ -32,7 +32,7 @@ module Prism
         sig { returns(Integer) }
         def end_offset; end
 
-        sig { params(comment: Comment).returns(T::Boolean) }
+        sig { params(comment: Comment).returns(::T::Boolean) }
         def encloses?(comment); end
 
         sig { params(comment: Comment).void }
@@ -57,7 +57,7 @@ module Prism
         sig { returns(Integer) }
         def end_offset; end
 
-        sig { params(comment: Comment).returns(T::Boolean) }
+        sig { params(comment: Comment).returns(::T::Boolean) }
         def encloses?(comment); end
 
         sig { params(comment: Comment).void }

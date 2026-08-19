@@ -131,11 +131,11 @@ module Prism
     attr_reader :flags
 
     # Returns true if the node has the newline flag set.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def newline?; end
 
     # Returns true if the node has the static literal flag set.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def static_literal?; end
 
     # Similar to inspect, but respects the current level of indentation given by
@@ -161,10 +161,10 @@ module Prism
     # particular condition.
     #
     #     node.breadth_first_search { |node| node.node_id == node_id }
-    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(::T.nilable(Node)) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(::T::Boolean)).returns(::T.nilable(Node)) }
     def breadth_first_search(&blk); end
 
-    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(::T.nilable(Node)) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(::T::Boolean)).returns(::T.nilable(Node)) }
     def find(&blk); end
 
     # Returns all of the nodes that match the given block when visited in a
@@ -172,10 +172,10 @@ module Prism
     # particular condition.
     #
     #     node.breadth_first_search_all { |node| node.is_a?(Prism::CallNode) }
-    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(::T::Boolean)).returns(T::Array[Node]) }
     def breadth_first_search_all(&blk); end
 
-    sig { params(blk: ::T.proc.params(arg0: Node).returns(T::Boolean)).returns(T::Array[Node]) }
+    sig { params(blk: ::T.proc.params(arg0: Node).returns(::T::Boolean)).returns(T::Array[Node]) }
     def find_all(&blk); end
 
     # Returns a list of the fields that exist for this node class. Fields
@@ -321,7 +321,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -418,7 +418,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -503,7 +503,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -594,7 +594,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -650,23 +650,23 @@ module Prism
     def inspect; end
 
     # if the arguments contain forwarding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_forwarding?; end
 
     # if the arguments contain keywords
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_keywords?; end
 
     # if the arguments contain a keyword splat
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_keyword_splat?; end
 
     # if the arguments contain a splat
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_splat?; end
 
     # if the arguments contain multiple splats
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_multiple_splats?; end
 
     # The list of arguments, if present. These can be any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -676,7 +676,7 @@ module Prism
     sig { returns(T::Array[Node]) }
     def arguments; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -732,7 +732,7 @@ module Prism
     def inspect; end
 
     # if array contains splat nodes
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def contains_splat?; end
 
     # Represent the list of zero or more [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression) within the array.
@@ -775,7 +775,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -908,7 +908,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1002,7 +1002,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1080,7 +1080,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1143,7 +1143,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1260,7 +1260,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1338,7 +1338,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1394,7 +1394,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # The name of the block local variable.
@@ -1404,7 +1404,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1516,7 +1516,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1573,7 +1573,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # The name of the block parameter.
@@ -1613,7 +1613,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1734,7 +1734,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1812,7 +1812,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -1868,19 +1868,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -1959,7 +1959,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2030,19 +2030,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -2165,7 +2165,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def equal; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2221,19 +2221,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -2315,7 +2315,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def message; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2371,19 +2371,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -2462,7 +2462,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2526,19 +2526,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # The object that the method is being called on. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -2587,7 +2587,7 @@ module Prism
     sig { returns(String) }
     def message; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2672,7 +2672,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2782,7 +2782,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -2892,7 +2892,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3023,7 +3023,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3120,7 +3120,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3205,7 +3205,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3290,7 +3290,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3353,7 +3353,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3412,7 +3412,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3513,7 +3513,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3598,7 +3598,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3683,7 +3683,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3768,7 +3768,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3844,7 +3844,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -3950,7 +3950,7 @@ module Prism
     sig { returns(String) }
     def delimiter; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4026,7 +4026,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4102,7 +4102,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4187,7 +4187,7 @@ module Prism
     sig { returns(String) }
     def delimiter; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4281,7 +4281,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4344,7 +4344,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4403,7 +4403,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4504,7 +4504,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4667,7 +4667,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4765,7 +4765,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4850,7 +4850,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -4935,7 +4935,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5007,7 +5007,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5096,7 +5096,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5152,7 +5152,7 @@ module Prism
     sig { returns(::T.nilable(Node)) }
     def unexpected; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5207,7 +5207,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5346,7 +5346,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5402,7 +5402,7 @@ module Prism
     def inspect; end
 
     # ... operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def exclude_end?; end
 
     # Returns the `left` attribute.
@@ -5426,7 +5426,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5485,7 +5485,7 @@ module Prism
     sig { returns(Float) }
     def value; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5627,7 +5627,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5684,7 +5684,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5740,7 +5740,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5821,7 +5821,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5906,7 +5906,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -5991,7 +5991,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6076,7 +6076,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6139,7 +6139,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6198,7 +6198,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6299,7 +6299,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6396,7 +6396,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6528,7 +6528,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6686,7 +6686,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6745,7 +6745,7 @@ module Prism
     sig { returns(::T.any(FloatNode, IntegerNode, RationalNode)) }
     def numeric; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6810,7 +6810,7 @@ module Prism
     sig { returns(::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)) }
     def value; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6874,7 +6874,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -6963,7 +6963,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7019,19 +7019,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
@@ -7102,7 +7102,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7158,19 +7158,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
@@ -7241,7 +7241,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7297,19 +7297,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
@@ -7380,7 +7380,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7444,19 +7444,19 @@ module Prism
     def inspect; end
 
     # &. operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def safe_navigation?; end
 
     # a call that could have been a local variable
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def variable_call?; end
 
     # a call that is an attribute write, so the value being written should be returned
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def attribute_write?; end
 
     # a call that ignores method visibility
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_visibility?; end
 
     # Returns the `receiver` attribute.
@@ -7497,7 +7497,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7582,7 +7582,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7667,7 +7667,7 @@ module Prism
     sig { returns(Symbol) }
     def binary_operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7752,7 +7752,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7815,7 +7815,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7874,7 +7874,7 @@ module Prism
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -7975,7 +7975,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8031,26 +8031,26 @@ module Prism
     def inspect; end
 
     # 0b prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def binary?; end
 
     # 0d or no prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def decimal?; end
 
     # 0o or 0 prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def octal?; end
 
     # 0x prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def hexadecimal?; end
 
     # The value of the integer literal as a number.
     sig { returns(Integer) }
     def value; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8106,47 +8106,47 @@ module Prism
     def inspect; end
 
     # i - ignores the case of characters when matching
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_case?; end
 
     # x - ignores whitespace and allows comments in regular expressions
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def extended?; end
 
     # m - allows $ to match the end of lines within strings
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def multi_line?; end
 
     # o - only interpolates values into the regular expression once
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def once?; end
 
     # e - forces the EUC-JP encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def euc_jp?; end
 
     # n - forces the ASCII-8BIT encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ascii_8bit?; end
 
     # s - forces the Windows-31J encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def windows_31j?; end
 
     # u - forces the UTF-8 encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def utf_8?; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # internal bytes forced the encoding to US-ASCII
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -8179,7 +8179,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8235,47 +8235,47 @@ module Prism
     def inspect; end
 
     # i - ignores the case of characters when matching
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_case?; end
 
     # x - ignores whitespace and allows comments in regular expressions
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def extended?; end
 
     # m - allows $ to match the end of lines within strings
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def multi_line?; end
 
     # o - only interpolates values into the regular expression once
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def once?; end
 
     # e - forces the EUC-JP encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def euc_jp?; end
 
     # n - forces the ASCII-8BIT encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ascii_8bit?; end
 
     # s - forces the Windows-31J encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def windows_31j?; end
 
     # u - forces the UTF-8 encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def utf_8?; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # internal bytes forced the encoding to US-ASCII
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -8308,7 +8308,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8364,11 +8364,11 @@ module Prism
     def inspect; end
 
     # frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def frozen?; end
 
     # mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`; only for adjacent string literals like `'a' 'b'`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def mutable?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -8401,7 +8401,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8486,7 +8486,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8571,7 +8571,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8626,7 +8626,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8681,7 +8681,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8737,14 +8737,14 @@ module Prism
     def inspect; end
 
     # a keyword hash which only has `AssocNode` elements all with symbol keys, which means the elements can be treated as keyword arguments
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def symbol_keys?; end
 
     # Returns the `elements` attribute.
     sig { returns(T::Array[::T.any(AssocNode, AssocSplatNode)]) }
     def elements; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8801,7 +8801,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
@@ -8830,7 +8830,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -8936,7 +8936,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9025,7 +9025,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9114,7 +9114,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9203,7 +9203,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9280,7 +9280,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9346,7 +9346,7 @@ module Prism
     sig { returns(Integer) }
     def depth; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9461,7 +9461,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9517,47 +9517,47 @@ module Prism
     def inspect; end
 
     # i - ignores the case of characters when matching
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_case?; end
 
     # x - ignores whitespace and allows comments in regular expressions
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def extended?; end
 
     # m - allows $ to match the end of lines within strings
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def multi_line?; end
 
     # o - only interpolates values into the regular expression once
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def once?; end
 
     # e - forces the EUC-JP encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def euc_jp?; end
 
     # n - forces the ASCII-8BIT encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ascii_8bit?; end
 
     # s - forces the Windows-31J encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def windows_31j?; end
 
     # u - forces the UTF-8 encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def utf_8?; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # internal bytes forced the encoding to US-ASCII
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -9603,7 +9603,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9679,7 +9679,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9803,7 +9803,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9866,7 +9866,7 @@ module Prism
     sig { returns(T::Array[LocalVariableTargetNode]) }
     def targets; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -9963,7 +9963,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10091,7 +10091,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10237,7 +10237,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10309,7 +10309,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10364,7 +10364,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10446,7 +10446,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10528,7 +10528,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10587,7 +10587,7 @@ module Prism
     sig { returns(Integer) }
     def maximum; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10652,7 +10652,7 @@ module Prism
     sig { returns(Integer) }
     def number; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10709,7 +10709,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
@@ -10729,7 +10729,7 @@ module Prism
     sig { returns(Node) }
     def value; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10786,7 +10786,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
@@ -10819,7 +10819,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10910,7 +10910,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -10994,7 +10994,7 @@ module Prism
     sig { returns(::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))) }
     def block; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11050,7 +11050,7 @@ module Prism
     def inspect; end
 
     # parentheses that contain multiple potentially void statements
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def multiple_statements?; end
 
     # Returns the `body` attribute.
@@ -11083,7 +11083,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11193,7 +11193,7 @@ module Prism
     sig { returns(String) }
     def rparen; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11271,7 +11271,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11369,7 +11369,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11467,7 +11467,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11527,7 +11527,7 @@ module Prism
     sig { returns(StatementsNode) }
     def statements; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11586,7 +11586,7 @@ module Prism
     def inspect; end
 
     # ... operator
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def exclude_end?; end
 
     # The left-hand side of the range, if present. It can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
@@ -11623,7 +11623,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11679,19 +11679,19 @@ module Prism
     def inspect; end
 
     # 0b prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def binary?; end
 
     # 0d or no prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def decimal?; end
 
     # 0o or 0 prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def octal?; end
 
     # 0x prefix
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def hexadecimal?; end
 
     # The numerator of the rational number.
@@ -11706,7 +11706,7 @@ module Prism
     sig { returns(Integer) }
     def denominator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11761,7 +11761,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11817,47 +11817,47 @@ module Prism
     def inspect; end
 
     # i - ignores the case of characters when matching
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ignore_case?; end
 
     # x - ignores whitespace and allows comments in regular expressions
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def extended?; end
 
     # m - allows $ to match the end of lines within strings
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def multi_line?; end
 
     # o - only interpolates values into the regular expression once
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def once?; end
 
     # e - forces the EUC-JP encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def euc_jp?; end
 
     # n - forces the ASCII-8BIT encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def ascii_8bit?; end
 
     # s - forces the Windows-31J encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def windows_31j?; end
 
     # u - forces the UTF-8 encoding
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def utf_8?; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # internal bytes forced the encoding to US-ASCII
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -11903,7 +11903,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -11960,7 +11960,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
@@ -11976,7 +11976,7 @@ module Prism
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_name_loc(repository); end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12033,14 +12033,14 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
     sig { returns(Symbol) }
     def name; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12116,7 +12116,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12231,7 +12231,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12288,7 +12288,7 @@ module Prism
     def inspect; end
 
     # a parameter name that has been repeated in the method signature
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def repeated_parameter?; end
 
     # Returns the `name` attribute.
@@ -12317,7 +12317,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12372,7 +12372,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12444,7 +12444,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12499,7 +12499,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12556,22 +12556,22 @@ module Prism
     def inspect; end
 
     # constant writes that should be modified with shareable constant value literal
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def literal?; end
 
     # constant writes that should be modified with shareable constant value experimental everything
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def experimental_everything?; end
 
     # constant writes that should be modified with shareable constant value experimental copy
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def experimental_copy?; end
 
     # The constant write that should be modified with the shareability state.
     sig { returns(::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)) }
     def write; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12677,7 +12677,7 @@ module Prism
     sig { returns(String) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12732,7 +12732,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12788,26 +12788,26 @@ module Prism
     def inspect; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def frozen?; end
 
     # mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def mutable?; end
 
     # Represents the file path being parsed. This corresponds directly to the `filepath` option given to the various `Prism.parse*` APIs.
     sig { returns(String) }
     def filepath; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12862,7 +12862,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12934,7 +12934,7 @@ module Prism
     sig { returns(String) }
     def operator; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -12993,7 +12993,7 @@ module Prism
     sig { returns(T::Array[Node]) }
     def body; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13055,19 +13055,19 @@ module Prism
     def inspect; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # frozen by virtue of a `frozen_string_literal: true` comment or `--enable-frozen-string-literal`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def frozen?; end
 
     # mutable by virtue of a `frozen_string_literal: false` comment or `--disable-frozen-string-literal`
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def mutable?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -13113,7 +13113,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13220,7 +13220,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13279,15 +13279,15 @@ module Prism
     def inspect; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # internal bytes forced the encoding to US-ASCII
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_us_ascii_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -13333,7 +13333,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13388,7 +13388,7 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13460,7 +13460,7 @@ module Prism
     sig { returns(String) }
     def keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13594,7 +13594,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13653,7 +13653,7 @@ module Prism
     def inspect; end
 
     # a loop after a begin statement, so the body is executed first before the condition
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def begin_modifier?; end
 
     # Returns the Location represented by `until_keyword_loc`.
@@ -13703,7 +13703,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13794,7 +13794,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def then_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13853,7 +13853,7 @@ module Prism
     def inspect; end
 
     # a loop after a begin statement, so the body is executed first before the condition
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def begin_modifier?; end
 
     # Returns the Location represented by `while_keyword_loc`.
@@ -13903,7 +13903,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def end_keyword; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -13959,11 +13959,11 @@ module Prism
     def inspect; end
 
     # internal bytes forced the encoding to UTF-8
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_utf8_encoding?; end
 
     # internal bytes forced the encoding to binary
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def forced_binary_encoding?; end
 
     # Returns the Location represented by `opening_loc`.
@@ -14009,7 +14009,7 @@ module Prism
     sig { returns(String) }
     def closing; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 
@@ -14107,7 +14107,7 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def rparen; end
 
-    sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }
+    sig { params(other: ::T.untyped).returns(::T.nilable(::T::Boolean)) }
     def ===(other); end
   end
 

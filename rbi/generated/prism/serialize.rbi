@@ -19,14 +19,14 @@ module Prism
     #
     # The formatting of the source of this method is purposeful to illustrate
     # the structure of the serialized data.
-    sig { params(input: String, serialized: String, freeze: T::Boolean).returns(ParseResult) }
+    sig { params(input: String, serialized: String, freeze: ::T::Boolean).returns(ParseResult) }
     def self.load_parse(input, serialized, freeze); end
 
     # Deserialize the dumped output from a request to lex or lex_file.
     #
     # The formatting of the source of this method is purposeful to illustrate
     # the structure of the serialized data.
-    sig { params(input: String, serialized: String, freeze: T::Boolean).returns(LexResult) }
+    sig { params(input: String, serialized: String, freeze: ::T::Boolean).returns(LexResult) }
     def self.load_lex(input, serialized, freeze); end
 
     # Deserialize the dumped output from a request to parse_comments or
@@ -34,7 +34,7 @@ module Prism
     #
     # The formatting of the source of this method is purposeful to illustrate
     # the structure of the serialized data.
-    sig { params(input: String, serialized: String, freeze: T::Boolean).returns(T::Array[Comment]) }
+    sig { params(input: String, serialized: String, freeze: ::T::Boolean).returns(T::Array[Comment]) }
     def self.load_parse_comments(input, serialized, freeze); end
 
     # Deserialize the dumped output from a request to parse_lex or
@@ -42,7 +42,7 @@ module Prism
     #
     # The formatting of the source of this method is purposeful to illustrate
     # the structure of the serialized data.
-    sig { params(input: String, serialized: String, freeze: T::Boolean).returns(ParseLexResult) }
+    sig { params(input: String, serialized: String, freeze: ::T::Boolean).returns(ParseLexResult) }
     def self.load_parse_lex(input, serialized, freeze); end
 
     class ConstantPool
@@ -71,7 +71,7 @@ module Prism
       sig { params(source: Source, serialized: String).void }
       def initialize(source, serialized); end
 
-      sig { returns(T::Boolean) }
+      sig { returns(::T::Boolean) }
       def eof?; end
 
       sig { params(constant_pool: ConstantPool).void }
@@ -83,13 +83,13 @@ module Prism
       sig { returns(Encoding) }
       def load_encoding; end
 
-      sig { params(freeze: T::Boolean).returns(T::Array[Integer]) }
+      sig { params(freeze: ::T::Boolean).returns(T::Array[Integer]) }
       def load_line_offsets(freeze); end
 
-      sig { params(freeze: T::Boolean).returns(T::Array[Comment]) }
+      sig { params(freeze: ::T::Boolean).returns(T::Array[Comment]) }
       def load_comments(freeze); end
 
-      sig { params(freeze: T::Boolean).returns(T::Array[MagicComment]) }
+      sig { params(freeze: ::T::Boolean).returns(T::Array[MagicComment]) }
       def load_magic_comments(freeze); end
 
       DIAGNOSTIC_TYPES = T.let(nil, T::Array[Symbol])
@@ -97,13 +97,13 @@ module Prism
       sig { returns(Symbol) }
       def load_error_level; end
 
-      sig { params(encoding: Encoding, freeze: T::Boolean).returns(T::Array[ParseError]) }
+      sig { params(encoding: Encoding, freeze: ::T::Boolean).returns(T::Array[ParseError]) }
       def load_errors(encoding, freeze); end
 
       sig { returns(Symbol) }
       def load_warning_level; end
 
-      sig { params(encoding: Encoding, freeze: T::Boolean).returns(T::Array[ParseWarning]) }
+      sig { params(encoding: Encoding, freeze: ::T::Boolean).returns(T::Array[ParseWarning]) }
       def load_warnings(encoding, freeze); end
 
       sig { returns(T::Array[Token]) }
@@ -123,34 +123,34 @@ module Prism
       sig { returns(Float) }
       def load_double; end
 
-      sig { returns(T::Boolean) }
+      sig { returns(::T::Boolean) }
       def load_bool; end
 
       sig { returns(Integer) }
       def load_uint32; end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(::T.nilable(Node)) }
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: ::T::Boolean).returns(::T.nilable(Node)) }
       def load_optional_node(constant_pool, encoding, freeze); end
 
       sig { params(encoding: Encoding).returns(String) }
       def load_string(encoding); end
 
-      sig { params(freeze: T::Boolean).returns(Location) }
+      sig { params(freeze: ::T::Boolean).returns(Location) }
       def load_location_object(freeze); end
 
       # Load a location object from the serialized data. Note that we are lying
       # about the signature a bit here, because we sometimes load it as a packed
       # integer instead of an object.
-      sig { params(freeze: T::Boolean).returns(Location) }
+      sig { params(freeze: ::T::Boolean).returns(Location) }
       def load_location(freeze); end
 
       # Load an optional location object from the serialized data if it is
       # present. Note that we are lying about the signature a bit here, because
       # we sometimes load it as a packed integer instead of an object.
-      sig { params(freeze: T::Boolean).returns(::T.nilable(Location)) }
+      sig { params(freeze: ::T::Boolean).returns(::T.nilable(Location)) }
       def load_optional_location(freeze); end
 
-      sig { params(freeze: T::Boolean).returns(::T.nilable(Location)) }
+      sig { params(freeze: ::T::Boolean).returns(::T.nilable(Location)) }
       def load_optional_location_object(freeze); end
 
       sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(Symbol) }
@@ -159,7 +159,7 @@ module Prism
       sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(::T.nilable(Symbol)) }
       def load_optional_constant(constant_pool, encoding); end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(Node) }
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: ::T::Boolean).returns(Node) }
       def load_node(constant_pool, encoding, freeze); end
 
       sig { void }

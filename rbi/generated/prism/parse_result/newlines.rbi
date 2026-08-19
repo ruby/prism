@@ -52,70 +52,70 @@ module Prism
   class Node
     abstract!
 
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def newline_flag?; end
 
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class BeginNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class ParenthesesNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class IfNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class UnlessNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class UntilNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class WhileNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class RescueModifierNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class InterpolatedMatchLastLineNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class InterpolatedRegularExpressionNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class InterpolatedStringNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class InterpolatedSymbolNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 
   class InterpolatedXStringNode < Node
-    sig { params(lines: T::Array[T::Boolean]).void }
+    sig { params(lines: T::Array[::T::Boolean]).void }
     def newline_flag!(lines); end
   end
 end

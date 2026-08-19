@@ -213,6 +213,7 @@ module Prism
     def full_message_loc: () -> Location?
   end
 
+  # :stopdoc:
   class InNode < Node
     # : () -> String
     def in: () -> String

@@ -53,7 +53,7 @@ namespace :test do
     RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
   rescue LoadError
     task :valgrind_internal do
-      puts "\e[31mruby_memcheck gem not available. Try running with BUNDLE_WITH=memcheck\e[0m"
+      puts "\e[31mruby_memcheck gem not available. Try running with BUNDLE_GEMFILE=gemfiles/memcheck/Gemfile\e[0m"
       exit 1
     end
   end

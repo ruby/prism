@@ -72,7 +72,7 @@ module Prism
   #--
   #: (String source, **untyped options) -> LexCompat::Result
   def self.lex_compat(source, **options)
-    LexCompat.new(source, **options).result # steep:ignore
+    LexCompat.new(source, **options).result
   end
 
   # :call-seq:

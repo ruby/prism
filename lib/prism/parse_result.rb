@@ -1030,7 +1030,7 @@ module Prism
     #--
     #: () -> void
     def attach_comments!
-      Comments.new(self).attach! # steep:ignore
+      Comments.new(self).attach!
     end
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating
@@ -1038,7 +1038,7 @@ module Prism
     #--
     #: () -> void
     def mark_newlines!
-      value.accept(Newlines.new(source.offsets.size)) # steep:ignore
+      value.accept(Newlines.new(source.offsets.size))
     end
 
     # Returns a string representation of the syntax tree with the errors

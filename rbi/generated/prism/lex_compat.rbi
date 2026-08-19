@@ -44,7 +44,7 @@ module Prism
       attr_reader :value
 
       # Create a new lex compat result object with the given values.
-      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+      sig { params(value: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: ::T::Boolean, source: Source).void }
       def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
       # Implement the hash pattern matching interface for Result.
@@ -83,13 +83,13 @@ module Prism
       # that need to be split on "\\\n" to mimic Ripper's behavior. We also need
       # to keep track of the state that the heredoc was opened in.
       class DashHeredoc
-        sig { returns(T::Boolean) }
+        sig { returns(::T::Boolean) }
         attr_reader :split
 
         sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         attr_reader :tokens
 
-        sig { params(split: T::Boolean).void }
+        sig { params(split: ::T::Boolean).void }
         def initialize(split); end
 
         sig { params(token: [[Integer, Integer], Symbol, String, ::T.untyped]).void }
@@ -115,7 +115,7 @@ module Prism
         sig { returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
         attr_reader :tokens
 
-        sig { returns(T::Boolean) }
+        sig { returns(::T::Boolean) }
         attr_reader :dedent_next
 
         sig { returns(::T.nilable(Integer)) }
@@ -157,7 +157,7 @@ module Prism
     sig { returns(Result) }
     def result; end
 
-    sig { params(tokens: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], source: Source, data_loc: ::T.nilable(Location), bom: T::Boolean, eof_token: ::T.nilable(Token)).returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
+    sig { params(tokens: T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]], source: Source, data_loc: ::T.nilable(Location), bom: ::T::Boolean, eof_token: ::T.nilable(Token)).returns(T::Array[[[Integer, Integer], Symbol, String, ::T.untyped]]) }
     private def post_process_tokens(tokens, source, data_loc, bom, eof_token); end
   end
 end

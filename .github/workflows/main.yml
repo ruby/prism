@@ -42,8 +42,6 @@ jobs:
 
   typecheck:
     runs-on: ubuntu-latest
-    env:
-      BUNDLE_GEMFILE: gemfiles/typecheck/Gemfile
     steps:
     - uses: actions/checkout@v7
     - name: Set up Ruby
@@ -261,6 +259,7 @@ jobs:
     env:
       BUNDLE_WITH: 'memcheck'
       BUNDLER_VERSION: '0'
+      BUNDLE_GEMFILE: gemfiles/memcheck/Gemfile
     steps:
     - uses: actions/checkout@v7
     - name: Install valgrind

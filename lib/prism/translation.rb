@@ -6,7 +6,7 @@
 module Prism
   # This module is responsible for converting the prism syntax tree into other
   # syntax trees.
-  module Translation # steep:ignore
+  module Translation
     autoload :Parser, "prism/translation/parser"
     autoload :ParserCurrent, "prism/translation/parser_current"
     autoload :Parser33, "prism/translation/parser_versions"

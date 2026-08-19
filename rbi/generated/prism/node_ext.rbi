@@ -45,25 +45,25 @@ module Prism
 
   module HeredocQuery
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { params(opening: ::T.nilable(String)).returns(::T.nilable(T::Boolean)) }
+    sig { params(opening: ::T.nilable(String)).returns(::T.nilable(::T::Boolean)) }
     def self.heredoc?(opening); end
   end
 
   class InterpolatedStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(::T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(::T::Boolean)) }
     def heredoc?; end
   end
 
   class InterpolatedXStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(::T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(::T::Boolean)) }
     def heredoc?; end
   end
 
   class StringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(::T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(::T::Boolean)) }
     def heredoc?; end
 
     # Occasionally it's helpful to treat a string as if it were interpolated so
@@ -74,7 +74,7 @@ module Prism
 
   class XStringNode < Node
     # Returns true if this node was represented as a heredoc in the source code.
-    sig { returns(::T.nilable(T::Boolean)) }
+    sig { returns(::T.nilable(::T::Boolean)) }
     def heredoc?; end
 
     # Occasionally it's helpful to treat a string as if it were interpolated so

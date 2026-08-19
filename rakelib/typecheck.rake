@@ -68,14 +68,14 @@ namespace :typecheck do
           abstract = Set.new
           override = Set.new
 
-          if parent && parent.name.name == "Prism" && cls.name.name == "Node"
+          if parent && parent.name == "Prism" && cls.name == "Node"
             cls << RBI::Helper.new("abstract")
             abstract = INODE
           end
 
           if (super_class = node.super_class).is_a?(RBS::AST::Declarations::Class::Super)
             cls.superclass_name = compile_name(super_class.name)
-            override = INODE if parent && parent.name.name == "Prism" && super_class.name.name.name == "Node"
+            override = INODE if parent && parent.name == "Prism" && super_class.name.name == :Node
           end
 
           compiler = RBICompiler.new(cls, abstract: abstract, override: override)
@@ -156,10 +156,15 @@ namespace :typecheck do
              [:deconstruct, :child_nodes]
           found = parent.nodes.find { |child| child.is_a?(RBI::Method) && child.name == node.old_name.name }
           parent <<
-            found.dup.tap do |method|
-              method.name = node.new_name.name
-              method.comments = compile_comments(node)
-            end
+            RBI::Method.new(
+              node.new_name.name,
+              params: found.params,
+              is_singleton: found.is_singleton,
+              visibility: found.visibility,
+              sigs: found.sigs,
+              loc: found.loc,
+              comments: compile_comments(node),
+            )
         else
           raise
         end
@@ -288,61 +293,46 @@ namespace :typecheck do
     end
   end
 
-  def with_gemfile
-    Bundler.with_original_env do
-      ENV['BUNDLE_GEMFILE'] = "gemfiles/typecheck/Gemfile"
-      yield
-    end
-  end
-
   desc "Generate RBS with rbs-inline"
   task rbs_inline: :templates do
-    with_gemfile do
-      sh "bundle", "exec", "rbs-inline", "lib", "--output", "lib"
-    end
+    sh "bundle", "exec", "rbs-inline", "lib", "--output", "lib"
   end
 
   desc "Generate RBIs from RBSs"
   task rbi: :templates do
-    with_gemfile do
-      require "fileutils"
-      require "rbs"
-      require "rbi"
-      require "set"
+    require "fileutils"
+    require "rbs"
+    require "rbi"
+    require "set"
 
-      rbs_base = File.expand_path("../sig/generated", __dir__)
-      rbi_base = File.expand_path("../rbi/generated", __dir__)
+    rbs_base = File.expand_path("../sig/generated", __dir__)
+    rbi_base = File.expand_path("../rbi/generated", __dir__)
 
-      Dir["**/*.rbs", base: rbs_base].each do |filepath|
-        RBI::File.new(strictness: "true") do |file|
-          compiler = RBICompiler.new(file)
+    Dir["**/*.rbs", base: rbs_base].each do |filepath|
+      RBI::File.new(strictness: "true") do |file|
+        compiler = RBICompiler.new(file)
 
-          _, _, decls = RBS::Parser.parse_signature(File.read(File.join(rbs_base, filepath)))
-          decls.each { |decl| compiler.compile(decl) }
+        _, _, decls = RBS::Parser.parse_signature(File.read(File.join(rbs_base, filepath)))
+        decls.each { |decl| compiler.compile(decl) }
 
-          mkdir_p((dirpath = File.join(rbi_base, File.dirname(filepath))))
-          File.write(File.join(dirpath, "#{File.basename(filepath, ".rbs")}.rbi"), file.string)
-        end
+        mkdir_p((dirpath = File.join(rbi_base, File.dirname(filepath))))
+        File.write(File.join(dirpath, "#{File.basename(filepath, ".rbs")}.rbi"), file.string)
       end
     end
   end
 
   desc "Typecheck with Steep"
   task steep: :templates do
-    with_gemfile do
-      sh "bundle", "exec", "steep", "check"
-    end
+    sh "bundle", "exec", "steep", "check"
   end
 
   desc "Generate RBIs with Tapioca"
   task tapioca: :templates do
     Rake::Task["compile:prism"].invoke
 
-    with_gemfile do
-      sh "bundle", "exec", "tapioca", "configure"
-      sh "bundle", "exec", "tapioca", "gems", "--exclude", "prism"
-      sh "bundle", "exec", "tapioca", "todo"
-    end
+    sh "bundle", "exec", "tapioca", "configure"
+    sh "bundle", "exec", "tapioca", "gems", "--exclude", "prism"
+    sh "bundle", "exec", "tapioca", "todo"
   end
 
   desc "Typecheck with Sorbet"
@@ -403,8 +393,6 @@ namespace :typecheck do
       --suppress-error-code=7001
     CONFIG
 
-    with_gemfile do
-      sh "bundle", "exec", "srb"
-    end
+    sh "bundle", "exec", "srb"
   end
 end

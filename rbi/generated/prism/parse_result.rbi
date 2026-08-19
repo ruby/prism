@@ -379,7 +379,7 @@ module Prism
     def pretty_print(q); end
 
     # Returns true if the given other location is equal to this location.
-    sig { params(other: ::T.untyped).returns(T::Boolean) }
+    sig { params(other: ::T.untyped).returns(::T::Boolean) }
     def ==(other); end
 
     # Returns a new location that stretches from this location to the given
@@ -417,7 +417,7 @@ module Prism
     # Returns true if this comment happens on the same line as other code and
     # false if the comment is by itself. This can only be true for inline
     # comments and should be false for block comments.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def trailing?; end
   end
 
@@ -426,7 +426,7 @@ module Prism
   class InlineComment < Comment
     # Returns true if this comment happens on the same line as other code and
     # false if the comment is by itself.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def trailing?; end
 
     # Returns a string representation of this comment.
@@ -438,7 +438,7 @@ module Prism
   # and =end.
   class EmbDocComment < Comment
     # Returns false. This can only be true for inline comments.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def trailing?; end
 
     # Returns a string representation of this comment.
@@ -572,7 +572,7 @@ module Prism
     attr_reader :source
 
     # Create a new result object with the given values.
-    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: ::T::Boolean, source: Source).void }
     def initialize(comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for Result.
@@ -585,12 +585,12 @@ module Prism
 
     # Returns true if there were no errors during parsing and false if there
     # were.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def success?; end
 
     # Returns true if there were errors during parsing and false if there were
     # not.
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def failure?; end
 
     # Returns true if the parsed source is an incomplete expression that could
@@ -613,7 +613,7 @@ module Prism
     #     Prism.parse("tap do").continuable?     #=> true  (unclosed block)
     #     Prism.parse("end.tap do").continuable? #=> false (stray end)
     #
-    sig { returns(T::Boolean) }
+    sig { returns(::T::Boolean) }
     def continuable?; end
 
     # Create a code units cache for the given encoding.
@@ -628,7 +628,7 @@ module Prism
     attr_reader :value
 
     # Create a new parse result object with the given values.
-    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: ::T::Boolean, source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseResult.
@@ -657,7 +657,7 @@ module Prism
     attr_reader :value
 
     # Create a new lex result object with the given values.
-    sig { params(value: T::Array[Token], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(value: T::Array[Token], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: ::T::Boolean, source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for LexResult.
@@ -673,7 +673,7 @@ module Prism
     attr_reader :value
 
     # Create a new parse lex result object with the given values.
-    sig { params(value: [ProgramNode, T::Array[Token]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    sig { params(value: [ProgramNode, T::Array[Token]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: ::T::Boolean, source: Source).void }
     def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseLexResult.
@@ -712,7 +712,7 @@ module Prism
     def pretty_print(q); end
 
     # Returns true if the given other token is equal to this token.
-    sig { params(other: ::T.untyped).returns(T::Boolean) }
+    sig { params(other: ::T.untyped).returns(::T::Boolean) }
     def ==(other); end
 
     # Returns a string representation of this token.

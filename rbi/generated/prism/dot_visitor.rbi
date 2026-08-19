@@ -11,10 +11,10 @@ module Prism
       sig { returns(::T.nilable(String)) }
       attr_reader :value
 
-      sig { returns(T::Boolean) }
+      sig { returns(::T::Boolean) }
       attr_reader :port
 
-      sig { params(name: String, value: ::T.nilable(String), port: T::Boolean).void }
+      sig { params(name: String, value: ::T.nilable(String), port: ::T::Boolean).void }
       def initialize(name, value, port); end
 
       sig { returns(String) }
@@ -31,7 +31,7 @@ module Prism
       sig { params(name: String).void }
       def initialize(name); end
 
-      sig { params(name: String, value: ::T.nilable(String), port: T::Boolean).void }
+      sig { params(name: String, value: ::T.nilable(String), port: ::T::Boolean).void }
       def field(name, value = T.unsafe(nil), port: T.unsafe(nil)); end
 
       sig { returns(String) }
