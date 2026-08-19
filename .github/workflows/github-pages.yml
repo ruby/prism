@@ -44,8 +44,6 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v6
-      - name: Template source files
-        run: bundle exec rake templates
       - name: Build with RDoc
         run: bundle exec rake rdoc
       - name: Build with Doxygen
