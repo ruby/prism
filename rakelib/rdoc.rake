@@ -29,5 +29,5 @@ end
 %w[rdoc rerdoc rdoc:coverage].each do |name|
   # rdoc:coverage available in rdoc as a default gem since ruby 3.3 only
   next unless Rake::Task.task_defined?(name)
-  Rake::Task[name].enhance(["compile"])
+  Rake::Task[name].prerequisites.unshift("compile")
 end
