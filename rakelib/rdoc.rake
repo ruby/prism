@@ -26,4 +26,8 @@ RDoc::Task.new(:rdoc) do |rdoc|
   )
 end
 
-Rake::Task["rdoc"].prerequisites.unshift("templates")
+%w[rdoc rerdoc rdoc:coverage].each do |name|
+  # rdoc:coverage available in rdoc as a default gem since ruby 3.3 only
+  next unless Rake::Task.task_defined?(name)
+  Rake::Task[name].enhance(["compile"])
+end
