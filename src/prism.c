@@ -22526,6 +22526,15 @@ static pm_node_t *
 parse_expression(pm_parser_t *parser, pm_binding_power_t binding_power, uint8_t flags, pm_diagnostic_id_t diag_id, uint16_t depth) {
     if (PRISM_UNLIKELY(depth >= PRISM_DEPTH_MAXIMUM)) {
         pm_parser_err_current(parser, PM_ERR_NESTING_TOO_DEEP);
+
+        // A current_hash_keys handed over for the expression we are declining
+        // to parse points at a stack local of the frame waiting for it. Only
+        // the PM_TOKEN_BRACE_LEFT case in parse_expression_prefix takes it and
+        // sets it back to NULL, and returning here means that never runs, so
+        // the pointer would outlive the frame it points into and the next hash
+        // to be parsed would add its keys to a dead stack frame.
+        parser->current_hash_keys = NULL;
+
         return UP(pm_error_recovery_node_create(parser, PM_TOKEN_START(parser, &parser->current), PM_TOKEN_LENGTH(&parser->current)));
     }
 
