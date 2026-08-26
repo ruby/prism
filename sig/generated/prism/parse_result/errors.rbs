@@ -9,12 +9,12 @@ module Prism
       attr_reader parse_result: ParseResult
 
       # Initialize a new set of errors from the given parse result.
-      # --
+      #
       # : (ParseResult parse_result) -> void
       def initialize: (ParseResult parse_result) -> void
 
       # Formats the errors in a human-readable way and return them as a string.
-      # --
+      #
       # : () -> String
       def format: () -> String
     end

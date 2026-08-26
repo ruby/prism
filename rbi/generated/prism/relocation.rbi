@@ -257,7 +257,6 @@ module Prism
         attr_reader :slice
 
         # Initialize a new comment with the given slice.
-        #
         sig { params(slice: String).void }
         def initialize(slice); end
       end
