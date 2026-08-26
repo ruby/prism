@@ -252,11 +252,18 @@ function offsetToLineCol(source, offset) {
 }
 
 
-function formatLoc(source, loc) {
+function formatLoc(source, loc, includeSlice) {
   if (!loc || loc.startOffset === undefined) return null;
   const start = offsetToLineCol(source, loc.startOffset);
   const end = offsetToLineCol(source, loc.startOffset + loc.length);
-  return { start, end, text: `${start.line}:${start.col}-${end.line}:${end.col}` };
+
+  let text = `${start.line}:${start.col}-${end.line}:${end.col}`;
+
+  if (includeSlice) {
+    const slice = source.slice(loc.startOffset, loc.startOffset + loc.length);
+    text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(slice))}</span>`
+  }
+  return { start, end, text };
 }
 
 function locDataAttrs(loc) {
@@ -282,6 +289,14 @@ function clearHighlight() {
 // Detect whether a value is a Prism AST node (class instance with location)
 function isNode(value) {
   return value && typeof value === "object" && !Array.isArray(value) && value.location && value.constructor && value.constructor.name !== "Object";
+}
+
+function isString(value) {
+  return value && typeof value === "object" && Object.hasOwn(value, "encoding")
+}
+
+function isConstant(value) {
+  return typeof value === "string";
 }
 
 // Get the node type name from the class name
@@ -346,11 +361,11 @@ function renderNode(node, source, prefix, isLast, isRoot) {
   if (!isRoot) html += `<span class="tree-connector" aria-hidden="true">${prefix}${isLast ? CONNECTOR.last : CONNECTOR.mid}</span>`;
   if (foldable) html += `<button class="tree-toggle" aria-label="Toggle ${escapedType}">▼</button>`;
 
-  const loc = formatLoc(source, node.location);
+  const loc = formatLoc(source, node.location, false);
   const locAttrs = locDataAttrs(loc);
 
   html += `<span class="tree-type"${locAttrs}>@ ${escapedType}</span>`;
-  if (loc) html += ` <span class="tree-loc"${locAttrs}>(${loc.text})</span>`;
+  if (loc) html += ` <span class="tree-loc"${locAttrs}>(location: ${loc.text})</span>`;
   html += `</div>`;
 
   html += `<div class="tree-children" role="group">`;
@@ -378,7 +393,11 @@ function renderNode(node, source, prefix, isLast, isRoot) {
             html += renderNode(item, source, fieldChildPrefix, i === value.length - 1);
           } else {
             const itemConnector = i === value.length - 1 ? CONNECTOR.last : CONNECTOR.mid;
-            html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${fieldChildPrefix}${itemConnector}</span><span class="tree-value">${escapeHtml(JSON.stringify(item))}</span></div>`;
+            if (isConstant(item)) {
+              html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${fieldChildPrefix}${itemConnector}</span><span class="tree-constant">:${escapeHtml(item)}</span></div>`;
+            } else {
+              html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${fieldChildPrefix}${itemConnector}</span><span class="tree-value">${escapeHtml(JSON.stringify(item))}</span></div>`;
+            }
           }
         });
       }
@@ -386,13 +405,18 @@ function renderNode(node, source, prefix, isLast, isRoot) {
       html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>:</div>`;
       html += renderNode(value, source, fieldChildPrefix, true);
     } else if (typeof value === "object" && value.startOffset !== undefined) {
-      const fieldLoc = formatLoc(source, value);
+      const fieldLoc = formatLoc(source, value, true);
       if (fieldLoc) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-loc"${locDataAttrs(fieldLoc)}>${fieldLoc.text}</span></div>`;
       }
-    } else if (typeof value === "string") {
-      html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-string">${escapeHtml(JSON.stringify(value))}</span></div>`;
+    } else if (isString(value)) {
+      html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-string">${escapeHtml(JSON.stringify(value.value))}</span></div>`;
+    } else if (isConstant(value)) {
+      html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-constant">:${escapeHtml(value)}</span></div>`;
+    } else if (typeof value === "number"){
+      html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-number">${value}</span></div>`;
     } else {
+      // Should not reach
       html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-value">${escapeHtml(String(value))}</span></div>`;
     }
   });
@@ -408,7 +432,7 @@ function escapeHtml(str) {
 
 // Render a single diagnostic line
 function renderDiagnostic(source, item, kind) {
-  const loc = formatLoc(source, item.location);
+  const loc = formatLoc(source, item.location, false);
   const cssClass = kind === "Error" ? "error-text" : "warning-text";
   return `<div class="diagnostics-line ${cssClass}"${locDataAttrs(loc)}>${kind}: ${escapeHtml(item.message)}${loc ? ` <span class="tree-loc">(${loc.text})</span>` : ""}</div>`;
 }
