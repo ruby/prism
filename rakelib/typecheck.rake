@@ -30,7 +30,8 @@ namespace :typecheck do
             # break when RDoc private starts
             break
           when /\A:/
-            # skip RBS type annotations
+            # skip RBS type annotations and remove preceeding empty line
+            comments.pop if comments.last&.text&.empty?
           else
             comments << RBI::Comment.new(line)
           end

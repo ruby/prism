@@ -43,12 +43,12 @@ module Prism
       attr_reader value: Array[lex_compat_token]
 
       # Create a new lex compat result object with the given values.
-      # --
+      #
       # : (Array[lex_compat_token] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
       def initialize: (Array[lex_compat_token] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
       # Implement the hash pattern matching interface for Result.
-      # --
+      #
       # : (Array[Symbol]? keys) -> Hash[Symbol, untyped]
       def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     end
@@ -139,7 +139,7 @@ module Prism
 
       # Here we will split between the two types of heredocs and return the
       # object that will store their tokens.
-      # --
+      #
       # : (lex_compat_token opening) -> (PlainHeredoc | DashHeredoc | DedentingHeredoc)
       def self.build: (lex_compat_token opening) -> (PlainHeredoc | DashHeredoc | DedentingHeredoc)
     end

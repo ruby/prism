@@ -18,7 +18,7 @@ module Prism
     def initialize: (ClassVariableAndWriteNode | ConstantAndWriteNode | GlobalVariableAndWriteNode | InstanceVariableAndWriteNode | LocalVariableAndWriteNode node, Source default_source, Symbol read_class, Symbol write_class, **untyped arguments) -> void
 
     # Desugar `x &&= y` to `x && x = y`
-    # --
+    #
     # : () -> node
     def compile: () -> node
   end
@@ -40,7 +40,7 @@ module Prism
     def initialize: (ClassVariableOrWriteNode | ConstantOrWriteNode | GlobalVariableOrWriteNode node, Source default_source, Symbol read_class, Symbol write_class, **untyped arguments) -> void
 
     # Desugar `x ||= y` to `defined?(x) ? x : x = y`
-    # --
+    #
     # : () -> node
     def compile: () -> node
   end
@@ -62,7 +62,7 @@ module Prism
     def initialize: (ClassVariableOperatorWriteNode | ConstantOperatorWriteNode | GlobalVariableOperatorWriteNode | InstanceVariableOperatorWriteNode | LocalVariableOperatorWriteNode node, Source default_source, Symbol read_class, Symbol write_class, **untyped arguments) -> void
 
     # Desugar `x += y` to `x = x + y`
-    # --
+    #
     # : () -> node
     def compile: () -> node
   end
@@ -84,7 +84,7 @@ module Prism
     def initialize: (InstanceVariableOrWriteNode | LocalVariableOrWriteNode node, Source default_source, Symbol read_class, Symbol write_class, **untyped arguments) -> void
 
     # Desugar `x ||= y` to `x || x = y`
-    # --
+    #
     # : () -> node
     def compile: () -> node
   end
@@ -172,7 +172,7 @@ module Prism
     # becomes
     #
     # `@@foo && @@foo = bar`
-    # --
+    #
     # : (ClassVariableAndWriteNode node) -> node
     def visit_class_variable_and_write_node: (ClassVariableAndWriteNode node) -> node
 
@@ -181,7 +181,7 @@ module Prism
     # becomes
     #
     # `defined?(@@foo) ? @@foo : @@foo = bar`
-    # --
+    #
     # : (ClassVariableOrWriteNode node) -> node
     def visit_class_variable_or_write_node: (ClassVariableOrWriteNode node) -> node
 
@@ -190,7 +190,7 @@ module Prism
     # becomes
     #
     # `@@foo = @@foo + bar`
-    # --
+    #
     # : (ClassVariableOperatorWriteNode node) -> node
     def visit_class_variable_operator_write_node: (ClassVariableOperatorWriteNode node) -> node
 
@@ -199,7 +199,7 @@ module Prism
     # becomes
     #
     # `Foo && Foo = bar`
-    # --
+    #
     # : (ConstantAndWriteNode node) -> node
     def visit_constant_and_write_node: (ConstantAndWriteNode node) -> node
 
@@ -208,7 +208,7 @@ module Prism
     # becomes
     #
     # `defined?(Foo) ? Foo : Foo = bar`
-    # --
+    #
     # : (ConstantOrWriteNode node) -> node
     def visit_constant_or_write_node: (ConstantOrWriteNode node) -> node
 
@@ -217,7 +217,7 @@ module Prism
     # becomes
     #
     # `Foo = Foo + bar`
-    # --
+    #
     # : (ConstantOperatorWriteNode node) -> node
     def visit_constant_operator_write_node: (ConstantOperatorWriteNode node) -> node
 
@@ -226,7 +226,7 @@ module Prism
     # becomes
     #
     # `$foo && $foo = bar`
-    # --
+    #
     # : (GlobalVariableAndWriteNode node) -> node
     def visit_global_variable_and_write_node: (GlobalVariableAndWriteNode node) -> node
 
@@ -235,7 +235,7 @@ module Prism
     # becomes
     #
     # `defined?($foo) ? $foo : $foo = bar`
-    # --
+    #
     # : (GlobalVariableOrWriteNode node) -> node
     def visit_global_variable_or_write_node: (GlobalVariableOrWriteNode node) -> node
 
@@ -244,7 +244,7 @@ module Prism
     # becomes
     #
     # `$foo = $foo + bar`
-    # --
+    #
     # : (GlobalVariableOperatorWriteNode node) -> node
     def visit_global_variable_operator_write_node: (GlobalVariableOperatorWriteNode node) -> node
 
@@ -253,7 +253,7 @@ module Prism
     # becomes
     #
     # `@foo && @foo = bar`
-    # --
+    #
     # : (InstanceVariableAndWriteNode node) -> node
     def visit_instance_variable_and_write_node: (InstanceVariableAndWriteNode node) -> node
 
@@ -262,7 +262,7 @@ module Prism
     # becomes
     #
     # `@foo || @foo = bar`
-    # --
+    #
     # : (InstanceVariableOrWriteNode node) -> node
     def visit_instance_variable_or_write_node: (InstanceVariableOrWriteNode node) -> node
 
@@ -271,7 +271,7 @@ module Prism
     # becomes
     #
     # `@foo = @foo + bar`
-    # --
+    #
     # : (InstanceVariableOperatorWriteNode node) -> node
     def visit_instance_variable_operator_write_node: (InstanceVariableOperatorWriteNode node) -> node
 
@@ -280,7 +280,7 @@ module Prism
     # becomes
     #
     # `foo && foo = bar`
-    # --
+    #
     # : (LocalVariableAndWriteNode node) -> node
     def visit_local_variable_and_write_node: (LocalVariableAndWriteNode node) -> node
 
@@ -289,7 +289,7 @@ module Prism
     # becomes
     #
     # `foo || foo = bar`
-    # --
+    #
     # : (LocalVariableOrWriteNode node) -> node
     def visit_local_variable_or_write_node: (LocalVariableOrWriteNode node) -> node
 
@@ -298,7 +298,7 @@ module Prism
     # becomes
     #
     # `foo = foo + bar`
-    # --
+    #
     # : (LocalVariableOperatorWriteNode node) -> node
     def visit_local_variable_operator_write_node: (LocalVariableOperatorWriteNode node) -> node
   end
