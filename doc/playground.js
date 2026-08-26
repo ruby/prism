@@ -6,6 +6,9 @@ const editorDiv = document.getElementById("editor");
 const loading = document.getElementById("loading");
 const toast = document.getElementById("toast");
 
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
 // Load Prism WASM and Monaco, show error if either fails
 let instance, monaco;
 try {
@@ -115,7 +118,7 @@ end
 
 // URL-safe base64 encode/decode (RFC 4648 §5)
 function encodeSource(str) {
-  const bytes = new TextEncoder().encode(str);
+  const bytes = encoder.encode(str);
   let binary = "";
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -123,7 +126,7 @@ function encodeSource(str) {
 
 function decodeSource(str) {
   const padded = str.replace(/-/g, "+").replace(/_/g, "/") + "==".slice(0, (4 - str.length % 4) % 4);
-  return new TextDecoder().decode(Uint8Array.from(atob(padded), ch => ch.codePointAt(0)));
+  return decoder.decode(Uint8Array.from(atob(padded), ch => ch.codePointAt(0)));
 }
 
 // Read initial source from URL hash or use default
@@ -241,26 +244,27 @@ document.getElementById("expand-all").addEventListener("click", () => {
   output.querySelectorAll(".tree-toggle").forEach(toggle => setToggleState(toggle, false));
 });
 
-// Convert byte offset to line:column using the source string
-function offsetToLineCol(source, offset) {
+// Convert byte offset to line:column using the utf8 bytes
+function offsetToLineCol(utf8Bytes, offset) {
   let line = 1, col = 0;
-  for (let i = 0; i < offset && i < source.length; i++) {
-    if (source[i] === "\n") { line++; col = 0; }
+  for (let i = 0; i < offset && i < utf8Bytes.length; i++) {
+    // Check for newline
+    if (utf8Bytes[i] === 10) { line++; col = 0; }
     else { col++; }
   }
   return { line, col };
 }
 
 
-function formatLoc(source, loc, includeSlice) {
+function formatLoc(utf8Bytes, loc, includeSlice) {
   if (!loc || loc.startOffset === undefined) return null;
-  const start = offsetToLineCol(source, loc.startOffset);
-  const end = offsetToLineCol(source, loc.startOffset + loc.length);
+  const start = offsetToLineCol(utf8Bytes, loc.startOffset);
+  const end = offsetToLineCol(utf8Bytes, loc.startOffset + loc.length);
 
   let text = `${start.line}:${start.col}-${end.line}:${end.col}`;
 
   if (includeSlice) {
-    const slice = source.slice(loc.startOffset, loc.startOffset + loc.length);
+    const slice = decoder.decode(utf8Bytes.slice(loc.startOffset, loc.startOffset + loc.length));
     text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(slice))}</span>`
   }
   return { start, end, text };
@@ -348,7 +352,7 @@ function hasChildNodes(fields, node) {
 const CONNECTOR = { last: "└── ", mid: "├── ", lastPad: "    ", midPad: "│   " };
 
 // Build the AST tree as interactive HTML
-function renderNode(node, source, prefix, isLast, isRoot) {
+function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
   if (!isNode(node)) return "";
 
   const type = nodeType(node);
@@ -361,7 +365,7 @@ function renderNode(node, source, prefix, isLast, isRoot) {
   if (!isRoot) html += `<span class="tree-connector" aria-hidden="true">${prefix}${isLast ? CONNECTOR.last : CONNECTOR.mid}</span>`;
   if (foldable) html += `<button class="tree-toggle" aria-label="Toggle ${escapedType}">▼</button>`;
 
-  const loc = formatLoc(source, node.location, false);
+  const loc = formatLoc(utf8Bytes, node.location, false);
   const locAttrs = locDataAttrs(loc);
 
   html += `<span class="tree-type"${locAttrs}>@ ${escapedType}</span>`;
@@ -390,7 +394,7 @@ function renderNode(node, source, prefix, isLast, isRoot) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: (${value.length} item${value.length === 1 ? "" : "s"})</div>`;
         value.forEach((item, i) => {
           if (isNode(item)) {
-            html += renderNode(item, source, fieldChildPrefix, i === value.length - 1);
+            html += renderNode(item, utf8Bytes, fieldChildPrefix, i === value.length - 1);
           } else {
             const itemConnector = i === value.length - 1 ? CONNECTOR.last : CONNECTOR.mid;
             if (isConstant(item)) {
@@ -403,9 +407,9 @@ function renderNode(node, source, prefix, isLast, isRoot) {
       }
     } else if (isNode(value)) {
       html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>:</div>`;
-      html += renderNode(value, source, fieldChildPrefix, true);
+      html += renderNode(value, utf8Bytes, fieldChildPrefix, true);
     } else if (typeof value === "object" && value.startOffset !== undefined) {
-      const fieldLoc = formatLoc(source, value, true);
+      const fieldLoc = formatLoc(utf8Bytes, value, true);
       if (fieldLoc) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-loc"${locDataAttrs(fieldLoc)}>${fieldLoc.text}</span></div>`;
       }
@@ -431,8 +435,8 @@ function escapeHtml(str) {
 }
 
 // Render a single diagnostic line
-function renderDiagnostic(source, item, kind) {
-  const loc = formatLoc(source, item.location, false);
+function renderDiagnostic(utf8Bytes, item, kind) {
+  const loc = formatLoc(utf8Bytes, item.location, false);
   const cssClass = kind === "Error" ? "error-text" : "warning-text";
   return `<div class="diagnostics-line ${cssClass}"${locDataAttrs(loc)}>${kind}: ${escapeHtml(item.message)}${loc ? ` <span class="tree-loc">(${loc.text})</span>` : ""}</div>`;
 }
@@ -477,9 +481,10 @@ function render() {
 
   output.setAttribute("aria-labelledby", currentTab === "ast" ? "tab-ast" : "tab-diagnostics");
 
+  const utf8Bytes = encoder.encode(lastSource);
   switch (currentTab) {
     case "ast":
-      const tree = renderNode(lastResult.value, lastSource, "", true, true);
+      const tree = renderNode(lastResult.value, utf8Bytes, "", true, true);
       output.innerHTML = tree
         ? `<div role="tree" aria-label="Abstract syntax tree">${tree}</div>`
         : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`;
@@ -492,8 +497,8 @@ function render() {
         output.innerHTML = `<div class="empty-message">No errors or warnings.</div>`;
       } else {
         let html = "";
-        for (const err of errors) html += renderDiagnostic(lastSource, err, "Error");
-        for (const warn of warnings) html += renderDiagnostic(lastSource, warn, "Warning");
+        for (const err of errors) html += renderDiagnostic(utf8Bytes, err, "Error");
+        for (const warn of warnings) html += renderDiagnostic(utf8Bytes, warn, "Warning");
         output.innerHTML = html;
       }
       break;
