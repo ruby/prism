@@ -37,7 +37,7 @@
             │   │   │       └── @ StringNode (location: (4,2)-(4,6))
             │   │   │           ├── flags: newline
             │   │   │           ├── opening_loc: (4,2)-(4,3) = "\""
-            │   │   │           ├── content_loc: (4,3)-(4,5) = "OK"
+            │   │   │           ├── value_loc: (4,3)-(4,5) = "OK"
             │   │   │           ├── closing_loc: (4,5)-(4,6) = "\""
             │   │   │           └── unescaped: "OK"
             │   │   └── subsequent: ∅

@@ -12,7 +12,7 @@
             │   ├── @ StringNode (location: (1,1)-(1,3))
             │   │   ├── flags: static_literal, frozen
             │   │   ├── opening_loc: ∅
-            │   │   ├── content_loc: (1,1)-(1,3) = "a "
+            │   │   ├── value_loc: (1,1)-(1,3) = "a "
             │   │   ├── closing_loc: ∅
             │   │   └── unescaped: "a "
             │   ├── @ EmbeddedStatementsNode (location: (1,3)-(1,7))
@@ -37,7 +37,7 @@
             │   └── @ StringNode (location: (1,7)-(1,15))
             │       ├── flags: static_literal, forced_utf8_encoding, frozen
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (1,7)-(1,15) = "\\302\\275"
+            │       ├── value_loc: (1,7)-(1,15) = "\\302\\275"
             │       ├── closing_loc: ∅
             │       └── unescaped: "½"
             └── closing_loc: (1,15)-(1,16) = "\""

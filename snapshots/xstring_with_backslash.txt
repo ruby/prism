@@ -8,6 +8,6 @@
         └── @ XStringNode (location: (1,0)-(1,6))
             ├── flags: newline
             ├── opening_loc: (1,0)-(1,1) = "`"
-            ├── content_loc: (1,1)-(1,5) = "f\\oo"
+            ├── value_loc: (1,1)-(1,5) = "f\\oo"
             ├── closing_loc: (1,5)-(1,6) = "`"
             └── unescaped: "foo"

@@ -279,4 +279,36 @@ module Prism
     # : () -> Location?
     def closing_loc: () -> Location?
   end
+
+  class MatchLastLineNode < Node
+    # : () -> String
+    def content: () -> String
+
+    # : () -> Location
+    def content_loc: () -> Location
+  end
+
+  class RegularExpressionNode < Node
+    # : () -> String
+    def content: () -> String
+
+    # : () -> Location
+    def content_loc: () -> Location
+  end
+
+  class StringNode < Node
+    # : () -> String
+    def content: () -> String
+
+    # : () -> Location
+    def content_loc: () -> Location
+  end
+
+  class XStringNode < Node
+    # : () -> String
+    def content: () -> String
+
+    # : () -> Location
+    def content_loc: () -> Location
+  end
 end

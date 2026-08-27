@@ -28,7 +28,7 @@
         │   │           │   └── @ StringNode (location: (2,6)-(2,7))
         │   │           │       ├── flags: static_literal, frozen
         │   │           │       ├── opening_loc: ∅
-        │   │           │       ├── content_loc: (2,6)-(2,7) = "a"
+        │   │           │       ├── value_loc: (2,6)-(2,7) = "a"
         │   │           │       ├── closing_loc: ∅
         │   │           │       └── unescaped: "a"
         │   │           └── closing_loc: (2,7)-(2,8) = "\""
@@ -52,7 +52,7 @@
         │   │       │   │   ├── @ StringNode (location: (6,0)-(7,0))
         │   │       │   │   │   ├── flags: static_literal, frozen
         │   │       │   │   │   ├── opening_loc: ∅
-        │   │       │   │   │   ├── content_loc: (6,0)-(7,0) = "a\n"
+        │   │       │   │   │   ├── value_loc: (6,0)-(7,0) = "a\n"
         │   │       │   │   │   ├── closing_loc: ∅
         │   │       │   │   │   └── unescaped: "a\n"
         │   │       │   │   ├── @ EmbeddedStatementsNode (location: (7,0)-(7,3))
@@ -63,7 +63,7 @@
         │   │       │   │   └── @ StringNode (location: (7,3)-(9,0))
         │   │       │   │       ├── flags: static_literal, frozen
         │   │       │   │       ├── opening_loc: ∅
-        │   │       │   │       ├── content_loc: (7,3)-(9,0) = "a\nb\n"
+        │   │       │   │       ├── value_loc: (7,3)-(9,0) = "a\nb\n"
         │   │       │   │       ├── closing_loc: ∅
         │   │       │   │       └── unescaped: "a\nb\n"
         │   │       │   └── closing_loc: (9,0)-(10,0) = "  HEREDOC\n"
@@ -87,7 +87,7 @@
         │   │   ├── @ StringNode (location: (13,0)-(14,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (13,0)-(14,0) = "\\\#{}\\\#{}\n"
+        │   │   │   ├── value_loc: (13,0)-(14,0) = "\\\#{}\\\#{}\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\#{}\#{}\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (14,0)-(14,3))
@@ -98,7 +98,7 @@
         │   │   ├── @ StringNode (location: (14,3)-(15,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (14,3)-(15,0) = "\n"
+        │   │   │   ├── value_loc: (14,3)-(15,0) = "\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (15,0)-(15,3))
@@ -109,7 +109,7 @@
         │   │   ├── @ StringNode (location: (15,3)-(16,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (15,3)-(16,0) = "\n"
+        │   │   │   ├── value_loc: (15,3)-(16,0) = "\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (16,0)-(16,3))
@@ -120,7 +120,7 @@
         │   │   └── @ StringNode (location: (16,3)-(17,0))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (16,3)-(17,0) = "\n"
+        │   │       ├── value_loc: (16,3)-(17,0) = "\n"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "\n"
         │   └── closing_loc: (17,0)-(18,0) = "HEREDOC\n"
@@ -139,7 +139,7 @@
         │   │   │   └── @ StringNode (location: (19,3)-(21,0))
         │   │   │       ├── flags: static_literal, frozen
         │   │   │       ├── opening_loc: ∅
-        │   │   │       ├── content_loc: (19,3)-(21,0) = "\na\n"
+        │   │   │       ├── value_loc: (19,3)-(21,0) = "\na\n"
         │   │   │       ├── closing_loc: ∅
         │   │   │       └── unescaped: "\na\n"
         │   │   └── closing_loc: (21,0)-(22,0) = "HEREDOC\n"
@@ -154,7 +154,7 @@
         │   │   ├── @ StringNode (location: (22,1)-(22,2))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (22,1)-(22,2) = "a"
+        │   │   │   ├── value_loc: (22,1)-(22,2) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
         │   │   └── @ EmbeddedVariableNode (location: (22,2)-(22,5))
@@ -172,7 +172,7 @@
         │   │   ├── @ StringNode (location: (23,1)-(23,2))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (23,1)-(23,2) = "a"
+        │   │   │   ├── value_loc: (23,1)-(23,2) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
         │   │   └── @ EmbeddedVariableNode (location: (23,2)-(23,5))
@@ -190,7 +190,7 @@
         │   │   ├── @ StringNode (location: (24,1)-(24,2))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (24,1)-(24,2) = "a"
+        │   │   │   ├── value_loc: (24,1)-(24,2) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
         │   │   └── @ EmbeddedVariableNode (location: (24,2)-(24,5))
@@ -208,7 +208,7 @@
         │   │   ├── @ StringNode (location: (25,1)-(25,2))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (25,1)-(25,2) = "a"
+        │   │   │   ├── value_loc: (25,1)-(25,2) = "a"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a"
         │   │   └── @ EmbeddedVariableNode (location: (25,2)-(25,6))
@@ -244,7 +244,7 @@
         │   │                       │   ├── @ StringNode (location: (28,0)-(28,4))
         │   │                       │   │   ├── flags: static_literal, frozen
         │   │                       │   │   ├── opening_loc: ∅
-        │   │                       │   │   ├── content_loc: (28,0)-(28,4) = "    "
+        │   │                       │   │   ├── value_loc: (28,0)-(28,4) = "    "
         │   │                       │   │   ├── closing_loc: ∅
         │   │                       │   │   └── unescaped: "    "
         │   │                       │   ├── @ EmbeddedStatementsNode (location: (28,4)-(28,9))
@@ -261,7 +261,7 @@
         │   │                       │   └── @ StringNode (location: (28,9)-(29,0))
         │   │                       │       ├── flags: static_literal, frozen
         │   │                       │       ├── opening_loc: ∅
-        │   │                       │       ├── content_loc: (28,9)-(29,0) = "\n"
+        │   │                       │       ├── value_loc: (28,9)-(29,0) = "\n"
         │   │                       │       ├── closing_loc: ∅
         │   │                       │       └── unescaped: "\n"
         │   │                       └── closing_loc: (29,0)-(30,0) = "  HEREDOC\n"
@@ -285,7 +285,7 @@
         │   │           │   ├── @ StringNode (location: (32,0)-(32,2))
         │   │           │   │   ├── flags: static_literal, frozen
         │   │           │   │   ├── opening_loc: ∅
-        │   │           │   │   ├── content_loc: (32,0)-(32,2) = "  "
+        │   │           │   │   ├── value_loc: (32,0)-(32,2) = "  "
         │   │           │   │   ├── closing_loc: ∅
         │   │           │   │   └── unescaped: "  "
         │   │           │   ├── @ EmbeddedStatementsNode (location: (32,2)-(32,8))
@@ -310,7 +310,7 @@
         │   │           │   └── @ StringNode (location: (32,8)-(33,0))
         │   │           │       ├── flags: static_literal, frozen
         │   │           │       ├── opening_loc: ∅
-        │   │           │       ├── content_loc: (32,8)-(33,0) = "\n"
+        │   │           │       ├── value_loc: (32,8)-(33,0) = "\n"
         │   │           │       ├── closing_loc: ∅
         │   │           │       └── unescaped: "\n"
         │   │           └── closing_loc: (33,0)-(34,0) = "HEREDOC\n"
@@ -335,7 +335,7 @@
             │           │   ├── @ StringNode (location: (35,0)-(35,2))
             │           │   │   ├── flags: static_literal, frozen
             │           │   │   ├── opening_loc: ∅
-            │           │   │   ├── content_loc: (35,0)-(35,2) = "  "
+            │           │   │   ├── value_loc: (35,0)-(35,2) = "  "
             │           │   │   ├── closing_loc: ∅
             │           │   │   └── unescaped: "  "
             │           │   ├── @ EmbeddedStatementsNode (location: (35,2)-(35,8))
@@ -360,7 +360,7 @@
             │           │   └── @ StringNode (location: (35,8)-(36,0))
             │           │       ├── flags: static_literal, frozen
             │           │       ├── opening_loc: ∅
-            │           │       ├── content_loc: (35,8)-(36,0) = "\n"
+            │           │       ├── value_loc: (35,8)-(36,0) = "\n"
             │           │       ├── closing_loc: ∅
             │           │       └── unescaped: "\n"
             │           └── closing_loc: (36,0)-(37,0) = "HEREDOC\n"

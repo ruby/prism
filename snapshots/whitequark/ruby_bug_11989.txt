@@ -19,7 +19,7 @@
             │       └── @ StringNode (location: (1,2)-(1,8))
             │           ├── flags: ∅
             │           ├── opening_loc: (1,2)-(1,8) = "<<~\"E\""
-            │           ├── content_loc: (2,0)-(3,0) = "  x\\n   y\n"
+            │           ├── value_loc: (2,0)-(3,0) = "  x\\n   y\n"
             │           ├── closing_loc: (3,0)-(4,0) = "E\n"
             │           └── unescaped: "x\n   y\n"
             ├── closing_loc: ∅

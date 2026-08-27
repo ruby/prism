@@ -1531,8 +1531,8 @@ module Prism
           result = s(node, :xstr, node.unescaped)
 
           if node.heredoc?
-            result.line = node.content_loc.start_line
-            result.line_max = node.content_loc.end_line
+            result.line = node.value_loc.start_line
+            result.line_max = node.value_loc.end_line
           end
 
           result

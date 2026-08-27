@@ -103,7 +103,7 @@
         │   │       │   ├── @ StringNode (location: (15,8)-(15,11))
         │   │       │   │   ├── flags: static_literal, frozen
         │   │       │   │   ├── opening_loc: ∅
-        │   │       │   │   ├── content_loc: (15,8)-(15,11) = "abc"
+        │   │       │   │   ├── value_loc: (15,8)-(15,11) = "abc"
         │   │       │   │   ├── closing_loc: ∅
         │   │       │   │   └── unescaped: "abc"
         │   │       │   └── @ EmbeddedStatementsNode (location: (15,11)-(15,15))

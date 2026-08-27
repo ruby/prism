@@ -32,7 +32,7 @@
             │               └── @ StringNode (location: (1,16)-(1,21))
             │                   ├── flags: newline
             │                   ├── opening_loc: (1,16)-(1,17) = "'"
-            │                   ├── content_loc: (1,17)-(1,20) = "foo"
+            │                   ├── value_loc: (1,17)-(1,20) = "foo"
             │                   ├── closing_loc: (1,20)-(1,21) = "'"
             │                   └── unescaped: "foo"
             ├── else_clause: ∅

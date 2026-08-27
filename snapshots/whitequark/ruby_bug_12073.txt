@@ -91,7 +91,7 @@
             │           │       └── @ StringNode (location: (3,27)-(3,29))
             │           │           ├── flags: ∅
             │           │           ├── opening_loc: (3,27)-(3,28) = "'"
-            │           │           ├── content_loc: (3,28)-(3,28) = ""
+            │           │           ├── value_loc: (3,28)-(3,28) = ""
             │           │           ├── closing_loc: (3,28)-(3,29) = "'"
             │           │           └── unescaped: ""
             │           ├── closing_loc: ∅

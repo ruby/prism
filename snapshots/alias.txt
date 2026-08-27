@@ -66,7 +66,7 @@
         │   │   │   ├── @ StringNode (location: (7,8)-(7,11))
         │   │   │   │   ├── flags: static_literal, frozen
         │   │   │   │   ├── opening_loc: ∅
-        │   │   │   │   ├── content_loc: (7,8)-(7,11) = "abc"
+        │   │   │   │   ├── value_loc: (7,8)-(7,11) = "abc"
         │   │   │   │   ├── closing_loc: ∅
         │   │   │   │   └── unescaped: "abc"
         │   │   │   └── @ EmbeddedStatementsNode (location: (7,11)-(7,15))

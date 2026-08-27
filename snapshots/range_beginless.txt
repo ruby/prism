@@ -28,7 +28,7 @@
         │   │   │           │   @ StringNode (location: (1,13)-(1,15))
         │   │   │           │   ├── flags: ∅
         │   │   │           │   ├── opening_loc: (1,13)-(1,14) = "?"
-        │   │   │           │   ├── content_loc: (1,14)-(1,15) = "a"
+        │   │   │           │   ├── value_loc: (1,14)-(1,15) = "a"
         │   │   │           │   ├── closing_loc: ∅
         │   │   │           │   └── unescaped: "a"
         │   │   │           └── operator_loc: (1,10)-(1,13) = "..."
@@ -70,7 +70,7 @@
         │   │   │           │   @ StringNode (location: (3,12)-(3,14))
         │   │   │           │   ├── flags: ∅
         │   │   │           │   ├── opening_loc: (3,12)-(3,13) = "?"
-        │   │   │           │   ├── content_loc: (3,13)-(3,14) = "a"
+        │   │   │           │   ├── value_loc: (3,13)-(3,14) = "a"
         │   │   │           │   ├── closing_loc: ∅
         │   │   │           │   └── unescaped: "a"
         │   │   │           └── operator_loc: (3,9)-(3,12) = "..."

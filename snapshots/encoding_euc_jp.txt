@@ -8,7 +8,7 @@
         ├── @ StringNode (location: (4,0)-(4,10))
         │   ├── flags: newline
         │   ├── opening_loc: (4,0)-(4,1) = "\""
-        │   ├── content_loc: (4,1)-(4,9) = "\\x8E\\x01"
+        │   ├── value_loc: (4,1)-(4,9) = "\\x8E\\x01"
         │   ├── closing_loc: (4,9)-(4,10) = "\""
         │   └── unescaped: "\x8E\x01"
         └── @ ArrayNode (location: (6,0)-(6,14))
@@ -17,7 +17,7 @@
             │   └── @ StringNode (location: (6,3)-(6,13))
             │       ├── flags: ∅
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (6,3)-(6,13) = "\"\\x8E\\x01\""
+            │       ├── value_loc: (6,3)-(6,13) = "\"\\x8E\\x01\""
             │       ├── closing_loc: ∅
             │       └── unescaped: "\"\x8E\x01\""
             ├── opening_loc: (6,0)-(6,3) = "%W["

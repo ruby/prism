@@ -27,7 +27,7 @@
             │       │   └── @ StringNode (location: (1,15)-(1,20))
             │       │       ├── flags: static_literal, frozen
             │       │       ├── opening_loc: (1,15)-(1,16) = "'"
-            │       │       ├── content_loc: (1,16)-(1,19) = "bar"
+            │       │       ├── value_loc: (1,16)-(1,19) = "bar"
             │       │       ├── closing_loc: (1,19)-(1,20) = "'"
             │       │       └── unescaped: "bar"
             │       ├── then_keyword_loc: (1,21)-(1,25) = "then"

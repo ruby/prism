@@ -1278,7 +1278,7 @@
         │   │   │           @ StringNode (location: (123,19)-(123,26))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (123,19)-(123,20) = "\""
-        │   │   │           ├── content_loc: (123,20)-(123,25) = "value"
+        │   │   │           ├── value_loc: (123,20)-(123,25) = "value"
         │   │   │           ├── closing_loc: (123,25)-(123,26) = "\""
         │   │   │           └── unescaped: "value"
         │   │   ├── keyword_rest: ∅
@@ -1308,7 +1308,7 @@
         │   │           │   ├── @ StringNode (location: (128,0)-(128,4))
         │   │           │   │   ├── flags: static_literal, frozen
         │   │           │   │   ├── opening_loc: ∅
-        │   │           │   │   ├── content_loc: (128,0)-(128,4) = "    "
+        │   │           │   │   ├── value_loc: (128,0)-(128,4) = "    "
         │   │           │   │   ├── closing_loc: ∅
         │   │           │   │   └── unescaped: "    "
         │   │           │   ├── @ EmbeddedStatementsNode (location: (128,4)-(128,7))
@@ -1319,7 +1319,7 @@
         │   │           │   └── @ StringNode (location: (128,7)-(129,0))
         │   │           │       ├── flags: static_literal, frozen
         │   │           │       ├── opening_loc: ∅
-        │   │           │       ├── content_loc: (128,7)-(129,0) = "\n"
+        │   │           │       ├── value_loc: (128,7)-(129,0) = "\n"
         │   │           │       ├── closing_loc: ∅
         │   │           │       └── unescaped: "\n"
         │   │           └── closing_loc: (129,0)-(130,0) = "  HEREDOC\n"
@@ -1343,7 +1343,7 @@
             │       └── @ StringNode (location: (133,2)-(133,5))
             │           ├── flags: newline
             │           ├── opening_loc: (133,2)-(133,4) = "%("
-            │           ├── content_loc: (133,4)-(133,4) = ""
+            │           ├── value_loc: (133,4)-(133,4) = ""
             │           ├── closing_loc: (133,4)-(133,5) = ")"
             │           └── unescaped: ""
             ├── locals: []

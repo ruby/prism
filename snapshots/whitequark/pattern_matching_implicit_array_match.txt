@@ -172,7 +172,7 @@
         │   │       │   │   ├── @ StringNode (location: (7,16)-(7,19))
         │   │       │   │   │   ├── flags: ∅
         │   │       │   │   │   ├── opening_loc: (7,16)-(7,17) = "\""
-        │   │       │   │   │   ├── content_loc: (7,17)-(7,18) = "a"
+        │   │       │   │   │   ├── value_loc: (7,17)-(7,18) = "a"
         │   │       │   │   │   ├── closing_loc: (7,18)-(7,19) = "\""
         │   │       │   │   │   └── unescaped: "a"
         │   │       │   │   ├── @ ArrayPatternNode (location: (7,21)-(7,23))

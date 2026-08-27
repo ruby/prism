@@ -458,8 +458,8 @@ module Prism
     def local_variable_write_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), name: T.unsafe(nil), depth: T.unsafe(nil), name_loc: T.unsafe(nil), value: T.unsafe(nil), operator_loc: T.unsafe(nil)); end
 
     # Create a new MatchLastLineNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
-    def match_last_line_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
+    def match_last_line_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     # Create a new MatchPredicateNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, keyword_loc: Location).returns(MatchPredicateNode) }
@@ -562,8 +562,8 @@ module Prism
     def redo_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil)); end
 
     # Create a new RegularExpressionNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
-    def regular_expression_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
+    def regular_expression_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     # Create a new RequiredKeywordParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location).returns(RequiredKeywordParameterNode) }
@@ -626,8 +626,8 @@ module Prism
     def statements_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), body: T.unsafe(nil)); end
 
     # Create a new StringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(StringNode) }
-    def string_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(StringNode) }
+    def string_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     # Create a new SuperNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).returns(SuperNode) }
@@ -662,8 +662,8 @@ module Prism
     def while_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), while_keyword_loc: T.unsafe(nil), do_keyword_loc: T.unsafe(nil), end_keyword_loc: T.unsafe(nil), predicate: T.unsafe(nil), statements: T.unsafe(nil)); end
 
     # Create a new XStringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
-    def x_string_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
+    def x_string_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     # Create a new YieldNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location)).returns(YieldNode) }

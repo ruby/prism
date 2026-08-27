@@ -89,7 +89,7 @@
             │                   │   @ StringNode (location: (4,18)-(4,28))
             │                   │   ├── flags: ∅
             │                   │   ├── opening_loc: (4,18)-(4,19) = "'"
-            │                   │   ├── content_loc: (4,19)-(4,27) = "endpoint"
+            │                   │   ├── value_loc: (4,19)-(4,27) = "endpoint"
             │                   │   ├── closing_loc: (4,27)-(4,28) = "'"
             │                   │   └── unescaped: "endpoint"
             │                   └── operator_loc: (4,15)-(4,17) = "=>"

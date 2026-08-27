@@ -42,7 +42,7 @@
         │   │   ├── @ StringNode (location: (5,2)-(5,5))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (5,2)-(5,5) = "abc"
+        │   │   │   ├── value_loc: (5,2)-(5,5) = "abc"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "abc"
         │   │   └── @ EmbeddedStatementsNode (location: (5,5)-(5,9))
@@ -70,7 +70,7 @@
         │   │   ├── @ StringNode (location: (12,2)-(15,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (12,2)-(15,0) = "\nfoo\\\nb\\nar\n"
+        │   │   │   ├── value_loc: (12,2)-(15,0) = "\nfoo\\\nb\\nar\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\nfoob\nar\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (15,0)-(15,3))
@@ -81,7 +81,7 @@
         │   │   └── @ StringNode (location: (15,3)-(16,0))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (15,3)-(16,0) = "\n"
+        │   │       ├── value_loc: (15,3)-(16,0) = "\n"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "\n"
         │   └── closing_loc: (16,0)-(16,1) = "\""
@@ -275,7 +275,7 @@
         │   │   │   │   ├── @ StringNode (location: (50,5)-(50,6))
         │   │   │   │   │   ├── flags: static_literal, frozen
         │   │   │   │   │   ├── opening_loc: ∅
-        │   │   │   │   │   ├── content_loc: (50,5)-(50,6) = "b"
+        │   │   │   │   │   ├── value_loc: (50,5)-(50,6) = "b"
         │   │   │   │   │   ├── closing_loc: ∅
         │   │   │   │   │   └── unescaped: "b"
         │   │   │   │   └── @ EmbeddedStatementsNode (location: (50,6)-(50,10))
@@ -308,7 +308,7 @@
         │   │   │   │   └── @ StringNode (location: (50,15)-(50,16))
         │   │   │   │       ├── flags: static_literal, frozen
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (50,15)-(50,16) = "c"
+        │   │   │   │       ├── value_loc: (50,15)-(50,16) = "c"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "c"
         │   │   │   └── closing_loc: ∅
@@ -319,7 +319,7 @@
         │   │       │   ├── @ StringNode (location: (50,17)-(50,18))
         │   │       │   │   ├── flags: static_literal, frozen
         │   │       │   │   ├── opening_loc: ∅
-        │   │       │   │   ├── content_loc: (50,17)-(50,18) = "d"
+        │   │       │   │   ├── value_loc: (50,17)-(50,18) = "d"
         │   │       │   │   ├── closing_loc: ∅
         │   │       │   │   └── unescaped: "d"
         │   │       │   ├── @ EmbeddedStatementsNode (location: (50,18)-(50,22))
@@ -336,7 +336,7 @@
         │   │       │   └── @ StringNode (location: (50,22)-(50,23))
         │   │       │       ├── flags: static_literal, frozen
         │   │       │       ├── opening_loc: ∅
-        │   │       │       ├── content_loc: (50,22)-(50,23) = "f"
+        │   │       │       ├── value_loc: (50,22)-(50,23) = "f"
         │   │       │       ├── closing_loc: ∅
         │   │       │       └── unescaped: "f"
         │   │       └── closing_loc: ∅

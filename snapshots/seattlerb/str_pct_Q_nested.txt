@@ -12,7 +12,7 @@
             │   ├── @ StringNode (location: (1,3)-(1,11))
             │   │   ├── flags: static_literal, frozen
             │   │   ├── opening_loc: ∅
-            │   │   ├── content_loc: (1,3)-(1,11) = "before ["
+            │   │   ├── value_loc: (1,3)-(1,11) = "before ["
             │   │   ├── closing_loc: ∅
             │   │   └── unescaped: "before ["
             │   ├── @ EmbeddedStatementsNode (location: (1,11)-(1,18))
@@ -37,7 +37,7 @@
             │   └── @ StringNode (location: (1,18)-(1,25))
             │       ├── flags: static_literal, frozen
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (1,18)-(1,25) = "] after"
+            │       ├── value_loc: (1,18)-(1,25) = "] after"
             │       ├── closing_loc: ∅
             │       └── unescaped: "] after"
             └── closing_loc: (1,25)-(1,26) = "]"

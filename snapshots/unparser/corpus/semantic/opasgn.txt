@@ -43,7 +43,7 @@
             │           │   └── @ StringNode (location: (1,8)-(1,10))
             │           │       ├── flags: static_literal, frozen
             │           │       ├── opening_loc: ∅
-            │           │       ├── content_loc: (1,8)-(1,10) = "\\n"
+            │           │       ├── value_loc: (1,8)-(1,10) = "\\n"
             │           │       ├── closing_loc: ∅
             │           │       └── unescaped: "\n"
             │           └── closing_loc: (1,10)-(1,11) = "\""
@@ -70,7 +70,7 @@
                 │   └── @ StringNode (location: (1,22)-(1,24))
                 │       ├── flags: static_literal, frozen
                 │       ├── opening_loc: ∅
-                │       ├── content_loc: (1,22)-(1,24) = "\\n"
+                │       ├── value_loc: (1,22)-(1,24) = "\\n"
                 │       ├── closing_loc: ∅
                 │       └── unescaped: "\n"
                 └── closing_loc: (1,24)-(1,25) = "\""

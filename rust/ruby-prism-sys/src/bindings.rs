@@ -7588,9 +7588,9 @@ pub struct pm_match_last_line_node {
     /** MatchLastLineNode#opening_loc
 */
     pub opening_loc: pm_location_t,
-    /** MatchLastLineNode#content_loc
+    /** MatchLastLineNode#value_loc
 */
-    pub content_loc: pm_location_t,
+    pub value_loc: pm_location_t,
     /** MatchLastLineNode#closing_loc
 */
     pub closing_loc: pm_location_t,
@@ -8720,9 +8720,9 @@ pub struct pm_regular_expression_node {
     /** RegularExpressionNode#opening_loc
 */
     pub opening_loc: pm_location_t,
-    /** RegularExpressionNode#content_loc
+    /** RegularExpressionNode#value_loc
 */
-    pub content_loc: pm_location_t,
+    pub value_loc: pm_location_t,
     /** RegularExpressionNode#closing_loc
 */
     pub closing_loc: pm_location_t,
@@ -9188,9 +9188,9 @@ pub struct pm_string_node {
     /** StringNode#opening_loc
 */
     pub opening_loc: pm_location_t,
-    /** StringNode#content_loc
+    /** StringNode#value_loc
 */
-    pub content_loc: pm_location_t,
+    pub value_loc: pm_location_t,
     /** StringNode#closing_loc
 */
     pub closing_loc: pm_location_t,
@@ -9572,9 +9572,9 @@ pub struct pm_x_string_node {
     /** XStringNode#opening_loc
 */
     pub opening_loc: pm_location_t,
-    /** XStringNode#content_loc
+    /** XStringNode#value_loc
 */
-    pub content_loc: pm_location_t,
+    pub value_loc: pm_location_t,
     /** XStringNode#closing_loc
 */
     pub closing_loc: pm_location_t,

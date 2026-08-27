@@ -26,7 +26,7 @@
             │   │   └── @ StringNode (location: (1,5)-(1,18))
             │   │       ├── flags: static_literal, frozen
             │   │       ├── opening_loc: ∅
-            │   │       ├── content_loc: (1,5)-(1,18) = "(?<match>bar)"
+            │   │       ├── value_loc: (1,5)-(1,18) = "(?<match>bar)"
             │   │       ├── closing_loc: ∅
             │   │       └── unescaped: "(?<match>bar)"
             │   └── closing_loc: (1,18)-(1,19) = "/"
@@ -41,7 +41,7 @@
             │       └── @ StringNode (location: (1,23)-(1,28))
             │           ├── flags: ∅
             │           ├── opening_loc: (1,23)-(1,24) = "'"
-            │           ├── content_loc: (1,24)-(1,27) = "bar"
+            │           ├── value_loc: (1,24)-(1,27) = "bar"
             │           ├── closing_loc: (1,27)-(1,28) = "'"
             │           └── unescaped: "bar"
             ├── closing_loc: ∅

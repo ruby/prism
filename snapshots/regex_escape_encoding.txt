@@ -14,7 +14,7 @@
         │   │   @ StringNode (location: (2,6)-(2,18))
         │   │   ├── flags: forced_binary_encoding
         │   │   ├── opening_loc: (2,6)-(2,7) = "\""
-        │   │   ├── content_loc: (2,7)-(2,17) = "hello \\xFC"
+        │   │   ├── value_loc: (2,7)-(2,17) = "hello \\xFC"
         │   │   ├── closing_loc: (2,17)-(2,18) = "\""
         │   │   └── unescaped: "hello \xFC"
         │   └── operator_loc: (2,4)-(2,5) = "="
@@ -36,7 +36,7 @@
             │       └── @ RegularExpressionNode (location: (3,7)-(3,21))
             │           ├── flags: static_literal, forced_utf8_encoding
             │           ├── opening_loc: (3,7)-(3,8) = "/"
-            │           ├── content_loc: (3,8)-(3,20) = "hello \\u{fc}"
+            │           ├── value_loc: (3,8)-(3,20) = "hello \\u{fc}"
             │           ├── closing_loc: (3,20)-(3,21) = "/"
             │           └── unescaped: "hello \\u{fc}"
             ├── closing_loc: ∅

@@ -9471,8 +9471,8 @@ module Prism
   #        ^^^^^^
   class MatchLastLineNode < Node
     # Initialize a new MatchLastLineNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
-    def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).void }
+    def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -9496,8 +9496,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(MatchLastLineNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -9569,14 +9569,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
-    # Returns the Location represented by `content_loc`.
+    # Returns the Location represented by `value_loc`.
     sig { returns(Location) }
-    def content_loc; end
+    def value_loc; end
 
-    # Save the content_loc location using the given saved source so that
+    # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_content_loc(repository); end
+    def save_value_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
     sig { returns(Location) }
@@ -9595,9 +9595,9 @@ module Prism
     sig { returns(String) }
     def opening; end
 
-    # Slice the location of content_loc from the source.
+    # Slice the location of value_loc from the source.
     sig { returns(String) }
-    def content; end
+    def value; end
 
     # Slice the location of closing_loc from the source.
     sig { returns(String) }
@@ -11771,8 +11771,8 @@ module Prism
   #     ^^^^^^
   class RegularExpressionNode < Node
     # Initialize a new RegularExpressionNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
-    def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).void }
+    def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -11796,8 +11796,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(RegularExpressionNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -11869,14 +11869,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
-    # Returns the Location represented by `content_loc`.
+    # Returns the Location represented by `value_loc`.
     sig { returns(Location) }
-    def content_loc; end
+    def value_loc; end
 
-    # Save the content_loc location using the given saved source so that
+    # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_content_loc(repository); end
+    def save_value_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
     sig { returns(Location) }
@@ -11895,9 +11895,9 @@ module Prism
     sig { returns(String) }
     def opening; end
 
-    # Slice the location of content_loc from the source.
+    # Slice the location of value_loc from the source.
     sig { returns(String) }
-    def content; end
+    def value; end
 
     # Slice the location of closing_loc from the source.
     sig { returns(String) }
@@ -13009,8 +13009,8 @@ module Prism
   #      ^^^^      ^^^^
   class StringNode < Node
     # Initialize a new StringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
-    def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
+    def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13034,8 +13034,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(StringNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(StringNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13079,14 +13079,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(::T.nilable(Relocation::Entry)) }
     def save_opening_loc(repository); end
 
-    # Returns the Location represented by `content_loc`.
+    # Returns the Location represented by `value_loc`.
     sig { returns(Location) }
-    def content_loc; end
+    def value_loc; end
 
-    # Save the content_loc location using the given saved source so that
+    # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_content_loc(repository); end
+    def save_value_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
     sig { returns(::T.nilable(Location)) }
@@ -13105,9 +13105,9 @@ module Prism
     sig { returns(::T.nilable(String)) }
     def opening; end
 
-    # Slice the location of content_loc from the source.
+    # Slice the location of value_loc from the source.
     sig { returns(String) }
-    def content; end
+    def value; end
 
     # Slice the location of closing_loc from the source.
     sig { returns(::T.nilable(String)) }
@@ -13913,8 +13913,8 @@ module Prism
   #     ^^^^^
   class XStringNode < Node
     # Initialize a new XStringNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
-    def initialize(source, node_id, location, flags, opening_loc, content_loc, closing_loc, unescaped); end
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).void }
+    def initialize(source, node_id, location, flags, opening_loc, value_loc, closing_loc, unescaped); end
 
     # See Node.accept.
     sig { override.params(visitor: Visitor).returns(::T.untyped) }
@@ -13938,8 +13938,8 @@ module Prism
     def comment_targets; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
-    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), content_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
+    sig { params(node_id: Integer, location: Location, flags: Integer, opening_loc: Location, value_loc: Location, closing_loc: Location, unescaped: String).returns(XStringNode) }
+    def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
     def deconstruct; end
@@ -13975,14 +13975,14 @@ module Prism
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
     def save_opening_loc(repository); end
 
-    # Returns the Location represented by `content_loc`.
+    # Returns the Location represented by `value_loc`.
     sig { returns(Location) }
-    def content_loc; end
+    def value_loc; end
 
-    # Save the content_loc location using the given saved source so that
+    # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
     sig { params(repository: ::T.untyped).returns(Relocation::Entry) }
-    def save_content_loc(repository); end
+    def save_value_loc(repository); end
 
     # Returns the Location represented by `closing_loc`.
     sig { returns(Location) }
@@ -14001,9 +14001,9 @@ module Prism
     sig { returns(String) }
     def opening; end
 
-    # Slice the location of content_loc from the source.
+    # Slice the location of value_loc from the source.
     sig { returns(String) }
-    def content; end
+    def value; end
 
     # Slice the location of closing_loc from the source.
     sig { returns(String) }

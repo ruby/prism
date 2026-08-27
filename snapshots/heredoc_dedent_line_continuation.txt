@@ -12,19 +12,19 @@
             │   ├── @ StringNode (location: (2,0)-(3,0))
             │   │   ├── flags: static_literal, frozen
             │   │   ├── opening_loc: ∅
-            │   │   ├── content_loc: (2,0)-(3,0) = "  foo\\\n"
+            │   │   ├── value_loc: (2,0)-(3,0) = "  foo\\\n"
             │   │   ├── closing_loc: ∅
             │   │   └── unescaped: "foo"
             │   ├── @ StringNode (location: (3,0)-(4,0))
             │   │   ├── flags: static_literal, frozen
             │   │   ├── opening_loc: ∅
-            │   │   ├── content_loc: (3,0)-(4,0) = "  \\\n"
+            │   │   ├── value_loc: (3,0)-(4,0) = "  \\\n"
             │   │   ├── closing_loc: ∅
             │   │   └── unescaped: ""
             │   └── @ StringNode (location: (4,0)-(5,0))
             │       ├── flags: static_literal, frozen
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (4,0)-(5,0) = "  bar\n"
+            │       ├── value_loc: (4,0)-(5,0) = "  bar\n"
             │       ├── closing_loc: ∅
             │       └── unescaped: "bar\n"
             └── closing_loc: (5,0)-(6,0) = "FOO\n"

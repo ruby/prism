@@ -768,7 +768,7 @@ module Prism
             visit_words_sep(opening_loc, previous, element)
 
             bounds(element.location)
-            elements = on_qwords_add(elements, on_tstring_content(element.content))
+            elements = on_qwords_add(elements, on_tstring_content(element.value))
 
             previous = element
           end
@@ -814,13 +814,13 @@ module Prism
               on_words_add(
                 elements,
                 if element.is_a?(StringNode)
-                  on_word_add(on_word_new, on_tstring_content(element.content))
+                  on_word_add(on_word_new, on_tstring_content(element.value))
                 else
                   element.parts.inject(on_word_new) do |word, part|
                     word_part =
                       if part.is_a?(StringNode)
                         bounds(part.location)
-                        on_tstring_content(part.content)
+                        on_tstring_content(part.value)
                       else
                         visit(part)
                       end
@@ -859,7 +859,7 @@ module Prism
                     word_part =
                       if part.is_a?(StringNode)
                         bounds(part.location)
-                        on_tstring_content(part.content)
+                        on_tstring_content(part.value)
                       else
                         visit(part)
                       end
@@ -2665,8 +2665,8 @@ module Prism
 
         bounds(node.parts.first.location)
         parts =
-          node.parts.inject(on_regexp_new) do |content, part|
-            on_regexp_add(content, visit_string_content(part))
+          node.parts.inject(on_regexp_new) do |value, part|
+            on_regexp_add(value, visit_string_content(part))
           end
 
         bounds(node.closing_loc)
@@ -2765,8 +2765,8 @@ module Prism
       # Visit an individual part of a string-like node.
       private def visit_string_content(part)
         if part.is_a?(StringNode)
-          bounds(part.content_loc)
-          on_tstring_content(part.content)
+          bounds(part.value_loc)
+          on_tstring_content(part.value)
         else
           visit(part)
         end
@@ -2971,8 +2971,8 @@ module Prism
         bounds(node.opening_loc)
         on_regexp_beg(node.opening)
 
-        bounds(node.content_loc)
-        tstring_content = on_tstring_content(node.content)
+        bounds(node.value_loc)
+        tstring_content = on_tstring_content(node.value)
 
         bounds(node.closing_loc)
         closing = on_regexp_end(node.closing)
@@ -3411,14 +3411,14 @@ module Prism
         bounds(node.opening_loc)
         on_regexp_beg(node.opening)
 
-        if node.content.empty?
+        if node.value.empty?
           bounds(node.closing_loc)
           closing = on_regexp_end(node.closing)
 
           on_regexp_literal(on_regexp_new, closing)
         else
-          bounds(node.content_loc)
-          tstring_content = on_tstring_content(node.content)
+          bounds(node.value_loc)
+          tstring_content = on_tstring_content(node.value)
 
           bounds(node.closing_loc)
           closing = on_regexp_end(node.closing)
@@ -3648,20 +3648,20 @@ module Prism
       # ^^^^^
       def visit_string_node(node)
         with_string_bounds(node) do
-          if (content = node.content).empty?
+          if (value = node.value).empty?
             bounds(node.location)
             on_string_literal(on_string_content)
           elsif (opening = node.opening) == "?"
             bounds(node.location)
-            on_CHAR("?#{node.content}")
+            on_CHAR("?#{value}")
           elsif opening.start_with?("<<~")
             heredoc = visit_heredoc_string_node(node.to_interpolated)
 
             bounds(node.location)
             on_string_literal(heredoc)
           else
-            bounds(node.content_loc)
-            tstring_content = on_tstring_content(content)
+            bounds(node.value_loc)
+            tstring_content = on_tstring_content(value)
 
             bounds(node.location)
             on_string_literal(on_string_add(on_string_content, tstring_content))
@@ -3720,10 +3720,10 @@ module Prism
 
         parts.each do |part|
           if part.is_a?(StringNode)
-            if dedent_next && !(content = part.content).chomp.empty?
+            if dedent_next && !(value = part.value).chomp.empty?
               common_whitespace = [
                 common_whitespace || Float::INFINITY,
-                content[/\A\s*/].each_char.inject(0) do |part_whitespace, char|
+                value[/\A\s*/].each_char.inject(0) do |part_whitespace, char|
                   char == "\t" ? ((part_whitespace / 8 + 1) * 8) : (part_whitespace + 1)
                 end
               ].min
@@ -3758,7 +3758,7 @@ module Prism
             else
               unless string.empty?
                 bounds(string[0].location)
-                result = yield result, on_tstring_content(string.map(&:content).join)
+                result = yield result, on_tstring_content(string.map(&:value).join)
                 string = []
               end
 
@@ -3768,7 +3768,7 @@ module Prism
 
           unless string.empty?
             bounds(string[0].location)
-            result = yield result, on_tstring_content(string.map(&:content).join)
+            result = yield result, on_tstring_content(string.map(&:value).join)
           end
 
           result
@@ -4037,8 +4037,8 @@ module Prism
             bounds(node.location)
             on_xstring_literal(heredoc)
           else
-            bounds(node.content_loc)
-            content = on_tstring_content(node.content)
+            bounds(node.value_loc)
+            content = on_tstring_content(node.value)
 
             bounds(node.location)
             on_xstring_literal(on_xstring_add(on_xstring_new, content))

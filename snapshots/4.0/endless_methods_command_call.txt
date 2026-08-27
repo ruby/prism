@@ -40,7 +40,7 @@
         │   │           │           │       └── @ StringNode (location: (1,23)-(1,30))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (1,23)-(1,24) = "\""
-        │   │           │           │           ├── content_loc: (1,24)-(1,29) = "Hello"
+        │   │           │           │           ├── value_loc: (1,24)-(1,29) = "Hello"
         │   │           │           │           ├── closing_loc: (1,29)-(1,30) = "\""
         │   │           │           │           └── unescaped: "Hello"
         │   │           │           ├── closing_loc: ∅
@@ -91,13 +91,13 @@
         │   │           │           │       ├── @ StringNode (location: (2,23)-(2,30))
         │   │           │           │       │   ├── flags: ∅
         │   │           │           │       │   ├── opening_loc: (2,23)-(2,24) = "\""
-        │   │           │           │       │   ├── content_loc: (2,24)-(2,29) = "Hello"
+        │   │           │           │       │   ├── value_loc: (2,24)-(2,29) = "Hello"
         │   │           │           │       │   ├── closing_loc: (2,29)-(2,30) = "\""
         │   │           │           │       │   └── unescaped: "Hello"
         │   │           │           │       └── @ StringNode (location: (2,32)-(2,39))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (2,32)-(2,33) = "\""
-        │   │           │           │           ├── content_loc: (2,33)-(2,38) = "World"
+        │   │           │           │           ├── value_loc: (2,33)-(2,38) = "World"
         │   │           │           │           ├── closing_loc: (2,38)-(2,39) = "\""
         │   │           │           │           └── unescaped: "World"
         │   │           │           ├── closing_loc: ∅
@@ -148,7 +148,7 @@
         │   │           │           │       └── @ StringNode (location: (3,23)-(3,30))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (3,23)-(3,24) = "\""
-        │   │           │           │           ├── content_loc: (3,24)-(3,29) = "Hello"
+        │   │           │           │           ├── value_loc: (3,24)-(3,29) = "Hello"
         │   │           │           │           ├── closing_loc: (3,29)-(3,30) = "\""
         │   │           │           │           └── unescaped: "Hello"
         │   │           │           ├── closing_loc: ∅
@@ -220,7 +220,7 @@
         │   │           │           │       └── @ StringNode (location: (4,25)-(4,32))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (4,25)-(4,26) = "\""
-        │   │           │           │           ├── content_loc: (4,26)-(4,31) = "Hello"
+        │   │           │           │           ├── value_loc: (4,26)-(4,31) = "Hello"
         │   │           │           │           ├── closing_loc: (4,31)-(4,32) = "\""
         │   │           │           │           └── unescaped: "Hello"
         │   │           │           ├── closing_loc: ∅
@@ -343,7 +343,7 @@
         │   │           │           │       └── @ StringNode (location: (6,27)-(6,34))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (6,27)-(6,28) = "\""
-        │   │           │           │           ├── content_loc: (6,28)-(6,33) = "Hello"
+        │   │           │           │           ├── value_loc: (6,28)-(6,33) = "Hello"
         │   │           │           │           ├── closing_loc: (6,33)-(6,34) = "\""
         │   │           │           │           └── unescaped: "Hello"
         │   │           │           ├── closing_loc: ∅
@@ -405,7 +405,7 @@
         │   │           │           │       └── @ StringNode (location: (7,29)-(7,36))
         │   │           │           │           ├── flags: ∅
         │   │           │           │           ├── opening_loc: (7,29)-(7,30) = "\""
-        │   │           │           │           ├── content_loc: (7,30)-(7,35) = "Hello"
+        │   │           │           │           ├── value_loc: (7,30)-(7,35) = "Hello"
         │   │           │           │           ├── closing_loc: (7,35)-(7,36) = "\""
         │   │           │           │           └── unescaped: "Hello"
         │   │           │           ├── closing_loc: ∅

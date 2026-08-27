@@ -78,10 +78,10 @@ module Prism
           if node.opening&.start_with?("%w", "%W", "%i", "%I")
             elements = node.elements.flat_map do |element|
               if element.is_a?(StringNode)
-                if element.content.include?("\n")
-                  string_nodes_from_line_continuations(element.unescaped, element.content, element.content_loc.start_offset, node.opening)
+                if element.value.include?("\n")
+                  string_nodes_from_line_continuations(element.unescaped, element.value, element.value_loc.start_offset, node.opening)
                 else
-                  [builder.string_internal([element.unescaped, srange(element.content_loc)])]
+                  [builder.string_internal([element.unescaped, srange(element.value_loc)])]
                 end
               elsif element.is_a?(InterpolatedStringNode)
                 builder.string_compose(
@@ -1564,12 +1564,12 @@ module Prism
         # ^^^^^
         def visit_regular_expression_node(node)
           parts =
-            if node.content == ""
+            if node.value == ""
               []
-            elsif node.content.include?("\n")
-              string_nodes_from_line_continuations(node.unescaped, node.content, node.content_loc.start_offset, node.opening)
+            elsif node.value.include?("\n")
+              string_nodes_from_line_continuations(node.unescaped, node.value, node.value_loc.start_offset, node.opening)
             else
-              [builder.string_internal([node.unescaped, srange(node.content_loc)])]
+              [builder.string_internal([node.unescaped, srange(node.value_loc)])]
             end
 
           builder.regexp_compose(
@@ -1727,10 +1727,10 @@ module Prism
             builder.string_compose(token(node.opening_loc), [], token(node.closing_loc))
           else
             parts =
-              if node.content.include?("\n")
-                string_nodes_from_line_continuations(node.unescaped, node.content, node.content_loc.start_offset, node.opening)
+              if node.value.include?("\n")
+                string_nodes_from_line_continuations(node.unescaped, node.value, node.value_loc.start_offset, node.opening)
               else
-                [builder.string_internal([node.unescaped, srange(node.content_loc)])]
+                [builder.string_internal([node.unescaped, srange(node.value_loc)])]
               end
 
             builder.string_compose(
@@ -1914,12 +1914,12 @@ module Prism
           end
 
           parts =
-            if node.content == ""
+            if node.value == ""
               []
-            elsif node.content.include?("\n")
-              string_nodes_from_line_continuations(node.unescaped, node.content, node.content_loc.start_offset, node.opening)
+            elsif node.value.include?("\n")
+              string_nodes_from_line_continuations(node.unescaped, node.value, node.value_loc.start_offset, node.opening)
             else
-              [builder.string_internal([node.unescaped, srange(node.content_loc)])]
+              [builder.string_internal([node.unescaped, srange(node.value_loc)])]
             end
 
           builder.xstring_compose(
@@ -2073,8 +2073,8 @@ module Prism
 
           node.parts.each do |part|
             pushing =
-              if part.is_a?(StringNode) && part.content.include?("\n")
-                string_nodes_from_line_continuations(part.unescaped, part.content, part.location.start_offset, node.opening)
+              if part.is_a?(StringNode) && part.value.include?("\n")
+                string_nodes_from_line_continuations(part.unescaped, part.value, part.location.start_offset, node.opening)
               else
                 [visit(part)]
               end
@@ -2129,8 +2129,8 @@ module Prism
         # parser gem creates individual string nodes for each line the content is part of.
         def string_nodes_from_interpolation(node, opening)
           node.parts.flat_map do |part|
-            if part.type == :string_node && part.content.include?("\n") && part.opening_loc.nil?
-              string_nodes_from_line_continuations(part.unescaped, part.content, part.content_loc.start_offset, opening)
+            if part.type == :string_node && part.value.include?("\n") && part.opening_loc.nil?
+              string_nodes_from_line_continuations(part.unescaped, part.value, part.value_loc.start_offset, opening)
             else
               visit(part)
             end

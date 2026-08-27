@@ -19,7 +19,7 @@
         │   │       └── @ StringNode (location: (1,2)-(1,7))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (1,2)-(1,3) = "\""
-        │   │           ├── content_loc: (1,3)-(1,6) = "\\\\n"
+        │   │           ├── value_loc: (1,3)-(1,6) = "\\\\n"
         │   │           ├── closing_loc: (1,6)-(1,7) = "\""
         │   │           └── unescaped: "\\n"
         │   ├── closing_loc: ∅

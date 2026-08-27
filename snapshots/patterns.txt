@@ -189,7 +189,7 @@
         │   │   @ RegularExpressionNode (location: (9,7)-(9,12))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (9,7)-(9,8) = "/"
-        │   │   ├── content_loc: (9,8)-(9,11) = "foo"
+        │   │   ├── value_loc: (9,8)-(9,11) = "foo"
         │   │   ├── closing_loc: (9,11)-(9,12) = "/"
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (9,4)-(9,6) = "=>"
@@ -211,7 +211,7 @@
         │   │   @ XStringNode (location: (10,7)-(10,12))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (10,7)-(10,8) = "`"
-        │   │   ├── content_loc: (10,8)-(10,11) = "foo"
+        │   │   ├── value_loc: (10,8)-(10,11) = "foo"
         │   │   ├── closing_loc: (10,11)-(10,12) = "`"
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (10,4)-(10,6) = "=>"
@@ -233,7 +233,7 @@
         │   │   @ XStringNode (location: (11,7)-(11,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (11,7)-(11,10) = "%x["
-        │   │   ├── content_loc: (11,10)-(11,13) = "foo"
+        │   │   ├── value_loc: (11,10)-(11,13) = "foo"
         │   │   ├── closing_loc: (11,13)-(11,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (11,4)-(11,6) = "=>"
@@ -312,7 +312,7 @@
         │   │   │   └── @ StringNode (location: (14,10)-(14,13))
         │   │   │       ├── flags: ∅
         │   │   │       ├── opening_loc: ∅
-        │   │   │       ├── content_loc: (14,10)-(14,13) = "foo"
+        │   │   │       ├── value_loc: (14,10)-(14,13) = "foo"
         │   │   │       ├── closing_loc: ∅
         │   │   │       └── unescaped: "foo"
         │   │   ├── opening_loc: (14,7)-(14,10) = "%w["
@@ -339,7 +339,7 @@
         │   │   │   └── @ StringNode (location: (15,10)-(15,13))
         │   │   │       ├── flags: ∅
         │   │   │       ├── opening_loc: ∅
-        │   │   │       ├── content_loc: (15,10)-(15,13) = "foo"
+        │   │   │       ├── value_loc: (15,10)-(15,13) = "foo"
         │   │   │       ├── closing_loc: ∅
         │   │   │       └── unescaped: "foo"
         │   │   ├── opening_loc: (15,7)-(15,10) = "%W["
@@ -363,7 +363,7 @@
         │   │   @ StringNode (location: (16,7)-(16,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (16,7)-(16,10) = "%q["
-        │   │   ├── content_loc: (16,10)-(16,13) = "foo"
+        │   │   ├── value_loc: (16,10)-(16,13) = "foo"
         │   │   ├── closing_loc: (16,13)-(16,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (16,4)-(16,6) = "=>"
@@ -385,7 +385,7 @@
         │   │   @ StringNode (location: (17,7)-(17,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (17,7)-(17,10) = "%Q["
-        │   │   ├── content_loc: (17,10)-(17,13) = "foo"
+        │   │   ├── value_loc: (17,10)-(17,13) = "foo"
         │   │   ├── closing_loc: (17,13)-(17,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (17,4)-(17,6) = "=>"
@@ -407,7 +407,7 @@
         │   │   @ StringNode (location: (18,7)-(18,12))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (18,7)-(18,8) = "\""
-        │   │   ├── content_loc: (18,8)-(18,11) = "foo"
+        │   │   ├── value_loc: (18,8)-(18,11) = "foo"
         │   │   ├── closing_loc: (18,11)-(18,12) = "\""
         │   │   └── unescaped: "foo"
         │   └── operator_loc: (18,4)-(18,6) = "=>"
@@ -805,14 +805,14 @@
         │   │   │   @ RegularExpressionNode (location: (35,7)-(35,12))
         │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   ├── opening_loc: (35,7)-(35,8) = "/"
-        │   │   │   ├── content_loc: (35,8)-(35,11) = "foo"
+        │   │   │   ├── value_loc: (35,8)-(35,11) = "foo"
         │   │   │   ├── closing_loc: (35,11)-(35,12) = "/"
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ RegularExpressionNode (location: (35,16)-(35,21))
         │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   ├── opening_loc: (35,16)-(35,17) = "/"
-        │   │   │   ├── content_loc: (35,17)-(35,20) = "foo"
+        │   │   │   ├── value_loc: (35,17)-(35,20) = "foo"
         │   │   │   ├── closing_loc: (35,20)-(35,21) = "/"
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (35,13)-(35,15) = ".."
@@ -838,14 +838,14 @@
         │   │   │   @ XStringNode (location: (36,7)-(36,12))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (36,7)-(36,8) = "`"
-        │   │   │   ├── content_loc: (36,8)-(36,11) = "foo"
+        │   │   │   ├── value_loc: (36,8)-(36,11) = "foo"
         │   │   │   ├── closing_loc: (36,11)-(36,12) = "`"
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ XStringNode (location: (36,16)-(36,21))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (36,16)-(36,17) = "`"
-        │   │   │   ├── content_loc: (36,17)-(36,20) = "foo"
+        │   │   │   ├── value_loc: (36,17)-(36,20) = "foo"
         │   │   │   ├── closing_loc: (36,20)-(36,21) = "`"
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (36,13)-(36,15) = ".."
@@ -871,14 +871,14 @@
         │   │   │   @ XStringNode (location: (37,7)-(37,14))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (37,7)-(37,10) = "%x["
-        │   │   │   ├── content_loc: (37,10)-(37,13) = "foo"
+        │   │   │   ├── value_loc: (37,10)-(37,13) = "foo"
         │   │   │   ├── closing_loc: (37,13)-(37,14) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ XStringNode (location: (37,18)-(37,25))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (37,18)-(37,21) = "%x["
-        │   │   │   ├── content_loc: (37,21)-(37,24) = "foo"
+        │   │   │   ├── value_loc: (37,21)-(37,24) = "foo"
         │   │   │   ├── closing_loc: (37,24)-(37,25) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (37,15)-(37,17) = ".."
@@ -993,7 +993,7 @@
         │   │   │   │   └── @ StringNode (location: (40,10)-(40,13))
         │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (40,10)-(40,13) = "foo"
+        │   │   │   │       ├── value_loc: (40,10)-(40,13) = "foo"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "foo"
         │   │   │   ├── opening_loc: (40,7)-(40,10) = "%w["
@@ -1005,7 +1005,7 @@
         │   │   │   │   └── @ StringNode (location: (40,21)-(40,24))
         │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (40,21)-(40,24) = "foo"
+        │   │   │   │       ├── value_loc: (40,21)-(40,24) = "foo"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "foo"
         │   │   │   ├── opening_loc: (40,18)-(40,21) = "%w["
@@ -1036,7 +1036,7 @@
         │   │   │   │   └── @ StringNode (location: (41,10)-(41,13))
         │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (41,10)-(41,13) = "foo"
+        │   │   │   │       ├── value_loc: (41,10)-(41,13) = "foo"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "foo"
         │   │   │   ├── opening_loc: (41,7)-(41,10) = "%W["
@@ -1048,7 +1048,7 @@
         │   │   │   │   └── @ StringNode (location: (41,21)-(41,24))
         │   │   │   │       ├── flags: ∅
         │   │   │   │       ├── opening_loc: ∅
-        │   │   │   │       ├── content_loc: (41,21)-(41,24) = "foo"
+        │   │   │   │       ├── value_loc: (41,21)-(41,24) = "foo"
         │   │   │   │       ├── closing_loc: ∅
         │   │   │   │       └── unescaped: "foo"
         │   │   │   ├── opening_loc: (41,18)-(41,21) = "%W["
@@ -1076,14 +1076,14 @@
         │   │   │   @ StringNode (location: (42,7)-(42,14))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (42,7)-(42,10) = "%q["
-        │   │   │   ├── content_loc: (42,10)-(42,13) = "foo"
+        │   │   │   ├── value_loc: (42,10)-(42,13) = "foo"
         │   │   │   ├── closing_loc: (42,13)-(42,14) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ StringNode (location: (42,18)-(42,25))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (42,18)-(42,21) = "%q["
-        │   │   │   ├── content_loc: (42,21)-(42,24) = "foo"
+        │   │   │   ├── value_loc: (42,21)-(42,24) = "foo"
         │   │   │   ├── closing_loc: (42,24)-(42,25) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (42,15)-(42,17) = ".."
@@ -1109,14 +1109,14 @@
         │   │   │   @ StringNode (location: (43,7)-(43,14))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (43,7)-(43,10) = "%Q["
-        │   │   │   ├── content_loc: (43,10)-(43,13) = "foo"
+        │   │   │   ├── value_loc: (43,10)-(43,13) = "foo"
         │   │   │   ├── closing_loc: (43,13)-(43,14) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ StringNode (location: (43,18)-(43,25))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (43,18)-(43,21) = "%Q["
-        │   │   │   ├── content_loc: (43,21)-(43,24) = "foo"
+        │   │   │   ├── value_loc: (43,21)-(43,24) = "foo"
         │   │   │   ├── closing_loc: (43,24)-(43,25) = "]"
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (43,15)-(43,17) = ".."
@@ -1142,14 +1142,14 @@
         │   │   │   @ StringNode (location: (44,7)-(44,12))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (44,7)-(44,8) = "\""
-        │   │   │   ├── content_loc: (44,8)-(44,11) = "foo"
+        │   │   │   ├── value_loc: (44,8)-(44,11) = "foo"
         │   │   │   ├── closing_loc: (44,11)-(44,12) = "\""
         │   │   │   └── unescaped: "foo"
         │   │   ├── right:
         │   │   │   @ StringNode (location: (44,16)-(44,21))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: (44,16)-(44,17) = "\""
-        │   │   │   ├── content_loc: (44,17)-(44,20) = "foo"
+        │   │   │   ├── value_loc: (44,17)-(44,20) = "foo"
         │   │   │   ├── closing_loc: (44,20)-(44,21) = "\""
         │   │   │   └── unescaped: "foo"
         │   │   └── operator_loc: (44,13)-(44,15) = ".."
@@ -1558,7 +1558,7 @@
         │   │   │   │   @ StringNode (location: (61,9)-(61,14))
         │   │   │   │   ├── flags: ∅
         │   │   │   │   ├── opening_loc: (61,9)-(61,10) = "\""
-        │   │   │   │   ├── content_loc: (61,10)-(61,13) = "bar"
+        │   │   │   │   ├── value_loc: (61,10)-(61,13) = "bar"
         │   │   │   │   ├── closing_loc: (61,13)-(61,14) = "\""
         │   │   │   │   └── unescaped: "bar"
         │   │   │   ├── call_operator_loc: ∅
@@ -1572,7 +1572,7 @@
         │   │   │   │       └── @ StringNode (location: (61,17)-(61,22))
         │   │   │   │           ├── flags: ∅
         │   │   │   │           ├── opening_loc: (61,17)-(61,18) = "\""
-        │   │   │   │           ├── content_loc: (61,18)-(61,21) = "baz"
+        │   │   │   │           ├── value_loc: (61,18)-(61,21) = "baz"
         │   │   │   │           ├── closing_loc: (61,21)-(61,22) = "\""
         │   │   │   │           └── unescaped: "baz"
         │   │   │   ├── closing_loc: ∅
@@ -2910,7 +2910,7 @@
         │   │   @ RegularExpressionNode (location: (109,7)-(109,12))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (109,7)-(109,8) = "/"
-        │   │   ├── content_loc: (109,8)-(109,11) = "foo"
+        │   │   ├── value_loc: (109,8)-(109,11) = "foo"
         │   │   ├── closing_loc: (109,11)-(109,12) = "/"
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (109,4)-(109,6) = "in"
@@ -2932,7 +2932,7 @@
         │   │   @ XStringNode (location: (110,7)-(110,12))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (110,7)-(110,8) = "`"
-        │   │   ├── content_loc: (110,8)-(110,11) = "foo"
+        │   │   ├── value_loc: (110,8)-(110,11) = "foo"
         │   │   ├── closing_loc: (110,11)-(110,12) = "`"
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (110,4)-(110,6) = "in"
@@ -2954,7 +2954,7 @@
         │   │   @ XStringNode (location: (111,7)-(111,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (111,7)-(111,10) = "%x["
-        │   │   ├── content_loc: (111,10)-(111,13) = "foo"
+        │   │   ├── value_loc: (111,10)-(111,13) = "foo"
         │   │   ├── closing_loc: (111,13)-(111,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (111,4)-(111,6) = "in"
@@ -3033,7 +3033,7 @@
         │   │   │   └── @ StringNode (location: (114,10)-(114,13))
         │   │   │       ├── flags: ∅
         │   │   │       ├── opening_loc: ∅
-        │   │   │       ├── content_loc: (114,10)-(114,13) = "foo"
+        │   │   │       ├── value_loc: (114,10)-(114,13) = "foo"
         │   │   │       ├── closing_loc: ∅
         │   │   │       └── unescaped: "foo"
         │   │   ├── opening_loc: (114,7)-(114,10) = "%w["
@@ -3060,7 +3060,7 @@
         │   │   │   └── @ StringNode (location: (115,10)-(115,13))
         │   │   │       ├── flags: ∅
         │   │   │       ├── opening_loc: ∅
-        │   │   │       ├── content_loc: (115,10)-(115,13) = "foo"
+        │   │   │       ├── value_loc: (115,10)-(115,13) = "foo"
         │   │   │       ├── closing_loc: ∅
         │   │   │       └── unescaped: "foo"
         │   │   ├── opening_loc: (115,7)-(115,10) = "%W["
@@ -3084,7 +3084,7 @@
         │   │   @ StringNode (location: (116,7)-(116,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (116,7)-(116,10) = "%q["
-        │   │   ├── content_loc: (116,10)-(116,13) = "foo"
+        │   │   ├── value_loc: (116,10)-(116,13) = "foo"
         │   │   ├── closing_loc: (116,13)-(116,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (116,4)-(116,6) = "in"
@@ -3106,7 +3106,7 @@
         │   │   @ StringNode (location: (117,7)-(117,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (117,7)-(117,10) = "%Q["
-        │   │   ├── content_loc: (117,10)-(117,13) = "foo"
+        │   │   ├── value_loc: (117,10)-(117,13) = "foo"
         │   │   ├── closing_loc: (117,13)-(117,14) = "]"
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (117,4)-(117,6) = "in"
@@ -3128,7 +3128,7 @@
         │   │   @ StringNode (location: (118,7)-(118,12))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (118,7)-(118,8) = "\""
-        │   │   ├── content_loc: (118,8)-(118,11) = "foo"
+        │   │   ├── value_loc: (118,8)-(118,11) = "foo"
         │   │   ├── closing_loc: (118,11)-(118,12) = "\""
         │   │   └── unescaped: "foo"
         │   └── keyword_loc: (118,4)-(118,6) = "in"
@@ -3571,7 +3571,7 @@
         │   │       │   @ RegularExpressionNode (location: (137,13)-(137,18))
         │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │       │   ├── opening_loc: (137,13)-(137,14) = "/"
-        │   │       │   ├── content_loc: (137,14)-(137,17) = "foo"
+        │   │       │   ├── value_loc: (137,14)-(137,17) = "foo"
         │   │       │   ├── closing_loc: (137,17)-(137,18) = "/"
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -3601,7 +3601,7 @@
         │   │       │   @ XStringNode (location: (138,13)-(138,18))
         │   │       │   ├── flags: ∅
         │   │       │   ├── opening_loc: (138,13)-(138,14) = "`"
-        │   │       │   ├── content_loc: (138,14)-(138,17) = "foo"
+        │   │       │   ├── value_loc: (138,14)-(138,17) = "foo"
         │   │       │   ├── closing_loc: (138,17)-(138,18) = "`"
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -3631,7 +3631,7 @@
         │   │       │   @ XStringNode (location: (139,13)-(139,20))
         │   │       │   ├── flags: ∅
         │   │       │   ├── opening_loc: (139,13)-(139,16) = "%x["
-        │   │       │   ├── content_loc: (139,16)-(139,19) = "foo"
+        │   │       │   ├── value_loc: (139,16)-(139,19) = "foo"
         │   │       │   ├── closing_loc: (139,19)-(139,20) = "]"
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -3734,7 +3734,7 @@
         │   │       │   │   └── @ StringNode (location: (142,16)-(142,19))
         │   │       │   │       ├── flags: ∅
         │   │       │   │       ├── opening_loc: ∅
-        │   │       │   │       ├── content_loc: (142,16)-(142,19) = "foo"
+        │   │       │   │       ├── value_loc: (142,16)-(142,19) = "foo"
         │   │       │   │       ├── closing_loc: ∅
         │   │       │   │       └── unescaped: "foo"
         │   │       │   ├── opening_loc: (142,13)-(142,16) = "%w["
@@ -3769,7 +3769,7 @@
         │   │       │   │   └── @ StringNode (location: (143,16)-(143,19))
         │   │       │   │       ├── flags: ∅
         │   │       │   │       ├── opening_loc: ∅
-        │   │       │   │       ├── content_loc: (143,16)-(143,19) = "foo"
+        │   │       │   │       ├── value_loc: (143,16)-(143,19) = "foo"
         │   │       │   │       ├── closing_loc: ∅
         │   │       │   │       └── unescaped: "foo"
         │   │       │   ├── opening_loc: (143,13)-(143,16) = "%W["
@@ -3801,7 +3801,7 @@
         │   │       │   @ StringNode (location: (144,13)-(144,20))
         │   │       │   ├── flags: ∅
         │   │       │   ├── opening_loc: (144,13)-(144,16) = "%q["
-        │   │       │   ├── content_loc: (144,16)-(144,19) = "foo"
+        │   │       │   ├── value_loc: (144,16)-(144,19) = "foo"
         │   │       │   ├── closing_loc: (144,19)-(144,20) = "]"
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -3831,7 +3831,7 @@
         │   │       │   @ StringNode (location: (145,13)-(145,20))
         │   │       │   ├── flags: ∅
         │   │       │   ├── opening_loc: (145,13)-(145,16) = "%Q["
-        │   │       │   ├── content_loc: (145,16)-(145,19) = "foo"
+        │   │       │   ├── value_loc: (145,16)-(145,19) = "foo"
         │   │       │   ├── closing_loc: (145,19)-(145,20) = "]"
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -3861,7 +3861,7 @@
         │   │       │   @ StringNode (location: (146,13)-(146,18))
         │   │       │   ├── flags: ∅
         │   │       │   ├── opening_loc: (146,13)-(146,14) = "\""
-        │   │       │   ├── content_loc: (146,14)-(146,17) = "foo"
+        │   │       │   ├── value_loc: (146,14)-(146,17) = "foo"
         │   │       │   ├── closing_loc: (146,17)-(146,18) = "\""
         │   │       │   └── unescaped: "foo"
         │   │       ├── statements: ∅
@@ -4476,7 +4476,7 @@
         │   │       │   │       └── @ RegularExpressionNode (location: (164,13)-(164,18))
         │   │       │   │           ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   │       │   │           ├── opening_loc: (164,13)-(164,14) = "/"
-        │   │       │   │           ├── content_loc: (164,14)-(164,17) = "foo"
+        │   │       │   │           ├── value_loc: (164,14)-(164,17) = "foo"
         │   │       │   │           ├── closing_loc: (164,17)-(164,18) = "/"
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -4521,7 +4521,7 @@
         │   │       │   │       └── @ XStringNode (location: (165,13)-(165,18))
         │   │       │   │           ├── flags: newline
         │   │       │   │           ├── opening_loc: (165,13)-(165,14) = "`"
-        │   │       │   │           ├── content_loc: (165,14)-(165,17) = "foo"
+        │   │       │   │           ├── value_loc: (165,14)-(165,17) = "foo"
         │   │       │   │           ├── closing_loc: (165,17)-(165,18) = "`"
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -4566,7 +4566,7 @@
         │   │       │   │       └── @ XStringNode (location: (166,13)-(166,20))
         │   │       │   │           ├── flags: newline
         │   │       │   │           ├── opening_loc: (166,13)-(166,16) = "%x["
-        │   │       │   │           ├── content_loc: (166,16)-(166,19) = "foo"
+        │   │       │   │           ├── value_loc: (166,16)-(166,19) = "foo"
         │   │       │   │           ├── closing_loc: (166,19)-(166,20) = "]"
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -4714,7 +4714,7 @@
         │   │       │   │           │   └── @ StringNode (location: (169,16)-(169,19))
         │   │       │   │           │       ├── flags: ∅
         │   │       │   │           │       ├── opening_loc: ∅
-        │   │       │   │           │       ├── content_loc: (169,16)-(169,19) = "foo"
+        │   │       │   │           │       ├── value_loc: (169,16)-(169,19) = "foo"
         │   │       │   │           │       ├── closing_loc: ∅
         │   │       │   │           │       └── unescaped: "foo"
         │   │       │   │           ├── opening_loc: (169,13)-(169,16) = "%w["
@@ -4764,7 +4764,7 @@
         │   │       │   │           │   └── @ StringNode (location: (170,16)-(170,19))
         │   │       │   │           │       ├── flags: ∅
         │   │       │   │           │       ├── opening_loc: ∅
-        │   │       │   │           │       ├── content_loc: (170,16)-(170,19) = "foo"
+        │   │       │   │           │       ├── value_loc: (170,16)-(170,19) = "foo"
         │   │       │   │           │       ├── closing_loc: ∅
         │   │       │   │           │       └── unescaped: "foo"
         │   │       │   │           ├── opening_loc: (170,13)-(170,16) = "%W["
@@ -4811,7 +4811,7 @@
         │   │       │   │       └── @ StringNode (location: (171,13)-(171,20))
         │   │       │   │           ├── flags: newline
         │   │       │   │           ├── opening_loc: (171,13)-(171,16) = "%q["
-        │   │       │   │           ├── content_loc: (171,16)-(171,19) = "foo"
+        │   │       │   │           ├── value_loc: (171,16)-(171,19) = "foo"
         │   │       │   │           ├── closing_loc: (171,19)-(171,20) = "]"
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -4856,7 +4856,7 @@
         │   │       │   │       └── @ StringNode (location: (172,13)-(172,20))
         │   │       │   │           ├── flags: newline
         │   │       │   │           ├── opening_loc: (172,13)-(172,16) = "%Q["
-        │   │       │   │           ├── content_loc: (172,16)-(172,19) = "foo"
+        │   │       │   │           ├── value_loc: (172,16)-(172,19) = "foo"
         │   │       │   │           ├── closing_loc: (172,19)-(172,20) = "]"
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -4901,7 +4901,7 @@
         │   │       │   │       └── @ StringNode (location: (173,13)-(173,18))
         │   │       │   │           ├── flags: newline
         │   │       │   │           ├── opening_loc: (173,13)-(173,14) = "\""
-        │   │       │   │           ├── content_loc: (173,14)-(173,17) = "foo"
+        │   │       │   │           ├── value_loc: (173,14)-(173,17) = "foo"
         │   │       │   │           ├── closing_loc: (173,17)-(173,18) = "\""
         │   │       │   │           └── unescaped: "foo"
         │   │       │   ├── subsequent: ∅
@@ -5767,14 +5767,14 @@
         │   │   │   │       │   @ StringNode (location: (215,8)-(215,11))
         │   │   │   │       │   ├── flags: static_literal, frozen
         │   │   │   │       │   ├── opening_loc: (215,8)-(215,9) = "'"
-        │   │   │   │       │   ├── content_loc: (215,9)-(215,10) = "a"
+        │   │   │   │       │   ├── value_loc: (215,9)-(215,10) = "a"
         │   │   │   │       │   ├── closing_loc: (215,10)-(215,11) = "'"
         │   │   │   │       │   └── unescaped: "a"
         │   │   │   │       ├── value:
         │   │   │   │       │   @ StringNode (location: (215,15)-(215,18))
         │   │   │   │       │   ├── flags: ∅
         │   │   │   │       │   ├── opening_loc: (215,15)-(215,16) = "'"
-        │   │   │   │       │   ├── content_loc: (215,16)-(215,17) = "b"
+        │   │   │   │       │   ├── value_loc: (215,16)-(215,17) = "b"
         │   │   │   │       │   ├── closing_loc: (215,17)-(215,18) = "'"
         │   │   │   │       │   └── unescaped: "b"
         │   │   │   │       └── operator_loc: (215,12)-(215,14) = "=>"

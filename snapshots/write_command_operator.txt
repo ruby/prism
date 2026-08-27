@@ -31,7 +31,7 @@
         │   │   │   │       └── @ StringNode (location: (1,12)-(1,17))
         │   │   │   │           ├── flags: ∅
         │   │   │   │           ├── opening_loc: (1,12)-(1,13) = "'"
-        │   │   │   │           ├── content_loc: (1,13)-(1,16) = "456"
+        │   │   │   │           ├── value_loc: (1,13)-(1,16) = "456"
         │   │   │   │           ├── closing_loc: (1,16)-(1,17) = "'"
         │   │   │   │           └── unescaped: "456"
         │   │   │   ├── closing_loc: ∅
@@ -70,7 +70,7 @@
             │   │   │       └── @ StringNode (location: (3,12)-(3,17))
             │   │   │           ├── flags: ∅
             │   │   │           ├── opening_loc: (3,12)-(3,13) = "'"
-            │   │   │           ├── content_loc: (3,13)-(3,16) = "456"
+            │   │   │           ├── value_loc: (3,13)-(3,16) = "456"
             │   │   │           ├── closing_loc: (3,16)-(3,17) = "'"
             │   │   │           └── unescaped: "456"
             │   │   ├── closing_loc: ∅

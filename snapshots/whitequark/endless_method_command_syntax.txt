@@ -29,7 +29,7 @@
         │   │           │       └── @ StringNode (location: (1,15)-(1,22))
         │   │           │           ├── flags: ∅
         │   │           │           ├── opening_loc: (1,15)-(1,16) = "\""
-        │   │           │           ├── content_loc: (1,16)-(1,21) = "Hello"
+        │   │           │           ├── value_loc: (1,16)-(1,21) = "Hello"
         │   │           │           ├── closing_loc: (1,21)-(1,22) = "\""
         │   │           │           └── unescaped: "Hello"
         │   │           ├── closing_loc: ∅
@@ -66,7 +66,7 @@
         │   │           │       └── @ StringNode (location: (3,17)-(3,24))
         │   │           │           ├── flags: ∅
         │   │           │           ├── opening_loc: (3,17)-(3,18) = "\""
-        │   │           │           ├── content_loc: (3,18)-(3,23) = "Hello"
+        │   │           │           ├── value_loc: (3,18)-(3,23) = "Hello"
         │   │           │           ├── closing_loc: (3,23)-(3,24) = "\""
         │   │           │           └── unescaped: "Hello"
         │   │           ├── closing_loc: ∅
@@ -161,7 +161,7 @@
         │   │           │       └── @ StringNode (location: (7,19)-(7,26))
         │   │           │           ├── flags: ∅
         │   │           │           ├── opening_loc: (7,19)-(7,20) = "\""
-        │   │           │           ├── content_loc: (7,20)-(7,25) = "Hello"
+        │   │           │           ├── value_loc: (7,20)-(7,25) = "Hello"
         │   │           │           ├── closing_loc: (7,25)-(7,26) = "\""
         │   │           │           └── unescaped: "Hello"
         │   │           ├── closing_loc: ∅
@@ -209,7 +209,7 @@
         │   │           │       └── @ StringNode (location: (9,21)-(9,28))
         │   │           │           ├── flags: ∅
         │   │           │           ├── opening_loc: (9,21)-(9,22) = "\""
-        │   │           │           ├── content_loc: (9,22)-(9,27) = "Hello"
+        │   │           │           ├── value_loc: (9,22)-(9,27) = "Hello"
         │   │           │           ├── closing_loc: (9,27)-(9,28) = "\""
         │   │           │           └── unescaped: "Hello"
         │   │           ├── closing_loc: ∅
@@ -319,7 +319,7 @@
         │   │           │   │       └── @ StringNode (location: (13,23)-(13,37))
         │   │           │   │           ├── flags: ∅
         │   │           │   │           ├── opening_loc: (13,23)-(13,24) = "\""
-        │   │           │   │           ├── content_loc: (13,24)-(13,36) = "to be caught"
+        │   │           │   │           ├── value_loc: (13,24)-(13,36) = "to be caught"
         │   │           │   │           ├── closing_loc: (13,36)-(13,37) = "\""
         │   │           │   │           └── unescaped: "to be caught"
         │   │           │   ├── closing_loc: ∅
@@ -334,7 +334,7 @@
         │   │               │   ├── @ StringNode (location: (13,46)-(13,55))
         │   │               │   │   ├── flags: static_literal, frozen
         │   │               │   │   ├── opening_loc: ∅
-        │   │               │   │   ├── content_loc: (13,46)-(13,55) = "instance "
+        │   │               │   │   ├── value_loc: (13,46)-(13,55) = "instance "
         │   │               │   │   ├── closing_loc: ∅
         │   │               │   │   └── unescaped: "instance "
         │   │               │   └── @ EmbeddedStatementsNode (location: (13,55)-(13,59))
@@ -398,7 +398,7 @@
             │           │   │       └── @ StringNode (location: (15,28)-(15,42))
             │           │   │           ├── flags: ∅
             │           │   │           ├── opening_loc: (15,28)-(15,29) = "\""
-            │           │   │           ├── content_loc: (15,29)-(15,41) = "to be caught"
+            │           │   │           ├── value_loc: (15,29)-(15,41) = "to be caught"
             │           │   │           ├── closing_loc: (15,41)-(15,42) = "\""
             │           │   │           └── unescaped: "to be caught"
             │           │   ├── closing_loc: ∅
@@ -413,7 +413,7 @@
             │               │   ├── @ StringNode (location: (15,51)-(15,57))
             │               │   │   ├── flags: static_literal, frozen
             │               │   │   ├── opening_loc: ∅
-            │               │   │   ├── content_loc: (15,51)-(15,57) = "class "
+            │               │   │   ├── value_loc: (15,51)-(15,57) = "class "
             │               │   │   ├── closing_loc: ∅
             │               │   │   └── unescaped: "class "
             │               │   └── @ EmbeddedStatementsNode (location: (15,57)-(15,61))

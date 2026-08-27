@@ -117,13 +117,13 @@
         ├── @ StringNode (location: (15,0)-(15,6))
         │   ├── flags: newline
         │   ├── opening_loc: (15,0)-(15,2) = "%{"
-        │   ├── content_loc: (15,2)-(15,5) = "abc"
+        │   ├── value_loc: (15,2)-(15,5) = "abc"
         │   ├── closing_loc: (15,5)-(15,6) = "}"
         │   └── unescaped: "abc"
         ├── @ StringNode (location: (17,0)-(17,6))
         │   ├── flags: newline
         │   ├── opening_loc: (17,0)-(17,2) = "%\""
-        │   ├── content_loc: (17,2)-(17,5) = "abc"
+        │   ├── value_loc: (17,2)-(17,5) = "abc"
         │   ├── closing_loc: (17,5)-(17,6) = "\""
         │   └── unescaped: "abc"
         └── @ DefNode (location: (19,0)-(20,3))

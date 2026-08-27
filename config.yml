@@ -3596,7 +3596,7 @@ nodes:
     fields:
       - name: opening_loc
         type: location
-      - name: content_loc
+      - name: value_loc
         type: location
       - name: closing_loc
         type: location
@@ -4281,7 +4281,7 @@ nodes:
     fields:
       - name: opening_loc
         type: location
-      - name: content_loc
+      - name: value_loc
         type: location
       - name: closing_loc
         type: location
@@ -4503,7 +4503,7 @@ nodes:
     fields:
       - name: opening_loc
         type: location?
-      - name: content_loc
+      - name: value_loc
         type: location
       - name: closing_loc
         type: location?
@@ -4721,7 +4721,7 @@ nodes:
     fields:
       - name: opening_loc
         type: location
-      - name: content_loc
+      - name: value_loc
         type: location
       - name: closing_loc
         type: location
