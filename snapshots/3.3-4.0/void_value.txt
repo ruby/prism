@@ -169,7 +169,7 @@
         │   │   │       └── @ StringNode (location: (21,2)-(21,6))
         │   │   │           ├── flags: newline
         │   │   │           ├── opening_loc: (21,2)-(21,3) = "\""
-        │   │   │           ├── content_loc: (21,3)-(21,5) = "NG"
+        │   │   │           ├── value_loc: (21,3)-(21,5) = "NG"
         │   │   │           ├── closing_loc: (21,5)-(21,6) = "\""
         │   │   │           └── unescaped: "NG"
         │   │   ├── rescue_clause: ∅
@@ -227,7 +227,7 @@
             │   │       └── @ StringNode (location: (26,2)-(26,6))
             │   │           ├── flags: newline
             │   │           ├── opening_loc: (26,2)-(26,3) = "\""
-            │   │           ├── content_loc: (26,3)-(26,5) = "NG"
+            │   │           ├── value_loc: (26,3)-(26,5) = "NG"
             │   │           ├── closing_loc: (26,5)-(26,6) = "\""
             │   │           └── unescaped: "NG"
             │   ├── subsequent:

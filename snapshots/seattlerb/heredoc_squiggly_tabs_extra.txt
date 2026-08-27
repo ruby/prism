@@ -18,13 +18,13 @@
             │   │   ├── @ StringNode (location: (2,0)-(3,0))
             │   │   │   ├── flags: static_literal, frozen
             │   │   │   ├── opening_loc: ∅
-            │   │   │   ├── content_loc: (2,0)-(3,0) = "  blah blah\n"
+            │   │   │   ├── value_loc: (2,0)-(3,0) = "  blah blah\n"
             │   │   │   ├── closing_loc: ∅
             │   │   │   └── unescaped: "blah blah\n"
             │   │   └── @ StringNode (location: (3,0)-(4,0))
             │   │       ├── flags: static_literal, frozen
             │   │       ├── opening_loc: ∅
-            │   │       ├── content_loc: (3,0)-(4,0) = " \tblah blah\n"
+            │   │       ├── value_loc: (3,0)-(4,0) = " \tblah blah\n"
             │   │       ├── closing_loc: ∅
             │   │       └── unescaped: "\tblah blah\n"
             │   └── closing_loc: (4,0)-(5,0) = "  EOF\n"

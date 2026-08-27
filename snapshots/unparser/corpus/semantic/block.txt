@@ -140,7 +140,7 @@
         │   │       └── @ StringNode (location: (16,4)-(16,10))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (16,4)-(16,10) = "<<-DOC"
-        │   │           ├── content_loc: (17,0)-(18,0) = "  b\n"
+        │   │           ├── value_loc: (17,0)-(18,0) = "  b\n"
         │   │           ├── closing_loc: (18,0)-(19,0) = "DOC\n"
         │   │           └── unescaped: "  b\n"
         │   ├── closing_loc: (16,10)-(16,11) = ")"
@@ -192,7 +192,7 @@
             │       └── @ StringNode (location: (22,4)-(22,10))
             │           ├── flags: ∅
             │           ├── opening_loc: (22,4)-(22,10) = "<<-DOC"
-            │           ├── content_loc: (23,0)-(24,0) = "  b\n"
+            │           ├── value_loc: (23,0)-(24,0) = "  b\n"
             │           ├── closing_loc: (24,0)-(25,0) = "DOC\n"
             │           └── unescaped: "  b\n"
             ├── closing_loc: (22,10)-(22,11) = ")"

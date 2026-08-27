@@ -19,7 +19,7 @@
         │   │       └── @ RegularExpressionNode (location: (1,4)-(1,9))
         │   │           ├── flags: static_literal, forced_us_ascii_encoding
         │   │           ├── opening_loc: (1,4)-(1,5) = "/"
-        │   │           ├── content_loc: (1,5)-(1,8) = "bar"
+        │   │           ├── value_loc: (1,5)-(1,8) = "bar"
         │   │           ├── closing_loc: (1,8)-(1,9) = "/"
         │   │           └── unescaped: "bar"
         │   ├── closing_loc: ∅
@@ -28,13 +28,13 @@
         ├── @ RegularExpressionNode (location: (3,0)-(3,8))
         │   ├── flags: newline, static_literal, ignore_case, forced_us_ascii_encoding
         │   ├── opening_loc: (3,0)-(3,3) = "%r{"
-        │   ├── content_loc: (3,3)-(3,6) = "abc"
+        │   ├── value_loc: (3,3)-(3,6) = "abc"
         │   ├── closing_loc: (3,6)-(3,8) = "}i"
         │   └── unescaped: "abc"
         ├── @ RegularExpressionNode (location: (5,0)-(5,5))
         │   ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   ├── opening_loc: (5,0)-(5,1) = "/"
-        │   ├── content_loc: (5,1)-(5,4) = "a\\b"
+        │   ├── value_loc: (5,1)-(5,4) = "a\\b"
         │   ├── closing_loc: (5,4)-(5,5) = "/"
         │   └── unescaped: "a\\b"
         ├── @ InterpolatedRegularExpressionNode (location: (7,0)-(7,11))
@@ -44,7 +44,7 @@
         │   │   ├── @ StringNode (location: (7,1)-(7,5))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (7,1)-(7,5) = "aaa "
+        │   │   │   ├── value_loc: (7,1)-(7,5) = "aaa "
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "aaa "
         │   │   └── @ EmbeddedVariableNode (location: (7,5)-(7,10))
@@ -62,7 +62,7 @@
         │   │   ├── @ StringNode (location: (9,1)-(9,5))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (9,1)-(9,5) = "aaa "
+        │   │   │   ├── value_loc: (9,1)-(9,5) = "aaa "
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "aaa "
         │   │   ├── @ EmbeddedStatementsNode (location: (9,5)-(9,11))
@@ -87,7 +87,7 @@
         │   │   └── @ StringNode (location: (9,11)-(9,15))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (9,11)-(9,15) = " ccc"
+        │   │       ├── value_loc: (9,11)-(9,15) = " ccc"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: " ccc"
         │   └── closing_loc: (9,15)-(9,16) = "/"
@@ -103,7 +103,7 @@
         │   │   │   │   │   @ RegularExpressionNode (location: (11,1)-(11,14))
         │   │   │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   │   │   ├── opening_loc: (11,1)-(11,2) = "/"
-        │   │   │   │   │   ├── content_loc: (11,2)-(11,13) = "(?<foo>bar)"
+        │   │   │   │   │   ├── value_loc: (11,2)-(11,13) = "(?<foo>bar)"
         │   │   │   │   │   ├── closing_loc: (11,13)-(11,14) = "/"
         │   │   │   │   │   └── unescaped: "(?<foo>bar)"
         │   │   │   │   ├── call_operator_loc: ∅
@@ -142,31 +142,31 @@
         ├── @ RegularExpressionNode (location: (13,0)-(13,6))
         │   ├── flags: newline, static_literal, ignore_case, forced_us_ascii_encoding
         │   ├── opening_loc: (13,0)-(13,1) = "/"
-        │   ├── content_loc: (13,1)-(13,4) = "abc"
+        │   ├── value_loc: (13,1)-(13,4) = "abc"
         │   ├── closing_loc: (13,4)-(13,6) = "/i"
         │   └── unescaped: "abc"
         ├── @ RegularExpressionNode (location: (15,0)-(15,26))
         │   ├── flags: newline, static_literal, ignore_case, forced_us_ascii_encoding
         │   ├── opening_loc: (15,0)-(15,3) = "%r/"
-        │   ├── content_loc: (15,3)-(15,24) = "[a-z$._?][\\w$.?\#@~]*:"
+        │   ├── value_loc: (15,3)-(15,24) = "[a-z$._?][\\w$.?\#@~]*:"
         │   ├── closing_loc: (15,24)-(15,26) = "/i"
         │   └── unescaped: "[a-z$._?][\\w$.?\#@~]*:"
         ├── @ RegularExpressionNode (location: (17,0)-(17,37))
         │   ├── flags: newline, static_literal, ignore_case, forced_us_ascii_encoding
         │   ├── opening_loc: (17,0)-(17,3) = "%r/"
-        │   ├── content_loc: (17,3)-(17,35) = "([a-z$._?][\\w$.?\#@~]*)(\\s+)(equ)"
+        │   ├── value_loc: (17,3)-(17,35) = "([a-z$._?][\\w$.?\#@~]*)(\\s+)(equ)"
         │   ├── closing_loc: (17,35)-(17,37) = "/i"
         │   └── unescaped: "([a-z$._?][\\w$.?\#@~]*)(\\s+)(equ)"
         ├── @ RegularExpressionNode (location: (19,0)-(19,25))
         │   ├── flags: newline, static_literal, ignore_case, forced_us_ascii_encoding
         │   ├── opening_loc: (19,0)-(19,3) = "%r/"
-        │   ├── content_loc: (19,3)-(19,23) = "[a-z$._?][\\w$.?\#@~]*"
+        │   ├── value_loc: (19,3)-(19,23) = "[a-z$._?][\\w$.?\#@~]*"
         │   ├── closing_loc: (19,23)-(19,25) = "/i"
         │   └── unescaped: "[a-z$._?][\\w$.?\#@~]*"
         ├── @ RegularExpressionNode (location: (21,0)-(24,1))
         │   ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   ├── opening_loc: (21,0)-(21,3) = "%r("
-        │   ├── content_loc: (21,3)-(24,0) = "\n(?:[\#$%_']|\\(\\)|\\(,\\)|\\[\\]|[0-9])*\n  (?:[\#$%_']+)\n"
+        │   ├── value_loc: (21,3)-(24,0) = "\n(?:[\#$%_']|\\(\\)|\\(,\\)|\\[\\]|[0-9])*\n  (?:[\#$%_']+)\n"
         │   ├── closing_loc: (24,0)-(24,1) = ")"
         │   └── unescaped: "\n(?:[\#$%_']|\\(\\)|\\(,\\)|\\[\\]|[0-9])*\n  (?:[\#$%_']+)\n"
         ├── @ CallNode (location: (26,0)-(26,16))
@@ -175,7 +175,7 @@
         │   │   @ RegularExpressionNode (location: (26,0)-(26,8))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (26,0)-(26,1) = "/"
-        │   │   ├── content_loc: (26,1)-(26,7) = "(?#\\))"
+        │   │   ├── value_loc: (26,1)-(26,7) = "(?#\\))"
         │   │   ├── closing_loc: (26,7)-(26,8) = "/"
         │   │   └── unescaped: "(?#\\))"
         │   ├── call_operator_loc: ∅
@@ -189,7 +189,7 @@
         │   │       └── @ StringNode (location: (26,12)-(26,16))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (26,12)-(26,13) = "\""
-        │   │           ├── content_loc: (26,13)-(26,15) = "hi"
+        │   │           ├── value_loc: (26,13)-(26,15) = "hi"
         │   │           ├── closing_loc: (26,15)-(26,16) = "\""
         │   │           └── unescaped: "hi"
         │   ├── closing_loc: ∅
@@ -198,7 +198,7 @@
         ├── @ RegularExpressionNode (location: (28,0)-(28,9))
         │   ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   ├── opening_loc: (28,0)-(28,3) = "%r#"
-        │   ├── content_loc: (28,3)-(28,8) = "pound"
+        │   ├── value_loc: (28,3)-(28,8) = "pound"
         │   ├── closing_loc: (28,8)-(28,9) = "#"
         │   └── unescaped: "pound"
         ├── @ InterpolatedRegularExpressionNode (location: (30,0)-(30,13))
@@ -208,7 +208,7 @@
         │   │   ├── @ StringNode (location: (30,1)-(30,5))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (30,1)-(30,5) = "aaa "
+        │   │   │   ├── value_loc: (30,1)-(30,5) = "aaa "
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "aaa "
         │   │   └── @ EmbeddedStatementsNode (location: (30,5)-(30,11))
@@ -240,7 +240,7 @@
         │   │   │   @ RegularExpressionNode (location: (32,0)-(33,4))
         │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   ├── opening_loc: (32,0)-(32,1) = "/"
-        │   │   │   ├── content_loc: (32,1)-(33,3) = "(?<a\\\nb>)"
+        │   │   │   ├── value_loc: (32,1)-(33,3) = "(?<a\\\nb>)"
         │   │   │   ├── closing_loc: (33,3)-(33,4) = "/"
         │   │   │   └── unescaped: "(?<ab>)"
         │   │   ├── call_operator_loc: ∅
@@ -254,7 +254,7 @@
         │   │   │       └── @ StringNode (location: (33,8)-(33,10))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (33,8)-(33,9) = "\""
-        │   │   │           ├── content_loc: (33,9)-(33,9) = ""
+        │   │   │           ├── value_loc: (33,9)-(33,9) = ""
         │   │   │           ├── closing_loc: (33,9)-(33,10) = "\""
         │   │   │           └── unescaped: ""
         │   │   ├── closing_loc: ∅
@@ -278,7 +278,7 @@
         │   │   │   @ RegularExpressionNode (location: (35,0)-(35,18))
         │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   ├── opening_loc: (35,0)-(35,1) = "/"
-        │   │   │   ├── content_loc: (35,1)-(35,17) = "(?<abc>)(?<abc>)"
+        │   │   │   ├── value_loc: (35,1)-(35,17) = "(?<abc>)(?<abc>)"
         │   │   │   ├── closing_loc: (35,17)-(35,18) = "/"
         │   │   │   └── unescaped: "(?<abc>)(?<abc>)"
         │   │   ├── call_operator_loc: ∅
@@ -292,7 +292,7 @@
         │   │   │       └── @ StringNode (location: (35,22)-(35,24))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (35,22)-(35,23) = "\""
-        │   │   │           ├── content_loc: (35,23)-(35,23) = ""
+        │   │   │           ├── value_loc: (35,23)-(35,23) = ""
         │   │   │           ├── closing_loc: (35,23)-(35,24) = "\""
         │   │   │           └── unescaped: ""
         │   │   ├── closing_loc: ∅
@@ -313,7 +313,7 @@
         │   │   @ RegularExpressionNode (location: (37,0)-(37,10))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (37,0)-(37,1) = "/"
-        │   │   ├── content_loc: (37,1)-(37,9) = "(?<a b>)"
+        │   │   ├── value_loc: (37,1)-(37,9) = "(?<a b>)"
         │   │   ├── closing_loc: (37,9)-(37,10) = "/"
         │   │   └── unescaped: "(?<a b>)"
         │   ├── call_operator_loc: ∅
@@ -327,7 +327,7 @@
         │   │       └── @ StringNode (location: (37,14)-(37,16))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (37,14)-(37,15) = "\""
-        │   │           ├── content_loc: (37,15)-(37,15) = ""
+        │   │           ├── value_loc: (37,15)-(37,15) = ""
         │   │           ├── closing_loc: (37,15)-(37,16) = "\""
         │   │           └── unescaped: ""
         │   ├── closing_loc: ∅
@@ -371,7 +371,7 @@
         │       │           │   │   @ RegularExpressionNode (location: (40,6)-(40,14))
         │       │           │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │       │           │   │   ├── opening_loc: (40,6)-(40,7) = "/"
-        │       │           │   │   ├── content_loc: (40,7)-(40,13) = "(?<a>)"
+        │       │           │   │   ├── value_loc: (40,7)-(40,13) = "(?<a>)"
         │       │           │   │   ├── closing_loc: (40,13)-(40,14) = "/"
         │       │           │   │   └── unescaped: "(?<a>)"
         │       │           │   ├── call_operator_loc: ∅
@@ -412,7 +412,7 @@
         │   │   │   @ RegularExpressionNode (location: (42,0)-(42,10))
         │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   │   ├── opening_loc: (42,0)-(42,1) = "/"
-        │   │   │   ├── content_loc: (42,1)-(42,9) = "(?<foo>)"
+        │   │   │   ├── value_loc: (42,1)-(42,9) = "(?<foo>)"
         │   │   │   ├── closing_loc: (42,9)-(42,10) = "/"
         │   │   │   └── unescaped: "(?<foo>)"
         │   │   ├── call_operator_loc: ∅
@@ -426,7 +426,7 @@
         │   │   │       └── @ StringNode (location: (42,14)-(42,16))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (42,14)-(42,15) = "\""
-        │   │   │           ├── content_loc: (42,15)-(42,15) = ""
+        │   │   │           ├── value_loc: (42,15)-(42,15) = ""
         │   │   │           ├── closing_loc: (42,15)-(42,16) = "\""
         │   │   │           └── unescaped: ""
         │   │   ├── closing_loc: ∅
@@ -443,7 +443,7 @@
         │   │   @ RegularExpressionNode (location: (43,0)-(43,10))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (43,0)-(43,1) = "/"
-        │   │   ├── content_loc: (43,1)-(43,9) = "(?<Foo>)"
+        │   │   ├── value_loc: (43,1)-(43,9) = "(?<Foo>)"
         │   │   ├── closing_loc: (43,9)-(43,10) = "/"
         │   │   └── unescaped: "(?<Foo>)"
         │   ├── call_operator_loc: ∅
@@ -457,7 +457,7 @@
         │   │       └── @ StringNode (location: (43,14)-(43,16))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (43,14)-(43,15) = "\""
-        │   │           ├── content_loc: (43,15)-(43,15) = ""
+        │   │           ├── value_loc: (43,15)-(43,15) = ""
         │   │           ├── closing_loc: (43,15)-(43,16) = "\""
         │   │           └── unescaped: ""
         │   ├── closing_loc: ∅
@@ -469,7 +469,7 @@
         │   │   @ RegularExpressionNode (location: (45,0)-(45,10))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (45,0)-(45,1) = "/"
-        │   │   ├── content_loc: (45,1)-(45,9) = "(?<nil>)"
+        │   │   ├── value_loc: (45,1)-(45,9) = "(?<nil>)"
         │   │   ├── closing_loc: (45,9)-(45,10) = "/"
         │   │   └── unescaped: "(?<nil>)"
         │   ├── call_operator_loc: ∅
@@ -483,7 +483,7 @@
         │   │       └── @ StringNode (location: (45,14)-(45,16))
         │   │           ├── flags: ∅
         │   │           ├── opening_loc: (45,14)-(45,15) = "\""
-        │   │           ├── content_loc: (45,15)-(45,15) = ""
+        │   │           ├── value_loc: (45,15)-(45,15) = ""
         │   │           ├── closing_loc: (45,15)-(45,16) = "\""
         │   │           └── unescaped: ""
         │   ├── closing_loc: ∅
@@ -521,7 +521,7 @@
         │   │           │   │   @ RegularExpressionNode (location: (46,16)-(46,26))
         │   │           │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │           │   │   ├── opening_loc: (46,16)-(46,17) = "/"
-        │   │           │   │   ├── content_loc: (46,17)-(46,25) = "(?<nil>)"
+        │   │           │   │   ├── value_loc: (46,17)-(46,25) = "(?<nil>)"
         │   │           │   │   ├── closing_loc: (46,25)-(46,26) = "/"
         │   │           │   │   └── unescaped: "(?<nil>)"
         │   │           │   ├── call_operator_loc: ∅
@@ -535,7 +535,7 @@
         │   │           │   │       └── @ StringNode (location: (46,30)-(46,32))
         │   │           │   │           ├── flags: ∅
         │   │           │   │           ├── opening_loc: (46,30)-(46,31) = "\""
-        │   │           │   │           ├── content_loc: (46,31)-(46,31) = ""
+        │   │           │   │           ├── value_loc: (46,31)-(46,31) = ""
         │   │           │   │           ├── closing_loc: (46,31)-(46,32) = "\""
         │   │           │   │           └── unescaped: ""
         │   │           │   ├── closing_loc: ∅
@@ -556,18 +556,18 @@
         ├── @ RegularExpressionNode (location: (48,0)-(48,10))
         │   ├── flags: newline, static_literal, extended, forced_us_ascii_encoding
         │   ├── opening_loc: (48,0)-(48,1) = "/"
-        │   ├── content_loc: (48,1)-(48,8) = "(?-x:#)"
+        │   ├── value_loc: (48,1)-(48,8) = "(?-x:#)"
         │   ├── closing_loc: (48,8)-(48,10) = "/x"
         │   └── unescaped: "(?-x:#)"
         ├── @ RegularExpressionNode (location: (50,0)-(56,1))
         │   ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   ├── opening_loc: (50,0)-(50,1) = "/"
-        │   ├── content_loc: (50,1)-(56,0) = "a\nb\\\nc\\\nd\\\\\\\ne\\\\\nf\\\n"
+        │   ├── value_loc: (50,1)-(56,0) = "a\nb\\\nc\\\nd\\\\\\\ne\\\\\nf\\\n"
         │   ├── closing_loc: (56,0)-(56,1) = "/"
         │   └── unescaped: "a\nbcd\\\\e\\\\\nf"
         └── @ RegularExpressionNode (location: (58,0)-(58,2))
             ├── flags: newline, static_literal, forced_us_ascii_encoding
             ├── opening_loc: (58,0)-(58,1) = "/"
-            ├── content_loc: (58,1)-(58,1) = ""
+            ├── value_loc: (58,1)-(58,1) = ""
             ├── closing_loc: (58,1)-(58,2) = "/"
             └── unescaped: ""

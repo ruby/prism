@@ -551,7 +551,7 @@
         ├── @ StringNode (location: (48,0)-(48,6))
         │   ├── flags: newline
         │   ├── opening_loc: (48,0)-(48,2) = "%!"
-        │   ├── content_loc: (48,2)-(48,5) = "abc"
+        │   ├── value_loc: (48,2)-(48,5) = "abc"
         │   ├── closing_loc: (48,5)-(48,6) = "!"
         │   └── unescaped: "abc"
         ├── @ BeginNode (location: (50,0)-(54,3))

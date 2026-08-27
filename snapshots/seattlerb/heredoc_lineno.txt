@@ -14,7 +14,7 @@
         │   │   @ StringNode (location: (1,4)-(1,11))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (1,4)-(1,11) = "<<'CCC'"
-        │   │   ├── content_loc: (2,0)-(5,0) = "line2\nline3\nline4\n"
+        │   │   ├── value_loc: (2,0)-(5,0) = "line2\nline3\nline4\n"
         │   │   ├── closing_loc: (5,0)-(6,0) = "CCC\n"
         │   │   └── unescaped: "line2\nline3\nline4\n"
         │   └── operator_loc: (1,2)-(1,3) = "="

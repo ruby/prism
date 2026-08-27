@@ -16,7 +16,7 @@
             │       │   └── @ RegularExpressionNode (location: (1,11)-(1,23))
             │       │       ├── flags: static_literal, forced_us_ascii_encoding
             │       │       ├── opening_loc: (1,11)-(1,14) = "%r%"
-            │       │       ├── content_loc: (1,14)-(1,22) = "blahblah"
+            │       │       ├── value_loc: (1,14)-(1,22) = "blahblah"
             │       │       ├── closing_loc: (1,22)-(1,23) = "%"
             │       │       └── unescaped: "blahblah"
             │       ├── then_keyword_loc: ∅

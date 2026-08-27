@@ -94,7 +94,7 @@
         │   │   @ StringNode (location: (9,9)-(9,14))
         │   │   ├── flags: ∅
         │   │   ├── opening_loc: (9,9)-(9,10) = "\""
-        │   │   ├── content_loc: (9,10)-(9,13) = "foo"
+        │   │   ├── value_loc: (9,10)-(9,13) = "foo"
         │   │   ├── closing_loc: (9,13)-(9,14) = "\""
         │   │   └── unescaped: "foo"
         │   ├── rparen_loc: (10,0)-(10,1) = ")"

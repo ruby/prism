@@ -50,7 +50,7 @@
             │           │       └── @ StringNode (location: (1,8)-(1,10))
             │           │           ├── flags: ∅
             │           │           ├── opening_loc: (1,8)-(1,9) = "'"
-            │           │           ├── content_loc: (1,9)-(1,9) = ""
+            │           │           ├── value_loc: (1,9)-(1,9) = ""
             │           │           ├── closing_loc: (1,9)-(1,10) = "'"
             │           │           └── unescaped: ""
             │           ├── closing_loc: ∅

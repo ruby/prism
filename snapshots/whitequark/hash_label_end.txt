@@ -39,7 +39,7 @@
         │   │           │       └── @ StringNode (location: (1,6)-(1,9))
         │   │           │           ├── flags: newline
         │   │           │           ├── opening_loc: (1,6)-(1,7) = "\""
-        │   │           │           ├── content_loc: (1,7)-(1,8) = "a"
+        │   │           │           ├── value_loc: (1,7)-(1,8) = "a"
         │   │           │           ├── closing_loc: (1,8)-(1,9) = "\""
         │   │           │           └── unescaped: "a"
         │   │           ├── subsequent:

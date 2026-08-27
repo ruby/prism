@@ -27,7 +27,7 @@
             │       │   ├── @ StringNode (location: (1,19)-(1,22))
             │       │   │   ├── flags: static_literal, frozen
             │       │   │   ├── opening_loc: ∅
-            │       │   │   ├── content_loc: (1,19)-(1,22) = "foo"
+            │       │   │   ├── value_loc: (1,19)-(1,22) = "foo"
             │       │   │   ├── closing_loc: ∅
             │       │   │   └── unescaped: "foo"
             │       │   └── @ EmbeddedStatementsNode (location: (1,22)-(1,26))

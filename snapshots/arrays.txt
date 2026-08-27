@@ -867,19 +867,19 @@
         │   │   ├── @ StringNode (location: (64,3)-(64,6))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (64,3)-(64,6) = "one"
+        │   │   │   ├── value_loc: (64,3)-(64,6) = "one"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "one"
         │   │   ├── @ StringNode (location: (64,7)-(64,10))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (64,7)-(64,10) = "two"
+        │   │   │   ├── value_loc: (64,7)-(64,10) = "two"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "two"
         │   │   └── @ StringNode (location: (64,11)-(64,16))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (64,11)-(64,16) = "three"
+        │   │       ├── value_loc: (64,11)-(64,16) = "three"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "three"
         │   ├── opening_loc: (64,0)-(64,3) = "%w#"
@@ -887,7 +887,7 @@
         ├── @ XStringNode (location: (66,0)-(66,17))
         │   ├── flags: newline
         │   ├── opening_loc: (66,0)-(66,3) = "%x#"
-        │   ├── content_loc: (66,3)-(66,16) = "one two three"
+        │   ├── value_loc: (66,3)-(66,16) = "one two three"
         │   ├── closing_loc: (66,16)-(66,17) = "#"
         │   └── unescaped: "one two three"
         ├── @ ArrayNode (location: (69,0)-(69,17))
@@ -919,19 +919,19 @@
         │   │   ├── @ StringNode (location: (71,3)-(71,6))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (71,3)-(71,6) = "one"
+        │   │   │   ├── value_loc: (71,3)-(71,6) = "one"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "one"
         │   │   ├── @ StringNode (location: (71,7)-(71,10))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (71,7)-(71,10) = "two"
+        │   │   │   ├── value_loc: (71,7)-(71,10) = "two"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "two"
         │   │   └── @ StringNode (location: (71,11)-(71,16))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (71,11)-(71,16) = "three"
+        │   │       ├── value_loc: (71,11)-(71,16) = "three"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "three"
         │   ├── opening_loc: (71,0)-(71,3) = "%w@"
@@ -939,7 +939,7 @@
         ├── @ XStringNode (location: (73,0)-(73,17))
         │   ├── flags: newline
         │   ├── opening_loc: (73,0)-(73,3) = "%x@"
-        │   ├── content_loc: (73,3)-(73,16) = "one two three"
+        │   ├── value_loc: (73,3)-(73,16) = "one two three"
         │   ├── closing_loc: (73,16)-(73,17) = "@"
         │   └── unescaped: "one two three"
         ├── @ ArrayNode (location: (76,0)-(76,17))
@@ -971,19 +971,19 @@
         │   │   ├── @ StringNode (location: (78,3)-(78,6))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (78,3)-(78,6) = "one"
+        │   │   │   ├── value_loc: (78,3)-(78,6) = "one"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "one"
         │   │   ├── @ StringNode (location: (78,7)-(78,10))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (78,7)-(78,10) = "two"
+        │   │   │   ├── value_loc: (78,7)-(78,10) = "two"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "two"
         │   │   └── @ StringNode (location: (78,11)-(78,16))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (78,11)-(78,16) = "three"
+        │   │       ├── value_loc: (78,11)-(78,16) = "three"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "three"
         │   ├── opening_loc: (78,0)-(78,3) = "%w{"
@@ -991,7 +991,7 @@
         ├── @ XStringNode (location: (80,0)-(80,17))
         │   ├── flags: newline
         │   ├── opening_loc: (80,0)-(80,3) = "%x{"
-        │   ├── content_loc: (80,3)-(80,16) = "one two three"
+        │   ├── value_loc: (80,3)-(80,16) = "one two three"
         │   ├── closing_loc: (80,16)-(80,17) = "}"
         │   └── unescaped: "one two three"
         ├── @ ArrayNode (location: (82,0)-(82,7))
@@ -1000,7 +1000,7 @@
         │   │   └── @ StringNode (location: (82,3)-(82,6))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (82,3)-(82,6) = "\\C:"
+        │   │       ├── value_loc: (82,3)-(82,6) = "\\C:"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "\\C:"
         │   ├── opening_loc: (82,0)-(82,3) = "%w["

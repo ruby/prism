@@ -6860,15 +6860,15 @@ pm_string_node_to_symbol_node(pm_parser_t *parser, pm_string_node_t *node, const
         PM_NODE_FLAG_STATIC_LITERAL,
         PM_LOCATION_INIT_TOKENS(parser, opening, closing),
         TOK2LOC(parser, opening),
-        node->content_loc,
+        node->value_loc,
         TOK2LOC(parser, closing),
         node->unescaped
     );
 
     pm_token_t content = {
         .type = PM_TOKEN_IDENTIFIER,
-        .start = parser->start + node->content_loc.start,
-        .end = parser->start + node->content_loc.start + node->content_loc.length
+        .start = parser->start + node->value_loc.start,
+        .end = parser->start + node->value_loc.start + node->value_loc.length
     };
 
     pm_node_flag_set(UP(new_node), parse_symbol_encoding(parser, parser->explicit_encoding, &content, &node->unescaped, true));
@@ -16619,8 +16619,8 @@ parse_heredoc_dedent_string(pm_arena_t *arena, pm_string_t *string, size_t commo
 static PRISM_INLINE bool
 heredoc_dedent_discard_string_node(pm_parser_t *parser, pm_string_node_t *string_node) {
     if (string_node->unescaped.length == 0) {
-        const uint8_t *cursor = parser->start + PM_LOCATION_START(&string_node->content_loc);
-        return pm_memchr(cursor, '\\', string_node->content_loc.length, parser->encoding_changed, parser->encoding) == NULL;
+        const uint8_t *cursor = parser->start + PM_LOCATION_START(&string_node->value_loc);
+        return pm_memchr(cursor, '\\', string_node->value_loc.length, parser->encoding_changed, parser->encoding) == NULL;
     }
     return false;
 }

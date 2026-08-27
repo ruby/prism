@@ -323,7 +323,7 @@
         │       │               │           │       └── @ StringNode (location: (19,35)-(19,40))
         │       │               │           │           ├── flags: ∅
         │       │               │           │           ├── opening_loc: (19,35)-(19,36) = "\""
-        │       │               │           │           ├── content_loc: (19,36)-(19,39) = "baz"
+        │       │               │           │           ├── value_loc: (19,36)-(19,39) = "baz"
         │       │               │           │           ├── closing_loc: (19,39)-(19,40) = "\""
         │       │               │           │           └── unescaped: "baz"
         │       │               │           ├── closing_loc: ∅

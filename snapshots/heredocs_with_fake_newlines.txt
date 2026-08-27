@@ -8,7 +8,7 @@
         ├── @ StringNode (location: (1,0)-(1,7))
         │   ├── flags: newline
         │   ├── opening_loc: (1,0)-(1,7) = "<<-RUBY"
-        │   ├── content_loc: (2,0)-(13,0) = "  \\n\n  \\n\n  exit\n  \\\\n\n  \\n\\n\\n\\n\n  argh\n  \\\\\n  \\\\\\\n  foo\\nbar\n  \\f\n  ok\n"
+        │   ├── value_loc: (2,0)-(13,0) = "  \\n\n  \\n\n  exit\n  \\\\n\n  \\n\\n\\n\\n\n  argh\n  \\\\\n  \\\\\\\n  foo\\nbar\n  \\f\n  ok\n"
         │   ├── closing_loc: (13,0)-(14,0) = "RUBY\n"
         │   └── unescaped: "  \n\n  \n\n  exit\n  \\n\n  \n\n\n\n\n  argh\n  \\\n  \\  foo\nbar\n  \f\n  ok\n"
         ├── @ InterpolatedStringNode (location: (15,0)-(15,7))
@@ -18,67 +18,67 @@
         │   │   ├── @ StringNode (location: (16,0)-(17,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (16,0)-(17,0) = "  \\n\n"
+        │   │   │   ├── value_loc: (16,0)-(17,0) = "  \\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n"
         │   │   ├── @ StringNode (location: (17,0)-(18,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (17,0)-(18,0) = "  \\n\n"
+        │   │   │   ├── value_loc: (17,0)-(18,0) = "  \\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n"
         │   │   ├── @ StringNode (location: (18,0)-(19,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (18,0)-(19,0) = "  exit\n"
+        │   │   │   ├── value_loc: (18,0)-(19,0) = "  exit\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "exit\n"
         │   │   ├── @ StringNode (location: (19,0)-(20,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (19,0)-(20,0) = "  \\\\n\n"
+        │   │   │   ├── value_loc: (19,0)-(20,0) = "  \\\\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\n\n"
         │   │   ├── @ StringNode (location: (20,0)-(21,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (20,0)-(21,0) = "  \\n\\n\\n\\n\n"
+        │   │   │   ├── value_loc: (20,0)-(21,0) = "  \\n\\n\\n\\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n\n\n\n"
         │   │   ├── @ StringNode (location: (21,0)-(22,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (21,0)-(22,0) = "  argh\n"
+        │   │   │   ├── value_loc: (21,0)-(22,0) = "  argh\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "argh\n"
         │   │   ├── @ StringNode (location: (22,0)-(23,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (22,0)-(23,0) = "  \\\\\n"
+        │   │   │   ├── value_loc: (22,0)-(23,0) = "  \\\\\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\\n"
         │   │   ├── @ StringNode (location: (23,0)-(24,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (23,0)-(24,0) = "  \\\\\\\n"
+        │   │   │   ├── value_loc: (23,0)-(24,0) = "  \\\\\\\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\"
         │   │   ├── @ StringNode (location: (24,0)-(25,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (24,0)-(25,0) = "  foo\\nbar\n"
+        │   │   │   ├── value_loc: (24,0)-(25,0) = "  foo\\nbar\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "foo\nbar\n"
         │   │   ├── @ StringNode (location: (25,0)-(26,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (25,0)-(26,0) = "  \\f\n"
+        │   │   │   ├── value_loc: (25,0)-(26,0) = "  \\f\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\f\n"
         │   │   └── @ StringNode (location: (26,0)-(27,0))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (26,0)-(27,0) = "  ok\n"
+        │   │       ├── value_loc: (26,0)-(27,0) = "  ok\n"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "ok\n"
         │   └── closing_loc: (27,0)-(28,0) = "RUBY\n"
@@ -100,25 +100,25 @@
         │   │   ├── @ StringNode (location: (30,8)-(31,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (30,8)-(31,0) = "\\n\n"
+        │   │   │   ├── value_loc: (30,8)-(31,0) = "\\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n"
         │   │   ├── @ StringNode (location: (31,0)-(32,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (31,0)-(32,0) = "  \\n\n"
+        │   │   │   ├── value_loc: (31,0)-(32,0) = "  \\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n"
         │   │   ├── @ StringNode (location: (32,0)-(33,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (32,0)-(33,0) = "  exit\n"
+        │   │   │   ├── value_loc: (32,0)-(33,0) = "  exit\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "exit\n"
         │   │   ├── @ StringNode (location: (33,0)-(33,4))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (33,0)-(33,4) = "  \\\\"
+        │   │   │   ├── value_loc: (33,0)-(33,4) = "  \\\\"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\"
         │   │   ├── @ EmbeddedStatementsNode (location: (33,4)-(33,10))
@@ -135,13 +135,13 @@
         │   │   ├── @ StringNode (location: (33,10)-(34,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (33,10)-(34,0) = "n\n"
+        │   │   │   ├── value_loc: (33,10)-(34,0) = "n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "n\n"
         │   │   ├── @ StringNode (location: (34,0)-(34,4))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (34,0)-(34,4) = "  \\n"
+        │   │   │   ├── value_loc: (34,0)-(34,4) = "  \\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n"
         │   │   ├── @ EmbeddedStatementsNode (location: (34,4)-(34,10))
@@ -158,19 +158,19 @@
         │   │   ├── @ StringNode (location: (34,10)-(35,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (34,10)-(35,0) = "\\n\\n\\n\n"
+        │   │   │   ├── value_loc: (34,10)-(35,0) = "\\n\\n\\n\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\n\n\n\n"
         │   │   ├── @ StringNode (location: (35,0)-(36,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (35,0)-(36,0) = "  argh\n"
+        │   │   │   ├── value_loc: (35,0)-(36,0) = "  argh\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "argh\n"
         │   │   ├── @ StringNode (location: (36,0)-(36,4))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (36,0)-(36,4) = "  \\\\"
+        │   │   │   ├── value_loc: (36,0)-(36,4) = "  \\\\"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\"
         │   │   ├── @ EmbeddedStatementsNode (location: (36,4)-(36,10))
@@ -187,37 +187,37 @@
         │   │   ├── @ StringNode (location: (36,10)-(37,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (36,10)-(37,0) = "baz\n"
+        │   │   │   ├── value_loc: (36,10)-(37,0) = "baz\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "baz\n"
         │   │   ├── @ StringNode (location: (37,0)-(38,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (37,0)-(38,0) = "  \\\\\\\n"
+        │   │   │   ├── value_loc: (37,0)-(38,0) = "  \\\\\\\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\\"
         │   │   ├── @ StringNode (location: (38,0)-(39,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (38,0)-(39,0) = "  foo\\nbar\n"
+        │   │   │   ├── value_loc: (38,0)-(39,0) = "  foo\\nbar\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "foo\nbar\n"
         │   │   ├── @ StringNode (location: (39,0)-(40,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (39,0)-(40,0) = "  \\f\n"
+        │   │   │   ├── value_loc: (39,0)-(40,0) = "  \\f\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "\f\n"
         │   │   └── @ StringNode (location: (40,0)-(41,0))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (40,0)-(41,0) = "  ok\n"
+        │   │       ├── value_loc: (40,0)-(41,0) = "  ok\n"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "ok\n"
         │   └── closing_loc: (41,0)-(42,0) = "RUBY\n"
         └── @ StringNode (location: (43,0)-(43,8))
             ├── flags: newline
             ├── opening_loc: (43,0)-(43,8) = "<<'RUBY'"
-            ├── content_loc: (44,0)-(55,0) = "  \\n\n  \\n\n  exit\n  \\n\n  \\n\\n\\n\\n\n  argh\n  \\\n  \\\n  foo\\nbar\n  \\f\n  ok\n"
+            ├── value_loc: (44,0)-(55,0) = "  \\n\n  \\n\n  exit\n  \\n\n  \\n\\n\\n\\n\n  argh\n  \\\n  \\\n  foo\\nbar\n  \\f\n  ok\n"
             ├── closing_loc: (55,0)-(56,0) = "RUBY\n"
             └── unescaped: "  \\n\n  \\n\n  exit\n  \\n\n  \\n\\n\\n\\n\n  argh\n  \\\n  \\\n  foo\\nbar\n  \\f\n  ok\n"

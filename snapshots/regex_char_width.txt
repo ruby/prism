@@ -14,7 +14,7 @@
         │   │   │   @ RegularExpressionNode (location: (2,0)-(2,22))
         │   │   │   ├── flags: static_literal
         │   │   │   ├── opening_loc: (2,0)-(2,1) = "/"
-        │   │   │   ├── content_loc: (2,1)-(2,21) = "\x{E285}\xA7(?<a>.)\x{E285}\xA9(?<b>.)"
+        │   │   │   ├── value_loc: (2,1)-(2,21) = "\x{E285}\xA7(?<a>.)\x{E285}\xA9(?<b>.)"
         │   │   │   ├── closing_loc: (2,21)-(2,22) = "/"
         │   │   │   └── unescaped: "\x{E285}\xA7(?<a>.)\x{E285}\xA9(?<b>.)"
         │   │   ├── call_operator_loc: ∅
@@ -28,7 +28,7 @@
         │   │   │       └── @ StringNode (location: (2,26)-(2,36))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (2,26)-(2,27) = "'"
-        │   │   │           ├── content_loc: (2,27)-(2,35) = "\x{E285}\xA7a\x{E285}\xA9b"
+        │   │   │           ├── value_loc: (2,27)-(2,35) = "\x{E285}\xA7a\x{E285}\xA9b"
         │   │   │           ├── closing_loc: (2,35)-(2,36) = "'"
         │   │   │           └── unescaped: "\x{E285}\xA7a\x{E285}\xA9b"
         │   │   ├── closing_loc: ∅

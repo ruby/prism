@@ -50,7 +50,7 @@
             │       └── @ StringNode (location: (1,21)-(1,26))
             │           ├── flags: newline
             │           ├── opening_loc: (1,21)-(1,22) = "'"
-            │           ├── content_loc: (1,22)-(1,25) = "foo"
+            │           ├── value_loc: (1,22)-(1,25) = "foo"
             │           ├── closing_loc: (1,25)-(1,26) = "'"
             │           └── unescaped: "foo"
             ├── subsequent:
@@ -64,7 +64,7 @@
             │   │       └── @ StringNode (location: (1,32)-(1,37))
             │   │           ├── flags: newline
             │   │           ├── opening_loc: (1,32)-(1,33) = "'"
-            │   │           ├── content_loc: (1,33)-(1,36) = "bar"
+            │   │           ├── value_loc: (1,33)-(1,36) = "bar"
             │   │           ├── closing_loc: (1,36)-(1,37) = "'"
             │   │           └── unescaped: "bar"
             │   └── end_keyword_loc: (2,0)-(2,3) = "end"

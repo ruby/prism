@@ -49,7 +49,7 @@
         │   │           │       └── @ StringNode (location: (3,12)-(3,14))
         │   │           │           ├── flags: ∅
         │   │           │           ├── opening_loc: (3,12)-(3,13) = "\""
-        │   │           │           ├── content_loc: (3,13)-(3,13) = ""
+        │   │           │           ├── value_loc: (3,13)-(3,13) = ""
         │   │           │           ├── closing_loc: (3,13)-(3,14) = "\""
         │   │           │           └── unescaped: ""
         │   │           ├── closing_loc: ∅

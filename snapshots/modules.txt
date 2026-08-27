@@ -36,7 +36,7 @@
         │   │   ├── @ StringNode (location: (3,3)-(3,7))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (3,3)-(3,7) = "aaa "
+        │   │   │   ├── value_loc: (3,3)-(3,7) = "aaa "
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "aaa "
         │   │   ├── @ EmbeddedStatementsNode (location: (3,7)-(3,13))
@@ -61,7 +61,7 @@
         │   │   └── @ StringNode (location: (3,13)-(3,17))
         │   │       ├── flags: static_literal, frozen
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (3,13)-(3,17) = " ccc"
+        │   │       ├── value_loc: (3,13)-(3,17) = " ccc"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: " ccc"
         │   └── closing_loc: (3,17)-(3,18) = "}"

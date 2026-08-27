@@ -58,7 +58,7 @@
             │       │   │   │   │   @ StringNode (location: (2,25)-(2,28))
             │       │   │   │   │   ├── flags: ∅
             │       │   │   │   │   ├── opening_loc: (2,25)-(2,26) = "\""
-            │       │   │   │   │   ├── content_loc: (2,26)-(2,27) = "e"
+            │       │   │   │   │   ├── value_loc: (2,26)-(2,27) = "e"
             │       │   │   │   │   ├── closing_loc: (2,27)-(2,28) = "\""
             │       │   │   │   │   └── unescaped: "e"
             │       │   │   │   └── operator_loc: ∅

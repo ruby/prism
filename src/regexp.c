@@ -1601,15 +1601,15 @@ pm_regexp_validate_encoding(pm_regexp_parser_t *parser, bool ascii_only, pm_node
 
 /**
  * Parse a regular expression, validate its encoding, and optionally extract
- * named capture groups. Encoding validation walks the raw source (content_loc)
+ * named capture groups. Encoding validation walks the raw source (value_loc)
  * to distinguish escape-produced bytes from literal bytes. Named capture
  * extraction walks the unescaped content since escape sequences in group names
  * (e.g., line continuations) have already been processed by the lexer.
  */
 pm_node_flags_t
 pm_regexp_parse(pm_parser_t *parser, pm_regular_expression_node_t *node, pm_regexp_name_callback_t name_callback, pm_regexp_name_data_t *name_data) {
-    const uint8_t *source = parser->start + node->content_loc.start;
-    size_t size = node->content_loc.length;
+    const uint8_t *source = parser->start + node->value_loc.start;
+    size_t size = node->value_loc.length;
     bool extended_mode = PM_NODE_FLAG_P(node, PM_REGULAR_EXPRESSION_FLAGS_EXTENDED);
     pm_node_flags_t flags = PM_NODE_FLAGS(node);
 

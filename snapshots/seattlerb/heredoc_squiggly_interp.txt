@@ -18,13 +18,13 @@
             │   │   ├── @ StringNode (location: (2,0)-(3,0))
             │   │   │   ├── flags: static_literal, frozen
             │   │   │   ├── opening_loc: ∅
-            │   │   │   ├── content_loc: (2,0)-(3,0) = "      w\n"
+            │   │   │   ├── value_loc: (2,0)-(3,0) = "      w\n"
             │   │   │   ├── closing_loc: ∅
             │   │   │   └── unescaped: "    w\n"
             │   │   ├── @ StringNode (location: (3,0)-(3,3))
             │   │   │   ├── flags: static_literal, frozen
             │   │   │   ├── opening_loc: ∅
-            │   │   │   ├── content_loc: (3,0)-(3,3) = "  x"
+            │   │   │   ├── value_loc: (3,0)-(3,3) = "  x"
             │   │   │   ├── closing_loc: ∅
             │   │   │   └── unescaped: "x"
             │   │   ├── @ EmbeddedStatementsNode (location: (3,3)-(3,8))
@@ -41,13 +41,13 @@
             │   │   ├── @ StringNode (location: (3,8)-(4,0))
             │   │   │   ├── flags: static_literal, frozen
             │   │   │   ├── opening_loc: ∅
-            │   │   │   ├── content_loc: (3,8)-(4,0) = " y\n"
+            │   │   │   ├── value_loc: (3,8)-(4,0) = " y\n"
             │   │   │   ├── closing_loc: ∅
             │   │   │   └── unescaped: " y\n"
             │   │   └── @ StringNode (location: (4,0)-(5,0))
             │   │       ├── flags: static_literal, frozen
             │   │       ├── opening_loc: ∅
-            │   │       ├── content_loc: (4,0)-(5,0) = "    z\n"
+            │   │       ├── value_loc: (4,0)-(5,0) = "    z\n"
             │   │       ├── closing_loc: ∅
             │   │       └── unescaped: "  z\n"
             │   └── closing_loc: (5,0)-(6,0) = "  EOF\n"

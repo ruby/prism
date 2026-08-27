@@ -12,7 +12,7 @@
             │   ├── @ StringNode (location: (1,2)-(1,5))
             │   │   ├── flags: static_literal, frozen
             │   │   ├── opening_loc: ∅
-            │   │   ├── content_loc: (1,2)-(1,5) = "foo"
+            │   │   ├── value_loc: (1,2)-(1,5) = "foo"
             │   │   ├── closing_loc: ∅
             │   │   └── unescaped: "foo"
             │   ├── @ EmbeddedStatementsNode (location: (1,5)-(1,11))
@@ -37,7 +37,7 @@
             │   └── @ StringNode (location: (1,11)-(1,14))
             │       ├── flags: static_literal, frozen
             │       ├── opening_loc: ∅
-            │       ├── content_loc: (1,11)-(1,14) = "baz"
+            │       ├── value_loc: (1,11)-(1,14) = "baz"
             │       ├── closing_loc: ∅
             │       └── unescaped: "baz"
             └── closing_loc: (1,14)-(1,15) = "\""

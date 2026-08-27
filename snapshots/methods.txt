@@ -316,7 +316,7 @@
         ├── @ StringNode (location: (33,0)-(33,6))
         │   ├── flags: newline
         │   ├── opening_loc: (33,0)-(33,2) = "%,"
-        │   ├── content_loc: (33,2)-(33,5) = "abc"
+        │   ├── value_loc: (33,2)-(33,5) = "abc"
         │   ├── closing_loc: (33,5)-(33,6) = ","
         │   └── unescaped: "abc"
         ├── @ DefNode (location: (35,0)-(36,3))
@@ -582,7 +582,7 @@
         ├── @ StringNode (location: (63,0)-(63,6))
         │   ├── flags: newline
         │   ├── opening_loc: (63,0)-(63,2) = "%."
-        │   ├── content_loc: (63,2)-(63,5) = "abc"
+        │   ├── value_loc: (63,2)-(63,5) = "abc"
         │   ├── closing_loc: (63,5)-(63,6) = "."
         │   └── unescaped: "abc"
         ├── @ DefNode (location: (65,0)-(66,3))
@@ -1454,7 +1454,7 @@
         │   │           │   ├── @ StringNode (location: (138,13)-(138,16))
         │   │           │   │   ├── flags: static_literal, frozen
         │   │           │   │   ├── opening_loc: ∅
-        │   │           │   │   ├── content_loc: (138,13)-(138,16) = "foo"
+        │   │           │   │   ├── value_loc: (138,13)-(138,16) = "foo"
         │   │           │   │   ├── closing_loc: ∅
         │   │           │   │   └── unescaped: "foo"
         │   │           │   └── @ EmbeddedStatementsNode (location: (138,16)-(138,25))
@@ -2157,7 +2157,7 @@
         │   │   │           @ StringNode (location: (177,10)-(177,15))
         │   │   │           ├── flags: ∅
         │   │   │           ├── opening_loc: (177,10)-(177,12) = "%("
-        │   │   │           ├── content_loc: (177,12)-(177,14) = "xx"
+        │   │   │           ├── value_loc: (177,12)-(177,14) = "xx"
         │   │   │           ├── closing_loc: (177,14)-(177,15) = ")"
         │   │   │           └── unescaped: "xx"
         │   │   ├── keyword_rest: ∅

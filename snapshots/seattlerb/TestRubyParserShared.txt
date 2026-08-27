@@ -38,13 +38,13 @@
         │   │   ├── @ StringNode (location: (17,0)-(17,5))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (17,0)-(17,5) = "line2"
+        │   │   │   ├── value_loc: (17,0)-(17,5) = "line2"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "line2"
         │   │   └── @ StringNode (location: (18,0)-(18,5))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (18,0)-(18,5) = "line3"
+        │   │       ├── value_loc: (18,0)-(18,5) = "line3"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "line3"
         │   ├── opening_loc: (16,0)-(16,3) = "%W["
@@ -74,7 +74,7 @@
         ├── @ RegularExpressionNode (location: (31,0)-(34,1))
         │   ├── flags: newline, static_literal, forced_us_ascii_encoding
         │   ├── opening_loc: (31,0)-(31,3) = "%r["
-        │   ├── content_loc: (31,3)-(34,0) = "\n\n\n"
+        │   ├── value_loc: (31,3)-(34,0) = "\n\n\n"
         │   ├── closing_loc: (34,0)-(34,1) = "]"
         │   └── unescaped: "\n\n\n"
         ├── @ ArrayNode (location: (36,0)-(39,1))
@@ -88,13 +88,13 @@
         │   │   ├── @ StringNode (location: (42,0)-(42,5))
         │   │   │   ├── flags: ∅
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (42,0)-(42,5) = "line2"
+        │   │   │   ├── value_loc: (42,0)-(42,5) = "line2"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "line2"
         │   │   └── @ StringNode (location: (43,0)-(43,5))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: ∅
-        │   │       ├── content_loc: (43,0)-(43,5) = "line3"
+        │   │       ├── value_loc: (43,0)-(43,5) = "line3"
         │   │       ├── closing_loc: ∅
         │   │       └── unescaped: "line3"
         │   ├── opening_loc: (41,0)-(41,3) = "%w["

@@ -23,7 +23,7 @@
             │   │       ├── @ StringNode (location: (1,8)-(1,10))
             │   │       │   ├── flags: ∅
             │   │       │   ├── opening_loc: (1,8)-(1,9) = "?"
-            │   │       │   ├── content_loc: (1,9)-(1,10) = "d"
+            │   │       │   ├── value_loc: (1,9)-(1,10) = "d"
             │   │       │   ├── closing_loc: ∅
             │   │       │   └── unescaped: "d"
             │   │       └── @ CallNode (location: (1,12)-(1,15))

@@ -248,4 +248,36 @@ module Prism
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
   end
+
+  class MatchLastLineNode < Node
+    sig { returns(String) }
+    def content; end
+
+    sig { returns(Location) }
+    def content_loc; end
+  end
+
+  class RegularExpressionNode < Node
+    sig { returns(String) }
+    def content; end
+
+    sig { returns(Location) }
+    def content_loc; end
+  end
+
+  class StringNode < Node
+    sig { returns(String) }
+    def content; end
+
+    sig { returns(Location) }
+    def content_loc; end
+  end
+
+  class XStringNode < Node
+    sig { returns(String) }
+    def content; end
+
+    sig { returns(Location) }
+    def content_loc; end
+  end
 end

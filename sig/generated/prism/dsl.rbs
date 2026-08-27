@@ -560,8 +560,8 @@ module Prism
 
     # Create a new MatchLastLineNode node.
     #
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> MatchLastLineNode
-    def match_last_line_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> MatchLastLineNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> MatchLastLineNode
+    def match_last_line_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> MatchLastLineNode
 
     # Create a new MatchPredicateNode node.
     #
@@ -690,8 +690,8 @@ module Prism
 
     # Create a new RegularExpressionNode node.
     #
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> RegularExpressionNode
-    def regular_expression_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> RegularExpressionNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> RegularExpressionNode
+    def regular_expression_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> RegularExpressionNode
 
     # Create a new RequiredKeywordParameterNode node.
     #
@@ -770,8 +770,8 @@ module Prism
 
     # Create a new StringNode node.
     #
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?content_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> StringNode
-    def string_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?content_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> StringNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> StringNode
+    def string_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> StringNode
 
     # Create a new SuperNode node.
     #
@@ -815,8 +815,8 @@ module Prism
 
     # Create a new XStringNode node.
     #
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> XStringNode
-    def x_string_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?content_loc: Location, ?closing_loc: Location, ?unescaped: String) -> XStringNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> XStringNode
+    def x_string_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location, ?value_loc: Location, ?closing_loc: Location, ?unescaped: String) -> XStringNode
 
     # Create a new YieldNode node.
     #

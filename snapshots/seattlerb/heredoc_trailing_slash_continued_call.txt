@@ -11,7 +11,7 @@
             │   @ StringNode (location: (1,0)-(1,5))
             │   ├── flags: ∅
             │   ├── opening_loc: (1,0)-(1,5) = "<<END"
-            │   ├── content_loc: (2,0)-(3,0) = "blah\n"
+            │   ├── value_loc: (2,0)-(3,0) = "blah\n"
             │   ├── closing_loc: (3,0)-(4,0) = "END\n"
             │   └── unescaped: "blah\n"
             ├── call_operator_loc: (4,0)-(4,1) = "."

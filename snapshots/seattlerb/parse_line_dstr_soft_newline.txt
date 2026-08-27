@@ -12,7 +12,7 @@
         │   │   ├── @ StringNode (location: (1,1)-(2,0))
         │   │   │   ├── flags: static_literal, frozen
         │   │   │   ├── opening_loc: ∅
-        │   │   │   ├── content_loc: (1,1)-(2,0) = "a\n"
+        │   │   │   ├── value_loc: (1,1)-(2,0) = "a\n"
         │   │   │   ├── closing_loc: ∅
         │   │   │   └── unescaped: "a\n"
         │   │   └── @ EmbeddedStatementsNode (location: (2,0)-(3,1))

@@ -51,6 +51,6 @@
                     └── @ StringNode (location: (2,2)-(2,7))
                         ├── flags: newline
                         ├── opening_loc: (2,2)-(2,3) = "'"
-                        ├── content_loc: (2,3)-(2,6) = "foo"
+                        ├── value_loc: (2,3)-(2,6) = "foo"
                         ├── closing_loc: (2,6)-(2,7) = "'"
                         └── unescaped: "foo"

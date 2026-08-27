@@ -11,7 +11,7 @@
         │   │   └── @ StringNode (location: (1,1)-(2,1))
         │   │       ├── flags: ∅
         │   │       ├── opening_loc: (1,1)-(1,2) = "\""
-        │   │       ├── content_loc: (1,2)-(2,0) = "  some text\n"
+        │   │       ├── value_loc: (1,2)-(2,0) = "  some text\n"
         │   │       ├── closing_loc: (2,0)-(2,1) = "\""
         │   │       └── unescaped: "  some text\n"
         │   ├── opening_loc: (1,0)-(1,1) = "["
@@ -22,7 +22,7 @@
             │   └── @ StringNode (location: (4,1)-(4,8))
             │       ├── flags: ∅
             │       ├── opening_loc: (4,1)-(4,8) = "<<-FILE"
-            │       ├── content_loc: (5,0)-(6,0) = "  some text\n"
+            │       ├── value_loc: (5,0)-(6,0) = "  some text\n"
             │       ├── closing_loc: (6,0)-(7,0) = "FILE\n"
             │       └── unescaped: "  some text\n"
             ├── opening_loc: (4,0)-(4,1) = "["

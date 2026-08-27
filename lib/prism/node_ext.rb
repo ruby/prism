@@ -127,7 +127,7 @@ module Prism
         location,
         frozen? ? InterpolatedStringNodeFlags::FROZEN : 0,
         opening_loc,
-        [copy(location: content_loc, opening_loc: nil, closing_loc: nil)],
+        [copy(location: value_loc, opening_loc: nil, closing_loc: nil)],
         closing_loc
       )
     end
@@ -152,7 +152,7 @@ module Prism
         location,
         flags,
         opening_loc,
-        [StringNode.new(source, node_id, content_loc, 0, nil, content_loc, nil, unescaped)],
+        [StringNode.new(source, node_id, value_loc, 0, nil, value_loc, nil, unescaped)],
         closing_loc
       )
     end
@@ -486,6 +486,54 @@ module Prism
     #: () -> Location?
     def closing_loc # :nodoc
       end_keyword_loc
+    end
+  end
+
+  class MatchLastLineNode < Node
+    #: () -> String
+    def content # :nodoc
+      value
+    end
+
+    #: () -> Location
+    def content_loc # :nodoc
+      value_loc
+    end
+  end
+
+  class RegularExpressionNode < Node
+    #: () -> String
+    def content # :nodoc
+      value
+    end
+
+    #: () -> Location
+    def content_loc # :nodoc
+      value_loc
+    end
+  end
+
+  class StringNode < Node
+    #: () -> String
+    def content # :nodoc
+      value
+    end
+
+    #: () -> Location
+    def content_loc # :nodoc
+      value_loc
+    end
+  end
+
+  class XStringNode < Node
+    #: () -> String
+    def content # :nodoc
+      value
+    end
+
+    #: () -> Location
+    def content_loc # :nodoc
+      value_loc
     end
   end
   # :startdoc:

@@ -19,7 +19,7 @@
             │       └── @ StringNode (location: (1,2)-(1,10))
             │           ├── flags: ∅
             │           ├── opening_loc: (1,2)-(1,10) = "<<-TABLE"
-            │           ├── content_loc: (2,0)-(2,0) = ""
+            │           ├── value_loc: (2,0)-(2,0) = ""
             │           ├── closing_loc: (2,0)-(3,0) = "TABLE\n"
             │           └── unescaped: ""
             ├── closing_loc: ∅

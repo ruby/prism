@@ -11,7 +11,7 @@
         │   │   @ MatchLastLineNode (location: (1,1)-(1,6))
         │   │   ├── flags: static_literal, forced_us_ascii_encoding
         │   │   ├── opening_loc: (1,1)-(1,2) = "/"
-        │   │   ├── content_loc: (1,2)-(1,5) = "wat"
+        │   │   ├── value_loc: (1,2)-(1,5) = "wat"
         │   │   ├── closing_loc: (1,5)-(1,6) = "/"
         │   │   └── unescaped: "wat"
         │   ├── call_operator_loc: ∅
@@ -29,7 +29,7 @@
             │   @ MatchLastLineNode (location: (3,3)-(3,8))
             │   ├── flags: static_literal, forced_us_ascii_encoding
             │   ├── opening_loc: (3,3)-(3,4) = "/"
-            │   ├── content_loc: (3,4)-(3,7) = "wat"
+            │   ├── value_loc: (3,4)-(3,7) = "wat"
             │   ├── closing_loc: (3,7)-(3,8) = "/"
             │   └── unescaped: "wat"
             ├── then_keyword_loc: ∅
