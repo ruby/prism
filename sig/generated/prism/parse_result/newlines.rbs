@@ -146,6 +146,56 @@ module Prism
     def newline_flag!: (Array[bool] lines) -> void
   end
 
+  class LocalVariableWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class InstanceVariableWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class ClassVariableWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class GlobalVariableWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class ConstantWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class ConstantPathWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class MultiWriteNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class CallNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class ArrayNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
+  class HashNode < Node
+    # : (Array[bool] lines) -> void
+    def newline_flag!: (Array[bool] lines) -> void
+  end
+
   class InterpolatedMatchLastLineNode < Node
     # : (Array[bool] lines) -> void
     def newline_flag!: (Array[bool] lines) -> void

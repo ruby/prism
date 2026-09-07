@@ -285,6 +285,97 @@ module Prism
     end
   end
 
+  # The line event for a statement is emitted where its first instruction is
+  # compiled, so nodes whose first instruction comes from a sub-expression
+  # delegate their newline flag to that sub-expression: assignments to their
+  # value, calls to their receiver, and array, hash, and interpolated string
+  # literals to their first element. Static literals are the exception: they
+  # are compiled to a single instruction on the first line of the literal, so
+  # they do not delegate.
+
+  class LocalVariableWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class InstanceVariableWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class ClassVariableWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class GlobalVariableWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class ConstantWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class ConstantPathWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class MultiWriteNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      value.newline_flag!(lines)
+    end
+  end
+
+  class CallNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      if (receiver = self.receiver)
+        receiver.newline_flag!(lines)
+      else
+        super
+      end
+    end
+  end
+
+  class ArrayNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      first = elements.first
+      if first && !static_literal?
+        first.newline_flag!(lines)
+      else
+        super
+      end
+    end
+  end
+
+  class HashNode < Node
+    #: (Array[bool] lines) -> void
+    def newline_flag!(lines) # :nodoc:
+      first = elements.first
+      if first && !static_literal?
+        first.newline_flag!(lines)
+      else
+        super
+      end
+    end
+  end
 
   class InterpolatedMatchLastLineNode < Node
     #: (Array[bool] lines) -> void
@@ -306,7 +397,11 @@ module Prism
     #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
       first = parts.first
-      first.newline_flag!(lines) if first
+      if first && !static_literal?
+        first.newline_flag!(lines)
+      else
+        super
+      end
     end
   end
 

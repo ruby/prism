@@ -26,36 +26,7 @@ module Prism
       assert_empty result.errors
       actual = prism_lines(result)
 
-      lines = source.lines
-      lines.each.with_index(1) do |line, line_number|
-        # For statements like `foo = [` or `foo =` where the value continues
-        # on the following lines, the line event in the bytecode is emitted on
-        # the line of its first instruction (e.g., the first array element)
-        # instead of on the first line of the statement, while prism marks the
-        # newline flag on the node that starts the statement. The same is true
-        # for statements that begin with a multi-line array or hash literal,
-        # like `[` alone on a line. The exact line depends on constant folding
-        # (e.g., an array of literals compiles to a single instruction on the
-        # first line), so to compensate, move the newline flag to the line the
-        # bytecode uses, or drop it if another node already has a newline flag
-        # on that line.
-        if line.match?(/[\w\])"'] =( \[| \{| begin)?$/) || line.match?(/\A\s*[\[{]$/)
-          if actual.count(line_number) > expected.count(line_number)
-            target = ((line_number + 1)..lines.length).find do |candidate|
-              !lines[candidate - 1].match?(/\A\s*(#|\z)/)
-            end
-
-            index = actual.index(line_number) #: Integer
-            if target && expected.count(target) > actual.count(target)
-              actual[index] = target
-            else
-              actual.delete_at(index)
-            end
-          end
-        end
-      end
-
-      assert_equal expected, actual.sort
+      assert_equal expected, actual
     end
 
     def rubyvm_lines(source)

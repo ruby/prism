@@ -131,6 +131,56 @@ module Prism
     def newline_flag!(lines); end
   end
 
+  class LocalVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class InstanceVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ClassVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class GlobalVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ConstantWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ConstantPathWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class MultiWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class CallNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ArrayNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class HashNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
   class InterpolatedMatchLastLineNode < Node
     sig { params(lines: T::Array[T::Boolean]).void }
     def newline_flag!(lines); end
