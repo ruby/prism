@@ -11,7 +11,6 @@ module Prism
     skips = %w[
       errors_test.rb
       locals_test.rb
-      regexp_test.rb
       test_helper.rb
       unescape_test.rb
       api/parse_stream_test.rb
@@ -24,9 +23,6 @@ module Prism
       ruby/find_fixtures.rb
       ruby/find_test.rb
       ruby/parser_test.rb
-      ruby/ripper_test.rb
-      ruby/ruby_parser_test.rb
-      ruby/parameters_signature_test.rb
     ]
 
     base = __dir__
