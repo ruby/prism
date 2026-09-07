@@ -140,6 +140,42 @@ module Prism
         end
       end
 
+      # The predicate of a while loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      #
+      #: (WhileNode node) -> void
+      def visit_while_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, false)
+
+        begin
+          visit(node.predicate)
+        ensure
+          @lines = old_lines
+        end
+
+        visit(node.statements)
+      end
+
+      # The predicate of an until loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      #
+      #: (UntilNode node) -> void
+      def visit_until_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, false)
+
+        begin
+          visit(node.predicate)
+        ensure
+          @lines = old_lines
+        end
+
+        visit(node.statements)
+      end
+
       # Mark if nodes as newlines.
       #
       #: (IfNode node) -> void
@@ -219,14 +255,26 @@ module Prism
   class UntilNode < Node
     #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
-      predicate.newline_flag!(lines)
+      if location.start_offset == keyword_loc.start_offset && predicate.is_a?(ParenthesesNode)
+        # A parenthesized predicate emits its own line event when it is
+        # compiled at the end of the loop, in addition to this one.
+        super
+      else
+        predicate.newline_flag!(lines)
+      end
     end
   end
 
   class WhileNode < Node
     #: (Array[bool] lines) -> void
     def newline_flag!(lines) # :nodoc:
-      predicate.newline_flag!(lines)
+      if location.start_offset == keyword_loc.start_offset && predicate.is_a?(ParenthesesNode)
+        # A parenthesized predicate emits its own line event when it is
+        # compiled at the end of the loop, in addition to this one.
+        super
+      else
+        predicate.newline_flag!(lines)
+      end
     end
   end
 
@@ -236,6 +284,7 @@ module Prism
       expression.newline_flag!(lines)
     end
   end
+
 
   class InterpolatedMatchLastLineNode < Node
     #: (Array[bool] lines) -> void

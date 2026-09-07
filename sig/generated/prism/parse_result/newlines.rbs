@@ -70,6 +70,20 @@ module Prism
       # : (EmbeddedStatementsNode node) -> void
       def visit_embedded_statements_node: (EmbeddedStatementsNode node) -> void
 
+      # The predicate of a while loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      #
+      # : (WhileNode node) -> void
+      def visit_while_node: (WhileNode node) -> void
+
+      # The predicate of an until loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      #
+      # : (UntilNode node) -> void
+      def visit_until_node: (UntilNode node) -> void
+
       # Mark if nodes as newlines.
       #
       # : (IfNode node) -> void
