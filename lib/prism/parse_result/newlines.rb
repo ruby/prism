@@ -65,6 +65,81 @@ module Prism
         end
       end
 
+      # Permit def nodes to mark newlines within themselves. The body of an
+      # endless method definition never emits newline events, so in that case
+      # mark every line as already seen while visiting it instead. Nested
+      # scopes (blocks, lambdas, etc.) reset the lines and emit events again.
+      #
+      #: (DefNode node) -> void
+      def visit_def_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, !node.equal_loc.nil?)
+
+        begin
+          super(node)
+        ensure
+          @lines = old_lines
+        end
+      end
+
+      # Permit class nodes to mark newlines within themselves.
+      #
+      #: (ClassNode node) -> void
+      def visit_class_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, false)
+
+        begin
+          super(node)
+        ensure
+          @lines = old_lines
+        end
+      end
+
+      # Permit module nodes to mark newlines within themselves.
+      #
+      #: (ModuleNode node) -> void
+      def visit_module_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, false)
+
+        begin
+          super(node)
+        ensure
+          @lines = old_lines
+        end
+      end
+
+      # Permit singleton class nodes to mark newlines within themselves.
+      #
+      #: (SingletonClassNode node) -> void
+      def visit_singleton_class_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, false)
+
+        begin
+          super(node)
+        ensure
+          @lines = old_lines
+        end
+      end
+
+      # Statements inside string interpolation do not emit newline events, so
+      # mark every line as already seen while visiting them. Nested scopes
+      # (blocks, lambdas, defs, etc.) reset the lines and emit events again.
+      #
+      #: (EmbeddedStatementsNode node) -> void
+      def visit_embedded_statements_node(node)
+        old_lines = @lines
+        @lines = Array.new(old_lines.size, true)
+
+        begin
+          super(node)
+        ensure
+          @lines = old_lines
+        end
+      end
+
       # Mark if nodes as newlines.
       #
       #: (IfNode node) -> void

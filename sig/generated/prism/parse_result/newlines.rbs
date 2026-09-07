@@ -40,6 +40,36 @@ module Prism
       # : (LambdaNode node) -> void
       def visit_lambda_node: (LambdaNode node) -> void
 
+      # Permit def nodes to mark newlines within themselves. The body of an
+      # endless method definition never emits newline events, so in that case
+      # mark every line as already seen while visiting it instead. Nested
+      # scopes (blocks, lambdas, etc.) reset the lines and emit events again.
+      #
+      # : (DefNode node) -> void
+      def visit_def_node: (DefNode node) -> void
+
+      # Permit class nodes to mark newlines within themselves.
+      #
+      # : (ClassNode node) -> void
+      def visit_class_node: (ClassNode node) -> void
+
+      # Permit module nodes to mark newlines within themselves.
+      #
+      # : (ModuleNode node) -> void
+      def visit_module_node: (ModuleNode node) -> void
+
+      # Permit singleton class nodes to mark newlines within themselves.
+      #
+      # : (SingletonClassNode node) -> void
+      def visit_singleton_class_node: (SingletonClassNode node) -> void
+
+      # Statements inside string interpolation do not emit newline events, so
+      # mark every line as already seen while visiting them. Nested scopes
+      # (blocks, lambdas, defs, etc.) reset the lines and emit events again.
+      #
+      # : (EmbeddedStatementsNode node) -> void
+      def visit_embedded_statements_node: (EmbeddedStatementsNode node) -> void
+
       # Mark if nodes as newlines.
       #
       # : (IfNode node) -> void

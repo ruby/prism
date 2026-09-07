@@ -8,25 +8,8 @@ return if !defined?(RubyVM::InstructionSequence) || RUBY_VERSION < "3.4.0"
 
 module Prism
   class NewlineTest < TestCase
-    skips = %w[
-      errors_test.rb
-      locals_test.rb
-      test_helper.rb
-      unescape_test.rb
-      api/parse_stream_test.rb
-      api/raise_error_test.rb
-      encoding/regular_expression_encoding_test.rb
-      encoding/string_encoding_test.rb
-      result/breadth_first_search_test.rb
-      result/static_literals_test.rb
-      result/warnings_test.rb
-      ruby/find_fixtures.rb
-      ruby/find_test.rb
-      ruby/parser_test.rb
-    ]
-
     base = __dir__
-    (Dir["{,api/,encoding/,result/,ruby/}*.rb", base: base] - skips).each do |relative|
+    Dir["{,api/,encoding/,result/,ruby/}*.rb", base: base].each do |relative|
       define_method(:"test_#{relative}") do
         assert_newlines(base, relative)
       end
@@ -43,7 +26,8 @@ module Prism
       assert_empty result.errors
       actual = prism_lines(result)
 
-      source.each_line.with_index(1) do |line, line_number|
+      lines = source.lines
+      lines.each.with_index(1) do |line, line_number|
         # Lines like `while (foo = bar)` result in two line flags in the
         # bytecode but only one newline flag in the AST. We need to remove the
         # extra line flag from the bytecode to make the test pass.
@@ -52,25 +36,32 @@ module Prism
           expected.delete_at(index) if index
         end
 
-        # Lines like `foo =` where the value is on the next line result in
-        # another line flag in the bytecode but only one newline flag in the
-        # AST.
-        if line.match?(/^\s+\w+ =$/)
-          if source.lines[line_number].match?(/^\s+case/)
-            actual[actual.index(line_number)] += 1
-          else
-            actual.delete_at(actual.index(line_number))
-          end
-        end
+        # For statements like `foo = [` or `foo =` where the value continues
+        # on the following lines, the line event in the bytecode is emitted on
+        # the line of the first sub-expression of the value (e.g., the first
+        # array element) instead of on the first line of the statement, while
+        # prism marks the newline flag on the node that starts the statement.
+        # The same is true for statements that begin with a multi-line array
+        # or hash literal, like `[` alone on a line. To compensate, move the
+        # newline flag to the line the bytecode uses, or drop it if another
+        # node already has a newline flag on that line.
+        if line.match?(/[\w\])"'] =( \[| \{| begin)?$/) || line.match?(/\A\s*[\[{]$/)
+          if actual.count(line_number) > expected.count(line_number)
+            target = ((line_number + 1)..lines.length).find do |candidate|
+              !lines[candidate - 1].match?(/\A\s*(#|\z)/)
+            end
 
-        if line.match?(/^\s+\w+ = \[$/)
-          if !expected.include?(line_number) && !expected.include?(line_number + 2)
-            actual[actual.index(line_number)] += 1
+            index = actual.index(line_number) #: Integer
+            if target && expected.count(target) > actual.count(target)
+              actual[index] = target
+            else
+              actual.delete_at(index)
+            end
           end
         end
       end
 
-      assert_equal expected, actual
+      assert_equal expected, actual.sort
     end
 
     def rubyvm_lines(source)
