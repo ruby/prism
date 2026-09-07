@@ -2,7 +2,9 @@
 
 require_relative "test_helper"
 
-return unless defined?(RubyVM::InstructionSequence)
+# There have also been changes made in other versions of Ruby, so we only want
+# to test on the most recent versions.
+return if !defined?(RubyVM::InstructionSequence) || RUBY_VERSION < "3.4.0"
 
 module Prism
   class NewlineTest < TestCase
