@@ -8,6 +8,8 @@ return if !defined?(RubyVM::InstructionSequence) || RUBY_VERSION < "3.4.0"
 
 module Prism
   class NewlineTest < TestCase
+    # If you are coming from ruby/ruby, a test failure here means that TracePoint `:line` events changed.
+    # Before adding a skip, make sure that you actually intended for such a difference to happen.
     base = __dir__
     Dir["{,api/,encoding/,result/,ruby/}*.rb", base: base].each do |relative|
       define_method(:"test_#{relative}") do
