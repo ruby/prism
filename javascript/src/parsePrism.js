@@ -41,7 +41,7 @@ export function parsePrism(prism, source, options = {}) {
 
   prism.pm_serialize_parse(bufferPointer, sourcePointer, sourceArray.length, optionsPointer);
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
-  const result = deserialize(serializedView);
+  const result = deserialize(sourceArray, serializedView);
 
   prism.pm_buffer_free(bufferPointer);
   prism.free(sourcePointer);
@@ -118,7 +118,7 @@ function dumpOptions(options) {
   }
 
   template.push("l");
-  values.push(options.line || 1);
+  values.push(options.line === undefined ? 1 : options.line);
 
   template.push("L");
   if (options.encoding) {

@@ -6,6 +6,7 @@ import { ParseResult } from "./deserialize.js";
 import { parsePrism } from "./parsePrism.js";
 
 export * from "./location.js";
+export * from "./source.js";
 export * from "./visitor.js";
 export * from "./nodes.js";
 
