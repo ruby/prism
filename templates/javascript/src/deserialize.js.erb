@@ -1,4 +1,5 @@
 import * as nodes from "./nodes.js";
+import { Location } from "./location.js";
 
 const MAJOR_VERSION = 1;
 const MINOR_VERSION = 9;
@@ -82,7 +83,9 @@ class SerializationBuffer {
   }
 
   readLocation() {
-    return { startOffset: this.readVarInt(), length: this.readVarInt() };
+    const startOffset = this.readVarInt();
+    const length = this.readVarInt();
+    return new Location(startOffset, length);
   }
 
   readOptionalLocation() {
@@ -172,12 +175,6 @@ class SerializationBuffer {
 }
 
 /**
- * A location in the source code.
- *
- * @typedef {{ startOffset: number, length: number }} Location
- */
-
-/**
  * A comment in the source code.
  *
  * @typedef {{ type: number, location: Location }} Comment
@@ -229,6 +226,7 @@ export class ParseResult {
   /**
    * @type {Location | null}
    */
+  dataLoc;
 
   /**
    * @type {ParseError[]}
@@ -244,6 +242,7 @@ export class ParseResult {
    * @param {nodes.ProgramNode} value
    * @param {Comment[]} comments
    * @param {MagicComment[]} magicComments
+   * @param {Location | null} dataLoc
    * @param {ParseError[]} errors
    * @param {ParseWarning[]} warnings
    */

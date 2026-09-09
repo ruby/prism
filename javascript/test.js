@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert";
 import { loadPrism } from "./src/index.js";
 import * as nodes from "./src/nodes.js";
+import { Location } from "./src/location.js";
 import { Visitor } from "./src/visitor.js";
 
 const parse = await loadPrism();
@@ -142,12 +143,18 @@ test("constant[]", async() => {
 
 test("location", () => {
   const result = parse("foo = 1");
-  assert(typeof result.value.location.startOffset === "number");
+  const location = result.value.location;
+
+  assert(location instanceof Location);
+  assert(location.startOffset === 0);
+  assert(location.length === 7);
+  assert(location.endOffset() === 7);
 });
 
 test("location? present", () => {
   const result = parse("def foo = bar");
-  assert(statement(result).equalLoc !== null);
+
+  assert(statement(result).equalLoc instanceof Location);
 });
 
 test("location? absent", () => {

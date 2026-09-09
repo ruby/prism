@@ -24,6 +24,7 @@ def jstype(field)
   end
 end
 -%>
+import { Location } from "./location.js"
 import * as visitors from "./visitor.js"
 
 <%- flags.each do |flag| -%>
@@ -37,12 +38,6 @@ const <%= flag.name %> = {
 <%- end -%>
 };
 <%- end -%>
-
-/**
- * A location in the source code.
- *
- * @typedef {{ startOffset: number, length: number }} Location
- */
 
 /**
  * An encoded Ruby string.
