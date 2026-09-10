@@ -285,6 +285,13 @@ test("source", () => {
   assert.deepStrictEqual([0, 4, 8, 11].map((offset) => source.lineStart(offset)), [0, 4, 8, 8]);
   assert.deepStrictEqual([0, 4, 8, 11].map((offset) => source.lineEnd(offset)), [4, 8, 11, 11]);
   assert.deepStrictEqual([0, 4, 8, 11].map((offset) => source.column(offset)), [0, 0, 0, 3]);
+  assert.deepStrictEqual([0, 4, 8, 11].map((offset) => source.codeUnitsColumn(offset)), [0, 0, 0, 3]);
+
+  for (const encoding of ["utf-8", "utf-16", "utf-32"]) {
+    assert.deepStrictEqual([0, 4, 8, 11].map((offset) => source.codeUnitsColumn(offset, encoding)), [0, 0, 0, 3]);
+  }
+
+  assert.throws(() => source.codeUnitsColumn(0, "utf-64"));
 
   assert(source.slice(4, 3) === "bar");
   assert(source.slice(0, 11) === "foo\nbar\nbaz");
@@ -338,5 +345,85 @@ suite("location", () => {
 
     assert(node.receiver.location.endColumn() === 5);
     assert(node.arguments_.arguments_[0].location.slice() === '"foo"');
+  });
+
+  test("code units columns default to utf-16 and count code units, not bytes", () => {
+    const result = parse('"鹿" + "foo"');
+    const node = statement(result);
+
+    assert(node.receiver.location.startCodeUnitsColumn() === 0);
+    assert(node.receiver.location.endCodeUnitsColumn() === 3);
+
+    assert(node.arguments_.arguments_[0].location.startCodeUnitsColumn() === 6);
+    assert(node.arguments_.arguments_[0].location.endCodeUnitsColumn() === 11);
+  });
+
+  test("code units columns count in the requested position encoding", () => {
+    const result = parse('"鹿" + "foo"');
+    const node = statement(result);
+    const argument = node.arguments_.arguments_[0];
+
+    // 鹿 is three bytes and one code unit in every form, so only utf-8 differs.
+    assert.deepStrictEqual(
+      ["utf-8", "utf-16", "utf-32"].map((encoding) => node.receiver.location.endCodeUnitsColumn(encoding)),
+      [5, 3, 3]
+    );
+
+    assert.deepStrictEqual(
+      ["utf-8", "utf-16", "utf-32"].map((encoding) => argument.location.startCodeUnitsColumn(encoding)),
+      [8, 6, 6]
+    );
+  });
+
+  test("code units columns count characters outside the BMP per encoding", () => {
+    const result = parse('"\u{1F600}" + "foo"');
+    const node = statement(result);
+    const argument = node.arguments_.arguments_[0];
+
+    // The emoji is four bytes, two utf-16 code units, and one codepoint.
+    assert(node.receiver.location.endColumn() === 6);
+    assert.deepStrictEqual(
+      ["utf-8", "utf-16", "utf-32"].map((encoding) => node.receiver.location.endCodeUnitsColumn(encoding)),
+      [6, 4, 3]
+    );
+
+    assert.deepStrictEqual(
+      ["utf-8", "utf-16", "utf-32"].map((encoding) => argument.location.endCodeUnitsColumn(encoding)),
+      [14, 12, 11]
+    );
+  });
+
+  test("code units columns count bytes that do not decode as themselves in utf-8", () => {
+    // 0xff is not valid utf-8, and the parser tolerates it in the source. The
+    // editor still holds that one byte, so the utf-8 column stays 7 rather than
+    // widening to the three bytes a replacement character would encode to.
+    const bytes = new Uint8Array([0x78, 0x20, 0x3d, 0x20, 0x22, 0xff, 0x22]);
+    const source = new Source(bytes, "UTF-8", 1, [0]);
+
+    assert(source.codeUnitsColumn(7, "utf-8") === 7);
+    assert(source.codeUnitsColumn(7, "utf-16") === 7);
+  });
+
+  test("code units columns in a source that is not utf-8", () => {
+    // x = "ソ" in Shift_JIS, where ソ is 0x83 0x5c and that trailing byte is an
+    // ASCII backslash.
+    const bytes = new Uint8Array([0x78, 0x20, 0x3d, 0x20, 0x22, 0x83, 0x5c, 0x22]);
+    const source = new Source(bytes, "Shift_JIS", 1, [0]);
+
+    assert(source.column(8) === 8);
+    assert.deepStrictEqual(
+      ["utf-8", "utf-16", "utf-32"].map((encoding) => source.codeUnitsColumn(8, encoding)),
+      [9, 7, 7]
+    );
+  });
+
+  test("code units columns are relative to the start of the line", () => {
+    const result = parse('x = 1\n"鹿" + "foo"');
+    const node = result.value.statements.body[1];
+
+    assert(node.location.startLine() === 2);
+    assert(node.receiver.location.startCodeUnitsColumn() === 0);
+    assert(node.receiver.location.endCodeUnitsColumn() === 3);
+    assert(node.receiver.location.endCodeUnitsColumn("utf-8") === 5);
   });
 });

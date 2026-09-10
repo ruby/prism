@@ -1,6 +1,13 @@
 import { getDecoder } from "./decoding.js";
 
 /**
+ * The encoder used to count code units for the utf-8 position encoding. The
+ * TextEncoder interface only ever emits utf-8, which is exactly what is needed
+ * here.
+ */
+const encoder = new TextEncoder();
+
+/**
  * A source of Ruby code that has been parsed. Locations hold a pointer to the
  * source they came from, which is what allows them to resolve line numbers,
  * columns, and the source code that they represent.
@@ -74,13 +81,25 @@ export class Source {
    */
   slice(byteOffset, length, decoder = null) {
     if (decoder === null) {
-      if (this.#decoder === null) {
-        this.#decoder = getDecoder(this.encoding);
-      }
-      decoder = this.#decoder;
+      decoder = this.#defaultDecoder();
     }
 
     return decoder.decode(this.bytes.subarray(byteOffset, byteOffset + length));
+  }
+
+  /**
+   * The decoder for this source's own encoding. It is created on first use
+   * because not every encoding that the parser accepts has a TextDecoder
+   * equivalent, and parsing should not fail on that basis.
+   *
+   * @returns {Decoder}
+   */
+  #defaultDecoder() {
+    if (this.#decoder === null) {
+      this.#decoder = getDecoder(this.encoding);
+    }
+
+    return this.#decoder;
   }
 
   /**
@@ -122,6 +141,63 @@ export class Source {
    */
   column(byteOffset) {
     return byteOffset - this.lineStart(byteOffset);
+  }
+
+  /**
+   * The column in code units of the given byte offset from the start of its
+   * line, counted in the given position encoding. A code unit is the smallest
+   * unit of an encoding form, so utf-8 counts bytes, utf-16 counts sixteen bit
+   * units where characters outside the basic multilingual plane take two, and
+   * utf-32 counts whole codepoints.
+   *
+   * These are the three position encodings of the language server protocol,
+   * spelled the way the protocol spells them, so a negotiated value can be
+   * passed straight through. It defaults to utf-16 because that is what the
+   * protocol defaults to.
+   *
+   * The prefix of the line is decoded through this source's own encoding
+   * first, so a given character resolves to the same column no matter which
+   * encoding the source was parsed in.
+   *
+   * @param {number} byteOffset
+   * @param {"utf-8" | "utf-16" | "utf-32"} encoding
+   * @returns {number}
+   */
+  codeUnitsColumn(byteOffset, encoding = "utf-16") {
+    const lineStart = this.lineStart(byteOffset);
+
+    /* Byte offsets are themselves utf-8 code units when the source is utf-8,
+     * and counting them directly keeps bytes that do not decode from inflating
+     * the column into the width of the replacement character. */
+    if (encoding === "utf-8" && this.encoding.toLowerCase() === "utf-8") {
+      return byteOffset - lineStart;
+    }
+
+    const prefix = this.#defaultDecoder().decode(this.bytes.subarray(lineStart, byteOffset));
+
+    switch (encoding) {
+      case "utf-8":
+        return encoder.encode(prefix).length;
+      case "utf-16":
+        return prefix.length;
+      case "utf-32": {
+        /* Every codepoint is one utf-16 code unit except those outside the
+         * basic multilingual plane, which are a surrogate pair. Decoders only
+         * ever produce well-formed utf-16, substituting the replacement
+         * character for anything they cannot pair up, so every low surrogate
+         * here closes a pair and dropping them leaves the codepoint count. */
+        let count = prefix.length;
+
+        for (let index = 0; index < prefix.length; index++) {
+          const unit = prefix.charCodeAt(index);
+          if (unit >= 0xdc00 && unit <= 0xdfff) count--;
+        }
+
+        return count;
+      }
+      default:
+        throw new Error(`Unsupported position encoding '${encoding}'`);
+    }
   }
 
   /**

@@ -90,6 +90,28 @@ export class Location {
   }
 
   /**
+   * The column in code units where this location starts from the start of its
+   * line, counted in the given position encoding.
+   *
+   * @param {"utf-8" | "utf-16" | "utf-32"} encoding
+   * @returns {number}
+   */
+  startCodeUnitsColumn(encoding = "utf-16") {
+    return this.#source.codeUnitsColumn(this.startOffset, encoding);
+  }
+
+  /**
+   * The column in code units where this location ends from the start of its
+   * line, counted in the given position encoding.
+   *
+   * @param {"utf-8" | "utf-16" | "utf-32"} encoding
+   * @returns {number}
+   */
+  endCodeUnitsColumn(encoding = "utf-16") {
+    return this.#source.codeUnitsColumn(this.endOffset(), encoding);
+  }
+
+  /**
    * The source code that this location represents.
    *
    * @param {TextDecoder | null} decoder
