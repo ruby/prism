@@ -92,9 +92,10 @@ export class Location {
   /**
    * The source code that this location represents.
    *
+   * @param {TextDecoder | null} decoder
    * @returns {string}
    */
-  slice() {
-    return this.#source.slice(this.startOffset, this.length);
+  slice(decoder = null) {
+    return this.#source.slice(this.startOffset, this.length, decoder);
   }
 }

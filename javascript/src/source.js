@@ -41,7 +41,7 @@ export class Source {
    * on first use because not every encoding that the parser accepts has a
    * TextDecoder equivalent, and parsing should not fail on that basis.
    *
-   * @type {TextDecoder | null}
+   * @type {Decoder | null}
    */
   #decoder;
 
@@ -69,14 +69,18 @@ export class Source {
    *
    * @param {number} byteOffset
    * @param {number} length
+   * @param {TextDecoder | null} decoder
    * @returns {string}
    */
-  slice(byteOffset, length) {
-    if (this.#decoder === null) {
-      this.#decoder = getDecoder(this.encoding);
+  slice(byteOffset, length, decoder = null) {
+    if (decoder === null) {
+      if (this.#decoder === null) {
+        this.#decoder = getDecoder(this.encoding);
+      }
+      decoder = this.#decoder;
     }
 
-    return this.#decoder.decode(this.bytes.subarray(byteOffset, byteOffset + length));
+    return decoder.decode(this.bytes.subarray(byteOffset, byteOffset + length));
   }
 
   /**
