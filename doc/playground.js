@@ -158,7 +158,6 @@ const monacoEditor = monaco.editor.create(document.getElementById("monaco-contai
 
 let currentTab = "ast";
 let lastResult = null;
-let lastBytes = new Uint8Array();
 let currentDecorations = [];
 
 // Tab switching
@@ -243,28 +242,17 @@ document.getElementById("expand-all").addEventListener("click", () => {
   output.querySelectorAll(".tree-toggle").forEach(toggle => setToggleState(toggle, false));
 });
 
-// Convert byte offset to line:column using the utf8 bytes
-function offsetToLineCol(utf8Bytes, offset) {
-  let line = 1, col = 0;
-  for (let i = 0; i < offset && i < utf8Bytes.length; i++) {
-    // Check for newline
-    if (utf8Bytes[i] === 10) { line++; col = 0; }
-    else { col++; }
-  }
-  return { line, col };
-}
-
-
-function formatLoc(utf8Bytes, loc, includeSlice) {
+// Monaco counts columns in utf-16 code units, which is what the code units
+// columns report, so the two line up without any conversion here.
+function formatLoc(loc, includeSlice) {
   if (!loc || loc.startOffset === undefined) return null;
-  const start = offsetToLineCol(utf8Bytes, loc.startOffset);
-  const end = offsetToLineCol(utf8Bytes, loc.startOffset + loc.length);
+  const start = { line: loc.startLine(), col: loc.startCodeUnitsColumn() };
+  const end = { line: loc.endLine(), col: loc.endCodeUnitsColumn() };
 
   let text = `${start.line}:${start.col}-${end.line}:${end.col}`;
 
   if (includeSlice) {
-    const slice = decoder.decode(utf8Bytes.slice(loc.startOffset, loc.startOffset + loc.length));
-    text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(slice))}</span>`
+    text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(loc.slice()))}</span>`
   }
   return { start, end, text };
 }
@@ -351,7 +339,7 @@ function hasChildNodes(fields, node) {
 const CONNECTOR = { last: "└── ", mid: "├── ", lastPad: "    ", midPad: "│   " };
 
 // Build the AST tree as interactive HTML
-function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
+function renderNode(node, prefix, isLast, isRoot) {
   if (!isNode(node)) return "";
 
   const type = nodeType(node);
@@ -364,7 +352,7 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
   if (!isRoot) html += `<span class="tree-connector" aria-hidden="true">${prefix}${isLast ? CONNECTOR.last : CONNECTOR.mid}</span>`;
   if (foldable) html += `<button class="tree-toggle" aria-label="Toggle ${escapedType}">▼</button>`;
 
-  const loc = formatLoc(utf8Bytes, node.location, false);
+  const loc = formatLoc(node.location, false);
   const locAttrs = locDataAttrs(loc);
 
   html += `<span class="tree-type"${locAttrs}>@ ${escapedType}</span>`;
@@ -393,7 +381,7 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: (${value.length} item${value.length === 1 ? "" : "s"})</div>`;
         value.forEach((item, i) => {
           if (isNode(item)) {
-            html += renderNode(item, utf8Bytes, fieldChildPrefix, i === value.length - 1);
+            html += renderNode(item, fieldChildPrefix, i === value.length - 1);
           } else {
             const itemConnector = i === value.length - 1 ? CONNECTOR.last : CONNECTOR.mid;
             if (isConstant(item)) {
@@ -406,9 +394,9 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
       }
     } else if (isNode(value)) {
       html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>:</div>`;
-      html += renderNode(value, utf8Bytes, fieldChildPrefix, true);
+      html += renderNode(value, fieldChildPrefix, true);
     } else if (typeof value === "object" && value.startOffset !== undefined) {
-      const fieldLoc = formatLoc(utf8Bytes, value, true);
+      const fieldLoc = formatLoc(value, true);
       if (fieldLoc) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-loc"${locDataAttrs(fieldLoc)}>${fieldLoc.text}</span></div>`;
       }
@@ -434,8 +422,8 @@ function escapeHtml(str) {
 }
 
 // Render a single diagnostic line
-function renderDiagnostic(utf8Bytes, item, kind) {
-  const loc = formatLoc(utf8Bytes, item.location, false);
+function renderDiagnostic(item, kind) {
+  const loc = formatLoc(item.location, false);
   const cssClass = kind === "Error" ? "error-text" : "warning-text";
   return `<div class="diagnostics-line ${cssClass}"${locDataAttrs(loc)}>${kind}: ${escapeHtml(item.message)}${loc ? ` <span class="tree-loc">(${loc.text})</span>` : ""}</div>`;
 }
@@ -482,7 +470,7 @@ function render() {
 
   switch (currentTab) {
     case "ast":
-      const tree = renderNode(lastResult.value, lastBytes, "", true, true);
+      const tree = renderNode(lastResult.value, "", true, true);
       output.innerHTML = tree
         ? `<div role="tree" aria-label="Abstract syntax tree">${tree}</div>`
         : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`;
@@ -495,8 +483,8 @@ function render() {
         output.innerHTML = `<div class="empty-message">No errors or warnings.</div>`;
       } else {
         let html = "";
-        for (const err of errors) html += renderDiagnostic(lastBytes, err, "Error");
-        for (const warn of warnings) html += renderDiagnostic(lastBytes, warn, "Warning");
+        for (const err of errors) html += renderDiagnostic(err, "Error");
+        for (const warn of warnings) html += renderDiagnostic(warn, "Warning");
         output.innerHTML = html;
       }
       break;
@@ -507,10 +495,10 @@ let timeout = null;
 function parse() {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    lastBytes = encoder.encode(monacoEditor.getValue());
-    history.replaceState(null, "", `#${encodeSource(lastBytes)}`);
+    const bytes = encoder.encode(monacoEditor.getValue());
+    history.replaceState(null, "", `#${encodeSource(bytes)}`);
     try {
-      lastResult = parsePrism(instance.exports, lastBytes);
+      lastResult = parsePrism(instance.exports, bytes);
     } catch (e) {
       lastResult = { value: null, error: e.message, errors: [], warnings: [] };
     }
