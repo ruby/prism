@@ -1,7 +1,7 @@
 import { ParseResult, deserialize } from "./deserialize.js";
 
 /**
- * Parse the given source code.
+ * Parse the given source code represented as a Uint8Array.
  *
  * @typedef {{
  *   locals?: string[],
@@ -18,30 +18,28 @@ import { ParseResult, deserialize } from "./deserialize.js";
  *   main_script?: boolean,
  *   partial_script?: boolean,
  *   scopes?: (string[] | Scope)[]
- * }} Options<C>
+ * }} Options
  *
  * @param {WebAssembly.Exports} prism
- * @param {string} source
+ * @param {Uint8Array} source
  * @param {Options} options
  * @returns {ParseResult}
  */
 export function parsePrism(prism, source, options = {}) {
-  const sourceArray = new TextEncoder().encode(source);
-  const sourcePointer = prism.calloc(1, sourceArray.length);
-
   const packedOptions = dumpOptions(options);
   const optionsPointer = prism.calloc(1, packedOptions.length);
   const bufferPointer = prism.pm_buffer_new();
 
-  const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, sourceArray.length);
-  sourceView.set(sourceArray);
+  const sourcePointer = prism.calloc(1, source.length);
+  const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, source.length);
+  sourceView.set(source);
 
   const optionsView = new Uint8Array(prism.memory.buffer, optionsPointer, packedOptions.length);
   optionsView.set(packedOptions);
 
-  prism.pm_serialize_parse(bufferPointer, sourcePointer, sourceArray.length, optionsPointer);
+  prism.pm_serialize_parse(bufferPointer, sourcePointer, source.length, optionsPointer);
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
-  const result = deserialize(sourceArray, serializedView);
+  const result = deserialize(source, serializedView);
 
   prism.pm_buffer_free(bufferPointer);
   prism.free(sourcePointer);

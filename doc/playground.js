@@ -117,8 +117,7 @@ end
 };
 
 // URL-safe base64 encode/decode (RFC 4648 §5)
-function encodeSource(str) {
-  const bytes = encoder.encode(str);
+function encodeSource(bytes) {
   let binary = "";
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -159,7 +158,7 @@ const monacoEditor = monaco.editor.create(document.getElementById("monaco-contai
 
 let currentTab = "ast";
 let lastResult = null;
-let lastSource = "";
+let lastBytes = new Uint8Array();
 let currentDecorations = [];
 
 // Tab switching
@@ -481,10 +480,9 @@ function render() {
 
   output.setAttribute("aria-labelledby", currentTab === "ast" ? "tab-ast" : "tab-diagnostics");
 
-  const utf8Bytes = encoder.encode(lastSource);
   switch (currentTab) {
     case "ast":
-      const tree = renderNode(lastResult.value, utf8Bytes, "", true, true);
+      const tree = renderNode(lastResult.value, lastBytes, "", true, true);
       output.innerHTML = tree
         ? `<div role="tree" aria-label="Abstract syntax tree">${tree}</div>`
         : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`;
@@ -497,8 +495,8 @@ function render() {
         output.innerHTML = `<div class="empty-message">No errors or warnings.</div>`;
       } else {
         let html = "";
-        for (const err of errors) html += renderDiagnostic(utf8Bytes, err, "Error");
-        for (const warn of warnings) html += renderDiagnostic(utf8Bytes, warn, "Warning");
+        for (const err of errors) html += renderDiagnostic(lastBytes, err, "Error");
+        for (const warn of warnings) html += renderDiagnostic(lastBytes, warn, "Warning");
         output.innerHTML = html;
       }
       break;
@@ -509,10 +507,10 @@ let timeout = null;
 function parse() {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    lastSource = monacoEditor.getValue();
-    history.replaceState(null, "", `#${encodeSource(lastSource)}`);
+    lastBytes = encoder.encode(monacoEditor.getValue());
+    history.replaceState(null, "", `#${encodeSource(lastBytes)}`);
     try {
-      lastResult = parsePrism(instance.exports, lastSource);
+      lastResult = parsePrism(instance.exports, lastBytes);
     } catch (e) {
       lastResult = { value: null, error: e.message, errors: [], warnings: [] };
     }

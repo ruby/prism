@@ -56,7 +56,7 @@ Finally, you can create a function that will parse a string of Ruby code.
 
 ```js
 function parse(source) {
-  return parsePrism(instance.exports, source);
+  return parsePrism(instance.exports, new TextEncoder().encode(source));
 }
 ```
 

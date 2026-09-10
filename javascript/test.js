@@ -6,7 +6,11 @@ import { Location } from "./src/location.js";
 import { Source } from "./src/source.js";
 import { Visitor } from "./src/visitor.js";
 
-const parse = await loadPrism();
+const parseArray = await loadPrism();
+
+function parse(source, options = {}) {
+  return parseArray(new TextEncoder().encode(source), options);
+}
 
 function statement(result) {
   return result.value.statements.body[0];
