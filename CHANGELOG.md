@@ -13,7 +13,7 @@ Highlights of this release:
 
 ### Breaking Changes
 - Optional locations like `StringNode#closing_loc` in `'foo` that were empty for syntax-invalid code will now be `nil` instead.
-- Any place that you would have encountered a `MissingNode`, `ErrorRecoveryNode` will now be present. `ErrorRecoveryNode` wraps unexpected nodes, so when walking syntax-invalid code you will now only need to handle this one specific node type.
+- `MissingNode` has been replaced by `ErrorRecoveryNode`. `ErrorRecoveryNode` wraps unexpected nodes, so when walking syntax-invalid code you will now only need to handle this one specific node type.
 - Require arguments for `Prism::Source.for`. The second and third positional parameters are no longer optional.
 - `Prism.lex` now returns an array of tokens instead of an array of `[token, internal_parse_state]`. Previous access like `token[0]` or `token.first` to extract the actual token will continue to work.
 - The following tokens are changed: `PARENTHESIS_LEFT` was split up into `PARENTHESIS_LEFT` and `PARENTHESIS_LEFT_GROUPING`. `BRACE_LEFT` was split up into `BRACE_LEFT`, `BRACE_LEFT_ARGUMENT`, and `BRACE_LEFT_HASH`. `BACKTICK` was split up into `BACKTICK` and `XSTRING_BACKTICK`. `NEWLINE` was split up into `NEWLINE` and `NEWLINE_TERMINATOR`.
