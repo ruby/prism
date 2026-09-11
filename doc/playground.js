@@ -128,6 +128,110 @@ function decodeSource(str) {
   return decoder.decode(Uint8Array.from(atob(padded), ch => ch.codePointAt(0)));
 }
 
+/* Ruby takes the source encoding from a magic comment on the first line, or the
+ * second when the first is a shebang. Every encoding the parser accepts is
+ * ascii compatible, which is what lets the comment be read before the encoding
+ * it names is known. */
+function declaredEncoding(source) {
+  const lines = source.split("\n", 2);
+  const line = lines[0].startsWith("#!") ? lines[1] : lines[0];
+  const match = line && line.match(/^[ \t]*#.*?coding\s*[:=]\s*([\w-]+)/i);
+  return match ? match[1].toLowerCase() : "utf-8";
+}
+
+/* TextEncoder only ever emits utf-8, so an encoder for any other encoding is
+ * built by inverting the decoder the browser already ships. Sweeping the byte
+ * space costs enough that each one is built once and kept.
+ *
+ * The sweep reaches sequences of up to three bytes. Four byte sequences, which
+ * gb18030 uses for everything outside its two byte range, would take a million
+ * and a half more probes, so they are left out and a character that needs one
+ * is reported when the source actually uses it. Everything shorter, which is
+ * all of an encoding's common range, encodes exactly. */
+const encoders = new Map();
+
+/* The character a byte sequence decodes to, or null when the sequence is not a
+ * single character. Sequences that decode to more than one character are
+ * rejected so that a run of single byte characters cannot shadow a real
+ * multi byte mapping. */
+function decodeSingle(decoder, bytes) {
+  try {
+    const character = decoder.decode(new Uint8Array(bytes));
+    return [...character].length === 1 ? character : null;
+  } catch {
+    return null;
+  }
+}
+
+function getEncoder(canonical) {
+  if (encoders.has(canonical)) return encoders.get(canonical);
+
+  const decoder = new TextDecoder(canonical, { fatal: true });
+  const map = new Map();
+
+  for (let byte = 0; byte < 0x100; byte++) {
+    const character = decodeSingle(decoder, [byte]);
+    if (character && !map.has(character)) map.set(character, [byte]);
+  }
+
+  for (let lead = 0x80; lead < 0x100; lead++) {
+    for (let trail = 0; trail < 0x100; trail++) {
+      const character = decodeSingle(decoder, [lead, trail]);
+      if (character && !map.has(character)) map.set(character, [lead, trail]);
+    }
+  }
+
+  /* euc-jp is the only encoding the browser decodes that reaches a third byte,
+   * which it spends on JIS X 0212 behind a 0x8f lead with both continuation
+   * bytes in 0xa1 to 0xfe. */
+  if (canonical === "euc-jp") {
+    for (let mid = 0xa1; mid <= 0xfe; mid++) {
+      for (let trail = 0xa1; trail <= 0xfe; trail++) {
+        const character = decodeSingle(decoder, [0x8f, mid, trail]);
+        if (character && !map.has(character)) map.set(character, [0x8f, mid, trail]);
+      }
+    }
+  }
+
+  const encode = (source) => {
+    const bytes = [];
+
+    for (const character of source) {
+      const encoded = map.get(character);
+      if (!encoded) throw new Error(`${JSON.stringify(character)} could not be encoded as ${canonical}`);
+      bytes.push(...encoded);
+    }
+
+    return new Uint8Array(bytes);
+  };
+
+  encoders.set(canonical, encode);
+  return encode;
+}
+
+/* The bytes to hand the parser, in the encoding the source declares, so that it
+ * sees what it would see reading the same file from disk. */
+function sourceBytes(source) {
+  const name = declaredEncoding(source);
+
+  /* A comment can spell an encoding several ways, so the choice is made on the
+   * canonical name the browser resolves it to rather than on what the comment
+   * says. That keeps utf-8 on the encoder the platform already has, whichever
+   * of its spellings was used. */
+  let canonical;
+  try {
+    canonical = new TextDecoder(name).encoding;
+  } catch {
+    return {
+      bytes: encoder.encode(source),
+      notice: `This browser cannot encode ${name}, so the source was sent as utf-8. Results may differ from Ruby.`
+    };
+  }
+
+  if (canonical === "utf-8") return { bytes: encoder.encode(source) };
+  return { bytes: getEncoder(canonical)(source) };
+}
+
 // Read initial source from URL hash or use default
 function sourceFromHash() {
   const hash = location.hash.slice(1);
@@ -158,6 +262,7 @@ const monacoEditor = monaco.editor.create(document.getElementById("monaco-contai
 
 let currentTab = "ast";
 let lastResult = null;
+let lastNotice = null;
 let currentDecorations = [];
 
 // Tab switching
@@ -468,21 +573,23 @@ function render() {
 
   output.setAttribute("aria-labelledby", currentTab === "ast" ? "tab-ast" : "tab-diagnostics");
 
+  const notice = lastNotice ? `<div class="diagnostics-line warning-text">${escapeHtml(lastNotice)}</div>` : "";
+
   switch (currentTab) {
     case "ast":
       const tree = renderNode(lastResult.value, "", true, true);
-      output.innerHTML = tree
+      output.innerHTML = notice + (tree
         ? `<div role="tree" aria-label="Abstract syntax tree">${tree}</div>`
-        : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`;
+        : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`);
       break;
 
     case "diagnostics":
       const errors = lastResult.errors || [];
       const warnings = lastResult.warnings || [];
       if (errors.length === 0 && warnings.length === 0) {
-        output.innerHTML = `<div class="empty-message">No errors or warnings.</div>`;
+        output.innerHTML = notice || `<div class="empty-message">No errors or warnings.</div>`;
       } else {
-        let html = "";
+        let html = notice;
         for (const err of errors) html += renderDiagnostic(err, "Error");
         for (const warn of warnings) html += renderDiagnostic(warn, "Warning");
         output.innerHTML = html;
@@ -495,11 +602,18 @@ let timeout = null;
 function parse() {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    const bytes = encoder.encode(monacoEditor.getValue());
-    history.replaceState(null, "", `#${encodeSource(bytes)}`);
+    const source = monacoEditor.getValue();
+
+    /* The hash carries the editor's text, which is independent of the encoding
+     * the source declares, so it stays utf-8. */
+    history.replaceState(null, "", `#${encodeSource(encoder.encode(source))}`);
+
     try {
+      const { bytes, notice } = sourceBytes(source);
+      lastNotice = notice || null;
       lastResult = parsePrism(instance.exports, bytes);
     } catch (e) {
+      lastNotice = null;
       lastResult = { value: null, error: e.message, errors: [], warnings: [] };
     }
     render();
