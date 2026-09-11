@@ -16,10 +16,25 @@ Then import the package:
 import { loadPrism } from "@ruby/prism";
 ```
 
-Then call the load function to get a parse function:
+Then call the load function to get a parse function. It takes the source as
+bytes, in the encoding the source is written in, because that is what the parser
+reads and what the locations in the result are offsets into. If you are starting
+from a string, encode it first:
 
 ```js
-const parse = await loadPrism();
+const parseArray = await loadPrism();
+
+function parse(source) {
+  return parseArray(new TextEncoder().encode(source));
+}
+```
+
+Reading a file gives you those bytes already, so there is nothing to encode:
+
+```js
+import { readFile } from "node:fs/promises";
+
+const parseResult = parseArray(await readFile("example.rb"));
 ```
 
 ## Browser
@@ -84,7 +99,7 @@ Here's an example of a custom `FooCalls` visitor:
 import { loadPrism, Visitor } from "@ruby/prism"
 
 const parse = await loadPrism();
-const parseResult = parse("foo()");
+const parseResult = parse(new TextEncoder().encode("foo()"));
 
 class FooCalls extends Visitor {
   visitCallNode(node) {
