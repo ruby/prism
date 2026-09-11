@@ -41,6 +41,7 @@ out.svg
 /javascript/src/visitor.js
 /javascript/src/prism.wasm
 /javascript/src/*.d.ts
+/java/newline_fixtures.txt
 /java/org/ruby_lang/prism/AbstractNodeVisitor.java
 /java/org/ruby_lang/prism/Loader.java
 /java/org/ruby_lang/prism/Nodes.java
