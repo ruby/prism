@@ -1,5 +1,5 @@
 import { WASI } from "https://unpkg.com/@bjorn3/browser_wasi_shim@latest/dist/index.js";
-import { parsePrism } from "https://unpkg.com/@ruby/prism@latest/src/parsePrism.js";
+import { parsePrism } from "./playground/parsePrism.js";
 
 const output = document.getElementById("output");
 const editorDiv = document.getElementById("editor");
@@ -13,13 +13,13 @@ const decoder = new TextDecoder();
 let instance, monaco;
 try {
   const [wasmResult] = await Promise.all([
-    WebAssembly.compileStreaming(fetch("https://unpkg.com/@ruby/prism@latest/src/prism.wasm"))
+    WebAssembly.compileStreaming(fetch("./playground/prism.wasm"))
       .then(wasm => {
         const wasi = new WASI([], [], []);
         return WebAssembly.instantiate(wasm, { wasi_snapshot_preview1: wasi.wasiImport })
           .then(inst => { wasi.initialize(inst); return inst; });
       }),
-    fetch("https://unpkg.com/@ruby/prism@latest/package.json")
+    fetch("./playground/package.json")
       .then(r => r.json())
       .then(pkg => { document.getElementById("version").textContent = `v${pkg.version}`; })
       .catch(() => {})
