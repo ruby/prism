@@ -26,25 +26,25 @@ import { ParseResult, deserialize } from "./deserialize.js";
  * @returns {ParseResult}
  */
 export function parsePrism(prism, source, options = {}) {
-  const packedOptions = dumpOptions(options);
-  const optionsPointer = prism.calloc(1, packedOptions.length);
+  const dumpedOptions = dumpOptions(options);
   const bufferPointer = prism.pm_buffer_new();
+  const sourcePointer = prism.malloc(source.length);
+  const optionsPointer = prism.malloc(dumpedOptions.length);
 
-  const sourcePointer = prism.calloc(1, source.length);
   const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, source.length);
   sourceView.set(source);
 
-  const optionsView = new Uint8Array(prism.memory.buffer, optionsPointer, packedOptions.length);
-  optionsView.set(packedOptions);
+  const optionsView = new Uint8Array(prism.memory.buffer, optionsPointer, dumpedOptions.length);
+  optionsView.set(dumpedOptions);
 
   prism.pm_serialize_parse(bufferPointer, sourcePointer, source.length, optionsPointer);
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
-  const result = deserialize(source, serializedView);
+  const deserialized = deserialize(source, serializedView);
 
   prism.pm_buffer_free(bufferPointer);
   prism.free(sourcePointer);
   prism.free(optionsPointer);
-  return result;
+  return deserialized;
 }
 
 /**
