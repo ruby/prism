@@ -18,6 +18,11 @@ AR ?= ar
 ARFLAGS ?= -r$(V0:1=v)
 WASI_SDK_PATH := /opt/wasi-sdk
 
+# Exporting a symbol makes it a GC root, so the JavaScript module exports only
+# the symbols javascript/src/parsePrism.js calls. That lets --gc-sections drop
+# the rest of the C API along with the wasi-libc code reachable from it.
+WASM_EXPORTS := -Wl,--export=calloc,--export=free,--export=pm_buffer_new,--export=pm_buffer_value,--export=pm_buffer_length,--export=pm_buffer_free,--export=pm_serialize_parse
+
 MAKEDIRS ?= mkdir -p
 RMALL ?= rm -f -r
 
@@ -47,7 +52,7 @@ javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 		$(DEBUG_FLAGS) \
 		-DPRISM_EXPORT_SYMBOLS -DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXCLUDE_JSON \
 		-D_WASI_EMULATED_MMAN -lwasi-emulated-mman $(CPPFLAGS) $(CFLAGS) \
-		-Wl,--export-all -Wl,--gc-sections -Wl,--strip-all -Wl,--lto-O3 -Wl,--no-entry -mexec-model=reactor \
+		$(WASM_EXPORTS) -Wl,--gc-sections -Wl,--strip-all -Wl,--lto-O3 -Wl,--no-entry -mexec-model=reactor \
 		-Oz -g0 -flto -fdata-sections -ffunction-sections \
 		-o $@ $(SOURCES)
 
