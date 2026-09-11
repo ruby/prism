@@ -101,6 +101,44 @@ final class MarkNewlinesVisitor extends AbstractNodeVisitor<Void> {
         }
     }
 
+    // The predicate of a while loop is compiled at the end of the loop,
+    // after the body, so any statements it contains (from parentheses)
+    // emit their line events again even if the lines were already seen.
+    @Override
+    public Void visitWhileNode(Nodes.WhileNode node) {
+        boolean[] oldNewlineMarked = this.newlineMarked;
+        this.newlineMarked = new boolean[oldNewlineMarked.length];
+        try {
+            node.predicate.accept(this);
+        } finally {
+            this.newlineMarked = oldNewlineMarked;
+        }
+
+        if (node.statements != null) {
+            node.statements.accept(this);
+        }
+        return null;
+    }
+
+    // The predicate of an until loop is compiled at the end of the loop,
+    // after the body, so any statements it contains (from parentheses)
+    // emit their line events again even if the lines were already seen.
+    @Override
+    public Void visitUntilNode(Nodes.UntilNode node) {
+        boolean[] oldNewlineMarked = this.newlineMarked;
+        this.newlineMarked = new boolean[oldNewlineMarked.length];
+        try {
+            node.predicate.accept(this);
+        } finally {
+            this.newlineMarked = oldNewlineMarked;
+        }
+
+        if (node.statements != null) {
+            node.statements.accept(this);
+        }
+        return null;
+    }
+
     @Override
     public Void visitIfNode(Nodes.IfNode node) {
         node.setNewLineFlag(this.source, this.newlineMarked);
@@ -116,9 +154,52 @@ final class MarkNewlinesVisitor extends AbstractNodeVisitor<Void> {
     @Override
     public Void visitStatementsNode(Nodes.StatementsNode node) {
         for (Nodes.Node child : node.body) {
-            child.setNewLineFlag(this.source, this.newlineMarked);
+            setNewLineFlag(child);
         }
         return super.visitStatementsNode(node);
+    }
+
+    // Keep in sync with the newline_flag! overrides in Ruby's newlines.rb which
+    // are not part of the generated setNewLineFlag() methods.
+    private void setNewLineFlag(Nodes.Node node) {
+        if (node instanceof Nodes.WhileNode whileNode) {
+            boolean prefix = isPrefixLoop(whileNode, whileNode.isBeginModifier(), whileNode.statements);
+            if (prefix && whileNode.predicate instanceof Nodes.ParenthesesNode) {
+                // A parenthesized predicate emits its own line event when it is
+                // compiled at the end of the loop, in addition to this one.
+                markNewLineFlag(node);
+            } else {
+                whileNode.predicate.setNewLineFlag(this.source, this.newlineMarked);
+            }
+        } else if (node instanceof Nodes.UntilNode untilNode) {
+            boolean prefix = isPrefixLoop(untilNode, untilNode.isBeginModifier(), untilNode.statements);
+            if (prefix && untilNode.predicate instanceof Nodes.ParenthesesNode) {
+                // A parenthesized predicate emits its own line event when it is
+                // compiled at the end of the loop, in addition to this one.
+                markNewLineFlag(node);
+            } else {
+                untilNode.predicate.setNewLineFlag(this.source, this.newlineMarked);
+            }
+        } else {
+            node.setNewLineFlag(this.source, this.newlineMarked);
+        }
+    }
+
+    // Mark the node itself, like Nodes.Node#setNewLineFlag(), regardless of any
+    // setNewLineFlag() override of the node.
+    private void markNewLineFlag(Nodes.Node node) {
+        int line = this.source.findLine(node.startOffset);
+        if (!this.newlineMarked[line]) {
+            this.newlineMarked[line] = true;
+            node.setNewLineFlag(true);
+        }
+    }
+
+    // Whether a while/until loop starts with its keyword. There is no keyword
+    // location in the Java nodes, but only a prefix loop starts before its
+    // statements.
+    private static boolean isPrefixLoop(Nodes.Node node, boolean beginModifier, Nodes.StatementsNode statements) {
+        return !beginModifier && (statements == null || node.startOffset != statements.startOffset);
     }
 
     @Override
