@@ -140,7 +140,10 @@ class SerializationBuffer {
       value = decoder.decode(bytes);
       validEncoding = true;
     } catch (error) {
-      if (error instanceof TypeError && error.code === "ERR_ENCODING_INVALID_ENCODED_DATA") {
+      /* A fatal decoder reports bytes that are not valid in its encoding by
+       * throwing a TypeError, and that is the whole of what it throws, so the
+       * string is read back as binary and flagged. */
+      if (error instanceof TypeError) {
         value = getDecoder("ascii-8bit").decode(bytes);
         validEncoding = false;
       } else {

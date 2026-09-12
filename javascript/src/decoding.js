@@ -27,6 +27,16 @@ const binaryTextDecoder = {
 };
 
 /**
+ * Decoders built so far, keyed by the encoding and fatal setting they were
+ * built for. Nothing here decodes in streaming mode, so a decoder carries no
+ * state between calls and one instance serves every caller that wants the same
+ * pair.
+ *
+ * @type {Map<string, Decoder>}
+ */
+const decoders = new Map();
+
+/**
  * Get a Decoder from the encoding name. If the encoding is not supported, a
  * decoder that treats each byte as a single character is returned.
  *
@@ -36,7 +46,12 @@ const binaryTextDecoder = {
  */
 export function getDecoder(name, options = { fatal: false }) {
   const lower = name.toLowerCase();
-  let decoder = null;
+  const key = `${lower}:${options.fatal ? "fatal" : "replacement"}`;
+
+  let decoder = decoders.get(key);
+  if (decoder !== undefined) {
+    return decoder;
+  }
 
   if (lower === "ascii-8bit" || lower === "binary") {
     decoder = binaryTextDecoder;
@@ -52,5 +67,6 @@ export function getDecoder(name, options = { fatal: false }) {
     }
   }
 
+  decoders.set(key, decoder);
   return decoder;
 }
