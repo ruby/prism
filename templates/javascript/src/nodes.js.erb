@@ -24,6 +24,7 @@ def jstype(field)
   end
 end
 -%>
+import { Location } from "./location.js"
 import * as visitors from "./visitor.js"
 
 <%- flags.each do |flag| -%>
@@ -31,18 +32,12 @@ import * as visitors from "./visitor.js"
 /**
  * <%= flag.comment %>
  */
-const <%= flag.name %> = {
+export const <%= flag.name %> = {
 <%- flag.values.each_with_index do |value, index| -%>
   <%= value.name %>: 1 << <%= index + Prism::Template::COMMON_FLAGS_COUNT %>,
 <%- end -%>
 };
 <%- end -%>
-
-/**
- * A location in the source code.
- *
- * @typedef {{ startOffset: number, length: number }} Location
- */
 
 /**
  * An encoded Ruby string.
@@ -137,7 +132,7 @@ export class <%= node.name -%> {
     when Prism::Template::NodeField, Prism::Template::OptionalNodeField then "this.#{prop(field)}"
     when Prism::Template::NodeListField then "...this.#{prop(field)}"
     end
-    }.compact.join(", ") %>]
+    }.compact.join(", ") %>];
   }
 
   /**

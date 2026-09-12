@@ -1,5 +1,5 @@
 import { WASI } from "https://unpkg.com/@bjorn3/browser_wasi_shim@latest/dist/index.js";
-import { parsePrism } from "https://unpkg.com/@ruby/prism@latest/src/parsePrism.js";
+import { parsePrism } from "./playground/parsePrism.js";
 
 const output = document.getElementById("output");
 const editorDiv = document.getElementById("editor");
@@ -13,13 +13,13 @@ const decoder = new TextDecoder();
 let instance, monaco;
 try {
   const [wasmResult] = await Promise.all([
-    WebAssembly.compileStreaming(fetch("https://unpkg.com/@ruby/prism@latest/src/prism.wasm"))
+    WebAssembly.compileStreaming(fetch("./playground/prism.wasm"))
       .then(wasm => {
         const wasi = new WASI([], [], []);
         return WebAssembly.instantiate(wasm, { wasi_snapshot_preview1: wasi.wasiImport })
           .then(inst => { wasi.initialize(inst); return inst; });
       }),
-    fetch("https://unpkg.com/@ruby/prism@latest/package.json")
+    fetch("./playground/package.json")
       .then(r => r.json())
       .then(pkg => { document.getElementById("version").textContent = `v${pkg.version}`; })
       .catch(() => {})
@@ -117,8 +117,7 @@ end
 };
 
 // URL-safe base64 encode/decode (RFC 4648 §5)
-function encodeSource(str) {
-  const bytes = encoder.encode(str);
+function encodeSource(bytes) {
   let binary = "";
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -127,6 +126,110 @@ function encodeSource(str) {
 function decodeSource(str) {
   const padded = str.replace(/-/g, "+").replace(/_/g, "/") + "==".slice(0, (4 - str.length % 4) % 4);
   return decoder.decode(Uint8Array.from(atob(padded), ch => ch.codePointAt(0)));
+}
+
+/* Ruby takes the source encoding from a magic comment on the first line, or the
+ * second when the first is a shebang. Every encoding the parser accepts is
+ * ascii compatible, which is what lets the comment be read before the encoding
+ * it names is known. */
+function declaredEncoding(source) {
+  const lines = source.split("\n", 2);
+  const line = lines[0].startsWith("#!") ? lines[1] : lines[0];
+  const match = line && line.match(/^[ \t]*#.*?coding\s*[:=]\s*([\w-]+)/i);
+  return match ? match[1].toLowerCase() : "utf-8";
+}
+
+/* TextEncoder only ever emits utf-8, so an encoder for any other encoding is
+ * built by inverting the decoder the browser already ships. Sweeping the byte
+ * space costs enough that each one is built once and kept.
+ *
+ * The sweep reaches sequences of up to three bytes. Four byte sequences, which
+ * gb18030 uses for everything outside its two byte range, would take a million
+ * and a half more probes, so they are left out and a character that needs one
+ * is reported when the source actually uses it. Everything shorter, which is
+ * all of an encoding's common range, encodes exactly. */
+const encoders = new Map();
+
+/* The character a byte sequence decodes to, or null when the sequence is not a
+ * single character. Sequences that decode to more than one character are
+ * rejected so that a run of single byte characters cannot shadow a real
+ * multi byte mapping. */
+function decodeSingle(decoder, bytes) {
+  try {
+    const character = decoder.decode(new Uint8Array(bytes));
+    return [...character].length === 1 ? character : null;
+  } catch {
+    return null;
+  }
+}
+
+function getEncoder(canonical) {
+  if (encoders.has(canonical)) return encoders.get(canonical);
+
+  const decoder = new TextDecoder(canonical, { fatal: true });
+  const map = new Map();
+
+  for (let byte = 0; byte < 0x100; byte++) {
+    const character = decodeSingle(decoder, [byte]);
+    if (character && !map.has(character)) map.set(character, [byte]);
+  }
+
+  for (let lead = 0x80; lead < 0x100; lead++) {
+    for (let trail = 0; trail < 0x100; trail++) {
+      const character = decodeSingle(decoder, [lead, trail]);
+      if (character && !map.has(character)) map.set(character, [lead, trail]);
+    }
+  }
+
+  /* euc-jp is the only encoding the browser decodes that reaches a third byte,
+   * which it spends on JIS X 0212 behind a 0x8f lead with both continuation
+   * bytes in 0xa1 to 0xfe. */
+  if (canonical === "euc-jp") {
+    for (let mid = 0xa1; mid <= 0xfe; mid++) {
+      for (let trail = 0xa1; trail <= 0xfe; trail++) {
+        const character = decodeSingle(decoder, [0x8f, mid, trail]);
+        if (character && !map.has(character)) map.set(character, [0x8f, mid, trail]);
+      }
+    }
+  }
+
+  const encode = (source) => {
+    const bytes = [];
+
+    for (const character of source) {
+      const encoded = map.get(character);
+      if (!encoded) throw new Error(`${JSON.stringify(character)} could not be encoded as ${canonical}`);
+      bytes.push(...encoded);
+    }
+
+    return new Uint8Array(bytes);
+  };
+
+  encoders.set(canonical, encode);
+  return encode;
+}
+
+/* The bytes to hand the parser, in the encoding the source declares, so that it
+ * sees what it would see reading the same file from disk. */
+function sourceBytes(source) {
+  const name = declaredEncoding(source);
+
+  /* A comment can spell an encoding several ways, so the choice is made on the
+   * canonical name the browser resolves it to rather than on what the comment
+   * says. That keeps utf-8 on the encoder the platform already has, whichever
+   * of its spellings was used. */
+  let canonical;
+  try {
+    canonical = new TextDecoder(name).encoding;
+  } catch {
+    return {
+      bytes: encoder.encode(source),
+      notice: `This browser cannot encode ${name}, so the source was sent as utf-8. Results may differ from Ruby.`
+    };
+  }
+
+  if (canonical === "utf-8") return { bytes: encoder.encode(source) };
+  return { bytes: getEncoder(canonical)(source) };
 }
 
 // Read initial source from URL hash or use default
@@ -159,7 +262,7 @@ const monacoEditor = monaco.editor.create(document.getElementById("monaco-contai
 
 let currentTab = "ast";
 let lastResult = null;
-let lastSource = "";
+let lastNotice = null;
 let currentDecorations = [];
 
 // Tab switching
@@ -244,28 +347,17 @@ document.getElementById("expand-all").addEventListener("click", () => {
   output.querySelectorAll(".tree-toggle").forEach(toggle => setToggleState(toggle, false));
 });
 
-// Convert byte offset to line:column using the utf8 bytes
-function offsetToLineCol(utf8Bytes, offset) {
-  let line = 1, col = 0;
-  for (let i = 0; i < offset && i < utf8Bytes.length; i++) {
-    // Check for newline
-    if (utf8Bytes[i] === 10) { line++; col = 0; }
-    else { col++; }
-  }
-  return { line, col };
-}
-
-
-function formatLoc(utf8Bytes, loc, includeSlice) {
+// Monaco counts columns in utf-16 code units, which is what the code units
+// columns report, so the two line up without any conversion here.
+function formatLoc(loc, includeSlice) {
   if (!loc || loc.startOffset === undefined) return null;
-  const start = offsetToLineCol(utf8Bytes, loc.startOffset);
-  const end = offsetToLineCol(utf8Bytes, loc.startOffset + loc.length);
+  const start = { line: loc.startLine(), col: loc.startCodeUnitsColumn() };
+  const end = { line: loc.endLine(), col: loc.endCodeUnitsColumn() };
 
   let text = `${start.line}:${start.col}-${end.line}:${end.col}`;
 
   if (includeSlice) {
-    const slice = decoder.decode(utf8Bytes.slice(loc.startOffset, loc.startOffset + loc.length));
-    text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(slice))}</span>`
+    text = `${text} = <span class="tree-string">${escapeHtml(JSON.stringify(loc.slice()))}</span>`
   }
   return { start, end, text };
 }
@@ -352,7 +444,7 @@ function hasChildNodes(fields, node) {
 const CONNECTOR = { last: "└── ", mid: "├── ", lastPad: "    ", midPad: "│   " };
 
 // Build the AST tree as interactive HTML
-function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
+function renderNode(node, prefix, isLast, isRoot) {
   if (!isNode(node)) return "";
 
   const type = nodeType(node);
@@ -365,7 +457,7 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
   if (!isRoot) html += `<span class="tree-connector" aria-hidden="true">${prefix}${isLast ? CONNECTOR.last : CONNECTOR.mid}</span>`;
   if (foldable) html += `<button class="tree-toggle" aria-label="Toggle ${escapedType}">▼</button>`;
 
-  const loc = formatLoc(utf8Bytes, node.location, false);
+  const loc = formatLoc(node.location, false);
   const locAttrs = locDataAttrs(loc);
 
   html += `<span class="tree-type"${locAttrs}>@ ${escapedType}</span>`;
@@ -394,7 +486,7 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: (${value.length} item${value.length === 1 ? "" : "s"})</div>`;
         value.forEach((item, i) => {
           if (isNode(item)) {
-            html += renderNode(item, utf8Bytes, fieldChildPrefix, i === value.length - 1);
+            html += renderNode(item, fieldChildPrefix, i === value.length - 1);
           } else {
             const itemConnector = i === value.length - 1 ? CONNECTOR.last : CONNECTOR.mid;
             if (isConstant(item)) {
@@ -407,9 +499,9 @@ function renderNode(node, utf8Bytes, prefix, isLast, isRoot) {
       }
     } else if (isNode(value)) {
       html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>:</div>`;
-      html += renderNode(value, utf8Bytes, fieldChildPrefix, true);
+      html += renderNode(value, fieldChildPrefix, true);
     } else if (typeof value === "object" && value.startOffset !== undefined) {
-      const fieldLoc = formatLoc(utf8Bytes, value, true);
+      const fieldLoc = formatLoc(value, true);
       if (fieldLoc) {
         html += `<div class="tree-node"><span class="tree-connector" aria-hidden="true">${childPrefix}${fieldConnector}</span><span class="tree-field">${escapeHtml(field)}</span>: <span class="tree-loc"${locDataAttrs(fieldLoc)}>${fieldLoc.text}</span></div>`;
       }
@@ -435,8 +527,8 @@ function escapeHtml(str) {
 }
 
 // Render a single diagnostic line
-function renderDiagnostic(utf8Bytes, item, kind) {
-  const loc = formatLoc(utf8Bytes, item.location, false);
+function renderDiagnostic(item, kind) {
+  const loc = formatLoc(item.location, false);
   const cssClass = kind === "Error" ? "error-text" : "warning-text";
   return `<div class="diagnostics-line ${cssClass}"${locDataAttrs(loc)}>${kind}: ${escapeHtml(item.message)}${loc ? ` <span class="tree-loc">(${loc.text})</span>` : ""}</div>`;
 }
@@ -481,24 +573,25 @@ function render() {
 
   output.setAttribute("aria-labelledby", currentTab === "ast" ? "tab-ast" : "tab-diagnostics");
 
-  const utf8Bytes = encoder.encode(lastSource);
+  const notice = lastNotice ? `<div class="diagnostics-line warning-text">${escapeHtml(lastNotice)}</div>` : "";
+
   switch (currentTab) {
     case "ast":
-      const tree = renderNode(lastResult.value, utf8Bytes, "", true, true);
-      output.innerHTML = tree
+      const tree = renderNode(lastResult.value, "", true, true);
+      output.innerHTML = notice + (tree
         ? `<div role="tree" aria-label="Abstract syntax tree">${tree}</div>`
-        : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`;
+        : `<div class="empty-message error-text">${escapeHtml(lastResult.error || "Failed to parse.")}</div>`);
       break;
 
     case "diagnostics":
       const errors = lastResult.errors || [];
       const warnings = lastResult.warnings || [];
       if (errors.length === 0 && warnings.length === 0) {
-        output.innerHTML = `<div class="empty-message">No errors or warnings.</div>`;
+        output.innerHTML = notice || `<div class="empty-message">No errors or warnings.</div>`;
       } else {
-        let html = "";
-        for (const err of errors) html += renderDiagnostic(utf8Bytes, err, "Error");
-        for (const warn of warnings) html += renderDiagnostic(utf8Bytes, warn, "Warning");
+        let html = notice;
+        for (const err of errors) html += renderDiagnostic(err, "Error");
+        for (const warn of warnings) html += renderDiagnostic(warn, "Warning");
         output.innerHTML = html;
       }
       break;
@@ -509,11 +602,18 @@ let timeout = null;
 function parse() {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    lastSource = monacoEditor.getValue();
-    history.replaceState(null, "", `#${encodeSource(lastSource)}`);
+    const source = monacoEditor.getValue();
+
+    /* The hash carries the editor's text, which is independent of the encoding
+     * the source declares, so it stays utf-8. */
+    history.replaceState(null, "", `#${encodeSource(encoder.encode(source))}`);
+
     try {
-      lastResult = parsePrism(instance.exports, lastSource);
+      const { bytes, notice } = sourceBytes(source);
+      lastNotice = notice || null;
+      lastResult = parsePrism(instance.exports, bytes);
     } catch (e) {
+      lastNotice = null;
       lastResult = { value: null, error: e.message, errors: [], warnings: [] };
     }
     render();

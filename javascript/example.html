@@ -30,7 +30,7 @@ input.addEventListener("input", function (event) {
   if (timeout) clearTimeout(timeout);
 
   timeout = setTimeout(function () {
-    const result = parsePrism(instance.exports, event.target.value);
+    const result = parsePrism(instance.exports, new TextEncoder().encode(event.target.value));
     output.textContent = JSON.stringify(result, null, 2);
   }, 250);
 });
