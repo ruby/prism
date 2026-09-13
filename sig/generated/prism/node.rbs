@@ -19397,14 +19397,14 @@ module Prism
 
     @closing_loc: Location?
 
-    @value_loc: Location?
+    @value_loc: Location
 
     @opening_loc: Location?
 
     # Initialize a new SymbolNode node.
     #
-    # : (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Location? value_loc, Location? closing_loc, String unescaped) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Location? value_loc, Location? closing_loc, String unescaped) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Location value_loc, Location? closing_loc, String unescaped) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, Location? opening_loc, Location value_loc, Location? closing_loc, String unescaped) -> void
 
     # See Node.accept.
     #
@@ -19438,8 +19438,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     #
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location?, ?closing_loc: Location?, ?unescaped: String) -> SymbolNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location?, ?closing_loc: Location?, ?unescaped: String) -> SymbolNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> SymbolNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?opening_loc: Location?, ?value_loc: Location, ?closing_loc: Location?, ?unescaped: String) -> SymbolNode
 
     alias deconstruct child_nodes
 
@@ -19495,19 +19495,19 @@ module Prism
 
     # :category: Locations
     # :call-seq:
-    #   value_loc -> Location | nil
+    #   value_loc -> Location
     #
     # Returns the Location represented by `value_loc`.
     #
-    # : () -> Location?
-    def value_loc: () -> Location?
+    # : () -> Location
+    def value_loc: () -> Location
 
     # :category: Repository
     # Save the value_loc location using the given saved source so that
     # it can be retrieved later.
     #
-    # : (_Repository repository) -> Relocation::Entry?
-    def save_value_loc: (_Repository repository) -> Relocation::Entry?
+    # : (_Repository repository) -> Relocation::Entry
+    def save_value_loc: (_Repository repository) -> Relocation::Entry
 
     # :category: Locations
     # :call-seq:
@@ -19542,12 +19542,12 @@ module Prism
     def opening: () -> String?
 
     # :call-seq:
-    #   value -> String | nil
+    #   value -> String
     #
     # Slice the location of value_loc from the source.
     #
-    # : () -> String?
-    def value: () -> String?
+    # : () -> String
+    def value: () -> String
 
     # :call-seq:
     #   closing -> String | nil

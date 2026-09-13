@@ -634,7 +634,7 @@ module Prism
     def super_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), keyword_loc: T.unsafe(nil), lparen_loc: T.unsafe(nil), arguments: T.unsafe(nil), rparen_loc: T.unsafe(nil), block: T.unsafe(nil)); end
 
     # Create a new SymbolNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location), unescaped: String).returns(SymbolNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), value_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).returns(SymbolNode) }
     def symbol_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), opening_loc: T.unsafe(nil), value_loc: T.unsafe(nil), closing_loc: T.unsafe(nil), unescaped: T.unsafe(nil)); end
 
     # Create a new TrueNode node.
