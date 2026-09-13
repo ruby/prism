@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 Highlights of this release:
 - Significantly improved parsing performance by up to 40%.
 - The prism gem now ships precompiled platform-specific variants to rubygems.org.
-- Significant changes to the exposed C API.
+- Significant changes to the exposed C API and language bindings.
 
 ### Breaking Changes
 - Optional locations like `StringNode#closing_loc` in `'foo` that were empty for syntax-invalid code will now be `nil` instead.
@@ -26,6 +26,7 @@ Highlights of this release:
 - `Prism.find` takes a `Method`, `UnboundMethod`, `Proc`, or `Thread::Backtrace::Location` and returns the associated prism AST node.
 - `ForwardingSuperNode` now has `keyword_loc`.
 - Allow pattern matching with prism nodes to match on location slices, like `node in Prism::StringNode[content: "foo"]`.
+- `Prism.parse_file` and similar now accept anything responding to `to_path` (like `Pathname`) directly.
 
 ### Removed
 - Removed `Prism::Pack`.
