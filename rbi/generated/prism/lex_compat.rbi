@@ -130,7 +130,6 @@ module Prism
         # As tokens are coming in, we track the minimum amount of common leading
         # whitespace on plain string content tokens. This allows us to later
         # remove that amount of whitespace from the beginning of each line.
-        #
         sig { params(token: [[Integer, Integer], Symbol, String, ::T.untyped]).void }
         def <<(token); end
 

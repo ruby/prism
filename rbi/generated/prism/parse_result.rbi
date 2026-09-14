@@ -612,7 +612,6 @@ module Prism
     #     Prism.parse("1 + ]").continuable?      #=> false (stray ])
     #     Prism.parse("tap do").continuable?     #=> true  (unclosed block)
     #     Prism.parse("end.tap do").continuable? #=> false (stray end)
-    #
     sig { returns(T::Boolean) }
     def continuable?; end
 

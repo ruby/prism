@@ -35,6 +35,43 @@ module Prism
       sig { params(node: LambdaNode).void }
       def visit_lambda_node(node); end
 
+      # Permit def nodes to mark newlines within themselves. The body of an
+      # endless method definition never emits newline events, so in that case
+      # mark every line as already seen while visiting it instead. Nested
+      # scopes (blocks, lambdas, etc.) reset the lines and emit events again.
+      sig { params(node: DefNode).void }
+      def visit_def_node(node); end
+
+      # Permit class nodes to mark newlines within themselves.
+      sig { params(node: ClassNode).void }
+      def visit_class_node(node); end
+
+      # Permit module nodes to mark newlines within themselves.
+      sig { params(node: ModuleNode).void }
+      def visit_module_node(node); end
+
+      # Permit singleton class nodes to mark newlines within themselves.
+      sig { params(node: SingletonClassNode).void }
+      def visit_singleton_class_node(node); end
+
+      # Statements inside string interpolation do not emit newline events, so
+      # mark every line as already seen while visiting them. Nested scopes
+      # (blocks, lambdas, defs, etc.) reset the lines and emit events again.
+      sig { params(node: EmbeddedStatementsNode).void }
+      def visit_embedded_statements_node(node); end
+
+      # The predicate of a while loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      sig { params(node: WhileNode).void }
+      def visit_while_node(node); end
+
+      # The predicate of an until loop is compiled at the end of the loop,
+      # after the body, so any statements it contains (from parentheses)
+      # emit their line events again even if the lines were already seen.
+      sig { params(node: UntilNode).void }
+      def visit_until_node(node); end
+
       # Mark if nodes as newlines.
       sig { params(node: IfNode).void }
       def visit_if_node(node); end
@@ -90,6 +127,56 @@ module Prism
   end
 
   class RescueModifierNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class LocalVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class InstanceVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ClassVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class GlobalVariableWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ConstantWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ConstantPathWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class MultiWriteNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class CallNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class ArrayNode < Node
+    sig { params(lines: T::Array[T::Boolean]).void }
+    def newline_flag!(lines); end
+  end
+
+  class HashNode < Node
     sig { params(lines: T::Array[T::Boolean]).void }
     def newline_flag!(lines); end
   end

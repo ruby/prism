@@ -19,17 +19,17 @@ module Prism
   #     # => [:program, [[[:call, [[:integer], [:arguments, [[:integer]]]]]]]]
   class Compiler < Visitor
     # Visit an individual node.
-    # --
+    #
     # : (node?) -> untyped
     def visit: (node?) -> untyped
 
     # Visit a list of nodes.
-    # --
+    #
     # : (Array[node?]) -> untyped
     def visit_all: (Array[node?]) -> untyped
 
     # Visit the child nodes of the given node.
-    # --
+    #
     # : (node) -> Array[untyped]
     def visit_child_nodes: (node) -> Array[untyped]
 

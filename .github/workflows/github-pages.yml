@@ -55,6 +55,14 @@ jobs:
           bundle exec rake cargo:build
           cargo doc --no-deps --target-dir ../doc/rust
         working-directory: rust
+      - name: Set up WASI-SDK
+        run: |
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-33/wasi-sdk-33.0-x86_64-linux.tar.gz
+          tar xvf wasi-sdk-33.0-x86_64-linux.tar.gz
+      - name: Build the playground parser
+        run: |
+          bundle exec rake templates
+          make playground WASI_SDK_PATH=$(pwd)/wasi-sdk-33.0-x86_64-linux
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

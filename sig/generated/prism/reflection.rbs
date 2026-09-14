@@ -12,7 +12,7 @@ module Prism
       attr_reader name: Symbol
 
       # Initializes the field with the given name.
-      # --
+      #
       # : (Symbol name) -> void
       def initialize: (Symbol name) -> void
     end
@@ -88,13 +88,13 @@ module Prism
       attr_reader flags: Array[Symbol]
 
       # Initializes the flags field with the given name and flags.
-      # --
+      #
       # : (Symbol name, Array[Symbol] flags) -> void
       def initialize: (Symbol name, Array[Symbol] flags) -> void
     end
 
     # Returns the fields for the given node.
-    # --
+    #
     # : (singleton(Node) node) -> Array[Field]
     def self.fields_for: (singleton(Node) node) -> Array[Field]
   end

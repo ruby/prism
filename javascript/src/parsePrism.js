@@ -1,7 +1,7 @@
 import { ParseResult, deserialize } from "./deserialize.js";
 
 /**
- * Parse the given source code.
+ * Parse the given source code represented as a Uint8Array.
  *
  * @typedef {{
  *   locals?: string[],
@@ -18,35 +18,33 @@ import { ParseResult, deserialize } from "./deserialize.js";
  *   main_script?: boolean,
  *   partial_script?: boolean,
  *   scopes?: (string[] | Scope)[]
- * }} Options<C>
+ * }} Options
  *
  * @param {WebAssembly.Exports} prism
- * @param {string} source
+ * @param {Uint8Array} source
  * @param {Options} options
  * @returns {ParseResult}
  */
 export function parsePrism(prism, source, options = {}) {
-  const sourceArray = new TextEncoder().encode(source);
-  const sourcePointer = prism.calloc(1, sourceArray.length);
-
-  const packedOptions = dumpOptions(options);
-  const optionsPointer = prism.calloc(1, packedOptions.length);
+  const dumpedOptions = dumpOptions(options);
   const bufferPointer = prism.pm_buffer_new();
+  const sourcePointer = prism.malloc(source.length);
+  const optionsPointer = prism.malloc(dumpedOptions.length);
 
-  const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, sourceArray.length);
-  sourceView.set(sourceArray);
+  const sourceView = new Uint8Array(prism.memory.buffer, sourcePointer, source.length);
+  sourceView.set(source);
 
-  const optionsView = new Uint8Array(prism.memory.buffer, optionsPointer, packedOptions.length);
-  optionsView.set(packedOptions);
+  const optionsView = new Uint8Array(prism.memory.buffer, optionsPointer, dumpedOptions.length);
+  optionsView.set(dumpedOptions);
 
-  prism.pm_serialize_parse(bufferPointer, sourcePointer, sourceArray.length, optionsPointer);
+  prism.pm_serialize_parse(bufferPointer, sourcePointer, source.length, optionsPointer);
   const serializedView = new Uint8Array(prism.memory.buffer, prism.pm_buffer_value(bufferPointer), prism.pm_buffer_length(bufferPointer));
-  const result = deserialize(serializedView);
+  const deserialized = deserialize(source, serializedView);
 
   prism.pm_buffer_free(bufferPointer);
   prism.free(sourcePointer);
   prism.free(optionsPointer);
-  return result;
+  return deserialized;
 }
 
 /**
@@ -118,7 +116,7 @@ function dumpOptions(options) {
   }
 
   template.push("l");
-  values.push(options.line || 1);
+  values.push(options.line === undefined ? 1 : options.line);
 
   template.push("L");
   if (options.encoding) {

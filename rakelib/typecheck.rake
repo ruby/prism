@@ -30,7 +30,8 @@ namespace :typecheck do
             # break when RDoc private starts
             break
           when /\A:/
-            # skip RBS type annotations
+            # skip RBS type annotations and remove preceeding empty line
+            comments.pop if comments.last&.text&.empty?
           else
             comments << RBI::Comment.new(line)
           end
@@ -268,6 +269,8 @@ namespace :typecheck do
           RBI::Type.generic("T::Hash", RBI::Type.simple("Symbol"), RBI::Type.untyped)
         when :entry_value
           RBI::Type.untyped
+        when :path
+          RBI::Type.any(RBI::Type.simple("String"), RBI::Type.simple("Pathname"), RBI::Type.simple("IO"))
         when :boolish
           RBI::Type.nilable(RBI::Type.boolean)
         else

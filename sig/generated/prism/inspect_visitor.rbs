@@ -29,12 +29,12 @@ module Prism
     def initialize: (?String indent) -> void
 
     # Compose an inspect string for the given node.
-    # --
+    #
     # : (node node) -> String
     def self.compose: (node node) -> String
 
     # Compose the final string.
-    # --
+    #
     # : () -> String
     def compose: () -> String
 
@@ -497,12 +497,12 @@ module Prism
     private
 
     # Compose a header for the given node.
-    # --
+    #
     # : (String name, node node) -> String
     def inspect_node: (String name, node node) -> String
 
     # Compose a string representing the given inner location field.
-    # --
+    #
     # : (Location? location) -> String
     def inspect_location: (Location? location) -> String
   end

@@ -263,12 +263,16 @@ main {
   color: var(--color-text);
 }
 
-.tree-string {
-  color: #953800;
+.tree-string, .tree-constant {
+  color: #a31515;
+}
+
+.tree-number {
+  color: #098658;
 }
 
 .tree-null {
-  color: var(--color-text-light);
+  color: #7e22ce;
   font-style: italic;
 }
 
