@@ -4,14 +4,25 @@ import org.junit.jupiter.api.Test;
 import org.ruby_lang.prism.ParseResult;
 import org.ruby_lang.prism.ParsingOptions;
 import org.ruby_lang.prism.wasm.Prism;
+import org.ruby_lang.prism.wasm.PrismParser;
+import run.endive.redline.experimental.api.internal.RedlineTarget;
 
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class WASMTest {
+
+    @Test
+    public void usesNativeCode() {
+        // The bytecode fallback produces identical results, so without this check
+        // a broken native path would go unnoticed.
+        assumeTrue(RedlineTarget.detectHost().isPresent(), "Host is not a Redline target platform");
+        assertTrue(PrismParser.nativeProvider().isPresent(), "Prism should run on Redline native code");
+    }
 
     private static final byte[] packedOptions = ParsingOptions.serialize(
         new byte[] {},

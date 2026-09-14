@@ -4,7 +4,7 @@ This is the top-level project for the Java API and backend bindings for the Pris
 
 * api/ contains the API
 * native/ contains a native binding for the Prism shared library
-* wasm/ contains a Chicory-based WASM build and binding
+* wasm/ contains an Endive-based WASM build and binding, compiled to native code with the experimental Redline compiler
 
 ## Building the Java components
 
