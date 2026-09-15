@@ -1,10 +1,9 @@
 package org.ruby_lang.prism.wasm;
 
-import com.dylibso.chicory.runtime.ByteArrayMemory;
-import com.dylibso.chicory.runtime.ImportValues;
-import io.roastedroot.redline.api.RedlineInstance;
-import com.dylibso.chicory.wasi.WasiOptions;
-import com.dylibso.chicory.wasi.WasiPreview1;
+import run.endive.runtime.ImportValues;
+import run.endive.runtime.Instance;
+import run.endive.wasi.WasiOptions;
+import run.endive.wasi.WasiPreview1;
 import org.ruby_lang.prism.Loader;
 import org.ruby_lang.prism.ParseResult;
 
@@ -13,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class Prism implements AutoCloseable {
     private final WasiPreview1 wasi;
     protected final Prism_ModuleExports exports;
-    private final RedlineInstance instance;
+    private final Instance instance;
 
     public Prism() {
         this(WasiOptions.builder().build());
@@ -24,7 +23,7 @@ public class Prism implements AutoCloseable {
         instance = PrismParser.builder()
             .withImportValues(ImportValues.builder().addFunction(wasi.toHostFunctions()).build())
             .build();
-        exports = new Prism_ModuleExports(instance.instance());
+        exports = new Prism_ModuleExports(instance);
     }
 
     public String version() {

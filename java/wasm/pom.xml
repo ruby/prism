@@ -14,16 +14,15 @@
   <url>https://github.com/ruby/prism</url>
 
   <properties>
-    <chicory.version>1.7.5</chicory.version>
-    <redline.version>0.0.5</redline.version>
+    <endive.version>1.1.0</endive.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
           <dependency>
-              <groupId>com.dylibso.chicory</groupId>
+              <groupId>run.endive</groupId>
               <artifactId>bom</artifactId>
-              <version>${chicory.version}</version>
+              <version>${endive.version}</version>
               <type>pom</type>
               <scope>import</scope>
           </dependency>
@@ -37,20 +36,24 @@
       <version>0.0.4</version>
     </dependency>
     <dependency>
-      <groupId>com.dylibso.chicory</groupId>
+      <groupId>run.endive</groupId>
       <artifactId>runtime</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.dylibso.chicory</groupId>
+      <groupId>run.endive</groupId>
       <artifactId>log</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.dylibso.chicory</groupId>
+      <groupId>run.endive</groupId>
       <artifactId>wasi</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.dylibso.chicory</groupId>
+      <groupId>run.endive</groupId>
       <artifactId>wasm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>run.endive</groupId>
+      <artifactId>redline-runner-jffi-experimental</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -64,19 +67,14 @@
       <version>10.1.1.0</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.roastedroot</groupId>
-      <artifactId>redline</artifactId>
-      <version>${redline.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>io.roastedroot</groupId>
-        <artifactId>redline-compiler-maven-plugin</artifactId>
-        <version>${redline.version}</version>
+        <groupId>run.endive</groupId>
+        <artifactId>endive-compiler-maven-plugin</artifactId>
+        <version>${endive.version}</version>
         <executions>
           <execution>
             <id>prism</id>
@@ -87,6 +85,7 @@
               <name>org.ruby_lang.prism.wasm.PrismParser</name>
               <moduleInterface>org.ruby_lang.prism.wasm.Prism</moduleInterface>
               <wasmFile>src/main/wasm/prism.wasm</wasmFile>
+              <redlineExperimental>true</redlineExperimental>
             </configuration>
           </execution>
         </executions>
