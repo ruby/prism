@@ -279,4 +279,12 @@ module Prism
     # : () -> Location?
     def closing_loc: () -> Location?
   end
+
+  class SymbolNode < Node
+    # : () -> String
+    def value: () -> String
+
+    # : () -> Location
+    def value_loc: () -> Location
+  end
 end
