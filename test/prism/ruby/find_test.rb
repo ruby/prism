@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 return if RUBY_ENGINE == "ruby" && RUBY_VERSION < "3.4"
-return if defined?(RubyVM::InstructionSequence) && RubyVM::InstructionSequence.compile("").to_a[4][:parser] != :prism
+return if RUBY_VERSION < "4.1" && defined?(RubyVM::InstructionSequence) && RubyVM::InstructionSequence.compile("").to_a[4][:parser] != :prism
 
 require_relative "../test_helper"
 require_relative "find_fixtures"
@@ -189,32 +189,35 @@ module Prism
       def test_node_id_matches_iseq
         m = Fixtures::Methods.instance_method(:simple_method)
         node = Prism.find(m)
-        assert_equal node_id_of(m), node.node_id
+        assert_same_node_id m, node
       end
 
       def test_node_id_for_lambda
         node = Prism.find(Fixtures::Procs::SIMPLE_LAMBDA)
-        assert_equal node_id_of(Fixtures::Procs::SIMPLE_LAMBDA), node.node_id
+        assert_same_node_id Fixtures::Procs::SIMPLE_LAMBDA, node
       end
 
       def test_node_id_for_proc
         node = Prism.find(Fixtures::Procs::SIMPLE_PROC)
-        assert_equal node_id_of(Fixtures::Procs::SIMPLE_PROC), node.node_id
+        assert_same_node_id Fixtures::Procs::SIMPLE_PROC, node
       end
 
       def test_node_id_for_define_method
         m = Fixtures::DefineMethod.instance_method(:dynamic)
         node = Prism.find(m)
-        assert_equal node_id_of(m), node.node_id
+        assert_same_node_id m, node
       end
 
       def test_node_id_for_backtrace_location
         location = zero_division_location
         assert_not_nil location
-        expected_node_id = RubyVM::AbstractSyntaxTree.node_id_for_backtrace_location(location)
 
-        node = Prism.find(location)
-        assert_equal expected_node_id, node.node_id
+        if RubyVM::InstructionSequence.compile("").to_a[4][:parser] == :prism
+          expected_node_id = RubyVM::AbstractSyntaxTree.node_id_for_backtrace_location(location)
+
+          node = Prism.find(location)
+          assert_equal expected_node_id, node.node_id
+        end
       end
     end
 
@@ -235,8 +238,11 @@ module Prism
       fixture_backtrace_location(e)
     end
 
-    def node_id_of(callable)
-      RubyVM::InstructionSequence.of(callable).to_a[4][:node_id]
+    def assert_same_node_id(callable, node)
+      data = RubyVM::InstructionSequence.of(callable).to_a[4]
+      if data[:parser] == :prism
+        assert_equal data[:node_id], node.node_id
+      end
     end
   end
 end
