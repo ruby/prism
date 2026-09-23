@@ -251,7 +251,7 @@ fn write_node(file: &mut File, flags: &[Flags], node: &Node) -> Result<(), Box<d
 
     if let Some(kind) = &node.flags {
         let our_flags = flags.iter().filter(|f| &f.name == kind).collect::<Vec<_>>();
-        assert!(our_flags.len() == 1);
+        assert_eq!(our_flags.len(), 1);
 
         for flag in our_flags {
             for value in &flag.values {
@@ -553,7 +553,7 @@ use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
     for flag in &config.flags {
         for value in &flag.values {
             let const_name = enum_const_name(&flag.name, &value.name);
-            writeln!(file, "const {}: u16 = {}::{} as u16;", &const_name, enum_type_name(&flag.name), &const_name)?;
+            writeln!(file, "const {}: u16 = {}::{} as u16;", const_name, enum_type_name(&flag.name), const_name)?;
         }
     }
     writeln!(file)?;
