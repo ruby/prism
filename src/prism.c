@@ -7990,20 +7990,21 @@ context_recoverable(const pm_parser_t *parser, pm_token_t *token) {
     return PM_CONTEXT_NONE;
 }
 
+PM_STATIC_ASSERT(__LINE__, PM_CONTEXT_MAXIMUM <= 64, "Expected every context to fit in the context mask.");
+
 static bool
 context_push(pm_parser_t *parser, pm_context_t context) {
     pm_context_node_t *context_node = (pm_context_node_t *) xmalloc(sizeof(pm_context_node_t));
     if (context_node == NULL) return false;
 
-    *context_node = (pm_context_node_t) { .context = context, .prev = NULL };
+    pm_context_node_t *previous = parser->current_context;
+    *context_node = (pm_context_node_t) {
+        .context = context,
+        .prev = previous,
+        .mask = (previous == NULL ? 0 : previous->mask) | ((uint64_t) 1 << context)
+    };
 
-    if (parser->current_context == NULL) {
-        parser->current_context = context_node;
-    } else {
-        context_node->prev = parser->current_context;
-        parser->current_context = context_node;
-    }
-
+    parser->current_context = context_node;
     return true;
 }
 
@@ -8016,14 +8017,7 @@ context_pop(pm_parser_t *parser) {
 
 static bool
 context_p(const pm_parser_t *parser, pm_context_t context) {
-    pm_context_node_t *context_node = parser->current_context;
-
-    while (context_node != NULL) {
-        if (context_node->context == context) return true;
-        context_node = context_node->prev;
-    }
-
-    return false;
+    return parser->current_context != NULL && (parser->current_context->mask & ((uint64_t) 1 << context)) != 0;
 }
 
 static bool
@@ -8067,6 +8061,7 @@ static const char *
 context_human(pm_context_t context) {
     switch (context) {
         case PM_CONTEXT_NONE:
+        case PM_CONTEXT_MAXIMUM:
             assert(false && "unreachable");
             return "";
         case PM_CONTEXT_BEGIN: return "begin statement";
@@ -15745,6 +15740,7 @@ parse_return(pm_parser_t *parser, pm_node_t *node) {
                 // continue to loop.
                 return;
             case PM_CONTEXT_NONE:
+            case PM_CONTEXT_MAXIMUM:
                 // This case should never happen.
                 assert(false && "unreachable");
                 break;
@@ -15843,6 +15839,7 @@ parse_block_exit(pm_parser_t *parser, pm_node_t *node) {
                 // contexts.
                 break;
             case PM_CONTEXT_NONE:
+            case PM_CONTEXT_MAXIMUM:
                 // This case should never happen.
                 assert(false && "unreachable");
                 break;
@@ -18033,6 +18030,7 @@ parse_retry(pm_parser_t *parser, const pm_node_t *node) {
                 context = CONTEXT_THROUGH_ENSURE;
                 break;
             case PM_CONTEXT_NONE:
+            case PM_CONTEXT_MAXIMUM:
                 // This case should never happen.
                 assert(false && "unreachable");
                 break;
@@ -18109,6 +18107,7 @@ parse_yield(pm_parser_t *parser, const pm_node_t *node) {
                 pm_parser_err_node(parser, node, PM_ERR_INVALID_YIELD);
                 return;
             case PM_CONTEXT_NONE:
+            case PM_CONTEXT_MAXIMUM:
                 // This case should never happen.
                 assert(false && "unreachable");
                 break;
