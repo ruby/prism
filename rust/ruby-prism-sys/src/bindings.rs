@@ -9278,9 +9278,9 @@ pub struct pm_symbol_node {
     /** SymbolNode#opening_loc
 */
     pub opening_loc: pm_location_t,
-    /** SymbolNode#value_loc
+    /** SymbolNode#content_loc
 */
-    pub value_loc: pm_location_t,
+    pub content_loc: pm_location_t,
     /** SymbolNode#closing_loc
 */
     pub closing_loc: pm_location_t,

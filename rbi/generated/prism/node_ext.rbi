@@ -248,4 +248,12 @@ module Prism
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
   end
+
+  class SymbolNode < Node
+    sig { returns(String) }
+    def value; end
+
+    sig { returns(Location) }
+    def value_loc; end
+  end
 end
