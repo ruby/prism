@@ -1,0 +1,33 @@
+# Method#source_range, UnboundMethod#source_range, Proc#source_range and
+# Thread::Backtrace::Location#source_range are available on Ruby 4.1+
+# and are not yet part of the RBS core signatures.
+module Ruby
+  class SourceRange
+    def path: () -> String
+    def absolute_path: () -> String?
+    def start_line: () -> Integer
+    def start_column: () -> Integer
+    def end_line: () -> Integer
+    def end_column: () -> Integer
+  end
+end
+
+class Method
+  def source_range: () -> Ruby::SourceRange?
+end
+
+class UnboundMethod
+  def source_range: () -> Ruby::SourceRange?
+end
+
+class Proc
+  def source_range: () -> Ruby::SourceRange?
+end
+
+class Thread
+  class Backtrace
+    class Location
+      def source_range: () -> Ruby::SourceRange?
+    end
+  end
+end
