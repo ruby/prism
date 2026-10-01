@@ -20,6 +20,14 @@ module Prism
       private def parse_file(file); end
     end
 
+    # Finds the AST node for a Method, UnboundMethod, Proc or Thread::Backtrace::Location
+    # using the #source_range
+    class SourceRangeFind < Find
+      # Find the node for the given callable using the #source_range.
+      sig { params(callable: ::T.any(Method, UnboundMethod, Proc, Thread::Backtrace::Location)).returns(::T.nilable(Node)) }
+      def find(callable); end
+    end
+
     # Finds the AST node for a Method, UnboundMethod, or Proc using the node_id
     # from the instruction sequence.
     class RubyVMCallableFind < Find
