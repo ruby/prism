@@ -303,7 +303,7 @@ impl Options {
 
                 for (local_index, local) in scope.locals.iter().enumerate() {
                     let pm_local = unsafe { pm_options_scope_local_mut(pm_scope, local_index) };
-                    unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast::<i8>(), local.len()) };
+                    unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast(), local.len()) };
                 }
 
                 let forwarding = scope.forwarding.iter().fold(0u8, |acc, &flag| acc | u8::from(flag));
