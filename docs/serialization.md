@@ -44,6 +44,17 @@ The comment type is one of:
 | `1` | comment type |
 | location | the location in the source of this comment |
 
+### comment attachment
+
+A comment attachment lists the comments owned by a single node.
+Only nodes that own comments have an attachment, and there are none unless the `attach_comments` option was set.
+
+| # bytes | field |
+| --- | --- |
+| varuint | the node identifier of the node that owns the comments |
+| varuint | number of comments owned by the node |
+| varuint* | the index of each owned comment in the list of comments, ordered by start offset |
+
 ### magic comment
 
 | # bytes | field |
@@ -99,6 +110,8 @@ The header is structured like the following table:
 | varuint* | newline offsets |
 | varuint | number of comments |
 | comment* | comments |
+| varuint | number of nodes with attached comments |
+| comment attachment* | comment attachments |
 | varuint | number of magic comments |
 | magic comment* | magic comments |
 | location? | the optional location of the `__END__` keyword and its contents |

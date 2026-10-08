@@ -22,6 +22,8 @@ Highlights of this release:
   *  `BACKTICK` was split up into `BACKTICK` and `XSTRING_BACKTICK`.
   * `NEWLINE` was split up into `NEWLINE` and `NEWLINE_TERMINATOR`.
   * `WORDS_SEP` was split up into `WORDS_SEP` and `WORDS_SEP_IMPLICIT`.
+- Comment attachment now happens during parsing with the `attach_comments` option instead of afterward with `ParseResult#attach_comments!`, which was removed. `Node#comments` now returns the comments attached to the node by that option. `Location#comments`, `Location#leading_comments`, `Location#trailing_comments`, `Node#leading_comments`, `Node#trailing_comments`, and the comment fields of `Prism::Relocation` were removed.
+- Comments now live on the source. `Prism::Source#comments` returns them and `Result#comments` delegates to it, so `ParseResult.new`, `LexResult.new`, and `ParseLexResult.new` no longer take a `comments` argument.
 
 #### C/Rust Bindings
 - Most structs are now opaque (except for nodes) [#4015](https://github.com/ruby/prism/pull/4015)
@@ -40,6 +42,7 @@ Highlights of this release:
 - `ForwardingSuperNode` now has `keyword_loc`.
 - Allow pattern matching with prism nodes to match on location slices, like `node in Prism::StringNode[content: "foo"]`.
 - `Prism.parse_file` and similar now accept anything responding to `to_path` (like `Pathname`) directly.
+- `attach_comments` was added as a valid option. Each comment is attached to the node that ends latest on the comment's line before it, otherwise to the innermost node that contains it (or to that node's statements, if only whitespace and comments come between the comment and the statements), otherwise to the top-level statements. The attached comments are available through `Node#comments` and through `pm_node_comments_size` and `pm_node_comment` in the C API, as well as `pm_parser_comment_attachment`, `pm_parser_comment_ranges_size`, and `pm_parser_comment_range`, which expose the attachments grouped by node. When the option is set, the comments on the parse result are sorted by start offset.
 
 ### Removed
 - Removed `Prism::Pack`.

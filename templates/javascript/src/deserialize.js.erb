@@ -297,6 +297,16 @@ export function deserialize(source, array) {
     location: buffer.readLocation()
   }));
 
+  // Skip the comments attached to each node, which this library does not
+  // expose. Each entry is a node id followed by the indices of its comments.
+  for (let count = buffer.readVarInt(); count > 0; count--) {
+    buffer.readVarInt();
+
+    for (let length = buffer.readVarInt(); length > 0; length--) {
+      buffer.readVarInt();
+    }
+  }
+
   const magicComments = Array.from({ length: buffer.readVarInt() }, () => ({
     startLocation: buffer.readLocation(),
     endLocation: buffer.readLocation()

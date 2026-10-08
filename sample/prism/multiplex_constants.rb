@@ -117,7 +117,7 @@ def index_glob(glob, count = Etc.nprocessors - 1)
     Thread.new do
       while (line = index_reader.gets(chomp: true))
         filepath, *entries = line.split("|")
-        repository = Prism::Relocation.filepath(filepath).filepath.lines.code_unit_columns(Encoding::UTF_16LE).leading_comments
+        repository = Prism::Relocation.filepath(filepath).filepath.lines.code_unit_columns(Encoding::UTF_16LE)
 
         entries.each_slice(3) do |(name, node_id, field_name)|
           index[name] << repository.enter(Integer(node_id), field_name.to_sym)

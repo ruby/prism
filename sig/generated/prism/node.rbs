@@ -122,17 +122,8 @@ module Prism
     # : (_CodeUnitsCache cache) -> Integer
     def cached_end_code_units_column: (_CodeUnitsCache cache) -> Integer
 
-    # Delegates to [`leading_comments`](rdoc-ref:Location#leading_comments) of the associated location object.
-    #
-    # : () -> Array[Comment]
-    def leading_comments: () -> Array[Comment]
-
-    # Delegates to [`trailing_comments`](rdoc-ref:Location#trailing_comments) of the associated location object.
-    #
-    # : () -> Array[Comment]
-    def trailing_comments: () -> Array[Comment]
-
-    # Delegates to [`comments`](rdoc-ref:Location#comments) of the associated location object.
+    # The comments attached to this node, ordered by start offset. Comments are
+    # only attached when the source is parsed with the attach_comments option.
     #
     # : () -> Array[Comment]
     def comments: () -> Array[Comment]
@@ -251,12 +242,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # Returns an array of child nodes and locations that could potentially have
-    # comments attached to them.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # Returns a string representation of the node.
     #
     # : () -> String
@@ -324,11 +309,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> AliasGlobalVariableNode
@@ -446,11 +426,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> AliasMethodNode
@@ -581,11 +556,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> AlternationPatternNode
     #
@@ -702,11 +672,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> AndNode
@@ -827,11 +792,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ArgumentsNode
     #
@@ -940,11 +900,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ArrayNode
@@ -1103,11 +1058,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ArrayPatternNode
@@ -1281,11 +1231,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> AssocNode
     #
@@ -1410,11 +1355,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> AssocSplatNode
     #
@@ -1517,11 +1457,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> BackReferenceReadNode
     #
@@ -1609,11 +1544,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> BeginNode
@@ -1779,11 +1709,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> BlockArgumentNode
     #
@@ -1886,11 +1811,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> BlockLocalVariableNode
     #
@@ -1979,11 +1899,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> BlockNode
@@ -2145,11 +2060,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> BlockParameterNode
     #
@@ -2288,11 +2198,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> BlockParametersNode
@@ -2452,11 +2357,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> BreakNode
     #
@@ -2570,11 +2470,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> CallAndWriteNode
@@ -2819,11 +2714,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> CallNode
@@ -3118,11 +3008,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> CallOperatorWriteNode
     #
@@ -3351,11 +3236,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> CallOrWriteNode
     #
@@ -3583,11 +3463,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> CallTargetNode
     #
@@ -3756,11 +3631,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> CapturePatternNode
     #
@@ -3883,11 +3753,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> CaseMatchNode
@@ -4049,11 +3914,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> CaseNode
@@ -4219,11 +4079,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ClassNode
@@ -4424,11 +4279,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ClassVariableAndWriteNode
     #
@@ -4569,11 +4419,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ClassVariableOperatorWriteNode
     #
@@ -4700,11 +4545,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ClassVariableOrWriteNode
     #
@@ -4825,11 +4665,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ClassVariableReadNode
     #
@@ -4905,11 +4740,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ClassVariableTargetNode
@@ -4988,11 +4818,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ClassVariableWriteNode
@@ -5136,11 +4961,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantAndWriteNode
     #
@@ -5269,11 +5089,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantOperatorWriteNode
     #
@@ -5400,11 +5215,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantOrWriteNode
     #
@@ -5529,11 +5339,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantPathAndWriteNode
     #
@@ -5643,11 +5448,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ConstantPathNode
@@ -5796,11 +5596,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantPathOperatorWriteNode
     #
@@ -5908,11 +5703,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ConstantPathOrWriteNode
@@ -6023,11 +5813,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ConstantPathTargetNode
@@ -6159,11 +5944,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantPathWriteNode
     #
@@ -6280,11 +6060,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ConstantReadNode
     #
@@ -6360,11 +6135,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ConstantTargetNode
@@ -6443,11 +6213,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ConstantWriteNode
@@ -6607,11 +6372,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> DefNode
@@ -6883,11 +6643,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> DefinedNode
     #
@@ -7036,11 +6791,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ElseNode
     #
@@ -7165,11 +6915,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> EmbeddedStatementsNode
     #
@@ -7292,11 +7037,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> EmbeddedVariableNode
     #
@@ -7400,11 +7140,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> EnsureNode
@@ -7523,11 +7258,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ErrorRecoveryNode
     #
@@ -7597,11 +7327,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> FalseNode
@@ -7685,11 +7410,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> FindPatternNode
@@ -7872,11 +7592,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> FlipFlopNode
     #
@@ -7987,11 +7702,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> FloatNode
     #
@@ -8075,11 +7785,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ForNode
@@ -8288,11 +7993,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ForwardingArgumentsNode
     #
@@ -8355,11 +8055,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ForwardingParameterNode
@@ -8431,11 +8126,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ForwardingSuperNode
@@ -8542,11 +8232,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> GlobalVariableAndWriteNode
@@ -8676,11 +8361,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> GlobalVariableOperatorWriteNode
     #
@@ -8807,11 +8487,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> GlobalVariableOrWriteNode
     #
@@ -8932,11 +8607,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> GlobalVariableReadNode
     #
@@ -9012,11 +8682,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> GlobalVariableTargetNode
@@ -9095,11 +8760,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> GlobalVariableWriteNode
@@ -9240,11 +8900,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> HashNode
@@ -9394,11 +9049,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> HashPatternNode
@@ -9581,11 +9231,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> IfNode
@@ -9793,11 +9438,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ImaginaryNode
     #
@@ -9875,11 +9515,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ImplicitNode
@@ -9960,11 +9595,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ImplicitRestNode
     #
@@ -10034,11 +9664,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> InNode
@@ -10181,11 +9806,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> IndexAndWriteNode
@@ -10419,11 +10039,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> IndexOperatorWriteNode
     #
@@ -10653,11 +10268,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> IndexOrWriteNode
@@ -10891,11 +10501,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> IndexTargetNode
     #
@@ -11062,11 +10667,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InstanceVariableAndWriteNode
     #
@@ -11195,11 +10795,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InstanceVariableOperatorWriteNode
     #
@@ -11326,11 +10921,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InstanceVariableOrWriteNode
     #
@@ -11451,11 +11041,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InstanceVariableReadNode
     #
@@ -11531,11 +11116,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> InstanceVariableTargetNode
@@ -11614,11 +11194,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> InstanceVariableWriteNode
@@ -11756,11 +11331,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> IntegerNode
     #
@@ -11860,11 +11430,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> InterpolatedMatchLastLineNode
@@ -12056,11 +11621,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InterpolatedRegularExpressionNode
     #
@@ -12251,11 +11811,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InterpolatedStringNode
     #
@@ -12392,11 +11947,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InterpolatedSymbolNode
     #
@@ -12521,11 +12071,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> InterpolatedXStringNode
     #
@@ -12644,11 +12189,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ItLocalVariableReadNode
     #
@@ -12710,11 +12250,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ItParametersNode
@@ -12779,11 +12314,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> KeywordHashNode
@@ -12867,11 +12397,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> KeywordRestParameterNode
@@ -13000,11 +12525,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> LambdaNode
@@ -13174,11 +12694,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> LocalVariableAndWriteNode
     #
@@ -13317,11 +12832,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> LocalVariableOperatorWriteNode
     #
@@ -13458,11 +12968,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> LocalVariableOrWriteNode
     #
@@ -13562,9 +13067,9 @@ module Prism
   #     foo
   #     ^^^
   class LocalVariableReadNode < Node
-    @depth: Integer
-
     @name: Symbol
+
+    @depth: Integer
 
     # Initialize a new LocalVariableReadNode node.
     #
@@ -13592,11 +13097,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> LocalVariableReadNode
@@ -13666,9 +13166,9 @@ module Prism
   #     foo => baz
   #            ^^^
   class LocalVariableTargetNode < Node
-    @depth: Integer
-
     @name: Symbol
+
+    @depth: Integer
 
     # Initialize a new LocalVariableTargetNode node.
     #
@@ -13696,11 +13196,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> LocalVariableTargetNode
@@ -13789,11 +13284,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> LocalVariableWriteNode
@@ -13954,11 +13444,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> MatchLastLineNode
@@ -14174,11 +13659,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> MatchPredicateNode
     #
@@ -14286,11 +13766,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> MatchRequiredNode
@@ -14415,9 +13890,9 @@ module Prism
   #     /(?<foo>bar)/ =~ baz
   #     ^^^^^^^^^^^^^^^^^^^^
   class MatchWriteNode < Node
-    @targets: Array[LocalVariableTargetNode]
-
     @call: CallNode
+
+    @targets: Array[LocalVariableTargetNode]
 
     # Initialize a new MatchWriteNode node.
     #
@@ -14445,11 +13920,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> MatchWriteNode
@@ -14540,11 +14010,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ModuleNode
@@ -14702,11 +14167,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> MultiTargetNode
@@ -14885,11 +14345,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> MultiWriteNode
@@ -15097,11 +14552,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> NextNode
     #
@@ -15196,11 +14646,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> NilNode
     #
@@ -15267,11 +14712,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> NoBlockParameterNode
@@ -15388,11 +14828,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> NoKeywordsParameterNode
     #
@@ -15505,11 +14940,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> NumberedParametersNode
     #
@@ -15581,11 +15011,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> NumberedReferenceReadNode
@@ -15669,11 +15094,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> OptionalKeywordParameterNode
@@ -15783,11 +15203,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> OptionalParameterNode
@@ -15918,11 +15333,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> OrNode
@@ -16056,11 +15466,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> ParametersNode
     #
@@ -16184,11 +15589,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ParenthesesNode
@@ -16321,11 +15721,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> PinnedExpressionNode
@@ -16485,11 +15880,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> PinnedVariableNode
     #
@@ -16597,11 +15987,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> PostExecutionNode
@@ -16753,11 +16138,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> PreExecutionNode
     #
@@ -16870,9 +16250,9 @@ module Prism
 
   # The top level node of any parse tree.
   class ProgramNode < Node
-    @statements: StatementsNode
-
     @locals: Array[Symbol]
+
+    @statements: StatementsNode
 
     # Initialize a new ProgramNode node.
     #
@@ -16900,11 +16280,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ProgramNode
@@ -16992,11 +16367,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> RangeNode
@@ -17123,11 +16493,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RationalNode
     #
@@ -17234,11 +16599,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RedoNode
     #
@@ -17308,11 +16668,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> RegularExpressionNode
@@ -17527,11 +16882,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RequiredKeywordParameterNode
     #
@@ -17627,11 +16977,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RequiredParameterNode
     #
@@ -17713,11 +17058,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> RescueModifierNode
@@ -17839,11 +17179,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> RescueNode
@@ -18018,11 +17353,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RestParameterNode
     #
@@ -18139,11 +17469,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> RetryNode
     #
@@ -18209,11 +17534,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ReturnNode
@@ -18309,11 +17629,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> SelfNode
     #
@@ -18378,11 +17693,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> ShareableConstantNode
@@ -18483,11 +17793,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> SingletonClassNode
@@ -18647,11 +17952,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> SourceEncodingNode
     #
@@ -18715,11 +18015,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> SourceFileNode
@@ -18815,11 +18110,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> SourceLineNode
     #
@@ -18885,11 +18175,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> SplatNode
@@ -18987,11 +18272,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> StatementsNode
     #
@@ -19075,11 +18355,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> StringNode
@@ -19262,11 +18537,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> SuperNode
     #
@@ -19428,11 +18698,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> SymbolNode
     #
@@ -19593,11 +18858,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> TrueNode
     #
@@ -19663,11 +18923,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> UndefNode
@@ -19777,11 +19032,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> UnlessNode
@@ -19979,11 +19229,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> UntilNode
     #
@@ -20150,11 +19395,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> WhenNode
     #
@@ -20293,11 +19533,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> WhileNode
@@ -20463,11 +19698,6 @@ module Prism
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
 
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
-
     # :call-seq:
     #   copy(**fields) -> XStringNode
     #
@@ -20629,11 +19859,6 @@ module Prism
     #
     # : () -> Array[node]
     def compact_child_nodes: () -> Array[node]
-
-    # See Node.comment_targets.
-    #
-    # : () -> Array[node | Location]
-    def comment_targets: () -> Array[node | Location]
 
     # :call-seq:
     #   copy(**fields) -> YieldNode

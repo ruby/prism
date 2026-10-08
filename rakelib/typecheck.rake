@@ -2,7 +2,7 @@
 
 namespace :typecheck do
   class RBICompiler
-    INODE = Set.new(%i[accept child_nodes comment_targets compact_child_nodes deconstruct each_child_node inspect type])
+    INODE = Set.new(%i[accept child_nodes compact_child_nodes deconstruct each_child_node inspect type])
 
     attr_reader :parent
 

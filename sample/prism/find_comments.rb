@@ -3,10 +3,11 @@
 require "prism"
 
 class FindMethodComments < Prism::Visitor
-  def initialize(target, comments, nesting = [])
+  def initialize(target, comments, nesting = [], candidates = [])
     @target = target
     @comments = comments
     @nesting = nesting
+    @candidates = candidates
   end
 
   # These visit methods are specific to each class. Defining a visitor allows
@@ -29,15 +30,29 @@ class FindMethodComments < Prism::Visitor
     node.each_child_node { |child| child.accept(visitor) }
   end
 
+  def visit_statements_node(node)
+    visitor = FindMethodComments.new(@target, @comments, @nesting, node.comments)
+    node.each_child_node { |child| child.accept(visitor) }
+  end
+
   def visit_def_node(node)
     if [*@nesting, node.name] == @target
-      # Comments are always attached to locations (either inner locations on a
-      # node like the location of a keyword or the location on the node itself).
-      # Nodes are considered either "leading" or "trailing", which means that
-      # they occur before or after the location, respectively. In this case of
-      # documentation, we only want to consider leading comments. You can also
-      # fetch all of the comments on a location with #comments.
-      @comments.concat(node.location.leading_comments)
+      # Each comment is attached to a single node. A comment on its own line
+      # within a body is attached to the statements of that body, so
+      # documentation above a method is attached to the statements around the
+      # method rather than to the method itself. We kept the comments attached
+      # to those statements as we descended, which are ordered by where they
+      # start, so here we walk back from the method and take the ones on the
+      # lines directly above it.
+      expected_line = node.location.start_line - 1
+
+      @candidates.reverse_each do |comment|
+        next if comment.location.start_offset > node.location.start_offset
+        break if comment.location.start_line != expected_line
+
+        @comments.unshift(comment)
+        expected_line -= 1
+      end
     else
       super
     end
@@ -55,8 +70,8 @@ def find_comments(result, path)
   comments
 end
 
-result = Prism.parse_stream(DATA)
-result.attach_comments!
+# Comments are only attached to nodes when the attach_comments option is set.
+result = Prism.parse_stream(DATA, attach_comments: true)
 
 find_comments(result, "Foo#foo").each do |comment|
   puts comment.inspect
