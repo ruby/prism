@@ -337,6 +337,21 @@ namespace :typecheck do
     end
   end
 
+  desc "Validate the RBS signatures shipped with the gem"
+  task rbs: :templates do
+    with_gemfile do
+      require "yaml"
+
+      # Load only what users of the gem get: sig/generated and the standard
+      # libraries declared in sig/manifest.yaml. sig/_shims is not shipped
+      # with the gem, so it must not be used here.
+      dependencies = YAML.safe_load_file("sig/manifest.yaml").fetch("dependencies", [])
+      libraries = dependencies.flat_map { |dependency| ["-r", dependency.fetch("name")] }
+
+      sh "bundle", "exec", "rbs", "-I", "sig/generated", *libraries, "validate"
+    end
+  end
+
   desc "Generate RBIs with Tapioca"
   task tapioca: :templates do
     Rake::Task["compile:prism"].invoke

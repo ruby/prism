@@ -55,6 +55,8 @@ jobs:
       run: bundle exec rake typecheck:tapioca typecheck:sorbet
     - name: Check Steep
       run: bundle exec rake typecheck:steep
+    - name: Validate RBS
+      run: bundle exec rake typecheck:rbs
     - name: Check field kinds
       run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
 
