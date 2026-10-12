@@ -94,8 +94,19 @@ module Prism
       # : (bool freeze) -> Array[Integer]
       def load_line_offsets: (bool freeze) -> Array[Integer]
 
-      # : (bool freeze) -> Array[Comment]
-      def load_comments: (bool freeze) -> Array[Comment]
+      # Load the comments attached to each node into the comment attachments and
+      # comment ranges of the given source. For each node that owns comments, the
+      # index at which its comments begin is stored at its node id and the index
+      # at which they end at the following node id.
+      #
+      # : (Source source, bool freeze) -> void
+      def load_comment_attachments: (Source source, bool freeze) -> void
+
+      # Load the comments into the given list, which belongs to the source that
+      # the comments refer to.
+      #
+      # : (Array[Comment] comments, bool freeze) -> Array[Comment]
+      def load_comments: (Array[Comment] comments, bool freeze) -> Array[Comment]
 
       # : (bool freeze) -> Array[MagicComment]
       def load_magic_comments: (bool freeze) -> Array[MagicComment]

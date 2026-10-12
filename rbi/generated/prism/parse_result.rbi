@@ -18,8 +18,13 @@ module Prism
     # can be calculated by iterating through the source code and recording the
     # byte offset whenever a newline character is encountered.  The first
     # element is always 0 to mark the first line.
-    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer]).returns(Source) }
-    def self.for(source, start_line, offsets); end
+    #
+    # The comments, comment_attachments, and comment_ranges parameters are the
+    # lists described by the attributes of the same names. They are passed in
+    # empty when the source is created by the parser and filled in afterward,
+    # because the comments themselves refer to the source.
+    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer], comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)]).returns(Source) }
+    def self.for(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil)); end
 
     # The source code that this source object represents.
     sig { returns(String) }
@@ -28,6 +33,25 @@ module Prism
     # The line number where this source starts.
     sig { returns(Integer) }
     attr_reader :start_line
+
+    # The list of comments that were encountered during parsing. When the source
+    # is parsed with the attach_comments option, these are sorted by start
+    # offset.
+    sig { returns(T::Array[Comment]) }
+    attr_reader :comments
+
+    # The comments attached to nodes, grouped by node in order of node id. This
+    # is empty unless the source was parsed with the attach_comments option.
+    sig { returns(T::Array[Comment]) }
+    attr_reader :comment_attachments
+
+    # Indices into comment_attachments, indexed by node id. For each node that
+    # owns comments, the index at which its comments begin is stored at its node
+    # id and the index at which they end is stored at the following node id. The
+    # other entries are nil. This is empty unless the source was parsed with the
+    # attach_comments option.
+    sig { returns(T::Array[::T.nilable(Integer)]) }
+    attr_reader :comment_ranges
 
     # The list of newline byte offsets in the source code. When initialized from
     # the C extension, this may be a packed binary string of uint32_t values
@@ -38,8 +62,8 @@ module Prism
     # Create a new source object with the given source code. The offsets
     # parameter can be either an Array of Integer byte offsets or a packed
     # binary string of uint32_t values (from the C extension).
-    sig { params(source: String, start_line: Integer, offsets: ::T.any(T::Array[Integer], String)).void }
-    def initialize(source, start_line, offsets); end
+    sig { params(source: String, start_line: Integer, offsets: ::T.any(T::Array[Integer], String), comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)]).void }
+    def initialize(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil)); end
 
     # Replace the value of start_line with the given value.
     sig { params(start_line: Integer).void }
@@ -48,6 +72,12 @@ module Prism
     # Replace the value of offsets with the given value.
     sig { params(offsets: T::Array[Integer]).void }
     def replace_offsets(offsets); end
+
+    # The comments attached to the node with the given id, ordered by start
+    # offset. Comments are only attached when the source is parsed with the
+    # attach_comments option.
+    sig { params(node_id: Integer).returns(T::Array[Comment]) }
+    def comments_for(node_id); end
 
     # Returns the encoding of the source code, which is set by parameters to the
     # parser or by the encoding magic comment.
@@ -236,29 +266,6 @@ module Prism
     # byte length.
     sig { params(source: Source, start_offset: Integer, length: Integer).void }
     def initialize(source, start_offset, length); end
-
-    # These are the comments that are associated with this location that exist
-    # before the start of this location.
-    sig { returns(T::Array[Comment]) }
-    def leading_comments; end
-
-    # Attach a comment to the leading comments of this location.
-    sig { params(comment: Comment).void }
-    def leading_comment(comment); end
-
-    # These are the comments that are associated with this location that exist
-    # after the end of this location.
-    sig { returns(T::Array[Comment]) }
-    def trailing_comments; end
-
-    # Attach a comment to the trailing comments of this location.
-    sig { params(comment: Comment).void }
-    def trailing_comment(comment); end
-
-    # Returns all comments that are associated with this location (both leading
-    # and trailing comments).
-    sig { returns(T::Array[Comment]) }
-    def comments; end
 
     # Create a new location object with the given options.
     sig { params(source: Source, start_offset: Integer, length: Integer).returns(Location) }
@@ -545,10 +552,6 @@ module Prism
   # It contains the requested structure, any comments that were encounters,
   # and any errors that were encountered.
   class Result
-    # The list of comments that were encountered during parsing.
-    sig { returns(T::Array[Comment]) }
-    attr_reader :comments
-
     # The list of magic comments that were encountered during parsing.
     sig { returns(T::Array[MagicComment]) }
     attr_reader :magic_comments
@@ -572,8 +575,12 @@ module Prism
     attr_reader :source
 
     # Create a new result object with the given values.
-    sig { params(comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
-    def initialize(comments, magic_comments, data_loc, errors, warnings, continuable, source); end
+    sig { params(magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(magic_comments, data_loc, errors, warnings, continuable, source); end
+
+    # The list of comments that were encountered during parsing.
+    sig { returns(T::Array[Comment]) }
+    def comments; end
 
     # Implement the hash pattern matching interface for Result.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -627,16 +634,12 @@ module Prism
     attr_reader :value
 
     # Create a new parse result object with the given values.
-    sig { params(value: ProgramNode, comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
+    sig { params(value: ProgramNode, magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
     def deconstruct_keys(keys); end
-
-    # Attach the list of comments to their respective locations in the tree.
-    sig { void }
-    def attach_comments!; end
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating
     # the behavior of CRuby's `:line` tracepoint event.
@@ -656,8 +659,8 @@ module Prism
     attr_reader :value
 
     # Create a new lex result object with the given values.
-    sig { params(value: T::Array[Token], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
+    sig { params(value: T::Array[Token], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for LexResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }
@@ -672,8 +675,8 @@ module Prism
     attr_reader :value
 
     # Create a new parse lex result object with the given values.
-    sig { params(value: [ProgramNode, T::Array[Token]], comments: T::Array[Comment], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
-    def initialize(value, comments, magic_comments, data_loc, errors, warnings, continuable, source); end
+    sig { params(value: [ProgramNode, T::Array[Token]], magic_comments: T::Array[MagicComment], data_loc: ::T.nilable(Location), errors: T::Array[ParseError], warnings: T::Array[ParseWarning], continuable: T::Boolean, source: Source).void }
+    def initialize(value, magic_comments, data_loc, errors, warnings, continuable, source); end
 
     # Implement the hash pattern matching interface for ParseLexResult.
     sig { params(keys: ::T.nilable(T::Array[Symbol])).returns(T::Hash[Symbol, ::T.untyped]) }

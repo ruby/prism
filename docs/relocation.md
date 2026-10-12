@@ -6,10 +6,10 @@ The `Relocation` module provides an API around this property. It allows you to "
 
 ## Getting started
 
-To get started with the `Relocation` module, you would first instantiate a `Repository` object. You do this through a DSL that chains method calls for configuration. For example, if for every entry in the repository you want to store the start and end lines, the start and end code unit columns for in UTF-16, and the leading comments, you would:
+To get started with the `Relocation` module, you would first instantiate a `Repository` object. You do this through a DSL that chains method calls for configuration. For example, if for every entry in the repository you want to store the start and end lines, and the start and end code unit columns for in UTF-16, you would:
 
 ```ruby
-repository = Prism::Relocation.filepath("path/to/file").lines.code_unit_columns(Encoding::UTF_16).leading_comments
+repository = Prism::Relocation.filepath("path/to/file").lines.code_unit_columns(Encoding::UTF_16)
 ```
 
 Now that you have the repository, you can pass it into any of the `save*` APIs on nodes or locations to create entries in the repository that will be lazily reified.
@@ -27,8 +27,6 @@ entry.end_line
 
 entry.start_code_units_column
 entry.end_code_units_column
-
-entry.leading_comments
 ```
 
 Note that if you had configured other fields to be saved, you would be able to access them as well. The first time one of these fields is accessed, the repository will reify every entry it knows about and then clean itself up. In this way, you can effectively treat them as if you had kept around lightweight versions of `Prism::Node` or `Prism::Location` objects.

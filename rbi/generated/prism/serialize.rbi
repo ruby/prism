@@ -86,8 +86,17 @@ module Prism
       sig { params(freeze: T::Boolean).returns(T::Array[Integer]) }
       def load_line_offsets(freeze); end
 
-      sig { params(freeze: T::Boolean).returns(T::Array[Comment]) }
-      def load_comments(freeze); end
+      # Load the comments attached to each node into the comment attachments and
+      # comment ranges of the given source. For each node that owns comments, the
+      # index at which its comments begin is stored at its node id and the index
+      # at which they end at the following node id.
+      sig { params(source: Source, freeze: T::Boolean).void }
+      def load_comment_attachments(source, freeze); end
+
+      # Load the comments into the given list, which belongs to the source that
+      # the comments refer to.
+      sig { params(comments: T::Array[Comment], freeze: T::Boolean).returns(T::Array[Comment]) }
+      def load_comments(comments, freeze); end
 
       sig { params(freeze: T::Boolean).returns(T::Array[MagicComment]) }
       def load_magic_comments(freeze); end

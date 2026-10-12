@@ -25,14 +25,35 @@ module Prism
     # byte offset whenever a newline character is encountered.  The first
     # element is always 0 to mark the first line.
     #
-    # : (String source, Integer start_line, Array[Integer] offsets) -> Source
-    def self.for: (String source, Integer start_line, Array[Integer] offsets) -> Source
+    # The comments, comment_attachments, and comment_ranges parameters are the
+    # lists described by the attributes of the same names. They are passed in
+    # empty when the source is created by the parser and filled in afterward,
+    # because the comments themselves refer to the source.
+    #
+    # : (String source, Integer start_line, Array[Integer] offsets, ?Array[Comment] comments, ?Array[Comment] comment_attachments, ?Array[Integer?] comment_ranges) -> Source
+    def self.for: (String source, Integer start_line, Array[Integer] offsets, ?Array[Comment] comments, ?Array[Comment] comment_attachments, ?Array[Integer?] comment_ranges) -> Source
 
     # The source code that this source object represents.
     attr_reader source: String
 
     # The line number where this source starts.
     attr_reader start_line: Integer
+
+    # The list of comments that were encountered during parsing. When the source
+    # is parsed with the attach_comments option, these are sorted by start
+    # offset.
+    attr_reader comments: Array[Comment]
+
+    # The comments attached to nodes, grouped by node in order of node id. This
+    # is empty unless the source was parsed with the attach_comments option.
+    attr_reader comment_attachments: Array[Comment]
+
+    # Indices into comment_attachments, indexed by node id. For each node that
+    # owns comments, the index at which its comments begin is stored at its node
+    # id and the index at which they end is stored at the following node id. The
+    # other entries are nil. This is empty unless the source was parsed with the
+    # attach_comments option.
+    attr_reader comment_ranges: Array[Integer?]
 
     # The list of newline byte offsets in the source code. When initialized from
     # the C extension, this may be a packed binary string of uint32_t values
@@ -45,8 +66,8 @@ module Prism
     # parameter can be either an Array of Integer byte offsets or a packed
     # binary string of uint32_t values (from the C extension).
     #
-    # : (String source, Integer start_line, Array[Integer] | String offsets) -> void
-    def initialize: (String source, Integer start_line, Array[Integer] | String offsets) -> void
+    # : (String source, Integer start_line, Array[Integer] | String offsets, ?Array[Comment] comments, ?Array[Comment] comment_attachments, ?Array[Integer?] comment_ranges) -> void
+    def initialize: (String source, Integer start_line, Array[Integer] | String offsets, ?Array[Comment] comments, ?Array[Comment] comment_attachments, ?Array[Integer?] comment_ranges) -> void
 
     # Replace the value of start_line with the given value.
     #
@@ -57,6 +78,13 @@ module Prism
     #
     # : (Array[Integer] offsets) -> void
     def replace_offsets: (Array[Integer] offsets) -> void
+
+    # The comments attached to the node with the given id, ordered by start
+    # offset. Comments are only attached when the source is parsed with the
+    # attach_comments option.
+    #
+    # : (Integer node_id) -> Array[Comment]
+    def comments_for: (Integer node_id) -> Array[Comment]
 
     # Returns the encoding of the source code, which is set by parameters to the
     # parser or by the encoding magic comment.
@@ -276,43 +304,11 @@ module Prism
     # The length of this location in bytes.
     attr_reader length: Integer
 
-    @trailing_comments: Array[Comment]?
-
-    @leading_comments: Array[Comment]?
-
     # Create a new location object with the given source, start byte offset, and
     # byte length.
     #
     # : (Source source, Integer start_offset, Integer length) -> void
     def initialize: (Source source, Integer start_offset, Integer length) -> void
-
-    # These are the comments that are associated with this location that exist
-    # before the start of this location.
-    #
-    # : () -> Array[Comment]
-    def leading_comments: () -> Array[Comment]
-
-    # Attach a comment to the leading comments of this location.
-    #
-    # : (Comment comment) -> void
-    def leading_comment: (Comment comment) -> void
-
-    # These are the comments that are associated with this location that exist
-    # after the end of this location.
-    #
-    # : () -> Array[Comment]
-    def trailing_comments: () -> Array[Comment]
-
-    # Attach a comment to the trailing comments of this location.
-    #
-    # : (Comment comment) -> void
-    def trailing_comment: (Comment comment) -> void
-
-    # Returns all comments that are associated with this location (both leading
-    # and trailing comments).
-    #
-    # : () -> Array[Comment]
-    def comments: () -> Array[Comment]
 
     # Create a new location object with the given options.
     #
@@ -636,9 +632,6 @@ module Prism
   # It contains the requested structure, any comments that were encounters,
   # and any errors that were encountered.
   class Result
-    # The list of comments that were encountered during parsing.
-    attr_reader comments: Array[Comment]
-
     # The list of magic comments that were encountered during parsing.
     attr_reader magic_comments: Array[MagicComment]
 
@@ -658,8 +651,13 @@ module Prism
 
     # Create a new result object with the given values.
     #
-    # : (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
-    def initialize: (Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    # : (Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+
+    # The list of comments that were encountered during parsing.
+    #
+    # : () -> Array[Comment]
+    def comments: () -> Array[Comment]
 
     # Implement the hash pattern matching interface for Result.
     #
@@ -719,18 +717,13 @@ module Prism
 
     # Create a new parse result object with the given values.
     #
-    # : (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
-    def initialize: (ProgramNode value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    # : (ProgramNode value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (ProgramNode value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for ParseResult.
     #
     # : (Array[Symbol]? keys) -> Hash[Symbol, untyped]
     def deconstruct_keys: (Array[Symbol]? keys) -> Hash[Symbol, untyped]
-
-    # Attach the list of comments to their respective locations in the tree.
-    #
-    # : () -> void
-    def attach_comments!: () -> void
 
     # Walk the tree and mark nodes that are on a new line, loosely emulating
     # the behavior of CRuby's `:line` tracepoint event.
@@ -752,8 +745,8 @@ module Prism
 
     # Create a new lex result object with the given values.
     #
-    # : (Array[Token] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
-    def initialize: (Array[Token] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    # : (Array[Token] value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: (Array[Token] value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for LexResult.
     #
@@ -769,8 +762,8 @@ module Prism
 
     # Create a new parse lex result object with the given values.
     #
-    # : ([ProgramNode, Array[Token]] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
-    def initialize: ([ ProgramNode, Array[Token] ] value, Array[Comment] comments, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    # : ([ProgramNode, Array[Token]] value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
+    def initialize: ([ ProgramNode, Array[Token] ] value, Array[MagicComment] magic_comments, Location? data_loc, Array[ParseError] errors, Array[ParseWarning] warnings, bool continuable, Source source) -> void
 
     # Implement the hash pattern matching interface for ParseLexResult.
     #
