@@ -1161,6 +1161,17 @@ end
     }
 
     #[test]
+    fn diagnostic_message_test() {
+        let source = b"# encoding: shift_jis\nx = <<~\x82\xA0\n";
+        let result = parse(source);
+        let error = result.errors().next().unwrap();
+
+        let message = error.message();
+        assert!(std::str::from_utf8(message).is_err());
+        assert!(message.windows(2).any(|window| window == b"\x82\xA0"));
+    }
+
+    #[test]
     fn malformed_shebang() {
         let source = "#!\x00";
         let result = parse(source.as_ref());
