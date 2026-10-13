@@ -1,9 +1,34 @@
-<h1 align="center">Prism Ruby parser</h1>
-<div align="center">
-  <img alt="Prism Ruby parser" height="256px" src="https://github.com/ruby/prism/blob/main/doc/images/prism.png?raw=true">
-</div>
+<h1 align="center">Prism</h1>
 
 This is a parser for the Ruby programming language. It is designed to be portable, error tolerant, and maintainable. It is written in C99 and has no dependencies.
+
+## Getting started
+
+To compile the parser, you will need:
+
+* C99 compiler
+* GNU make
+* Ruby 2.7.0 or later
+
+Once you have these dependencies, run:
+
+```
+bundle install
+```
+
+to fetch the Ruby dependencies. Finally, run:
+
+```
+bundle exec rake compile
+```
+
+to compile the parser. It will be built in the `build` directory. To test that everything is working, run:
+
+```
+bin/parse -e "1 + 2"
+```
+
+to see the syntax tree for the expression `1 + 2`.
 
 ## Overview
 
@@ -54,93 +79,3 @@ The repository contains the infrastructure for both a shared library (libprism) 
         ├── fixtures      Ruby code used for testing
         └── snapshots     snapshots of generated syntax trees corresponding to fixtures
 ```
-
-## Getting started
-
-To compile the shared library, you will need:
-
-* C99 compiler
-* GNU make
-* Ruby 2.7.0 or later
-
-Once you have these dependencies, run:
-
-```
-bundle install
-```
-
-to fetch the Ruby dependencies. Finally, run:
-
-```
-bundle exec rake compile
-```
-
-to compile the shared library. It will be built in the `build` directory. To test that everything is working, run:
-
-```
-bin/parse -e "1 + 2"
-```
-
-to see the syntax tree for the expression `1 + 2`.
-
-## Contributing
-
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additionally have documentation about the overall design of the project as well as various subtopics.
-
-* [Build system](docs/build_system.md)
-* [Configuration](docs/configuration.md)
-* [CRuby compilation](docs/cruby_compilation.md)
-* [Design](docs/design.md)
-* [Encoding](docs/encoding.md)
-* [Fuzzing](docs/fuzzing.md)
-* [Heredocs](docs/heredocs.md)
-* [JavaScript](docs/javascript.md)
-* [Local variable depth](docs/local_variable_depth.md)
-* [Mapping](docs/mapping.md)
-* [Parser translation](docs/parser_translation.md)
-* [Parsing rules](docs/parsing_rules.md)
-* [Releasing](docs/releasing.md)
-* [Ripper translation](docs/ripper_translation.md)
-* [Ruby API](docs/ruby_api.md)
-* [RubyParser translation](docs/ruby_parser_translation.md)
-* [Serialization](docs/serialization.md)
-* [Testing](docs/testing.md)
-
-## Examples
-
-Prism has been integrated into the majority of Ruby runtimes, many libraries, and some applications. Below is a list of some of the projects that use Prism:
-
-### Runtimes
-
-* [CRuby](https://github.com/ruby/ruby/pull/7964) (via C)
-* [Garnet](https://github.com/camertron/garnet-js) (via WASM)
-* [JRuby](https://github.com/jruby/jruby/pull/8103) (via Java)
-* [MRuby](https://github.com/mruby/mruby) (via C)
-* [Natalie](https://github.com/natalie-lang/natalie/pull/1213) (via C++ and Ruby)
-* [Opal](https://github.com/opal/opal/pull/2642) (via Ruby and WASM)
-* [TruffleRuby](https://github.com/truffleruby/truffleruby/issues/3117) (via Java)
-
-### Libraries
-
-* [dispersion](https://github.com/joeldrapper/dispersion)
-* [fast](https://github.com/jonatas/fast)
-* [minifyrb](https://github.com/koic/minifyrb)
-* [packwerk](https://github.com/Shopify/packwerk/pull/388) (via parser translator)
-* [rbi](https://github.com/Shopify/rbi)
-* [rails](https://github.com/rails/rails)
-  * [parsing renders](https://github.com/rails/rails/pull/49438)
-  * [parsing rdoc](https://github.com/rails/rails/pull/50870)
-  * [parsing tests](https://github.com/rails/rails/pull/51006)
-* [repl_type_completor](https://github.com/ruby/repl_type_completor)
-* [rubocop](https://docs.rubocop.org/rubocop/configuration.html#setting-the-parser-engine) (via parser translator)
-* [ruby-lsp](https://github.com/Shopify/ruby-lsp)
-* [smart_todo](https://github.com/Shopify/smart_todo/pull/69)
-* [sorbet-eraser](https://github.com/kddnewton/sorbet-eraser/pull/25)
-* [synvert](https://github.com/xinminlabs/synvert-core-ruby)
-* [typeprof](https://github.com/ruby/typeprof)
-* [unparser](https://github.com/mbj/unparser) (via parser translator)
-
-### Applications
-
-* [gem.sh](https://github.com/marcoroth/gem.sh/pull/96)
-* [Sorbet](https://github.com/sorbet/sorbet)
