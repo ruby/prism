@@ -6,36 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-Highlights of this release:
-- Significantly improved parsing performance by up to 40%.
-- The prism gem now ships precompiled platform-specific variants to rubygems.org.
-- Significant changes to the exposed C API and language bindings.
+### Highlights
 
-### Breaking Changes
-- The Ruby API now defaults to `version: "nearest"` instead of `version: "latest"`, so code is parsed with the syntax of the running Ruby (or the closest version prism supports). Pass `version: "latest"` to keep the previous behavior. [#4247](https://github.com/ruby/prism/issues/4247)
-- Optional locations like `StringNode#closing_loc` in `'foo` that were empty for syntax-invalid code will now be `nil` instead.
-- `MissingNode` has been replaced by `ErrorRecoveryNode`. `ErrorRecoveryNode` wraps unexpected nodes, so when walking syntax-invalid code you will now only need to handle this one specific node type.
-- Require arguments for `Prism::Source.for`. The second and third positional parameters are no longer optional.
-- `Prism.lex` now returns an array of tokens instead of an array of `[token, internal_parse_state]`. Previous access like `token[0]` or `token.first` to extract the actual token will continue to work.
-- The following tokens are changed:
-  * `PARENTHESIS_LEFT` was split up into `PARENTHESIS_LEFT` and `PARENTHESIS_LEFT_GROUPING`.
-  * `BRACE_LEFT` was split up into `BRACE_LEFT`, `BRACE_LEFT_ARGUMENT`, and `BRACE_LEFT_HASH`.
-  *  `BACKTICK` was split up into `BACKTICK` and `XSTRING_BACKTICK`.
-  * `NEWLINE` was split up into `NEWLINE` and `NEWLINE_TERMINATOR`.
-  * `WORDS_SEP` was split up into `WORDS_SEP` and `WORDS_SEP_IMPLICIT`.
-- Comment attachment now happens during parsing with the `attach_comments` option instead of afterward with `ParseResult#attach_comments!`, which was removed. `Node#comments` now returns the comments attached to the node by that option. `Location#comments`, `Location#leading_comments`, `Location#trailing_comments`, `Node#leading_comments`, `Node#trailing_comments`, and the comment fields of `Prism::Relocation` were removed.
-- Comments now live on the source. `Prism::Source#comments` returns them and `Result#comments` delegates to it, so `ParseResult.new`, `LexResult.new`, and `ParseLexResult.new` no longer take a `comments` argument.
-
-#### C/Rust Bindings
-- Most structs are now opaque (except for nodes) [#4015](https://github.com/ruby/prism/pull/4015)
-- Locations are now represented using slices [#3772](https://github.com/ruby/prism/pull/3772).
-- Some APIs are now arena-allocated [#3964](https://github.com/ruby/prism/pull/3964).
-
-#### JavaScript
-- The parse method now only accepts `Uint8Array` [#4227](https://github.com/ruby/prism/pull/4227).
+- Significant performance and memory usage improvements.
+- Precompiled platform-specific variants on rubygems.org.
+- Many documentation improvements, including a new playground.
+- Prism now ships accurate and complete RBS and RBI definitions.
 
 ### Added
-- Support for parsing Ruby 4.1 syntax.
+
+- Support for parsing Ruby 4.1 syntax:
+  - Add support for `&nil` to declare that a method accepts no block.
+  - Thoroughly implement void value expression check.
+  - Allow trailing commas in method signatures like `def foo(a,); end`.
+  - Reject `END { break }` and `END { next }`.
+  - `a /b/` no longer warns about ambiguous `/`.
 - `version: "nearest"` is now supported. It behaves similarly to `version: "current"` but will not raise when the version is unsupported, instead falling back to the nearest syntax version prism currently supports.
 - `raise_error` was added as a valid option. Prism will raise a `SyntaxError` when given syntax-invalid code. When `true` is given, prism decides the formatting (`tty?`, `NO_COLOR`, etc.). If you need a specific style, `:plain`, `:style`, and `:color` are also supported values.
 - Added `Prism::ParseResult#continuable` to check if the parsed source can become valid by appending more code.
@@ -45,32 +30,48 @@ Highlights of this release:
 - `Prism.parse_file` and similar now accept anything responding to `to_path` (like `Pathname`) directly.
 - `attach_comments` was added as a valid option. Each comment is attached to the node that ends latest on the comment's line before it, otherwise to the innermost node that contains it (or to that node's statements, if only whitespace and comments come between the comment and the statements), otherwise to the top-level statements. The attached comments are available through `Node#comments` and through `pm_node_comments_size` and `pm_node_comment` in the C API, as well as `pm_parser_comment_attachment`, `pm_parser_comment_ranges_size`, and `pm_parser_comment_range`, which expose the attachments grouped by node. When the option is set, the comments on the parse result are sorted by start offset.
 
-### Removed
-- Removed `Prism::Pack`.
-
 ### Changed
-- Thoroughly implement void value expression check for Ruby 4.1.
-- Add support for `&nil` to declare that a method accepts no block for Ruby 4.1.
-- Allow trailing commas in method signatures like `def foo(a,); end` for Ruby 4.1.
-- Reject `END { break }` and `END { next }` for Ruby 4.1.
-- `a /b/` no longer warns about ambiguous `/` for Ruby 4.1.
-- Many improvements to the docs (fixing Markdown on docs.ruby-lang.org, grouping related methods, showing fewer useless methods, etc.).
-- The following node fields were renamed for consistency: `InNode#{in,then}_loc` -> `InNode#{in,then}_keyword_loc`, `MatchPredicateNode#operator_loc` -> `MatchPredicateNode#keyword_loc`, `UnlessNode#keyword_loc` -> `UnlessNode#unless_keyword_loc`, `UntilNode#{keyword,closing}_loc` -> `UntilNode#{until,end}_keyword_loc`, `WhenNode#keyword_loc` -> `WhenNode#when_keyword_loc`, `WhileNode#{keyword,closing}_loc` -> `WhileNode#{while,end}_keyword_loc`. Previous names are aliased and will continue to work.
 
-### Fixed
-- Many fixes to edge-case syntax to more closely align with `parse.y`.
-- Many compatibility fixes to the ripper translator, in particular in regards to the emitted events.
-- Handful of compatibility fixes for the parser translator.
-- Fix lexing for unterminated strings/heredocs etc.
-- Preserve line-continuation only in dedent heredocs.
-- Fix error message for block/lambda with `...` argument.
-- Handful of fixes for syntax-invalid code that triggers `ASAN` and similar.
-- Fix `Source#offsets` with `freeze: true`.
-- Fix UTF-8 code units to match the number of bytes in the code unit offsets.
-- Don't replicate unary method bug in the parser translator.
-- Fix `Prism.parse_comments` locations for the FFI backend.
-- `Prism.parse_stream` no longer assumes that the given io is implemented correctly.
-- Fix `Comment#trailing` for syntax-invalid edgecase.
+Note that for this major version, almost every change listed below is breaking.
+
+- Prism now defaults to `version: "nearest"` instead of `version: "latest"`, so code is parsed with the syntax of the running Ruby (or the closest version prism supports). Pass `version: "latest"` to keep the previous behavior.
+- `MissingNode` has been replaced by `ErrorRecoveryNode`. `ErrorRecoveryNode` wraps unexpected nodes, so when walking syntax-invalid code you will now only need to handle this one specific node type.
+- Some fields were renamed for consistency. Previous names are aliased and will continue to work in the Ruby layer.
+  - `InNode#{in,then}_loc` -> `InNode#{in,then}_keyword_loc`
+  - `MatchPredicateNode#operator_loc` -> `MatchPredicateNode#keyword_loc`
+  - `UnlessNode#keyword_loc` -> `UnlessNode#unless_keyword_loc`
+  - `UntilNode#{keyword,closing}_loc` -> `UntilNode#{until,end}_keyword_loc`
+  - `WhenNode#keyword_loc` -> `WhenNode#when_keyword_loc`
+  - `WhileNode#{keyword,closing}_loc` -> `WhileNode#{while,end}_keyword_loc`
+- Optional locations like `StringNode#closing_loc` in `'foo` that were empty for syntax-invalid code will now be `nil` instead.
+- `Prism.lex` now returns an array of tokens instead of an array of `[token, internal_parse_state]`. Previous access like `token[0]` or `token.first` to extract the actual token will continue to work. Additionally the following tokens were changed:
+  - `PARENTHESIS_LEFT` was split up into `PARENTHESIS_LEFT` and `PARENTHESIS_LEFT_GROUPING`.
+  - `BRACE_LEFT` was split up into `BRACE_LEFT`, `BRACE_LEFT_ARGUMENT`, and `BRACE_LEFT_HASH`.
+  - `BACKTICK` was split up into `BACKTICK` and `XSTRING_BACKTICK`.
+  - `NEWLINE` was split up into `NEWLINE` and `NEWLINE_TERMINATOR`.
+  - `WORDS_SEP` was split up into `WORDS_SEP` and `WORDS_SEP_IMPLICIT`.
+
+#### Ruby
+
+- Require arguments for `Prism::Source.for`. The second and third positional parameters are no longer optional.
+- Comments now live on the source. `Prism::Source#comments` returns them and `Result#comments` delegates to it, so `ParseResult.new`, `LexResult.new`, and `ParseLexResult.new` no longer take a `comments` argument.
+- Comment attachment now happens during parsing with the `attach_comments` option instead of afterward with `ParseResult#attach_comments!`, which was removed. `Node#comments` now returns the comments attached to the node by that option. `Location#comments`, `Location#leading_comments`, `Location#trailing_comments`, `Node#leading_comments`, `Node#trailing_comments`, and the comment fields of `Prism::Relocation` were removed.
+
+#### C/Rust
+
+- Most structs are now opaque (except for nodes), and many internal functions have been hidden.
+- Locations are now represented using slices (pairs of 32-bit integers for start offset and length).
+- Most allocations are now performed through an arena.
+- You may now build side tables of comment attachments through the `attach_comments` option.
+- `newline_list` was renamed to `list_offset_list`.
+
+#### JavaScript
+
+- The parse method now only accepts `Uint8Array`, instead of forcing a transcoding to UTF-16.
+
+### Removed
+
+- Removed `Prism::Pack`.
 
 ## [1.9.0] - 2026-01-27
 
