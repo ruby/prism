@@ -97,6 +97,7 @@ If you want to build prism as a shared library and link against it, you should c
 
 * `-fPIC -shared` - Compile as a shared library
 * `-DPRISM_EXPORT_SYMBOLS` - Export the symbols (by default nothing is exported)
+* `-Wl,-Bsymbolic` (ELF platforms) - Bind the library's internal calls to its own exported functions at link time, so that they cannot be redirected to another copy of libprism loaded in the same process
 
 #### Flags
 
