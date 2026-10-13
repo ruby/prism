@@ -37,7 +37,7 @@ The repository contains the infrastructure for both a shared library (libprism) 
 ```
 .
 ├── Makefile              configuration to compile the shared library and native tests
-├── Rakefile              configuration to compile the native extension and run the Ruby tests
+├── Rakefile              configuration to compile the native extension and Ruby tests
 ├── bin
 │   ├── lex               runs the lexer on a file or string and prints the tokens
 │   ├── parse             runs the parse on a file or string and prints the AST
