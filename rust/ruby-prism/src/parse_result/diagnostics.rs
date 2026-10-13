@@ -18,14 +18,14 @@ pub struct Diagnostic<'pr> {
 impl<'pr> Diagnostic<'pr> {
     /// Returns the message associated with the diagnostic.
     ///
-    /// # Panics
-    ///
-    /// Panics if the message is not valid UTF-8.
+    /// The message is in the encoding of the source, because some messages
+    /// quote the source directly. It is therefore not guaranteed to be valid
+    /// UTF-8.
     #[must_use]
-    pub fn message(&self) -> &str {
+    pub fn message(&self) -> &[u8] {
         unsafe {
             let message = pm_diagnostic_message(self.raw);
-            CStr::from_ptr(message).to_str().expect("prism allows only UTF-8 for diagnostics.")
+            CStr::from_ptr(message).to_bytes()
         }
     }
 

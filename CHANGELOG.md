@@ -57,13 +57,20 @@ Note that for this major version, almost every change listed below is breaking.
 - Comments now live on the source. `Prism::Source#comments` returns them and `Result#comments` delegates to it, so `ParseResult.new`, `LexResult.new`, and `ParseLexResult.new` no longer take a `comments` argument.
 - Comment attachment now happens during parsing with the `attach_comments` option instead of afterward with `ParseResult#attach_comments!`, which was removed. `Node#comments` now returns the comments attached to the node by that option. `Location#comments`, `Location#leading_comments`, `Location#trailing_comments`, `Node#leading_comments`, `Node#trailing_comments`, and the comment fields of `Prism::Relocation` were removed.
 
-#### C/Rust
+#### C
 
 - Most structs are now opaque (except for nodes), and many internal functions have been hidden.
 - Locations are now represented using slices (pairs of 32-bit integers for start offset and length).
 - Most allocations are now performed through an arena.
 - You may now build side tables of comment attachments through the `attach_comments` option.
 - `newline_list` was renamed to `list_offset_list`.
+
+#### Rust
+
+- Locations are now represented using slices (pairs of 32-bit integers for start offset and length).
+- Most allocations are now performed through an arena.
+- `newline_list` was renamed to `list_offset_list`.
+- `Diagnostic::message` now returns `&[u8]` instead of `&str`.
 
 #### JavaScript
 
