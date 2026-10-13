@@ -173,6 +173,17 @@ module Prism
       assert Prism.parse_success?("1 + 1", version: "nearest")
     end
 
+    def test_version_default
+      # Trailing commas in method parameters are only valid as of Ruby 4.1.
+      source = "def foo(a,); end"
+      expected = RUBY_VERSION >= "4.1"
+
+      assert_equal expected, Prism.parse_success?(source)
+      assert_equal expected, Prism.parse_success?(source, version: nil)
+      assert_equal expected, Prism.parse_success?(source, version: "nearest")
+      assert Prism.parse_success?(source, version: "latest")
+    end
+
     def test_scopes
       assert_kind_of Prism::CallNode, Prism.parse_statement("foo")
       assert_kind_of Prism::LocalVariableReadNode, Prism.parse_statement("foo", scopes: [[:foo]])

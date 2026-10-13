@@ -12,6 +12,7 @@ Highlights of this release:
 - Significant changes to the exposed C API and language bindings.
 
 ### Breaking Changes
+- The Ruby API now defaults to `version: "nearest"` instead of `version: "latest"`, so code is parsed with the syntax of the running Ruby (or the closest version prism supports). Pass `version: "latest"` to keep the previous behavior. [#4247](https://github.com/ruby/prism/issues/4247)
 - Optional locations like `StringNode#closing_loc` in `'foo` that were empty for syntax-invalid code will now be `nil` instead.
 - `MissingNode` has been replaced by `ErrorRecoveryNode`. `ErrorRecoveryNode` wraps unexpected nodes, so when walking syntax-invalid code you will now only need to handle this one specific node type.
 - Require arguments for `Prism::Source.for`. The second and third positional parameters are no longer optional.
