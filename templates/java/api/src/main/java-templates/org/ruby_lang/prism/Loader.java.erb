@@ -27,6 +27,15 @@ public class Loader {
         <%- end -%>
     }
 
+    /**
+     * Whether to skip the bodies of DefNodes while loading. A lazily loaded
+     * DefNode has a null body until it is replaced with DefNode#getNonLazy(),
+     * which loads the whole DefNode again from the serialized output.
+     */
+    protected boolean loadDefNodesLazily() {
+        return false;
+    }
+
     private static final class ConstantPool {
 
         private final Loader loader;
@@ -112,7 +121,7 @@ public class Loader {
 
         Nodes.Node node;
         if (errors.length == 0) {
-            node = loadNode();
+            node = loadNodes(constantPoolBufferOffset, -1);
 
             int left = constantPoolBufferOffset - buffer.position();
             if (left != 0) {
@@ -195,15 +204,6 @@ public class Loader {
         }
 
         return warnings;
-    }
-
-    private Nodes.Node loadOptionalNode() {
-        if (buffer.get(buffer.position()) != 0) {
-            return loadNode();
-        } else {
-            buffer.position(buffer.position() + 1); // continue after the 0 byte
-            return null;
-        }
     }
 
     private <%= id_type %> loadConstant() {
@@ -327,86 +327,112 @@ public class Loader {
         return negative ? result.negate() : result;
     }
 
-    <%-
-    base_params = [*("nodeId" if Prism::Template::INCLUDE_NODE_ID), "startOffset", "length"]
-    base_params_sig = base_params.map { "int #{_1}" }.join(", ")
-    -%>
-    private Nodes.Node loadNode() {
-        int type = buffer.get() & 0xFF;
-        <%- if Prism::Template::INCLUDE_NODE_ID -%>
-        int nodeId = loadVarUInt();
-        <%- end -%>
-        int startOffset = loadVarUInt();
-        int length = loadVarUInt();
+    private static final int LAZY_MARKER = <%= Prism::Template::LAZY_MARKER %>;
 
-        switch (type) {
-            <%- array_types = [] -%>
-            <%- nodes.each_with_index do |node, index| -%>
-            case <%= index + 1 %>:
-            <%-
-            params = []
-            params << "nodeId" if Prism::Template::INCLUDE_NODE_ID
-            params << "startOffset" << "length"
-            params << "buffer.getInt()" << "null" if node.needs_serialized_length?
-            params << "loadFlags()" if node.flags
-            params.concat node.semantic_fields.map { |field|
-              case field
-              when Prism::Template::NodeField then "#{field.java_cast}loadNode()"
-              when Prism::Template::OptionalNodeField then "#{field.java_cast}loadOptionalNode()"
-              when Prism::Template::StringField then "loadString()"
-              when Prism::Template::NodeListField then
-                element_type = field.java_type.sub('[]', '')
-                array_types << element_type
-                "load#{element_type}s()"
-              when Prism::Template::ConstantField then "loadConstant()"
-              when Prism::Template::OptionalConstantField then "loadOptionalConstant()"
-              when Prism::Template::ConstantListField then "loadConstants()"
-              when Prism::Template::LocationField then "loadLocation()"
-              when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
-              when Prism::Template::UInt8Field then "buffer.get()"
-              when Prism::Template::UInt32Field then "loadVarUInt()"
-              when Prism::Template::IntegerField then "loadInteger()"
-              when Prism::Template::DoubleField then "buffer.getDouble()"
-              else raise
-              end
+    /**
+     * The stack of nodes that have been loaded but not yet attached to their
+     * parent, along with the lazy subtrees that are pending.
+     */
+    private static final class NodeStack {
+
+        private Nodes.Node[] nodes = new Nodes.Node[64];
+        private int size = 0;
+
+        /** For each pending lazy subtree, its marker position, start, and end. */
+        private int[] lazy = new int[3 * 8];
+        private int lazySize = 0;
+
+        void push(Nodes.Node node) {
+            if (size == nodes.length) {
+                nodes = java.util.Arrays.copyOf(nodes, size * 2);
             }
-            $DefNode_params = params if node.name == "DefNode"
-            -%>
-                <%- if node.name == "DefNode" -%>
-                return loadDefNode(<%= base_params.join(", ") -%>);
-                <%- else -%>
-                return new Nodes.<%= node.name %>(<%= params.join(", ") -%>);
-                <%- end -%>
-            <%- end -%>
-            default:
-                throw new Error("Unknown node type: " + type);
+            nodes[size++] = node;
+        }
+
+        Nodes.Node pop() {
+            Nodes.Node node = nodes[--size];
+            nodes[size] = null;
+            return node;
+        }
+
+        void pushLazy(int marker, int start, int end) {
+            if (lazySize * 3 == lazy.length) {
+                lazy = java.util.Arrays.copyOf(lazy, lazy.length * 2);
+            }
+            lazy[lazySize * 3] = marker;
+            lazy[lazySize * 3 + 1] = start;
+            lazy[lazySize * 3 + 2] = end;
+            lazySize++;
+        }
+
+        /**
+         * Returns the marker position of the most recently pushed lazy
+         * subtree, or -1 if there is none. That subtree always belongs to the
+         * node whose record is being loaded, because the lazy subtrees of its
+         * descendants are popped when their own records are loaded.
+         */
+        int popLazy() {
+            return lazySize == 0 ? -1 : lazy[--lazySize * 3];
         }
     }
 
-    // Can be overridden to use createLazyDefNode instead
-    protected Nodes.DefNode loadDefNode(<%= base_params_sig -%>) {
-        return createDefNode(<%= base_params.join(", ") -%>);
+    /**
+     * Loads the nodes serialized from the current position, stopping at the
+     * given offset once a single root remains, and returns that root. Nodes
+     * are serialized in post-order, so the children of each node are the
+     * topmost values on the stack, in field order, by the time its record is
+     * loaded. The lazy marker at eagerMarker, if any, is loaded eagerly even
+     * when DefNodes are loaded lazily.
+     */
+    private Nodes.Node loadNodes(int end, int eagerMarker) {
+        boolean lazy = loadDefNodesLazily();
+        NodeStack stack = new NodeStack();
+
+        while (buffer.position() < end || stack.size != 1) {
+            if (stack.lazySize > 0 && buffer.position() == stack.lazy[stack.lazySize * 3 - 2]) {
+                buffer.position(stack.lazy[stack.lazySize * 3 - 1]);
+                continue;
+            }
+
+            int type = buffer.get() & 0xFF;
+            switch (type) {
+                case 0:
+                    stack.push(null);
+                    break;
+                case LAZY_MARKER: {
+                    int marker = buffer.position() - 1;
+                    int skip = buffer.getInt();
+                    int length = buffer.getInt();
+                    if (lazy && marker != eagerMarker) {
+                        int start = buffer.position() + skip;
+                        stack.pushLazy(marker, start, start + length);
+                    }
+                    break;
+                }
+                <%- nodes.each.with_index(1) do |node, index| -%>
+                case <%= index %>:
+                    stack.push(load<%= node.name %>(stack));
+                    break;
+                <%- end -%>
+                default:
+                    throw new Error("Unknown node type: " + type);
+            }
+        }
+
+        return stack.pop();
     }
 
-    protected Nodes.DefNode createLazyDefNode(<%= base_params_sig -%>) {
-        int bufferPosition = buffer.position();
-        int serializedLength = buffer.getInt();
-        // Load everything except the body and locals, because the name, receiver, parameters are still needed for lazily defining the method
-        Nodes.DefNode lazyDefNode = new Nodes.DefNode(<%= base_params.join(", ") -%>, -bufferPosition, this, loadConstant(), loadOptionalNode(), (Nodes.ParametersNode) loadOptionalNode(), null, Nodes.EMPTY_IDENTIFIER_ARRAY);
-        buffer.position(bufferPosition + serializedLength); // skip past the serialized DefNode
-        return lazyDefNode;
-    }
-
-    protected Nodes.DefNode createDefNode(<%= base_params_sig -%>) {
-        return new Nodes.DefNode(<%= $DefNode_params.join(", ") -%>);
-    }
-
-    Nodes.DefNode createDefNodeFromSavedPosition(<%= base_params_sig -%>, int bufferPosition) {
+    Nodes.DefNode loadNonLazyDefNode(int lazyPosition) {
         Nodes.DefNode node;
         // This method mutates the buffer position and may be called from different threads so we must synchronize
         synchronized (this) {
-            buffer.position(bufferPosition);
-            node = createDefNode(<%= base_params.join(", ") -%>);
+            buffer.position(lazyPosition + 1);
+            int skip = buffer.getInt();
+            int length = buffer.getInt();
+            int end = buffer.position() + skip + length;
+
+            buffer.position(lazyPosition);
+            node = (Nodes.DefNode) loadNodes(end, lazyPosition);
         }
 
         MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source);
@@ -414,21 +440,82 @@ public class Loader {
 
         return node;
     }
+    <%- array_types = [] -%>
+    <%- nodes.each do |node| -%>
+
+    private Nodes.<%= node.name %> load<%= node.name %>(NodeStack stack) {
+        <%- if Prism::Template::INCLUDE_NODE_ID -%>
+        int nodeId = loadVarUInt();
+        <%- end -%>
+        int startOffset = loadVarUInt();
+        int length = loadVarUInt();
+        <%- if node.flags -%>
+        short flags = loadFlags();
+        <%- end -%>
+        <%- node.semantic_fields.each do |field| -%>
+        <%- case field -%>
+        <%- when Prism::Template::NodeField, Prism::Template::OptionalNodeField -%>
+        <%- when Prism::Template::NodeListField -%>
+        int <%= field.name %>Size = loadVarUInt();
+        <%- else -%>
+        var field_<%= field.name %> = <%=
+          case field
+          when Prism::Template::StringField then "loadString()"
+          when Prism::Template::ConstantField then "loadConstant()"
+          when Prism::Template::OptionalConstantField then "loadOptionalConstant()"
+          when Prism::Template::ConstantListField then "loadConstants()"
+          when Prism::Template::LocationField then "loadLocation()"
+          when Prism::Template::OptionalLocationField then "loadOptionalLocation()"
+          when Prism::Template::UInt8Field then "buffer.get()"
+          when Prism::Template::UInt32Field then "loadVarUInt()"
+          when Prism::Template::IntegerField then "loadInteger()"
+          when Prism::Template::DoubleField then "buffer.getDouble()"
+          else raise
+          end
+        %>;
+        <%- end -%>
+        <%- end -%>
+        <%- if node.lazy_field -%>
+        int lazyPosition = stack.popLazy();
+        <%- end -%>
+        <%- node.child_fields.reverse_each do |field| -%>
+        <%- case field -%>
+        <%- when Prism::Template::NodeListField -%>
+        <%- element_type = field.java_type.sub("[]", ""); array_types << element_type -%>
+        var field_<%= field.name %> = pop<%= element_type %>s(stack, <%= field.name %>Size);
+        <%- else -%>
+        <%- if field == node.lazy_field -%>
+        var field_<%= field.name %> = lazyPosition == -1 ? <%= field.java_cast %>stack.pop() : null;
+        <%- else -%>
+        var field_<%= field.name %> = <%= field.java_cast %>stack.pop();
+        <%- end -%>
+        <%- end -%>
+        <%- end -%>
+        <%-
+          params = []
+          params << "nodeId" if Prism::Template::INCLUDE_NODE_ID
+          params << "startOffset" << "length"
+          params << "lazyPosition" << "lazyPosition == -1 ? null : this" if node.lazy_field
+          params << "flags" if node.flags
+          params.concat(node.semantic_fields.map { |field| "field_#{field.name}" })
+        -%>
+        return new Nodes.<%= node.name %>(<%= params.join(", ") %>);
+    }
+    <%- end -%>
     <%- array_types.uniq.each do |type| -%>
 
     private static final Nodes.<%= type %>[] EMPTY_<%= type %>_ARRAY = {};
 
-    private Nodes.<%= type %>[] load<%= type %>s() {
-        int length = loadVarUInt();
+    private static Nodes.<%= type %>[] pop<%= type %>s(NodeStack stack, int length) {
         if (length == 0) {
             return EMPTY_<%= type %>_ARRAY;
         }
         Nodes.<%= type %>[] nodes = new Nodes.<%= type %>[length];
-        for (int i = 0; i < length; i++) {
-            <%- if type == 'Node' -%>
-            nodes[i] = loadNode();
+        for (int i = length - 1; i >= 0; i--) {
+            <%- if type == "Node" -%>
+            nodes[i] = stack.pop();
             <%- else -%>
-            nodes[i] = (Nodes.<%= type %>) loadNode();
+            nodes[i] = (Nodes.<%= type %>) stack.pop();
             <%- end -%>
         }
         return nodes;

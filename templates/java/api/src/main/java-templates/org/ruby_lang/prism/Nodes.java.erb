@@ -217,8 +217,10 @@ public abstract class Nodes {
      * </pre>
      */
     public static final class <%= node.name -%> extends Node {
-        <%- if node.needs_serialized_length? -%>
-        public final int serializedLength;
+        <%- if node.lazy_field -%>
+        /** The position of the lazy marker in the serialized output, if this node is lazy. */
+        public final int lazyPosition;
+        /** The loader that loaded this node, if this node is lazy. */
         public final Loader loader;
         <%- end -%>
         <%- if node.flags -%>
@@ -247,10 +249,10 @@ public abstract class Nodes {
           params = []
           params << "int nodeId" if Prism::Template::INCLUDE_NODE_ID
           params << "int startOffset" << "int length"
-          if node.needs_serialized_length?
-            params << "int serializedLength"
+          if node.lazy_field
+            params << "int lazyPosition"
             params << "Loader loader"
-        end
+          end
           params << "short flags" if node.flags
           params.concat(node.semantic_fields.map { |field| "#{field.java_type} #{field.name}" })
         -%>
@@ -260,8 +262,8 @@ public abstract class Nodes {
         <%- else -%>
             super(startOffset, length);
         <%- end -%>
-        <%- if node.needs_serialized_length? -%>
-            this.serializedLength = serializedLength;
+        <%- if node.lazy_field -%>
+            this.lazyPosition = lazyPosition;
             this.loader = loader;
         <%- end -%>
         <%- if node.flags -%>
@@ -272,15 +274,15 @@ public abstract class Nodes {
         <%- end -%>
         }
         <%-# extra methods for DefNode -%>
-        <%- if node.needs_serialized_length? -%>
+        <%- if node.lazy_field -%>
 
         public boolean isLazy() {
-            return serializedLength < 0;
+            return loader != null;
         }
 
         public <%= node.name -%> getNonLazy() {
             if (isLazy()) {
-                return loader.createDefNodeFromSavedPosition(<%= "nodeId, " if Prism::Template::INCLUDE_NODE_ID %>startOffset, length, -serializedLength);
+                return loader.loadNonLazy<%= node.name %>(lazyPosition);
             } else {
                 return this;
             }

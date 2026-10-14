@@ -234,6 +234,8 @@ module Prism
   # alias $foo $bar
   # ^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgJGZvbyAkYmFyCg)
   class AliasGlobalVariableNode < Node
     # Initialize a new AliasGlobalVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), keyword_loc: Location).void }
@@ -283,6 +285,8 @@ module Prism
     # alias $foo $bar
     #       ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgJGZvbyAkYmFyCg)
     sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def new_name; end
 
@@ -292,6 +296,8 @@ module Prism
     # alias $foo $bar
     #            ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgJGZvbyAkYmFyCg)
     sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def old_name; end
 
@@ -301,6 +307,8 @@ module Prism
     # alias $foo $bar
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgJGZvbyAkYmFyCg)
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -323,6 +331,8 @@ module Prism
   # alias foo bar
   # ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgZm9vIGJhcgo)
   class AliasMethodNode < Node
     # Initialize a new AliasMethodNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode), keyword_loc: Location).void }
@@ -378,6 +388,8 @@ module Prism
     # alias :"#{foo}" :"#{bar}"
     #       ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgZm9vIGJhcgoKYWxpYXMgOmZvbyA6YmFyCgphbGlhcyA6IiN7Zm9vfSIgOiIje2Jhcn0iCg)
     sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode)) }
     def new_name; end
 
@@ -393,6 +405,8 @@ module Prism
     # alias :"#{foo}" :"#{bar}"
     #                 ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgZm9vIGJhcgoKYWxpYXMgOmZvbyA6YmFyCgphbGlhcyA6IiN7Zm9vfSIgOiIje2Jhcn0iCg)
     sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode)) }
     def old_name; end
 
@@ -402,6 +416,8 @@ module Prism
     # alias foo bar
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YWxpYXMgZm9vIGJhcgo)
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -424,6 +440,8 @@ module Prism
   # foo => bar | baz
   #        ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhciB8IGJhego)
   class AlternationPatternNode < Node
     # Initialize a new AlternationPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -473,6 +491,8 @@ module Prism
     # foo => bar | baz
     #        ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhciB8IGJhego)
     sig { returns(Node) }
     def left; end
 
@@ -482,6 +502,8 @@ module Prism
     # foo => bar | baz
     #              ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhciB8IGJhego)
     sig { returns(Node) }
     def right; end
 
@@ -491,6 +513,8 @@ module Prism
     # foo => bar | baz
     #            ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhciB8IGJhego)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -513,6 +537,8 @@ module Prism
   # left and right
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBhbmQgcmlnaHQK)
   class AndNode < Node
     # Initialize a new AndNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -565,6 +591,8 @@ module Prism
     # 1 && 2
     # ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBhbmQgcmlnaHQKCjEgJiYgMgo)
     sig { returns(Node) }
     def left; end
 
@@ -577,6 +605,8 @@ module Prism
     # 1 and 2
     #       ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCAmJiByaWdodAoKMSBhbmQgMgo)
     sig { returns(Node) }
     def right; end
 
@@ -586,6 +616,8 @@ module Prism
     # left and right
     #      ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBhbmQgcmlnaHQK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -608,6 +640,8 @@ module Prism
   # return foo, bar, baz
   #        ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#cmV0dXJuIGZvbywgYmFyLCBiYXoK)
   class ArgumentsNode < Node
     # Initialize a new ArgumentsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: T::Array[Node]).void }
@@ -677,6 +711,8 @@ module Prism
     # foo(bar, baz)
     #     ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKGJhciwgYmF6KQo)
     sig { returns(T::Array[Node]) }
     def arguments; end
 
@@ -690,6 +726,8 @@ module Prism
   # [1, 2, 3]
   # ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdCg)
   class ArrayNode < Node
     # Initialize a new ArrayNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -749,6 +787,8 @@ module Prism
     # %I(apple orange banana) # "%I("
     # foo = 1, 2, 3           # nil
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsMiwzXSAgICAgICAgICAgICAgICAgIyAiWyIKJXdbZm9vIGJhciBiYXpdICAgICAgICAgIyAiJXdbIgolSShhcHBsZSBvcmFuZ2UgYmFuYW5hKSAjICIlSSgiCmZvbyA9IDEsIDIsIDMgICAgICAgICAgICMgbmlsCg)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -765,6 +805,8 @@ module Prism
     # %I(apple orange banana) # ")"
     # foo = 1, 2, 3           # nil
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsMiwzXSAgICAgICAgICAgICAgICAgIyAiXSIKJXdbZm9vIGJhciBiYXpdICAgICAgICAgIyAiXSIKJUkoYXBwbGUgb3JhbmdlIGJhbmFuYSkgIyAiKSIKZm9vID0gMSwgMiwgMyAgICAgICAgICAgIyBuaWwK)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -803,6 +845,8 @@ module Prism
   # foo in Bar[1, 2, 3]
   #        ^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIDEsIDIKCmZvbyBpbiBbMSwgMl0KCmZvbyBpbiAqYmFyCgpmb28gaW4gQmFyW10KCmZvbyBpbiBCYXJbMSwgMiwgM10K)
   class ArrayPatternNode < Node
     # Initialize a new ArrayPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -858,6 +902,8 @@ module Prism
     # foo in Bar::Baz[1, 2, 3]
     #        ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIEJhcltdCgpmb28gaW4gQmFyWzEsIDIsIDNdCgpmb28gaW4gQmFyOjpCYXpbMSwgMiwgM10K)
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
@@ -867,6 +913,8 @@ module Prism
     # foo in [1, 2]
     #         ^  ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIFsxLCAyXQo)
     sig { returns(T::Array[Node]) }
     def requireds; end
 
@@ -876,6 +924,8 @@ module Prism
     # foo in *bar
     #        ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIK)
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
@@ -885,6 +935,8 @@ module Prism
     # foo in *bar, baz
     #              ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIsIGJhego)
     sig { returns(T::Array[Node]) }
     def posts; end
 
@@ -894,6 +946,8 @@ module Prism
     # foo in [1, 2]
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIFsxLCAyXQo)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -908,6 +962,8 @@ module Prism
     # foo in [1, 2]
     #             ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIFsxLCAyXQo)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -934,6 +990,8 @@ module Prism
   # { a => b }
   #   ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhID0-IGIgfQo)
   class AssocNode < Node
     # Initialize a new AssocNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: ::T.nilable(Location)).void }
@@ -989,6 +1047,8 @@ module Prism
     # { def a; end => 1 }
     #   ^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhOiBiIH0KCnsgZm9vID0-IGJhciB9Cgp7IGRlZiBhOyBlbmQgPT4gMSB9Cg)
     sig { returns(Node) }
     def key; end
 
@@ -1001,6 +1061,8 @@ module Prism
     # { x: 1 }
     #      ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBmb28gPT4gYmFyIH0KCnsgeDogMSB9Cg)
     sig { returns(Node) }
     def value; end
 
@@ -1010,6 +1072,8 @@ module Prism
     # { foo => bar }
     #       ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBmb28gPT4gYmFyIH0K)
     sig { returns(::T.nilable(Location)) }
     def operator_loc; end
 
@@ -1032,6 +1096,8 @@ module Prism
   # { **foo }
   #   ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#eyAqKmZvbyB9Cg)
   class AssocSplatNode < Node
     # Initialize a new AssocSplatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.nilable(Node), operator_loc: Location).void }
@@ -1081,6 +1147,8 @@ module Prism
     # { **foo }
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyAqKmZvbyB9Cg)
     sig { returns(::T.nilable(Node)) }
     def value; end
 
@@ -1090,6 +1158,8 @@ module Prism
     # { **x }
     #   ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyAqKnggfQo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1112,6 +1182,8 @@ module Prism
   # $'
   # ^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JCcK)
   class BackReferenceReadNode < Node
     # Initialize a new BackReferenceReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -1162,6 +1234,8 @@ module Prism
     #
     # $+ # name `:$+`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JCYgIyBuYW1lIGA6JCZgCgokKyAjIG5hbWUgYDokK2AK)
     sig { returns(Symbol) }
     def name; end
 
@@ -1177,6 +1251,8 @@ module Prism
   # end
   # ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4KICBmb28KZW5kCg)
   class BeginNode < Node
     # Initialize a new BeginNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), rescue_clause: ::T.nilable(RescueNode), else_clause: ::T.nilable(ElseNode), ensure_clause: ::T.nilable(EnsureNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -1226,6 +1302,8 @@ module Prism
     # begin x end
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geCBlbmQK)
     sig { returns(::T.nilable(Location)) }
     def begin_keyword_loc; end
 
@@ -1240,6 +1318,8 @@ module Prism
     # begin x end
     #       ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geCBlbmQK)
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
@@ -1249,6 +1329,8 @@ module Prism
     # begin x; rescue y; end
     #          ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geDsgcmVzY3VlIHk7IGVuZAo)
     sig { returns(::T.nilable(RescueNode)) }
     def rescue_clause; end
 
@@ -1258,6 +1340,8 @@ module Prism
     # begin x; rescue y; else z; end
     #                    ^^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geDsgcmVzY3VlIHk7IGVsc2UgejsgZW5kCg)
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -1267,6 +1351,8 @@ module Prism
     # begin x; ensure y; end
     #          ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geDsgZW5zdXJlIHk7IGVuZAo)
     sig { returns(::T.nilable(EnsureNode)) }
     def ensure_clause; end
 
@@ -1276,6 +1362,8 @@ module Prism
     # begin x end
     #         ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4geCBlbmQK)
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -1302,6 +1390,8 @@ module Prism
   # bar(&args)
   #     ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyKCZhcmdzKQo)
   class BlockArgumentNode < Node
     # Initialize a new BlockArgumentNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: ::T.nilable(Node), operator_loc: Location).void }
@@ -1351,6 +1441,8 @@ module Prism
     # foo(&args)
     #      ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKCZhcmdzKQo)
     sig { returns(::T.nilable(Node)) }
     def expression; end
 
@@ -1360,6 +1452,8 @@ module Prism
     # foo(&args)
     #     ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKCZhcmdzKQo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1382,6 +1476,8 @@ module Prism
   # a { |; b| }
   #        ^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YSB7IHw7IGJ8IH0K)
   class BlockLocalVariableNode < Node
     # Initialize a new BlockLocalVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -1435,6 +1531,8 @@ module Prism
     # a { |; b| } # name `:b`
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSB7IHw7IGJ8IH0gIyBuYW1lIGA6YmAK)
     sig { returns(Symbol) }
     def name; end
 
@@ -1448,6 +1546,8 @@ module Prism
   # [1, 2, 3].each { |i| puts x }
   #                ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0K)
   class BlockNode < Node
     # Initialize a new BlockNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).void }
@@ -1497,6 +1597,8 @@ module Prism
     # [1, 2, 3].each { |i| puts x } # locals: [:i]
     #                   ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0gIyBsb2NhbHM6IFs6aV0K)
     sig { returns(T::Array[Symbol]) }
     def locals; end
 
@@ -1510,6 +1612,8 @@ module Prism
     # [1, 2, 3].each { puts it }
     #                ^^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0KClsxLCAyLCAzXS5lYWNoIHsgcHV0cyBfMSB9CgpbMSwgMiwgM10uZWFjaCB7IHB1dHMgaXQgfQo)
     sig { returns(::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
     def parameters; end
 
@@ -1519,6 +1623,8 @@ module Prism
     # [1, 2, 3].each { |i| puts x }
     #                      ^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0K)
     sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
@@ -1528,6 +1634,8 @@ module Prism
     # [1, 2, 3].each { |i| puts x }
     #                ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0K)
     sig { returns(Location) }
     def opening_loc; end
 
@@ -1542,6 +1650,8 @@ module Prism
     # [1, 2, 3].each { |i| puts x }
     #                             ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WzEsIDIsIDNdLmVhY2ggeyB8aXwgcHV0cyB4IH0K)
     sig { returns(Location) }
     def closing_loc; end
 
@@ -1569,6 +1679,8 @@ module Prism
   #       ^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoJmIpCgplbmQK)
   class BlockParameterNode < Node
     # Initialize a new BlockParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -1623,6 +1735,8 @@ module Prism
     #        ^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoJmIpICMgbmFtZSBgOmJgCgplbmQK)
     sig { returns(::T.nilable(Symbol)) }
     def name; end
 
@@ -1632,6 +1746,8 @@ module Prism
     # def a(&b)
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoJmIpCg)
     sig { returns(::T.nilable(Location)) }
     def name_loc; end
 
@@ -1647,6 +1763,8 @@ module Prism
     #       ^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoJmIpCgplbmQK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1673,6 +1791,8 @@ module Prism
   #        ^^^^^^^^^^^^^^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4gKGEsIGIgPSAxOyBsb2NhbCkgeyB9Cgpmb28gZG8gfGEsIGIgPSAxOyBsb2NhbHwKCmVuZAo)
   class BlockParametersNode < Node
     # Initialize a new BlockParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parameters: ::T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -1726,6 +1846,8 @@ module Prism
     #         ^^^^^^^^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4gKGEsIGIgPSAxOyBsb2NhbCkgeyB9Cgpmb28gZG8gfGEsIGIgPSAxOyBsb2NhbHwKCmVuZAo)
     sig { returns(::T.nilable(ParametersNode)) }
     def parameters; end
 
@@ -1739,6 +1861,8 @@ module Prism
     #                   ^^^^^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4gKGEsIGIgPSAxOyBsb2NhbCkgeyB9Cgpmb28gZG8gfGEsIGIgPSAxOyBsb2NhbHwKCmVuZAo)
     sig { returns(T::Array[BlockLocalVariableNode]) }
     def locals; end
 
@@ -1752,6 +1876,8 @@ module Prism
     #        ^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4gKGEsIGIgPSAxOyBsb2NhbCkgeyB9Cgpmb28gZG8gfGEsIGIgPSAxOyBsb2NhbHwKCmVuZAo)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -1770,6 +1896,8 @@ module Prism
     #                        ^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4gKGEsIGIgPSAxOyBsb2NhbCkgeyB9Cgpmb28gZG8gfGEsIGIgPSAxOyBsb2NhbHwKCmVuZAo)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -1796,6 +1924,8 @@ module Prism
   # break foo
   # ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YnJlYWsgZm9vCg)
   class BreakNode < Node
     # Initialize a new BreakNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
@@ -1845,6 +1975,8 @@ module Prism
     # break foo
     #       ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YnJlYWsgZm9vCg)
     sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
@@ -1854,6 +1986,8 @@ module Prism
     # break foo
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YnJlYWsgZm9vCg)
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -1876,6 +2010,8 @@ module Prism
   # foo.bar &&= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
   class CallAndWriteNode < Node
     # Initialize a new CallAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
@@ -1941,6 +2077,8 @@ module Prism
     # foo.bar &&= value
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
@@ -1950,6 +2088,8 @@ module Prism
     # foo.bar &&= value
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -1964,6 +2104,8 @@ module Prism
     # foo.bar &&= value
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -1978,6 +2120,8 @@ module Prism
     # foo.bar &&= value # read_name `:bar`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUgIyByZWFkX25hbWUgYDpiYXJgCg)
     sig { returns(Symbol) }
     def read_name; end
 
@@ -1987,6 +2131,8 @@ module Prism
     # foo.bar &&= value # write_name `:bar=`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUgIyB3cml0ZV9uYW1lIGA6YmFyPWAK)
     sig { returns(Symbol) }
     def write_name; end
 
@@ -1996,6 +2142,8 @@ module Prism
     # foo.bar &&= value
     #         ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2010,6 +2158,8 @@ module Prism
     # foo.bar &&= value
     #             ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAmJj0gdmFsdWUK)
     sig { returns(Node) }
     def value; end
 
@@ -2050,6 +2200,8 @@ module Prism
   # foo&.bar
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vCgpmb28oKQoKK2ZvbwoKZm9vICsgYmFyCgpmb28uYmFyCgpmb28mLmJhcgo)
   class CallNode < Node
     # Initialize a new CallNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), name: Symbol, message_loc: ::T.nilable(Location), opening_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), closing_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).void }
@@ -2121,6 +2273,8 @@ module Prism
     # foo + bar
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcgoKK2ZvbwoKZm9vICsgYmFyCg)
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
@@ -2133,6 +2287,8 @@ module Prism
     # foo&.bar
     #    ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcgoKZm9vJi5iYXIK)
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -2147,6 +2303,8 @@ module Prism
     # foo.bar # name `:foo`
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciAjIG5hbWUgYDpmb29gCg)
     sig { returns(Symbol) }
     def name; end
 
@@ -2156,6 +2314,8 @@ module Prism
     # foo.bar
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcgo)
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2170,6 +2330,8 @@ module Prism
     # foo(bar)
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKGJhcikK)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -2184,6 +2346,8 @@ module Prism
     # foo(bar)
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKGJhcikK)
     sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
@@ -2193,6 +2357,8 @@ module Prism
     # foo(bar)
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKGJhcikK)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -2210,6 +2376,8 @@ module Prism
     # foo[bar] = value
     #          ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciA9IHZhbHVlCgpmb29bYmFyXSA9IHZhbHVlCg)
     sig { returns(::T.nilable(Location)) }
     def equal_loc; end
 
@@ -2224,6 +2392,8 @@ module Prism
     # foo { |a| a }
     #     ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIHsgfGF8IGEgfQo)
     sig { returns(::T.nilable(::T.any(BlockNode, BlockArgumentNode))) }
     def block; end
 
@@ -2257,6 +2427,8 @@ module Prism
   # foo.bar += baz
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSBiYXoK)
   class CallOperatorWriteNode < Node
     # Initialize a new CallOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
@@ -2322,6 +2494,8 @@ module Prism
     # foo.bar += value
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZQo)
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
@@ -2331,6 +2505,8 @@ module Prism
     # foo.bar += value
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZQo)
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -2345,6 +2521,8 @@ module Prism
     # foo.bar += value
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZQo)
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2359,6 +2537,8 @@ module Prism
     # foo.bar += value # read_name `:bar`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZSAjIHJlYWRfbmFtZSBgOmJhcmAK)
     sig { returns(Symbol) }
     def read_name; end
 
@@ -2368,6 +2548,8 @@ module Prism
     # foo.bar += value # write_name `:bar=`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZSAjIHdyaXRlX25hbWUgYDpiYXI9YAo)
     sig { returns(Symbol) }
     def write_name; end
 
@@ -2377,6 +2559,8 @@ module Prism
     # foo.bar += value # binary_operator `:+`
     #         ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZSAjIGJpbmFyeV9vcGVyYXRvciBgOitgCg)
     sig { returns(Symbol) }
     def binary_operator; end
 
@@ -2386,6 +2570,8 @@ module Prism
     # foo.bar += value
     #         ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZQo)
     sig { returns(Location) }
     def binary_operator_loc; end
 
@@ -2400,6 +2586,8 @@ module Prism
     # foo.bar += value
     #            ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciArPSB2YWx1ZQo)
     sig { returns(Node) }
     def value; end
 
@@ -2421,6 +2609,8 @@ module Prism
   # foo.bar ||= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
   class CallOrWriteNode < Node
     # Initialize a new CallOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
@@ -2486,6 +2676,8 @@ module Prism
     # foo.bar ||= value
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
@@ -2495,6 +2687,8 @@ module Prism
     # foo.bar ||= value
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -2509,6 +2703,8 @@ module Prism
     # foo.bar ||= value
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2523,6 +2719,8 @@ module Prism
     # foo.bar ||= value # read_name `:bar`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUgIyByZWFkX25hbWUgYDpiYXJgCg)
     sig { returns(Symbol) }
     def read_name; end
 
@@ -2532,6 +2730,8 @@ module Prism
     # foo.bar ||= value # write_name `:bar=`
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUgIyB3cml0ZV9uYW1lIGA6YmFyPWAK)
     sig { returns(Symbol) }
     def write_name; end
 
@@ -2541,6 +2741,8 @@ module Prism
     # foo.bar ||= value
     #         ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2555,6 +2757,8 @@ module Prism
     # foo.bar ||= value
     #             ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciB8fD0gdmFsdWUK)
     sig { returns(Node) }
     def value; end
 
@@ -2588,6 +2792,8 @@ module Prism
   # for foo.bar in baz do end
   #     ^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciwgPSAxCgpiZWdpbgpyZXNjdWUgPT4gZm9vLmJhcgoKZW5kCgpmb3IgZm9vLmJhciBpbiBiYXogZG8gZW5kCg)
   class CallTargetNode < Node
     # Initialize a new CallTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, call_operator_loc: Location, name: Symbol, message_loc: Location).void }
@@ -2653,6 +2859,8 @@ module Prism
     # foo.bar = 1
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciA9IDEK)
     sig { returns(Node) }
     def receiver; end
 
@@ -2662,6 +2870,8 @@ module Prism
     # foo.bar = 1
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciA9IDEK)
     sig { returns(Location) }
     def call_operator_loc; end
 
@@ -2676,6 +2886,8 @@ module Prism
     # foo.bar = 1 # name `:foo`
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciA9IDEgIyBuYW1lIGA6Zm9vYAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -2685,6 +2897,8 @@ module Prism
     # foo.bar = 1
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhciA9IDEK)
     sig { returns(Location) }
     def message_loc; end
 
@@ -2711,6 +2925,8 @@ module Prism
   # foo => [bar => baz]
   #         ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IFtiYXIgPT4gYmF6XQo)
   class CapturePatternNode < Node
     # Initialize a new CapturePatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, target: LocalVariableTargetNode, operator_loc: Location).void }
@@ -2760,6 +2976,8 @@ module Prism
     # foo => bar
     #        ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
     sig { returns(Node) }
     def value; end
 
@@ -2769,6 +2987,8 @@ module Prism
     # foo => bar
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
     sig { returns(LocalVariableTargetNode) }
     def target; end
 
@@ -2778,6 +2998,8 @@ module Prism
     # foo => bar
     #     ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2802,6 +3024,8 @@ module Prism
   # end
   # ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlCmluIGZhbHNlCmVuZAo)
   class CaseMatchNode < Node
     # Initialize a new CaseMatchNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[InNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
@@ -2851,6 +3075,8 @@ module Prism
     # case true; in false; end
     #      ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyBpbiBmYWxzZTsgZW5kCg)
     sig { returns(::T.nilable(Node)) }
     def predicate; end
 
@@ -2860,6 +3086,8 @@ module Prism
     # case true; in false; end
     #            ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyBpbiBmYWxzZTsgZW5kCg)
     sig { returns(T::Array[InNode]) }
     def conditions; end
 
@@ -2869,6 +3097,8 @@ module Prism
     # case true; in false; else; end
     #                      ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyBpbiBmYWxzZTsgZWxzZTsgZW5kCg)
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -2878,6 +3108,8 @@ module Prism
     # case true; in false; end
     # ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyBpbiBmYWxzZTsgZW5kCg)
     sig { returns(Location) }
     def case_keyword_loc; end
 
@@ -2892,6 +3124,8 @@ module Prism
     # case true; in false; end
     #                      ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyBpbiBmYWxzZTsgZW5kCg)
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -2920,6 +3154,8 @@ module Prism
   # end
   # ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlCndoZW4gZmFsc2UKZW5kCg)
   class CaseNode < Node
     # Initialize a new CaseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[WhenNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
@@ -2969,6 +3205,8 @@ module Prism
     # case true; when false; end
     #      ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyB3aGVuIGZhbHNlOyBlbmQK)
     sig { returns(::T.nilable(Node)) }
     def predicate; end
 
@@ -2978,6 +3216,8 @@ module Prism
     # case true; when false; end
     #            ^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyB3aGVuIGZhbHNlOyBlbmQK)
     sig { returns(T::Array[WhenNode]) }
     def conditions; end
 
@@ -2987,6 +3227,8 @@ module Prism
     # case true; when false; else; end
     #                        ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyB3aGVuIGZhbHNlOyBlbHNlOyBlbmQK)
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -2996,6 +3238,8 @@ module Prism
     # case true; when false; end
     # ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyB3aGVuIGZhbHNlOyBlbmQK)
     sig { returns(Location) }
     def case_keyword_loc; end
 
@@ -3010,6 +3254,8 @@ module Prism
     # case true; when false; end
     #                        ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlOyB3aGVuIGZhbHNlOyBlbmQK)
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -3036,6 +3282,8 @@ module Prism
   # class Foo end
   # ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIGVuZAo)
   class ClassNode < Node
     # Initialize a new ClassNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
@@ -3089,6 +3337,8 @@ module Prism
     # class Foo end
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIGVuZAo)
     sig { returns(Location) }
     def class_keyword_loc; end
 
@@ -3107,6 +3357,8 @@ module Prism
     # class Foo < Bar
     #           ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIDwgQmFyCg)
     sig { returns(::T.nilable(Location)) }
     def inheritance_operator_loc; end
 
@@ -3121,6 +3373,8 @@ module Prism
     # class Foo < Bar
     #             ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIDwgQmFyCg)
     sig { returns(::T.nilable(Node)) }
     def superclass; end
 
@@ -3130,6 +3384,8 @@ module Prism
     # class Foo; bar; end
     #            ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vOyBiYXI7IGVuZAo)
     sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
@@ -3139,6 +3395,8 @@ module Prism
     # class Foo end
     #           ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIGVuZAo)
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -3152,6 +3410,8 @@ module Prism
     # ```rb
     # class Foo end # name `:Foo`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgRm9vIGVuZCAjIG5hbWUgYDpGb29gCg)
     sig { returns(Symbol) }
     def name; end
 
@@ -3177,6 +3437,8 @@ module Prism
   # @@target &&= value
   # ^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgJiY9IHZhbHVlCg)
   class ClassVariableAndWriteNode < Node
     # Initialize a new ClassVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3226,6 +3488,8 @@ module Prism
     # @@target &&= value # name `:@@target`
     # ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgJiY9IHZhbHVlICMgbmFtZSBgOkBAdGFyZ2V0YAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -3235,6 +3499,8 @@ module Prism
     # @@target &&= value
     # ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgJiY9IHZhbHVlCg)
     sig { returns(Location) }
     def name_loc; end
 
@@ -3249,6 +3515,8 @@ module Prism
     # @@target &&= value
     #          ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgJiY9IHZhbHVlCg)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -3263,6 +3531,8 @@ module Prism
     # @@target &&= value
     #              ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgJiY9IHZhbHVlCg)
     sig { returns(Node) }
     def value; end
 
@@ -3280,6 +3550,8 @@ module Prism
   # @@target += value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgKz0gdmFsdWUK)
   class ClassVariableOperatorWriteNode < Node
     # Initialize a new ClassVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -3363,6 +3635,8 @@ module Prism
   # @@target ||= value
   # ^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEB0YXJnZXQgfHw9IHZhbHVlCg)
   class ClassVariableOrWriteNode < Node
     # Initialize a new ClassVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3446,6 +3720,8 @@ module Prism
   # @@foo
   # ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28K)
   class ClassVariableReadNode < Node
     # Initialize a new ClassVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -3496,6 +3772,8 @@ module Prism
     #
     # @@_test # name `:@@_test`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBhYmMgICAjIG5hbWUgYDpAQGFiY2AKCkBAX3Rlc3QgIyBuYW1lIGA6QEBfdGVzdGAK)
     sig { returns(Symbol) }
     def name; end
 
@@ -3509,6 +3787,8 @@ module Prism
   # @@foo, @@bar = baz
   # ^^^^^  ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28sIEBAYmFyID0gYmF6Cg)
   class ClassVariableTargetNode < Node
     # Initialize a new ClassVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -3566,6 +3846,8 @@ module Prism
   # @@foo = 1
   # ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28gPSAxCg)
   class ClassVariableWriteNode < Node
     # Initialize a new ClassVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -3616,6 +3898,8 @@ module Prism
     #
     # @@_test = :test # name `@@_test`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBhYmMgPSAxMjMgICAgICMgbmFtZSBgQEBhYmNgCgpAQF90ZXN0ID0gOnRlc3QgIyBuYW1lIGBAQF90ZXN0YAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -3625,6 +3909,8 @@ module Prism
     # @@foo = :bar
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28gPSA6YmFyCg)
     sig { returns(Location) }
     def name_loc; end
 
@@ -3642,6 +3928,8 @@ module Prism
     # @@_xyz = 123
     #          ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28gPSA6YmFyCgpAQF94eXogPSAxMjMK)
     sig { returns(Node) }
     def value; end
 
@@ -3651,6 +3939,8 @@ module Prism
     # @@foo = :bar
     #       ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QEBmb28gPSA6YmFyCg)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -3673,6 +3963,8 @@ module Prism
   # Target &&= value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#VGFyZ2V0ICYmPSB2YWx1ZQo)
   class ConstantAndWriteNode < Node
     # Initialize a new ConstantAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3756,6 +4048,8 @@ module Prism
   # Target += value
   # ^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#VGFyZ2V0ICs9IHZhbHVlCg)
   class ConstantOperatorWriteNode < Node
     # Initialize a new ConstantOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -3839,6 +4133,8 @@ module Prism
   # Target ||= value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#VGFyZ2V0IHx8PSB2YWx1ZQo)
   class ConstantOrWriteNode < Node
     # Initialize a new ConstantOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3922,6 +4218,8 @@ module Prism
   # Parent::Child &&= value
   # ^^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#UGFyZW50OjpDaGlsZCAmJj0gdmFsdWUK)
   class ConstantPathAndWriteNode < Node
     # Initialize a new ConstantPathAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -3996,6 +4294,8 @@ module Prism
   # Foo::Bar
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vOjpCYXIK)
   class ConstantPathNode < Node
     # Initialize a new ConstantPathNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
@@ -4051,6 +4351,8 @@ module Prism
     # a.b::C
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vOjpCYXIKCnNlbGY6OlRlc3QKCmEuYjo6Qwo)
     sig { returns(::T.nilable(Node)) }
     def parent; end
 
@@ -4066,6 +4368,8 @@ module Prism
     # One::Two
     #    ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#OjpGb28KCk9uZTo6VHdvCg)
     sig { returns(Location) }
     def delimiter_loc; end
 
@@ -4082,6 +4386,8 @@ module Prism
     # One::Two
     #      ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#OjpGb28KCk9uZTo6VHdvCg)
     sig { returns(Location) }
     def name_loc; end
 
@@ -4104,6 +4410,8 @@ module Prism
   # Parent::Child += value
   # ^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#UGFyZW50OjpDaGlsZCArPSB2YWx1ZQo)
   class ConstantPathOperatorWriteNode < Node
     # Initialize a new ConstantPathOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -4178,6 +4486,8 @@ module Prism
   # Parent::Child ||= value
   # ^^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#UGFyZW50OjpDaGlsZCB8fD0gdmFsdWUK)
   class ConstantPathOrWriteNode < Node
     # Initialize a new ConstantPathOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -4252,6 +4562,8 @@ module Prism
   # Foo::Foo, Bar::Bar = baz
   # ^^^^^^^^  ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vOjpGb28sIEJhcjo6QmFyID0gYmF6Cg)
   class ConstantPathTargetNode < Node
     # Initialize a new ConstantPathTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
@@ -4338,6 +4650,8 @@ module Prism
   # ^^^^^^^^^^^^
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#OjpGb28gPSAxCgpGb286OkJhciA9IDEKCjo6Rm9vOjpCYXIgPSAxCg)
   class ConstantPathWriteNode < Node
     # Initialize a new ConstantPathWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -4388,6 +4702,8 @@ module Prism
     # ^^^^^^^^
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vOjpCYXIgPSAxCgo6OkZvbyA9IDphYmMK)
     sig { returns(ConstantPathNode) }
     def target; end
 
@@ -4396,6 +4712,8 @@ module Prism
     # ```rb
     #       ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#OjpBQkMgPSAxMjMK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -4410,6 +4728,8 @@ module Prism
     # FOO::BAR = :abc
     #            ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rk9POjpCQVIgPSA6YWJjCg)
     sig { returns(Node) }
     def value; end
 
@@ -4427,6 +4747,8 @@ module Prism
   # Foo
   # ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vCg)
   class ConstantReadNode < Node
     # Initialize a new ConstantReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -4477,6 +4799,8 @@ module Prism
     #
     # SOME_CONSTANT  # name `:SOME_CONSTANT`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#WCAgICAgICAgICAgICAgIyBuYW1lIGA6WGAKClNPTUVfQ09OU1RBTlQgICMgbmFtZSBgOlNPTUVfQ09OU1RBTlRgCg)
     sig { returns(Symbol) }
     def name; end
 
@@ -4490,6 +4814,8 @@ module Prism
   # Foo, Bar = baz
   # ^^^  ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vLCBCYXIgPSBiYXoK)
   class ConstantTargetNode < Node
     # Initialize a new ConstantTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -4547,6 +4873,8 @@ module Prism
   # Foo = 1
   # ^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vID0gMQo)
   class ConstantWriteNode < Node
     # Initialize a new ConstantWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -4597,6 +4925,8 @@ module Prism
     #
     # XYZ = 1    # name `:XYZ`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rm9vID0gOmJhciAjIG5hbWUgYDpGb29gCgpYWVogPSAxICAgICMgbmFtZSBgOlhZWmAK)
     sig { returns(Symbol) }
     def name; end
 
@@ -4606,6 +4936,8 @@ module Prism
     # FOO = 1
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rk9PID0gMQo)
     sig { returns(Location) }
     def name_loc; end
 
@@ -4623,6 +4955,8 @@ module Prism
     # MyClass = Class.new
     #           ^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rk9PID0gOmJhcgoKTXlDbGFzcyA9IENsYXNzLm5ldwo)
     sig { returns(Node) }
     def value; end
 
@@ -4632,6 +4966,8 @@ module Prism
     # FOO = :bar
     #     ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Rk9PID0gOmJhcgo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -4655,6 +4991,8 @@ module Prism
   # end
   # ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIG1ldGhvZAplbmQK)
   class DefNode < Node
     # Initialize a new DefNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: ::T.nilable(Node), parameters: ::T.nilable(ParametersNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: ::T.nilable(Location), lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location)).void }
@@ -4815,6 +5153,8 @@ module Prism
   # defined?(a)
   # ^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmaW5lZD8oYSkK)
   class DefinedNode < Node
     # Initialize a new DefinedNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lparen_loc: ::T.nilable(Location), value: Node, rparen_loc: ::T.nilable(Location), keyword_loc: Location).void }
@@ -4911,6 +5251,8 @@ module Prism
   # if a then b else c end
   #             ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgYSB0aGVuIGIgZWxzZSBjIGVuZAo)
   class ElseNode < Node
     # Initialize a new ElseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -4994,6 +5336,8 @@ module Prism
   # "foo #{bar}"
   #      ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ImZvbyAje2Jhcn0iCg)
   class EmbeddedStatementsNode < Node
     # Initialize a new EmbeddedStatementsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: ::T.nilable(StatementsNode), closing_loc: Location).void }
@@ -5077,6 +5421,8 @@ module Prism
   # "foo #@bar"
   #      ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ImZvbyAjQGJhciIK)
   class EmbeddedVariableNode < Node
     # Initialize a new EmbeddedVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: ::T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).void }
@@ -5151,6 +5497,8 @@ module Prism
   #   bar
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4KICBmb28KZW5zdXJlCgogIGJhcgplbmQK)
   class EnsureNode < Node
     # Initialize a new EnsureNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: Location).void }
@@ -5286,6 +5634,8 @@ module Prism
   # false
   # ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZmFsc2UK)
   class FalseNode < Node
     # Initialize a new FalseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -5348,6 +5698,8 @@ module Prism
   # foo => *bar, baz, *qux
   #        ^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIsIGJheiwgKnF1eAoKZm9vIGluIFsqYmFyLCBiYXosICpxdXhdCgpmb28gaW4gRm9vKCpiYXIsIGJheiwgKnF1eCkKCmZvbyA9PiAqYmFyLCBiYXosICpxdXgK)
   class FindPatternNode < Node
     # Initialize a new FindPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: SplatNode, opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -5397,6 +5749,8 @@ module Prism
     # foo in Foo(*bar, baz, *qux)
     #        ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIEZvbygqYmFyLCBiYXosICpxdXgpCg)
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
@@ -5409,6 +5763,8 @@ module Prism
     # foo in Foo(*bar, baz, *qux)
     #            ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIsIGJheiwgKnF1eAoKZm9vIGluIEZvbygqYmFyLCBiYXosICpxdXgpCg)
     sig { returns(SplatNode) }
     def left; end
 
@@ -5421,6 +5777,8 @@ module Prism
     # foo in Foo(*bar, baz, 1, *qux)
     #                  ^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIsIGJheiwgKnF1eAoKZm9vIGluIEZvbygqYmFyLCBiYXosIDEsICpxdXgpCg)
     sig { returns(T::Array[Node]) }
     def requireds; end
 
@@ -5433,6 +5791,8 @@ module Prism
     # foo in Foo(*bar, baz, *qux)
     #                       ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluICpiYXIsIGJheiwgKnF1eAoKZm9vIGluIEZvbygqYmFyLCBiYXosICpxdXgpCg)
     sig { returns(SplatNode) }
     def right; end
 
@@ -5445,6 +5805,8 @@ module Prism
     # foo in Foo(*bar, baz, *qux)
     #           ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIFsqYmFyLCBiYXosICpxdXhdCgpmb28gaW4gRm9vKCpiYXIsIGJheiwgKnF1eCkK)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -5462,6 +5824,8 @@ module Prism
     # foo in Foo(*bar, baz, *qux)
     #                           ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIFsqYmFyLCBiYXosICpxdXhdCgpmb28gaW4gRm9vKCpiYXIsIGJheiwgKnF1eCkK)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -5488,6 +5852,8 @@ module Prism
   # baz if foo .. bar
   #        ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmF6IGlmIGZvbyAuLiBiYXIK)
   class FlipFlopNode < Node
     # Initialize a new FlipFlopNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
@@ -5566,6 +5932,8 @@ module Prism
   # 1.0
   # ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#MS4wCg)
   class FloatNode < Node
     # Initialize a new FloatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Float).void }
@@ -5623,6 +5991,8 @@ module Prism
   # for i in a end
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
   class ForNode < Node
     # Initialize a new ForNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).void }
@@ -5672,6 +6042,8 @@ module Prism
     # for i in a end
     #     ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
     sig { returns(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)) }
     def index; end
 
@@ -5681,6 +6053,8 @@ module Prism
     # for i in a end
     #          ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
     sig { returns(Node) }
     def collection; end
 
@@ -5692,6 +6066,8 @@ module Prism
     #   ^^^^^^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYQogIGZvbyhpKQoKZW5kCg)
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
@@ -5701,6 +6077,8 @@ module Prism
     # for i in a end
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
     sig { returns(Location) }
     def for_keyword_loc; end
 
@@ -5715,6 +6093,8 @@ module Prism
     # for i in a end
     #       ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
     sig { returns(Location) }
     def in_keyword_loc; end
 
@@ -5729,6 +6109,8 @@ module Prism
     # for i in a do end
     #            ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBkbyBlbmQK)
     sig { returns(::T.nilable(Location)) }
     def do_keyword_loc; end
 
@@ -5743,6 +6125,8 @@ module Prism
     # for i in a end
     #            ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGkgaW4gYSBlbmQK)
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -5779,6 +6163,8 @@ module Prism
   #       ^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGZvbyguLi4pCiAgYmFyKC4uLikKCmVuZAo)
   class ForwardingArgumentsNode < Node
     # Initialize a new ForwardingArgumentsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -5833,6 +6219,8 @@ module Prism
   #         ^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGZvbyguLi4pCgplbmQK)
   class ForwardingParameterNode < Node
     # Initialize a new ForwardingParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -5890,6 +6278,8 @@ module Prism
   # ^^^^^^^^^^^^^
   #
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#c3VwZXIKCnN1cGVyIHsgMTIzIH0K)
   # If it has any other arguments, it would be a `SuperNode` instead.
   class ForwardingSuperNode < Node
     # Initialize a new ForwardingSuperNode node.
@@ -5965,6 +6355,8 @@ module Prism
   # $target &&= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JHRhcmdldCAmJj0gdmFsdWUK)
   class GlobalVariableAndWriteNode < Node
     # Initialize a new GlobalVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -6048,6 +6440,8 @@ module Prism
   # $target += value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JHRhcmdldCArPSB2YWx1ZQo)
   class GlobalVariableOperatorWriteNode < Node
     # Initialize a new GlobalVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -6131,6 +6525,8 @@ module Prism
   # $target ||= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JHRhcmdldCB8fD0gdmFsdWUK)
   class GlobalVariableOrWriteNode < Node
     # Initialize a new GlobalVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -6214,6 +6610,8 @@ module Prism
   # $foo
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbwo)
   class GlobalVariableReadNode < Node
     # Initialize a new GlobalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -6264,6 +6662,8 @@ module Prism
     #
     # $_Test # name `:$_Test`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyAgICMgbmFtZSBgOiRmb29gCgokX1Rlc3QgIyBuYW1lIGA6JF9UZXN0YAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -6277,6 +6677,8 @@ module Prism
   # $foo, $bar = baz
   # ^^^^  ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbywgJGJhciA9IGJhego)
   class GlobalVariableTargetNode < Node
     # Initialize a new GlobalVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -6334,6 +6736,8 @@ module Prism
   # $foo = 1
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyA9IDEK)
   class GlobalVariableWriteNode < Node
     # Initialize a new GlobalVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -6384,6 +6788,8 @@ module Prism
     #
     # $_Test = 123 # name `:$_Test`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyA9IDpiYXIgICMgbmFtZSBgOiRmb29gCgokX1Rlc3QgPSAxMjMgIyBuYW1lIGA6JF9UZXN0YAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -6393,6 +6799,8 @@ module Prism
     # $foo = :bar
     # ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyA9IDpiYXIK)
     sig { returns(Location) }
     def name_loc; end
 
@@ -6410,6 +6818,8 @@ module Prism
     # $-xyz = 123
     #         ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyA9IDpiYXIKCiQteHl6ID0gMTIzCg)
     sig { returns(Node) }
     def value; end
 
@@ -6419,6 +6829,8 @@ module Prism
     # $foo = :bar
     #      ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JGZvbyA9IDpiYXIK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -6441,6 +6853,8 @@ module Prism
   # { a => b }
   # ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhID0-IGIgfQo)
   class HashNode < Node
     # Initialize a new HashNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[::T.any(AssocNode, AssocSplatNode)], closing_loc: Location).void }
@@ -6490,6 +6904,8 @@ module Prism
     # { a => b }
     # ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhID0-IGIgfQo)
     sig { returns(Location) }
     def opening_loc; end
 
@@ -6507,6 +6923,8 @@ module Prism
     # { **foo }
     #   ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhOiBiIH0KCnsgKipmb28gfQo)
     sig { returns(T::Array[::T.any(AssocNode, AssocSplatNode)]) }
     def elements; end
 
@@ -6516,6 +6934,8 @@ module Prism
     # { a => b }
     #          ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBhID0-IGIgfQo)
     sig { returns(Location) }
     def closing_loc; end
 
@@ -6551,6 +6971,8 @@ module Prism
   # foo in { a: 1, b: 2 }
   #        ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSwgYjogMiB9Cgpmb28gPT4geyBhOiAxLCBiOiAyLCAqKmMgfQoKZm9vID0-IEJhclthOiAxLCBiOiAyXQoKZm9vIGluIHsgYTogMSwgYjogMiB9Cg)
   class HashPatternNode < Node
     # Initialize a new HashPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: ::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -6603,6 +7025,8 @@ module Prism
     # foo => Bar::Baz[a: 1, b: 2]
     #      ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IEJhclthOiAxLCBiOiAyXQoKZm9vID0-IEJhcjo6QmF6W2E6IDEsIGI6IDJdCg)
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
@@ -6612,6 +7036,8 @@ module Prism
     # foo => { a: 1, b:, ** }
     #          ^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSwgYjosICoqIH0K)
     sig { returns(T::Array[AssocNode]) }
     def elements; end
 
@@ -6627,6 +7053,8 @@ module Prism
     # foo => { a: 1, b:, **nil }
     #                    ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSwgYjosICoqYyB9Cgpmb28gPT4geyBhOiAxLCBiOiwgKiogfQoKZm9vID0-IHsgYTogMSwgYjosICoqbmlsIH0K)
     sig { returns(::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode))) }
     def rest; end
 
@@ -6639,6 +7067,8 @@ module Prism
     # foo => Bar[a: 1]
     #           ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSB9Cgpmb28gPT4gQmFyW2E6IDFdCg)
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -6656,6 +7086,8 @@ module Prism
     # foo => Bar[a: 1]
     #                ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSB9Cgpmb28gPT4gQmFyW2E6IDFdCg)
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -6688,6 +7120,8 @@ module Prism
   # foo ? bar : baz
   # ^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyIGlmIGZvbwoKaWYgZm9vIHRoZW4gYmFyIGVuZAoKZm9vID8gYmFyIDogYmF6Cg)
   class IfNode < Node
     # Initialize a new IfNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, if_keyword_loc: ::T.nilable(Location), predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(::T.any(ElseNode, IfNode)), end_keyword_loc: ::T.nilable(Location)).void }
@@ -6738,6 +7172,8 @@ module Prism
     #     ^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyIGlmIGZvbwo)
     # The `if_keyword_loc` field will be `nil` when the `IfNode` represents a ternary expression.
     sig { returns(::T.nilable(Location)) }
     def if_keyword_loc; end
@@ -6761,6 +7197,8 @@ module Prism
     # foo ? bar : baz
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgZm9vCgogIGJhcgplbmQKCmJhciBpZiBmb28KCmZvbyA_IGJhciA6IGJhego)
     sig { returns(Node) }
     def predicate; end
 
@@ -6773,6 +7211,8 @@ module Prism
     # a ? b : c
     #   ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgZm9vIHRoZW4gYmFyIGVuZAoKYSA_IGIgOiBjCg)
     sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
@@ -6791,6 +7231,8 @@ module Prism
     #   ^^^
     # end
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgZm9vCiAgYmFyCgogIGJhegoKZW5kCg)
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
@@ -6809,6 +7251,8 @@ module Prism
     # if foo then bar else baz end
     #                 ^^^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgZm9vCiAgYmFyCmVsc2lmIGJhegoKICBxdXgKCmVuZAoKaWYgZm9vIHRoZW4gYmFyIGVsc2UgYmF6IGVuZAo)
     sig { returns(::T.nilable(::T.any(ElseNode, IfNode))) }
     def subsequent; end
 
@@ -6820,6 +7264,8 @@ module Prism
     # end
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgZm9vCiAgYmFyCmVuZAo)
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -6850,6 +7296,8 @@ module Prism
   # 1.0i
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#MS4waQo)
   class ImaginaryNode < Node
     # Initialize a new ImaginaryNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numeric: ::T.any(FloatNode, IntegerNode, RationalNode)).void }
@@ -6913,6 +7361,8 @@ module Prism
   # foo in { bar: }
   #          ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBmb286IH0KCnsgRm9vOiB9Cgpmb28gaW4geyBiYXI6IH0K)
   class ImplicitNode < Node
     # Initialize a new ImplicitNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
@@ -6979,6 +7429,8 @@ module Prism
   # foo, = bar
   #    ^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIHsgfGJhcix8IH0KCmZvbyBpbiBbYmFyLF0KCmZvciBmb28sIGluIGJhciBkbyBlbmQKCmZvbywgPSBiYXIK)
   class ImplicitRestNode < Node
     # Initialize a new ImplicitRestNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -7032,6 +7484,8 @@ module Prism
   # case a; in b then c end
   #         ^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSBhOyBpbiBiIHRoZW4gYyBlbmQK)
   class InNode < Node
     # Initialize a new InNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_keyword_loc: Location, then_keyword_loc: ::T.nilable(Location)).void }
@@ -7119,6 +7573,8 @@ module Prism
   # foo.bar[baz] &&= value
   # ^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcltiYXpdICYmPSB2YWx1ZQo)
   class IndexAndWriteNode < Node
     # Initialize a new IndexAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
@@ -7256,6 +7712,8 @@ module Prism
   # foo.bar[baz] += value
   # ^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcltiYXpdICs9IHZhbHVlCg)
   class IndexOperatorWriteNode < Node
     # Initialize a new IndexOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
@@ -7393,6 +7851,8 @@ module Prism
   # foo.bar[baz] ||= value
   # ^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLmJhcltiYXpdIHx8PSB2YWx1ZQo)
   class IndexOrWriteNode < Node
     # Initialize a new IndexOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
@@ -7538,6 +7998,8 @@ module Prism
   # for foo[bar] in baz do end
   #     ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vW2Jhcl0sID0gMQoKYmVnaW4KcmVzY3VlID0-IGZvb1tiYXJdCgplbmQKCmZvciBmb29bYmFyXSBpbiBiYXogZG8gZW5kCg)
   class IndexTargetNode < Node
     # Initialize a new IndexTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode)).void }
@@ -7645,6 +8107,8 @@ module Prism
   # @target &&= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QHRhcmdldCAmJj0gdmFsdWUK)
   class InstanceVariableAndWriteNode < Node
     # Initialize a new InstanceVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -7728,6 +8192,8 @@ module Prism
   # @target += value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QHRhcmdldCArPSB2YWx1ZQo)
   class InstanceVariableOperatorWriteNode < Node
     # Initialize a new InstanceVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -7811,6 +8277,8 @@ module Prism
   # @target ||= value
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QHRhcmdldCB8fD0gdmFsdWUK)
   class InstanceVariableOrWriteNode < Node
     # Initialize a new InstanceVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -7894,6 +8362,8 @@ module Prism
   # @foo
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QGZvbwo)
   class InstanceVariableReadNode < Node
     # Initialize a new InstanceVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -7944,6 +8414,8 @@ module Prism
     #
     # @_test # name `:@_test`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QHggICAgICMgbmFtZSBgOkB4YAoKQF90ZXN0ICMgbmFtZSBgOkBfdGVzdGAK)
     sig { returns(Symbol) }
     def name; end
 
@@ -7957,6 +8429,8 @@ module Prism
   # @foo, @bar = baz
   # ^^^^  ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QGZvbywgQGJhciA9IGJhego)
   class InstanceVariableTargetNode < Node
     # Initialize a new InstanceVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -8014,6 +8488,8 @@ module Prism
   # @foo = 1
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QGZvbyA9IDEK)
   class InstanceVariableWriteNode < Node
     # Initialize a new InstanceVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -8064,6 +8540,8 @@ module Prism
     #
     # @_foo = "bar" # name `@_foo`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QHggPSA6eSAgICAgICAjIG5hbWUgYDpAeGAKCkBfZm9vID0gImJhciIgIyBuYW1lIGBAX2Zvb2AK)
     sig { returns(Symbol) }
     def name; end
 
@@ -8073,6 +8551,8 @@ module Prism
     # @_x = 1
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QF94ID0gMQo)
     sig { returns(Location) }
     def name_loc; end
 
@@ -8090,6 +8570,8 @@ module Prism
     # @_x = 1234
     #       ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QGZvbyA9IDpiYXIKCkBfeCA9IDEyMzQK)
     sig { returns(Node) }
     def value; end
 
@@ -8099,6 +8581,8 @@ module Prism
     # @x = y
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#QHggPSB5Cg)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -8121,6 +8605,8 @@ module Prism
   # 1
   # ^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#MQo)
   class IntegerNode < Node
     # Initialize a new IntegerNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Integer).void }
@@ -8194,6 +8680,8 @@ module Prism
   # if /foo #{bar} baz/ then end
   #    ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgL2ZvbyAje2Jhcn0gYmF6LyB0aGVuIGVuZAo)
   class InterpolatedMatchLastLineNode < Node
     # Initialize a new InterpolatedMatchLastLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -8321,6 +8809,8 @@ module Prism
   # /foo #{bar} baz/
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#L2ZvbyAje2Jhcn0gYmF6Lwo)
   class InterpolatedRegularExpressionNode < Node
     # Initialize a new InterpolatedRegularExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -8448,6 +8938,8 @@ module Prism
   # "foo #{bar} baz"
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ImZvbyAje2Jhcn0gYmF6Igo)
   class InterpolatedStringNode < Node
     # Initialize a new InterpolatedStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode)], closing_loc: ::T.nilable(Location)).void }
@@ -8538,6 +9030,8 @@ module Prism
   # ```rb
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#OiJmb28gI3tiYXJ9IGJheiIK)
   class InterpolatedSymbolNode < Node
     # Initialize a new InterpolatedSymbolNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: ::T.nilable(Location)).void }
@@ -8621,6 +9115,8 @@ module Prism
   # `foo #{bar} baz`
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YGZvbyAje2Jhcn0gYmF6YAo)
   class InterpolatedXStringNode < Node
     # Initialize a new InterpolatedXStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -8704,6 +9200,8 @@ module Prism
   # -> { it }
   #      ^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4geyBpdCB9Cg)
   class ItLocalVariableReadNode < Node
     # Initialize a new ItLocalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -8757,6 +9255,8 @@ module Prism
   # -> { it + it }
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4geyBpdCArIGl0IH0K)
   class ItParametersNode < Node
     # Initialize a new ItParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -8810,6 +9310,8 @@ module Prism
   # foo(a: b)
   #     ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vKGE6IGIpCg)
   class KeywordHashNode < Node
     # Initialize a new KeywordHashNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[::T.any(AssocNode, AssocSplatNode)]).void }
@@ -8872,6 +9374,8 @@ module Prism
   #       ^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoKipiKQoKZW5kCg)
   class KeywordRestParameterNode < Node
     # Initialize a new KeywordRestParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -8955,6 +9459,8 @@ module Prism
   # ->(value) { value * 2 }
   # ^^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4odmFsdWUpIHsgdmFsdWUgKiAyIH0K)
   class LambdaNode < Node
     # Initialize a new LambdaNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode))).void }
@@ -9059,6 +9565,8 @@ module Prism
   # target &&= value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#dGFyZ2V0ICYmPSB2YWx1ZQo)
   class LocalVariableAndWriteNode < Node
     # Initialize a new LocalVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).void }
@@ -9146,6 +9654,8 @@ module Prism
   # target += value
   # ^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#dGFyZ2V0ICs9IHZhbHVlCg)
   class LocalVariableOperatorWriteNode < Node
     # Initialize a new LocalVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, binary_operator_loc: Location, value: Node, name: Symbol, binary_operator: Symbol, depth: Integer).void }
@@ -9233,6 +9743,8 @@ module Prism
   # target ||= value
   # ^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#dGFyZ2V0IHx8PSB2YWx1ZQo)
   class LocalVariableOrWriteNode < Node
     # Initialize a new LocalVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).void }
@@ -9320,6 +9832,8 @@ module Prism
   # foo
   # ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vCg)
   class LocalVariableReadNode < Node
     # Initialize a new LocalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).void }
@@ -9371,11 +9885,15 @@ module Prism
     # _Test  # name `:_Test`
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eCAgICAgICMgbmFtZSBgOnhgCgpfVGVzdCAgIyBuYW1lIGA6X1Rlc3RgCg)
     # Note that this can also be an underscore followed by a number for the default block parameters.
     #
     # ```rb
     # _1     # name `:_1`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#XzEgICAgICMgbmFtZSBgOl8xYAo)
     sig { returns(Symbol) }
     def name; end
 
@@ -9387,6 +9905,8 @@ module Prism
     # bar = 2; tap { bar } # depth 1
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gMTsgZm9vICMgZGVwdGggMAoKYmFyID0gMjsgdGFwIHsgYmFyIH0gIyBkZXB0aCAxCg)
     # The specific rules for calculating the depth may differ from individual Ruby implementations, as they are not specified by the language. For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
     sig { returns(Integer) }
     def depth; end
@@ -9404,6 +9924,8 @@ module Prism
   # foo => baz
   #        ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vLCBiYXIgPSBiYXoKCmZvbyA9PiBiYXoK)
   class LocalVariableTargetNode < Node
     # Initialize a new LocalVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).void }
@@ -9465,6 +9987,8 @@ module Prism
   # foo = 1
   # ^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gMQo)
   class LocalVariableWriteNode < Node
     # Initialize a new LocalVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -9515,6 +10039,8 @@ module Prism
     #
     # abc = 123  # name `:abc`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gOmJhciAjIG5hbWUgYDpmb29gCgphYmMgPSAxMjMgICMgbmFtZSBgOmFiY2AK)
     sig { returns(Symbol) }
     def name; end
 
@@ -9526,6 +10052,8 @@ module Prism
     # tap { foo = 1 } # depth 1
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gMSAgICAgICAgICMgZGVwdGggMAoKdGFwIHsgZm9vID0gMSB9ICMgZGVwdGggMQo)
     # The specific rules for calculating the depth may differ from individual Ruby implementations, as they are not specified by the language. For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
     sig { returns(Integer) }
     def depth; end
@@ -9536,6 +10064,8 @@ module Prism
     # foo = :bar
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gOmJhcgo)
     sig { returns(Location) }
     def name_loc; end
 
@@ -9554,11 +10084,15 @@ module Prism
     #       ^^^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gOmJhcgoKYWJjID0gMTIzNAo)
     # Note that since the name of a local variable is known before the value is parsed, it is valid for a local variable to appear within the value of its own write.
     #
     # ```rb
     # foo = foo
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0gZm9vCg)
     sig { returns(Node) }
     def value; end
 
@@ -9568,6 +10102,8 @@ module Prism
     # x = :y
     #   ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#eCA9IDp5Cg)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -9590,6 +10126,8 @@ module Prism
   # if /foo/i then end
   #    ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#aWYgL2Zvby9pIHRoZW4gZW5kCg)
   class MatchLastLineNode < Node
     # Initialize a new MatchLastLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -9730,6 +10268,8 @@ module Prism
   # foo in bar
   # ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIGJhcgo)
   class MatchPredicateNode < Node
     # Initialize a new MatchPredicateNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, keyword_loc: Location).void }
@@ -9804,6 +10344,8 @@ module Prism
   # foo => bar
   # ^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
   class MatchRequiredNode < Node
     # Initialize a new MatchRequiredNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).void }
@@ -9853,6 +10395,8 @@ module Prism
     # foo => bar
     # ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
     sig { returns(Node) }
     def value; end
 
@@ -9865,6 +10409,8 @@ module Prism
     #        ^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGEgIyBUaGlzIGlzIGVxdWl2YWxlbnQgdG8gd3JpdGluZyBgYSA9IGZvb2AK)
     # Using an explicit `Array` or combining expressions with `,` will result in a `ArrayPatternNode`. This can be preceded by a constant.
     #
     # ```rb
@@ -9878,6 +10424,8 @@ module Prism
     #        ^^^^^^^^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IFthXQoKZm9vID0-IGEsIGIKCmZvbyA9PiBCYXJbYSwgYl0K)
     # If the array pattern contains at least two wildcard matches, a `FindPatternNode` is created instead.
     #
     # ```rb
@@ -9885,6 +10433,8 @@ module Prism
     #        ^^^^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-ICosIDEsICphCg)
     # Using an explicit `Hash` or a constant with square brackets and hash keys in the square brackets will result in a `HashPatternNode`.
     #
     # ```rb
@@ -9895,6 +10445,8 @@ module Prism
     # foo => Bar[**]
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IHsgYTogMSwgYjogfQoKZm9vID0-IEJhclthOiAxLCBiOl0KCmZvbyA9PiBCYXJbKipdCg)
     # To use any variable that needs run time evaluation, pinning is required. This results in a `PinnedVariableNode`
     #
     # ```rb
@@ -9902,17 +10454,23 @@ module Prism
     #        ^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IF5hCg)
     # Similar, any expression can be used with pinning. This results in a `PinnedExpressionNode`.
     #
     # ```rb
     # foo => ^(a + 1)
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IF4oYSArIDEpCg)
     # Anything else will result in the regular node for that expression, for example a `ConstantReadNode`.
     #
     # ```rb
     # foo => CONST
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IENPTlNUCg)
     sig { returns(Node) }
     def pattern; end
 
@@ -9922,6 +10480,8 @@ module Prism
     # foo => bar
     #     ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vID0-IGJhcgo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -9944,6 +10504,8 @@ module Prism
   # /(?<foo>bar)/ =~ baz
   # ^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Lyg_PGZvbz5iYXIpLyA9fiBiYXoK)
   class MatchWriteNode < Node
     # Initialize a new MatchWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, call: CallNode, targets: T::Array[LocalVariableTargetNode]).void }
@@ -10005,6 +10567,8 @@ module Prism
   # module Foo end
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#bW9kdWxlIEZvbyBlbmQK)
   class ModuleNode < Node
     # Initialize a new ModuleNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
@@ -10101,12 +10665,16 @@ module Prism
   #    ^^^^^^
   #
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsIGMpID0gMSwgMiwgMwo)
   # This can be a part of `MultiWriteNode` as above, or the target of a `for` loop
   #
   # ```rb
   # for a, b in [[1, 2], [3, 4]]
   #     ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9yIGEsIGIgaW4gW1sxLCAyXSwgWzMsIDRdXQo)
   class MultiTargetNode < Node
     # Initialize a new MultiTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).void }
@@ -10157,12 +10725,16 @@ module Prism
     #     ^^^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsIGMsICopID0gMSwgMiwgMywgNCwgNQo)
     # The splat node can be absent, in that case all target expressions are in the left field.
     #
     # ```rb
     # a, (b, c) = 1, 2, 3, 4, 5
     #     ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsIGMpID0gMSwgMiwgMywgNCwgNQo)
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)]) }
     def lefts; end
 
@@ -10173,6 +10745,8 @@ module Prism
     #        ^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsICpjKSA9IDEsIDIsIDMsIDQK)
     # The variable can be empty, this results in a `SplatNode` with a `nil` expression field.
     #
     # ```rb
@@ -10180,12 +10754,16 @@ module Prism
     #        ^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsICopID0gMSwgMiwgMywgNAo)
     # If the `*` is omitted, this field will contain an `ImplicitRestNode`
     #
     # ```rb
     # a, (b,) = 1, 2, 3, 4
     #      ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsKSA9IDEsIDIsIDMsIDQK)
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
@@ -10195,6 +10773,8 @@ module Prism
     # a, (*, b, c) = 1, 2, 3, 4, 5
     #        ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKCosIGIsIGMpID0gMSwgMiwgMywgNCwgNQo)
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)]) }
     def rights; end
 
@@ -10204,6 +10784,8 @@ module Prism
     # a, (b, c) = 1, 2, 3
     #    ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsIGMpID0gMSwgMiwgMwo)
     sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
@@ -10218,6 +10800,8 @@ module Prism
     # a, (b, c) = 1, 2, 3
     #         ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKGIsIGMpID0gMSwgMiwgMwo)
     sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
@@ -10244,6 +10828,8 @@ module Prism
   # a, b, c = 1, 2, 3
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgYyA9IDEsIDIsIDMK)
   class MultiWriteNode < Node
     # Initialize a new MultiWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).void }
@@ -10294,12 +10880,16 @@ module Prism
     # ^^^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgKiA9IDEsIDIsIDMsIDQsIDUK)
     # The splat node can be absent, in that case all target expressions are in the left field.
     #
     # ```rb
     # a, b, c = 1, 2, 3, 4, 5
     # ^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgYyA9IDEsIDIsIDMsIDQsIDUK)
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)]) }
     def lefts; end
 
@@ -10310,6 +10900,8 @@ module Prism
     #       ^^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgKmMgPSAxLCAyLCAzLCA0Cg)
     # The variable can be empty, this results in a `SplatNode` with a `nil` expression field.
     #
     # ```rb
@@ -10317,12 +10909,16 @@ module Prism
     #       ^
     #
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgKiA9IDEsIDIsIDMsIDQK)
     # If the `*` is omitted, this field will contain an `ImplicitRestNode`
     #
     # ```rb
     # a, b, = 1, 2, 3, 4
     #     ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgPSAxLCAyLCAzLCA0Cg)
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
@@ -10332,6 +10928,8 @@ module Prism
     # a, *, b, c = 1, 2, 3, 4, 5
     #       ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgKiwgYiwgYyA9IDEsIDIsIDMsIDQsIDUK)
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)]) }
     def rights; end
 
@@ -10341,6 +10939,8 @@ module Prism
     # (a, b, c) = 1, 2, 3
     # ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#KGEsIGIsIGMpID0gMSwgMiwgMwo)
     sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
@@ -10355,6 +10955,8 @@ module Prism
     # (a, b, c) = 1, 2, 3
     #         ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#KGEsIGIsIGMpID0gMSwgMiwgMwo)
     sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
@@ -10369,6 +10971,8 @@ module Prism
     # a, b, c = 1, 2, 3
     #         ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgYyA9IDEsIDIsIDMK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -10383,6 +10987,8 @@ module Prism
     # a, b, c = 1, 2, 3
     #           ^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#YSwgYiwgYyA9IDEsIDIsIDMK)
     sig { returns(Node) }
     def value; end
 
@@ -10408,6 +11014,8 @@ module Prism
   # next 1
   # ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#bmV4dCAxCg)
   class NextNode < Node
     # Initialize a new NextNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
@@ -10478,6 +11086,8 @@ module Prism
   # nil
   # ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#bmlsCg)
   class NilNode < Node
     # Initialize a new NilNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -10532,6 +11142,8 @@ module Prism
   #       ^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoJm5pbCkKCmVuZAo)
   class NoBlockParameterNode < Node
     # Initialize a new NoBlockParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).void }
@@ -10612,6 +11224,8 @@ module Prism
   #       ^^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoKipuaWwpCgplbmQK)
   class NoKeywordsParameterNode < Node
     # Initialize a new NoKeywordsParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).void }
@@ -10691,6 +11305,8 @@ module Prism
   # -> { _1 + _2 }
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#LT4geyBfMSArIF8yIH0K)
   class NumberedParametersNode < Node
     # Initialize a new NumberedParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, maximum: Integer).void }
@@ -10748,6 +11364,8 @@ module Prism
   # $1
   # ^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#JDEK)
   class NumberedReferenceReadNode < Node
     # Initialize a new NumberedReferenceReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, number: Integer).void }
@@ -10800,6 +11418,8 @@ module Prism
     #
     # $4294967296 # number `0`
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#JDEgICAgICAgICAgIyBudW1iZXIgYDFgCgokNTQzMiAgICAgICAjIG51bWJlciBgNTQzMmAKCiQ0Mjk0OTY3Mjk2ICMgbnVtYmVyIGAwYAo)
     sig { returns(Integer) }
     def number; end
 
@@ -10814,6 +11434,8 @@ module Prism
   #       ^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoYjogMSkKCmVuZAo)
   class OptionalKeywordParameterNode < Node
     # Initialize a new OptionalKeywordParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node).void }
@@ -10889,6 +11511,8 @@ module Prism
   #       ^^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoYiA9IDEpCgplbmQK)
   class OptionalParameterNode < Node
     # Initialize a new OptionalParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -10976,6 +11600,8 @@ module Prism
   # left or right
   # ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBvciByaWdodAo)
   class OrNode < Node
     # Initialize a new OrNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -11028,6 +11654,8 @@ module Prism
     # 1 || 2
     # ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBvciByaWdodAoKMSB8fCAyCg)
     sig { returns(Node) }
     def left; end
 
@@ -11040,6 +11668,8 @@ module Prism
     # 1 or 2
     #      ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCB8fCByaWdodAoKMSBvciAyCg)
     sig { returns(Node) }
     def right; end
 
@@ -11049,6 +11679,8 @@ module Prism
     # left or right
     #      ^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#bGVmdCBvciByaWdodAo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -11072,6 +11704,8 @@ module Prism
   #       ^^^^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoYiwgYywgZCkKCmVuZAo)
   class ParametersNode < Node
     # Initialize a new ParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).void }
@@ -11153,6 +11787,8 @@ module Prism
   # (10 + 34)
   # ^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#KDEwICsgMzQpCg)
   class ParenthesesNode < Node
     # Initialize a new ParenthesesNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: ::T.nilable(Node), opening_loc: Location, closing_loc: Location).void }
@@ -11240,6 +11876,8 @@ module Prism
   # foo in ^(bar)
   #        ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF4oYmFyKQo)
   class PinnedExpressionNode < Node
     # Initialize a new PinnedExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: Node, operator_loc: Location, lparen_loc: Location, rparen_loc: Location).void }
@@ -11289,6 +11927,8 @@ module Prism
     # foo in ^(bar)
     #          ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF4oYmFyKQo)
     sig { returns(Node) }
     def expression; end
 
@@ -11298,6 +11938,8 @@ module Prism
     # foo in ^(bar)
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF4oYmFyKQo)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -11312,6 +11954,8 @@ module Prism
     # foo in ^(bar)
     #         ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF4oYmFyKQo)
     sig { returns(Location) }
     def lparen_loc; end
 
@@ -11326,6 +11970,8 @@ module Prism
     # foo in ^(bar)
     #             ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF4oYmFyKQo)
     sig { returns(Location) }
     def rparen_loc; end
 
@@ -11356,6 +12002,8 @@ module Prism
   # foo in ^bar
   #        ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF5iYXIK)
   class PinnedVariableNode < Node
     # Initialize a new PinnedVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode), operator_loc: Location).void }
@@ -11405,6 +12053,8 @@ module Prism
     # foo in ^bar
     #         ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF5iYXIK)
     sig { returns(::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode)) }
     def variable; end
 
@@ -11414,6 +12064,8 @@ module Prism
     # foo in ^bar
     #        ^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIGluIF5iYXIK)
     sig { returns(Location) }
     def operator_loc; end
 
@@ -11436,6 +12088,8 @@ module Prism
   # END { foo }
   # ^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#RU5EIHsgZm9vIH0K)
   class PostExecutionNode < Node
     # Initialize a new PostExecutionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
@@ -11532,6 +12186,8 @@ module Prism
   # BEGIN { foo }
   # ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#QkVHSU4geyBmb28gfQo)
   class PreExecutionNode < Node
     # Initialize a new PreExecutionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
@@ -11687,6 +12343,8 @@ module Prism
   # c if a =~ /left/ ... b =~ /right/
   #      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#MS4uMgoKYyBpZiBhID1-IC9sZWZ0LyAuLi4gYiA9fiAvcmlnaHQvCg)
   class RangeNode < Node
     # Initialize a new RangeNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
@@ -11743,6 +12401,8 @@ module Prism
     # hello...goodbye
     # ^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#MS4uLgoKaGVsbG8uLi5nb29kYnllCg)
     sig { returns(::T.nilable(Node)) }
     def left; end
 
@@ -11755,6 +12415,8 @@ module Prism
     # 1...foo
     #     ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#Li41CgoxLi4uZm9vCg)
     # If neither right-hand or left-hand side was included, this will be an ErrorRecoveryNode.
     sig { returns(::T.nilable(Node)) }
     def right; end
@@ -11782,6 +12444,8 @@ module Prism
   # 1.0r
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#MS4wcgo)
   class RationalNode < Node
     # Initialize a new RationalNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numerator: Integer, denominator: Integer).void }
@@ -11846,6 +12510,8 @@ module Prism
     # ```rb
     # 1.5r # numerator 3
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#MS41ciAjIG51bWVyYXRvciAzCg)
     sig { returns(Integer) }
     def numerator; end
 
@@ -11854,6 +12520,8 @@ module Prism
     # ```rb
     # 1.5r # denominator 2
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#MS41ciAjIGRlbm9taW5hdG9yIDIK)
     sig { returns(Integer) }
     def denominator; end
 
@@ -11867,6 +12535,8 @@ module Prism
   # redo
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#cmVkbwo)
   class RedoNode < Node
     # Initialize a new RedoNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -11920,6 +12590,8 @@ module Prism
   # /foo/i
   # ^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#L2Zvby9pCg)
   class RegularExpressionNode < Node
     # Initialize a new RegularExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -12061,6 +12733,8 @@ module Prism
   #       ^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoYjogKQoKZW5kCg)
   class RequiredKeywordParameterNode < Node
     # Initialize a new RequiredKeywordParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location).void }
@@ -12132,6 +12806,8 @@ module Prism
   #       ^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoYikKCmVuZAo)
   class RequiredParameterNode < Node
     # Initialize a new RequiredParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -12193,6 +12869,8 @@ module Prism
   # foo rescue nil
   # ^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vIHJlc2N1ZSBuaWwK)
   class RescueModifierNode < Node
     # Initialize a new RescueModifierNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: Node, keyword_loc: Location, rescue_expression: Node).void }
@@ -12271,6 +12949,8 @@ module Prism
   # end
   #
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmVnaW4KcmVzY3VlIEZvbywgKnNwbGF0LCBCYXIgPT4gZXgKICBmb28KCmVuZAo)
   # `Foo, *splat, Bar` are in the `exceptions` field. `ex` is in the `reference` field.
   class RescueNode < Node
     # Initialize a new RescueNode node.
@@ -12381,6 +13061,8 @@ module Prism
   #       ^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ZGVmIGEoKmIpCgplbmQK)
   class RestParameterNode < Node
     # Initialize a new RestParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -12464,6 +13146,8 @@ module Prism
   # retry
   # ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#cmV0cnkK)
   class RetryNode < Node
     # Initialize a new RetryNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12517,6 +13201,8 @@ module Prism
   # return 1
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#cmV0dXJuIDEK)
   class ReturnNode < Node
     # Initialize a new ReturnNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: ::T.nilable(ArgumentsNode)).void }
@@ -12587,6 +13273,8 @@ module Prism
   # self
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#c2VsZgo)
   class SelfNode < Node
     # Initialize a new SelfNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12641,6 +13329,8 @@ module Prism
   # C = { a: 1 }
   # ^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#IyBzaGFyZWFibGVfY29uc3RhbnRfdmFsdWU6IGxpdGVyYWwKQyA9IHsgYTogMSB9Cg)
   class ShareableConstantNode < Node
     # Initialize a new ShareableConstantNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, write: ::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).void }
@@ -12710,6 +13400,8 @@ module Prism
   # class << self end
   # ^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2xhc3MgPDwgc2VsZiBlbmQK)
   class SingletonClassNode < Node
     # Initialize a new SingletonClassNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).void }
@@ -12814,6 +13506,8 @@ module Prism
   # __ENCODING__
   # ^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#X19FTkNPRElOR19fCg)
   class SourceEncodingNode < Node
     # Initialize a new SourceEncodingNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12867,6 +13561,8 @@ module Prism
   # __FILE__
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#X19GSUxFX18K)
   class SourceFileNode < Node
     # Initialize a new SourceFileNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, filepath: String).void }
@@ -12940,6 +13636,8 @@ module Prism
   # __LINE__
   # ^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#X19MSU5FX18K)
   class SourceLineNode < Node
     # Initialize a new SourceLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12993,6 +13691,8 @@ module Prism
   # [*a]
   #  ^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#WyphXQo)
   class SplatNode < Node
     # Initialize a new SplatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: ::T.nilable(Node)).void }
@@ -13063,6 +13763,8 @@ module Prism
   # foo; bar; baz
   # ^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Zm9vOyBiYXI7IGJhego)
   class StatementsNode < Node
     # Initialize a new StatementsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: T::Array[Node]).void }
@@ -13126,6 +13828,8 @@ module Prism
   # "foo #{bar} baz"
   #  ^^^^      ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#ImZvbyIKCiV3W2Zvb10KCiJmb28gI3tiYXJ9IGJheiIK)
   class StringNode < Node
     # Initialize a new StringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
@@ -13242,6 +13946,8 @@ module Prism
   # ^^^^^^^^^^^^^^
   #
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#c3VwZXIoKQoKc3VwZXIgZm9vLCBiYXIK)
   # If no arguments are provided (except for a block), it would be a `ForwardingSuperNode` instead.
   class SuperNode < Node
     # Initialize a new SuperNode node.
@@ -13345,6 +14051,8 @@ module Prism
   # %i[foo]
   #    ^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#OmZvbwoKJWlbZm9vXQo)
   class SymbolNode < Node
     # Initialize a new SymbolNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
@@ -13453,6 +14161,8 @@ module Prism
   # true
   # ^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#dHJ1ZQo)
   class TrueNode < Node
     # Initialize a new TrueNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -13506,6 +14216,8 @@ module Prism
   # undef :foo, :bar, :baz
   # ^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5kZWYgOmZvbywgOmJhciwgOmJhego)
   class UndefNode < Node
     # Initialize a new UndefNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, names: T::Array[::T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).void }
@@ -13579,6 +14291,8 @@ module Prism
   # unless foo then bar end
   # ^^^^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyIHVubGVzcyBmb28KCnVubGVzcyBmb28gdGhlbiBiYXIgZW5kCg)
   class UnlessNode < Node
     # Initialize a new UnlessNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, unless_keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -13631,6 +14345,8 @@ module Prism
     # bar unless cond
     #     ^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZW5kCgpiYXIgdW5sZXNzIGNvbmQK)
     sig { returns(Location) }
     def unless_keyword_loc; end
 
@@ -13648,6 +14364,8 @@ module Prism
     # bar unless cond
     #            ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZW5kCgpiYXIgdW5sZXNzIGNvbmQK)
     sig { returns(Node) }
     def predicate; end
 
@@ -13657,6 +14375,8 @@ module Prism
     # unless cond then bar end
     #             ^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZW5kCg)
     sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
@@ -13672,6 +14392,8 @@ module Prism
     # unless cond then bar end
     #                  ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZW5kCg)
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
@@ -13681,6 +14403,8 @@ module Prism
     # unless cond then bar else baz end
     #                      ^^^^^^^^^^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZWxzZSBiYXogZW5kCg)
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
@@ -13690,6 +14414,8 @@ module Prism
     # unless cond then bar end
     #                      ^^^
     # ```
+    #
+    # [Explore code sample](https://ruby.github.io/prism/playground.html#dW5sZXNzIGNvbmQgdGhlbiBiYXIgZW5kCg)
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -13723,6 +14449,8 @@ module Prism
   # until foo do bar end
   # ^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyIHVudGlsIGZvbwoKdW50aWwgZm9vIGRvIGJhciBlbmQK)
   class UntilNode < Node
     # Initialize a new UntilNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, until_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
@@ -13829,6 +14557,8 @@ module Prism
   # ^^^^^^^^^
   # end
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#Y2FzZSB0cnVlCndoZW4gdHJ1ZQoKZW5kCg)
   class WhenNode < Node
     # Initialize a new WhenNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, when_keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).void }
@@ -13919,6 +14649,8 @@ module Prism
   # while foo do bar end
   # ^^^^^^^^^^^^^^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YmFyIHdoaWxlIGZvbwoKd2hpbGUgZm9vIGRvIGJhciBlbmQK)
   class WhileNode < Node
     # Initialize a new WhileNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, while_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
@@ -14023,6 +14755,8 @@ module Prism
   # `foo`
   # ^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#YGZvb2AK)
   class XStringNode < Node
     # Initialize a new XStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -14127,6 +14861,8 @@ module Prism
   # yield 1
   # ^^^^^^^
   # ```
+  #
+  # [Explore code sample](https://ruby.github.io/prism/playground.html#eWllbGQgMQo)
   class YieldNode < Node
     # Initialize a new YieldNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location)).void }

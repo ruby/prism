@@ -49,6 +49,7 @@ Gem::Specification.new do |spec|
     "include/prism/compiler/accel.h",
     "include/prism/compiler/align.h",
     "include/prism/compiler/assume.h",
+    "include/prism/compiler/branch.h",
     "include/prism/compiler/bswap.h",
     "include/prism/compiler/endianness.h",
     "include/prism/compiler/exported.h",
