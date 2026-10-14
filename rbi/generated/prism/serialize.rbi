@@ -141,9 +141,6 @@ module Prism
       sig { returns(Integer) }
       def load_uint64; end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(::T.nilable(Node)) }
-      def load_optional_node(constant_pool, encoding, freeze); end
-
       sig { params(encoding: Encoding).returns(String) }
       def load_string(encoding); end
 
@@ -171,8 +168,12 @@ module Prism
       sig { params(constant_pool: ConstantPool, encoding: Encoding).returns(::T.nilable(Symbol)) }
       def load_optional_constant(constant_pool, encoding); end
 
-      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(Node) }
-      def load_node(constant_pool, encoding, freeze); end
+      # Load the nodes that are serialized before the given offset and return
+      # the root. Nodes are serialized in post-order, so the children of each
+      # node are the topmost values on the stack, in field order, by the time
+      # its record is read.
+      sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean, finish: Integer).returns(Node) }
+      def load_nodes(constant_pool, encoding, freeze, finish); end
 
       sig { void }
       def define_load_node_lambdas; end

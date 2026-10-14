@@ -152,9 +152,6 @@ module Prism
       # : () -> Integer
       def load_uint64: () -> Integer
 
-      # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
-      def load_optional_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
-
       # : (Encoding encoding) -> String
       def load_string: (Encoding encoding) -> String
 
@@ -184,8 +181,13 @@ module Prism
       # : (ConstantPool constant_pool, Encoding encoding) -> Symbol?
       def load_optional_constant: (ConstantPool constant_pool, Encoding encoding) -> Symbol?
 
-      # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node
-      def load_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node
+      # Load the nodes that are serialized before the given offset and return
+      # the root. Nodes are serialized in post-order, so the children of each
+      # node are the topmost values on the stack, in field order, by the time
+      # its record is read.
+      #
+      # : (ConstantPool constant_pool, Encoding encoding, bool freeze, Integer finish) -> node
+      def load_nodes: (ConstantPool constant_pool, Encoding encoding, bool freeze, Integer finish) -> node
 
       @load_node_lambdas: Array[Proc]
 

@@ -62,6 +62,14 @@ task "test:java_loader:internal" => :compile do
   require 'java'
   require_relative '../tmp/prism.jar'
 
+  # A loader that skips the bodies of DefNodes, which are then loaded on demand
+  # by DefNode#getNonLazy.
+  class LazyDefNodeLoader < org.ruby_lang.prism.Loader
+    def loadDefNodesLazily
+      true
+    end
+  end
+
   Dir["**/*.txt", base: fixtures].each do |relative|
     path = "#{fixtures}/#{relative}"
     puts
@@ -71,15 +79,38 @@ task "test:java_loader:internal" => :compile do
     puts parse_result.value
   end
 
+  # Check that loading the bodies of DefNodes lazily and then loading them with
+  # getNonLazy gives the same tree as loading eagerly.
+  describe = -> (node, force) {
+    return "nil" if node.nil?
+    node = node.getNonLazy if force && node.is_a?(org.ruby_lang.prism.Nodes::DefNode)
+    "#{node.getClass.getSimpleName}@#{node.startOffset}(#{node.childNodes.map { |child| describe.call(child, force) }.join(", ")})"
+  }
+
+  lazy_failures = []
+  Dir["**/*.txt", base: fixtures].each do |relative|
+    path = "#{fixtures}/#{relative}"
+    serialized = Prism.dump_file(path).unpack('c*')
+
+    eager = org.ruby_lang.prism.Loader.load(serialized).value
+    lazy = LazyDefNodeLoader.new(serialized.to_java(:byte)).java_send(:load).value
+    lazy_failures << path if describe.call(eager, false) != describe.call(lazy, true)
+  end
+
+  abort "Lazily loaded DefNodes differ from eagerly loaded ones in:\n#{lazy_failures.join("\n")}" unless lazy_failures.empty?
+
   # Check that MarkNewlinesVisitor.java (run by Loader.load() above) marks
   # exactly the same lines as Ruby's newlines.rb, using the fixtures generated
   # by the test:java_loader:newline_fixtures task.
   newline_fixtures = File.expand_path("../java/newline_fixtures.txt", __dir__)
   raise "no #{newline_fixtures}, run the test:java_loader task to generate it" unless File.exist?(newline_fixtures)
 
+  # A lazy DefNode carries its own newline flag, while the DefNode returned by
+  # getNonLazy carries the newline flags of its descendants.
   collect_newlines = -> (node, source, lines) {
     return if node.nil?
     lines << source.line(node.startOffset) if node.hasNewLineFlag
+    node = node.getNonLazy if node.is_a?(org.ruby_lang.prism.Nodes::DefNode)
     node.childNodes.each { |child| collect_newlines.call(child, source, lines) }
   }
 
@@ -88,16 +119,21 @@ task "test:java_loader:internal" => :compile do
   File.readlines(newline_fixtures, chomp: true).each do |fixture|
     path, expected = fixture.split("\t", 2)
 
-    serialized = Prism.dump_file(path)
-    parse_result = org.ruby_lang.prism.Loader.load(serialized.unpack('c*'))
-
-    lines = []
-    collect_newlines.call(parse_result.value, parse_result.source, lines)
-    actual = lines.sort.join(" ")
+    serialized = Prism.dump_file(path).unpack('c*')
+    parse_results = {
+      "java" => org.ruby_lang.prism.Loader.load(serialized),
+      "java (lazy)" => LazyDefNodeLoader.new(serialized.to_java(:byte)).java_send(:load)
+    }
 
     checked += 1
-    if actual != (expected || "")
-      failures << "#{path}\n  ruby: #{expected}\n  java: #{actual}"
+    parse_results.each do |name, parse_result|
+      lines = []
+      collect_newlines.call(parse_result.value, parse_result.source, lines)
+      actual = lines.sort.join(" ")
+
+      if actual != (expected || "")
+        failures << "#{path}\n  ruby: #{expected}\n  #{name}: #{actual}"
+      end
     end
   end
 

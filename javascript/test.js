@@ -427,3 +427,11 @@ suite("location", () => {
     assert(node.receiver.location.endCodeUnitsColumn("utf-8") === 5);
   });
 });
+
+suite("serialization", () => {
+  test("deeply nested trees", () => {
+    // 20,000 nodes deep, which is deeper than a walk of the tree can recurse.
+    const result = parse("1" + "+1".repeat(20000));
+    assert(result.value instanceof nodes.ProgramNode);
+  });
+});
