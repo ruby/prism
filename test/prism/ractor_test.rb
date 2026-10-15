@@ -7,7 +7,7 @@ require_relative "test_helper"
 module Prism
   class RactorTest < TestCase
     def test_version
-      assert_match(/\A\d+\.\d+\.\d+\z/, with_ractor { Prism::VERSION })
+      assert_match(/\A\d+\.\d+\.\d+(\.rc\d+)?\z/, with_ractor { Prism::VERSION })
     end
 
     def test_parse_file
