@@ -64,7 +64,7 @@ jobs:
           cd gems
           sha256sum ./*.gem | tee CHECKSUMS.txt
 
-      - uses: rubygems/configure-rubygems-credentials@v2
+      - uses: rubygems/configure-rubygems-credentials@v2.1.0
 
       # TODO: once RubyGems >= 4.1 is in setup-ruby, `gem push` will auto-attest (ruby/rubygems#9325).
       - name: Push gems to RubyGems.org
