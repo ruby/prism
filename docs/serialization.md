@@ -124,8 +124,14 @@ The header is structured like the following table:
 | varuint | content pool size |
 
 After the header comes the body of the serialized string.
-The body consists of a sequence of nodes that is built using a prefix traversal order of the syntax tree.
-Each node is structured like the following table:
+The body consists of a sequence of nodes that is built using a postfix traversal order of the syntax tree: the children of each node come before the node itself, so the root node comes last.
+The body ends at the content pool offset specified in the header.
+
+The children of a node are the values of its `node`, `node?`, and `node[]` fields, which are serialized in the order in which the fields are listed in `config.yml`.
+A `node` field is serialized as its node, a `node?` field is serialized as its node or as a single `0` byte if the node is not present, and a `node[]` field is serialized as each of its nodes in order.
+A loader can therefore keep a stack of loaded nodes: a `0` byte pushes an absent node, and each node pops its children off the top of the stack (they are in field order) and then pushes itself.
+
+After its children, each node is structured like the following table:
 
 | # bytes | field |
 | --- | --- |
@@ -134,12 +140,11 @@ Each node is structured like the following table:
 | location | node location |
 | varuint | node flags |
 
-Every field on the node is then appended to the serialized string. The fields can be determined by referencing `config.yml`. Depending on the type of field, it could take a couple of different forms, described below:
+Every other field on the node is then appended to the serialized string. The fields can be determined by referencing `config.yml`. Depending on the type of field, it could take a couple of different forms, described below:
 
 * `double` - A field that is a `double`. This is structured as a sequence of 8 bytes in native endian order.
-* `node` - A field that is a node. This is structured just as like parent node.
-* `node?` - A field that is a node that is optionally present. If the node is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just as like parent node.
-* `node[]` - A field that is an array of nodes. This is structured as a variable-length integer length, followed by the child nodes themselves.
+* `node`, `node?` - Nothing is appended here, since the node has already been serialized as a child.
+* `node[]` - A field that is an array of nodes. This is structured as a variable-length integer length, which is the number of children that belong to this field.
 * `string` - A field that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a variable-length integer byte length, followed by the string bytes (_without_ a trailing null byte).
 * `constant` - A variable-length integer that represents an index in the constant pool.
 * `constant?` - An optional variable-length integer that represents an index in the constant pool. If it's not present, then a single `0` byte will be written in its place.
@@ -148,6 +153,14 @@ Every field on the node is then appended to the serialized string. The fields ca
 * `location?` - A field that is a location that is optionally present. If the location is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just like the `location` child node.
 * `uint8` - A field that is an 8-bit unsigned integer. This is structured as a single byte.
 * `uint32` - A field that is a 32-bit unsigned integer. This is structured as a variable-length integer.
+
+The `body` field of a `DefNode` is lazy, which means that loaders can skip it and load it later. The children of a `DefNode` are preceded by the following, which loaders that do not skip lazy fields can ignore:
+
+| # bytes | field |
+| --- | --- |
+| `1` | `255` |
+| `4` | the byte length of the children that come before the `body` child |
+| `4` | the byte length of the `body` child |
 
 After the syntax tree, the content pool is serialized. This is a list of constants that were referenced from within the tree. The content pool begins at the offset specified in the header. Every constant is embedded in the serialization. Each constant is structured as follows:
 
