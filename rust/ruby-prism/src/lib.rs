@@ -18,6 +18,7 @@ mod bindings {
 mod node;
 mod node_ext;
 mod parse_result;
+mod string_query;
 
 use std::ffi::CString;
 use std::ptr::NonNull;
@@ -26,6 +27,7 @@ pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
 pub use self::node_ext::{ConstantPathError, FullName};
 pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
+pub use self::string_query::{InvalidEncodingError, StringQuery};
 
 use ruby_prism_sys::{
     pm_arena_new, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set,

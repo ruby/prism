@@ -170,6 +170,7 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String], layout_tes
         .allowlist_type("pm_node_type")
         .allowlist_type("pm_options_t")
         .allowlist_type("pm_options_scope_t")
+        .allowlist_type("pm_string_query_t")
         .allowlist_type("pm_string_t")
         .allowlist_type("pm_warning_level_t")
         .allowlist_type(r"^pm_\w+_node_t")
@@ -233,6 +234,10 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String], layout_tes
         .allowlist_function("pm_size_to_native")
         .allowlist_function("pm_string_constant_init")
         .allowlist_function("pm_string_length")
+        .allowlist_function("pm_string_query_constant")
+        .allowlist_function("pm_string_query_keyword")
+        .allowlist_function("pm_string_query_local")
+        .allowlist_function("pm_string_query_method_name")
         .allowlist_function("pm_string_source")
         .allowlist_function("pm_version")
         // Vars
