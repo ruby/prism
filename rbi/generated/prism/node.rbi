@@ -230,8 +230,10 @@ module Prism
 
   # Represents the use of the `alias` keyword to alias a global variable.
   #
-  #     alias $foo $bar
-  #     ^^^^^^^^^^^^^^^
+  # ```rb
+  # alias $foo $bar
+  # ^^^^^^^^^^^^^^^
+  # ```
   class AliasGlobalVariableNode < Node
     # Initialize a new AliasGlobalVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), old_name: ::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode), keyword_loc: Location).void }
@@ -277,22 +279,28 @@ module Prism
 
     # Represents the new name of the global variable that can be used after aliasing.
     #
-    #     alias $foo $bar
-    #           ^^^^
+    # ```rb
+    # alias $foo $bar
+    #       ^^^^
+    # ```
     sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def new_name; end
 
     # Represents the old name of the global variable that can be used before aliasing.
     #
-    #     alias $foo $bar
-    #                ^^^^
+    # ```rb
+    # alias $foo $bar
+    #            ^^^^
+    # ```
     sig { returns(::T.any(GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)) }
     def old_name; end
 
     # The Location of the `alias` keyword.
     #
-    #     alias $foo $bar
-    #     ^^^^^
+    # ```rb
+    # alias $foo $bar
+    # ^^^^^
+    # ```
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -311,8 +319,10 @@ module Prism
 
   # Represents the use of the `alias` keyword to alias a method.
   #
-  #     alias foo bar
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # alias foo bar
+  # ^^^^^^^^^^^^^
+  # ```
   class AliasMethodNode < Node
     # Initialize a new AliasMethodNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, new_name: ::T.any(SymbolNode, InterpolatedSymbolNode), old_name: ::T.any(SymbolNode, InterpolatedSymbolNode), keyword_loc: Location).void }
@@ -358,34 +368,40 @@ module Prism
 
     # Represents the new name of the method that will be aliased.
     #
-    #     alias foo bar
-    #           ^^^
+    # ```rb
+    # alias foo bar
+    #       ^^^
     #
-    #     alias :foo :bar
-    #           ^^^^
+    # alias :foo :bar
+    #       ^^^^
     #
-    #     alias :"#{foo}" :"#{bar}"
-    #           ^^^^^^^^^
+    # alias :"#{foo}" :"#{bar}"
+    #       ^^^^^^^^^
+    # ```
     sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode)) }
     def new_name; end
 
     # Represents the old name of the method that will be aliased.
     #
-    #     alias foo bar
-    #               ^^^
+    # ```rb
+    # alias foo bar
+    #           ^^^
     #
-    #     alias :foo :bar
-    #                ^^^^
+    # alias :foo :bar
+    #            ^^^^
     #
-    #     alias :"#{foo}" :"#{bar}"
-    #                     ^^^^^^^^^
+    # alias :"#{foo}" :"#{bar}"
+    #                 ^^^^^^^^^
+    # ```
     sig { returns(::T.any(SymbolNode, InterpolatedSymbolNode)) }
     def old_name; end
 
     # Represents the Location of the `alias` keyword.
     #
-    #     alias foo bar
-    #     ^^^^^
+    # ```rb
+    # alias foo bar
+    # ^^^^^
+    # ```
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -404,8 +420,10 @@ module Prism
 
   # Represents an alternation pattern in pattern matching.
   #
-  #     foo => bar | baz
-  #            ^^^^^^^^^
+  # ```rb
+  # foo => bar | baz
+  #        ^^^^^^^^^
+  # ```
   class AlternationPatternNode < Node
     # Initialize a new AlternationPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -451,22 +469,28 @@ module Prism
 
     # Represents the left side of the expression.
     #
-    #     foo => bar | baz
-    #            ^^^
+    # ```rb
+    # foo => bar | baz
+    #        ^^^
+    # ```
     sig { returns(Node) }
     def left; end
 
     # Represents the right side of the expression.
     #
-    #     foo => bar | baz
-    #                  ^^^
+    # ```rb
+    # foo => bar | baz
+    #              ^^^
+    # ```
     sig { returns(Node) }
     def right; end
 
     # Represents the alternation operator Location.
     #
-    #     foo => bar | baz
-    #                ^
+    # ```rb
+    # foo => bar | baz
+    #            ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -485,8 +509,10 @@ module Prism
 
   # Represents the use of the `&&` operator or the `and` keyword.
   #
-  #     left and right
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # left and right
+  # ^^^^^^^^^^^^^^
+  # ```
   class AndNode < Node
     # Initialize a new AndNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -532,28 +558,34 @@ module Prism
 
     # Represents the left side of the expression. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     left and right
-    #     ^^^^
+    # ```rb
+    # left and right
+    # ^^^^
     #
-    #     1 && 2
-    #     ^
+    # 1 && 2
+    # ^
+    # ```
     sig { returns(Node) }
     def left; end
 
     # Represents the right side of the expression.
     #
-    #     left && right
-    #             ^^^^^
+    # ```rb
+    # left && right
+    #         ^^^^^
     #
-    #     1 and 2
-    #           ^
+    # 1 and 2
+    #       ^
+    # ```
     sig { returns(Node) }
     def right; end
 
     # The Location of the `and` keyword or the `&&` operator.
     #
-    #     left and right
-    #          ^^^
+    # ```rb
+    # left and right
+    #      ^^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -572,8 +604,10 @@ module Prism
 
   # Represents a set of arguments to a method or a keyword.
   #
-  #     return foo, bar, baz
-  #            ^^^^^^^^^^^^^
+  # ```rb
+  # return foo, bar, baz
+  #        ^^^^^^^^^^^^^
+  # ```
   class ArgumentsNode < Node
     # Initialize a new ArgumentsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: T::Array[Node]).void }
@@ -639,8 +673,10 @@ module Prism
 
     # The list of arguments, if present. These can be any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo(bar, baz)
-    #         ^^^^^^^^
+    # ```rb
+    # foo(bar, baz)
+    #     ^^^^^^^^
+    # ```
     sig { returns(T::Array[Node]) }
     def arguments; end
 
@@ -650,8 +686,10 @@ module Prism
 
   # Represents an array literal. This can be a regular array using brackets or a special array using % like %w or %i.
   #
-  #     [1, 2, 3]
-  #     ^^^^^^^^^
+  # ```rb
+  # [1, 2, 3]
+  # ^^^^^^^^^
+  # ```
   class ArrayNode < Node
     # Initialize a new ArrayNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -705,10 +743,12 @@ module Prism
 
     # Represents the optional source Location for the opening token.
     #
-    #     [1,2,3]                 # "["
-    #     %w[foo bar baz]         # "%w["
-    #     %I(apple orange banana) # "%I("
-    #     foo = 1, 2, 3           # nil
+    # ```rb
+    # [1,2,3]                 # "["
+    # %w[foo bar baz]         # "%w["
+    # %I(apple orange banana) # "%I("
+    # foo = 1, 2, 3           # nil
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -719,10 +759,12 @@ module Prism
 
     # Represents the optional source Location for the closing token.
     #
-    #     [1,2,3]                 # "]"
-    #     %w[foo bar baz]         # "]"
-    #     %I(apple orange banana) # ")"
-    #     foo = 1, 2, 3           # nil
+    # ```rb
+    # [1,2,3]                 # "]"
+    # %w[foo bar baz]         # "]"
+    # %I(apple orange banana) # ")"
+    # foo = 1, 2, 3           # nil
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -745,20 +787,22 @@ module Prism
 
   # Represents an array pattern in pattern matching.
   #
-  #     foo in 1, 2
-  #            ^^^^
+  # ```rb
+  # foo in 1, 2
+  #        ^^^^
   #
-  #     foo in [1, 2]
-  #            ^^^^^^
+  # foo in [1, 2]
+  #        ^^^^^^
   #
-  #     foo in *bar
-  #            ^^^^
+  # foo in *bar
+  #        ^^^^
   #
-  #     foo in Bar[]
-  #            ^^^^^
+  # foo in Bar[]
+  #        ^^^^^
   #
-  #     foo in Bar[1, 2, 3]
-  #            ^^^^^^^^^^^^
+  # foo in Bar[1, 2, 3]
+  #        ^^^^^^^^^^^^
+  # ```
   class ArrayPatternNode < Node
     # Initialize a new ArrayPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), requireds: T::Array[Node], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), posts: T::Array[Node], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -804,42 +848,52 @@ module Prism
 
     # Represents the optional constant preceding the Array
     #
-    #     foo in Bar[]
-    #            ^^^
+    # ```rb
+    # foo in Bar[]
+    #        ^^^
     #
-    #     foo in Bar[1, 2, 3]
-    #            ^^^
+    # foo in Bar[1, 2, 3]
+    #        ^^^
     #
-    #     foo in Bar::Baz[1, 2, 3]
-    #            ^^^^^^^^
+    # foo in Bar::Baz[1, 2, 3]
+    #        ^^^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the required elements of the array pattern.
     #
-    #     foo in [1, 2]
-    #             ^  ^
+    # ```rb
+    # foo in [1, 2]
+    #         ^  ^
+    # ```
     sig { returns(T::Array[Node]) }
     def requireds; end
 
     # Represents the rest element of the array pattern.
     #
-    #     foo in *bar
-    #            ^^^^
+    # ```rb
+    # foo in *bar
+    #        ^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
     # Represents the elements after the rest element of the array pattern.
     #
-    #     foo in *bar, baz
-    #                  ^^^
+    # ```rb
+    # foo in *bar, baz
+    #              ^^^
+    # ```
     sig { returns(T::Array[Node]) }
     def posts; end
 
     # Represents the opening Location of the array pattern.
     #
-    #     foo in [1, 2]
-    #            ^
+    # ```rb
+    # foo in [1, 2]
+    #        ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -850,8 +904,10 @@ module Prism
 
     # Represents the closing Location of the array pattern.
     #
-    #     foo in [1, 2]
-    #                 ^
+    # ```rb
+    # foo in [1, 2]
+    #             ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -874,8 +930,10 @@ module Prism
 
   # Represents a hash key/value pair.
   #
-  #     { a => b }
-  #       ^^^^^^
+  # ```rb
+  # { a => b }
+  #   ^^^^^^
+  # ```
   class AssocNode < Node
     # Initialize a new AssocNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, key: Node, value: Node, operator_loc: ::T.nilable(Location)).void }
@@ -921,31 +979,37 @@ module Prism
 
     # The key of the association. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     { a: b }
-    #       ^
+    # ```rb
+    # { a: b }
+    #   ^
     #
-    #     { foo => bar }
-    #       ^^^
+    # { foo => bar }
+    #   ^^^
     #
-    #     { def a; end => 1 }
-    #       ^^^^^^^^^^
+    # { def a; end => 1 }
+    #   ^^^^^^^^^^
+    # ```
     sig { returns(Node) }
     def key; end
 
     # The value of the association, if present. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     { foo => bar }
-    #              ^^^
+    # ```rb
+    # { foo => bar }
+    #          ^^^
     #
-    #     { x: 1 }
-    #          ^
+    # { x: 1 }
+    #      ^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=>` operator, if present.
     #
-    #     { foo => bar }
-    #           ^^
+    # ```rb
+    # { foo => bar }
+    #       ^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def operator_loc; end
 
@@ -964,8 +1028,10 @@ module Prism
 
   # Represents a splat in a hash literal.
   #
-  #     { **foo }
-  #       ^^^^^
+  # ```rb
+  # { **foo }
+  #   ^^^^^
+  # ```
   class AssocSplatNode < Node
     # Initialize a new AssocSplatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.nilable(Node), operator_loc: Location).void }
@@ -1011,15 +1077,19 @@ module Prism
 
     # The value to be splatted, if present. Will be missing when keyword rest argument forwarding is used.
     #
-    #     { **foo }
-    #         ^^^
+    # ```rb
+    # { **foo }
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def value; end
 
     # The Location of the `**` operator.
     #
-    #     { **x }
-    #       ^^
+    # ```rb
+    # { **x }
+    #   ^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1038,8 +1108,10 @@ module Prism
 
   # Represents reading a reference to a field in the previous match.
   #
-  #     $'
-  #     ^^
+  # ```rb
+  # $'
+  # ^^
+  # ```
   class BackReferenceReadNode < Node
     # Initialize a new BackReferenceReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -1085,9 +1157,11 @@ module Prism
 
     # The name of the back-reference variable, including the leading `$`.
     #
-    #     $& # name `:$&`
+    # ```rb
+    # $& # name `:$&`
     #
-    #     $+ # name `:$+`
+    # $+ # name `:$+`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -1097,10 +1171,12 @@ module Prism
 
   # Represents a begin statement.
   #
-  #     begin
-  #       foo
-  #     end
-  #     ^^^^^
+  # ```rb
+  # begin
+  #   foo
+  # end
+  # ^^^^^
+  # ```
   class BeginNode < Node
     # Initialize a new BeginNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, begin_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), rescue_clause: ::T.nilable(RescueNode), else_clause: ::T.nilable(ElseNode), ensure_clause: ::T.nilable(EnsureNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -1146,8 +1222,10 @@ module Prism
 
     # Represents the Location of the `begin` keyword.
     #
-    #     begin x end
-    #     ^^^^^
+    # ```rb
+    # begin x end
+    # ^^^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def begin_keyword_loc; end
 
@@ -1158,36 +1236,46 @@ module Prism
 
     # Represents the statements within the begin block.
     #
-    #     begin x end
-    #           ^
+    # ```rb
+    # begin x end
+    #       ^
+    # ```
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Represents the rescue clause within the begin block.
     #
-    #     begin x; rescue y; end
-    #              ^^^^^^^^
+    # ```rb
+    # begin x; rescue y; end
+    #          ^^^^^^^^
+    # ```
     sig { returns(::T.nilable(RescueNode)) }
     def rescue_clause; end
 
     # Represents the else clause within the begin block.
     #
-    #     begin x; rescue y; else z; end
-    #                        ^^^^^^^^^^^
+    # ```rb
+    # begin x; rescue y; else z; end
+    #                    ^^^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the ensure clause within the begin block.
     #
-    #     begin x; ensure y; end
-    #              ^^^^^^^^
+    # ```rb
+    # begin x; ensure y; end
+    #          ^^^^^^^^
+    # ```
     sig { returns(::T.nilable(EnsureNode)) }
     def ensure_clause; end
 
     # Represents the Location of the `end` keyword.
     #
-    #     begin x end
-    #             ^^^
+    # ```rb
+    # begin x end
+    #         ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -1210,8 +1298,10 @@ module Prism
 
   # Represents a block argument using `&`.
   #
-  #     bar(&args)
-  #         ^^^^^
+  # ```rb
+  # bar(&args)
+  #     ^^^^^
+  # ```
   class BlockArgumentNode < Node
     # Initialize a new BlockArgumentNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: ::T.nilable(Node), operator_loc: Location).void }
@@ -1257,15 +1347,19 @@ module Prism
 
     # The expression that is being passed as a block argument. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo(&args)
-    #          ^^^^
+    # ```rb
+    # foo(&args)
+    #      ^^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def expression; end
 
     # Represents the Location of the `&` operator.
     #
-    #     foo(&args)
-    #         ^
+    # ```rb
+    # foo(&args)
+    #     ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1284,8 +1378,10 @@ module Prism
 
   # Represents a block local variable.
   #
-  #     a { |; b| }
-  #            ^
+  # ```rb
+  # a { |; b| }
+  #        ^
+  # ```
   class BlockLocalVariableNode < Node
     # Initialize a new BlockLocalVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -1335,8 +1431,10 @@ module Prism
 
     # The name of the block local variable.
     #
-    #     a { |; b| } # name `:b`
-    #            ^
+    # ```rb
+    # a { |; b| } # name `:b`
+    #        ^
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -1346,8 +1444,10 @@ module Prism
 
   # Represents a block of ruby code.
   #
-  #     [1, 2, 3].each { |i| puts x }
-  #                    ^^^^^^^^^^^^^^
+  # ```rb
+  # [1, 2, 3].each { |i| puts x }
+  #                ^^^^^^^^^^^^^^
+  # ```
   class BlockNode < Node
     # Initialize a new BlockNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), opening_loc: Location, closing_loc: Location).void }
@@ -1393,33 +1493,41 @@ module Prism
 
     # The local variables declared in the block.
     #
-    #     [1, 2, 3].each { |i| puts x } # locals: [:i]
-    #                       ^
+    # ```rb
+    # [1, 2, 3].each { |i| puts x } # locals: [:i]
+    #                   ^
+    # ```
     sig { returns(T::Array[Symbol]) }
     def locals; end
 
     # The parameters of the block.
     #
-    #     [1, 2, 3].each { |i| puts x }
-    #                      ^^^
-    #     [1, 2, 3].each { puts _1 }
-    #                    ^^^^^^^^^^^
-    #     [1, 2, 3].each { puts it }
-    #                    ^^^^^^^^^^^
+    # ```rb
+    # [1, 2, 3].each { |i| puts x }
+    #                  ^^^
+    # [1, 2, 3].each { puts _1 }
+    #                ^^^^^^^^^^^
+    # [1, 2, 3].each { puts it }
+    #                ^^^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode))) }
     def parameters; end
 
     # The body of the block.
     #
-    #     [1, 2, 3].each { |i| puts x }
-    #                          ^^^^^^
+    # ```rb
+    # [1, 2, 3].each { |i| puts x }
+    #                      ^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Represents the Location of the opening `{` or `do`.
     #
-    #     [1, 2, 3].each { |i| puts x }
-    #                    ^
+    # ```rb
+    # [1, 2, 3].each { |i| puts x }
+    #                ^
+    # ```
     sig { returns(Location) }
     def opening_loc; end
 
@@ -1430,8 +1538,10 @@ module Prism
 
     # Represents the Location of the closing `}` or `end`.
     #
-    #     [1, 2, 3].each { |i| puts x }
-    #                                 ^
+    # ```rb
+    # [1, 2, 3].each { |i| puts x }
+    #                             ^
+    # ```
     sig { returns(Location) }
     def closing_loc; end
 
@@ -1454,9 +1564,11 @@ module Prism
 
   # Represents a block parameter of a method, block, or lambda definition.
   #
-  #     def a(&b)
-  #           ^^
-  #     end
+  # ```rb
+  # def a(&b)
+  #       ^^
+  # end
+  # ```
   class BlockParameterNode < Node
     # Initialize a new BlockParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -1506,16 +1618,20 @@ module Prism
 
     # The name of the block parameter.
     #
-    #     def a(&b) # name `:b`
-    #            ^
-    #     end
+    # ```rb
+    # def a(&b) # name `:b`
+    #        ^
+    # end
+    # ```
     sig { returns(::T.nilable(Symbol)) }
     def name; end
 
     # Represents the Location of the block parameter name.
     #
-    #     def a(&b)
-    #            ^
+    # ```rb
+    # def a(&b)
+    #        ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def name_loc; end
 
@@ -1526,9 +1642,11 @@ module Prism
 
     # Represents the Location of the `&` operator.
     #
-    #     def a(&b)
-    #           ^
-    #     end
+    # ```rb
+    # def a(&b)
+    #       ^
+    # end
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1547,12 +1665,14 @@ module Prism
 
   # Represents a block's parameters declaration.
   #
-  #     -> (a, b = 1; local) { }
-  #        ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # -> (a, b = 1; local) { }
+  #    ^^^^^^^^^^^^^^^^^
   #
-  #     foo do |a, b = 1; local|
-  #            ^^^^^^^^^^^^^^^^^
-  #     end
+  # foo do |a, b = 1; local|
+  #        ^^^^^^^^^^^^^^^^^
+  # end
+  # ```
   class BlockParametersNode < Node
     # Initialize a new BlockParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parameters: ::T.nilable(ParametersNode), locals: T::Array[BlockLocalVariableNode], opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -1598,34 +1718,40 @@ module Prism
 
     # Represents the parameters of the block.
     #
-    #     -> (a, b = 1; local) { }
-    #         ^^^^^^^^
+    # ```rb
+    # -> (a, b = 1; local) { }
+    #     ^^^^^^^^
     #
-    #     foo do |a, b = 1; local|
-    #             ^^^^^^^^
-    #     end
+    # foo do |a, b = 1; local|
+    #         ^^^^^^^^
+    # end
+    # ```
     sig { returns(::T.nilable(ParametersNode)) }
     def parameters; end
 
     # Represents the local variables of the block.
     #
-    #     -> (a, b = 1; local) { }
-    #                   ^^^^^
+    # ```rb
+    # -> (a, b = 1; local) { }
+    #               ^^^^^
     #
-    #     foo do |a, b = 1; local|
-    #                       ^^^^^
-    #     end
+    # foo do |a, b = 1; local|
+    #                   ^^^^^
+    # end
+    # ```
     sig { returns(T::Array[BlockLocalVariableNode]) }
     def locals; end
 
     # Represents the opening Location of the block parameters.
     #
-    #     -> (a, b = 1; local) { }
-    #        ^
+    # ```rb
+    # -> (a, b = 1; local) { }
+    #    ^
     #
-    #     foo do |a, b = 1; local|
-    #            ^
-    #     end
+    # foo do |a, b = 1; local|
+    #        ^
+    # end
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -1636,12 +1762,14 @@ module Prism
 
     # Represents the closing Location of the block parameters.
     #
-    #     -> (a, b = 1; local) { }
-    #                        ^
+    # ```rb
+    # -> (a, b = 1; local) { }
+    #                    ^
     #
-    #     foo do |a, b = 1; local|
-    #                            ^
-    #     end
+    # foo do |a, b = 1; local|
+    #                        ^
+    # end
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -1664,8 +1792,10 @@ module Prism
 
   # Represents the use of the `break` keyword.
   #
-  #     break foo
-  #     ^^^^^^^^^
+  # ```rb
+  # break foo
+  # ^^^^^^^^^
+  # ```
   class BreakNode < Node
     # Initialize a new BreakNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
@@ -1711,15 +1841,19 @@ module Prism
 
     # The arguments to the break statement, if present. These can be any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     break foo
-    #           ^^^
+    # ```rb
+    # break foo
+    #       ^^^
+    # ```
     sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # The Location of the `break` keyword.
     #
-    #     break foo
-    #     ^^^^^
+    # ```rb
+    # break foo
+    # ^^^^^
+    # ```
     sig { returns(Location) }
     def keyword_loc; end
 
@@ -1738,8 +1872,10 @@ module Prism
 
   # Represents the use of the `&&=` operator on a call.
   #
-  #     foo.bar &&= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar &&= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class CallAndWriteNode < Node
     # Initialize a new CallAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
@@ -1801,15 +1937,19 @@ module Prism
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo.bar &&= value
-    #     ^^^
+    # ```rb
+    # foo.bar &&= value
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
-    #     foo.bar &&= value
-    #        ^
+    # ```rb
+    # foo.bar &&= value
+    #    ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -1820,8 +1960,10 @@ module Prism
 
     # Represents the Location of the message.
     #
-    #     foo.bar &&= value
-    #         ^^^
+    # ```rb
+    # foo.bar &&= value
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -1832,22 +1974,28 @@ module Prism
 
     # Represents the name of the method being called.
     #
-    #     foo.bar &&= value # read_name `:bar`
-    #         ^^^
+    # ```rb
+    # foo.bar &&= value # read_name `:bar`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def read_name; end
 
     # Represents the name of the method being written to.
     #
-    #     foo.bar &&= value # write_name `:bar=`
-    #         ^^^
+    # ```rb
+    # foo.bar &&= value # write_name `:bar=`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def write_name; end
 
     # Represents the Location of the operator.
     #
-    #     foo.bar &&= value
-    #             ^^^
+    # ```rb
+    # foo.bar &&= value
+    #         ^^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -1858,8 +2006,10 @@ module Prism
 
     # Represents the value being assigned.
     #
-    #     foo.bar &&= value
-    #                 ^^^^^
+    # ```rb
+    # foo.bar &&= value
+    #             ^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -1881,23 +2031,25 @@ module Prism
 
   # Represents a method call, in all of the various forms that can take.
   #
-  #     foo
-  #     ^^^
+  # ```rb
+  # foo
+  # ^^^
   #
-  #     foo()
-  #     ^^^^^
+  # foo()
+  # ^^^^^
   #
-  #     +foo
-  #     ^^^^
+  # +foo
+  # ^^^^
   #
-  #     foo + bar
-  #     ^^^^^^^^^
+  # foo + bar
+  # ^^^^^^^^^
   #
-  #     foo.bar
-  #     ^^^^^^^
+  # foo.bar
+  # ^^^^^^^
   #
-  #     foo&.bar
-  #     ^^^^^^^^
+  # foo&.bar
+  # ^^^^^^^^
+  # ```
   class CallNode < Node
     # Initialize a new CallNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), name: Symbol, message_loc: ::T.nilable(Location), opening_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), closing_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), block: ::T.nilable(::T.any(BlockNode, BlockArgumentNode))).void }
@@ -1959,24 +2111,28 @@ module Prism
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo.bar
-    #     ^^^
+    # ```rb
+    # foo.bar
+    # ^^^
     #
-    #     +foo
-    #      ^^^
+    # +foo
+    #  ^^^
     #
-    #     foo + bar
-    #     ^^^
+    # foo + bar
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
-    #     foo.bar
-    #        ^
+    # ```rb
+    # foo.bar
+    #    ^
     #
-    #     foo&.bar
-    #        ^^
+    # foo&.bar
+    #    ^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -1987,15 +2143,19 @@ module Prism
 
     # Represents the name of the method being called.
     #
-    #     foo.bar # name `:foo`
-    #     ^^^
+    # ```rb
+    # foo.bar # name `:foo`
+    # ^^^
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # Represents the Location of the message.
     #
-    #     foo.bar
-    #         ^^^
+    # ```rb
+    # foo.bar
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2006,8 +2166,10 @@ module Prism
 
     # Represents the Location of the left parenthesis.
     #
-    #     foo(bar)
-    #        ^
+    # ```rb
+    # foo(bar)
+    #    ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -2018,15 +2180,19 @@ module Prism
 
     # Represents the arguments to the method call. These can be any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo(bar)
-    #         ^^^
+    # ```rb
+    # foo(bar)
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(ArgumentsNode)) }
     def arguments; end
 
     # Represents the Location of the right parenthesis.
     #
-    #     foo(bar)
-    #            ^
+    # ```rb
+    # foo(bar)
+    #        ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -2037,11 +2203,13 @@ module Prism
 
     # Represents the Location of the equal sign, in the case that this is an attribute write.
     #
-    #     foo.bar = value
-    #             ^
+    # ```rb
+    # foo.bar = value
+    #         ^
     #
-    #     foo[bar] = value
-    #              ^
+    # foo[bar] = value
+    #          ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def equal_loc; end
 
@@ -2052,8 +2220,10 @@ module Prism
 
     # Represents the block that is being passed to the method.
     #
-    #     foo { |a| a }
-    #         ^^^^^^^^^
+    # ```rb
+    # foo { |a| a }
+    #     ^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(BlockNode, BlockArgumentNode))) }
     def block; end
 
@@ -2083,8 +2253,10 @@ module Prism
 
   # Represents the use of an assignment operator on a call.
   #
-  #     foo.bar += baz
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar += baz
+  # ^^^^^^^^^^^^^^
+  # ```
   class CallOperatorWriteNode < Node
     # Initialize a new CallOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
@@ -2146,15 +2318,19 @@ module Prism
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo.bar += value
-    #     ^^^
+    # ```rb
+    # foo.bar += value
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
-    #     foo.bar += value
-    #        ^
+    # ```rb
+    # foo.bar += value
+    #    ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -2165,8 +2341,10 @@ module Prism
 
     # Represents the Location of the message.
     #
-    #     foo.bar += value
-    #         ^^^
+    # ```rb
+    # foo.bar += value
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2177,29 +2355,37 @@ module Prism
 
     # Represents the name of the method being called.
     #
-    #     foo.bar += value # read_name `:bar`
-    #         ^^^
+    # ```rb
+    # foo.bar += value # read_name `:bar`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def read_name; end
 
     # Represents the name of the method being written to.
     #
-    #     foo.bar += value # write_name `:bar=`
-    #         ^^^
+    # ```rb
+    # foo.bar += value # write_name `:bar=`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def write_name; end
 
     # Represents the binary operator being used.
     #
-    #     foo.bar += value # binary_operator `:+`
-    #             ^
+    # ```rb
+    # foo.bar += value # binary_operator `:+`
+    #         ^
+    # ```
     sig { returns(Symbol) }
     def binary_operator; end
 
     # Represents the Location of the binary operator.
     #
-    #     foo.bar += value
-    #             ^^
+    # ```rb
+    # foo.bar += value
+    #         ^^
+    # ```
     sig { returns(Location) }
     def binary_operator_loc; end
 
@@ -2210,8 +2396,10 @@ module Prism
 
     # Represents the value being assigned.
     #
-    #     foo.bar += value
-    #                ^^^^^
+    # ```rb
+    # foo.bar += value
+    #            ^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -2229,8 +2417,10 @@ module Prism
 
   # Represents the use of the `||=` operator on a call.
   #
-  #     foo.bar ||= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar ||= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class CallOrWriteNode < Node
     # Initialize a new CallOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), message_loc: ::T.nilable(Location), read_name: Symbol, write_name: Symbol, operator_loc: Location, value: Node).void }
@@ -2292,15 +2482,19 @@ module Prism
 
     # The object that the method is being called on. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo.bar ||= value
-    #     ^^^
+    # ```rb
+    # foo.bar ||= value
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
-    #     foo.bar ||= value
-    #        ^
+    # ```rb
+    # foo.bar ||= value
+    #    ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def call_operator_loc; end
 
@@ -2311,8 +2505,10 @@ module Prism
 
     # Represents the Location of the message.
     #
-    #     foo.bar ||= value
-    #         ^^^
+    # ```rb
+    # foo.bar ||= value
+    #     ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def message_loc; end
 
@@ -2323,22 +2519,28 @@ module Prism
 
     # Represents the name of the method being called.
     #
-    #     foo.bar ||= value # read_name `:bar`
-    #         ^^^
+    # ```rb
+    # foo.bar ||= value # read_name `:bar`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def read_name; end
 
     # Represents the name of the method being written to.
     #
-    #     foo.bar ||= value # write_name `:bar=`
-    #         ^^^
+    # ```rb
+    # foo.bar ||= value # write_name `:bar=`
+    #     ^^^
+    # ```
     sig { returns(Symbol) }
     def write_name; end
 
     # Represents the Location of the operator.
     #
-    #     foo.bar ||= value
-    #             ^^^
+    # ```rb
+    # foo.bar ||= value
+    #         ^^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2349,8 +2551,10 @@ module Prism
 
     # Represents the value being assigned.
     #
-    #     foo.bar ||= value
-    #                 ^^^^^
+    # ```rb
+    # foo.bar ||= value
+    #             ^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -2372,16 +2576,18 @@ module Prism
 
   # Represents assigning to a method call.
   #
-  #     foo.bar, = 1
+  # ```rb
+  # foo.bar, = 1
+  # ^^^^^^^
+  #
+  # begin
+  # rescue => foo.bar
+  #           ^^^^^^^
+  # end
+  #
+  # for foo.bar in baz do end
   #     ^^^^^^^
-  #
-  #     begin
-  #     rescue => foo.bar
-  #               ^^^^^^^
-  #     end
-  #
-  #     for foo.bar in baz do end
-  #         ^^^^^^^
+  # ```
   class CallTargetNode < Node
     # Initialize a new CallTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, call_operator_loc: Location, name: Symbol, message_loc: Location).void }
@@ -2443,15 +2649,19 @@ module Prism
 
     # The object that the method is being called on. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo.bar = 1
-    #     ^^^
+    # ```rb
+    # foo.bar = 1
+    # ^^^
+    # ```
     sig { returns(Node) }
     def receiver; end
 
     # Represents the Location of the call operator.
     #
-    #     foo.bar = 1
-    #        ^
+    # ```rb
+    # foo.bar = 1
+    #    ^
+    # ```
     sig { returns(Location) }
     def call_operator_loc; end
 
@@ -2462,15 +2672,19 @@ module Prism
 
     # Represents the name of the method being called.
     #
-    #     foo.bar = 1 # name `:foo`
-    #     ^^^
+    # ```rb
+    # foo.bar = 1 # name `:foo`
+    # ^^^
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # Represents the Location of the message.
     #
-    #     foo.bar = 1
-    #         ^^^
+    # ```rb
+    # foo.bar = 1
+    #     ^^^
+    # ```
     sig { returns(Location) }
     def message_loc; end
 
@@ -2493,8 +2707,10 @@ module Prism
 
   # Represents assigning to a local variable in pattern matching.
   #
-  #     foo => [bar => baz]
-  #             ^^^^^^^^^^
+  # ```rb
+  # foo => [bar => baz]
+  #         ^^^^^^^^^^
+  # ```
   class CapturePatternNode < Node
     # Initialize a new CapturePatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, target: LocalVariableTargetNode, operator_loc: Location).void }
@@ -2540,22 +2756,28 @@ module Prism
 
     # Represents the value to capture.
     #
-    #     foo => bar
-    #            ^^^
+    # ```rb
+    # foo => bar
+    #        ^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # Represents the target of the capture.
     #
-    #     foo => bar
-    #     ^^^
+    # ```rb
+    # foo => bar
+    # ^^^
+    # ```
     sig { returns(LocalVariableTargetNode) }
     def target; end
 
     # Represents the Location of the `=>` operator.
     #
-    #     foo => bar
-    #         ^^
+    # ```rb
+    # foo => bar
+    #     ^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2574,10 +2796,12 @@ module Prism
 
   # Represents the use of a case statement for pattern matching.
   #
-  #     case true
-  #     in false
-  #     end
-  #     ^^^^^^^^^
+  # ```rb
+  # case true
+  # in false
+  # end
+  # ^^^^^^^^^
+  # ```
   class CaseMatchNode < Node
     # Initialize a new CaseMatchNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[InNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
@@ -2623,29 +2847,37 @@ module Prism
 
     # Represents the predicate of the case match. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     case true; in false; end
-    #          ^^^^
+    # ```rb
+    # case true; in false; end
+    #      ^^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def predicate; end
 
     # Represents the conditions of the case match.
     #
-    #     case true; in false; end
-    #                ^^^^^^^^
+    # ```rb
+    # case true; in false; end
+    #            ^^^^^^^^
+    # ```
     sig { returns(T::Array[InNode]) }
     def conditions; end
 
     # Represents the else clause of the case match.
     #
-    #     case true; in false; else; end
-    #                          ^^^^^^^^^
+    # ```rb
+    # case true; in false; else; end
+    #                      ^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the Location of the `case` keyword.
     #
-    #     case true; in false; end
-    #     ^^^^
+    # ```rb
+    # case true; in false; end
+    # ^^^^
+    # ```
     sig { returns(Location) }
     def case_keyword_loc; end
 
@@ -2656,8 +2888,10 @@ module Prism
 
     # Represents the Location of the `end` keyword.
     #
-    #     case true; in false; end
-    #                          ^^^
+    # ```rb
+    # case true; in false; end
+    #                      ^^^
+    # ```
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -2680,10 +2914,12 @@ module Prism
 
   # Represents the use of a case statement.
   #
-  #     case true
-  #     when false
-  #     end
-  #     ^^^^^^^^^^
+  # ```rb
+  # case true
+  # when false
+  # end
+  # ^^^^^^^^^^
+  # ```
   class CaseNode < Node
     # Initialize a new CaseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, predicate: ::T.nilable(Node), conditions: T::Array[WhenNode], else_clause: ::T.nilable(ElseNode), case_keyword_loc: Location, end_keyword_loc: Location).void }
@@ -2729,29 +2965,37 @@ module Prism
 
     # Represents the predicate of the case statement. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     case true; when false; end
-    #          ^^^^
+    # ```rb
+    # case true; when false; end
+    #      ^^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def predicate; end
 
     # Represents the conditions of the case statement.
     #
-    #     case true; when false; end
-    #                ^^^^^^^^^^
+    # ```rb
+    # case true; when false; end
+    #            ^^^^^^^^^^
+    # ```
     sig { returns(T::Array[WhenNode]) }
     def conditions; end
 
     # Represents the else clause of the case statement.
     #
-    #     case true; when false; else; end
-    #                            ^^^^^^^^^
+    # ```rb
+    # case true; when false; else; end
+    #                        ^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # Represents the Location of the `case` keyword.
     #
-    #     case true; when false; end
-    #     ^^^^
+    # ```rb
+    # case true; when false; end
+    # ^^^^
+    # ```
     sig { returns(Location) }
     def case_keyword_loc; end
 
@@ -2762,8 +3006,10 @@ module Prism
 
     # Represents the Location of the `end` keyword.
     #
-    #     case true; when false; end
-    #                            ^^^
+    # ```rb
+    # case true; when false; end
+    #                        ^^^
+    # ```
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -2786,8 +3032,10 @@ module Prism
 
   # Represents a class declaration involving the `class` keyword.
   #
-  #     class Foo end
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # class Foo end
+  # ^^^^^^^^^^^^^
+  # ```
   class ClassNode < Node
     # Initialize a new ClassNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), inheritance_operator_loc: ::T.nilable(Location), superclass: ::T.nilable(Node), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
@@ -2837,8 +3085,10 @@ module Prism
 
     # Represents the Location of the `class` keyword.
     #
-    #     class Foo end
-    #     ^^^^^
+    # ```rb
+    # class Foo end
+    # ^^^^^
+    # ```
     sig { returns(Location) }
     def class_keyword_loc; end
 
@@ -2853,8 +3103,10 @@ module Prism
 
     # Represents the Location of the `<` operator.
     #
-    #     class Foo < Bar
-    #               ^
+    # ```rb
+    # class Foo < Bar
+    #           ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def inheritance_operator_loc; end
 
@@ -2865,22 +3117,28 @@ module Prism
 
     # Represents the superclass of the class.
     #
-    #     class Foo < Bar
-    #                 ^^^
+    # ```rb
+    # class Foo < Bar
+    #             ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def superclass; end
 
     # Represents the body of the class.
     #
-    #     class Foo; bar; end
-    #                ^^^
+    # ```rb
+    # class Foo; bar; end
+    #            ^^^
+    # ```
     sig { returns(::T.nilable(::T.any(StatementsNode, BeginNode))) }
     def body; end
 
     # Represents the Location of the `end` keyword.
     #
-    #     class Foo end
-    #               ^^^
+    # ```rb
+    # class Foo end
+    #           ^^^
+    # ```
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -2891,7 +3149,9 @@ module Prism
 
     # The name of the class.
     #
-    #     class Foo end # name `:Foo`
+    # ```rb
+    # class Foo end # name `:Foo`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -2913,8 +3173,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to a class variable.
   #
-  #     @@target &&= value
-  #     ^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # @@target &&= value
+  # ^^^^^^^^^^^^^^^^^^
+  # ```
   class ClassVariableAndWriteNode < Node
     # Initialize a new ClassVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -2960,15 +3222,19 @@ module Prism
 
     # The name of the class variable, which is a `@@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     @@target &&= value # name `:@@target`
-    #     ^^^^^^^^
+    # ```rb
+    # @@target &&= value # name `:@@target`
+    # ^^^^^^^^
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # Represents the Location of the variable name.
     #
-    #     @@target &&= value
-    #     ^^^^^^^^
+    # ```rb
+    # @@target &&= value
+    # ^^^^^^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -2979,8 +3245,10 @@ module Prism
 
     # Represents the Location of the `&&=` operator.
     #
-    #     @@target &&= value
-    #              ^^^
+    # ```rb
+    # @@target &&= value
+    #          ^^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -2991,8 +3259,10 @@ module Prism
 
     # Represents the value being assigned. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     @@target &&= value
-    #                  ^^^^^
+    # ```rb
+    # @@target &&= value
+    #              ^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -3006,8 +3276,10 @@ module Prism
 
   # Represents assigning to a class variable using an operator that isn't `=`.
   #
-  #     @@target += value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # @@target += value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class ClassVariableOperatorWriteNode < Node
     # Initialize a new ClassVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -3087,8 +3359,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to a class variable.
   #
-  #     @@target ||= value
-  #     ^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # @@target ||= value
+  # ^^^^^^^^^^^^^^^^^^
+  # ```
   class ClassVariableOrWriteNode < Node
     # Initialize a new ClassVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3168,8 +3442,10 @@ module Prism
 
   # Represents referencing a class variable.
   #
-  #     @@foo
-  #     ^^^^^
+  # ```rb
+  # @@foo
+  # ^^^^^
+  # ```
   class ClassVariableReadNode < Node
     # Initialize a new ClassVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -3215,9 +3491,11 @@ module Prism
 
     # The name of the class variable, which is a `@@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     @@abc   # name `:@@abc`
+    # ```rb
+    # @@abc   # name `:@@abc`
     #
-    #     @@_test # name `:@@_test`
+    # @@_test # name `:@@_test`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -3227,8 +3505,10 @@ module Prism
 
   # Represents writing to a class variable in a context that doesn't have an explicit value.
   #
-  #     @@foo, @@bar = baz
-  #     ^^^^^  ^^^^^
+  # ```rb
+  # @@foo, @@bar = baz
+  # ^^^^^  ^^^^^
+  # ```
   class ClassVariableTargetNode < Node
     # Initialize a new ClassVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -3282,8 +3562,10 @@ module Prism
 
   # Represents writing to a class variable.
   #
-  #     @@foo = 1
-  #     ^^^^^^^^^
+  # ```rb
+  # @@foo = 1
+  # ^^^^^^^^^
+  # ```
   class ClassVariableWriteNode < Node
     # Initialize a new ClassVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -3329,16 +3611,20 @@ module Prism
 
     # The name of the class variable, which is a `@@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     @@abc = 123     # name `@@abc`
+    # ```rb
+    # @@abc = 123     # name `@@abc`
     #
-    #     @@_test = :test # name `@@_test`
+    # @@_test = :test # name `@@_test`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The Location of the variable name.
     #
-    #     @@foo = :bar
-    #     ^^^^^
+    # ```rb
+    # @@foo = :bar
+    # ^^^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -3349,18 +3635,22 @@ module Prism
 
     # The value to write to the class variable. This can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     @@foo = :bar
-    #             ^^^^
+    # ```rb
+    # @@foo = :bar
+    #         ^^^^
     #
-    #     @@_xyz = 123
-    #              ^^^
+    # @@_xyz = 123
+    #          ^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=` operator.
     #
-    #     @@foo = :bar
-    #           ^
+    # ```rb
+    # @@foo = :bar
+    #       ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -3379,8 +3669,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to a constant.
   #
-  #     Target &&= value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # Target &&= value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class ConstantAndWriteNode < Node
     # Initialize a new ConstantAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3460,8 +3752,10 @@ module Prism
 
   # Represents assigning to a constant using an operator that isn't `=`.
   #
-  #     Target += value
-  #     ^^^^^^^^^^^^^^^
+  # ```rb
+  # Target += value
+  # ^^^^^^^^^^^^^^^
+  # ```
   class ConstantOperatorWriteNode < Node
     # Initialize a new ConstantOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -3541,8 +3835,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to a constant.
   #
-  #     Target ||= value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # Target ||= value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class ConstantOrWriteNode < Node
     # Initialize a new ConstantOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -3622,8 +3918,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to a constant path.
   #
-  #     Parent::Child &&= value
-  #     ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # Parent::Child &&= value
+  # ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class ConstantPathAndWriteNode < Node
     # Initialize a new ConstantPathAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -3694,8 +3992,10 @@ module Prism
 
   # Represents accessing a constant through a path of `::` operators.
   #
-  #     Foo::Bar
-  #     ^^^^^^^^
+  # ```rb
+  # Foo::Bar
+  # ^^^^^^^^
+  # ```
   class ConstantPathNode < Node
     # Initialize a new ConstantPathNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
@@ -3741,14 +4041,16 @@ module Prism
 
     # The left-hand node of the path, if present. It can be `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression). It will be `nil` when the constant lookup is at the root of the module tree.
     #
-    #     Foo::Bar
-    #     ^^^
+    # ```rb
+    # Foo::Bar
+    # ^^^
     #
-    #     self::Test
-    #     ^^^^
+    # self::Test
+    # ^^^^
     #
-    #     a.b::C
-    #     ^^^
+    # a.b::C
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def parent; end
 
@@ -3758,11 +4060,12 @@ module Prism
 
     # The Location of the `::` delimiter.
     #
-    #     ::Foo
-    #     ^^
+    # ```rb
+    # ^^
     #
-    #     One::Two
-    #        ^^
+    # One::Two
+    #    ^^
+    # ```
     sig { returns(Location) }
     def delimiter_loc; end
 
@@ -3773,11 +4076,12 @@ module Prism
 
     # The Location of the name of the constant.
     #
-    #     ::Foo
-    #       ^^^
+    # ```rb
+    #   ^^^
     #
-    #     One::Two
-    #          ^^^
+    # One::Two
+    #      ^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -3796,8 +4100,10 @@ module Prism
 
   # Represents assigning to a constant path using an operator that isn't `=`.
   #
-  #     Parent::Child += value
-  #     ^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # Parent::Child += value
+  # ^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class ConstantPathOperatorWriteNode < Node
     # Initialize a new ConstantPathOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -3868,8 +4174,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to a constant path.
   #
-  #     Parent::Child ||= value
-  #     ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # Parent::Child ||= value
+  # ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class ConstantPathOrWriteNode < Node
     # Initialize a new ConstantPathOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -3940,8 +4248,10 @@ module Prism
 
   # Represents writing to a constant path in a context that doesn't have an explicit value.
   #
-  #     Foo::Foo, Bar::Bar = baz
-  #     ^^^^^^^^  ^^^^^^^^
+  # ```rb
+  # Foo::Foo, Bar::Bar = baz
+  # ^^^^^^^^  ^^^^^^^^
+  # ```
   class ConstantPathTargetNode < Node
     # Initialize a new ConstantPathTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, parent: ::T.nilable(Node), name: ::T.nilable(Symbol), delimiter_loc: Location, name_loc: Location).void }
@@ -4021,14 +4331,13 @@ module Prism
 
   # Represents writing to a constant path.
   #
-  #     ::Foo = 1
-  #     ^^^^^^^^^
+  # ```rb
+  # ^^^^^^^^^
   #
-  #     Foo::Bar = 1
-  #     ^^^^^^^^^^^^
-  #
-  #     ::Foo::Bar = 1
-  #     ^^^^^^^^^^^^^^
+  # Foo::Bar = 1
+  # ^^^^^^^^^^^^
+  # ^^^^^^^^^^^^^^
+  # ```
   class ConstantPathWriteNode < Node
     # Initialize a new ConstantPathWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, target: ConstantPathNode, operator_loc: Location, value: Node).void }
@@ -4074,18 +4383,19 @@ module Prism
 
     # A node representing the constant path being written to.
     #
-    #     Foo::Bar = 1
-    #     ^^^^^^^^
-    #
-    #     ::Foo = :abc
-    #     ^^^^^
+    # ```rb
+    # Foo::Bar = 1
+    # ^^^^^^^^
+    # ^^^^^
+    # ```
     sig { returns(ConstantPathNode) }
     def target; end
 
     # The Location of the `=` operator.
     #
-    #     ::ABC = 123
-    #           ^
+    # ```rb
+    #       ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -4096,8 +4406,10 @@ module Prism
 
     # The value to write to the constant path. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     FOO::BAR = :abc
-    #                ^^^^
+    # ```rb
+    # FOO::BAR = :abc
+    #            ^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -4111,8 +4423,10 @@ module Prism
 
   # Represents referencing a constant.
   #
-  #     Foo
-  #     ^^^
+  # ```rb
+  # Foo
+  # ^^^
+  # ```
   class ConstantReadNode < Node
     # Initialize a new ConstantReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -4158,9 +4472,11 @@ module Prism
 
     # The name of the [constant](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#constants).
     #
-    #     X              # name `:X`
+    # ```rb
+    # X              # name `:X`
     #
-    #     SOME_CONSTANT  # name `:SOME_CONSTANT`
+    # SOME_CONSTANT  # name `:SOME_CONSTANT`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -4170,8 +4486,10 @@ module Prism
 
   # Represents writing to a constant in a context that doesn't have an explicit value.
   #
-  #     Foo, Bar = baz
-  #     ^^^  ^^^
+  # ```rb
+  # Foo, Bar = baz
+  # ^^^  ^^^
+  # ```
   class ConstantTargetNode < Node
     # Initialize a new ConstantTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -4225,8 +4543,10 @@ module Prism
 
   # Represents writing to a constant.
   #
-  #     Foo = 1
-  #     ^^^^^^^
+  # ```rb
+  # Foo = 1
+  # ^^^^^^^
+  # ```
   class ConstantWriteNode < Node
     # Initialize a new ConstantWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -4272,16 +4592,20 @@ module Prism
 
     # The name of the [constant](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#constants).
     #
-    #     Foo = :bar # name `:Foo`
+    # ```rb
+    # Foo = :bar # name `:Foo`
     #
-    #     XYZ = 1    # name `:XYZ`
+    # XYZ = 1    # name `:XYZ`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The Location of the constant name.
     #
-    #     FOO = 1
-    #     ^^^
+    # ```rb
+    # FOO = 1
+    # ^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -4292,18 +4616,22 @@ module Prism
 
     # The value to write to the constant. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     FOO = :bar
-    #           ^^^^
+    # ```rb
+    # FOO = :bar
+    #       ^^^^
     #
-    #     MyClass = Class.new
-    #               ^^^^^^^^^
+    # MyClass = Class.new
+    #           ^^^^^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=` operator.
     #
-    #     FOO = :bar
-    #         ^
+    # ```rb
+    # FOO = :bar
+    #     ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -4322,9 +4650,11 @@ module Prism
 
   # Represents a method definition.
   #
-  #     def method
-  #     end
-  #     ^^^^^^^^^^
+  # ```rb
+  # def method
+  # end
+  # ^^^^^^^^^^
+  # ```
   class DefNode < Node
     # Initialize a new DefNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, receiver: ::T.nilable(Node), parameters: ::T.nilable(ParametersNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), locals: T::Array[Symbol], def_keyword_loc: Location, operator_loc: ::T.nilable(Location), lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), equal_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location)).void }
@@ -4481,8 +4811,10 @@ module Prism
 
   # Represents the use of the `defined?` keyword.
   #
-  #     defined?(a)
-  #     ^^^^^^^^^^^
+  # ```rb
+  # defined?(a)
+  # ^^^^^^^^^^^
+  # ```
   class DefinedNode < Node
     # Initialize a new DefinedNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lparen_loc: ::T.nilable(Location), value: Node, rparen_loc: ::T.nilable(Location), keyword_loc: Location).void }
@@ -4575,8 +4907,10 @@ module Prism
 
   # Represents an `else` clause in a `case`, `if`, or `unless` statement.
   #
-  #     if a then b else c end
-  #                 ^^^^^^^^^^
+  # ```rb
+  # if a then b else c end
+  #             ^^^^^^^^^^
+  # ```
   class ElseNode < Node
     # Initialize a new ElseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, else_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -4656,8 +4990,10 @@ module Prism
 
   # Represents an interpolated set of statements.
   #
-  #     "foo #{bar}"
-  #          ^^^^^^
+  # ```rb
+  # "foo #{bar}"
+  #      ^^^^^^
+  # ```
   class EmbeddedStatementsNode < Node
     # Initialize a new EmbeddedStatementsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, statements: ::T.nilable(StatementsNode), closing_loc: Location).void }
@@ -4737,8 +5073,10 @@ module Prism
 
   # Represents an interpolated variable.
   #
-  #     "foo #@bar"
-  #          ^^^^^
+  # ```rb
+  # "foo #@bar"
+  #      ^^^^^
+  # ```
   class EmbeddedVariableNode < Node
     # Initialize a new EmbeddedVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, variable: ::T.any(InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode)).void }
@@ -4805,12 +5143,14 @@ module Prism
 
   # Represents an `ensure` clause in a `begin` statement.
   #
-  #     begin
-  #       foo
-  #     ensure
-  #     ^^^^^^
-  #       bar
-  #     end
+  # ```rb
+  # begin
+  #   foo
+  # ensure
+  # ^^^^^^
+  #   bar
+  # end
+  # ```
   class EnsureNode < Node
     # Initialize a new EnsureNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, ensure_keyword_loc: Location, statements: ::T.nilable(StatementsNode), end_keyword_loc: Location).void }
@@ -4942,8 +5282,10 @@ module Prism
 
   # Represents the use of the literal `false` keyword.
   #
-  #     false
-  #     ^^^^^
+  # ```rb
+  # false
+  # ^^^^^
+  # ```
   class FalseNode < Node
     # Initialize a new FalseNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -4993,17 +5335,19 @@ module Prism
 
   # Represents a find pattern in pattern matching.
   #
-  #     foo in *bar, baz, *qux
-  #            ^^^^^^^^^^^^^^^
+  # ```rb
+  # foo in *bar, baz, *qux
+  #        ^^^^^^^^^^^^^^^
   #
-  #     foo in [*bar, baz, *qux]
-  #            ^^^^^^^^^^^^^^^^^
+  # foo in [*bar, baz, *qux]
+  #        ^^^^^^^^^^^^^^^^^
   #
-  #     foo in Foo(*bar, baz, *qux)
-  #            ^^^^^^^^^^^^^^^^^^^^
+  # foo in Foo(*bar, baz, *qux)
+  #        ^^^^^^^^^^^^^^^^^^^^
   #
-  #     foo => *bar, baz, *qux
-  #            ^^^^^^^^^^^^^^^
+  # foo => *bar, baz, *qux
+  #        ^^^^^^^^^^^^^^^
+  # ```
   class FindPatternNode < Node
     # Initialize a new FindPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), left: SplatNode, requireds: T::Array[Node], right: SplatNode, opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -5049,48 +5393,58 @@ module Prism
 
     # Represents the optional constant preceding the pattern
     #
-    #     foo in Foo(*bar, baz, *qux)
-    #            ^^^
+    # ```rb
+    # foo in Foo(*bar, baz, *qux)
+    #        ^^^
+    # ```
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the first wildcard node in the pattern.
     #
-    #     foo in *bar, baz, *qux
-    #            ^^^^
+    # ```rb
+    # foo in *bar, baz, *qux
+    #        ^^^^
     #
-    #     foo in Foo(*bar, baz, *qux)
-    #                ^^^^
+    # foo in Foo(*bar, baz, *qux)
+    #            ^^^^
+    # ```
     sig { returns(SplatNode) }
     def left; end
 
     # Represents the nodes in between the wildcards.
     #
-    #     foo in *bar, baz, *qux
-    #                  ^^^
+    # ```rb
+    # foo in *bar, baz, *qux
+    #              ^^^
     #
-    #     foo in Foo(*bar, baz, 1, *qux)
-    #                      ^^^^^^
+    # foo in Foo(*bar, baz, 1, *qux)
+    #                  ^^^^^^
+    # ```
     sig { returns(T::Array[Node]) }
     def requireds; end
 
     # Represents the second wildcard node in the pattern.
     #
-    #     foo in *bar, baz, *qux
-    #                       ^^^^
+    # ```rb
+    # foo in *bar, baz, *qux
+    #                   ^^^^
     #
-    #     foo in Foo(*bar, baz, *qux)
-    #                           ^^^^
+    # foo in Foo(*bar, baz, *qux)
+    #                       ^^^^
+    # ```
     sig { returns(SplatNode) }
     def right; end
 
     # The Location of the opening brace.
     #
-    #     foo in [*bar, baz, *qux]
-    #            ^
+    # ```rb
+    # foo in [*bar, baz, *qux]
+    #        ^
     #
-    #     foo in Foo(*bar, baz, *qux)
-    #               ^
+    # foo in Foo(*bar, baz, *qux)
+    #           ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -5101,11 +5455,13 @@ module Prism
 
     # The Location of the closing brace.
     #
-    #     foo in [*bar, baz, *qux]
-    #                            ^
+    # ```rb
+    # foo in [*bar, baz, *qux]
+    #                        ^
     #
-    #     foo in Foo(*bar, baz, *qux)
-    #                               ^
+    # foo in Foo(*bar, baz, *qux)
+    #                           ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -5128,8 +5484,10 @@ module Prism
 
   # Represents the use of the `..` or `...` operators to create flip flops.
   #
-  #     baz if foo .. bar
-  #            ^^^^^^^^^^
+  # ```rb
+  # baz if foo .. bar
+  #        ^^^^^^^^^^
+  # ```
   class FlipFlopNode < Node
     # Initialize a new FlipFlopNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
@@ -5204,8 +5562,10 @@ module Prism
 
   # Represents a floating point number literal.
   #
-  #     1.0
-  #     ^^^
+  # ```rb
+  # 1.0
+  # ^^^
+  # ```
   class FloatNode < Node
     # Initialize a new FloatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Float).void }
@@ -5259,8 +5619,10 @@ module Prism
 
   # Represents the use of the `for` keyword.
   #
-  #     for i in a end
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # for i in a end
+  # ^^^^^^^^^^^^^^
+  # ```
   class ForNode < Node
     # Initialize a new ForNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, index: ::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode), collection: Node, statements: ::T.nilable(StatementsNode), for_keyword_loc: Location, in_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: Location).void }
@@ -5306,31 +5668,39 @@ module Prism
 
     # The index expression for `for` loops.
     #
-    #     for i in a end
-    #         ^
+    # ```rb
+    # for i in a end
+    #     ^
+    # ```
     sig { returns(::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)) }
     def index; end
 
     # The collection to iterate over.
     #
-    #     for i in a end
-    #              ^
+    # ```rb
+    # for i in a end
+    #          ^
+    # ```
     sig { returns(Node) }
     def collection; end
 
     # Represents the body of statements to execute for each iteration of the loop.
     #
-    #     for i in a
-    #       foo(i)
-    #       ^^^^^^
-    #     end
+    # ```rb
+    # for i in a
+    #   foo(i)
+    #   ^^^^^^
+    # end
+    # ```
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # The Location of the `for` keyword.
     #
-    #     for i in a end
-    #     ^^^
+    # ```rb
+    # for i in a end
+    # ^^^
+    # ```
     sig { returns(Location) }
     def for_keyword_loc; end
 
@@ -5341,8 +5711,10 @@ module Prism
 
     # The Location of the `in` keyword.
     #
-    #     for i in a end
-    #           ^^
+    # ```rb
+    # for i in a end
+    #       ^^
+    # ```
     sig { returns(Location) }
     def in_keyword_loc; end
 
@@ -5353,8 +5725,10 @@ module Prism
 
     # The Location of the `do` keyword, if present.
     #
-    #     for i in a do end
-    #                ^^
+    # ```rb
+    # for i in a do end
+    #            ^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def do_keyword_loc; end
 
@@ -5365,8 +5739,10 @@ module Prism
 
     # The Location of the `end` keyword.
     #
-    #     for i in a end
-    #                ^^^
+    # ```rb
+    # for i in a end
+    #            ^^^
+    # ```
     sig { returns(Location) }
     def end_keyword_loc; end
 
@@ -5397,10 +5773,12 @@ module Prism
 
   # Represents forwarding all arguments to this method to another method.
   #
-  #     def foo(...)
-  #       bar(...)
-  #           ^^^
-  #     end
+  # ```rb
+  # def foo(...)
+  #   bar(...)
+  #       ^^^
+  # end
+  # ```
   class ForwardingArgumentsNode < Node
     # Initialize a new ForwardingArgumentsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -5450,9 +5828,11 @@ module Prism
 
   # Represents the use of the forwarding parameter in a method, block, or lambda declaration.
   #
-  #     def foo(...)
-  #             ^^^
-  #     end
+  # ```rb
+  # def foo(...)
+  #         ^^^
+  # end
+  # ```
   class ForwardingParameterNode < Node
     # Initialize a new ForwardingParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -5502,12 +5882,14 @@ module Prism
 
   # Represents the use of the `super` keyword without parentheses or arguments, but which might have a block.
   #
-  #     super
-  #     ^^^^^
+  # ```rb
+  # super
+  # ^^^^^
   #
-  #     super { 123 }
-  #     ^^^^^^^^^^^^^
+  # super { 123 }
+  # ^^^^^^^^^^^^^
   #
+  # ```
   # If it has any other arguments, it would be a `SuperNode` instead.
   class ForwardingSuperNode < Node
     # Initialize a new ForwardingSuperNode node.
@@ -5579,8 +5961,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to a global variable.
   #
-  #     $target &&= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # $target &&= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class GlobalVariableAndWriteNode < Node
     # Initialize a new GlobalVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -5660,8 +6044,10 @@ module Prism
 
   # Represents assigning to a global variable using an operator that isn't `=`.
   #
-  #     $target += value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # $target += value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class GlobalVariableOperatorWriteNode < Node
     # Initialize a new GlobalVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -5741,8 +6127,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to a global variable.
   #
-  #     $target ||= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # $target ||= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class GlobalVariableOrWriteNode < Node
     # Initialize a new GlobalVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -5822,8 +6210,10 @@ module Prism
 
   # Represents referencing a global variable.
   #
-  #     $foo
-  #     ^^^^
+  # ```rb
+  # $foo
+  # ^^^^
+  # ```
   class GlobalVariableReadNode < Node
     # Initialize a new GlobalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -5869,9 +6259,11 @@ module Prism
 
     # The name of the global variable, which is a `$` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifier). Alternatively, it can be one of the special global variables designated by a symbol.
     #
-    #     $foo   # name `:$foo`
+    # ```rb
+    # $foo   # name `:$foo`
     #
-    #     $_Test # name `:$_Test`
+    # $_Test # name `:$_Test`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -5881,8 +6273,10 @@ module Prism
 
   # Represents writing to a global variable in a context that doesn't have an explicit value.
   #
-  #     $foo, $bar = baz
-  #     ^^^^  ^^^^
+  # ```rb
+  # $foo, $bar = baz
+  # ^^^^  ^^^^
+  # ```
   class GlobalVariableTargetNode < Node
     # Initialize a new GlobalVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -5936,8 +6330,10 @@ module Prism
 
   # Represents writing to a global variable.
   #
-  #     $foo = 1
-  #     ^^^^^^^^
+  # ```rb
+  # $foo = 1
+  # ^^^^^^^^
+  # ```
   class GlobalVariableWriteNode < Node
     # Initialize a new GlobalVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -5983,16 +6379,20 @@ module Prism
 
     # The name of the global variable, which is a `$` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifier). Alternatively, it can be one of the special global variables designated by a symbol.
     #
-    #     $foo = :bar  # name `:$foo`
+    # ```rb
+    # $foo = :bar  # name `:$foo`
     #
-    #     $_Test = 123 # name `:$_Test`
+    # $_Test = 123 # name `:$_Test`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The Location of the global variable's name.
     #
-    #     $foo = :bar
-    #     ^^^^
+    # ```rb
+    # $foo = :bar
+    # ^^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -6003,18 +6403,22 @@ module Prism
 
     # The value to write to the global variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     $foo = :bar
-    #            ^^^^
+    # ```rb
+    # $foo = :bar
+    #        ^^^^
     #
-    #     $-xyz = 123
-    #             ^^^
+    # $-xyz = 123
+    #         ^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=` operator.
     #
-    #     $foo = :bar
-    #          ^
+    # ```rb
+    # $foo = :bar
+    #      ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -6033,8 +6437,10 @@ module Prism
 
   # Represents a hash literal.
   #
-  #     { a => b }
-  #     ^^^^^^^^^^
+  # ```rb
+  # { a => b }
+  # ^^^^^^^^^^
+  # ```
   class HashNode < Node
     # Initialize a new HashNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, elements: T::Array[::T.any(AssocNode, AssocSplatNode)], closing_loc: Location).void }
@@ -6080,8 +6486,10 @@ module Prism
 
     # The Location of the opening brace.
     #
-    #     { a => b }
-    #     ^
+    # ```rb
+    # { a => b }
+    # ^
+    # ```
     sig { returns(Location) }
     def opening_loc; end
 
@@ -6092,18 +6500,22 @@ module Prism
 
     # The elements of the hash. These can be either `AssocNode`s or `AssocSplatNode`s.
     #
-    #     { a: b }
-    #       ^^^^
+    # ```rb
+    # { a: b }
+    #   ^^^^
     #
-    #     { **foo }
-    #       ^^^^^
+    # { **foo }
+    #   ^^^^^
+    # ```
     sig { returns(T::Array[::T.any(AssocNode, AssocSplatNode)]) }
     def elements; end
 
     # The Location of the closing brace.
     #
-    #     { a => b }
-    #              ^
+    # ```rb
+    # { a => b }
+    #          ^
+    # ```
     sig { returns(Location) }
     def closing_loc; end
 
@@ -6126,17 +6538,19 @@ module Prism
 
   # Represents a hash pattern in pattern matching.
   #
-  #     foo => { a: 1, b: 2 }
-  #            ^^^^^^^^^^^^^^
+  # ```rb
+  # foo => { a: 1, b: 2 }
+  #        ^^^^^^^^^^^^^^
   #
-  #     foo => { a: 1, b: 2, **c }
-  #            ^^^^^^^^^^^^^^^^^^^
+  # foo => { a: 1, b: 2, **c }
+  #        ^^^^^^^^^^^^^^^^^^^
   #
-  #     foo => Bar[a: 1, b: 2]
-  #            ^^^^^^^^^^^^^^^
+  # foo => Bar[a: 1, b: 2]
+  #        ^^^^^^^^^^^^^^^
   #
-  #     foo in { a: 1, b: 2 }
-  #            ^^^^^^^^^^^^^^
+  # foo in { a: 1, b: 2 }
+  #        ^^^^^^^^^^^^^^
+  # ```
   class HashPatternNode < Node
     # Initialize a new HashPatternNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, constant: ::T.nilable(::T.any(ConstantPathNode, ConstantReadNode)), elements: T::Array[AssocNode], rest: ::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode)), opening_loc: ::T.nilable(Location), closing_loc: ::T.nilable(Location)).void }
@@ -6182,41 +6596,49 @@ module Prism
 
     # Represents the optional constant preceding the Hash.
     #
-    #     foo => Bar[a: 1, b: 2]
-    #          ^^^
+    # ```rb
+    # foo => Bar[a: 1, b: 2]
+    #      ^^^
     #
-    #     foo => Bar::Baz[a: 1, b: 2]
-    #          ^^^^^^^^
+    # foo => Bar::Baz[a: 1, b: 2]
+    #      ^^^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(ConstantPathNode, ConstantReadNode))) }
     def constant; end
 
     # Represents the explicit named hash keys and values.
     #
-    #     foo => { a: 1, b:, ** }
-    #              ^^^^^^^^
+    # ```rb
+    # foo => { a: 1, b:, ** }
+    #          ^^^^^^^^
+    # ```
     sig { returns(T::Array[AssocNode]) }
     def elements; end
 
     # Represents the rest of the Hash keys and values. This can be named, unnamed, or explicitly forbidden via `**nil`, this last one results in a `NoKeywordsParameterNode`.
     #
-    #     foo => { a: 1, b:, **c }
-    #                        ^^^
+    # ```rb
+    # foo => { a: 1, b:, **c }
+    #                    ^^^
     #
-    #     foo => { a: 1, b:, ** }
-    #                        ^^
+    # foo => { a: 1, b:, ** }
+    #                    ^^
     #
-    #     foo => { a: 1, b:, **nil }
-    #                        ^^^^^
+    # foo => { a: 1, b:, **nil }
+    #                    ^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(AssocSplatNode, NoKeywordsParameterNode))) }
     def rest; end
 
     # The Location of the opening brace.
     #
-    #     foo => { a: 1 }
-    #            ^
+    # ```rb
+    # foo => { a: 1 }
+    #        ^
     #
-    #     foo => Bar[a: 1]
-    #               ^
+    # foo => Bar[a: 1]
+    #           ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def opening_loc; end
 
@@ -6227,11 +6649,13 @@ module Prism
 
     # The Location of the closing brace.
     #
-    #     foo => { a: 1 }
-    #                   ^
+    # ```rb
+    # foo => { a: 1 }
+    #               ^
     #
-    #     foo => Bar[a: 1]
-    #                    ^
+    # foo => Bar[a: 1]
+    #                ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def closing_loc; end
 
@@ -6254,14 +6678,16 @@ module Prism
 
   # Represents the use of the `if` keyword, either in the block form or the modifier form, or a ternary expression.
   #
-  #     bar if foo
-  #     ^^^^^^^^^^
+  # ```rb
+  # bar if foo
+  # ^^^^^^^^^^
   #
-  #     if foo then bar end
-  #     ^^^^^^^^^^^^^^^^^^^
+  # if foo then bar end
+  # ^^^^^^^^^^^^^^^^^^^
   #
-  #     foo ? bar : baz
-  #     ^^^^^^^^^^^^^^^
+  # foo ? bar : baz
+  # ^^^^^^^^^^^^^^^
+  # ```
   class IfNode < Node
     # Initialize a new IfNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, if_keyword_loc: ::T.nilable(Location), predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), subsequent: ::T.nilable(::T.any(ElseNode, IfNode)), end_keyword_loc: ::T.nilable(Location)).void }
@@ -6307,9 +6733,11 @@ module Prism
 
     # The Location of the `if` keyword if present.
     #
-    #     bar if foo
-    #         ^^
+    # ```rb
+    # bar if foo
+    #     ^^
     #
+    # ```
     # The `if_keyword_loc` field will be `nil` when the `IfNode` represents a ternary expression.
     sig { returns(::T.nilable(Location)) }
     def if_keyword_loc; end
@@ -6321,26 +6749,30 @@ module Prism
 
     # The node for the condition the `IfNode` is testing.
     #
-    #     if foo
+    # ```rb
+    # if foo
+    #    ^^^
+    #   bar
+    # end
+    #
+    # bar if foo
     #        ^^^
-    #       bar
-    #     end
     #
-    #     bar if foo
-    #            ^^^
-    #
-    #     foo ? bar : baz
-    #     ^^^
+    # foo ? bar : baz
+    # ^^^
+    # ```
     sig { returns(Node) }
     def predicate; end
 
     # The Location of the `then` keyword (if present) or the `?` in a ternary expression, `nil` otherwise.
     #
-    #     if foo then bar end
-    #            ^^^^
+    # ```rb
+    # if foo then bar end
+    #        ^^^^
     #
-    #     a ? b : c
-    #       ^
+    # a ? b : c
+    #   ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
@@ -6351,37 +6783,43 @@ module Prism
 
     # Represents the body of statements that will be executed when the predicate is evaluated as truthy. Will be `nil` when no body is provided.
     #
-    #     if foo
-    #       bar
-    #       ^^^
-    #       baz
-    #       ^^^
-    #     end
+    # ```rb
+    # if foo
+    #   bar
+    #   ^^^
+    #   baz
+    #   ^^^
+    # end
+    # ```
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # Represents an `ElseNode` or an `IfNode` when there is an `else` or an `elsif` in the `if` statement.
     #
-    #     if foo
-    #       bar
-    #     elsif baz
-    #     ^^^^^^^^^
-    #       qux
-    #       ^^^
-    #     end
-    #     ^^^
+    # ```rb
+    # if foo
+    #   bar
+    # elsif baz
+    # ^^^^^^^^^
+    #   qux
+    #   ^^^
+    # end
+    # ^^^
     #
-    #     if foo then bar else baz end
-    #                     ^^^^^^^^^^^^
+    # if foo then bar else baz end
+    #                 ^^^^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(::T.any(ElseNode, IfNode))) }
     def subsequent; end
 
     # The Location of the `end` keyword if present, `nil` otherwise.
     #
-    #     if foo
-    #       bar
-    #     end
-    #     ^^^
+    # ```rb
+    # if foo
+    #   bar
+    # end
+    # ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -6408,8 +6846,10 @@ module Prism
 
   # Represents an imaginary number literal.
   #
-  #     1.0i
-  #     ^^^^
+  # ```rb
+  # 1.0i
+  # ^^^^
+  # ```
   class ImaginaryNode < Node
     # Initialize a new ImaginaryNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numeric: ::T.any(FloatNode, IntegerNode, RationalNode)).void }
@@ -6463,14 +6903,16 @@ module Prism
 
   # Represents a node that is implicitly being added to the tree but doesn't correspond directly to a node in the source.
   #
-  #     { foo: }
-  #       ^^^^
+  # ```rb
+  # { foo: }
+  #   ^^^^
   #
-  #     { Foo: }
-  #       ^^^^
+  # { Foo: }
+  #   ^^^^
   #
-  #     foo in { bar: }
-  #              ^^^^
+  # foo in { bar: }
+  #          ^^^^
+  # ```
   class ImplicitNode < Node
     # Initialize a new ImplicitNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
@@ -6524,17 +6966,19 @@ module Prism
 
   # Represents using a trailing comma to indicate an implicit rest parameter.
   #
-  #     foo { |bar,| }
-  #               ^
+  # ```rb
+  # foo { |bar,| }
+  #           ^
   #
-  #     foo in [bar,]
-  #                ^
-  #
-  #     for foo, in bar do end
+  # foo in [bar,]
   #            ^
   #
-  #     foo, = bar
+  # for foo, in bar do end
   #        ^
+  #
+  # foo, = bar
+  #    ^
+  # ```
   class ImplicitRestNode < Node
     # Initialize a new ImplicitRestNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -6584,8 +7028,10 @@ module Prism
 
   # Represents the use of the `in` keyword in a case statement.
   #
-  #     case a; in b then c end
-  #             ^^^^^^^^^^^
+  # ```rb
+  # case a; in b then c end
+  #         ^^^^^^^^^^^
+  # ```
   class InNode < Node
     # Initialize a new InNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, pattern: Node, statements: ::T.nilable(StatementsNode), in_keyword_loc: Location, then_keyword_loc: ::T.nilable(Location)).void }
@@ -6669,8 +7115,10 @@ module Prism
 
   # Represents the use of the `&&=` operator on a call to the `[]` method.
   #
-  #     foo.bar[baz] &&= value
-  #     ^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar[baz] &&= value
+  # ^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class IndexAndWriteNode < Node
     # Initialize a new IndexAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
@@ -6804,8 +7252,10 @@ module Prism
 
   # Represents the use of an assignment operator on a call to `[]`.
   #
-  #     foo.bar[baz] += value
-  #     ^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar[baz] += value
+  # ^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class IndexOperatorWriteNode < Node
     # Initialize a new IndexOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), binary_operator: Symbol, binary_operator_loc: Location, value: Node).void }
@@ -6939,8 +7389,10 @@ module Prism
 
   # Represents the use of the `||=` operator on a call to `[]`.
   #
-  #     foo.bar[baz] ||= value
-  #     ^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # foo.bar[baz] ||= value
+  # ^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class IndexOrWriteNode < Node
     # Initialize a new IndexOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: ::T.nilable(Node), call_operator_loc: ::T.nilable(Location), opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode), operator_loc: Location, value: Node).void }
@@ -7074,16 +7526,18 @@ module Prism
 
   # Represents assigning to an index.
   #
-  #     foo[bar], = 1
+  # ```rb
+  # foo[bar], = 1
+  # ^^^^^^^^
+  #
+  # begin
+  # rescue => foo[bar]
+  #           ^^^^^^^^
+  # end
+  #
+  # for foo[bar] in baz do end
   #     ^^^^^^^^
-  #
-  #     begin
-  #     rescue => foo[bar]
-  #               ^^^^^^^^
-  #     end
-  #
-  #     for foo[bar] in baz do end
-  #         ^^^^^^^^
+  # ```
   class IndexTargetNode < Node
     # Initialize a new IndexTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, receiver: Node, opening_loc: Location, arguments: ::T.nilable(ArgumentsNode), closing_loc: Location, block: ::T.nilable(BlockArgumentNode)).void }
@@ -7187,8 +7641,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to an instance variable.
   #
-  #     @target &&= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # @target &&= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class InstanceVariableAndWriteNode < Node
     # Initialize a new InstanceVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -7268,8 +7724,10 @@ module Prism
 
   # Represents assigning to an instance variable using an operator that isn't `=`.
   #
-  #     @target += value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # @target += value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class InstanceVariableOperatorWriteNode < Node
     # Initialize a new InstanceVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, binary_operator_loc: Location, value: Node, binary_operator: Symbol).void }
@@ -7349,8 +7807,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to an instance variable.
   #
-  #     @target ||= value
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # @target ||= value
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class InstanceVariableOrWriteNode < Node
     # Initialize a new InstanceVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -7430,8 +7890,10 @@ module Prism
 
   # Represents referencing an instance variable.
   #
-  #     @foo
-  #     ^^^^
+  # ```rb
+  # @foo
+  # ^^^^
+  # ```
   class InstanceVariableReadNode < Node
     # Initialize a new InstanceVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -7477,9 +7939,11 @@ module Prism
 
     # The name of the instance variable, which is a `@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     @x     # name `:@x`
+    # ```rb
+    # @x     # name `:@x`
     #
-    #     @_test # name `:@_test`
+    # @_test # name `:@_test`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
@@ -7489,8 +7953,10 @@ module Prism
 
   # Represents writing to an instance variable in a context that doesn't have an explicit value.
   #
-  #     @foo, @bar = baz
-  #     ^^^^  ^^^^
+  # ```rb
+  # @foo, @bar = baz
+  # ^^^^  ^^^^
+  # ```
   class InstanceVariableTargetNode < Node
     # Initialize a new InstanceVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -7544,8 +8010,10 @@ module Prism
 
   # Represents writing to an instance variable.
   #
-  #     @foo = 1
-  #     ^^^^^^^^
+  # ```rb
+  # @foo = 1
+  # ^^^^^^^^
+  # ```
   class InstanceVariableWriteNode < Node
     # Initialize a new InstanceVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -7591,16 +8059,20 @@ module Prism
 
     # The name of the instance variable, which is a `@` followed by an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     @x = :y       # name `:@x`
+    # ```rb
+    # @x = :y       # name `:@x`
     #
-    #     @_foo = "bar" # name `@_foo`
+    # @_foo = "bar" # name `@_foo`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The Location of the variable name.
     #
-    #     @_x = 1
-    #     ^^^
+    # ```rb
+    # @_x = 1
+    # ^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -7611,18 +8083,22 @@ module Prism
 
     # The value to write to the instance variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     @foo = :bar
-    #            ^^^^
+    # ```rb
+    # @foo = :bar
+    #        ^^^^
     #
-    #     @_x = 1234
-    #           ^^^^
+    # @_x = 1234
+    #       ^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=` operator.
     #
-    #     @x = y
-    #        ^
+    # ```rb
+    # @x = y
+    #    ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -7641,8 +8117,10 @@ module Prism
 
   # Represents an integer number literal.
   #
-  #     1
-  #     ^
+  # ```rb
+  # 1
+  # ^
+  # ```
   class IntegerNode < Node
     # Initialize a new IntegerNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Integer).void }
@@ -7712,8 +8190,10 @@ module Prism
 
   # Represents a regular expression literal that contains interpolation that is being used in the predicate of a conditional to implicitly match against the last line read by an IO object.
   #
-  #     if /foo #{bar} baz/ then end
-  #        ^^^^^^^^^^^^^^^^
+  # ```rb
+  # if /foo #{bar} baz/ then end
+  #    ^^^^^^^^^^^^^^^^
+  # ```
   class InterpolatedMatchLastLineNode < Node
     # Initialize a new InterpolatedMatchLastLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -7837,8 +8317,10 @@ module Prism
 
   # Represents a regular expression literal that contains interpolation.
   #
-  #     /foo #{bar} baz/
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # /foo #{bar} baz/
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class InterpolatedRegularExpressionNode < Node
     # Initialize a new InterpolatedRegularExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -7962,8 +8444,10 @@ module Prism
 
   # Represents a string literal that contains interpolation.
   #
-  #     "foo #{bar} baz"
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # "foo #{bar} baz"
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class InterpolatedStringNode < Node
     # Initialize a new InterpolatedStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode, InterpolatedStringNode)], closing_loc: ::T.nilable(Location)).void }
@@ -8051,8 +8535,9 @@ module Prism
 
   # Represents a symbol literal that contains interpolation.
   #
-  #     :"foo #{bar} baz"
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class InterpolatedSymbolNode < Node
     # Initialize a new InterpolatedSymbolNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: ::T.nilable(Location)).void }
@@ -8132,8 +8617,10 @@ module Prism
 
   # Represents an xstring literal that contains interpolation.
   #
-  #     `foo #{bar} baz`
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # `foo #{bar} baz`
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class InterpolatedXStringNode < Node
     # Initialize a new InterpolatedXStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, parts: T::Array[::T.any(StringNode, EmbeddedStatementsNode, EmbeddedVariableNode)], closing_loc: Location).void }
@@ -8213,8 +8700,10 @@ module Prism
 
   # Represents reading from the implicit `it` local variable.
   #
-  #     -> { it }
-  #          ^^
+  # ```rb
+  # -> { it }
+  #      ^^
+  # ```
   class ItLocalVariableReadNode < Node
     # Initialize a new ItLocalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -8264,8 +8753,10 @@ module Prism
 
   # Represents an implicit set of parameters through the use of the `it` keyword within a block or lambda.
   #
-  #     -> { it + it }
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # -> { it + it }
+  # ^^^^^^^^^^^^^^
+  # ```
   class ItParametersNode < Node
     # Initialize a new ItParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -8315,8 +8806,10 @@ module Prism
 
   # Represents a hash literal without opening and closing braces.
   #
-  #     foo(a: b)
-  #         ^^^^
+  # ```rb
+  # foo(a: b)
+  #     ^^^^
+  # ```
   class KeywordHashNode < Node
     # Initialize a new KeywordHashNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, elements: T::Array[::T.any(AssocNode, AssocSplatNode)]).void }
@@ -8374,9 +8867,11 @@ module Prism
 
   # Represents a keyword rest parameter to a method, block, or lambda definition.
   #
-  #     def a(**b)
-  #           ^^^
-  #     end
+  # ```rb
+  # def a(**b)
+  #       ^^^
+  # end
+  # ```
   class KeywordRestParameterNode < Node
     # Initialize a new KeywordRestParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -8456,8 +8951,10 @@ module Prism
 
   # Represents using a lambda literal (not the lambda method call).
   #
-  #     ->(value) { value * 2 }
-  #     ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # ->(value) { value * 2 }
+  # ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class LambdaNode < Node
     # Initialize a new LambdaNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], operator_loc: Location, opening_loc: Location, closing_loc: Location, parameters: ::T.nilable(::T.any(BlockParametersNode, NumberedParametersNode, ItParametersNode)), body: ::T.nilable(::T.any(StatementsNode, BeginNode))).void }
@@ -8558,8 +9055,10 @@ module Prism
 
   # Represents the use of the `&&=` operator for assignment to a local variable.
   #
-  #     target &&= value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # target &&= value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class LocalVariableAndWriteNode < Node
     # Initialize a new LocalVariableAndWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).void }
@@ -8643,8 +9142,10 @@ module Prism
 
   # Represents assigning to a local variable using an operator that isn't `=`.
   #
-  #     target += value
-  #     ^^^^^^^^^^^^^^^
+  # ```rb
+  # target += value
+  # ^^^^^^^^^^^^^^^
+  # ```
   class LocalVariableOperatorWriteNode < Node
     # Initialize a new LocalVariableOperatorWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, binary_operator_loc: Location, value: Node, name: Symbol, binary_operator: Symbol, depth: Integer).void }
@@ -8728,8 +9229,10 @@ module Prism
 
   # Represents the use of the `||=` operator for assignment to a local variable.
   #
-  #     target ||= value
-  #     ^^^^^^^^^^^^^^^^
+  # ```rb
+  # target ||= value
+  # ^^^^^^^^^^^^^^^^
+  # ```
   class LocalVariableOrWriteNode < Node
     # Initialize a new LocalVariableOrWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name_loc: Location, operator_loc: Location, value: Node, name: Symbol, depth: Integer).void }
@@ -8813,8 +9316,10 @@ module Prism
 
   # Represents reading a local variable. Note that this requires that a local variable of the same name has already been written to in the same scope, otherwise it is parsed as a method call.
   #
-  #     foo
-  #     ^^^
+  # ```rb
+  # foo
+  # ^^^
+  # ```
   class LocalVariableReadNode < Node
     # Initialize a new LocalVariableReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).void }
@@ -8860,22 +9365,28 @@ module Prism
 
     # The name of the local variable, which is an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     x      # name `:x`
+    # ```rb
+    # x      # name `:x`
     #
-    #     _Test  # name `:_Test`
+    # _Test  # name `:_Test`
     #
+    # ```
     # Note that this can also be an underscore followed by a number for the default block parameters.
     #
-    #     _1     # name `:_1`
+    # ```rb
+    # _1     # name `:_1`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The number of visible scopes that should be searched to find the origin of this local variable.
     #
-    #     foo = 1; foo # depth 0
+    # ```rb
+    # foo = 1; foo # depth 0
     #
-    #     bar = 2; tap { bar } # depth 1
+    # bar = 2; tap { bar } # depth 1
     #
+    # ```
     # The specific rules for calculating the depth may differ from individual Ruby implementations, as they are not specified by the language. For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
     sig { returns(Integer) }
     def depth; end
@@ -8886,11 +9397,13 @@ module Prism
 
   # Represents writing to a local variable in a context that doesn't have an explicit value.
   #
-  #     foo, bar = baz
-  #     ^^^  ^^^
+  # ```rb
+  # foo, bar = baz
+  # ^^^  ^^^
   #
-  #     foo => baz
-  #            ^^^
+  # foo => baz
+  #        ^^^
+  # ```
   class LocalVariableTargetNode < Node
     # Initialize a new LocalVariableTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer).void }
@@ -8948,8 +9461,10 @@ module Prism
 
   # Represents writing to a local variable.
   #
-  #     foo = 1
-  #     ^^^^^^^
+  # ```rb
+  # foo = 1
+  # ^^^^^^^
+  # ```
   class LocalVariableWriteNode < Node
     # Initialize a new LocalVariableWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, depth: Integer, name_loc: Location, value: Node, operator_loc: Location).void }
@@ -8995,26 +9510,32 @@ module Prism
 
     # The name of the local variable, which is an [identifier](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#identifiers).
     #
-    #     foo = :bar # name `:foo`
+    # ```rb
+    # foo = :bar # name `:foo`
     #
-    #     abc = 123  # name `:abc`
+    # abc = 123  # name `:abc`
+    # ```
     sig { returns(Symbol) }
     def name; end
 
     # The number of semantic scopes we have to traverse to find the declaration of this variable.
     #
-    #     foo = 1         # depth 0
+    # ```rb
+    # foo = 1         # depth 0
     #
-    #     tap { foo = 1 } # depth 1
+    # tap { foo = 1 } # depth 1
     #
+    # ```
     # The specific rules for calculating the depth may differ from individual Ruby implementations, as they are not specified by the language. For more information, see [the Prism documentation](https://github.com/ruby/prism/blob/main/docs/local_variable_depth.md).
     sig { returns(Integer) }
     def depth; end
 
     # The Location of the variable name.
     #
-    #     foo = :bar
-    #     ^^^
+    # ```rb
+    # foo = :bar
+    # ^^^
+    # ```
     sig { returns(Location) }
     def name_loc; end
 
@@ -9025,22 +9546,28 @@ module Prism
 
     # The value to write to the local variable. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     foo = :bar
-    #           ^^^^
+    # ```rb
+    # foo = :bar
+    #       ^^^^
     #
-    #     abc = 1234
-    #           ^^^^
+    # abc = 1234
+    #       ^^^^
     #
+    # ```
     # Note that since the name of a local variable is known before the value is parsed, it is valid for a local variable to appear within the value of its own write.
     #
-    #     foo = foo
+    # ```rb
+    # foo = foo
+    # ```
     sig { returns(Node) }
     def value; end
 
     # The Location of the `=` operator.
     #
-    #     x = :y
-    #       ^
+    # ```rb
+    # x = :y
+    #   ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -9059,8 +9586,10 @@ module Prism
 
   # Represents a regular expression literal used in the predicate of a conditional to implicitly match against the last line read by an IO object.
   #
-  #     if /foo/i then end
-  #        ^^^^^^
+  # ```rb
+  # if /foo/i then end
+  #    ^^^^^^
+  # ```
   class MatchLastLineNode < Node
     # Initialize a new MatchLastLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -9197,8 +9726,10 @@ module Prism
 
   # Represents the use of the modifier `in` operator.
   #
-  #     foo in bar
-  #     ^^^^^^^^^^
+  # ```rb
+  # foo in bar
+  # ^^^^^^^^^^
+  # ```
   class MatchPredicateNode < Node
     # Initialize a new MatchPredicateNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, keyword_loc: Location).void }
@@ -9269,8 +9800,10 @@ module Prism
 
   # Represents the use of the `=>` operator.
   #
-  #     foo => bar
-  #     ^^^^^^^^^^
+  # ```rb
+  # foo => bar
+  # ^^^^^^^^^^
+  # ```
   class MatchRequiredNode < Node
     # Initialize a new MatchRequiredNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: Node, pattern: Node, operator_loc: Location).void }
@@ -9316,8 +9849,10 @@ module Prism
 
     # Represents the left-hand side of the operator.
     #
-    #     foo => bar
-    #     ^^^
+    # ```rb
+    # foo => bar
+    # ^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -9325,52 +9860,68 @@ module Prism
     #
     # Anything that looks like a local variable name (including `_`) will result in a `LocalVariableTargetNode`.
     #
-    #     foo => a # This is equivalent to writing `a = foo`
-    #            ^
+    # ```rb
+    # foo => a # This is equivalent to writing `a = foo`
+    #        ^
     #
+    # ```
     # Using an explicit `Array` or combining expressions with `,` will result in a `ArrayPatternNode`. This can be preceded by a constant.
     #
-    #     foo => [a]
-    #            ^^^
+    # ```rb
+    # foo => [a]
+    #        ^^^
     #
-    #     foo => a, b
-    #            ^^^^
+    # foo => a, b
+    #        ^^^^
     #
-    #     foo => Bar[a, b]
-    #            ^^^^^^^^^
+    # foo => Bar[a, b]
+    #        ^^^^^^^^^
     #
+    # ```
     # If the array pattern contains at least two wildcard matches, a `FindPatternNode` is created instead.
     #
-    #     foo => *, 1, *a
-    #            ^^^^^
+    # ```rb
+    # foo => *, 1, *a
+    #        ^^^^^
     #
+    # ```
     # Using an explicit `Hash` or a constant with square brackets and hash keys in the square brackets will result in a `HashPatternNode`.
     #
-    #     foo => { a: 1, b: }
+    # ```rb
+    # foo => { a: 1, b: }
     #
-    #     foo => Bar[a: 1, b:]
+    # foo => Bar[a: 1, b:]
     #
-    #     foo => Bar[**]
+    # foo => Bar[**]
     #
+    # ```
     # To use any variable that needs run time evaluation, pinning is required. This results in a `PinnedVariableNode`
     #
-    #     foo => ^a
-    #            ^^
+    # ```rb
+    # foo => ^a
+    #        ^^
     #
+    # ```
     # Similar, any expression can be used with pinning. This results in a `PinnedExpressionNode`.
     #
-    #     foo => ^(a + 1)
+    # ```rb
+    # foo => ^(a + 1)
     #
+    # ```
     # Anything else will result in the regular node for that expression, for example a `ConstantReadNode`.
     #
-    #     foo => CONST
+    # ```rb
+    # foo => CONST
+    # ```
     sig { returns(Node) }
     def pattern; end
 
     # The Location of the operator.
     #
-    #     foo => bar
-    #         ^^
+    # ```rb
+    # foo => bar
+    #     ^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -9389,8 +9940,10 @@ module Prism
 
   # Represents writing local variables using a regular expression match with named capture groups.
   #
-  #     /(?<foo>bar)/ =~ baz
-  #     ^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # /(?<foo>bar)/ =~ baz
+  # ^^^^^^^^^^^^^^^^^^^^
+  # ```
   class MatchWriteNode < Node
     # Initialize a new MatchWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, call: CallNode, targets: T::Array[LocalVariableTargetNode]).void }
@@ -9448,8 +10001,10 @@ module Prism
 
   # Represents a module declaration involving the `module` keyword.
   #
-  #     module Foo end
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # module Foo end
+  # ^^^^^^^^^^^^^^
+  # ```
   class ModuleNode < Node
     # Initialize a new ModuleNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], module_keyword_loc: Location, constant_path: ::T.any(ConstantReadNode, ConstantPathNode), body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location, name: Symbol).void }
@@ -9541,13 +10096,17 @@ module Prism
 
   # Represents a multi-target expression.
   #
-  #     a, (b, c) = 1, 2, 3
-  #        ^^^^^^
+  # ```rb
+  # a, (b, c) = 1, 2, 3
+  #    ^^^^^^
   #
+  # ```
   # This can be a part of `MultiWriteNode` as above, or the target of a `for` loop
   #
-  #     for a, b in [[1, 2], [3, 4]]
-  #         ^^^^
+  # ```rb
+  # for a, b in [[1, 2], [3, 4]]
+  #     ^^^^
+  # ```
   class MultiTargetNode < Node
     # Initialize a new MultiTargetNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location)).void }
@@ -9593,44 +10152,58 @@ module Prism
 
     # Represents the targets expressions before a splat node.
     #
-    #     a, (b, c, *) = 1, 2, 3, 4, 5
-    #         ^^^^
+    # ```rb
+    # a, (b, c, *) = 1, 2, 3, 4, 5
+    #     ^^^^
     #
+    # ```
     # The splat node can be absent, in that case all target expressions are in the left field.
     #
-    #     a, (b, c) = 1, 2, 3, 4, 5
-    #         ^^^^
+    # ```rb
+    # a, (b, c) = 1, 2, 3, 4, 5
+    #     ^^^^
+    # ```
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)]) }
     def lefts; end
 
     # Represents a splat node in the target expression.
     #
-    #     a, (b, *c) = 1, 2, 3, 4
-    #            ^^
+    # ```rb
+    # a, (b, *c) = 1, 2, 3, 4
+    #        ^^
     #
+    # ```
     # The variable can be empty, this results in a `SplatNode` with a `nil` expression field.
     #
-    #     a, (b, *) = 1, 2, 3, 4
-    #            ^
+    # ```rb
+    # a, (b, *) = 1, 2, 3, 4
+    #        ^
     #
+    # ```
     # If the `*` is omitted, this field will contain an `ImplicitRestNode`
     #
-    #     a, (b,) = 1, 2, 3, 4
-    #          ^
+    # ```rb
+    # a, (b,) = 1, 2, 3, 4
+    #      ^
+    # ```
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
     # Represents the targets expressions after a splat node.
     #
-    #     a, (*, b, c) = 1, 2, 3, 4, 5
-    #            ^^^^
+    # ```rb
+    # a, (*, b, c) = 1, 2, 3, 4, 5
+    #        ^^^^
+    # ```
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode, RequiredParameterNode)]) }
     def rights; end
 
     # The Location of the opening parenthesis.
     #
-    #     a, (b, c) = 1, 2, 3
-    #        ^
+    # ```rb
+    # a, (b, c) = 1, 2, 3
+    #    ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
@@ -9641,8 +10214,10 @@ module Prism
 
     # The Location of the closing parenthesis.
     #
-    #     a, (b, c) = 1, 2, 3
-    #             ^
+    # ```rb
+    # a, (b, c) = 1, 2, 3
+    #         ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
@@ -9665,8 +10240,10 @@ module Prism
 
   # Represents a write to a multi-target expression.
   #
-  #     a, b, c = 1, 2, 3
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # a, b, c = 1, 2, 3
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class MultiWriteNode < Node
     # Initialize a new MultiWriteNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, lefts: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], rest: ::T.nilable(::T.any(ImplicitRestNode, SplatNode)), rights: T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)], lparen_loc: ::T.nilable(Location), rparen_loc: ::T.nilable(Location), operator_loc: Location, value: Node).void }
@@ -9712,44 +10289,58 @@ module Prism
 
     # Represents the targets expressions before a splat node.
     #
-    #     a, b, * = 1, 2, 3, 4, 5
-    #     ^^^^
+    # ```rb
+    # a, b, * = 1, 2, 3, 4, 5
+    # ^^^^
     #
+    # ```
     # The splat node can be absent, in that case all target expressions are in the left field.
     #
-    #     a, b, c = 1, 2, 3, 4, 5
-    #     ^^^^^^^
+    # ```rb
+    # a, b, c = 1, 2, 3, 4, 5
+    # ^^^^^^^
+    # ```
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)]) }
     def lefts; end
 
     # Represents a splat node in the target expression.
     #
-    #     a, b, *c = 1, 2, 3, 4
-    #           ^^
+    # ```rb
+    # a, b, *c = 1, 2, 3, 4
+    #       ^^
     #
+    # ```
     # The variable can be empty, this results in a `SplatNode` with a `nil` expression field.
     #
-    #     a, b, * = 1, 2, 3, 4
-    #           ^
+    # ```rb
+    # a, b, * = 1, 2, 3, 4
+    #       ^
     #
+    # ```
     # If the `*` is omitted, this field will contain an `ImplicitRestNode`
     #
-    #     a, b, = 1, 2, 3, 4
-    #         ^
+    # ```rb
+    # a, b, = 1, 2, 3, 4
+    #     ^
+    # ```
     sig { returns(::T.nilable(::T.any(ImplicitRestNode, SplatNode))) }
     def rest; end
 
     # Represents the targets expressions after a splat node.
     #
-    #     a, *, b, c = 1, 2, 3, 4, 5
-    #           ^^^^
+    # ```rb
+    # a, *, b, c = 1, 2, 3, 4, 5
+    #       ^^^^
+    # ```
     sig { returns(T::Array[::T.any(LocalVariableTargetNode, InstanceVariableTargetNode, ClassVariableTargetNode, GlobalVariableTargetNode, ConstantTargetNode, ConstantPathTargetNode, CallTargetNode, IndexTargetNode, MultiTargetNode)]) }
     def rights; end
 
     # The Location of the opening parenthesis.
     #
-    #     (a, b, c) = 1, 2, 3
-    #     ^
+    # ```rb
+    # (a, b, c) = 1, 2, 3
+    # ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def lparen_loc; end
 
@@ -9760,8 +10351,10 @@ module Prism
 
     # The Location of the closing parenthesis.
     #
-    #     (a, b, c) = 1, 2, 3
-    #             ^
+    # ```rb
+    # (a, b, c) = 1, 2, 3
+    #         ^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def rparen_loc; end
 
@@ -9772,8 +10365,10 @@ module Prism
 
     # The Location of the operator.
     #
-    #     a, b, c = 1, 2, 3
-    #             ^
+    # ```rb
+    # a, b, c = 1, 2, 3
+    #         ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -9784,8 +10379,10 @@ module Prism
 
     # The value to write to the targets. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     a, b, c = 1, 2, 3
-    #               ^^^^^^^
+    # ```rb
+    # a, b, c = 1, 2, 3
+    #           ^^^^^^^
+    # ```
     sig { returns(Node) }
     def value; end
 
@@ -9807,8 +10404,10 @@ module Prism
 
   # Represents the use of the `next` keyword.
   #
-  #     next 1
-  #     ^^^^^^
+  # ```rb
+  # next 1
+  # ^^^^^^
+  # ```
   class NextNode < Node
     # Initialize a new NextNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, arguments: ::T.nilable(ArgumentsNode), keyword_loc: Location).void }
@@ -9875,8 +10474,10 @@ module Prism
 
   # Represents the use of the `nil` keyword.
   #
-  #     nil
-  #     ^^^
+  # ```rb
+  # nil
+  # ^^^
+  # ```
   class NilNode < Node
     # Initialize a new NilNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -9926,9 +10527,11 @@ module Prism
 
   # Represents the use of `&nil` inside method arguments.
   #
-  #     def a(&nil)
-  #           ^^^^
-  #     end
+  # ```rb
+  # def a(&nil)
+  #       ^^^^
+  # end
+  # ```
   class NoBlockParameterNode < Node
     # Initialize a new NoBlockParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).void }
@@ -10004,9 +10607,11 @@ module Prism
 
   # Represents the use of `**nil` inside method arguments.
   #
-  #     def a(**nil)
-  #           ^^^^^
-  #     end
+  # ```rb
+  # def a(**nil)
+  #       ^^^^^
+  # end
+  # ```
   class NoKeywordsParameterNode < Node
     # Initialize a new NoKeywordsParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, keyword_loc: Location).void }
@@ -10082,8 +10687,10 @@ module Prism
 
   # Represents an implicit set of parameters through the use of numbered parameters within a block or lambda.
   #
-  #     -> { _1 + _2 }
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # -> { _1 + _2 }
+  # ^^^^^^^^^^^^^^
+  # ```
   class NumberedParametersNode < Node
     # Initialize a new NumberedParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, maximum: Integer).void }
@@ -10137,8 +10744,10 @@ module Prism
 
   # Represents reading a numbered reference to a capture in the previous match.
   #
-  #     $1
-  #     ^^
+  # ```rb
+  # $1
+  # ^^
+  # ```
   class NumberedReferenceReadNode < Node
     # Initialize a new NumberedReferenceReadNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, number: Integer).void }
@@ -10184,11 +10793,13 @@ module Prism
 
     # The (1-indexed, from the left) number of the capture group. Numbered references that are too large result in this value being `0`.
     #
-    #     $1          # number `1`
+    # ```rb
+    # $1          # number `1`
     #
-    #     $5432       # number `5432`
+    # $5432       # number `5432`
     #
-    #     $4294967296 # number `0`
+    # $4294967296 # number `0`
+    # ```
     sig { returns(Integer) }
     def number; end
 
@@ -10198,9 +10809,11 @@ module Prism
 
   # Represents an optional keyword parameter to a method, block, or lambda definition.
   #
-  #     def a(b: 1)
-  #           ^^^^
-  #     end
+  # ```rb
+  # def a(b: 1)
+  #       ^^^^
+  # end
+  # ```
   class OptionalKeywordParameterNode < Node
     # Initialize a new OptionalKeywordParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, value: Node).void }
@@ -10271,9 +10884,11 @@ module Prism
 
   # Represents an optional parameter to a method, block, or lambda definition.
   #
-  #     def a(b = 1)
-  #           ^^^^^
-  #     end
+  # ```rb
+  # def a(b = 1)
+  #       ^^^^^
+  # end
+  # ```
   class OptionalParameterNode < Node
     # Initialize a new OptionalParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location, operator_loc: Location, value: Node).void }
@@ -10357,8 +10972,10 @@ module Prism
 
   # Represents the use of the `||` operator or the `or` keyword.
   #
-  #     left or right
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # left or right
+  # ^^^^^^^^^^^^^
+  # ```
   class OrNode < Node
     # Initialize a new OrNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: Node, right: Node, operator_loc: Location).void }
@@ -10404,28 +11021,34 @@ module Prism
 
     # Represents the left side of the expression. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     left or right
-    #     ^^^^
+    # ```rb
+    # left or right
+    # ^^^^
     #
-    #     1 || 2
-    #     ^
+    # 1 || 2
+    # ^
+    # ```
     sig { returns(Node) }
     def left; end
 
     # Represents the right side of the expression.
     #
-    #     left || right
-    #             ^^^^^
+    # ```rb
+    # left || right
+    #         ^^^^^
     #
-    #     1 or 2
-    #          ^
+    # 1 or 2
+    #      ^
+    # ```
     sig { returns(Node) }
     def right; end
 
     # The Location of the `or` keyword or the `||` operator.
     #
-    #     left or right
-    #          ^^
+    # ```rb
+    # left or right
+    #      ^^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -10444,9 +11067,11 @@ module Prism
 
   # Represents the list of parameters on a method, block, or lambda definition.
   #
-  #     def a(b, c, d)
-  #           ^^^^^^^
-  #     end
+  # ```rb
+  # def a(b, c, d)
+  #       ^^^^^^^
+  # end
+  # ```
   class ParametersNode < Node
     # Initialize a new ParametersNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, requireds: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], optionals: T::Array[OptionalParameterNode], rest: ::T.nilable(::T.any(RestParameterNode, ImplicitRestNode)), posts: T::Array[::T.any(RequiredParameterNode, MultiTargetNode)], keywords: T::Array[::T.any(RequiredKeywordParameterNode, OptionalKeywordParameterNode)], keyword_rest: ::T.nilable(::T.any(KeywordRestParameterNode, ForwardingParameterNode, NoKeywordsParameterNode)), block: ::T.nilable(::T.any(BlockParameterNode, NoBlockParameterNode))).void }
@@ -10524,8 +11149,10 @@ module Prism
 
   # Represents a parenthesized expression
   #
-  #     (10 + 34)
-  #     ^^^^^^^^^
+  # ```rb
+  # (10 + 34)
+  # ^^^^^^^^^
+  # ```
   class ParenthesesNode < Node
     # Initialize a new ParenthesesNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: ::T.nilable(Node), opening_loc: Location, closing_loc: Location).void }
@@ -10609,8 +11236,10 @@ module Prism
 
   # Represents the use of the `^` operator for pinning an expression in a pattern matching expression.
   #
-  #     foo in ^(bar)
-  #            ^^^^^^
+  # ```rb
+  # foo in ^(bar)
+  #        ^^^^^^
+  # ```
   class PinnedExpressionNode < Node
     # Initialize a new PinnedExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: Node, operator_loc: Location, lparen_loc: Location, rparen_loc: Location).void }
@@ -10656,15 +11285,19 @@ module Prism
 
     # The expression used in the pinned expression
     #
-    #     foo in ^(bar)
-    #              ^^^
+    # ```rb
+    # foo in ^(bar)
+    #          ^^^
+    # ```
     sig { returns(Node) }
     def expression; end
 
     # The Location of the `^` operator
     #
-    #     foo in ^(bar)
-    #            ^
+    # ```rb
+    # foo in ^(bar)
+    #        ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -10675,8 +11308,10 @@ module Prism
 
     # The Location of the opening parenthesis.
     #
-    #     foo in ^(bar)
-    #             ^
+    # ```rb
+    # foo in ^(bar)
+    #         ^
+    # ```
     sig { returns(Location) }
     def lparen_loc; end
 
@@ -10687,8 +11322,10 @@ module Prism
 
     # The Location of the closing parenthesis.
     #
-    #     foo in ^(bar)
-    #                 ^
+    # ```rb
+    # foo in ^(bar)
+    #             ^
+    # ```
     sig { returns(Location) }
     def rparen_loc; end
 
@@ -10715,8 +11352,10 @@ module Prism
 
   # Represents the use of the `^` operator for pinning a variable in a pattern matching expression.
   #
-  #     foo in ^bar
-  #            ^^^^
+  # ```rb
+  # foo in ^bar
+  #        ^^^^
+  # ```
   class PinnedVariableNode < Node
     # Initialize a new PinnedVariableNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, variable: ::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode), operator_loc: Location).void }
@@ -10762,15 +11401,19 @@ module Prism
 
     # The variable used in the pinned expression
     #
-    #     foo in ^bar
-    #             ^^^
+    # ```rb
+    # foo in ^bar
+    #         ^^^
+    # ```
     sig { returns(::T.any(LocalVariableReadNode, InstanceVariableReadNode, ClassVariableReadNode, GlobalVariableReadNode, BackReferenceReadNode, NumberedReferenceReadNode, ItLocalVariableReadNode)) }
     def variable; end
 
     # The Location of the `^` operator
     #
-    #     foo in ^bar
-    #            ^
+    # ```rb
+    # foo in ^bar
+    #        ^
+    # ```
     sig { returns(Location) }
     def operator_loc; end
 
@@ -10789,8 +11432,10 @@ module Prism
 
   # Represents the use of the `END` keyword.
   #
-  #     END { foo }
-  #     ^^^^^^^^^^^
+  # ```rb
+  # END { foo }
+  # ^^^^^^^^^^^
+  # ```
   class PostExecutionNode < Node
     # Initialize a new PostExecutionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
@@ -10883,8 +11528,10 @@ module Prism
 
   # Represents the use of the `BEGIN` keyword.
   #
-  #     BEGIN { foo }
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # BEGIN { foo }
+  # ^^^^^^^^^^^^^
+  # ```
   class PreExecutionNode < Node
     # Initialize a new PreExecutionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, statements: ::T.nilable(StatementsNode), keyword_loc: Location, opening_loc: Location, closing_loc: Location).void }
@@ -11033,11 +11680,13 @@ module Prism
 
   # Represents the use of the `..` or `...` operators.
   #
-  #     1..2
-  #     ^^^^
+  # ```rb
+  # 1..2
+  # ^^^^
   #
-  #     c if a =~ /left/ ... b =~ /right/
-  #          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # c if a =~ /left/ ... b =~ /right/
+  #      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class RangeNode < Node
     # Initialize a new RangeNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, left: ::T.nilable(Node), right: ::T.nilable(Node), operator_loc: Location).void }
@@ -11087,21 +11736,25 @@ module Prism
 
     # The left-hand side of the range, if present. It can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     1...
-    #     ^
+    # ```rb
+    # 1...
+    # ^
     #
-    #     hello...goodbye
-    #     ^^^^^
+    # hello...goodbye
+    # ^^^^^
+    # ```
     sig { returns(::T.nilable(Node)) }
     def left; end
 
     # The right-hand side of the range, if present. It can be either `nil` or any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     ..5
-    #       ^
+    # ```rb
+    # ..5
+    #   ^
     #
-    #     1...foo
-    #         ^^^
+    # 1...foo
+    #     ^^^
+    # ```
     # If neither right-hand or left-hand side was included, this will be an ErrorRecoveryNode.
     sig { returns(::T.nilable(Node)) }
     def right; end
@@ -11125,8 +11778,10 @@ module Prism
 
   # Represents a rational number literal.
   #
-  #     1.0r
-  #     ^^^^
+  # ```rb
+  # 1.0r
+  # ^^^^
+  # ```
   class RationalNode < Node
     # Initialize a new RationalNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, numerator: Integer, denominator: Integer).void }
@@ -11188,13 +11843,17 @@ module Prism
 
     # The numerator of the rational number.
     #
-    #     1.5r # numerator 3
+    # ```rb
+    # 1.5r # numerator 3
+    # ```
     sig { returns(Integer) }
     def numerator; end
 
     # The denominator of the rational number.
     #
-    #     1.5r # denominator 2
+    # ```rb
+    # 1.5r # denominator 2
+    # ```
     sig { returns(Integer) }
     def denominator; end
 
@@ -11204,8 +11863,10 @@ module Prism
 
   # Represents the use of the `redo` keyword.
   #
-  #     redo
-  #     ^^^^
+  # ```rb
+  # redo
+  # ^^^^
+  # ```
   class RedoNode < Node
     # Initialize a new RedoNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -11255,8 +11916,10 @@ module Prism
 
   # Represents a regular expression literal with no interpolation.
   #
-  #     /foo/i
-  #     ^^^^^^
+  # ```rb
+  # /foo/i
+  # ^^^^^^
+  # ```
   class RegularExpressionNode < Node
     # Initialize a new RegularExpressionNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -11393,9 +12056,11 @@ module Prism
 
   # Represents a required keyword parameter to a method, block, or lambda definition.
   #
-  #     def a(b: )
-  #           ^^
-  #     end
+  # ```rb
+  # def a(b: )
+  #       ^^
+  # end
+  # ```
   class RequiredKeywordParameterNode < Node
     # Initialize a new RequiredKeywordParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol, name_loc: Location).void }
@@ -11462,9 +12127,11 @@ module Prism
 
   # Represents a required parameter to a method, block, or lambda definition.
   #
-  #     def a(b)
-  #           ^
-  #     end
+  # ```rb
+  # def a(b)
+  #       ^
+  # end
+  # ```
   class RequiredParameterNode < Node
     # Initialize a new RequiredParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: Symbol).void }
@@ -11522,8 +12189,10 @@ module Prism
 
   # Represents an expression modified with a rescue.
   #
-  #     foo rescue nil
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # foo rescue nil
+  # ^^^^^^^^^^^^^^
+  # ```
   class RescueModifierNode < Node
     # Initialize a new RescueModifierNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, expression: Node, keyword_loc: Location, rescue_expression: Node).void }
@@ -11594,12 +12263,14 @@ module Prism
 
   # Represents a rescue statement.
   #
-  #     begin
-  #     rescue Foo, *splat, Bar => ex
-  #       foo
-  #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  #     end
+  # ```rb
+  # begin
+  # rescue Foo, *splat, Bar => ex
+  #   foo
+  # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # end
   #
+  # ```
   # `Foo, *splat, Bar` are in the `exceptions` field. `ex` is in the `reference` field.
   class RescueNode < Node
     # Initialize a new RescueNode node.
@@ -11705,9 +12376,11 @@ module Prism
 
   # Represents a rest parameter to a method, block, or lambda definition.
   #
-  #     def a(*b)
-  #           ^^
-  #     end
+  # ```rb
+  # def a(*b)
+  #       ^^
+  # end
+  # ```
   class RestParameterNode < Node
     # Initialize a new RestParameterNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, name: ::T.nilable(Symbol), name_loc: ::T.nilable(Location), operator_loc: Location).void }
@@ -11787,8 +12460,10 @@ module Prism
 
   # Represents the use of the `retry` keyword.
   #
-  #     retry
-  #     ^^^^^
+  # ```rb
+  # retry
+  # ^^^^^
+  # ```
   class RetryNode < Node
     # Initialize a new RetryNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -11838,8 +12513,10 @@ module Prism
 
   # Represents the use of the `return` keyword.
   #
-  #     return 1
-  #     ^^^^^^^^
+  # ```rb
+  # return 1
+  # ^^^^^^^^
+  # ```
   class ReturnNode < Node
     # Initialize a new ReturnNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, arguments: ::T.nilable(ArgumentsNode)).void }
@@ -11906,8 +12583,10 @@ module Prism
 
   # Represents the `self` keyword.
   #
-  #     self
-  #     ^^^^
+  # ```rb
+  # self
+  # ^^^^
+  # ```
   class SelfNode < Node
     # Initialize a new SelfNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -11957,9 +12636,11 @@ module Prism
 
   # This node wraps a constant write to indicate that when the value is written, it should have its shareability state modified.
   #
-  #     # shareable_constant_value: literal
-  #     C = { a: 1 }
-  #     ^^^^^^^^^^^^
+  # ```rb
+  # # shareable_constant_value: literal
+  # C = { a: 1 }
+  # ^^^^^^^^^^^^
+  # ```
   class ShareableConstantNode < Node
     # Initialize a new ShareableConstantNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, write: ::T.any(ConstantWriteNode, ConstantAndWriteNode, ConstantOrWriteNode, ConstantOperatorWriteNode, ConstantPathWriteNode, ConstantPathAndWriteNode, ConstantPathOrWriteNode, ConstantPathOperatorWriteNode)).void }
@@ -12025,8 +12706,10 @@ module Prism
 
   # Represents a singleton class declaration involving the `class` keyword.
   #
-  #     class << self end
-  #     ^^^^^^^^^^^^^^^^^
+  # ```rb
+  # class << self end
+  # ^^^^^^^^^^^^^^^^^
+  # ```
   class SingletonClassNode < Node
     # Initialize a new SingletonClassNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, locals: T::Array[Symbol], class_keyword_loc: Location, operator_loc: Location, expression: Node, body: ::T.nilable(::T.any(StatementsNode, BeginNode)), end_keyword_loc: Location).void }
@@ -12127,8 +12810,10 @@ module Prism
 
   # Represents the use of the `__ENCODING__` keyword.
   #
-  #     __ENCODING__
-  #     ^^^^^^^^^^^^
+  # ```rb
+  # __ENCODING__
+  # ^^^^^^^^^^^^
+  # ```
   class SourceEncodingNode < Node
     # Initialize a new SourceEncodingNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12178,8 +12863,10 @@ module Prism
 
   # Represents the use of the `__FILE__` keyword.
   #
-  #     __FILE__
-  #     ^^^^^^^^
+  # ```rb
+  # __FILE__
+  # ^^^^^^^^
+  # ```
   class SourceFileNode < Node
     # Initialize a new SourceFileNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, filepath: String).void }
@@ -12249,8 +12936,10 @@ module Prism
 
   # Represents the use of the `__LINE__` keyword.
   #
-  #     __LINE__
-  #     ^^^^^^^^
+  # ```rb
+  # __LINE__
+  # ^^^^^^^^
+  # ```
   class SourceLineNode < Node
     # Initialize a new SourceLineNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12300,8 +12989,10 @@ module Prism
 
   # Represents the use of the splat operator.
   #
-  #     [*a]
-  #      ^^
+  # ```rb
+  # [*a]
+  #  ^^
+  # ```
   class SplatNode < Node
     # Initialize a new SplatNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, operator_loc: Location, expression: ::T.nilable(Node)).void }
@@ -12368,8 +13059,10 @@ module Prism
 
   # Represents a set of statements contained within some scope.
   #
-  #     foo; bar; baz
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # foo; bar; baz
+  # ^^^^^^^^^^^^^
+  # ```
   class StatementsNode < Node
     # Initialize a new StatementsNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, body: T::Array[Node]).void }
@@ -12423,14 +13116,16 @@ module Prism
 
   # Represents a string literal, a string contained within a `%w` list, or plain string content within an interpolated string.
   #
-  #     "foo"
-  #     ^^^^^
+  # ```rb
+  # "foo"
+  # ^^^^^
   #
-  #     %w[foo]
-  #        ^^^
+  # %w[foo]
+  #    ^^^
   #
-  #     "foo #{bar} baz"
-  #      ^^^^      ^^^^
+  # "foo #{bar} baz"
+  #  ^^^^      ^^^^
+  # ```
   class StringNode < Node
     # Initialize a new StringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
@@ -12539,12 +13234,14 @@ module Prism
 
   # Represents the use of the `super` keyword with parentheses or arguments.
   #
-  #     super()
-  #     ^^^^^^^
+  # ```rb
+  # super()
+  # ^^^^^^^
   #
-  #     super foo, bar
-  #     ^^^^^^^^^^^^^^
+  # super foo, bar
+  # ^^^^^^^^^^^^^^
   #
+  # ```
   # If no arguments are provided (except for a block), it would be a `ForwardingSuperNode` instead.
   class SuperNode < Node
     # Initialize a new SuperNode node.
@@ -12642,11 +13339,12 @@ module Prism
 
   # Represents a symbol literal or a symbol contained within a `%i` list.
   #
-  #     :foo
-  #     ^^^^
+  # ```rb
+  # ^^^^
   #
-  #     %i[foo]
-  #        ^^^
+  # %i[foo]
+  #    ^^^
+  # ```
   class SymbolNode < Node
     # Initialize a new SymbolNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: ::T.nilable(Location), content_loc: Location, closing_loc: ::T.nilable(Location), unescaped: String).void }
@@ -12751,8 +13449,10 @@ module Prism
 
   # Represents the use of the literal `true` keyword.
   #
-  #     true
-  #     ^^^^
+  # ```rb
+  # true
+  # ^^^^
+  # ```
   class TrueNode < Node
     # Initialize a new TrueNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer).void }
@@ -12802,8 +13502,10 @@ module Prism
 
   # Represents the use of the `undef` keyword.
   #
-  #     undef :foo, :bar, :baz
-  #     ^^^^^^^^^^^^^^^^^^^^^^
+  # ```rb
+  # undef :foo, :bar, :baz
+  # ^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class UndefNode < Node
     # Initialize a new UndefNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, names: T::Array[::T.any(SymbolNode, InterpolatedSymbolNode)], keyword_loc: Location).void }
@@ -12870,11 +13572,13 @@ module Prism
 
   # Represents the use of the `unless` keyword, either in the block form or the modifier form.
   #
-  #     bar unless foo
-  #     ^^^^^^^^^^^^^^
+  # ```rb
+  # bar unless foo
+  # ^^^^^^^^^^^^^^
   #
-  #     unless foo then bar end
-  #     ^^^^^^^^^^^^^^^^^^^^^^^
+  # unless foo then bar end
+  # ^^^^^^^^^^^^^^^^^^^^^^^
+  # ```
   class UnlessNode < Node
     # Initialize a new UnlessNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, unless_keyword_loc: Location, predicate: Node, then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode), else_clause: ::T.nilable(ElseNode), end_keyword_loc: ::T.nilable(Location)).void }
@@ -12920,11 +13624,13 @@ module Prism
 
     # The Location of the `unless` keyword.
     #
-    #     unless cond then bar end
-    #     ^^^^^^
+    # ```rb
+    # unless cond then bar end
+    # ^^^^^^
     #
-    #     bar unless cond
-    #         ^^^^^^
+    # bar unless cond
+    #     ^^^^^^
+    # ```
     sig { returns(Location) }
     def unless_keyword_loc; end
 
@@ -12935,18 +13641,22 @@ module Prism
 
     # The condition to be evaluated for the unless expression. It can be any [non-void expression](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
-    #     unless cond then bar end
-    #            ^^^^
+    # ```rb
+    # unless cond then bar end
+    #        ^^^^
     #
-    #     bar unless cond
-    #                ^^^^
+    # bar unless cond
+    #            ^^^^
+    # ```
     sig { returns(Node) }
     def predicate; end
 
     # The Location of the `then` keyword, if present.
     #
-    #     unless cond then bar end
-    #                 ^^^^
+    # ```rb
+    # unless cond then bar end
+    #             ^^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def then_keyword_loc; end
 
@@ -12958,22 +13668,28 @@ module Prism
     # The body of statements that will executed if the unless condition is
     # falsey. Will be `nil` if no body is provided.
     #
-    #     unless cond then bar end
-    #                      ^^^
+    # ```rb
+    # unless cond then bar end
+    #                  ^^^
+    # ```
     sig { returns(::T.nilable(StatementsNode)) }
     def statements; end
 
     # The else clause of the unless expression, if present.
     #
-    #     unless cond then bar else baz end
-    #                          ^^^^^^^^^^^^
+    # ```rb
+    # unless cond then bar else baz end
+    #                      ^^^^^^^^^^^^
+    # ```
     sig { returns(::T.nilable(ElseNode)) }
     def else_clause; end
 
     # The Location of the `end` keyword, if present.
     #
-    #     unless cond then bar end
-    #                          ^^^
+    # ```rb
+    # unless cond then bar end
+    #                      ^^^
+    # ```
     sig { returns(::T.nilable(Location)) }
     def end_keyword_loc; end
 
@@ -13000,11 +13716,13 @@ module Prism
 
   # Represents the use of the `until` keyword, either in the block form or the modifier form.
   #
-  #     bar until foo
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # bar until foo
+  # ^^^^^^^^^^^^^
   #
-  #     until foo do bar end
-  #     ^^^^^^^^^^^^^^^^^^^^
+  # until foo do bar end
+  # ^^^^^^^^^^^^^^^^^^^^
+  # ```
   class UntilNode < Node
     # Initialize a new UntilNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, until_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
@@ -13105,10 +13823,12 @@ module Prism
 
   # Represents the use of the `when` keyword within a case statement.
   #
-  #     case true
-  #     when true
-  #     ^^^^^^^^^
-  #     end
+  # ```rb
+  # case true
+  # when true
+  # ^^^^^^^^^
+  # end
+  # ```
   class WhenNode < Node
     # Initialize a new WhenNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, when_keyword_loc: Location, conditions: T::Array[Node], then_keyword_loc: ::T.nilable(Location), statements: ::T.nilable(StatementsNode)).void }
@@ -13192,11 +13912,13 @@ module Prism
 
   # Represents the use of the `while` keyword, either in the block form or the modifier form.
   #
-  #     bar while foo
-  #     ^^^^^^^^^^^^^
+  # ```rb
+  # bar while foo
+  # ^^^^^^^^^^^^^
   #
-  #     while foo do bar end
-  #     ^^^^^^^^^^^^^^^^^^^^
+  # while foo do bar end
+  # ^^^^^^^^^^^^^^^^^^^^
+  # ```
   class WhileNode < Node
     # Initialize a new WhileNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, while_keyword_loc: Location, do_keyword_loc: ::T.nilable(Location), end_keyword_loc: ::T.nilable(Location), predicate: Node, statements: ::T.nilable(StatementsNode)).void }
@@ -13297,8 +14019,10 @@ module Prism
 
   # Represents an xstring literal with no interpolation.
   #
-  #     `foo`
-  #     ^^^^^
+  # ```rb
+  # `foo`
+  # ^^^^^
+  # ```
   class XStringNode < Node
     # Initialize a new XStringNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, opening_loc: Location, content_loc: Location, closing_loc: Location, unescaped: String).void }
@@ -13399,8 +14123,10 @@ module Prism
 
   # Represents the use of the `yield` keyword.
   #
-  #     yield 1
-  #     ^^^^^^^
+  # ```rb
+  # yield 1
+  # ^^^^^^^
+  # ```
   class YieldNode < Node
     # Initialize a new YieldNode node.
     sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, keyword_loc: Location, lparen_loc: ::T.nilable(Location), arguments: ::T.nilable(ArgumentsNode), rparen_loc: ::T.nilable(Location)).void }
