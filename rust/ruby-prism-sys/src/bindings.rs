@@ -2614,6 +2614,9 @@ pub type pm_constant_callback_t = ::std::option::Option<
         data: *mut ::std::os::raw::c_void,
     ),
 >;
+/** Represents the results of a slice query.
+*/
+pub type pm_string_query_t = ::std::os::raw::c_int;
 /** An opaque pointer to an arena that is used for allocations.
 */
 #[repr(C)]
@@ -9737,6 +9740,15 @@ pub const PM_OPTIONS_COMMAND_LINE_P: u8 = 16;
  searches the input file for a shebang that includes "ruby".
 */
 pub const PM_OPTIONS_COMMAND_LINE_X: u8 = 32;
+/** Returned if the encoding given to a slice query was invalid.
+*/
+pub const PM_STRING_QUERY_ERROR: pm_string_query_t = -1;
+/** Returned if the result of the slice query is false.
+*/
+pub const PM_STRING_QUERY_FALSE: pm_string_query_t = 0;
+/** Returned if the result of the slice query is true.
+*/
+pub const PM_STRING_QUERY_TRUE: pm_string_query_t = 1;
 #[repr(u32)]
 #[non_exhaustive]
 /** This enum represents every type of node in the Ruby syntax tree.
@@ -12079,6 +12091,58 @@ unsafe extern "C" {
  @returns The AST representing the source.
 */
     pub fn pm_parse(parser: *mut pm_parser_t) -> *mut pm_node_t;
+    /** Check that the slice is a valid local variable name.
+
+ @param source The source to check.
+ @param length The length of the source.
+ @param encoding_name The name of the encoding of the source.
+ @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
+   the query is false, and PM_STRING_QUERY_ERROR if the encoding was invalid.
+*/
+    pub fn pm_string_query_local(
+        source: *const u8,
+        length: usize,
+        encoding_name: *const ::std::os::raw::c_char,
+    ) -> pm_string_query_t;
+    /** Check that the slice is a valid constant name.
+
+ @param source The source to check.
+ @param length The length of the source.
+ @param encoding_name The name of the encoding of the source.
+ @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
+   the query is false, and PM_STRING_QUERY_ERROR if the encoding was invalid.
+*/
+    pub fn pm_string_query_constant(
+        source: *const u8,
+        length: usize,
+        encoding_name: *const ::std::os::raw::c_char,
+    ) -> pm_string_query_t;
+    /** Check that the slice is a valid method name.
+
+ @param source The source to check.
+ @param length The length of the source.
+ @param encoding_name The name of the encoding of the source.
+ @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
+   the query is false, and PM_STRING_QUERY_ERROR if the encoding was invalid.
+*/
+    pub fn pm_string_query_method_name(
+        source: *const u8,
+        length: usize,
+        encoding_name: *const ::std::os::raw::c_char,
+    ) -> pm_string_query_t;
+    /** Check that the slice is a keyword.
+
+ @param source The source to check.
+ @param length The length of the source.
+ @param encoding_name The name of the encoding of the source.
+ @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
+   the query is false, and PM_STRING_QUERY_ERROR if the encoding was invalid.
+*/
+    pub fn pm_string_query_keyword(
+        source: *const u8,
+        length: usize,
+        encoding_name: *const ::std::os::raw::c_char,
+    ) -> pm_string_query_t;
     /** The prism version and the serialization format.
 
  @returns The prism version as a constant string.
