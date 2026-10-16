@@ -14,6 +14,7 @@ module Prism
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
       when "error"      then error(argv)
+      when "keywords"   then keywords
       when "lex"        then lex(argv)
       when "lex_compat" then lex_compat(argv)
       when "locals"     then locals(argv)
@@ -31,6 +32,7 @@ module Prism
             bin/prism dot [source]
             bin/prism encoding [encoding]
             bin/prism error [source]
+            bin/prism keywords
             bin/prism lex [source]
             bin/prism lex_compat [source]
             bin/prism locals [source]
@@ -158,6 +160,66 @@ module Prism
         puts result.errors_format
       else
         puts "No syntax errors for #{filepath}"
+      end
+    end
+
+    # bin/prism keywords
+    # Searches for the multiplier that PM_KEYWORD_SLOT in src/prism.c uses to
+    # give every keyword its own slot in the keyword table. Run this after
+    # changing the set of keywords, and copy its output into src/prism.c.
+    def keywords
+      keywords = %w[
+        __ENCODING__ __LINE__ __FILE__ BEGIN END alias and begin break case
+        class def defined? do else elsif end ensure false for if in module next
+        nil not or redo rescue retry return self super then true undef unless
+        until when while yield
+      ]
+
+      # This must match PM_KEYWORD_SLOT_BITS in src/prism.c.
+      slot_bits = 6
+
+      # Pack each keyword the same way as PM_KEYWORD_PACK in src/prism.c: its
+      # first, middle, and last bytes, and its length.
+      packed = keywords.map do |keyword|
+        bytes = keyword.bytes
+        bytes[0] | (bytes[bytes.length / 2] << 8) | (bytes[-1] << 16) | (bytes.length << 24)
+      end
+
+      if packed.uniq.length != packed.length
+        abort "Two keywords pack to the same value, so PM_KEYWORD_PACK needs to sample different bytes."
+      end
+
+      # Try random odd multipliers until one gives every keyword its own slot.
+      # The generator is seeded so that the search always finds the same
+      # multiplier. Each slot remembers the attempt that last claimed it, so
+      # the slots do not need to be cleared between attempts.
+      random = Random.new(1)
+      claimed = Array.new(1 << slot_bits, 0)
+      multiplier = nil
+      attempts = 0
+
+      until multiplier
+        attempts += 1
+        candidate = random.rand(1 << 32) | 1
+
+        perfect = packed.all? do |value|
+          slot = ((value * candidate) & 0xFFFFFFFF) >> (32 - slot_bits)
+          next false if claimed[slot] == attempts
+          claimed[slot] = attempts
+        end
+
+        multiplier = candidate if perfect
+      end
+
+      puts "Found a multiplier after #{attempts} attempts:"
+      puts
+      puts format("#define PM_KEYWORD_SLOT(packed) ((uint32_t) ((uint32_t) (packed) * 0x%08xU) >> (32 - PM_KEYWORD_SLOT_BITS))", multiplier)
+      puts
+      puts "The bytes that each keyword's entry in pm_keywords packs:"
+      puts
+
+      keywords.each do |keyword|
+        puts "    PM_KEYWORD(#{keyword.inspect}, '#{keyword[0]}', '#{keyword[keyword.length / 2]}', '#{keyword[-1]}', ...)"
       end
     end
 

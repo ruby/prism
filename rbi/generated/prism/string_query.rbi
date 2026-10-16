@@ -13,6 +13,9 @@ module Prism
     sig { params(string: String).returns(T::Boolean) }
     def self.method_name?(string); end
 
+    sig { params(string: String).returns(T::Boolean) }
+    def self.keyword?(string); end
+
     # The string that this query is wrapping.
     sig { returns(String) }
     attr_reader :string
@@ -32,5 +35,9 @@ module Prism
     # Whether or not this string is a valid method name.
     sig { returns(T::Boolean) }
     def method_name?; end
+
+    # Whether or not this string is a valid keyword.
+    sig { returns(T::Boolean) }
+    def keyword?; end
   end
 end
