@@ -49,6 +49,8 @@ Gem::Specification.new do |spec|
     "include/prism/compiler/accel.h",
     "include/prism/compiler/align.h",
     "include/prism/compiler/assume.h",
+    "include/prism/compiler/bswap.h",
+    "include/prism/compiler/endianness.h",
     "include/prism/compiler/exported.h",
     "include/prism/compiler/fallthrough.h",
     "include/prism/compiler/filesystem.h",
@@ -86,6 +88,7 @@ Gem::Specification.new do |spec|
     "include/prism/internal/stringy.h",
     "include/prism/internal/strpbrk.h",
     "include/prism/internal/tokens.h",
+    "include/prism/internal/xxh3.h",
     "include/prism/arena.h",
     "include/prism/ast.h",
     "include/prism/buffer.h",
@@ -224,7 +227,8 @@ Gem::Specification.new do |spec|
     "src/stringy.c",
     "src/strncasecmp.c",
     "src/strpbrk.c",
-    "src/tokens.c"
+    "src/tokens.c",
+    "src/xxh3.c"
   ]
 
   spec.extensions = ["ext/prism/extconf.rb"]

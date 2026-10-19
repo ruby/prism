@@ -23,8 +23,11 @@ module Prism
     # lists described by the attributes of the same names. They are passed in
     # empty when the source is created by the parser and filled in afterward,
     # because the comments themselves refer to the source.
-    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer], comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)]).returns(Source) }
-    def self.for(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil)); end
+    #
+    # The checksum parameter is the value described by the attribute of the same
+    # name. It is nil when the source is not created by the parser.
+    sig { params(source: String, start_line: Integer, offsets: T::Array[Integer], comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)], checksum: ::T.nilable(Integer)).returns(Source) }
+    def self.for(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil), checksum = T.unsafe(nil)); end
 
     # The source code that this source object represents.
     sig { returns(String) }
@@ -33,6 +36,11 @@ module Prism
     # The line number where this source starts.
     sig { returns(Integer) }
     attr_reader :start_line
+
+    # The checksum of the source code which can be used to quickly determine if
+    # the source has changed.
+    sig { returns(::T.nilable(Integer)) }
+    attr_reader :checksum
 
     # The list of comments that were encountered during parsing. When the source
     # is parsed with the attach_comments option, these are sorted by start
@@ -62,12 +70,16 @@ module Prism
     # Create a new source object with the given source code. The offsets
     # parameter can be either an Array of Integer byte offsets or a packed
     # binary string of uint32_t values (from the C extension).
-    sig { params(source: String, start_line: Integer, offsets: ::T.any(T::Array[Integer], String), comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)]).void }
-    def initialize(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil)); end
+    sig { params(source: String, start_line: Integer, offsets: ::T.any(T::Array[Integer], String), comments: T::Array[Comment], comment_attachments: T::Array[Comment], comment_ranges: T::Array[::T.nilable(Integer)], checksum: ::T.nilable(Integer)).void }
+    def initialize(source, start_line, offsets, comments = T.unsafe(nil), comment_attachments = T.unsafe(nil), comment_ranges = T.unsafe(nil), checksum = T.unsafe(nil)); end
 
     # Replace the value of start_line with the given value.
     sig { params(start_line: Integer).void }
     def replace_start_line(start_line); end
+
+    # Replace the value of checksum with the given value.
+    sig { params(checksum: Integer).void }
+    def replace_checksum(checksum); end
 
     # Replace the value of offsets with the given value.
     sig { params(offsets: T::Array[Integer]).void }

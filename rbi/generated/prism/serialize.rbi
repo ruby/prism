@@ -138,6 +138,9 @@ module Prism
       sig { returns(Integer) }
       def load_uint32; end
 
+      sig { returns(Integer) }
+      def load_uint64; end
+
       sig { params(constant_pool: ConstantPool, encoding: Encoding, freeze: T::Boolean).returns(::T.nilable(Node)) }
       def load_optional_node(constant_pool, encoding, freeze); end
 

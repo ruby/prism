@@ -94,6 +94,10 @@ public class Loader {
         this.encodingName = new String(encodingNameBytes, StandardCharsets.US_ASCII);
 
         source.setStartLine(loadVarSInt());
+
+        // Skip the 8-byte hash of the source, which this library does not expose.
+        buffer.getLong();
+
         source.setLineOffsets(loadLineOffsets());
 
         ParseResult.MagicComment[] magicComments = loadMagicComments();
