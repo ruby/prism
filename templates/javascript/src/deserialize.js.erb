@@ -288,6 +288,10 @@ export function deserialize(source, array) {
   // Read the line that the source starts on along with the byte offset of the
   // start of each line, which together let locations resolve lines and columns.
   const startLine = buffer.readVarSInt();
+
+  // Skip the 8-byte hash of the source, which this library does not expose.
+  buffer.readBytes(8);
+
   const lineOffsets = Array.from({ length: buffer.readVarInt() }, () => buffer.readVarInt());
 
   buffer.source = new Source(source, buffer.encoding, startLine, lineOffsets);

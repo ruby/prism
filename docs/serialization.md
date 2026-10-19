@@ -106,6 +106,7 @@ The header is structured like the following table:
 | `1` | 1 indicates only semantics fields were serialized, 0 indicates all fields were serialized (including location fields) |
 | string | the encoding name |
 | varsint | the start line |
+| `8` | the checksum of the source up to the end of the `__END__` line in native endian order, see `pm_parser_checksum` |
 | varuint | number of newline offsets |
 | varuint* | newline offsets |
 | varuint | number of comments |

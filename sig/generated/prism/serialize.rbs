@@ -149,6 +149,9 @@ module Prism
       # : () -> Integer
       def load_uint32: () -> Integer
 
+      # : () -> Integer
+      def load_uint64: () -> Integer
+
       # : (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
       def load_optional_node: (ConstantPool constant_pool, Encoding encoding, bool freeze) -> node?
 
