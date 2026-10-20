@@ -1148,6 +1148,20 @@ end
     }
 
     #[test]
+    fn parse_with_options_default_line_test() {
+        use super::{parse_with_options, Options};
+
+        let source = b"foo\nbar";
+        let options = Options::default().filepath("test.rb").build();
+        let result = parse_with_options(source, &options);
+
+        let node = result.node();
+        let statements: Vec<_> = node.as_program_node().unwrap().statements().body().iter().collect();
+        assert_eq!(statements[0].location().start_line(), 1);
+        assert_eq!(statements[1].location().start_line(), 2);
+    }
+
+    #[test]
     fn parse_with_options_scopes_test() {
         use super::{parse_with_options, Options, Scope};
 
