@@ -3,8 +3,8 @@
 Gem::Specification.new do |spec|
   spec.name = "prism"
   spec.version = "2.0.0.rc1"
-  spec.authors = ["Shopify"]
-  spec.email = ["ruby@shopify.com"]
+  spec.authors = ["Ruby developers"]
+  spec.email = ["ruby-core@ruby-lang.org"]
 
   spec.summary = "Prism Ruby parser"
   spec.homepage = "https://github.com/ruby/prism"

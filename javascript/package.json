@@ -10,7 +10,7 @@
     "test": "node test.js",
     "type": "tsc --allowJs -d --target ES2015 --emitDeclarationOnly --outDir src src/index.js"
   },
-  "author": "Shopify <ruby@shopify.com>",
+  "author": "Ruby developers <ruby-core@ruby-lang.org>",
   "license": "MIT",
   "repository": {
     "type": "git",
