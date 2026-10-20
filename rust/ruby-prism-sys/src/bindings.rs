@@ -2583,15 +2583,6 @@ pub type pm_x_string_node_t = pm_x_string_node;
  @extends pm_node_t
 */
 pub type pm_yield_node_t = pm_yield_node;
-/** A callback function that can be used to process constants found while
- parsing.
-*/
-pub type pm_constant_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        constant: *const pm_constant_t,
-        data: *mut ::std::os::raw::c_void,
-    ),
->;
 /** Represents the results of a slice query.
 */
 pub type pm_string_query_t = ::std::os::raw::c_int;
@@ -12042,26 +12033,39 @@ unsafe extern "C" {
      given parser
 */
     pub fn pm_parser_constants_size(parser: *const pm_parser_t) -> usize;
-    /** Iterates over the constants in the constant pool associated with the given
- parser and calls the given callback for each constant.
+    /** Returns the constant at the given index in the constant pool associated with
+ the given parser. Together with pm_constant_id_index, this lets a caller
+ build a cache with one entry per constant and then find the entry for any
+ constant id, as in:
 
- @param parser the parser whose constants we want to iterate over
- @param callback the callback function to call for each constant. This function
-     will be passed a pointer to the constant and the data parameter passed to
-     this function.
- @param data the data to pass to the callback function for each constant. This
-     can be NULL if no data needs to be passed to the callback function.
+ ```c
+ size_t size = pm_parser_constants_size(parser);
+ for (size_t index = 0; index < size; index++) {
+     cache[index] = convert(pm_parser_constant_at(parser, index));
+ }
+
+ value = cache[pm_constant_id_index(constant_id)];
+ ```
+
+ For any constant id, pm_parser_constant_at(parser,
+ pm_constant_id_index(constant_id)) is pm_parser_constant(parser,
+ constant_id).
+
+ @param parser the parser whose constant pool we want to look up from
+ @param index the index of the constant, which must be less than
+     pm_parser_constants_size(parser)
+ @returns a pointer to the constant at the given index
 */
-    pub fn pm_parser_constants_each(
+    pub fn pm_parser_constant_at(
         parser: *const pm_parser_t,
-        callback: pm_constant_callback_t,
-        data: *mut ::std::os::raw::c_void,
-    );
+        index: usize,
+    ) -> *const pm_constant_t;
     /** Returns a pointer to the constant at the given id in the constant pool
  associated with the given parser.
 
  @param parser the parser whose constant pool we want to look up from
- @param constant_id the id of the constant to look up (1-based)
+ @param constant_id the id of the constant to look up. Optional constant
+     fields on nodes hold 0 when they are absent, which is not a valid id.
  @returns a pointer to the constant at the given id
 */
     pub fn pm_parser_constant(
