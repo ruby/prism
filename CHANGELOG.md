@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Precompiled platform-specific variants on rubygems.org.
 - Many documentation improvements, including a new playground.
 - Prism now ships accurate and complete RBS and RBI definitions.
+- The license is now owned by the Ruby developers.
 
 ### Added
 
@@ -29,6 +30,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Allow pattern matching with prism nodes to match on location slices, like `node in Prism::StringNode[content: "foo"]`.
 - `Prism.parse_file` and similar now accept anything responding to `to_path` (like `Pathname`) directly.
 - `attach_comments` was added as a valid option. Each comment is attached to the node that ends latest on the comment's line before it, otherwise to the innermost node that contains it (or to that node's statements, if only whitespace and comments come between the comment and the statements), otherwise to the top-level statements. The attached comments are available through `Node#comments` and through `pm_node_comments_size` and `pm_node_comment` in the C API, as well as `pm_parser_comment_attachment`, `pm_parser_comment_ranges_size`, and `pm_parser_comment_range`, which expose the attachments grouped by node. When the option is set, the comments on the parse result are sorted by start offset.
+- `StringQuery#keyword?` was added to check if the string query matches a keyword.
+- `Source#checksum` was added to retrieve the checksum of the source content.
 
 ### Changed
 
@@ -71,6 +74,7 @@ Note that for this major version, almost every change listed below is breaking.
 - Most allocations are now performed through an arena.
 - `newline_list` was renamed to `list_offset_list`.
 - `Diagnostic::message` now returns `&[u8]` instead of `&str`.
+- `StringQuery` is now exposed.
 
 #### JavaScript
 
