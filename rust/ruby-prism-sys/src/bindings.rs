@@ -2583,28 +2583,6 @@ pub type pm_x_string_node_t = pm_x_string_node;
  @extends pm_node_t
 */
 pub type pm_yield_node_t = pm_yield_node;
-/** A callback function that can be used to process comments found while parsing.
-*/
-pub type pm_comment_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(comment: *const pm_comment_t, data: *mut ::std::os::raw::c_void),
->;
-/** A callback function that can be used to process magic comments found while parsing.
-*/
-pub type pm_magic_comment_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        magic_comment: *const pm_magic_comment_t,
-        data: *mut ::std::os::raw::c_void,
-    ),
->;
-/** A callback function that can be used to process diagnostics found while
- parsing.
-*/
-pub type pm_diagnostic_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        diagnostic: *const pm_diagnostic_t,
-        data: *mut ::std::os::raw::c_void,
-    ),
->;
 /** A callback function that can be used to process constants found while
  parsing.
 */
@@ -11728,6 +11706,16 @@ unsafe extern "C" {
     pub fn pm_diagnostic_warning_level(
         diagnostic: *const pm_diagnostic_t,
     ) -> pm_warning_level_t;
+    /** Get the diagnostic that follows the given diagnostic among the errors or the
+ warnings of the parser that produced it.
+
+ @param diagnostic The diagnostic to get the successor of.
+ @returns The next diagnostic of the same kind, or NULL if the given
+     diagnostic is the last one.
+*/
+    pub fn pm_diagnostic_next(
+        diagnostic: *const pm_diagnostic_t,
+    ) -> *const pm_diagnostic_t;
     /** Returns the location associated with the given comment.
 
  @param comment the comment whose location we want to get
@@ -11741,6 +11729,13 @@ unsafe extern "C" {
      PM_COMMENT_INLINE or PM_COMMENT_EMBDOC.
 */
     pub fn pm_comment_type(comment: *const pm_comment_t) -> pm_comment_type_t;
+    /** Returns the comment that follows the given comment among the comments
+ associated with the parser that found it.
+
+ @param comment the comment whose successor we want to get
+ @returns the next comment, or NULL if the given comment is the last one
+*/
+    pub fn pm_comment_next(comment: *const pm_comment_t) -> *const pm_comment_t;
     /** Returns the line and column of the given offset. If the offset is not in the
  list, the line and column of the closest offset less than the given offset
  are returned.
@@ -11771,6 +11766,16 @@ unsafe extern "C" {
     pub fn pm_magic_comment_value(
         magic_comment: *const pm_magic_comment_t,
     ) -> pm_location_t;
+    /** Returns the magic comment that follows the given magic comment among the
+ magic comments associated with the parser that found it.
+
+ @param magic_comment the magic comment whose successor we want to get
+ @returns the next magic comment, or NULL if the given magic comment is the
+     last one
+*/
+    pub fn pm_magic_comment_next(
+        magic_comment: *const pm_magic_comment_t,
+    ) -> *const pm_magic_comment_t;
     /** Allocate a new options struct. If the options struct cannot be allocated,
  this function aborts the process.
 
@@ -11972,42 +11977,34 @@ unsafe extern "C" {
  @returns the number of comments associated with the given parser
 */
     pub fn pm_parser_comments_size(parser: *const pm_parser_t) -> usize;
-    /** Iterates over the comments associated with the given parser and calls the
- given callback for each comment.
+    /** Returns the first comment associated with the given parser. Iterate over the
+ rest with pm_comment_next, as in:
+
+ ```c
+ for (const pm_comment_t *comment = pm_parser_comments_first(parser); comment != NULL; comment = pm_comment_next(comment)) {
+     pm_location_t location = pm_comment_location(comment);
+ }
+ ```
 
  @param parser the parser whose comments we want to iterate over
- @param callback the callback function to call for each comment. This function
-     will be passed a pointer to the comment and the data parameter passed to
-     this function.
- @param data the data to pass to the callback function for each comment. This
-     can be NULL if no data needs to be passed to the callback function.
+ @returns the first comment, or NULL if there are no comments
 */
-    pub fn pm_parser_comments_each(
-        parser: *const pm_parser_t,
-        callback: pm_comment_callback_t,
-        data: *mut ::std::os::raw::c_void,
-    );
+    pub fn pm_parser_comments_first(parser: *const pm_parser_t) -> *const pm_comment_t;
     /** Returns the number of magic comments associated with the given parser.
 
  @param parser the parser whose magic comments we want to get the size of
  @returns the number of magic comments associated with the given parser
 */
     pub fn pm_parser_magic_comments_size(parser: *const pm_parser_t) -> usize;
-    /** Iterates over the magic comments associated with the given parser and calls the
- given callback for each magic comment.
+    /** Returns the first magic comment associated with the given parser. Iterate
+ over the rest with pm_magic_comment_next.
 
  @param parser the parser whose magic comments we want to iterate over
- @param callback the callback function to call for each magic comment. This
-     function will be passed a pointer to the magic comment and the data
-     parameter passed to this function.
- @param data the data to pass to the callback function for each magic comment.
-     This can be NULL if no data needs to be passed to the callback function.
+ @returns the first magic comment, or NULL if there are no magic comments
 */
-    pub fn pm_parser_magic_comments_each(
+    pub fn pm_parser_magic_comments_first(
         parser: *const pm_parser_t,
-        callback: pm_magic_comment_callback_t,
-        data: *mut ::std::os::raw::c_void,
-    );
+    ) -> *const pm_magic_comment_t;
     /** Returns the number of errors associated with the given parser.
 
  @param parser the parser whose errors we want to get the size of
@@ -12020,36 +12017,22 @@ unsafe extern "C" {
  @returns the number of warnings associated with the given parser
 */
     pub fn pm_parser_warnings_size(parser: *const pm_parser_t) -> usize;
-    /** Iterates over the errors associated with the given parser and calls the
- given callback for each error.
+    /** Returns the first error associated with the given parser. Iterate over the
+ rest with pm_diagnostic_next.
 
  @param parser the parser whose errors we want to iterate over
- @param callback the callback function to call for each error. This function
-     will be passed a pointer to the error and the data parameter passed to
-     this function.
- @param data the data to pass to the callback function for each error. This
-     can be NULL if no data needs to be passed to the callback function.
+ @returns the first error, or NULL if there are no errors
 */
-    pub fn pm_parser_errors_each(
-        parser: *const pm_parser_t,
-        callback: pm_diagnostic_callback_t,
-        data: *mut ::std::os::raw::c_void,
-    );
-    /** Iterates over the warnings associated with the given parser and calls the
- given callback for each warning.
+    pub fn pm_parser_errors_first(parser: *const pm_parser_t) -> *const pm_diagnostic_t;
+    /** Returns the first warning associated with the given parser. Iterate over the
+ rest with pm_diagnostic_next.
 
  @param parser the parser whose warnings we want to iterate over
- @param callback the callback function to call for each warning. This function
-     will be passed a pointer to the warning and the data parameter passed to
-     this function.
- @param data the data to pass to the callback function for each warning. This
-     can be NULL if no data needs to be passed to the callback function.
+ @returns the first warning, or NULL if there are no warnings
 */
-    pub fn pm_parser_warnings_each(
+    pub fn pm_parser_warnings_first(
         parser: *const pm_parser_t,
-        callback: pm_diagnostic_callback_t,
-        data: *mut ::std::os::raw::c_void,
-    );
+    ) -> *const pm_diagnostic_t;
     /** Returns the number of constants in the constant pool associated with the
  given parser.
 

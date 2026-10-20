@@ -2,22 +2,10 @@ use std::ffi::{CStr, CString};
 use std::path::Path;
 
 use ruby_prism_sys::{
-    pm_arena_free, pm_arena_new, pm_comment_location, pm_comment_type, pm_comment_type_t, pm_diagnostic_location,
-    pm_diagnostic_message, pm_parse, pm_parser_comments_each, pm_parser_errors_each, pm_parser_free, pm_parser_new,
+    pm_arena_free, pm_arena_new, pm_comment_location, pm_comment_next, pm_comment_type, pm_comment_type_t,
+    pm_diagnostic_location, pm_diagnostic_message, pm_diagnostic_next, pm_parse, pm_parser_comments_first,
+    pm_parser_errors_first, pm_parser_errors_size, pm_parser_free, pm_parser_new,
 };
-
-unsafe extern "C" fn collect_comment(comment: *const ruby_prism_sys::pm_comment_t, data: *mut std::ffi::c_void) {
-    let vec = &mut *(data.cast::<Vec<*const ruby_prism_sys::pm_comment_t>>());
-    vec.push(comment);
-}
-
-unsafe extern "C" fn collect_diagnostic(
-    diagnostic: *const ruby_prism_sys::pm_diagnostic_t,
-    data: *mut std::ffi::c_void,
-) {
-    let vec = &mut *(data.cast::<Vec<*const ruby_prism_sys::pm_diagnostic_t>>());
-    vec.push(diagnostic);
-}
 
 fn ruby_file_contents() -> (CString, usize) {
     let rust_path = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -56,11 +44,9 @@ fn comments_test() {
         );
         let _node = pm_parse(parser);
 
-        let mut comments: Vec<*const ruby_prism_sys::pm_comment_t> = Vec::new();
-        pm_parser_comments_each(parser, Some(collect_comment), (&raw mut comments).cast());
-
-        assert_eq!(comments.len(), 1);
-        let comment = comments[0];
+        let comment = pm_parser_comments_first(parser);
+        assert!(!comment.is_null());
+        assert!(pm_comment_next(comment).is_null());
         assert_eq!(pm_comment_type(comment), pm_comment_type_t::PM_COMMENT_INLINE);
 
         let location = pm_comment_location(comment);
@@ -85,11 +71,16 @@ fn diagnostics_test() {
         );
         let _node = pm_parse(parser);
 
-        let mut errors: Vec<*const ruby_prism_sys::pm_diagnostic_t> = Vec::new();
-        pm_parser_errors_each(parser, Some(collect_diagnostic), (&raw mut errors).cast());
+        let error = pm_parser_errors_first(parser);
+        assert!(!error.is_null());
 
-        assert!(!errors.is_empty());
-        let error = errors[0];
+        let mut count = 0;
+        let mut current = error;
+        while !current.is_null() {
+            count += 1;
+            current = pm_diagnostic_next(current);
+        }
+        assert_eq!(count, pm_parser_errors_size(parser));
 
         let message = CStr::from_ptr(pm_diagnostic_message(error));
         assert_eq!(

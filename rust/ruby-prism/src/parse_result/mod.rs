@@ -6,8 +6,8 @@ mod diagnostics;
 use std::ptr::NonNull;
 
 use ruby_prism_sys::{
-    pm_arena_free, pm_arena_t, pm_comment_t, pm_diagnostic_t, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_t, pm_node_t, pm_parser_comments_each, pm_parser_comments_size, pm_parser_data_loc, pm_parser_errors_each, pm_parser_errors_size, pm_parser_free,
-    pm_parser_frozen_string_literal, pm_parser_line_offsets, pm_parser_magic_comments_each, pm_parser_magic_comments_size, pm_parser_start, pm_parser_start_line, pm_parser_t, pm_parser_warnings_each, pm_parser_warnings_size,
+    pm_arena_free, pm_arena_t, pm_comment_next, pm_diagnostic_next, pm_line_offset_list_line_column, pm_location_t, pm_magic_comment_next, pm_node_t, pm_parser_comments_first, pm_parser_comments_size, pm_parser_data_loc, pm_parser_errors_first, pm_parser_errors_size, pm_parser_free,
+    pm_parser_frozen_string_literal, pm_parser_line_offsets, pm_parser_magic_comments_first, pm_parser_magic_comments_size, pm_parser_start, pm_parser_start_line, pm_parser_t, pm_parser_warnings_first, pm_parser_warnings_size,
 };
 
 pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
@@ -140,22 +140,16 @@ impl std::fmt::Debug for Location<'_> {
     }
 }
 
-// C callback that collects comment pointers into a Vec
-unsafe extern "C" fn collect_comment(comment: *const pm_comment_t, data: *mut std::ffi::c_void) {
-    let vec = &mut *(data.cast::<Vec<*const pm_comment_t>>());
-    vec.push(comment);
-}
-
-// C callback that collects magic comment pointers into a Vec
-unsafe extern "C" fn collect_magic_comment(comment: *const pm_magic_comment_t, data: *mut std::ffi::c_void) {
-    let vec = &mut *(data.cast::<Vec<*const pm_magic_comment_t>>());
-    vec.push(comment);
-}
-
-// C callback that collects diagnostic pointers into a Vec
-unsafe extern "C" fn collect_diagnostic(diagnostic: *const pm_diagnostic_t, data: *mut std::ffi::c_void) {
-    let vec = &mut *(data.cast::<Vec<*const pm_diagnostic_t>>());
-    vec.push(diagnostic);
+// Collects the items of one of the parser's lists into a Vec, starting from the
+// first item and following each item's successor until it is null.
+unsafe fn collect<T>(size: usize, first: *const T, next: unsafe extern "C" fn(*const T) -> *const T) -> Vec<*const T> {
+    let mut ptrs = Vec::with_capacity(size);
+    let mut current = first;
+    while !current.is_null() {
+        ptrs.push(current);
+        current = next(current);
+    }
+    ptrs
 }
 
 /// The result of parsing a source string.
@@ -207,11 +201,7 @@ impl<'pr> ParseResult<'pr> {
     /// parse result.
     #[must_use]
     pub fn errors(&self) -> Diagnostics<'_> {
-        let size = unsafe { pm_parser_errors_size(self.parser) };
-        let mut ptrs: Vec<*const pm_diagnostic_t> = Vec::with_capacity(size);
-        unsafe {
-            pm_parser_errors_each(self.parser, Some(collect_diagnostic), (&raw mut ptrs).cast());
-        }
+        let ptrs = unsafe { collect(pm_parser_errors_size(self.parser), pm_parser_errors_first(self.parser), pm_diagnostic_next) };
         Diagnostics::new(ptrs, self.parser)
     }
 
@@ -219,11 +209,7 @@ impl<'pr> ParseResult<'pr> {
     /// parse result.
     #[must_use]
     pub fn warnings(&self) -> Diagnostics<'_> {
-        let size = unsafe { pm_parser_warnings_size(self.parser) };
-        let mut ptrs: Vec<*const pm_diagnostic_t> = Vec::with_capacity(size);
-        unsafe {
-            pm_parser_warnings_each(self.parser, Some(collect_diagnostic), (&raw mut ptrs).cast());
-        }
+        let ptrs = unsafe { collect(pm_parser_warnings_size(self.parser), pm_parser_warnings_first(self.parser), pm_diagnostic_next) };
         Diagnostics::new(ptrs, self.parser)
     }
 
@@ -231,11 +217,7 @@ impl<'pr> ParseResult<'pr> {
     /// parse result.
     #[must_use]
     pub fn comments(&self) -> Comments<'_> {
-        let size = unsafe { pm_parser_comments_size(self.parser) };
-        let mut ptrs: Vec<*const pm_comment_t> = Vec::with_capacity(size);
-        unsafe {
-            pm_parser_comments_each(self.parser, Some(collect_comment), (&raw mut ptrs).cast());
-        }
+        let ptrs = unsafe { collect(pm_parser_comments_size(self.parser), pm_parser_comments_first(self.parser), pm_comment_next) };
         Comments::new(ptrs, self.parser)
     }
 
@@ -243,11 +225,7 @@ impl<'pr> ParseResult<'pr> {
     /// parse result.
     #[must_use]
     pub fn magic_comments(&self) -> MagicComments<'_> {
-        let size = unsafe { pm_parser_magic_comments_size(self.parser) };
-        let mut ptrs: Vec<*const pm_magic_comment_t> = Vec::with_capacity(size);
-        unsafe {
-            pm_parser_magic_comments_each(self.parser, Some(collect_magic_comment), (&raw mut ptrs).cast());
-        }
+        let ptrs = unsafe { collect(pm_parser_magic_comments_size(self.parser), pm_parser_magic_comments_first(self.parser), pm_magic_comment_next) };
         MagicComments::new(ptrs, self.parser)
     }
 
