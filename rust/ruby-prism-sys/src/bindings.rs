@@ -7,6 +7,9 @@
 /** A constant id is a unique identifier for a constant in the constant pool.
 */
 pub type pm_constant_id_t = u32;
+/** A list of nodes in the source, most often used for lists of children.
+*/
+pub type pm_node_list_t = pm_node_list;
 /** This is the type of node embedded in the node struct. We explicitly control
  the size of it here to avoid having the variable-width enum.
 */
@@ -2694,7 +2697,9 @@ pub struct pm_node {
 */
     pub flags: pm_node_flags_t,
     /** The unique identifier for this node, which is deterministic based on the
- source. It is used to identify unique nodes across parses.
+ source. It is used to identify unique nodes across parses. Nodes created
+ outside of parsing have no position in the source and can use 0, which
+ no parsed node uses.
 */
     pub node_id: u32,
     /** This is the location of the node in the source. It is a range of bytes
@@ -11925,6 +11930,26 @@ unsafe extern "C" {
  @returns the line that the parser was considered to have started on
 */
     pub fn pm_parser_start_line(parser: *const pm_parser_t) -> i32;
+    /** Add a constant to the parser's constant pool, for naming a node that was not
+ parsed from the source. If the constant is already in the pool, its existing
+ id is returned. Otherwise the parser copies the bytes, so they only need to
+ remain valid for the duration of the call.
+
+ Adding a constant makes the pool larger, so a cache with one entry per
+ constant built beforehand from pm_parser_constants_size and
+ pm_parser_constant_at does not cover it. Build such caches after adding any
+ constants.
+
+ @param parser the parser whose constant pool we want to add to
+ @param start a pointer to the start of the string to add
+ @param length the length of the string to add
+ @returns the id of the constant
+*/
+    pub fn pm_parser_constant_insert(
+        parser: *mut pm_parser_t,
+        start: *const u8,
+        length: usize,
+    ) -> pm_constant_id_t;
     /** Returns the frozen string literal value of the parser, as determined by the
  frozen_string_literal magic comment or the option set on the parser.
 
@@ -12064,6 +12089,20 @@ unsafe extern "C" {
  @returns The AST representing the source.
 */
     pub fn pm_parse(parser: *mut pm_parser_t) -> *mut pm_node_t;
+    /** Append a node to the end of a node list. If the list is full, its storage is
+ grown by allocating from the given arena, so the arena must live as long as
+ the list does. For a list in a parsed tree, that is the arena that was passed
+ to pm_parser_new.
+
+ @param arena The arena to allocate the list's storage from.
+ @param list The list to append to.
+ @param node The node to append.
+*/
+    pub fn pm_node_list_append(
+        arena: *mut pm_arena_t,
+        list: *mut pm_node_list_t,
+        node: *mut pm_node_t,
+    );
     /** Check that the slice is a valid local variable name.
 
  @param source The source to check.
