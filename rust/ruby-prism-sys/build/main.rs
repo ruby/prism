@@ -219,7 +219,7 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String], layout_tes
         .allowlist_function("pm_parser_comments_first")
         .allowlist_function("pm_parser_comments_size")
         .allowlist_function("pm_parser_constant")
-        .allowlist_function("pm_parser_constants_each")
+        .allowlist_function("pm_parser_constant_at")
         .allowlist_function("pm_parser_constants_size")
         .allowlist_function("pm_parser_data_loc")
         .allowlist_function("pm_parser_errors_first")
