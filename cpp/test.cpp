@@ -1,6 +1,4 @@
-extern "C" {
-    #include "prism.h"
-}
+#include "prism.h"
 
 #include <iostream>
 

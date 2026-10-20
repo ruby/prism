@@ -29,7 +29,11 @@ jobs:
           bundler-cache: true
       - name: Compile prism
         run: bundle exec rake compile
-      - name: Compile C++
+      - name: Compile C++ test
         run: g++ -o ./cpp_test cpp/test.cpp build/static/*.o -Iinclude
-      - name: Run C++
+      - name: Run C++ test
         run: ./cpp_test
+      - name: Compile C++ headers
+        run: g++ -o ./cpp_headers cpp/headers.cpp build/static/*.o -Iinclude
+      - name: Run C++ headers
+        run: ./cpp_headers
