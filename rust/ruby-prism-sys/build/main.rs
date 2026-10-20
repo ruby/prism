@@ -235,7 +235,7 @@ fn generate_bindings(ruby_include_path: &Path, clang_args: &[String], layout_tes
         .allowlist_function("pm_parser_warnings_first")
         .allowlist_function("pm_parser_warnings_size")
         .allowlist_function("pm_size_to_native")
-        .allowlist_function("pm_string_constant_init")
+        .allowlist_function("pm_string_init")
         .allowlist_function("pm_string_length")
         .allowlist_function("pm_string_query_constant")
         .allowlist_function("pm_string_query_keyword")

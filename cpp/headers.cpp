@@ -48,7 +48,7 @@ Function functions[] = {
     reinterpret_cast<Function>(pm_source_constant_new),
     reinterpret_cast<Function>(pm_parse_stream),
     reinterpret_cast<Function>(pm_string_query_local),
-    reinterpret_cast<Function>(pm_string_constant_init),
+    reinterpret_cast<Function>(pm_string_init),
     reinterpret_cast<Function>(pm_version)
 };
 

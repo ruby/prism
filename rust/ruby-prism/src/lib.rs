@@ -31,7 +31,7 @@ pub use self::string_query::{InvalidEncodingError, StringQuery};
 
 use ruby_prism_sys::{
     pm_arena_new, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set,
-    pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_constant_init,
+    pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_init,
 };
 
 /// The version of Ruby syntax to parse with.
@@ -305,7 +305,7 @@ impl Options {
 
                 for (local_index, local) in scope.locals.iter().enumerate() {
                     let pm_local = unsafe { pm_options_scope_local_mut(pm_scope, local_index) };
-                    unsafe { pm_string_constant_init(pm_local, local.as_ptr().cast(), local.len()) };
+                    unsafe { pm_string_init(pm_local, local.as_ptr(), local.len()) };
                 }
 
                 let forwarding = scope.forwarding.iter().fold(0u8, |acc, &flag| acc | u8::from(flag));
@@ -328,7 +328,8 @@ impl Options {
 /// any [`ParseResult`] created with [`parse_with_options`].
 pub struct ParseOptions {
     options: *mut pm_options_t,
-    // These CStrings back the constant pm_string_t values inside `options`.
+    // These CStrings back the pm_string_t values inside `options`, which only
+    // view their bytes.
     // They must not be dropped before `options` is freed.
     _filepath: Option<CString>,
     _encoding: Option<CString>,
