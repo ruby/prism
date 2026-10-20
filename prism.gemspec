@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "prism"
-  spec.version = "2.0.0.rc1"
+  spec.version = "2.0.0.rc2"
   spec.authors = ["Ruby developers"]
   spec.email = ["ruby-core@ruby-lang.org"]
 
