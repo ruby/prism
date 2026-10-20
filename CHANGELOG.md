@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Many documentation improvements, including a new playground.
 - Prism now ships accurate and complete RBS and RBI definitions.
 - The license is now owned by the Ruby developers.
+- Prism now ships an official C++ interface.
 
 ### Added
 

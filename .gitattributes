@@ -1,5 +1,6 @@
 templates/**/*.c.erb linguist-language=C
 templates/**/*.h.erb linguist-language=C
+templates/**/*.hpp.erb linguist-language=C++
 templates/**/*.java.erb linguist-language=Java
 templates/**/*.rb.erb linguist-language=Ruby
 
