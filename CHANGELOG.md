@@ -67,6 +67,7 @@ Note that for this major version, almost every change listed below is breaking.
 - Most allocations are now performed through an arena.
 - You may now build side tables of comment attachments through the `attach_comments` option.
 - `newline_list` was renamed to `list_offset_list`.
+- Visitor callbacks passed to `pm_visit_node` and `pm_visit_child_nodes` now return a `pm_visit_result_t` instead of a `bool`. Returning `PM_VISIT_DESCEND` or `PM_VISIT_SKIP` replaces returning `true` or `false`, and returning `PM_VISIT_STOP` ends the walk. Both functions now return `false` if the walk was stopped.
 
 #### Rust
 
