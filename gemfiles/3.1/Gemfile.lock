@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    prism (2.0.0.rc1)
+    prism (2.0.0.rc2)
 
 GEM
   remote: https://rubygems.org/

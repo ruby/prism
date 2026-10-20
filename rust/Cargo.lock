@@ -193,7 +193,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "ruby-prism"
-version = "2.0.0-rc.1"
+version = "2.0.0-rc.2"
 dependencies = [
  "ruby-prism-sys",
  "serde",
@@ -202,7 +202,7 @@ dependencies = [
 
 [[package]]
 name = "ruby-prism-sys"
-version = "2.0.0-rc.1"
+version = "2.0.0-rc.2"
 dependencies = [
  "bindgen",
  "cc",
