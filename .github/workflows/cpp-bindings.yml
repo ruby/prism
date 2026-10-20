@@ -19,6 +19,16 @@ jobs:
     name: test
     strategy:
       fail-fast: false
+      matrix:
+        compiler:
+          - "g++"
+          - "clang++"
+        standard:
+          - "-std=c++17"
+          - "-std=c++20"
+        exceptions:
+          - ""
+          - "-fno-exceptions"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -29,11 +39,7 @@ jobs:
           bundler-cache: true
       - name: Compile prism
         run: bundle exec rake compile
-      - name: Compile C++ test
-        run: g++ -o ./cpp_test cpp/test.cpp build/static/*.o -Iinclude
-      - name: Run C++ test
+      - name: Compile tests
+        run: ${{ matrix.compiler }} ${{ matrix.standard }} ${{ matrix.exceptions }} -Wall -Wextra -pedantic -Werror -o ./cpp_test cpp/*_test.cpp build/static/*.o -Iinclude
+      - name: Run
         run: ./cpp_test
-      - name: Compile C++ headers
-        run: g++ -o ./cpp_headers cpp/headers.cpp build/static/*.o -Iinclude
-      - name: Run C++ headers
-        run: ./cpp_headers
