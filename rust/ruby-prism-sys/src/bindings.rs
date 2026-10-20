@@ -7,9 +7,6 @@
 /** A constant id is a unique identifier for a constant in the constant pool.
 */
 pub type pm_constant_id_t = u32;
-/** The type of the string. This field determines how the string should be freed.
-*/
-pub type pm_string_t__bindgen_ty_1 = ::std::os::raw::c_uint;
 /** This is the type of node embedded in the node struct. We explicitly control
  the size of it here to avoid having the variable-width enum.
 */
@@ -2636,7 +2633,8 @@ pub struct pm_integer_t {
 */
     pub negative: bool,
 }
-/** A generic string type that can have various ownership semantics.
+/** A view of a sequence of bytes. The string does not own the bytes, so they
+ must remain valid for as long as the string is in use.
 */
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -2647,7 +2645,6 @@ pub struct pm_string_t {
     /** The length of the string in bytes of memory.
 */
     pub length: usize,
-    pub type_: pm_string_t__bindgen_ty_1,
 }
 /** This struct represents a slice in the source code, defined by an offset and
  a length. Note that we have confirmation that we can represent all locations
@@ -9660,15 +9657,6 @@ pub struct pm_options_t {
 pub struct pm_parser_t {
     _unused: [u8; 0],
 }
-/** This string is a constant string, and should not be freed.
-*/
-pub const PM_STRING_CONSTANT: pm_string_t__bindgen_ty_1 = 0;
-/** This is a slice of another string, and should not be freed.
-*/
-pub const PM_STRING_SHARED: pm_string_t__bindgen_ty_1 = 1;
-/** This string owns its memory, and should be freed internally.
-*/
-pub const PM_STRING_OWNED: pm_string_t__bindgen_ty_1 = 2;
 /** The default value for parameters.
 */
 pub const PM_OPTIONS_SCOPE_FORWARDING_NONE: u8 = 0;
@@ -11628,17 +11616,14 @@ unsafe extern "C" {
  @returns The length of the constant.
 */
     pub fn pm_constant_length(constant: *const pm_constant_t) -> usize;
-    /** Initialize a constant string that doesn't own its memory source.
+    /** Initialize a string that views the given bytes. The bytes are not copied, so
+ they must remain valid for as long as the string is in use.
 
  @param string The string to initialize.
- @param source The source of the string.
- @param length The length of the string.
+ @param source The start of the bytes.
+ @param length The number of bytes.
 */
-    pub fn pm_string_constant_init(
-        string: *mut pm_string_t,
-        source: *const ::std::os::raw::c_char,
-        length: usize,
-    );
+    pub fn pm_string_init(string: *mut pm_string_t, source: *const u8, length: usize);
     /** Returns the length associated with the string.
 
  @param string The string to get the length of.
@@ -11886,7 +11871,8 @@ unsafe extern "C" {
 */
     pub fn pm_options_scope_init(scope: *mut pm_options_scope_t, locals_count: usize);
     /** Return a mutable pointer to the local at the given index within the given
- scope.
+ scope, for setting the local's name with pm_string_init. The parser copies
+ the name when it is created, so its bytes must remain valid until then.
 
  @param scope The scope struct to get the local from.
  @param index The index of the local to get.

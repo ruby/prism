@@ -68,6 +68,8 @@ Note that for this major version, almost every change listed below is breaking.
 - You may now build side tables of comment attachments through the `attach_comments` option.
 - `newline_list` was renamed to `list_offset_list`.
 - Visitor callbacks passed to `pm_visit_node` and `pm_visit_child_nodes` now return a `pm_visit_result_t` instead of a `bool`. Returning `PM_VISIT_DESCEND` or `PM_VISIT_SKIP` replaces returning `true` or `false`, and returning `PM_VISIT_STOP` ends the walk. Both functions now return `false` if the walk was stopped.
+- `pm_string_t` is now a view of bytes owned by someone else. It no longer has a `type` field, `pm_string_owned_init` was removed, and `pm_string_constant_init` was renamed to `pm_string_init`, which takes the bytes as `const uint8_t *`.
+- `pm_options_free` no longer frees the names of scope locals. The parser copies them when it is created, so they only need to remain valid until then.
 
 #### Rust
 
