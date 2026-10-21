@@ -333,6 +333,31 @@ compile_and_node(PrismBuilder *builder, PrismGraph *graph, const pm_and_node_t *
 }
 
 static uint32_t
+compile_call_node(PrismBuilder *builder, PrismGraph *graph, const pm_call_node_t *node) {
+    uint32_t receiver_id;
+    if (node->receiver) {
+        receiver_id = compile_node(builder, graph, node->receiver);
+    } else {
+        receiver_id = emit_load_self(builder, graph, node->base.node_id, node->base.location);
+    }
+
+    size_t nargument_ids = 0;
+    uint32_t *argument_ids = NULL;
+
+    if (node->arguments) {
+        nargument_ids = node->arguments->arguments.size;
+        argument_ids = xmalloc(sizeof(uint32_t) * nargument_ids);
+        if (!argument_ids) abort();
+
+        for (size_t idx = 0; idx < nargument_ids; ++idx) {
+            argument_ids[idx] = compile_node(builder, graph, node->arguments->arguments.nodes[idx]);
+        }
+    }
+
+    return emit_call(builder, graph, node->base.node_id, node->base.location, node->name, receiver_id, nargument_ids, argument_ids);
+}
+
+static uint32_t
 compile_or_node(PrismBuilder *builder, PrismGraph *graph, const pm_or_node_t *node) {
     return compile_logical_node(builder, graph, PM_NODE_UPCAST(node), node->left, node->right);
 }
@@ -342,33 +367,10 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         case PM_AND_NODE:
             return compile_and_node(builder, graph, (const pm_and_node_t *) node);
+        case PM_CALL_NODE:
+            return compile_call_node(builder, graph, (const pm_call_node_t *) node);
         case PM_OR_NODE:
             return compile_or_node(builder, graph, (const pm_or_node_t *) node);
-        case PM_CALL_NODE: {
-            const pm_call_node_t *cast = (const pm_call_node_t *) node; /* TODO */
-
-            uint32_t receiver_id;
-            if (cast->receiver) {
-                receiver_id = compile_node(builder, graph, cast->receiver);
-            } else {
-                receiver_id = emit_load_self(builder, graph, node->node_id, node->location);
-            }
-
-            size_t nargument_ids = 0;
-            uint32_t *argument_ids = NULL;
-
-            if (cast->arguments) {
-                nargument_ids = cast->arguments->arguments.size;
-                argument_ids = xmalloc(sizeof(uint32_t) * nargument_ids);
-                if (!argument_ids) abort();
-
-                for (size_t idx = 0; idx < nargument_ids; ++idx) {
-                    argument_ids[idx] = compile_node(builder, graph, cast->arguments->arguments.nodes[idx]);
-                }
-            }
-
-            return emit_call(builder, graph, node->node_id, node->location, cast->name, receiver_id, nargument_ids, argument_ids);
-        }
         case PM_CLASS_VARIABLE_READ_NODE: {
             const pm_class_variable_read_node_t *cast = (const pm_class_variable_read_node_t *) node;
 
