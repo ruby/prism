@@ -358,6 +358,44 @@ compile_call_node(PrismBuilder *builder, PrismGraph *graph, const pm_call_node_t
 }
 
 static uint32_t
+compile_class_variable_read_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_read_node_t *node) {
+    return emit_load_cvar(builder, graph, node->base.node_id, node->base.location, node->name);
+}
+
+static uint32_t
+compile_class_variable_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_write_node_t *node) {
+    uint32_t value_id = compile_node(builder, graph, node->value);
+    emit_store_cvar(builder, graph, node->base.node_id, node->base.location, node->name, value_id);
+    return value_id;
+}
+
+static uint32_t
+compile_class_variable_operator_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_operator_write_node_t *node) {
+    uint32_t receiver_id = emit_load_cvar(builder, graph, node->base.node_id, node->base.location, node->name);
+    uint32_t value_id = compile_node(builder, graph, node->value);
+    uint32_t result_id = emit_call(builder, graph, node->base.node_id, node->base.location, node->binary_operator, receiver_id, 1, &value_id);
+    emit_store_cvar(builder, graph, node->base.node_id, node->base.location, node->name, result_id);
+    return result_id;
+}
+
+static uint32_t
+compile_class_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_and_write_node_t *node) {
+    uint32_t set_block_id = make_block(graph, 0);
+    uint32_t join_block_id = make_block(graph, 1);
+
+    uint32_t predicate_id = emit_load_cvar(builder, graph, node->base.node_id, node->base.location, node->name);
+    emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
+
+    builder->block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, graph, node->value);
+    emit_store_cvar(builder, graph, node->base.node_id, node->base.location, node->name, value_id);
+    emit_branch(builder, graph, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
+
+    builder->block_id = join_block_id;
+    return graph->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_or_node(PrismBuilder *builder, PrismGraph *graph, const pm_or_node_t *node) {
     return compile_logical_node(builder, graph, PM_NODE_UPCAST(node), node->left, node->right);
 }
@@ -371,46 +409,14 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_call_node(builder, graph, (const pm_call_node_t *) node);
         case PM_OR_NODE:
             return compile_or_node(builder, graph, (const pm_or_node_t *) node);
-        case PM_CLASS_VARIABLE_READ_NODE: {
-            const pm_class_variable_read_node_t *cast = (const pm_class_variable_read_node_t *) node;
-
-            return emit_load_cvar(builder, graph, node->node_id, node->location, cast->name);
-        }
-        case PM_CLASS_VARIABLE_WRITE_NODE: {
-            const pm_class_variable_write_node_t *cast = (const pm_class_variable_write_node_t *) node;
-
-            uint32_t value_id = compile_node(builder, graph, cast->value);
-            emit_store_cvar(builder, graph, node->node_id, node->location, cast->name, value_id);
-
-            return value_id;
-        }
-        case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE: {
-            const pm_class_variable_operator_write_node_t *cast = (const pm_class_variable_operator_write_node_t *) node;
-
-            uint32_t receiver_id = emit_load_cvar(builder, graph, node->node_id, node->location, cast->name);
-            uint32_t value_id = compile_node(builder, graph, cast->value);
-            uint32_t result_id = emit_call(builder, graph, node->node_id, node->location, cast->binary_operator, receiver_id, 1, &value_id);
-            emit_store_cvar(builder, graph, node->node_id, node->location, cast->name, result_id);
-
-            return result_id;
-        }
-        case PM_CLASS_VARIABLE_AND_WRITE_NODE: {
-            const pm_class_variable_and_write_node_t *cast = (const pm_class_variable_and_write_node_t *) node;
-
-            uint32_t set_block_id = make_block(graph, 0);
-            uint32_t join_block_id = make_block(graph, 1);
-
-            uint32_t predicate_id = emit_load_cvar(builder, graph, node->node_id, node->location, cast->name);
-            emit_branchif(builder, graph, node->node_id, node->location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
-
-            builder->block_id = set_block_id;
-            uint32_t value_id = compile_node(builder, graph, cast->value);
-            emit_store_cvar(builder, graph, node->node_id, node->location, cast->name, value_id);
-            emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &value_id);
-
-            builder->block_id = join_block_id;
-            return graph->blocks[join_block_id].params[0];
-        }
+        case PM_CLASS_VARIABLE_READ_NODE:
+            return compile_class_variable_read_node(builder, graph, (const pm_class_variable_read_node_t *) node);
+        case PM_CLASS_VARIABLE_WRITE_NODE:
+            return compile_class_variable_write_node(builder, graph, (const pm_class_variable_write_node_t *) node);
+        case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE:
+            return compile_class_variable_operator_write_node(builder, graph, (const pm_class_variable_operator_write_node_t *) node);
+        case PM_CLASS_VARIABLE_AND_WRITE_NODE:
+            return compile_class_variable_and_write_node(builder, graph, (const pm_class_variable_and_write_node_t *) node);
         case PM_FALSE_NODE: {
             uint32_t object_id = make_object(graph, kPrismObjectFalse);
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
