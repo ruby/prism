@@ -402,6 +402,20 @@ compile_false_node(PrismBuilder *builder, PrismGraph *graph, const pm_false_node
 }
 
 static uint32_t
+compile_float_node(PrismBuilder *builder, PrismGraph *graph, const pm_float_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectFloat);
+    graph->objects[object_id].as.floating.value = node->value;
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
+compile_integer_node(PrismBuilder *builder, PrismGraph *graph, const pm_integer_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectInteger);
+    graph->objects[object_id].as.integer.value = &node->value;
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, PrismGraph *graph, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(graph, kPrismObjectNil);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
@@ -437,14 +451,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_class_variable_and_write_node(builder, graph, (const pm_class_variable_and_write_node_t *) node);
         case PM_FALSE_NODE:
             return compile_false_node(builder, graph, (const pm_false_node_t *) node);
-        case PM_FLOAT_NODE: {
-            const pm_float_node_t *cast = (const pm_float_node_t *) node;
-
-            uint32_t object_id = make_object(graph, kPrismObjectFloat);
-            graph->objects[object_id].as.floating.value = cast->value;
-
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_FLOAT_NODE:
+            return compile_float_node(builder, graph, (const pm_float_node_t *) node);
         case PM_GLOBAL_VARIABLE_READ_NODE: {
             const pm_global_variable_read_node_t *cast = (const pm_global_variable_read_node_t *) node;
 
@@ -525,14 +533,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             builder->block_id = join_block_id;
             return graph->blocks[join_block_id].params[0];
         }
-        case PM_INTEGER_NODE: {
-            const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
-
-            uint32_t object_id = make_object(graph, kPrismObjectInteger);
-            graph->objects[object_id].as.integer.value = &cast->value;
-
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_INTEGER_NODE:
+            return compile_integer_node(builder, graph, (const pm_integer_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, graph, (const pm_nil_node_t *) node);
         case PM_PARENTHESES_NODE: {
