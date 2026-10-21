@@ -11,9 +11,11 @@
 
 typedef enum {
     kPrismInsnCall,
+    kPrismInsnLoadIVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
-    kPrismInsnReturn
+    kPrismInsnReturn,
+    kPrismInsnStoreIVar
 } PrismInsnKind;
 
 typedef struct {
@@ -24,7 +26,7 @@ typedef struct {
     uint32_t opnds_len;
     union {
         struct { uint32_t block_id; } branch;
-        struct { pm_constant_id_t name_id; } call;
+        struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
     } as;
 } PrismInsn;
@@ -78,6 +80,8 @@ typedef struct {
 typedef struct {
     uint32_t block_id;
 } PrismBuilder;
+
+/******************************************************************************/
 
 static inline uint32_t
 make_value(PrismGraph *graph) {
@@ -158,10 +162,12 @@ make_insn(PrismBuilder *builder, PrismGraph *graph, PrismInsnKind kind, uint32_t
     return insn;
 }
 
+/******************************************************************************/
+
 static uint32_t
 emit_call(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids) {
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnCall, node_id, location, 2 + (uint32_t) nargument_ids);
-    insn->as.call.name_id = name_id;
+    insn->as.name.name_id = name_id;
 
     uint32_t value_id = make_value(graph);
     graph->opnds.mem[insn->opnds_idx] = value_id;
@@ -170,6 +176,17 @@ emit_call(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locatio
     for (size_t idx = 0; idx < nargument_ids; ++idx) {
         graph->opnds.mem[insn->opnds_idx + 2 + idx] = argument_ids[idx];
     }
+
+    return value_id;
+}
+
+static uint32_t
+emit_load_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnLoadIVar, node_id, location, 1);
+    insn->as.name.name_id = name_id;
+
+    uint32_t value_id = make_value(graph);
+    graph->opnds.mem[insn->opnds_idx] = value_id;
 
     return value_id;
 }
@@ -206,6 +223,18 @@ emit_return(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locat
 
     graph->opnds.mem[insn->opnds_idx] = value_id;
 }
+
+static uint32_t
+emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnStoreIVar, node_id, location, 1);
+    insn->as.name.name_id = name_id;
+
+    graph->opnds.mem[insn->opnds_idx] = value_id;
+
+    return value_id;
+}
+
+/******************************************************************************/
 
 static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
@@ -246,6 +275,19 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             graph->objects.mem[object_id].as.floating.value = cast->value;
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
+        }
+        case PM_INSTANCE_VARIABLE_READ_NODE: {
+            const pm_instance_variable_read_node_t *cast = (const pm_instance_variable_read_node_t *) node;
+
+            return emit_load_ivar(builder, graph, node->node_id, node->location, cast->name);
+        }
+        case PM_INSTANCE_VARIABLE_WRITE_NODE: {
+            const pm_instance_variable_write_node_t *cast = (const pm_instance_variable_write_node_t *) node;
+
+            uint32_t value_id = compile_node(builder, graph, cast->value);
+            emit_store_ivar(builder, graph, node->node_id, node->location, cast->name, value_id);
+
+            return value_id;
         }
         case PM_INTEGER_NODE: {
             const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
@@ -297,6 +339,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     }
 }
 
+/******************************************************************************/
+
 static void
 dump_object(PrismObject *object) {
     switch (object->kind) {
@@ -332,7 +376,7 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 case kPrismInsnCall: {
                     printf("  %%%" PRIu32 " = call %%%" PRIu32 ".", opnds[0], opnds[1]);
 
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.call.name_id);
+                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
                     printf("%.*s(", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
 
                     for (uint32_t idx = 0; idx < insn->opnds_len - 2; ++idx) {
@@ -340,6 +384,12 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     }
 
                     printf(")\n");
+                    break;
+                }
+                case kPrismInsnLoadIVar: {
+                    printf("  %%%" PRIu32 " = load_ivar ", opnds[0]);
+                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadObject: {
@@ -354,6 +404,12 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 case kPrismInsnReturn:
                     printf("  return %%%" PRIu32 "\n", opnds[0]);
                     break;
+                case kPrismInsnStoreIVar: {
+                    printf("  store_ivar ");
+                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
+                    break;
+                }
             }
         }
     }
