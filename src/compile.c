@@ -33,13 +33,17 @@ typedef struct {
 } PrismBlock;
 
 typedef enum {
+    kPrismObjectFalse,
+    kPrismObjectInteger,
     kPrismObjectNil,
-    kPrismObjectTrue,
-    kPrismObjectFalse
+    kPrismObjectTrue
 } PrismObjectKind;
 
 typedef struct {
     PrismObjectKind kind;
+    union {
+        struct { const pm_integer_t *value; } integer;
+    } as;
 } PrismObject;
 
 typedef struct {
@@ -186,6 +190,14 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             uint32_t object_id = make_object(graph, kPrismObjectFalse);
             return emit_load_object(builder, graph, node->node_id, node->location.start, object_id);
         }
+        case PM_INTEGER_NODE: {
+            const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
+
+            uint32_t object_id = make_object(graph, kPrismObjectInteger);
+            graph->objects.mem[object_id].as.integer.value = &cast->value;
+
+            return emit_load_object(builder, graph, node->node_id, node->location.start, object_id);
+        }
         case PM_NIL_NODE: {
             uint32_t object_id = make_object(graph, kPrismObjectNil);
             return emit_load_object(builder, graph, node->node_id, node->location.start, object_id);
@@ -229,6 +241,24 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 }
 
 static void
+dump_object(PrismObject *object) {
+    switch (object->kind) {
+        case kPrismObjectFalse:
+            printf("false");
+            break;
+        case kPrismObjectInteger:
+            printf("%" PRIu32, object->as.integer.value->value); /* TODO */
+            break;
+        case kPrismObjectNil:
+            printf("nil");
+            break;
+        case kPrismObjectTrue:
+            printf("true");
+            break;
+    }
+}
+
+static void
 dump_graph(PrismGraph *graph) {
     for (uint32_t block_id = 0; block_id < graph->blocks.size; ++block_id) {
         PrismBlock *block = &graph->blocks.mem[block_id];
@@ -241,20 +271,7 @@ dump_graph(PrismGraph *graph) {
             switch (insn->kind) {
                 case kPrismInsnLoadObject: {
                     printf("  %%%" PRIu32 " = load_object ", opnds[0]);
-
-                    PrismObject *object = &graph->objects.mem[insn->as.object.object_id];
-                    switch (object->kind) {
-                        case kPrismObjectNil:
-                            printf("nil");
-                            break;
-                        case kPrismObjectTrue:
-                            printf("true");
-                            break;
-                        case kPrismObjectFalse:
-                            printf("false");
-                            break;
-                    }
-
+                    dump_object(&graph->objects.mem[insn->as.object.object_id]);
                     printf("\n");
                     break;
                 }
