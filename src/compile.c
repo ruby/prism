@@ -8,6 +8,7 @@
 
 typedef enum {
     kPrismInsnLoadObject,
+    kPrismInsnLoadSelf,
     kPrismInsnReturn
 } PrismInsnKind;
 
@@ -162,6 +163,16 @@ emit_load_nil(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, uint32
     return emit_load_object(builder, graph, node_id, offset, make_object(graph, kPrismObjectNil));
 }
 
+static uint32_t
+emit_load_self(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, uint32_t offset) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnLoadSelf, node_id, offset, 1);
+
+    uint32_t value_id = make_value(graph);
+    graph->opnds.mem[insn->opnds_idx] = value_id;
+
+    return value_id;
+}
+
 static void
 emit_return(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, uint32_t offset, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnReturn, node_id, offset, 1);
@@ -195,6 +206,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             emit_return(builder, graph, node->node_id, node->location.start, value_id);
             return UINT32_MAX;
         }
+        case PM_SELF_NODE:
+            return emit_load_self(builder, graph, node->node_id, node->location.start);
         case PM_STATEMENTS_NODE: {
             const pm_statements_node_t *cast = (const pm_statements_node_t *) node;
             uint32_t value_id;
@@ -245,6 +258,9 @@ dump_graph(PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
+                case kPrismInsnLoadSelf:
+                    printf("  %%%" PRIu32 " = load_self\n", opnds[0]);
+                    break;
                 case kPrismInsnReturn:
                     printf("  return %%%" PRIu32 "\n", opnds[0]);
                     break;
