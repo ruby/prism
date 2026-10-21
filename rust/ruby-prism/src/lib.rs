@@ -43,8 +43,11 @@ pub enum Version {
     CRuby3_3,
     /// The vendored version of prism in `CRuby` 3.4.x.
     CRuby3_4,
-    /// The vendored version of prism in `CRuby` 3.5.x / 4.0.x.
+    /// The vendored version of prism in `CRuby` 4.0.x, formerly known as 3.5.x.
+    #[deprecated(note = "Use Version::CRuby4_0 instead")]
     CRuby3_5,
+    /// The vendored version of prism in `CRuby` 4.0.x.
+    CRuby4_0,
     /// The vendored version of prism in `CRuby` 4.1.x.
     CRuby4_1,
 }
@@ -63,8 +66,9 @@ impl Version {
             Self::CRuby3_4 => {
                 pm_options_version_set(opts, c"3.4".as_ptr(), 3);
             },
-            Self::CRuby3_5 => {
-                pm_options_version_set(opts, c"3.5".as_ptr(), 3);
+            #[allow(deprecated)]
+            Self::CRuby3_5 | Self::CRuby4_0 => {
+                pm_options_version_set(opts, c"4.0".as_ptr(), 3);
             },
             Self::CRuby4_1 => {
                 pm_options_version_set(opts, c"4.1".as_ptr(), 3);
@@ -1146,6 +1150,34 @@ end
         let options = Options::default().line(10).build();
         let result = parse_with_options(source, &options);
         assert!(result.errors().next().is_none());
+    }
+
+    #[test]
+    #[allow(deprecated)]
+    fn parse_with_options_cruby4_0_test() {
+        use super::{parse_with_options, Options, Version};
+
+        let source = b"private def foo = puts 'Hello'";
+        let newer_source = b"def foo(&nil); end";
+
+        for version in [Version::CRuby4_0, Version::CRuby3_5] {
+            let options = Options::default().version(version).build();
+            let result = parse_with_options(source, &options);
+            assert!(result.errors().next().is_none());
+
+            let call = result.node().as_program_node().unwrap().statements().body().first().unwrap().as_call_node().unwrap();
+            assert_eq!(call.name().as_slice(), b"private");
+            let method = call.arguments().unwrap().arguments().first().unwrap().as_def_node().unwrap();
+            assert_eq!(method.name().as_slice(), b"foo");
+
+            assert!(parse_with_options(newer_source, &options).errors().next().is_some());
+        }
+
+        let earlier_options = Options::default().version(Version::CRuby3_4).build();
+        assert!(parse_with_options(source, &earlier_options).errors().next().is_some());
+
+        let later_options = Options::default().version(Version::CRuby4_1).build();
+        assert!(parse_with_options(newer_source, &later_options).errors().next().is_none());
     }
 
     #[test]

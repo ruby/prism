@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- Add `Version::CRuby4_0` to the Rust bindings. `Version::CRuby3_5` remains available but is deprecated in favor of the new name; both select Ruby 4.0 syntax.
+
 ## [2.0.0] - 2026-10-21
 
 ### Highlights
