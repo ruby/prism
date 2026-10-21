@@ -319,14 +319,19 @@ emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_l
 static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
-        case PM_AND_NODE: {
+        case PM_AND_NODE:
+        case PM_OR_NODE: {
             const pm_and_node_t *cast = (const pm_and_node_t *) node;
 
             uint32_t right_block_id = make_block(graph, 0);
             uint32_t join_block_id = make_block(graph, 1);
 
             uint32_t left_value_id = compile_node(builder, graph, cast->left);
-            emit_branchif(builder, graph, node->node_id, node->location, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
+            if (PM_NODE_TYPE(node) == PM_AND_NODE) {
+                emit_branchif(builder, graph, node->node_id, node->location, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
+            } else {
+                emit_branchif(builder, graph, node->node_id, node->location, left_value_id, join_block_id, 1, &left_value_id, right_block_id, 0, NULL);
+            }
 
             builder->block_id = right_block_id;
             uint32_t right_value_id = compile_node(builder, graph, cast->right);
