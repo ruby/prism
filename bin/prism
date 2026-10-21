@@ -10,6 +10,7 @@ module Prism
       case argv.shift
       when "bench"      then bench(argv)
       when "bundle"     then bundle(argv)
+      when "compile"    then compile(argv)
       when "console"    then console
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
@@ -46,6 +47,11 @@ module Prism
     end
 
     private
+
+    def compile(argv)
+      source, filepath = read_source(argv)
+      Prism.compile(source)
+    end
 
     ############################################################################
     # Commands

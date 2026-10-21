@@ -1170,6 +1170,26 @@ parse(int argc, VALUE *argv, VALUE self) {
     return result_get(result);
 }
 
+static VALUE
+compile(int argc, VALUE *argv, VALUE self) {
+    pm_options_t *options = pm_options_new();
+    VALUE string = string_options(argc, argv, options);
+
+    const uint8_t *source = (const uint8_t *) RSTRING_PTR(string);
+    size_t length = RSTRING_LEN(string);
+
+    pm_arena_t *arena = pm_arena_new();
+    pm_parser_t *parser = pm_parser_new(arena, source, length, options);
+    pm_node_t *node = pm_parse(parser);
+    pm_compile(node);
+
+    pm_parser_free(parser);
+    pm_arena_free(arena);
+    pm_options_free(options);
+
+    return Qnil;
+}
+
 /**
  * :markup: markdown
  * call-seq:
@@ -1753,6 +1773,8 @@ Init_prism(void) {
     rb_define_singleton_method(rb_cPrism, "parse_failure?", parse_failure_p, -1);
     rb_define_singleton_method(rb_cPrism, "parse_file_success?", parse_file_success_p, -1);
     rb_define_singleton_method(rb_cPrism, "parse_file_failure?", parse_file_failure_p, -1);
+
+    rb_define_singleton_method(rb_cPrism, "compile", compile, -1);
 
 #ifndef PRISM_EXCLUDE_SERIALIZATION
     rb_define_singleton_method(rb_cPrism, "dump", dump, -1);
