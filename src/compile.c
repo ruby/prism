@@ -1,6 +1,7 @@
 #include "prism/compile.h"
 
 #include "prism/internal/allocator.h"
+#include "prism/internal/constant_pool.h"
 #include "prism/node.h"
 
 #include <assert.h>
@@ -9,6 +10,18 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+
+#define PM_CONSTANT_BACKTICK (pm_constant_id_t) -1
+static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
+
+static const pm_constant_t *
+compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
+    if (constant_id == PM_CONSTANT_BACKTICK) {
+        return &backtick_constant;
+    } else {
+        return pm_parser_constant(parser, constant_id);
+    }
+}
 
 typedef enum {
     kPrismInsnBranch,
@@ -690,6 +703,19 @@ compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t
 }
 
 static uint32_t
+compile_x_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_x_string_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectString);
+    PrismObject *object = graph->objects + object_id;
+
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->unescaped;
+
+    uint32_t receiver_id = emit_load_self(builder, graph, node->base.node_id, node->base.location);
+    uint32_t argument_id = emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+    return emit_call(builder, graph, node->base.node_id, node->base.location, PM_CONSTANT_BACKTICK, receiver_id, 1, &argument_id);
+}
+
+static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         case PM_AND_NODE:
@@ -752,6 +778,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_symbol_node(builder, graph, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
             return compile_true_node(builder, graph, (const pm_true_node_t *) node);
+        case PM_X_STRING_NODE:
+            return compile_x_string_node(builder, graph, (const pm_x_string_node_t *) node);
         default:
             fprintf(stderr, "Unhandled node type: %s\n", pm_node_type(node->type));
             abort();
@@ -834,7 +862,7 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 case kPrismInsnCall: {
                     printf("  %%%" PRIu32 " = call %%%" PRIu32 ".", opnds[0], opnds[1]);
 
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s(", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
 
                     for (uint32_t idx = 0; idx < insn->opnds_len - 2; ++idx) {
@@ -846,31 +874,31 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 }
                 case kPrismInsnDefinedCVar: {
                     printf("  %%%" PRIu32 " = defined_cvar ", opnds[0]);
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnDefinedGVar: {
                     printf("  %%%" PRIu32 " = defined_gvar ", opnds[0]);
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadCVar: {
                     printf("  %%%" PRIu32 " = load_cvar ", opnds[0]);
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadGVar: {
                     printf("  %%%" PRIu32 " = load_gvar ", opnds[0]);
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadIVar: {
                     printf("  %%%" PRIu32 " = load_ivar ", opnds[0]);
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
@@ -891,19 +919,19 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     break;
                 case kPrismInsnStoreCVar: {
                     printf("  store_cvar ");
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
                 case kPrismInsnStoreGVar: {
                     printf("  store_gvar ");
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
                 case kPrismInsnStoreIVar: {
                     printf("  store_ivar ");
-                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
                     printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
