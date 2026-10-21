@@ -1181,7 +1181,7 @@ compile(int argc, VALUE *argv, VALUE self) {
     pm_arena_t *arena = pm_arena_new();
     pm_parser_t *parser = pm_parser_new(arena, source, length, options);
     pm_node_t *node = pm_parse(parser);
-    pm_compile(node);
+    pm_compile(parser, node);
 
     pm_parser_free(parser);
     pm_arena_free(arena);
