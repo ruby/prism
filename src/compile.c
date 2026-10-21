@@ -511,7 +511,7 @@ compile_parentheses_node(PrismBuilder *builder, PrismGraph *graph, const pm_pare
     }
 }
 
-static void
+static uint32_t
 compile_program_node(PrismBuilder *builder, PrismGraph *graph, const pm_program_node_t *node) {
     builder->block_id = make_block(graph, 0);
     uint32_t value_id;
@@ -524,6 +524,12 @@ compile_program_node(PrismBuilder *builder, PrismGraph *graph, const pm_program_
     }
 
     emit_return(builder, graph, node->base.node_id, node->base.location, value_id);
+    return UINT32_MAX;
+}
+
+static uint32_t
+compile_self_node(PrismBuilder *builder, PrismGraph *graph, const pm_self_node_t *node) {
+    return emit_load_self(builder, graph, node->base.node_id, node->base.location);
 }
 
 static uint32_t
@@ -586,10 +592,9 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
         case PM_PARENTHESES_NODE:
             return compile_parentheses_node(builder, graph, (const pm_parentheses_node_t *) node);
         case PM_PROGRAM_NODE:
-            compile_program_node(builder, graph, (const pm_program_node_t *) node);
-            return UINT32_MAX;
+            return compile_program_node(builder, graph, (const pm_program_node_t *) node);
         case PM_SELF_NODE:
-            return emit_load_self(builder, graph, node->node_id, node->location);
+            return compile_self_node(builder, graph, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, graph, (const pm_statements_node_t *) node);
         case PM_SYMBOL_NODE: {
