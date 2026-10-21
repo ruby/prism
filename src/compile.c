@@ -396,8 +396,26 @@ compile_class_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, 
 }
 
 static uint32_t
+compile_false_node(PrismBuilder *builder, PrismGraph *graph, const pm_false_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectFalse);
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
+compile_nil_node(PrismBuilder *builder, PrismGraph *graph, const pm_nil_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectNil);
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_or_node(PrismBuilder *builder, PrismGraph *graph, const pm_or_node_t *node) {
     return compile_logical_node(builder, graph, PM_NODE_UPCAST(node), node->left, node->right);
+}
+
+static uint32_t
+compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectTrue);
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
 
 static uint32_t
@@ -417,10 +435,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_class_variable_operator_write_node(builder, graph, (const pm_class_variable_operator_write_node_t *) node);
         case PM_CLASS_VARIABLE_AND_WRITE_NODE:
             return compile_class_variable_and_write_node(builder, graph, (const pm_class_variable_and_write_node_t *) node);
-        case PM_FALSE_NODE: {
-            uint32_t object_id = make_object(graph, kPrismObjectFalse);
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_FALSE_NODE:
+            return compile_false_node(builder, graph, (const pm_false_node_t *) node);
         case PM_FLOAT_NODE: {
             const pm_float_node_t *cast = (const pm_float_node_t *) node;
 
@@ -517,10 +533,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
         }
-        case PM_NIL_NODE: {
-            uint32_t object_id = make_object(graph, kPrismObjectNil);
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_NIL_NODE:
+            return compile_nil_node(builder, graph, (const pm_nil_node_t *) node);
         case PM_PARENTHESES_NODE: {
             const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
 
@@ -569,10 +583,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
         }
-        case PM_TRUE_NODE: {
-            uint32_t object_id = make_object(graph, kPrismObjectTrue);
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_TRUE_NODE:
+            return compile_true_node(builder, graph, (const pm_true_node_t *) node);
         default:
             fprintf(stderr, "Unhandled node type: %s\n", pm_node_type(node->type));
             abort();
