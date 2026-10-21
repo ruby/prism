@@ -305,30 +305,45 @@ emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_l
 
 /******************************************************************************/
 
+static uint32_t compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node);
+
+static uint32_t
+compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, const pm_node_t *left, const pm_node_t *right) {
+    uint32_t right_block_id = make_block(graph, 0);
+    uint32_t join_block_id = make_block(graph, 1);
+
+    uint32_t left_value_id = compile_node(builder, graph, left);
+    if (PM_NODE_TYPE(node) == PM_AND_NODE) {
+        emit_branchif(builder, graph, node->node_id, node->location, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
+    } else {
+        emit_branchif(builder, graph, node->node_id, node->location, left_value_id, join_block_id, 1, &left_value_id, right_block_id, 0, NULL);
+    }
+
+    builder->block_id = right_block_id;
+    uint32_t right_value_id = compile_node(builder, graph, right);
+    emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &right_value_id);
+
+    builder->block_id = join_block_id;
+    return graph->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_and_node(PrismBuilder *builder, PrismGraph *graph, const pm_and_node_t *node) {
+    return compile_logical_node(builder, graph, PM_NODE_UPCAST(node), node->left, node->right);
+}
+
+static uint32_t
+compile_or_node(PrismBuilder *builder, PrismGraph *graph, const pm_or_node_t *node) {
+    return compile_logical_node(builder, graph, PM_NODE_UPCAST(node), node->left, node->right);
+}
+
 static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         case PM_AND_NODE:
-        case PM_OR_NODE: {
-            const pm_and_node_t *cast = (const pm_and_node_t *) node;
-
-            uint32_t right_block_id = make_block(graph, 0);
-            uint32_t join_block_id = make_block(graph, 1);
-
-            uint32_t left_value_id = compile_node(builder, graph, cast->left);
-            if (PM_NODE_TYPE(node) == PM_AND_NODE) {
-                emit_branchif(builder, graph, node->node_id, node->location, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
-            } else {
-                emit_branchif(builder, graph, node->node_id, node->location, left_value_id, join_block_id, 1, &left_value_id, right_block_id, 0, NULL);
-            }
-
-            builder->block_id = right_block_id;
-            uint32_t right_value_id = compile_node(builder, graph, cast->right);
-            emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &right_value_id);
-
-            builder->block_id = join_block_id;
-            return graph->blocks[join_block_id].params[0];
-        }
+            return compile_and_node(builder, graph, (const pm_and_node_t *) node);
+        case PM_OR_NODE:
+            return compile_or_node(builder, graph, (const pm_or_node_t *) node);
         case PM_CALL_NODE: {
             const pm_call_node_t *cast = (const pm_call_node_t *) node; /* TODO */
 
