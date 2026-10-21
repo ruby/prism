@@ -8,8 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef enum {
+    kPrismInsnBranch,
+    kPrismInsnBranchIf,
     kPrismInsnCall,
     kPrismInsnLoadCVar,
     kPrismInsnLoadGVar,
@@ -30,6 +33,7 @@ typedef struct {
     uint32_t opnds_len;
     union {
         struct { uint32_t block_id; } branch;
+        struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
     } as;
@@ -41,6 +45,10 @@ typedef struct {
         uint32_t size;
         uint32_t capa;
     } insns;
+    struct {
+        uint32_t *mem;
+        uint32_t size;
+    } params;
 } PrismBlock;
 
 typedef enum {
@@ -93,7 +101,7 @@ make_value(PrismGraph *graph) {
 }
 
 static uint32_t
-make_block(PrismGraph *graph) {
+make_block(PrismGraph *graph, uint32_t nparams) {
     if (graph->blocks.size == graph->blocks.capa) {
         uint32_t next_capa = graph->blocks.capa ? graph->blocks.capa * 2 : 8;
         PrismBlock *next_mem = xrealloc_sized(graph->blocks.mem, sizeof(PrismBlock) * next_capa, sizeof(PrismBlock) * graph->blocks.capa);
@@ -103,8 +111,18 @@ make_block(PrismGraph *graph) {
         graph->blocks.mem = next_mem;
     }
 
+    uint32_t *params = NULL;
+    if (nparams) {
+        params = xmalloc(sizeof(uint32_t) * nparams);
+        if (!params) abort();
+
+        for (uint32_t idx = 0; idx < nparams; ++idx) {
+            params[idx] = make_value(graph);
+        }
+    }
+
     uint32_t block_id = graph->blocks.size++;
-    graph->blocks.mem[block_id] = (PrismBlock) { 0 };
+    graph->blocks.mem[block_id] = (PrismBlock) { .insns = { 0 }, .params = { .mem = params, .size = nparams } };
     return block_id;
 }
 
@@ -167,6 +185,34 @@ make_insn(PrismBuilder *builder, PrismGraph *graph, PrismInsnKind kind, uint32_t
 }
 
 /******************************************************************************/
+
+static void
+emit_branch(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, uint32_t block_id, uint32_t opnds_len, uint32_t *opnd_ids) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnBranch, node_id, location, opnds_len);
+    insn->as.branch.block_id = block_id;
+
+    if (opnds_len) {
+        memcpy(graph->opnds.mem + insn->opnds_idx, opnd_ids, sizeof(uint32_t) * opnds_len);
+    }
+}
+
+static void
+emit_branchif(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, uint32_t predicate_id, uint32_t then_block_id, uint32_t then_opnds_len, uint32_t *then_opnd_ids, uint32_t else_block_id, uint32_t else_opnds_len, uint32_t *else_opnd_ids) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnBranchIf, node_id, location, 1 + then_opnds_len + else_opnds_len);
+    insn->as.branchif.then_block_id = then_block_id;
+    insn->as.branchif.else_block_id = else_block_id;
+    insn->as.branchif.then_opnds_len = then_opnds_len;
+
+    graph->opnds.mem[insn->opnds_idx] = predicate_id;
+
+    if (then_opnds_len) {
+        memcpy(graph->opnds.mem + 1 + insn->opnds_idx, then_opnd_ids, sizeof(uint32_t) * then_opnds_len);
+    }
+
+    if (else_opnds_len) {
+        memcpy(graph->opnds.mem + 1 + insn->opnds_idx + then_opnds_len, else_opnd_ids, sizeof(uint32_t) * else_opnds_len);
+    }
+}
 
 static uint32_t
 emit_call(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids) {
@@ -273,6 +319,22 @@ emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_l
 static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_AND_NODE: {
+            const pm_and_node_t *cast = (const pm_and_node_t *) node;
+
+            uint32_t right_block_id = make_block(graph, 0);
+            uint32_t join_block_id = make_block(graph, 1);
+
+            uint32_t left_value_id = compile_node(builder, graph, cast->left);
+            emit_branchif(builder, graph, node->node_id, node->location, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
+
+            builder->block_id = right_block_id;
+            uint32_t right_value_id = compile_node(builder, graph, cast->right);
+            emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &right_value_id);
+
+            builder->block_id = join_block_id;
+            return graph->blocks.mem[join_block_id].params.mem[0];
+        }
         case PM_CALL_NODE: {
             const pm_call_node_t *cast = (const pm_call_node_t *) node; /* TODO */
 
@@ -404,7 +466,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             const pm_program_node_t *cast = (const pm_program_node_t *) node;
             const pm_statements_node_t *statements = (const pm_statements_node_t *) cast->statements;
 
-            builder->block_id = make_block(graph);
+            builder->block_id = make_block(graph, 0);
             uint32_t value_id;
 
             if (statements->body.size) {
@@ -441,6 +503,18 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 /******************************************************************************/
 
 static void
+dump_values(uint32_t nvalues, uint32_t *values) {
+    if (nvalues) {
+        printf("(");
+        for (uint32_t idx = 0; idx < nvalues; ++idx) {
+            if (idx > 0) printf(", ");
+            printf("%%%" PRIu32, values[idx]);
+        }
+        printf(")");
+    }
+}
+
+static void
 dump_object(PrismObject *object) {
     switch (object->kind) {
         case kPrismObjectFalse:
@@ -465,13 +539,30 @@ static void
 dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
     for (uint32_t block_id = 0; block_id < graph->blocks.size; ++block_id) {
         PrismBlock *block = &graph->blocks.mem[block_id];
-        printf("bb%" PRIu32 ":\n", block_id);
+
+        printf("bb%" PRIu32, block_id);
+        dump_values(block->params.size, block->params.mem);
+        printf(":\n");
 
         for (uint32_t insn_id = 0; insn_id < block->insns.size; ++insn_id) {
             PrismInsn *insn = &block->insns.mem[insn_id];
             uint32_t *opnds = &graph->opnds.mem[insn->opnds_idx];
 
             switch (insn->kind) {
+                case kPrismInsnBranch: {
+                    printf("  branch bb%" PRIu32, insn->as.branchif.then_block_id);
+                    dump_values(insn->opnds_len, opnds);
+                    printf("\n");
+                    break;
+                }
+                case kPrismInsnBranchIf: {
+                    printf("  branchif %%%" PRIu32 " bb%" PRIu32, opnds[0], insn->as.branchif.then_block_id);
+                    dump_values(insn->as.branchif.then_opnds_len, opnds + 1);
+                    printf(" bb%" PRIu32, insn->as.branchif.else_block_id);
+                    dump_values(insn->opnds_len - insn->as.branchif.then_opnds_len - 1, opnds + 1 + insn->as.branchif.then_opnds_len);
+                    printf("\n");
+                    break;
+                }
                 case kPrismInsnCall: {
                     printf("  %%%" PRIu32 " = call %%%" PRIu32 ".", opnds[0], opnds[1]);
 
