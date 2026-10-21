@@ -21,6 +21,7 @@ typedef enum {
     kPrismInsnLoadIVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
+    kPrismInsnNewRange,
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
     kPrismInsnStoreGVar,
@@ -38,6 +39,7 @@ typedef struct {
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
+        struct { bool exclude_end; } range;
     } as;
 } PrismInsn;
 
@@ -291,6 +293,19 @@ emit_load_self(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_lo
 
     uint32_t value_id = make_value(graph);
     graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_range(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, uint32_t left_id, uint32_t right_id, bool exclude_end) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnNewRange, node_id, location, 3);
+    insn->as.range.exclude_end = exclude_end;
+
+    uint32_t value_id = make_value(graph);
+    graph->opnds[insn->opnds_off + 0] = value_id;
+    graph->opnds[insn->opnds_off + 1] = left_id;
+    graph->opnds[insn->opnds_off + 2] = right_id;
 
     return value_id;
 }
@@ -612,6 +627,25 @@ compile_program_node(PrismBuilder *builder, PrismGraph *graph, const pm_program_
 }
 
 static uint32_t
+compile_range_node(PrismBuilder *builder, PrismGraph *graph, const pm_range_node_t *node) {
+    uint32_t left_id;
+    if (node->left) {
+        left_id = compile_node(builder, graph, node->left);
+    } else {
+        left_id = emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+    }
+
+    uint32_t right_id;
+    if (node->right) {
+        right_id = compile_node(builder, graph, node->right);
+    } else {
+        right_id = emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+    }
+
+    return emit_new_range(builder, graph, node->base.node_id, node->base.location, left_id, right_id, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END));
+}
+
+static uint32_t
 compile_self_node(PrismBuilder *builder, PrismGraph *graph, const pm_self_node_t *node) {
     return emit_load_self(builder, graph, node->base.node_id, node->base.location);
 }
@@ -694,6 +728,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_parentheses_node(builder, graph, (const pm_parentheses_node_t *) node);
         case PM_PROGRAM_NODE:
             return compile_program_node(builder, graph, (const pm_program_node_t *) node);
+        case PM_RANGE_NODE:
+            return compile_range_node(builder, graph, (const pm_range_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, graph, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
@@ -827,6 +863,9 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 }
                 case kPrismInsnLoadSelf:
                     printf("  %%%" PRIu32 " = load_self\n", opnds[0]);
+                    break;
+                case kPrismInsnNewRange:
+                    printf("  %%%" PRIu32 " = new_range %%%" PRIu32 ", %%%" PRIu32 ", exclude_end=%d\n", opnds[0], opnds[1], opnds[2], insn->as.range.exclude_end);
                     break;
                 case kPrismInsnReturn:
                     printf("  return %%%" PRIu32 "\n", opnds[0]);
