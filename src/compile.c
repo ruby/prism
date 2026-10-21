@@ -503,6 +503,40 @@ compile_or_node(PrismBuilder *builder, PrismGraph *graph, const pm_or_node_t *no
 }
 
 static uint32_t
+compile_parentheses_node(PrismBuilder *builder, PrismGraph *graph, const pm_parentheses_node_t *node) {
+    if (node->body) {
+        return compile_node(builder, graph, node->body);
+    } else {
+        return emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+    }
+}
+
+static void
+compile_program_node(PrismBuilder *builder, PrismGraph *graph, const pm_program_node_t *node) {
+    builder->block_id = make_block(graph, 0);
+    uint32_t value_id;
+
+    const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
+    if (statements->body.size) {
+        value_id = compile_node(builder, graph, PM_NODE_UPCAST(statements));
+    } else {
+        value_id = emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+    }
+
+    emit_return(builder, graph, node->base.node_id, node->base.location, value_id);
+}
+
+static uint32_t
+compile_statements_node(PrismBuilder *builder, PrismGraph *graph, const pm_statements_node_t *node) {
+    uint32_t value_id;
+    for (size_t idx = 0; idx < node->body.size; ++idx) {
+        value_id = compile_node(builder, graph, node->body.nodes[idx]);
+    }
+
+    return value_id;
+}
+
+static uint32_t
 compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t *node) {
     uint32_t object_id = make_object(graph, kPrismObjectTrue);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
@@ -549,43 +583,15 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_nil_node(builder, graph, (const pm_nil_node_t *) node);
         case PM_OR_NODE:
             return compile_or_node(builder, graph, (const pm_or_node_t *) node);
-        case PM_PARENTHESES_NODE: {
-            const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
-
-            if (cast->body) {
-                return compile_node(builder, graph, cast->body);
-            } else {
-                return emit_load_nil(builder, graph, node->node_id, node->location);
-            }
-        }
-        case PM_PROGRAM_NODE: {
-            const pm_program_node_t *cast = (const pm_program_node_t *) node;
-            const pm_statements_node_t *statements = (const pm_statements_node_t *) cast->statements;
-
-            builder->block_id = make_block(graph, 0);
-            uint32_t value_id;
-
-            if (statements->body.size) {
-                value_id = compile_node(builder, graph, PM_NODE_UPCAST(statements));
-            } else {
-                value_id = emit_load_nil(builder, graph, node->node_id, node->location);
-            }
-
-            emit_return(builder, graph, node->node_id, node->location, value_id);
+        case PM_PARENTHESES_NODE:
+            return compile_parentheses_node(builder, graph, (const pm_parentheses_node_t *) node);
+        case PM_PROGRAM_NODE:
+            compile_program_node(builder, graph, (const pm_program_node_t *) node);
             return UINT32_MAX;
-        }
         case PM_SELF_NODE:
             return emit_load_self(builder, graph, node->node_id, node->location);
-        case PM_STATEMENTS_NODE: {
-            const pm_statements_node_t *cast = (const pm_statements_node_t *) node;
-            uint32_t value_id;
-
-            for (size_t idx = 0; idx < cast->body.size; ++idx) {
-                value_id = compile_node(builder, graph, cast->body.nodes[idx]);
-            }
-
-            return value_id;
-        }
+        case PM_STATEMENTS_NODE:
+            return compile_statements_node(builder, graph, (const pm_statements_node_t *) node);
         case PM_SYMBOL_NODE: {
             const pm_symbol_node_t *cast = (const pm_symbol_node_t *) node;
 
