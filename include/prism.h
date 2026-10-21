@@ -9,6 +9,7 @@
 #include "prism/arena.h"
 #include "prism/ast.h"
 #include "prism/buffer.h"
+#include "prism/compile.h"
 #include "prism/diagnostic.h"
 #include "prism/errors_format.h"
 #include "prism/json.h"
