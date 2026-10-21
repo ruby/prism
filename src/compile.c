@@ -401,6 +401,32 @@ compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *
     return graph->blocks[join_block_id].params[0];
 }
 
+static uint32_t
+compile_loop_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements) {
+    uint32_t predicate_block_id = make_block(graph, 0);
+    uint32_t loop_block_id = make_block(graph, 0);
+    uint32_t join_block_id = make_block(graph, 0);
+
+    emit_branch(builder, graph, node->node_id, node->location, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
+
+    builder->block_id = predicate_block_id;
+    uint32_t predicate_id = compile_node(builder, graph, predicate);
+    if (PM_NODE_TYPE_P(node, PM_WHILE_NODE)) {
+        emit_branchif(builder, graph, node->node_id, node->location, predicate_id, loop_block_id, 0, NULL, join_block_id, 0, NULL);
+    } else {
+        emit_branchif(builder, graph, node->node_id, node->location, predicate_id, join_block_id, 0, NULL, loop_block_id, 0, NULL);
+    }
+
+    builder->block_id = loop_block_id;
+    if (statements) {
+        compile_node(builder, graph, PM_NODE_UPCAST(statements));
+    }
+    emit_branch(builder, graph, node->node_id, node->location, predicate_block_id, 0, NULL);
+
+    builder->block_id = join_block_id;
+    return emit_load_nil(builder, graph, node->node_id, node->location);
+}
+
 /******************************************************************************/
 
 static uint32_t
@@ -703,25 +729,13 @@ compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t
 }
 
 static uint32_t
+compile_until_node(PrismBuilder *builder, PrismGraph *graph, const pm_until_node_t *node) {
+    return compile_loop_node(builder, graph, PM_NODE_UPCAST(node), node->predicate, node->statements);
+}
+
+static uint32_t
 compile_while_node(PrismBuilder *builder, PrismGraph *graph, const pm_while_node_t *node) {
-    uint32_t predicate_block_id = make_block(graph, 0);
-    uint32_t loop_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 0);
-
-    emit_branch(builder, graph, node->base.node_id, node->base.location, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
-
-    builder->block_id = predicate_block_id;
-    uint32_t predicate_id = compile_node(builder, graph, node->predicate);
-    emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, loop_block_id, 0, NULL, join_block_id, 0, NULL);
-
-    builder->block_id = loop_block_id;
-    if (node->statements) {
-        compile_node(builder, graph, PM_NODE_UPCAST(node->statements));
-    }
-    emit_branch(builder, graph, node->base.node_id, node->base.location, predicate_block_id, 0, NULL);
-
-    builder->block_id = join_block_id;
-    return emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+    return compile_loop_node(builder, graph, PM_NODE_UPCAST(node), node->predicate, node->statements);
 }
 
 static uint32_t
@@ -800,6 +814,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_symbol_node(builder, graph, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
             return compile_true_node(builder, graph, (const pm_true_node_t *) node);
+        case PM_UNTIL_NODE:
+            return compile_until_node(builder, graph, (const pm_until_node_t *) node);
         case PM_WHILE_NODE:
             return compile_while_node(builder, graph, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
