@@ -29,7 +29,7 @@ typedef struct {
     PrismInsnKind kind;
     uint32_t node_id;
     pm_location_t location;
-    uint32_t opnds_idx;
+    uint32_t opnds_off;
     uint32_t opnds_len;
     union {
         struct { uint32_t block_id; } branch;
@@ -40,15 +40,11 @@ typedef struct {
 } PrismInsn;
 
 typedef struct {
-    struct {
-        PrismInsn *mem;
-        uint32_t size;
-        uint32_t capa;
-    } insns;
-    struct {
-        uint32_t *mem;
-        uint32_t size;
-    } params;
+    PrismInsn *insns;
+    uint32_t *params;
+    uint32_t ninsns;
+    uint32_t nparams;
+    uint32_t insns_capa;
 } PrismBlock;
 
 typedef enum {
@@ -70,25 +66,16 @@ typedef struct {
 } PrismObject;
 
 typedef struct {
-    struct {
-        PrismBlock *mem;
-        uint32_t size;
-        uint32_t capa;
-    } blocks;
-
-    struct {
-        uint32_t *mem;
-        uint32_t size;
-        uint32_t capa;
-    } opnds;
-
-    struct {
-        PrismObject *mem;
-        uint32_t size;
-        uint32_t capa;
-    } objects;
-
-    uint32_t next_value_id;
+    PrismBlock *blocks;
+    uint32_t *opnds;
+    PrismObject *objects;
+    uint32_t nblocks;
+    uint32_t nopnds;
+    uint32_t nobjects;
+    uint32_t blocks_capa;
+    uint32_t opnds_capa;
+    uint32_t objects_capa;
+    uint32_t value_id;
 } PrismGraph;
 
 typedef struct {
@@ -99,18 +86,18 @@ typedef struct {
 
 static inline uint32_t
 make_value(PrismGraph *graph) {
-    return graph->next_value_id++;
+    return graph->value_id++;
 }
 
 static uint32_t
 make_block(PrismGraph *graph, uint32_t nparams) {
-    if (graph->blocks.size == graph->blocks.capa) {
-        uint32_t next_capa = graph->blocks.capa ? graph->blocks.capa * 2 : 8;
-        PrismBlock *next_mem = xrealloc_sized(graph->blocks.mem, sizeof(PrismBlock) * next_capa, sizeof(PrismBlock) * graph->blocks.capa);
-        if (!next_mem) abort();
+    if (graph->nblocks == graph->blocks_capa) {
+        uint32_t next_capa = graph->blocks_capa ? graph->blocks_capa * 2 : 8;
+        PrismBlock *next_blocks = xrealloc_sized(graph->blocks, sizeof(PrismBlock) * next_capa, sizeof(PrismBlock) * graph->blocks_capa);
+        if (!next_blocks) abort();
 
-        graph->blocks.capa = next_capa;
-        graph->blocks.mem = next_mem;
+        graph->blocks_capa = next_capa;
+        graph->blocks = next_blocks;
     }
 
     uint32_t *params = NULL;
@@ -123,64 +110,64 @@ make_block(PrismGraph *graph, uint32_t nparams) {
         }
     }
 
-    uint32_t block_id = graph->blocks.size++;
-    graph->blocks.mem[block_id] = (PrismBlock) { .insns = { 0 }, .params = { .mem = params, .size = nparams } };
+    uint32_t block_id = graph->nblocks++;
+    graph->blocks[block_id] = (PrismBlock) { .insns = NULL, .params = params, .ninsns = 0, .nparams = nparams, .insns_capa = 0 };
     return block_id;
 }
 
 static uint32_t
 make_object(PrismGraph *graph, PrismObjectKind kind) {
-    if (graph->objects.size == graph->objects.capa) {
-        uint32_t next_capa = graph->objects.capa ? graph->objects.capa * 2 : 8;
-        PrismObject *next_mem = xrealloc_sized(graph->objects.mem, sizeof(PrismObject) * next_capa, sizeof(PrismObject) * graph->objects.capa);
+    if (graph->nobjects == graph->objects_capa) {
+        uint32_t next_capa = graph->objects_capa ? graph->objects_capa * 2 : 8;
+        PrismObject *next_mem = xrealloc_sized(graph->objects, sizeof(PrismObject) * next_capa, sizeof(PrismObject) * graph->objects_capa);
         if (!next_mem) abort();
 
-        graph->objects.capa = next_capa;
-        graph->objects.mem = next_mem;
+        graph->objects_capa = next_capa;
+        graph->objects = next_mem;
     }
 
-    uint32_t obj_id = graph->objects.size++;
-    graph->objects.mem[obj_id] = (PrismObject) { .kind = kind };
-    return obj_id;
+    uint32_t object_id = graph->nobjects++;
+    graph->objects[object_id] = (PrismObject) { .kind = kind };
+    return object_id;
 }
 
 static PrismInsn *
 make_insn(PrismBuilder *builder, PrismGraph *graph, PrismInsnKind kind, uint32_t node_id, pm_location_t location, uint32_t opnds_len) {
-    PrismBlock *block = &graph->blocks.mem[builder->block_id];
+    PrismBlock *block = graph->blocks + builder->block_id;
 
-    if (block->insns.size == block->insns.capa) {
-        uint32_t next_capa = block->insns.capa ? block->insns.capa * 2 : 8;
-        PrismInsn *next_mem = xrealloc_sized(block->insns.mem, sizeof(PrismInsn) * next_capa, sizeof(PrismInsn) * block->insns.capa);
-        if (!next_mem) abort();
+    if (block->ninsns == block->insns_capa) {
+        uint32_t next_capa = block->insns_capa ? block->insns_capa * 2 : 8;
+        PrismInsn *next_insns = xrealloc_sized(block->insns, sizeof(PrismInsn) * next_capa, sizeof(PrismInsn) * block->insns_capa);
+        if (!next_insns) abort();
 
-        block->insns.capa = next_capa;
-        block->insns.mem = next_mem;
+        block->insns_capa = next_capa;
+        block->insns = next_insns;
     }
 
-    PrismInsn *insn = &block->insns.mem[block->insns.size++];
+    PrismInsn *insn = block->insns + block->ninsns++;
     *insn = (PrismInsn) {
         .kind = kind,
         .node_id = node_id,
         .location = location,
-        .opnds_idx = graph->opnds.size,
+        .opnds_off = graph->nopnds,
         .opnds_len = opnds_len
     };
 
     if (opnds_len) {
-        if ((opnds_len > graph->opnds.capa) || (graph->opnds.size > graph->opnds.capa - opnds_len)) {
-            uint32_t next_capa = graph->opnds.capa ? graph->opnds.capa * 2 : 8;
-            while ((opnds_len > next_capa) || (graph->opnds.size > next_capa - opnds_len)) {
+        if ((opnds_len > graph->opnds_capa) || (graph->nopnds > graph->opnds_capa - opnds_len)) {
+            uint32_t next_capa = graph->opnds_capa ? graph->opnds_capa * 2 : 8;
+            while ((opnds_len > next_capa) || (graph->nopnds > next_capa - opnds_len)) {
                 next_capa *= 2;
             }
 
-            uint32_t *next_mem = xrealloc_sized(graph->opnds.mem, sizeof(uint32_t) * next_capa, sizeof(uint32_t) * graph->opnds.capa);
-            if (!next_mem) abort();
+            uint32_t *next_opnds = xrealloc_sized(graph->opnds, sizeof(uint32_t) * next_capa, sizeof(uint32_t) * graph->opnds_capa);
+            if (!next_opnds) abort();
 
-            graph->opnds.capa = next_capa;
-            graph->opnds.mem = next_mem;
+            graph->opnds_capa = next_capa;
+            graph->opnds = next_opnds;
         }
 
-        graph->opnds.size += opnds_len;
+        graph->nopnds += opnds_len;
     }
 
     return insn;
@@ -194,7 +181,7 @@ emit_branch(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locat
     insn->as.branch.block_id = block_id;
 
     if (opnds_len) {
-        memcpy(graph->opnds.mem + insn->opnds_idx, opnd_ids, sizeof(uint32_t) * opnds_len);
+        memcpy(graph->opnds + insn->opnds_off, opnd_ids, sizeof(uint32_t) * opnds_len);
     }
 }
 
@@ -205,14 +192,14 @@ emit_branchif(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_loc
     insn->as.branchif.else_block_id = else_block_id;
     insn->as.branchif.then_opnds_len = then_opnds_len;
 
-    graph->opnds.mem[insn->opnds_idx] = predicate_id;
+    graph->opnds[insn->opnds_off] = predicate_id;
 
     if (then_opnds_len) {
-        memcpy(graph->opnds.mem + 1 + insn->opnds_idx, then_opnd_ids, sizeof(uint32_t) * then_opnds_len);
+        memcpy(graph->opnds + 1 + insn->opnds_off, then_opnd_ids, sizeof(uint32_t) * then_opnds_len);
     }
 
     if (else_opnds_len) {
-        memcpy(graph->opnds.mem + 1 + insn->opnds_idx + then_opnds_len, else_opnd_ids, sizeof(uint32_t) * else_opnds_len);
+        memcpy(graph->opnds + 1 + insn->opnds_off + then_opnds_len, else_opnd_ids, sizeof(uint32_t) * else_opnds_len);
     }
 }
 
@@ -222,11 +209,11 @@ emit_call(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locatio
     insn->as.name.name_id = name_id;
 
     uint32_t value_id = make_value(graph);
-    graph->opnds.mem[insn->opnds_idx] = value_id;
-    graph->opnds.mem[insn->opnds_idx + 1] = receiver_id;
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = receiver_id;
 
     for (size_t idx = 0; idx < nargument_ids; ++idx) {
-        graph->opnds.mem[insn->opnds_idx + 2 + idx] = argument_ids[idx];
+        graph->opnds[insn->opnds_off + 2 + idx] = argument_ids[idx];
     }
 
     return value_id;
@@ -238,7 +225,7 @@ emit_load_name(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_lo
     insn->as.name.name_id = name_id;
 
     uint32_t value_id = make_value(graph);
-    graph->opnds.mem[insn->opnds_idx] = value_id;
+    graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
 }
@@ -264,7 +251,7 @@ emit_load_object(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_
     insn->as.object.object_id = object_id;
 
     uint32_t value_id = make_value(graph);
-    graph->opnds.mem[insn->opnds_idx] = value_id;
+    graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
 }
@@ -279,7 +266,7 @@ emit_load_self(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_lo
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnLoadSelf, node_id, location, 1);
 
     uint32_t value_id = make_value(graph);
-    graph->opnds.mem[insn->opnds_idx] = value_id;
+    graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
 }
@@ -288,7 +275,7 @@ static void
 emit_return(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnReturn, node_id, location, 1);
 
-    graph->opnds.mem[insn->opnds_idx] = value_id;
+    graph->opnds[insn->opnds_off] = value_id;
 }
 
 static uint32_t
@@ -296,7 +283,7 @@ emit_store_name(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_l
     PrismInsn *insn = make_insn(builder, graph, kind, node_id, location, 1);
     insn->as.name.name_id = name_id;
 
-    graph->opnds.mem[insn->opnds_idx] = value_id;
+    graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
 }
@@ -340,7 +327,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &right_value_id);
 
             builder->block_id = join_block_id;
-            return graph->blocks.mem[join_block_id].params.mem[0];
+            return graph->blocks[join_block_id].params[0];
         }
         case PM_CALL_NODE: {
             const pm_call_node_t *cast = (const pm_call_node_t *) node; /* TODO */
@@ -405,7 +392,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &value_id);
 
             builder->block_id = join_block_id;
-            return graph->blocks.mem[join_block_id].params.mem[0];
+            return graph->blocks[join_block_id].params[0];
         }
         case PM_FALSE_NODE: {
             uint32_t object_id = make_object(graph, kPrismObjectFalse);
@@ -415,7 +402,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             const pm_float_node_t *cast = (const pm_float_node_t *) node;
 
             uint32_t object_id = make_object(graph, kPrismObjectFloat);
-            graph->objects.mem[object_id].as.floating.value = cast->value;
+            graph->objects[object_id].as.floating.value = cast->value;
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
         }
@@ -469,7 +456,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
 
             uint32_t object_id = make_object(graph, kPrismObjectInteger);
-            graph->objects.mem[object_id].as.integer.value = &cast->value;
+            graph->objects[object_id].as.integer.value = &cast->value;
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
         }
@@ -518,7 +505,7 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             const pm_symbol_node_t *cast = (const pm_symbol_node_t *) node;
 
             uint32_t object_id = make_object(graph, kPrismObjectSymbol);
-            PrismObject *object = graph->objects.mem + object_id;
+            PrismObject *object = graph->objects + object_id;
 
             object->as.symbol.flags = node->flags;
             object->as.symbol.unescaped = &cast->unescaped;
@@ -577,16 +564,16 @@ dump_object(PrismObject *object) {
 
 static void
 dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
-    for (uint32_t block_id = 0; block_id < graph->blocks.size; ++block_id) {
-        PrismBlock *block = &graph->blocks.mem[block_id];
+    for (uint32_t block_id = 0; block_id < graph->nblocks; ++block_id) {
+        PrismBlock *block = &graph->blocks[block_id];
 
         printf("bb%" PRIu32, block_id);
-        dump_values(block->params.size, block->params.mem);
+        dump_values(block->nparams, block->params);
         printf(":\n");
 
-        for (uint32_t insn_id = 0; insn_id < block->insns.size; ++insn_id) {
-            PrismInsn *insn = &block->insns.mem[insn_id];
-            uint32_t *opnds = &graph->opnds.mem[insn->opnds_idx];
+        for (uint32_t insn_id = 0; insn_id < block->ninsns; ++insn_id) {
+            PrismInsn *insn = &block->insns[insn_id];
+            uint32_t *opnds = &graph->opnds[insn->opnds_off];
 
             switch (insn->kind) {
                 case kPrismInsnBranch: {
@@ -636,7 +623,7 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                 }
                 case kPrismInsnLoadObject: {
                     printf("  %%%" PRIu32 " = load_object ", opnds[0]);
-                    dump_object(&graph->objects.mem[insn->as.object.object_id]);
+                    dump_object(&graph->objects[insn->as.object.object_id]);
                     printf("\n");
                     break;
                 }
