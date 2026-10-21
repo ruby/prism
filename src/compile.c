@@ -391,6 +391,15 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             uint32_t object_id = make_object(graph, kPrismObjectNil);
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
         }
+        case PM_PARENTHESES_NODE: {
+            const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
+
+            if (cast->body) {
+                return compile_node(builder, graph, cast->body);
+            } else {
+                return emit_load_nil(builder, graph, node->node_id, node->location);
+            }
+        }
         case PM_PROGRAM_NODE: {
             const pm_program_node_t *cast = (const pm_program_node_t *) node;
             const pm_statements_node_t *statements = (const pm_statements_node_t *) cast->statements;
