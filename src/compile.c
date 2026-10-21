@@ -56,6 +56,7 @@ typedef enum {
     kPrismObjectFloat,
     kPrismObjectInteger,
     kPrismObjectNil,
+    kPrismObjectString,
     kPrismObjectSymbol,
     kPrismObjectTrue
 } PrismObjectKind;
@@ -65,7 +66,7 @@ typedef struct {
     union {
         struct { double value; } floating;
         struct { const pm_integer_t *value; } integer;
-        struct { pm_node_flags_t flags; const pm_string_t *unescaped; } symbol;
+        struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
     } as;
 } PrismObject;
 
@@ -661,12 +662,23 @@ compile_statements_node(PrismBuilder *builder, PrismGraph *graph, const pm_state
 }
 
 static uint32_t
+compile_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_string_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectString);
+    PrismObject *object = graph->objects + object_id;
+
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->unescaped;
+
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_symbol_node(PrismBuilder *builder, PrismGraph *graph, const pm_symbol_node_t *node) {
     uint32_t object_id = make_object(graph, kPrismObjectSymbol);
     PrismObject *object = graph->objects + object_id;
 
-    object->as.symbol.flags = node->base.flags;
-    object->as.symbol.unescaped = &node->unescaped;
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->unescaped;
 
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
@@ -734,6 +746,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_self_node(builder, graph, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, graph, (const pm_statements_node_t *) node);
+        case PM_STRING_NODE:
+            return compile_string_node(builder, graph, (const pm_string_node_t *) node);
         case PM_SYMBOL_NODE:
             return compile_symbol_node(builder, graph, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
@@ -773,8 +787,13 @@ dump_object(PrismObject *object) {
         case kPrismObjectNil:
             printf("nil");
             break;
+        case kPrismObjectString: {
+            const pm_string_t *unescaped = object->as.string.unescaped;
+            printf("\"%.*s\"", (int) pm_string_length(unescaped), (const char *) pm_string_source(unescaped));
+            break;
+        }
         case kPrismObjectSymbol: {
-            const pm_string_t *unescaped = object->as.symbol.unescaped; 
+            const pm_string_t *unescaped = object->as.string.unescaped;
             printf(":%.*s", (int) pm_string_length(unescaped), (const char *) pm_string_source(unescaped));
             break;
         }
