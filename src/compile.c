@@ -320,6 +320,27 @@ emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_l
 static uint32_t compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node);
 
 static uint32_t
+compile_instance_variable_logical_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, pm_constant_id_t name, const pm_node_t *value) {
+    uint32_t set_block_id = make_block(graph, 0);
+    uint32_t join_block_id = make_block(graph, 1);
+
+    uint32_t predicate_id = emit_load_ivar(builder, graph, node->node_id, node->location, name);
+    if (PM_NODE_TYPE(node) == PM_INSTANCE_VARIABLE_AND_WRITE_NODE) {
+        emit_branchif(builder, graph, node->node_id, node->location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
+    } else {
+        emit_branchif(builder, graph, node->node_id, node->location, predicate_id, join_block_id, 1, &predicate_id, set_block_id, 0, NULL);
+    }
+
+    builder->block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, graph, value);
+    emit_store_ivar(builder, graph, node->node_id, node->location, name, value_id);
+    emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &value_id);
+
+    builder->block_id = join_block_id;
+    return graph->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, const pm_node_t *left, const pm_node_t *right) {
     uint32_t right_block_id = make_block(graph, 0);
     uint32_t join_block_id = make_block(graph, 1);
@@ -338,6 +359,8 @@ compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *
     builder->block_id = join_block_id;
     return graph->blocks[join_block_id].params[0];
 }
+
+/******************************************************************************/
 
 static uint32_t
 compile_and_node(PrismBuilder *builder, PrismGraph *graph, const pm_and_node_t *node) {
@@ -503,19 +526,12 @@ compile_instance_variable_operator_write_node(PrismBuilder *builder, PrismGraph 
 
 static uint32_t
 compile_instance_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_instance_variable_and_write_node_t *node) {
-    uint32_t set_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    return compile_instance_variable_logical_write_node(builder, graph, PM_NODE_UPCAST(node), node->name, node->value);
+}
 
-    uint32_t predicate_id = emit_load_ivar(builder, graph, node->base.node_id, node->base.location, node->name);
-    emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
-
-    builder->block_id = set_block_id;
-    uint32_t value_id = compile_node(builder, graph, node->value);
-    emit_store_ivar(builder, graph, node->base.node_id, node->base.location, node->name, value_id);
-    emit_branch(builder, graph, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
-
-    builder->block_id = join_block_id;
-    return graph->blocks[join_block_id].params[0];
+static uint32_t
+compile_instance_variable_or_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_instance_variable_or_write_node_t *node) {
+    return compile_instance_variable_logical_write_node(builder, graph, PM_NODE_UPCAST(node), node->name, node->value);
 }
 
 static uint32_t
@@ -630,6 +646,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_instance_variable_operator_write_node(builder, graph, (const pm_instance_variable_operator_write_node_t *) node);
         case PM_INSTANCE_VARIABLE_AND_WRITE_NODE:
             return compile_instance_variable_and_write_node(builder, graph, (const pm_instance_variable_and_write_node_t *) node);
+        case PM_INSTANCE_VARIABLE_OR_WRITE_NODE:
+            return compile_instance_variable_or_write_node(builder, graph, (const pm_instance_variable_or_write_node_t *) node);
         case PM_INTEGER_NODE:
             return compile_integer_node(builder, graph, (const pm_integer_node_t *) node);
         case PM_NIL_NODE:
