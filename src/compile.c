@@ -543,6 +543,17 @@ compile_statements_node(PrismBuilder *builder, PrismGraph *graph, const pm_state
 }
 
 static uint32_t
+compile_symbol_node(PrismBuilder *builder, PrismGraph *graph, const pm_symbol_node_t *node) {
+    uint32_t object_id = make_object(graph, kPrismObjectSymbol);
+    PrismObject *object = graph->objects + object_id;
+
+    object->as.symbol.flags = node->base.flags;
+    object->as.symbol.unescaped = &node->unescaped;
+
+    return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t *node) {
     uint32_t object_id = make_object(graph, kPrismObjectTrue);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
@@ -597,17 +608,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_self_node(builder, graph, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, graph, (const pm_statements_node_t *) node);
-        case PM_SYMBOL_NODE: {
-            const pm_symbol_node_t *cast = (const pm_symbol_node_t *) node;
-
-            uint32_t object_id = make_object(graph, kPrismObjectSymbol);
-            PrismObject *object = graph->objects + object_id;
-
-            object->as.symbol.flags = node->flags;
-            object->as.symbol.unescaped = &cast->unescaped;
-
-            return emit_load_object(builder, graph, node->node_id, node->location, object_id);
-        }
+        case PM_SYMBOL_NODE:
+            return compile_symbol_node(builder, graph, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
             return compile_true_node(builder, graph, (const pm_true_node_t *) node);
         default:
