@@ -390,6 +390,23 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 
             return result_id;
         }
+        case PM_CLASS_VARIABLE_AND_WRITE_NODE: {
+            const pm_class_variable_and_write_node_t *cast = (const pm_class_variable_and_write_node_t *) node;
+
+            uint32_t set_block_id = make_block(graph, 0);
+            uint32_t join_block_id = make_block(graph, 1);
+
+            uint32_t predicate_id = emit_load_cvar(builder, graph, node->node_id, node->location, cast->name);
+            emit_branchif(builder, graph, node->node_id, node->location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
+
+            builder->block_id = set_block_id;
+            uint32_t value_id = compile_node(builder, graph, cast->value);
+            emit_store_cvar(builder, graph, node->node_id, node->location, cast->name, value_id);
+            emit_branch(builder, graph, node->node_id, node->location, join_block_id, 1, &value_id);
+
+            builder->block_id = join_block_id;
+            return graph->blocks.mem[join_block_id].params.mem[0];
+        }
         case PM_FALSE_NODE: {
             uint32_t object_id = make_object(graph, kPrismObjectFalse);
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
