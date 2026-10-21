@@ -12,11 +12,13 @@
 typedef enum {
     kPrismInsnCall,
     kPrismInsnLoadCVar,
+    kPrismInsnLoadGVar,
     kPrismInsnLoadIVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
+    kPrismInsnStoreGVar,
     kPrismInsnStoreIVar
 } PrismInsnKind;
 
@@ -194,6 +196,17 @@ emit_load_cvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_lo
 }
 
 static uint32_t
+emit_load_gvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnLoadGVar, node_id, location, 1);
+    insn->as.name.name_id = name_id;
+
+    uint32_t value_id = make_value(graph);
+    graph->opnds.mem[insn->opnds_idx] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_load_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id) {
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnLoadIVar, node_id, location, 1);
     insn->as.name.name_id = name_id;
@@ -240,6 +253,16 @@ emit_return(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locat
 static uint32_t
 emit_store_cvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, graph, kPrismInsnStoreCVar, node_id, location, 1);
+    insn->as.name.name_id = name_id;
+
+    graph->opnds.mem[insn->opnds_idx] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_store_gvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, graph, kPrismInsnStoreGVar, node_id, location, 1);
     insn->as.name.name_id = name_id;
 
     graph->opnds.mem[insn->opnds_idx] = value_id;
@@ -311,6 +334,19 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             graph->objects.mem[object_id].as.floating.value = cast->value;
 
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
+        }
+        case PM_GLOBAL_VARIABLE_READ_NODE: {
+            const pm_global_variable_read_node_t *cast = (const pm_global_variable_read_node_t *) node;
+
+            return emit_load_gvar(builder, graph, node->node_id, node->location, cast->name);
+        }
+        case PM_GLOBAL_VARIABLE_WRITE_NODE: {
+            const pm_global_variable_write_node_t *cast = (const pm_global_variable_write_node_t *) node;
+
+            uint32_t value_id = compile_node(builder, graph, cast->value);
+            emit_store_gvar(builder, graph, node->node_id, node->location, cast->name, value_id);
+
+            return value_id;
         }
         case PM_INSTANCE_VARIABLE_READ_NODE: {
             const pm_instance_variable_read_node_t *cast = (const pm_instance_variable_read_node_t *) node;
@@ -428,6 +464,12 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
+                case kPrismInsnLoadGVar: {
+                    printf("  %%%" PRIu32 " = load_gvar ", opnds[0]);
+                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    break;
+                }
                 case kPrismInsnLoadIVar: {
                     printf("  %%%" PRIu32 " = load_ivar ", opnds[0]);
                     const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
@@ -448,6 +490,12 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     break;
                 case kPrismInsnStoreCVar: {
                     printf("  store_cvar ");
+                    const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
+                    printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
+                    break;
+                }
+                case kPrismInsnStoreGVar: {
+                    printf("  store_gvar ");
                     const pm_constant_t *constant = pm_parser_constant(parser, insn->as.name.name_id);
                     printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
