@@ -703,6 +703,28 @@ compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t
 }
 
 static uint32_t
+compile_while_node(PrismBuilder *builder, PrismGraph *graph, const pm_while_node_t *node) {
+    uint32_t predicate_block_id = make_block(graph, 0);
+    uint32_t loop_block_id = make_block(graph, 0);
+    uint32_t join_block_id = make_block(graph, 0);
+
+    emit_branch(builder, graph, node->base.node_id, node->base.location, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
+
+    builder->block_id = predicate_block_id;
+    uint32_t predicate_id = compile_node(builder, graph, node->predicate);
+    emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, loop_block_id, 0, NULL, join_block_id, 0, NULL);
+
+    builder->block_id = loop_block_id;
+    if (node->statements) {
+        compile_node(builder, graph, PM_NODE_UPCAST(node->statements));
+    }
+    emit_branch(builder, graph, node->base.node_id, node->base.location, predicate_block_id, 0, NULL);
+
+    builder->block_id = join_block_id;
+    return emit_load_nil(builder, graph, node->base.node_id, node->base.location);
+}
+
+static uint32_t
 compile_x_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_x_string_node_t *node) {
     uint32_t object_id = make_object(graph, kPrismObjectString);
     PrismObject *object = graph->objects + object_id;
@@ -778,6 +800,8 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
             return compile_symbol_node(builder, graph, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
             return compile_true_node(builder, graph, (const pm_true_node_t *) node);
+        case PM_WHILE_NODE:
+            return compile_while_node(builder, graph, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
             return compile_x_string_node(builder, graph, (const pm_x_string_node_t *) node);
         default:
