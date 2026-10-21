@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-21
+
 ### Highlights
 
 - Significant performance and memory usage improvements.
@@ -835,8 +837,9 @@ Note that for this major version, almost every change listed below is breaking.
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.9.0...HEAD
-[1.9.0]: https://github.com/ruby/prism/compare/v1.8.0...v1.9.0
+[unreleased]: https://github.com/ruby/prism/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/ruby/prism/compare/v1.9.0...v2.0.0
+[1.9.0]: https://github.com/ruby/prism/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/ruby/prism/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0

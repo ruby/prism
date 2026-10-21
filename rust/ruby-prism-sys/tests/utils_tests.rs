@@ -9,5 +9,5 @@ fn version_test() {
         CStr::from_ptr(version)
     };
 
-    assert_eq!(&cstring.to_string_lossy(), "2.0.0.rc2");
+    assert_eq!(&cstring.to_string_lossy(), "2.0.0");
 }
