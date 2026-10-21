@@ -311,6 +311,16 @@ compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
 
             return value_id;
         }
+        case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE: {
+            const pm_class_variable_operator_write_node_t *cast = (const pm_class_variable_operator_write_node_t *) node;
+
+            uint32_t receiver_id = emit_load_cvar(builder, graph, node->node_id, node->location, cast->name);
+            uint32_t value_id = compile_node(builder, graph, cast->value);
+            uint32_t result_id = emit_call(builder, graph, node->node_id, node->location, cast->binary_operator, receiver_id, 1, &value_id);
+            emit_store_cvar(builder, graph, node->node_id, node->location, cast->name, result_id);
+
+            return result_id;
+        }
         case PM_FALSE_NODE: {
             uint32_t object_id = make_object(graph, kPrismObjectFalse);
             return emit_load_object(builder, graph, node->node_id, node->location, object_id);
