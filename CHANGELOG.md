@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.8.2] - 2026-10-21
+
+### Changed
+
+- Fix build errors with C23 qualifier-preserving `memchr`.
+- Do not warn for ambiguous `/` when targeting Ruby 4.1.
+- Fix array-bounds warnings with newer GCC.
+
 ## [1.8.1] - 2026-03-16
 
 ### Changed
@@ -740,7 +748,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby/prism/compare/v1.8.1...HEAD
+[unreleased]: https://github.com/ruby/prism/compare/v1.8.2...HEAD
+[1.8.2]: https://github.com/ruby/prism/compare/v1.8.1...v1.8.2
 [1.8.1]: https://github.com/ruby/prism/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ruby/prism/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ruby/prism/compare/v1.6.0...v1.7.0
