@@ -826,6 +826,16 @@ compile_local_variable_write_node(PrismBuilder *builder, const pm_local_variable
 }
 
 static uint32_t
+compile_local_variable_operator_write_node(PrismBuilder *builder, const pm_local_variable_operator_write_node_t *node) {
+    uint32_t resolved_id = resolve_local(builder, node->name);
+    uint32_t local_id = emit_load_lvar(builder, node->base.node_id, node->base.location, resolved_id);
+    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->base.location, node->binary_operator, local_id, 1, &value_id);
+    emit_store_lvar(builder, node->base.node_id, node->base.location, resolved_id, result_id);
+    return result_id;
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -1010,6 +1020,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_read_node(builder, (const pm_local_variable_read_node_t *) node);
         case PM_LOCAL_VARIABLE_WRITE_NODE:
             return compile_local_variable_write_node(builder, (const pm_local_variable_write_node_t *) node);
+        case PM_LOCAL_VARIABLE_OPERATOR_WRITE_NODE:
+            return compile_local_variable_operator_write_node(builder, (const pm_local_variable_operator_write_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_OR_NODE:
