@@ -485,6 +485,28 @@ emit_trace_line(PrismBuilder *builder, uint32_t node_id, pm_location_t location)
 
 /******************************************************************************/
 
+static uint32_t
+resolve_local(PrismBuilder *builder, pm_constant_id_t name_id) {
+    uint32_t graph_id = builder->state.graph_id;
+
+    while (1) {
+        PrismGraph *graph = builder->unit->graphs + graph_id;
+
+        for (uint32_t idx = 0; idx < graph->nlocal_ids; ++idx) {
+            uint32_t local_id = graph->local_ids[idx];
+            if (builder->unit->locals[local_id].name_id == name_id) {
+                return local_id;
+            }
+        }
+
+        if (graph->parent_id == UINT32_MAX) break;
+        graph_id = graph->parent_id;
+    }
+
+    assert(false && "unreachable");
+    return UINT32_MAX;
+}
+
 static uint32_t compile_node(PrismBuilder *builder, const pm_node_t *node);
 
 static uint32_t
@@ -502,6 +524,28 @@ compile_instance_variable_logical_write_node(PrismBuilder *builder, const pm_nod
     builder->state.block_id = set_block_id;
     uint32_t value_id = compile_node(builder, value);
     emit_store_ivar(builder, node->node_id, node->location, name, value_id);
+    emit_branch(builder, node->node_id, node->location, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_local_variable_logical_write_node(PrismBuilder *builder, const pm_node_t *node, pm_constant_id_t name_id, const pm_node_t *value) {
+    uint32_t set_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t resolved_id = resolve_local(builder, name_id);
+    uint32_t local_id = emit_load_lvar(builder, node->node_id, node->location, resolved_id);
+    if (PM_NODE_TYPE_P(node, PM_LOCAL_VARIABLE_AND_WRITE_NODE)) {
+        emit_branchif(builder, node->node_id, node->location, local_id, set_block_id, 0, NULL, join_block_id, 1, &local_id);
+    } else {
+        emit_branchif(builder, node->node_id, node->location, local_id, join_block_id, 1, &local_id, set_block_id, 0, NULL);
+    }
+
+    builder->state.block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, value);
+    emit_store_lvar(builder, node->node_id, node->location, resolved_id, value_id);
     emit_branch(builder, node->node_id, node->location, join_block_id, 1, &value_id);
 
     builder->state.block_id = join_block_id;
@@ -552,28 +596,6 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 
     builder->state.block_id = join_block_id;
     return emit_load_nil(builder, node->node_id, node->location);
-}
-
-static uint32_t
-resolve_local(PrismBuilder *builder, pm_constant_id_t name_id) {
-    uint32_t graph_id = builder->state.graph_id;
-
-    while (1) {
-        PrismGraph *graph = builder->unit->graphs + graph_id;
-
-        for (uint32_t idx = 0; idx < graph->nlocal_ids; ++idx) {
-            uint32_t local_id = graph->local_ids[idx];
-            if (builder->unit->locals[local_id].name_id == name_id) {
-                return local_id;
-            }
-        }
-
-        if (graph->parent_id == UINT32_MAX) break;
-        graph_id = graph->parent_id;
-    }
-
-    assert(false && "unreachable");
-    return UINT32_MAX;
 }
 
 /******************************************************************************/
@@ -836,6 +858,16 @@ compile_local_variable_operator_write_node(PrismBuilder *builder, const pm_local
 }
 
 static uint32_t
+compile_local_variable_and_write_node(PrismBuilder *builder, const pm_local_variable_and_write_node_t *node) {
+    return compile_local_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->value);
+}
+
+static uint32_t
+compile_local_variable_or_write_node(PrismBuilder *builder, const pm_local_variable_or_write_node_t *node) {
+    return compile_local_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->value);
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -1022,6 +1054,10 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_write_node(builder, (const pm_local_variable_write_node_t *) node);
         case PM_LOCAL_VARIABLE_OPERATOR_WRITE_NODE:
             return compile_local_variable_operator_write_node(builder, (const pm_local_variable_operator_write_node_t *) node);
+        case PM_LOCAL_VARIABLE_AND_WRITE_NODE:
+            return compile_local_variable_and_write_node(builder, (const pm_local_variable_and_write_node_t *) node);
+        case PM_LOCAL_VARIABLE_OR_WRITE_NODE:
+            return compile_local_variable_or_write_node(builder, (const pm_local_variable_or_write_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_OR_NODE:
