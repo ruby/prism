@@ -915,13 +915,9 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     printf("  %%%" PRIu32 " = call %%%" PRIu32 ".", opnds[0], opnds[1]);
 
                     const pm_constant_t *constant = compile_constant(parser, insn->as.name.name_id);
-                    printf("%.*s(", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
-
-                    for (uint32_t idx = 0; idx < insn->opnds_len - 2; ++idx) {
-                        printf("%%%" PRIu32, opnds[2 + idx]);
-                    }
-
-                    printf(")\n");
+                    printf("%.*s", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    dump_values(insn->opnds_len - 2, opnds + 2);
+                    printf("\n");
                     break;
                 }
                 case kPrismInsnDefinedCVar: {
