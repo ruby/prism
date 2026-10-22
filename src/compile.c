@@ -41,6 +41,8 @@ typedef enum {
     kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
+    kPrismInsnNewArray,
+    kPrismInsnNewArrayStatic,
     kPrismInsnNewRange,
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
@@ -76,6 +78,7 @@ typedef struct {
 } PrismBlock;
 
 typedef enum {
+    kPrismObjectArray,
     kPrismObjectFalse,
     kPrismObjectFloat,
     kPrismObjectInteger,
@@ -88,6 +91,7 @@ typedef enum {
 typedef struct {
     PrismObjectKind kind;
     union {
+        struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
         struct { double value; } floating;
         struct { const pm_integer_t *value; } integer;
         struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
@@ -434,6 +438,30 @@ emit_load_self(PrismBuilder *builder, uint32_t node_id, pm_location_t location) 
 }
 
 static uint32_t
+emit_new_array(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t nelement_ids, uint32_t *element_ids) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewArray, node_id, location, 1 + nelement_ids);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_array_static(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t object_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewArrayStatic, node_id, location, 1);
+    insn->as.object.object_id = object_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_new_range(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t left_id, uint32_t right_id, bool exclude_end) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewRange, node_id, location, 3);
     insn->as.range.exclude_end = exclude_end;
@@ -515,6 +543,49 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id) {
 
     assert(false && "unreachable");
     return UINT32_MAX;
+}
+
+static uint32_t
+static_literal(PrismBuilder *builder, const pm_node_t *node) {
+    switch (PM_NODE_TYPE(node)) {
+        case PM_ARRAY_NODE: {
+            const pm_array_node_t *cast = (const pm_array_node_t *) node;
+            uint32_t nobject_ids = (uint32_t) cast->elements.size;
+            uint32_t *object_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nobject_ids, PRISM_ALIGNOF(uint32_t));
+
+            for (uint32_t idx = 0; idx < nobject_ids; ++idx) {
+                object_ids[idx] = static_literal(builder, cast->elements.nodes[idx]);
+            }
+
+            uint32_t object_id = make_object(builder, kPrismObjectArray);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.array.nobject_ids = nobject_ids;
+            object->as.array.object_ids = object_ids;
+
+            return object_id;
+        }
+        case PM_FLOAT_NODE: {
+            const pm_float_node_t *cast = (const pm_float_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectFloat);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.floating.value = cast->value;
+
+            return object_id;
+        }
+        case PM_INTEGER_NODE: {
+            const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectInteger);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.integer.value = &cast->value;
+
+            return object_id;
+        }
+        default:
+            assert(false && "unsupported static literal node type");
+            return UINT32_MAX;
+    }
 }
 
 static uint32_t compile_node(PrismBuilder *builder, const pm_node_t *node);
@@ -621,6 +692,23 @@ compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *n
 static uint32_t
 compile_and_node(PrismBuilder *builder, const pm_and_node_t *node) {
     return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
+}
+
+static uint32_t
+compile_array_node(PrismBuilder *builder, const pm_array_node_t *node) {
+    size_t nelements = node->elements.size;
+
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && nelements) {
+        uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
+        return emit_new_array_static(builder, node->base.node_id, node->base.location, object_id);
+    } else {
+        uint32_t *element_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nelements, PRISM_ALIGNOF(uint32_t));
+        for (size_t idx = 0; idx < nelements; ++idx) {
+            element_ids[idx] = compile_node(builder, node->elements.nodes[idx]);
+        }
+
+        return emit_new_array(builder, node->base.node_id, node->base.location, (uint32_t) nelements, element_ids);
+    }
 }
 
 static uint32_t
@@ -1047,6 +1135,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_alias_method_node(builder, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
             return compile_and_node(builder, (const pm_and_node_t *) node);
+        case PM_ARRAY_NODE:
+            return compile_array_node(builder, (const pm_array_node_t *) node);
         case PM_CALL_NODE:
             return compile_call_node(builder, (const pm_call_node_t *) node);
         case PM_CLASS_VARIABLE_READ_NODE:
@@ -1147,8 +1237,19 @@ dump_values(uint32_t nvalues, uint32_t *values) {
 }
 
 static void
-dump_object(PrismObject *object) {
+dump_object(PrismBuilder *builder, uint32_t object_id) {
+    PrismObject *object = builder->unit->objects + object_id;
+
     switch (object->kind) {
+        case kPrismObjectArray: {
+            printf("[");
+            for (uint32_t idx = 0; idx < object->as.array.nobject_ids; ++idx) {
+                if (idx > 0) printf(", ");
+                dump_object(builder, object->as.array.object_ids[idx]);
+            }
+            printf("]");
+            break;
+        }
         case kPrismObjectFalse:
             printf("false");
             break;
@@ -1194,7 +1295,7 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
 
             switch (insn->kind) {
                 case kPrismInsnAliasMethod:
-                    printf("alias_method %%%" PRIu32 " %%%" PRIu32 "\n", opnds[0], opnds[1]);
+                    printf("alias_method %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
                 case kPrismInsnBranch: {
                     printf("branch bb%" PRIu32, insn->as.branchif.then_block_id);
@@ -1253,12 +1354,22 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnLoadObject: {
                     printf("%%%" PRIu32 " = load_object ", opnds[0]);
-                    dump_object(builder->unit->objects + insn->as.object.object_id);
+                    dump_object(builder, insn->as.object.object_id);
                     printf("\n");
                     break;
                 }
                 case kPrismInsnLoadSelf:
                     printf("%%%" PRIu32 " = load_self\n", opnds[0]);
+                    break;
+                case kPrismInsnNewArray:
+                    printf("%%%" PRIu32 " = new_array", opnds[0]);
+                    dump_values(insn->opnds_len - 1, opnds + 1);
+                    printf("\n");
+                    break;
+                case kPrismInsnNewArrayStatic:
+                    printf("%%%" PRIu32 " = new_array_static ", opnds[0]);
+                    dump_object(builder, insn->as.object.object_id);
+                    printf("\n");
                     break;
                 case kPrismInsnNewRange:
                     printf("%%%" PRIu32 " = new_range %%%" PRIu32 ", %%%" PRIu32 ", exclude_end=%d\n", opnds[0], opnds[1], opnds[2], insn->as.range.exclude_end);
