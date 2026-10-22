@@ -88,6 +88,7 @@ typedef enum {
     kPrismObjectImaginary,
     kPrismObjectInteger,
     kPrismObjectNil,
+    kPrismObjectRational,
     kPrismObjectString,
     kPrismObjectSymbol,
     kPrismObjectTrue
@@ -100,6 +101,7 @@ typedef struct {
         struct { double value; } floating;
         struct { uint32_t numeric_id; } imaginary;
         struct { const pm_integer_t *value; } integer;
+        struct { const pm_integer_t *numerator; const pm_integer_t *denominator; } rational;
         struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
     } as;
 } PrismObject;
@@ -625,6 +627,16 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_RATIONAL_NODE: {
+            const pm_rational_node_t *cast = (const pm_rational_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectRational);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.rational.numerator = &cast->numerator;
+            object->as.rational.denominator = &cast->denominator;
+
+            return object_id;
+        }
         case PM_STRING_NODE: {
             const pm_string_node_t *cast = (const pm_string_node_t *) node;
 
@@ -636,8 +648,8 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
             return object_id;
         }
         default:
-            assert(false && "unsupported static literal node type");
-            return UINT32_MAX;
+            fprintf(stderr, "unsupported static literal node type: %s\n", pm_node_type(node->type));
+            abort();
     }
 }
 
@@ -1120,6 +1132,12 @@ compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
 }
 
 static uint32_t
+compile_rational_node(PrismBuilder *builder, const pm_rational_node_t *node) {
+    uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
+    return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
     return emit_load_self(builder, node->base.node_id, node->base.location);
 }
@@ -1266,6 +1284,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_program_node(builder, (const pm_program_node_t *) node);
         case PM_RANGE_NODE:
             return compile_range_node(builder, (const pm_range_node_t *) node);
+        case PM_RATIONAL_NODE:
+            return compile_rational_node(builder, (const pm_rational_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
@@ -1334,6 +1354,9 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             break;
         case kPrismObjectNil:
             printf("nil");
+            break;
+        case kPrismObjectRational:
+            printf("(%" PRIu32 "/%" PRIu32 ")", object->as.rational.numerator->value, object->as.rational.denominator->value); /* TODO */
             break;
         case kPrismObjectString: {
             const pm_string_t *unescaped = object->as.string.unescaped;
