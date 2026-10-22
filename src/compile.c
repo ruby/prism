@@ -85,6 +85,7 @@ typedef enum {
     kPrismObjectArray,
     kPrismObjectFalse,
     kPrismObjectFloat,
+    kPrismObjectImaginary,
     kPrismObjectInteger,
     kPrismObjectNil,
     kPrismObjectString,
@@ -97,6 +98,7 @@ typedef struct {
     union {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
         struct { double value; } floating;
+        struct { uint32_t numeric_id; } imaginary;
         struct { const pm_integer_t *value; } integer;
         struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
     } as;
@@ -604,6 +606,16 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_IMAGINARY_NODE: {
+            const pm_imaginary_node_t *cast = (const pm_imaginary_node_t *) node;
+
+            uint32_t numeric_id = static_literal(builder, cast->numeric);
+            uint32_t object_id = make_object(builder, kPrismObjectImaginary);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.imaginary.numeric_id = numeric_id;
+
+            return object_id;
+        }
         case PM_INTEGER_NODE: {
             const pm_integer_node_t *cast = (const pm_integer_node_t *) node;
 
@@ -964,6 +976,12 @@ compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_var
 }
 
 static uint32_t
+compile_imaginary_node(PrismBuilder *builder, const pm_imaginary_node_t *node) {
+    uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
+    return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_instance_variable_read_node(PrismBuilder *builder, const pm_instance_variable_read_node_t *node) {
     return emit_load_ivar(builder, node->base.node_id, node->base.location, node->name);
 }
@@ -1212,6 +1230,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_global_variable_and_write_node(builder, (const pm_global_variable_and_write_node_t *) node);
         case PM_GLOBAL_VARIABLE_OR_WRITE_NODE:
             return compile_global_variable_or_write_node(builder, (const pm_global_variable_or_write_node_t *) node);
+        case PM_IMAGINARY_NODE:
+            return compile_imaginary_node(builder, (const pm_imaginary_node_t *) node);
         case PM_INSTANCE_VARIABLE_READ_NODE:
             return compile_instance_variable_read_node(builder, (const pm_instance_variable_read_node_t *) node);
         case PM_INSTANCE_VARIABLE_WRITE_NODE:
@@ -1304,6 +1324,10 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             break;
         case kPrismObjectFloat:
             printf("%f", object->as.floating.value);
+            break;
+        case kPrismObjectImaginary:
+            dump_object(builder, object->as.imaginary.numeric_id);
+            printf("i");
             break;
         case kPrismObjectInteger:
             printf("%" PRIu32, object->as.integer.value->value); /* TODO */
