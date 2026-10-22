@@ -1,6 +1,8 @@
 #include "prism/compile.h"
 
+#include "prism/compiler/align.h"
 #include "prism/internal/allocator.h"
+#include "prism/internal/arena.h"
 #include "prism/internal/constant_pool.h"
 #include "prism/internal/line_offset_list.h"
 #include "prism/internal/parser.h"
@@ -101,6 +103,7 @@ typedef struct {
 
 typedef struct {
     const pm_parser_t *parser;
+    pm_arena_t *arena;
     uint32_t block_id;
     int32_t lineno;
 } PrismBuilder;
@@ -113,11 +116,10 @@ make_value(PrismGraph *graph) {
 }
 
 static uint32_t
-make_block(PrismGraph *graph, uint32_t nparams) {
+make_block(PrismBuilder *builder, PrismGraph *graph, uint32_t nparams) {
     if (graph->nblocks == graph->blocks_capa) {
         uint32_t next_capa = graph->blocks_capa ? graph->blocks_capa * 2 : 8;
-        PrismBlock *next_blocks = xrealloc_sized(graph->blocks, sizeof(PrismBlock) * next_capa, sizeof(PrismBlock) * graph->blocks_capa);
-        if (!next_blocks) abort();
+        PrismBlock *next_blocks = pm_arena_realloc(builder->arena, graph->blocks, sizeof(PrismBlock) * graph->blocks_capa, sizeof(PrismBlock) * next_capa, PRISM_ALIGNOF(PrismBlock));
 
         graph->blocks_capa = next_capa;
         graph->blocks = next_blocks;
@@ -125,9 +127,7 @@ make_block(PrismGraph *graph, uint32_t nparams) {
 
     uint32_t *params = NULL;
     if (nparams) {
-        params = xmalloc(sizeof(uint32_t) * nparams);
-        if (!params) abort();
-
+        params = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nparams, PRISM_ALIGNOF(uint32_t));
         for (uint32_t idx = 0; idx < nparams; ++idx) {
             params[idx] = make_value(graph);
         }
@@ -139,11 +139,10 @@ make_block(PrismGraph *graph, uint32_t nparams) {
 }
 
 static uint32_t
-make_object(PrismGraph *graph, PrismObjectKind kind) {
+make_object(PrismBuilder *builder, PrismGraph *graph, PrismObjectKind kind) {
     if (graph->nobjects == graph->objects_capa) {
         uint32_t next_capa = graph->objects_capa ? graph->objects_capa * 2 : 8;
-        PrismObject *next_mem = xrealloc_sized(graph->objects, sizeof(PrismObject) * next_capa, sizeof(PrismObject) * graph->objects_capa);
-        if (!next_mem) abort();
+        PrismObject *next_mem = pm_arena_realloc(builder->arena, graph->objects, sizeof(PrismObject) * graph->objects_capa, sizeof(PrismObject) * next_capa, PRISM_ALIGNOF(PrismObject));
 
         graph->objects_capa = next_capa;
         graph->objects = next_mem;
@@ -160,8 +159,7 @@ make_insn(PrismBuilder *builder, PrismGraph *graph, PrismInsnKind kind, uint32_t
 
     if (block->ninsns == block->insns_capa) {
         uint32_t next_capa = block->insns_capa ? block->insns_capa * 2 : 8;
-        PrismInsn *next_insns = xrealloc_sized(block->insns, sizeof(PrismInsn) * next_capa, sizeof(PrismInsn) * block->insns_capa);
-        if (!next_insns) abort();
+        PrismInsn *next_insns = pm_arena_realloc(builder->arena, block->insns, sizeof(PrismInsn) * block->insns_capa, sizeof(PrismInsn) * next_capa, PRISM_ALIGNOF(PrismInsn));
 
         block->insns_capa = next_capa;
         block->insns = next_insns;
@@ -183,8 +181,7 @@ make_insn(PrismBuilder *builder, PrismGraph *graph, PrismInsnKind kind, uint32_t
                 next_capa *= 2;
             }
 
-            uint32_t *next_opnds = xrealloc_sized(graph->opnds, sizeof(uint32_t) * next_capa, sizeof(uint32_t) * graph->opnds_capa);
-            if (!next_opnds) abort();
+            uint32_t *next_opnds = pm_arena_realloc(builder->arena, graph->opnds, sizeof(uint32_t) * graph->opnds_capa, sizeof(uint32_t) * next_capa, PRISM_ALIGNOF(uint32_t));
 
             graph->opnds_capa = next_capa;
             graph->opnds = next_opnds;
@@ -234,10 +231,7 @@ emit_call(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locatio
     uint32_t value_id = make_value(graph);
     graph->opnds[insn->opnds_off] = value_id;
     graph->opnds[insn->opnds_off + 1] = receiver_id;
-
-    for (size_t idx = 0; idx < nargument_ids; ++idx) {
-        graph->opnds[insn->opnds_off + 2 + idx] = argument_ids[idx];
-    }
+    memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
 
     return value_id;
 }
@@ -303,7 +297,7 @@ emit_load_object(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_
 
 static uint32_t
 emit_load_nil(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location) {
-    return emit_load_object(builder, graph, node_id, location, make_object(graph, kPrismObjectNil));
+    return emit_load_object(builder, graph, node_id, location, make_object(builder, graph, kPrismObjectNil));
 }
 
 static uint32_t
@@ -370,8 +364,8 @@ static uint32_t compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_
 
 static uint32_t
 compile_instance_variable_logical_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, pm_constant_id_t name, const pm_node_t *value) {
-    uint32_t set_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t set_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t predicate_id = emit_load_ivar(builder, graph, node->node_id, node->location, name);
     if (PM_NODE_TYPE(node) == PM_INSTANCE_VARIABLE_AND_WRITE_NODE) {
@@ -391,8 +385,8 @@ compile_instance_variable_logical_write_node(PrismBuilder *builder, PrismGraph *
 
 static uint32_t
 compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, const pm_node_t *left, const pm_node_t *right) {
-    uint32_t right_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t right_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t left_value_id = compile_node(builder, graph, left);
     if (PM_NODE_TYPE(node) == PM_AND_NODE) {
@@ -411,9 +405,9 @@ compile_logical_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *
 
 static uint32_t
 compile_loop_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements) {
-    uint32_t predicate_block_id = make_block(graph, 0);
-    uint32_t loop_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 0);
+    uint32_t predicate_block_id = make_block(builder, graph, 0);
+    uint32_t loop_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 0);
 
     emit_branch(builder, graph, node->node_id, node->location, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
 
@@ -464,7 +458,9 @@ compile_call_node(PrismBuilder *builder, PrismGraph *graph, const pm_call_node_t
         }
     }
 
-    return emit_call(builder, graph, node->base.node_id, node->base.location, node->name, receiver_id, nargument_ids, argument_ids);
+    uint32_t value_id = emit_call(builder, graph, node->base.node_id, node->base.location, node->name, receiver_id, nargument_ids, argument_ids);
+    if (nargument_ids) xfree(argument_ids);
+    return value_id;
 }
 
 static uint32_t
@@ -490,8 +486,8 @@ compile_class_variable_operator_write_node(PrismBuilder *builder, PrismGraph *gr
 
 static uint32_t
 compile_class_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_and_write_node_t *node) {
-    uint32_t set_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t set_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t predicate_id = emit_load_cvar(builder, graph, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
@@ -507,9 +503,9 @@ compile_class_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, 
 
 static uint32_t
 compile_class_variable_or_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_class_variable_or_write_node_t *node) {
-    uint32_t defined_block_id = make_block(graph, 0);
-    uint32_t undefined_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t defined_block_id = make_block(builder, graph, 0);
+    uint32_t undefined_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t defined_id = emit_defined_cvar(builder, graph, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, graph, node->base.node_id, node->base.location, defined_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
@@ -529,13 +525,13 @@ compile_class_variable_or_write_node(PrismBuilder *builder, PrismGraph *graph, c
 
 static uint32_t
 compile_false_node(PrismBuilder *builder, PrismGraph *graph, const pm_false_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectFalse);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectFalse);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
 
 static uint32_t
 compile_float_node(PrismBuilder *builder, PrismGraph *graph, const pm_float_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectFloat);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectFloat);
     graph->objects[object_id].as.floating.value = node->value;
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
@@ -563,8 +559,8 @@ compile_global_variable_operator_write_node(PrismBuilder *builder, PrismGraph *g
 
 static uint32_t
 compile_global_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_global_variable_and_write_node_t *node) {
-    uint32_t set_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t set_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t predicate_id = emit_load_gvar(builder, graph, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, graph, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
@@ -580,9 +576,9 @@ compile_global_variable_and_write_node(PrismBuilder *builder, PrismGraph *graph,
 
 static uint32_t
 compile_global_variable_or_write_node(PrismBuilder *builder, PrismGraph *graph, const pm_global_variable_or_write_node_t *node) {
-    uint32_t defined_block_id = make_block(graph, 0);
-    uint32_t undefined_block_id = make_block(graph, 0);
-    uint32_t join_block_id = make_block(graph, 1);
+    uint32_t defined_block_id = make_block(builder, graph, 0);
+    uint32_t undefined_block_id = make_block(builder, graph, 0);
+    uint32_t join_block_id = make_block(builder, graph, 1);
 
     uint32_t defined_id = emit_defined_gvar(builder, graph, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, graph, node->base.node_id, node->base.location, defined_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
@@ -633,14 +629,14 @@ compile_instance_variable_or_write_node(PrismBuilder *builder, PrismGraph *graph
 
 static uint32_t
 compile_integer_node(PrismBuilder *builder, PrismGraph *graph, const pm_integer_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectInteger);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectInteger);
     graph->objects[object_id].as.integer.value = &node->value;
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
 
 static uint32_t
 compile_nil_node(PrismBuilder *builder, PrismGraph *graph, const pm_nil_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectNil);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectNil);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
 
@@ -660,7 +656,7 @@ compile_parentheses_node(PrismBuilder *builder, PrismGraph *graph, const pm_pare
 
 static uint32_t
 compile_program_node(PrismBuilder *builder, PrismGraph *graph, const pm_program_node_t *node) {
-    builder->block_id = make_block(graph, 0);
+    builder->block_id = make_block(builder, graph, 0);
     uint32_t value_id;
 
     const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
@@ -710,7 +706,7 @@ compile_statements_node(PrismBuilder *builder, PrismGraph *graph, const pm_state
 
 static uint32_t
 compile_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_string_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectString);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectString);
     PrismObject *object = graph->objects + object_id;
 
     object->as.string.flags = node->base.flags;
@@ -721,7 +717,7 @@ compile_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_string_no
 
 static uint32_t
 compile_symbol_node(PrismBuilder *builder, PrismGraph *graph, const pm_symbol_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectSymbol);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectSymbol);
     PrismObject *object = graph->objects + object_id;
 
     object->as.string.flags = node->base.flags;
@@ -732,7 +728,7 @@ compile_symbol_node(PrismBuilder *builder, PrismGraph *graph, const pm_symbol_no
 
 static uint32_t
 compile_true_node(PrismBuilder *builder, PrismGraph *graph, const pm_true_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectTrue);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectTrue);
     return emit_load_object(builder, graph, node->base.node_id, node->base.location, object_id);
 }
 
@@ -748,7 +744,7 @@ compile_while_node(PrismBuilder *builder, PrismGraph *graph, const pm_while_node
 
 static uint32_t
 compile_x_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_x_string_node_t *node) {
-    uint32_t object_id = make_object(graph, kPrismObjectString);
+    uint32_t object_id = make_object(builder, graph, kPrismObjectString);
     PrismObject *object = graph->objects + object_id;
 
     object->as.string.flags = node->base.flags;
@@ -1001,8 +997,10 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
 
 void
 pm_compile(const pm_parser_t *parser, const pm_node_t *node) {
-    PrismBuilder builder = { .parser = parser, .lineno = parser->start_line - 1, 0 };
+    pm_arena_t arena = { 0 };
+    PrismBuilder builder = { .parser = parser, .arena = &arena, .block_id = 0, .lineno = parser->start_line - 1 };
     PrismGraph graph = { 0 };
     compile_node(&builder, &graph, node);
     dump_graph(parser, &graph);
+    pm_arena_cleanup(&arena);
 }
