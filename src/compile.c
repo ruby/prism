@@ -37,6 +37,7 @@ typedef enum {
     kPrismInsnLoadCVar,
     kPrismInsnLoadGVar,
     kPrismInsnLoadIVar,
+    kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
     kPrismInsnNewRange,
@@ -44,6 +45,7 @@ typedef enum {
     kPrismInsnStoreCVar,
     kPrismInsnStoreGVar,
     kPrismInsnStoreIVar,
+    kPrismInsnStoreLVar,
     kPrismInsnTraceLine
 } PrismInsnKind;
 
@@ -56,6 +58,7 @@ typedef struct {
     union {
         struct { uint32_t block_id; } branch;
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
+        struct { uint32_t local_id; } lvar;
         struct { pm_constant_id_t name_id; uint32_t graph_id; } method;
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
@@ -93,20 +96,31 @@ typedef struct {
 typedef struct {
     PrismBlock *blocks;
     uint32_t *opnds;
+    uint32_t *local_ids;
     uint32_t nblocks;
     uint32_t nopnds;
+    uint32_t nlocal_ids;
     uint32_t blocks_capa;
     uint32_t opnds_capa;
     uint32_t value_id;
+    uint32_t parent_id;
 } PrismGraph;
+
+typedef struct {
+    pm_constant_id_t name_id;
+    uint32_t graph_id;
+} PrismLocal;
 
 typedef struct {
     PrismGraph *graphs;
     PrismObject *objects;
+    PrismLocal *locals;
     uint32_t ngraphs;
     uint32_t nobjects;
+    uint32_t nlocals;
     uint32_t graphs_capa;
     uint32_t objects_capa;
+    uint32_t locals_capa;
 } PrismUnit;
 
 typedef struct {
@@ -127,7 +141,24 @@ typedef struct {
 #define PrismBuilder_graph(builder_) ((builder_)->unit->graphs + (builder_)->state.graph_id)
 
 static uint32_t
-make_graph(PrismBuilder *builder) {
+make_local(PrismBuilder *builder, pm_constant_id_t name_id) {
+    PrismUnit *unit = builder->unit;
+
+    if (unit->nlocals == unit->locals_capa) {
+        uint32_t next_capa = unit->locals_capa ? unit->locals_capa * 2 : 8;
+        PrismLocal *next_mem = pm_arena_realloc(builder->arena, unit->locals, sizeof(PrismLocal) * unit->locals_capa, sizeof(PrismLocal) * next_capa, PRISM_ALIGNOF(PrismLocal));
+
+        unit->locals_capa = next_capa;
+        unit->locals = next_mem;
+    }
+
+    uint32_t local_id = unit->nlocals++;
+    unit->locals[local_id] = (PrismLocal) { .name_id = name_id, .graph_id = builder->state.graph_id };
+    return local_id;
+}
+
+static uint32_t
+make_graph(PrismBuilder *builder, uint32_t parent_id, uint32_t nlocal_ids) {
     PrismUnit *unit = builder->unit;
 
     if (unit->ngraphs == unit->graphs_capa) {
@@ -138,8 +169,13 @@ make_graph(PrismBuilder *builder) {
         unit->graphs = next_mem;
     }
 
+    uint32_t *local_ids = NULL;
+    if (nlocal_ids) {
+        local_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nlocal_ids, PRISM_ALIGNOF(uint32_t));
+    }
+
     uint32_t graph_id = unit->ngraphs++;
-    unit->graphs[graph_id] = (PrismGraph) { 0 };
+    unit->graphs[graph_id] = (PrismGraph) { .parent_id = parent_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
     return graph_id;
 }
 
@@ -348,6 +384,18 @@ emit_load_ivar(PrismBuilder *builder, uint32_t node_id, pm_location_t location, 
 }
 
 static uint32_t
+emit_load_lvar(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t local_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadLVar, node_id, location, 1);
+    insn->as.lvar.local_id = local_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_load_object(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t object_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnLoadObject, node_id, location, 1);
     insn->as.object.object_id = object_id;
@@ -419,6 +467,15 @@ emit_store_gvar(PrismBuilder *builder, uint32_t node_id, pm_location_t location,
 static void
 emit_store_ivar(PrismBuilder *builder, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
     emit_store_name(builder, node_id, location, kPrismInsnStoreIVar, name_id, value_id);
+}
+
+static void
+emit_store_lvar(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t local_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreLVar, node_id, location, 1);
+    insn->as.lvar.local_id = local_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = value_id;
 }
 
 static void
@@ -495,6 +552,28 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 
     builder->state.block_id = join_block_id;
     return emit_load_nil(builder, node->node_id, node->location);
+}
+
+static uint32_t
+resolve_local(PrismBuilder *builder, pm_constant_id_t name_id) {
+    uint32_t graph_id = builder->state.graph_id;
+
+    while (1) {
+        PrismGraph *graph = builder->unit->graphs + graph_id;
+
+        for (uint32_t idx = 0; idx < graph->nlocal_ids; ++idx) {
+            uint32_t local_id = graph->local_ids[idx];
+            if (builder->unit->locals[local_id].name_id == name_id) {
+                return local_id;
+            }
+        }
+
+        if (graph->parent_id == UINT32_MAX) break;
+        graph_id = graph->parent_id;
+    }
+
+    assert(false && "unreachable");
+    return UINT32_MAX;
 }
 
 /******************************************************************************/
@@ -594,11 +673,16 @@ compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_varia
 static uint32_t
 compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     PrismBuilderState state = builder->state;
-    uint32_t graph_id = make_graph(builder);
+    uint32_t graph_id = make_graph(builder, UINT32_MAX, (uint32_t) node->locals.size);
 
     builder->state.graph_id = graph_id;
     builder->state.block_id = make_block(builder, 0);
     builder->state.lineno = builder->parser->start_line - 1;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    for (size_t idx = 0; idx < node->locals.size; ++idx) {
+        graph->local_ids[idx] = make_local(builder, node->locals.ids[idx]);
+    }
 
     uint32_t value_id;
     if (node->body) {
@@ -728,6 +812,20 @@ compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
 }
 
 static uint32_t
+compile_local_variable_read_node(PrismBuilder *builder, const pm_local_variable_read_node_t *node) {
+    uint32_t local_id = resolve_local(builder, node->name);
+    return emit_load_lvar(builder, node->base.node_id, node->base.location, local_id);
+}
+
+static uint32_t
+compile_local_variable_write_node(PrismBuilder *builder, const pm_local_variable_write_node_t *node) {
+    uint32_t local_id = resolve_local(builder, node->name);
+    uint32_t value_id = compile_node(builder, node->value);
+    emit_store_lvar(builder, node->base.node_id, node->base.location, local_id, value_id);
+    return value_id;
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -749,11 +847,17 @@ compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *nod
 
 static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
-    builder->state.graph_id = make_graph(builder);
+    builder->state.graph_id = make_graph(builder, UINT32_MAX, (uint32_t) node->locals.size);
     builder->state.block_id = make_block(builder, 0);
-    uint32_t value_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    for (size_t idx = 0; idx < node->locals.size; ++idx) {
+        graph->local_ids[idx] = make_local(builder, node->locals.ids[idx]);
+    }
 
     const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
+    uint32_t value_id;
+
     if (statements->body.size) {
         value_id = compile_node(builder, PM_NODE_UPCAST(statements));
     } else {
@@ -902,6 +1006,10 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_instance_variable_or_write_node(builder, (const pm_instance_variable_or_write_node_t *) node);
         case PM_INTEGER_NODE:
             return compile_integer_node(builder, (const pm_integer_node_t *) node);
+        case PM_LOCAL_VARIABLE_READ_NODE:
+            return compile_local_variable_read_node(builder, (const pm_local_variable_read_node_t *) node);
+        case PM_LOCAL_VARIABLE_WRITE_NODE:
+            return compile_local_variable_write_node(builder, (const pm_local_variable_write_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_OR_NODE:
@@ -1046,6 +1154,10 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = load_ivar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
+                case kPrismInsnLoadLVar: {
+                    printf("%%%" PRIu32 " = load_lvar v%" PRIu32 "\n", opnds[0], insn->as.lvar.local_id);
+                    break;
+                }
                 case kPrismInsnLoadObject: {
                     printf("%%%" PRIu32 " = load_object ", opnds[0]);
                     dump_object(builder->unit->objects + insn->as.object.object_id);
@@ -1076,6 +1188,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("store_ivar %.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
+                case kPrismInsnStoreLVar:
+                    printf("store_lvar v%" PRIu32 ", %%%" PRIu32 "\n", insn->as.lvar.local_id, opnds[0]);
+                    break;
                 case kPrismInsnTraceLine:
                     printf("trace_line %d\n", pm_line_offset_list_line(&builder->parser->line_offsets, insn->location.start, builder->parser->start_line));
                     break;
@@ -1086,6 +1201,12 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
 
 static void
 dump_unit(PrismBuilder *builder) {
+    for (uint32_t local_id = 0; local_id < builder->unit->nlocals; ++local_id) {
+        PrismLocal *local = builder->unit->locals + local_id;
+        const pm_constant_t *constant = compile_constant(builder->parser, local->name_id);
+        printf("v%" PRIu32 ": %.*s @ g%" PRIu32 "\n", local_id, (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), local->graph_id);
+    }
+
     for (uint32_t graph_id = 0; graph_id < builder->unit->ngraphs; ++graph_id) {
         printf("g%" PRIu32 ":\n", graph_id);
         dump_graph(builder, builder->unit->graphs + graph_id);
