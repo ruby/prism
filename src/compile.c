@@ -48,6 +48,7 @@ typedef enum {
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
     kPrismInsnNewRange,
+    kPrismInsnNewRegexp,
     kPrismInsnNewString,
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
@@ -73,6 +74,7 @@ typedef struct {
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
         struct { bool exclude_end; } range;
+        struct { pm_node_flags_t flags; } regexp;
         struct { uint32_t number; } svar;
     } as;
 } PrismInsn;
@@ -521,6 +523,19 @@ emit_new_range(PrismBuilder *builder, uint32_t node_id, pm_location_t location, 
     graph->opnds[insn->opnds_off + 0] = value_id;
     graph->opnds[insn->opnds_off + 1] = left_id;
     graph->opnds[insn->opnds_off + 2] = right_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_regexp(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t nvalue_ids, uint32_t *value_ids, pm_node_flags_t flags) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewRegexp, node_id, location, 1 + nvalue_ids);
+    insn->as.regexp.flags = flags;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    memcpy(graph->opnds + insn->opnds_off + 1, value_ids, nvalue_ids * sizeof(uint32_t));
 
     return value_id;
 }
@@ -1093,6 +1108,18 @@ compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
 }
 
 static uint32_t
+compile_interpolated_regular_expression_node(PrismBuilder *builder, const pm_interpolated_regular_expression_node_t *node) {
+    uint32_t nvalue_ids = (uint32_t) node->parts.size;
+    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
+        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
+    }
+
+    return emit_new_regexp(builder, node->base.node_id, node->base.location, nvalue_ids, value_ids, node->base.flags);
+}
+
+static uint32_t
 compile_interpolated_string_node(PrismBuilder *builder, const pm_interpolated_string_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
     uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
@@ -1351,6 +1378,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_instance_variable_or_write_node(builder, (const pm_instance_variable_or_write_node_t *) node);
         case PM_INTEGER_NODE:
             return compile_integer_node(builder, (const pm_integer_node_t *) node);
+        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
+            return compile_interpolated_regular_expression_node(builder, (const pm_interpolated_regular_expression_node_t *) node);
         case PM_INTERPOLATED_STRING_NODE:
             return compile_interpolated_string_node(builder, (const pm_interpolated_string_node_t *) node);
         case PM_LOCAL_VARIABLE_READ_NODE:
@@ -1577,6 +1606,11 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 case kPrismInsnNewRange:
                     printf("%%%" PRIu32 " = new_range %%%" PRIu32 ", %%%" PRIu32 ", exclude_end=%d\n", opnds[0], opnds[1], opnds[2], insn->as.range.exclude_end);
+                    break;
+                case kPrismInsnNewRegexp:
+                    printf("%%%" PRIu32 " = new_regexp", opnds[0]);
+                    dump_values(insn->opnds_len - 1, opnds + 1);
+                    printf(" flags=%" PRIu16 "\n", insn->as.regexp.flags);
                     break;
                 case kPrismInsnNewString:
                     printf("%%%" PRIu32 " = new_string", opnds[0]);
