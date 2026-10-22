@@ -1132,6 +1132,20 @@ compile_interpolated_string_node(PrismBuilder *builder, const pm_interpolated_st
 }
 
 static uint32_t
+compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_x_string_node_t *node) {
+    uint32_t receiver_id = emit_load_self(builder, node->base.node_id, node->base.location);
+    uint32_t nvalue_ids = (uint32_t) node->parts.size;
+    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
+        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
+    }
+
+    uint32_t string_id = emit_new_string(builder, node->base.node_id, node->base.location, nvalue_ids, value_ids);
+    return emit_call(builder, node->base.node_id, node->base.location, PM_CONSTANT_BACKTICK, receiver_id, 1, &string_id);
+}
+
+static uint32_t
 compile_local_variable_read_node(PrismBuilder *builder, const pm_local_variable_read_node_t *node) {
     uint32_t local_id = resolve_local(builder, node->name);
     return emit_load_lvar(builder, node->base.node_id, node->base.location, local_id);
@@ -1382,6 +1396,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_interpolated_regular_expression_node(builder, (const pm_interpolated_regular_expression_node_t *) node);
         case PM_INTERPOLATED_STRING_NODE:
             return compile_interpolated_string_node(builder, (const pm_interpolated_string_node_t *) node);
+        case PM_INTERPOLATED_X_STRING_NODE:
+            return compile_interpolated_x_string_node(builder, (const pm_interpolated_x_string_node_t *) node);
         case PM_LOCAL_VARIABLE_READ_NODE:
             return compile_local_variable_read_node(builder, (const pm_local_variable_read_node_t *) node);
         case PM_LOCAL_VARIABLE_WRITE_NODE:
