@@ -41,6 +41,7 @@ typedef enum {
     kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
+    kPrismInsnLoadSVar,
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
     kPrismInsnNewRange,
@@ -68,6 +69,7 @@ typedef struct {
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
         struct { bool exclude_end; } range;
+        struct { uint32_t number; } svar;
     } as;
 } PrismInsn;
 
@@ -431,6 +433,18 @@ emit_load_nil(PrismBuilder *builder, uint32_t node_id, pm_location_t location) {
 static uint32_t
 emit_load_self(PrismBuilder *builder, uint32_t node_id, pm_location_t location) {
     PrismInsn *insn = make_insn(builder, kPrismInsnLoadSelf, node_id, location, 1);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_load_svar(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t number) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadSVar, node_id, location, 1);
+    insn->as.svar.number = number;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -1027,6 +1041,11 @@ compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
 }
 
 static uint32_t
+compile_numbered_reference_read_node(PrismBuilder *builder, const pm_numbered_reference_read_node_t *node) {
+    return emit_load_svar(builder, node->base.node_id, node->base.location, node->number);
+}
+
+static uint32_t
 compile_or_node(PrismBuilder *builder, const pm_or_node_t *node) {
     return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
 }
@@ -1217,6 +1236,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_or_write_node(builder, (const pm_local_variable_or_write_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
+        case PM_NUMBERED_REFERENCE_READ_NODE:
+            return compile_numbered_reference_read_node(builder, (const pm_numbered_reference_read_node_t *) node);
         case PM_OR_NODE:
             return compile_or_node(builder, (const pm_or_node_t *) node);
         case PM_PARENTHESES_NODE:
@@ -1388,6 +1409,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnLoadSelf:
                     printf("%%%" PRIu32 " = load_self\n", opnds[0]);
+                    break;
+                case kPrismInsnLoadSVar:
+                    printf("%%%" PRIu32 " = load_svar s%" PRIu32 "\n", opnds[0], insn->as.svar.number);
                     break;
                 case kPrismInsnNewArray:
                     printf("%%%" PRIu32 " = new_array", opnds[0]);
