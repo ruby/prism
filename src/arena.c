@@ -81,6 +81,15 @@ pm_arena_alloc_slow(pm_arena_t *arena, size_t size) {
     return block->data;
 }
 
+void *
+pm_arena_realloc(pm_arena_t *arena, void *old_ptr, size_t old_size, size_t new_size, size_t alignment) {
+    void *new_ptr = pm_arena_alloc(arena, new_size, alignment);
+    if (old_ptr) {
+    memcpy(new_ptr, old_ptr, old_size);
+    }
+    return new_ptr;
+}
+
 /**
  * Returns a newly allocated and initialized arena.
  */

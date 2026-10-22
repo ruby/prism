@@ -83,6 +83,8 @@ pm_arena_alloc(pm_arena_t *arena, size_t size, size_t alignment) {
     return pm_arena_alloc_slow(arena, size);
 }
 
+void * pm_arena_realloc(pm_arena_t *arena, void *old_ptr, size_t old_size, size_t new_size, size_t alignment);
+
 /*
  * Allocate zero-initialized memory from the arena. This function is infallible
  * — it aborts on allocation failure.
