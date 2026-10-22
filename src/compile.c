@@ -49,7 +49,9 @@ typedef enum {
     kPrismInsnStoreGVar,
     kPrismInsnStoreIVar,
     kPrismInsnStoreLVar,
-    kPrismInsnTraceLine
+    kPrismInsnTraceCall,
+    kPrismInsnTraceLine,
+    kPrismInsnTraceReturn
 } PrismInsnKind;
 
 typedef struct {
@@ -517,8 +519,21 @@ emit_store_lvar(PrismBuilder *builder, uint32_t node_id, pm_location_t location,
 }
 
 static void
+emit_trace_call(PrismBuilder *builder, uint32_t node_id, pm_location_t location) {
+    make_insn(builder, kPrismInsnTraceCall, node_id, location, 0);
+}
+
+static void
 emit_trace_line(PrismBuilder *builder, uint32_t node_id, pm_location_t location) {
     make_insn(builder, kPrismInsnTraceLine, node_id, location, 0);
+}
+
+static void
+emit_trace_return(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnTraceReturn, node_id, location, 1);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = value_id;
 }
 
 /******************************************************************************/
@@ -843,6 +858,8 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
         }
     }
 
+    emit_trace_call(builder, node->base.node_id, node->base.location);
+
     uint32_t value_id;
     if (node->body) {
         value_id = compile_node(builder, node->body);
@@ -850,6 +867,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
         value_id = emit_load_nil(builder, node->base.node_id, node->base.location);
     }
 
+    emit_trace_return(builder, node->base.node_id, node->base.location, value_id);
     emit_return(builder, node->base.node_id, node->base.location, value_id);
 
     builder->state = state;
@@ -1405,8 +1423,14 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnStoreLVar:
                     printf("store_lvar v%" PRIu32 ", %%%" PRIu32 "\n", insn->as.lvar.local_id, opnds[0]);
                     break;
+                case kPrismInsnTraceCall:
+                    printf("trace_call\n");
+                    break;
                 case kPrismInsnTraceLine:
                     printf("trace_line %d\n", pm_line_offset_list_line(&builder->parser->line_offsets, insn->location.start, builder->parser->start_line));
+                    break;
+                case kPrismInsnTraceReturn:
+                    printf("trace_return %%%" PRIu32 "\n", opnds[0]);
                     break;
             }
         }
