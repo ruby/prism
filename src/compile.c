@@ -89,6 +89,7 @@ typedef enum {
     kPrismObjectInteger,
     kPrismObjectNil,
     kPrismObjectRational,
+    kPrismObjectRegexp,
     kPrismObjectString,
     kPrismObjectSymbol,
     kPrismObjectTrue
@@ -1138,6 +1139,17 @@ compile_rational_node(PrismBuilder *builder, const pm_rational_node_t *node) {
 }
 
 static uint32_t
+compile_regular_expression_node(PrismBuilder *builder, const pm_regular_expression_node_t *node) {
+    uint32_t object_id = make_object(builder, kPrismObjectRegexp);
+    PrismObject *object = builder->unit->objects + object_id;
+
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->unescaped;
+
+    return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
     return emit_load_self(builder, node->base.node_id, node->base.location);
 }
@@ -1286,6 +1298,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_range_node(builder, (const pm_range_node_t *) node);
         case PM_RATIONAL_NODE:
             return compile_rational_node(builder, (const pm_rational_node_t *) node);
+        case PM_REGULAR_EXPRESSION_NODE:
+            return compile_regular_expression_node(builder, (const pm_regular_expression_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
         case PM_STATEMENTS_NODE:
@@ -1358,6 +1372,11 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
         case kPrismObjectRational:
             printf("(%" PRIu32 "/%" PRIu32 ")", object->as.rational.numerator->value, object->as.rational.denominator->value); /* TODO */
             break;
+        case kPrismObjectRegexp: {
+            const pm_string_t *unescaped = object->as.string.unescaped;
+            printf("/%.*s/", (int) pm_string_length(unescaped), (const char *) pm_string_source(unescaped));
+            break;
+        }
         case kPrismObjectString: {
             const pm_string_t *unescaped = object->as.string.unescaped;
             printf("\"%.*s\"", (int) pm_string_length(unescaped), (const char *) pm_string_source(unescaped));
