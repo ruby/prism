@@ -2,6 +2,8 @@
 
 #include "prism/internal/allocator.h"
 #include "prism/internal/constant_pool.h"
+#include "prism/internal/line_offset_list.h"
+#include "prism/internal/parser.h"
 #include "prism/node.h"
 
 #include <assert.h>
@@ -38,7 +40,8 @@ typedef enum {
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
     kPrismInsnStoreGVar,
-    kPrismInsnStoreIVar
+    kPrismInsnStoreIVar,
+    kPrismInsnTraceLine
 } PrismInsnKind;
 
 typedef struct {
@@ -97,7 +100,9 @@ typedef struct {
 } PrismGraph;
 
 typedef struct {
+    const pm_parser_t *parser;
     uint32_t block_id;
+    int32_t lineno;
 } PrismBuilder;
 
 /******************************************************************************/
@@ -331,29 +336,32 @@ emit_return(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_locat
     graph->opnds[insn->opnds_off] = value_id;
 }
 
-static uint32_t
+static void
 emit_store_name(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, PrismInsnKind kind, pm_constant_id_t name_id, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, graph, kind, node_id, location, 1);
     insn->as.name.name_id = name_id;
 
     graph->opnds[insn->opnds_off] = value_id;
-
-    return value_id;
 }
 
-static uint32_t
+static void
 emit_store_cvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
-    return emit_store_name(builder, graph, node_id, location, kPrismInsnStoreCVar, name_id, value_id);
+    emit_store_name(builder, graph, node_id, location, kPrismInsnStoreCVar, name_id, value_id);
 }
 
-static uint32_t
+static void
 emit_store_gvar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
-    return emit_store_name(builder, graph, node_id, location, kPrismInsnStoreGVar, name_id, value_id);
+    emit_store_name(builder, graph, node_id, location, kPrismInsnStoreGVar, name_id, value_id);
 }
 
-static uint32_t
+static void
 emit_store_ivar(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t value_id) {
-    return emit_store_name(builder, graph, node_id, location, kPrismInsnStoreIVar, name_id, value_id);
+    emit_store_name(builder, graph, node_id, location, kPrismInsnStoreIVar, name_id, value_id);
+}
+
+static void
+emit_trace_line(PrismBuilder *builder, PrismGraph *graph, uint32_t node_id, pm_location_t location) {
+    make_insn(builder, graph, kPrismInsnTraceLine, node_id, location, 0);
 }
 
 /******************************************************************************/
@@ -753,6 +761,14 @@ compile_x_string_node(PrismBuilder *builder, PrismGraph *graph, const pm_x_strin
 
 static uint32_t
 compile_node(PrismBuilder *builder, PrismGraph *graph, const pm_node_t *node) {
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
+        int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
+        if (builder->lineno != lineno) {
+            emit_trace_line(builder, graph, node->node_id, node->location);
+            builder->lineno = lineno;
+        }
+    }
+
     switch (PM_NODE_TYPE(node)) {
         case PM_AND_NODE:
             return compile_and_node(builder, graph, (const pm_and_node_t *) node);
@@ -975,6 +991,9 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
                     printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
+                case kPrismInsnTraceLine:
+                    printf("  trace_line %d\n", pm_line_offset_list_line(&parser->line_offsets, insn->location.start, parser->start_line));
+                    break;
             }
         }
     }
@@ -982,7 +1001,7 @@ dump_graph(const pm_parser_t *parser, PrismGraph *graph) {
 
 void
 pm_compile(const pm_parser_t *parser, const pm_node_t *node) {
-    PrismBuilder builder = { 0 };
+    PrismBuilder builder = { .parser = parser, .lineno = parser->start_line - 1, 0 };
     PrismGraph graph = { 0 };
     compile_node(&builder, &graph, node);
     dump_graph(parser, &graph);
