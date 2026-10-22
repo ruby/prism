@@ -28,6 +28,7 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
 }
 
 typedef enum {
+    kPrismInsnAliasMethod,
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnCall,
@@ -281,6 +282,15 @@ make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, pm_locati
 }
 
 /******************************************************************************/
+
+static void
+emit_alias_method(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t new_name_id, uint32_t old_name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnAliasMethod, node_id, location, 2);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = new_name_id;
+    graph->opnds[insn->opnds_off + 1] = old_name_id;
+}
 
 static void
 emit_branch(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t block_id, uint32_t opnds_len, uint32_t *opnd_ids) {
@@ -599,6 +609,14 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 }
 
 /******************************************************************************/
+
+static uint32_t
+compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *node) {
+    uint32_t new_name_id = compile_node(builder, node->new_name);
+    uint32_t old_name_id = compile_node(builder, node->old_name);
+    emit_alias_method(builder, node->base.node_id, node->base.location, new_name_id, old_name_id);
+    return emit_load_nil(builder, node->base.node_id, node->base.location);
+}
 
 static uint32_t
 compile_and_node(PrismBuilder *builder, const pm_and_node_t *node) {
@@ -1025,6 +1043,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
     }
 
     switch (PM_NODE_TYPE(node)) {
+        case PM_ALIAS_METHOD_NODE:
+            return compile_alias_method_node(builder, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
             return compile_and_node(builder, (const pm_and_node_t *) node);
         case PM_CALL_NODE:
@@ -1173,6 +1193,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
             printf("    ");
 
             switch (insn->kind) {
+                case kPrismInsnAliasMethod:
+                    printf("alias_method %%%" PRIu32 " %%%" PRIu32 "\n", opnds[0], opnds[1]);
+                    break;
                 case kPrismInsnBranch: {
                     printf("branch bb%" PRIu32, insn->as.branchif.then_block_id);
                     dump_values(insn->opnds_len, opnds);
