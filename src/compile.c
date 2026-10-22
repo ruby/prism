@@ -20,10 +20,11 @@ static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`",
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
-    if (constant_id == PM_CONSTANT_BACKTICK) {
-        return &backtick_constant;
-    } else {
-        return pm_parser_constant(parser, constant_id);
+    switch (constant_id) {
+        case PM_CONSTANT_BACKTICK:
+            return &backtick_constant;
+        default:
+            return pm_parser_constant(parser, constant_id);
     }
 }
 
@@ -32,6 +33,8 @@ typedef enum {
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnCall,
+    kPrismInsnCallToS,
+    kPrismInsnConvertToString,
     kPrismInsnDefineMethod,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
@@ -345,6 +348,31 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_location_t location, pm_co
     graph->opnds[insn->opnds_off] = value_id;
     graph->opnds[insn->opnds_off + 1] = receiver_id;
     memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
+
+    return value_id;
+}
+
+static uint32_t
+emit_call_to_s(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t receiver_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnCallToS, node_id, location, 2);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = receiver_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_convert_to_string(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t string_id, uint32_t to_s_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnConvertToString, node_id, location, 3);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = string_id;
+    graph->opnds[insn->opnds_off + 2] = to_s_id;
 
     return value_id;
 }
@@ -930,6 +958,26 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 }
 
 static uint32_t
+compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statements_node_t *node) {
+    uint32_t string_id;
+    if (node->statements) {
+        string_id = compile_node(builder, PM_NODE_UPCAST(node->statements));
+    } else {
+        string_id = emit_load_nil(builder, node->base.node_id, node->base.location);
+    }
+
+    uint32_t to_s_id = emit_call_to_s(builder, node->base.node_id, node->base.location, string_id);
+    return emit_convert_to_string(builder, node->base.node_id, node->base.location, string_id, to_s_id);
+}
+
+static uint32_t
+compile_embedded_variable_node(PrismBuilder *builder, const pm_embedded_variable_node_t *node) {
+    uint32_t string_id = compile_node(builder, node->variable);
+    uint32_t to_s_id = emit_call_to_s(builder, node->base.node_id, node->base.location, string_id);
+    return emit_convert_to_string(builder, node->base.node_id, node->base.location, string_id, to_s_id);
+}
+
+static uint32_t
 compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectFalse);
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -1271,6 +1319,10 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_class_variable_or_write_node(builder, (const pm_class_variable_or_write_node_t *) node);
         case PM_DEF_NODE:
             return compile_def_node(builder, (const pm_def_node_t *) node);
+        case PM_EMBEDDED_STATEMENTS_NODE:
+            return compile_embedded_statements_node(builder, (const pm_embedded_statements_node_t *) node);
+        case PM_EMBEDDED_VARIABLE_NODE:
+            return compile_embedded_variable_node(builder, (const pm_embedded_variable_node_t *) node);
         case PM_FALSE_NODE:
             return compile_false_node(builder, (const pm_false_node_t *) node);
         case PM_FLOAT_NODE:
@@ -1460,6 +1512,13 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
+                case kPrismInsnCallToS: {
+                    printf("%%%" PRIu32 " = call_to_s %%%" PRIu32 "\n", opnds[0], opnds[1]);
+                    break;
+                }
+                case kPrismInsnConvertToString:
+                    printf("%%%" PRIu32 " = convert_to_string %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
+                    break;
                 case kPrismInsnDefineMethod: {
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.method.name_id);
                     printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.method.graph_id);
