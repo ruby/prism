@@ -31,6 +31,7 @@ typedef enum {
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnCall,
+    kPrismInsnDefineMethod,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
     kPrismInsnLoadCVar,
@@ -55,6 +56,7 @@ typedef struct {
     union {
         struct { uint32_t block_id; } branch;
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
+        struct { uint32_t graph_id; } method;
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
         struct { bool exclude_end; } range;
@@ -108,17 +110,21 @@ typedef struct {
 } PrismUnit;
 
 typedef struct {
-    const pm_parser_t *parser;
-    pm_arena_t *arena;
-    PrismUnit *unit;
     uint32_t graph_id;
     uint32_t block_id;
     int32_t lineno;
+} PrismBuilderState;
+
+typedef struct {
+    const pm_parser_t *parser;
+    pm_arena_t *arena;
+    PrismUnit *unit;
+    PrismBuilderState state;
 } PrismBuilder;
 
 /******************************************************************************/
 
-#define PrismBuilder_graph(builder_) ((builder_)->unit->graphs + (builder_)->graph_id)
+#define PrismBuilder_graph(builder_) ((builder_)->unit->graphs + (builder_)->state.graph_id)
 
 static uint32_t
 make_graph(PrismBuilder *builder) {
@@ -184,10 +190,23 @@ make_object(PrismBuilder *builder, PrismObjectKind kind) {
     return object_id;
 }
 
+static uint32_t
+make_object_constant_id(PrismBuilder *builder, pm_constant_id_t constant_id) {
+    uint32_t object_id = make_object(builder, kPrismObjectSymbol);
+    pm_string_t *name = pm_arena_alloc(builder->arena, sizeof(pm_string_t), PRISM_ALIGNOF(pm_string_t));
+
+    const pm_constant_t *constant = compile_constant(builder->parser, constant_id);
+    *name = (pm_string_t) { .source = pm_constant_start(constant), .length = pm_constant_length(constant) };
+
+    builder->unit->objects[object_id].as.string.flags = 0;
+    builder->unit->objects[object_id].as.string.unescaped = name;
+    return object_id;
+}
+
 static PrismInsn *
 make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, pm_location_t location, uint32_t opnds_len) {
     PrismGraph *graph = PrismBuilder_graph(builder);
-    PrismBlock *block = graph->blocks + builder->block_id;
+    PrismBlock *block = graph->blocks + builder->state.block_id;
 
     if (block->ninsns == block->insns_capa) {
         uint32_t next_capa = block->insns_capa ? block->insns_capa * 2 : 8;
@@ -268,6 +287,12 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_location_t location, pm_co
     memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
 
     return value_id;
+}
+
+static void
+emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineMethod, node_id, location, 0);
+    insn->as.method.graph_id = graph_id;
 }
 
 static uint32_t
@@ -416,12 +441,12 @@ compile_instance_variable_logical_write_node(PrismBuilder *builder, const pm_nod
         emit_branchif(builder, node->node_id, node->location, predicate_id, join_block_id, 1, &predicate_id, set_block_id, 0, NULL);
     }
 
-    builder->block_id = set_block_id;
+    builder->state.block_id = set_block_id;
     uint32_t value_id = compile_node(builder, value);
     emit_store_ivar(builder, node->node_id, node->location, name, value_id);
     emit_branch(builder, node->node_id, node->location, join_block_id, 1, &value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -437,11 +462,11 @@ compile_logical_node(PrismBuilder *builder, const pm_node_t *node, const pm_node
         emit_branchif(builder, node->node_id, node->location, left_value_id, join_block_id, 1, &left_value_id, right_block_id, 0, NULL);
     }
 
-    builder->block_id = right_block_id;
+    builder->state.block_id = right_block_id;
     uint32_t right_value_id = compile_node(builder, right);
     emit_branch(builder, node->node_id, node->location, join_block_id, 1, &right_value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -453,7 +478,7 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 
     emit_branch(builder, node->node_id, node->location, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
 
-    builder->block_id = predicate_block_id;
+    builder->state.block_id = predicate_block_id;
     uint32_t predicate_id = compile_node(builder, predicate);
     if (PM_NODE_TYPE_P(node, PM_WHILE_NODE)) {
         emit_branchif(builder, node->node_id, node->location, predicate_id, loop_block_id, 0, NULL, join_block_id, 0, NULL);
@@ -461,13 +486,13 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
         emit_branchif(builder, node->node_id, node->location, predicate_id, join_block_id, 0, NULL, loop_block_id, 0, NULL);
     }
 
-    builder->block_id = loop_block_id;
+    builder->state.block_id = loop_block_id;
     if (statements) {
         compile_node(builder, PM_NODE_UPCAST(statements));
     }
     emit_branch(builder, node->node_id, node->location, predicate_block_id, 0, NULL);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return emit_load_nil(builder, node->node_id, node->location);
 }
 
@@ -534,12 +559,12 @@ compile_class_variable_and_write_node(PrismBuilder *builder, const pm_class_vari
     uint32_t predicate_id = emit_load_cvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
 
-    builder->block_id = set_block_id;
+    builder->state.block_id = set_block_id;
     uint32_t value_id = compile_node(builder, node->value);
     emit_store_cvar(builder, node->base.node_id, node->base.location, node->name, value_id);
     emit_branch(builder, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -552,17 +577,42 @@ compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_varia
     uint32_t defined_id = emit_defined_cvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, defined_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
 
-    builder->block_id = defined_block_id;
+    builder->state.block_id = defined_block_id;
     uint32_t predicate_id = emit_load_cvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, predicate_id, join_block_id, 1, &predicate_id, undefined_block_id, 0, NULL);
 
-    builder->block_id = undefined_block_id;
+    builder->state.block_id = undefined_block_id;
     uint32_t value_id = compile_node(builder, node->value);
     emit_store_cvar(builder, node->base.node_id, node->base.location, node->name, value_id);
     emit_branch(builder, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
+    PrismBuilderState state = builder->state;
+    uint32_t graph_id = make_graph(builder);
+
+    builder->state.graph_id = graph_id;
+    builder->state.block_id = make_block(builder, 0);
+    builder->state.lineno = builder->parser->start_line - 1;
+
+    uint32_t value_id;
+    if (node->body) {
+        value_id = compile_node(builder, node->body);
+    } else {
+        value_id = emit_load_nil(builder, node->base.node_id, node->base.location);
+    }
+
+    emit_return(builder, node->base.node_id, node->base.location, value_id);
+
+    builder->state = state;
+    emit_define_method(builder, node->base.node_id, node->base.location, graph_id);
+
+    uint32_t object_id = make_object_constant_id(builder, node->name);
+    return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
 }
 
 static uint32_t
@@ -607,12 +657,12 @@ compile_global_variable_and_write_node(PrismBuilder *builder, const pm_global_va
     uint32_t predicate_id = emit_load_gvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
 
-    builder->block_id = set_block_id;
+    builder->state.block_id = set_block_id;
     uint32_t value_id = compile_node(builder, node->value);
     emit_store_gvar(builder, node->base.node_id, node->base.location, node->name, value_id);
     emit_branch(builder, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -625,16 +675,16 @@ compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_var
     uint32_t defined_id = emit_defined_gvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, defined_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
 
-    builder->block_id = defined_block_id;
+    builder->state.block_id = defined_block_id;
     uint32_t predicate_id = emit_load_gvar(builder, node->base.node_id, node->base.location, node->name);
     emit_branchif(builder, node->base.node_id, node->base.location, predicate_id, join_block_id, 1, &predicate_id, undefined_block_id, 0, NULL);
 
-    builder->block_id = undefined_block_id;
+    builder->state.block_id = undefined_block_id;
     uint32_t value_id = compile_node(builder, node->value);
     emit_store_gvar(builder, node->base.node_id, node->base.location, node->name, value_id);
     emit_branch(builder, node->base.node_id, node->base.location, join_block_id, 1, &value_id);
 
-    builder->block_id = join_block_id;
+    builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -698,8 +748,8 @@ compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *nod
 
 static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
-    builder->graph_id = make_graph(builder);
-    builder->block_id = make_block(builder, 0);
+    builder->state.graph_id = make_graph(builder);
+    builder->state.block_id = make_block(builder, 0);
     uint32_t value_id;
 
     const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
@@ -802,9 +852,9 @@ static uint32_t
 compile_node(PrismBuilder *builder, const pm_node_t *node) {
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
         int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
-        if (builder->lineno != lineno) {
+        if (builder->state.lineno != lineno) {
             emit_trace_line(builder, node->node_id, node->location);
-            builder->lineno = lineno;
+            builder->state.lineno = lineno;
         }
     }
 
@@ -823,6 +873,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_class_variable_and_write_node(builder, (const pm_class_variable_and_write_node_t *) node);
         case PM_CLASS_VARIABLE_OR_WRITE_NODE:
             return compile_class_variable_or_write_node(builder, (const pm_class_variable_or_write_node_t *) node);
+        case PM_DEF_NODE:
+            return compile_def_node(builder, (const pm_def_node_t *) node);
         case PM_FALSE_NODE:
             return compile_false_node(builder, (const pm_false_node_t *) node);
         case PM_FLOAT_NODE:
@@ -965,6 +1017,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
+                case kPrismInsnDefineMethod:
+                    printf("define_method graph%" PRIu32 "\n", insn->as.method.graph_id);
+                    break;
                 case kPrismInsnDefinedCVar: {
                     printf("%%%" PRIu32 " = defined_cvar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
@@ -1044,9 +1099,11 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node) {
         .parser = parser,
         .arena = &arena,
         .unit = &unit,
-        .graph_id = 0,
-        .block_id = 0,
-        .lineno = parser->start_line - 1
+        .state = {
+            .graph_id = 0,
+            .block_id = 0,
+            .lineno = parser->start_line - 1
+        }
     };
 
     compile_node(&builder, node);
