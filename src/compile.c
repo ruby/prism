@@ -547,6 +547,8 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id) {
 
 static uint32_t
 static_literal(PrismBuilder *builder, const pm_node_t *node) {
+    assert(PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL));
+
     switch (PM_NODE_TYPE(node)) {
         case PM_ARRAY_NODE: {
             const pm_array_node_t *cast = (const pm_array_node_t *) node;
@@ -579,6 +581,16 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
             uint32_t object_id = make_object(builder, kPrismObjectInteger);
             PrismObject *object = builder->unit->objects + object_id;
             object->as.integer.value = &cast->value;
+
+            return object_id;
+        }
+        case PM_STRING_NODE: {
+            const pm_string_node_t *cast = (const pm_string_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectString);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = &cast->unescaped;
 
             return object_id;
         }
@@ -855,8 +867,7 @@ compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
 
 static uint32_t
 compile_float_node(PrismBuilder *builder, const pm_float_node_t *node) {
-    uint32_t object_id = make_object(builder, kPrismObjectFloat);
-    builder->unit->objects[object_id].as.floating.value = node->value;
+    uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
 }
 
@@ -953,8 +964,7 @@ compile_instance_variable_or_write_node(PrismBuilder *builder, const pm_instance
 
 static uint32_t
 compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
-    uint32_t object_id = make_object(builder, kPrismObjectInteger);
-    builder->unit->objects[object_id].as.integer.value = &node->value;
+    uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
 }
 
