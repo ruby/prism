@@ -697,13 +697,32 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     PrismBuilderState state = builder->state;
     uint32_t graph_id = make_graph(builder, UINT32_MAX, (uint32_t) node->locals.size);
 
+    uint32_t nparams = 0;
+    const pm_parameters_node_t *parameters = node->parameters;
+    if (parameters) {
+        nparams = (uint32_t) parameters->requireds.size;
+    }
+
     builder->state.graph_id = graph_id;
-    builder->state.block_id = make_block(builder, 0);
+    builder->state.block_id = make_block(builder, nparams);
     builder->state.lineno = builder->parser->start_line - 1;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t *params = graph->blocks[builder->state.block_id].params;
+
     for (size_t idx = 0; idx < node->locals.size; ++idx) {
         graph->local_ids[idx] = make_local(builder, node->locals.ids[idx]);
+    }
+
+    if (parameters) {
+        for (size_t idx = 0; idx < parameters->requireds.size; ++idx) {
+            const pm_node_t *required = parameters->requireds.nodes[idx];
+
+            if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
+                uint32_t resolved_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name);
+                emit_store_lvar(builder, required->node_id, required->location, resolved_id, params[idx]);
+            }
+        }
     }
 
     uint32_t value_id;
@@ -1084,6 +1103,9 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_while_node(builder, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
             return compile_x_string_node(builder, (const pm_x_string_node_t *) node);
+        case PM_REQUIRED_PARAMETER_NODE:
+            fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
+            abort();
         default:
             fprintf(stderr, "Unhandled node type: %s\n", pm_node_type(node->type));
             abort();
