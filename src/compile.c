@@ -56,7 +56,7 @@ typedef struct {
     union {
         struct { uint32_t block_id; } branch;
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
-        struct { uint32_t graph_id; } method;
+        struct { pm_constant_id_t name_id; uint32_t graph_id; } method;
         struct { pm_constant_id_t name_id; } name;
         struct { uint32_t object_id; } object;
         struct { bool exclude_end; } range;
@@ -290,8 +290,9 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_location_t location, pm_co
 }
 
 static void
-emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t graph_id) {
+emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_location_t location, pm_constant_id_t name_id, uint32_t graph_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineMethod, node_id, location, 0);
+    insn->as.method.name_id = name_id;
     insn->as.method.graph_id = graph_id;
 }
 
@@ -609,7 +610,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     emit_return(builder, node->base.node_id, node->base.location, value_id);
 
     builder->state = state;
-    emit_define_method(builder, node->base.node_id, node->base.location, graph_id);
+    emit_define_method(builder, node->base.node_id, node->base.location, node->name, graph_id);
 
     uint32_t object_id = make_object_constant_id(builder, node->name);
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -1009,45 +1010,40 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 }
                 case kPrismInsnCall: {
-                    printf("%%%" PRIu32 " = call %%%" PRIu32 ".", opnds[0], opnds[1]);
-
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = call %%%" PRIu32 ".%.*s", opnds[0], opnds[1], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     dump_values(insn->opnds_len - 2, opnds + 2);
                     printf("\n");
                     break;
                 }
-                case kPrismInsnDefineMethod:
-                    printf("define_method graph%" PRIu32 "\n", insn->as.method.graph_id);
+                case kPrismInsnDefineMethod: {
+                    const pm_constant_t *constant = compile_constant(builder->parser, insn->as.method.name_id);
+                    printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.method.graph_id);
                     break;
+                }
                 case kPrismInsnDefinedCVar: {
-                    printf("%%%" PRIu32 " = defined_cvar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = defined_cvar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnDefinedGVar: {
-                    printf("%%%" PRIu32 " = defined_gvar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = defined_gvar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadCVar: {
-                    printf("%%%" PRIu32 " = load_cvar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = load_cvar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadGVar: {
-                    printf("%%%" PRIu32 " = load_gvar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = load_gvar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadIVar: {
-                    printf("%%%" PRIu32 " = load_ivar ", opnds[0]);
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
+                    printf("%%%" PRIu32 " = load_ivar %.*s\n", opnds[0], (int) pm_constant_length(constant), (const char *) pm_constant_start(constant));
                     break;
                 }
                 case kPrismInsnLoadObject: {
@@ -1066,21 +1062,18 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("return %%%" PRIu32 "\n", opnds[0]);
                     break;
                 case kPrismInsnStoreCVar: {
-                    printf("store_cvar ");
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
+                    printf("store_cvar %.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
                 case kPrismInsnStoreGVar: {
-                    printf("store_gvar ");
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
+                    printf("store_gvar %.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
                 case kPrismInsnStoreIVar: {
-                    printf("store_ivar ");
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.name.name_id);
-                    printf("%.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
+                    printf("store_ivar %.*s, %%%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0]);
                     break;
                 }
                 case kPrismInsnTraceLine:
@@ -1088,6 +1081,14 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
             }
         }
+    }
+}
+
+static void
+dump_unit(PrismBuilder *builder) {
+    for (uint32_t graph_id = 0; graph_id < builder->unit->ngraphs; ++graph_id) {
+        printf("g%" PRIu32 ":\n", graph_id);
+        dump_graph(builder, builder->unit->graphs + graph_id);
     }
 }
 
@@ -1107,11 +1108,6 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node) {
     };
 
     compile_node(&builder, node);
-
-    for (uint32_t graph_id = 0; graph_id < builder.unit->ngraphs; ++graph_id) {
-        printf("graph%" PRIu32 ":\n", graph_id);
-        dump_graph(&builder, builder.unit->graphs + graph_id);
-    }
-
+    dump_unit(&builder);
     pm_arena_cleanup(&arena);
 }
