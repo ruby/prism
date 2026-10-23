@@ -62,7 +62,8 @@ typedef enum {
     kPrismInsnStoreLVar,
     kPrismInsnTraceCall,
     kPrismInsnTraceLine,
-    kPrismInsnTraceReturn
+    kPrismInsnTraceReturn,
+    kPrismInsnUndefMethod
 } PrismInsnKind;
 
 typedef struct {
@@ -724,6 +725,14 @@ emit_trace_return(PrismBuilder *builder, uint32_t node_id, pm_location_t locatio
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     graph->opnds[insn->opnds_off] = value_id;
+}
+
+static void
+emit_undef_method(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnUndefMethod, node_id, location, 1);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = name_id;
 }
 
 /******************************************************************************/
@@ -1437,6 +1446,15 @@ compile_true_node(PrismBuilder *builder, const pm_true_node_t *node) {
 }
 
 static uint32_t
+compile_undef_node(PrismBuilder *builder, const pm_undef_node_t *node) {
+    for (size_t idx = 0; idx < node->names.size; ++idx) {
+        uint32_t name_id = compile_node(builder, node->names.nodes[idx]);
+        emit_undef_method(builder, node->base.node_id, node->base.location, name_id);
+    }
+    return emit_load_nil(builder, node->base.node_id, node->base.location);
+}
+
+static uint32_t
 compile_until_node(PrismBuilder *builder, const pm_until_node_t *node) {
     return compile_loop_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements);
 }
@@ -1566,6 +1584,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_symbol_node(builder, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
             return compile_true_node(builder, (const pm_true_node_t *) node);
+        case PM_UNDEF_NODE:
+            return compile_undef_node(builder, (const pm_undef_node_t *) node);
         case PM_UNTIL_NODE:
             return compile_until_node(builder, (const pm_until_node_t *) node);
         case PM_WHILE_NODE:
@@ -1810,6 +1830,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 case kPrismInsnTraceReturn:
                     printf("trace_return %%%" PRIu32 "\n", opnds[0]);
+                    break;
+                case kPrismInsnUndefMethod:
+                    printf("undef_method %%%" PRIu32 "\n", opnds[0]);
                     break;
             }
         }
