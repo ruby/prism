@@ -31,7 +31,7 @@ a.out
 out.svg
 
 /ext/prism/api_node.c
-/fuzz/output/
+/test/fuzz/output/
 /gemfiles/typecheck/bin/
 /include/prism/ast.h
 /include/prism/ast.hpp

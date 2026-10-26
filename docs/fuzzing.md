@@ -1,9 +1,9 @@
 # Fuzzing
 
-We use fuzzing to test the various entrypoints to the library. The fuzzer we use is [AFL++](https://aflplus.plus). All files related to fuzzing live within the `fuzz` directory, which has the following structure:
+We use fuzzing to test the various entrypoints to the library. The fuzzer we use is [AFL++](https://aflplus.plus). All files related to fuzzing live within the `test/fuzz` directory, which has the following structure:
 
 ```
-fuzz
+test/fuzz
 ├── corpus
 │   └── parse             fuzzing corpus for parsing (a symlink to our fixtures)
 ├── dict                  a AFL++ dictionary containing various tokens
@@ -57,12 +57,12 @@ make build/fuzz.heisenbug.parse
 Triaging crashes and hangs is easier when the inputs are as short as possible. In the fuzz container, an entire crash or hang directory can be minimized using
 
 ```
-./fuzz/tools/minimize.sh <directory>
+./test/fuzz/tools/minimize.sh <directory>
 ```
 
 e.g.
 ```
-./fuzz/tools/minimize.sh fuzz/output/parse/default/crashes
+./test/fuzz/tools/minimize.sh test/fuzz/output/parse/default/crashes
 ```
 
 This may take a long time. In the crash/hang directory, for each input file there will appear a minimized version with the extension `.min` appended.
@@ -70,7 +70,7 @@ This may take a long time. In the crash/hang directory, for each input file ther
 Backtraces for crashes (not hangs) can be generated en masse with
 
 ```
-./fuzz/tools/backtrace.sh <directory>
+./test/fuzz/tools/backtrace.sh <directory>
 ```
 
 Files with basename equal to the input file name with extension `.bt` will be created e.g.
