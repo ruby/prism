@@ -176,6 +176,38 @@ jobs:
       env:
         PRISM_BUILD_MINIMAL: "1"
 
+  build-arm-none-eabi:
+    strategy:
+      fail-fast: false
+      matrix:
+        cflags:
+          - ""
+          - "-DPRISM_BUILD_MINIMAL"
+    runs-on: ubuntu-24.04
+    env:
+      CC: arm-none-eabi-gcc
+      AR: arm-none-eabi-ar
+      CFLAGS: -mcpu=cortex-m33 -mthumb ${{ matrix.cflags }}
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ruby
+        bundler-cache: true
+    - name: Install toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi qemu-user
+    - name: Generate templates
+      run: bundle exec rake templates
+    - name: Build static library
+      run: make -j$(nproc) static
+    - name: Build smoke test
+      run: $CC $CFLAGS -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Iinclude test/embedded/main.c build/libprism.a --specs=rdimon.specs -o build/embedded.elf
+    - name: Run smoke test
+      run: qemu-arm -cpu cortex-m33 build/embedded.elf
+
   build-with-various-compilers:
     runs-on: ubuntu-latest
     steps:
