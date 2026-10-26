@@ -6,7 +6,7 @@ on:
       - ".github/workflows/cpp-bindings.yml"
       - "include/**"
       - "src/**"
-      - "cpp/**"
+      - "test/cpp/**"
       - "*akefile*"
     branches:
       - main
@@ -40,6 +40,6 @@ jobs:
       - name: Compile prism
         run: bundle exec rake compile
       - name: Compile tests
-        run: ${{ matrix.compiler }} ${{ matrix.standard }} ${{ matrix.exceptions }} -Wall -Wextra -pedantic -Werror -o ./cpp_test cpp/*_test.cpp build/static/*.o -Iinclude
+        run: ${{ matrix.compiler }} ${{ matrix.standard }} ${{ matrix.exceptions }} -Wall -Wextra -pedantic -Werror -o ./cpp_test test/cpp/*_test.cpp build/static/*.o -Iinclude
       - name: Run
         run: ./cpp_test
