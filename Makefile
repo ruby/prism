@@ -6,7 +6,7 @@ Q1 = $(V:1=)
 Q = $(Q1:0=@)
 ECHO1 = $(V:1=@ :)
 ECHO = $(ECHO1:0=@ echo)
-FUZZ_OUTPUT_DIR = $(CURDIR)/fuzz/output
+FUZZ_OUTPUT_DIR = $(CURDIR)/test/fuzz/output
 
 SOEXT ?= $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
@@ -94,7 +94,7 @@ build/static/%.o: src/%.c Makefile $(HEADERS)
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-build/fuzz.%: $(SOURCES) fuzz/%.c fuzz/fuzz.c
+build/fuzz.%: $(SOURCES) test/fuzz/%.c test/fuzz/fuzz.c
 	$(ECHO) "building $* fuzzer"
 	$(Q) $(MAKEDIRS) $(@D)
 	$(ECHO) "building main fuzz binary"
@@ -102,16 +102,16 @@ build/fuzz.%: $(SOURCES) fuzz/%.c fuzz/fuzz.c
 	$(ECHO) "building cmplog binary"
 	$(Q) AFL_LLVM_CMPLOG=1 afl-clang-lto $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(FUZZ_FLAGS) -O0 -fsanitize=fuzzer,address -ggdb3 -std=c99 -Iinclude -o $@.cmplog $^
 
-build/fuzz.heisenbug.%: $(SOURCES) fuzz/%.c fuzz/heisenbug.c
+build/fuzz.heisenbug.%: $(SOURCES) test/fuzz/%.c test/fuzz/heisenbug.c
 	$(Q) afl-clang-lto $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(FUZZ_FLAGS) -O0 -fsanitize=fuzzer,address -ggdb3 -std=c99 -Iinclude -o $@ $^
 
 fuzz-debug:
 	$(ECHO) "entering debug shell"
-	$(Q) docker run -it --rm -e HISTFILE=/prism/fuzz/output/.bash_history -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz
+	$(Q) docker run -it --rm -e HISTFILE=/prism/test/fuzz/output/.bash_history -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz
 
-fuzz-docker-build: fuzz/docker/Dockerfile
+fuzz-docker-build: test/fuzz/docker/Dockerfile
 	$(ECHO) "building docker image"
-	$(Q) docker build -t prism/fuzz fuzz/docker/
+	$(Q) docker build -t prism/fuzz test/fuzz/docker/
 
 fuzz-run-%: FORCE fuzz-docker-build
 	$(ECHO) "generating templates"
@@ -120,11 +120,11 @@ fuzz-run-%: FORCE fuzz-docker-build
 	$(Q) docker run --rm -v $(CURDIR):/prism prism/fuzz /bin/bash -c "FUZZ_FLAGS=\"$(FUZZ_FLAGS)\" make build/fuzz.$*"
 	$(ECHO) "starting AFL++ run"
 	$(Q) $(MAKEDIRS) $(FUZZ_OUTPUT_DIR)/$*
-	$(Q) docker run -it --rm -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz /bin/bash -c "./fuzz/$*.sh /fuzz_output/$*"
+	$(Q) docker run -it --rm -v $(CURDIR):/prism -v $(FUZZ_OUTPUT_DIR):/fuzz_output prism/fuzz /bin/bash -c "./test/fuzz/$*.sh /fuzz_output/$*"
 FORCE:
 
 fuzz-clean:
-	$(Q) $(RMALL) fuzz/output
+	$(Q) $(RMALL) test/fuzz/output
 
 clean:
 	$(Q) $(RMALL) build

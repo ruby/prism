@@ -15,7 +15,6 @@ task check_manifest: :templates do
     bin
     build
     doc
-    fuzz
     gemfiles
     javascript
     java
