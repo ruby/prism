@@ -83,6 +83,7 @@ Gem::Specification.new do |spec|
     "include/prism/internal/magic_comments.h",
     "include/prism/internal/memchr.h",
     "include/prism/internal/node.h",
+    "include/prism/internal/oom.h",
     "include/prism/internal/options.h",
     "include/prism/internal/parser.h",
     "include/prism/internal/regexp.h",
