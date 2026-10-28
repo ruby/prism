@@ -1048,6 +1048,17 @@ end
     }
 
     #[test]
+    fn integer_zero_value_test() {
+        for source in ["0", "-0"] {
+            let result = parse(source.as_ref());
+            let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+            let value: i32 = integer.try_into().unwrap();
+
+            assert_eq!(value, 0);
+        }
+    }
+
+    #[test]
     fn integer_small_value_to_u32_digits_test() {
         let result = parse("0xA".as_ref());
         let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
@@ -1055,6 +1066,26 @@ end
 
         assert!(!negative);
         assert_eq!(digits, &[10]);
+    }
+
+    #[test]
+    fn integer_zero_to_u32_digits_test() {
+        let result = parse("0".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[0]);
+    }
+
+    #[test]
+    fn integer_two_digit_value_to_u32_digits_test() {
+        let result = parse("0xFFFFFFFF00000001".as_ref());
+        let integer = result.node().as_program_node().unwrap().statements().body().iter().next().unwrap().as_integer_node().unwrap().value();
+        let (negative, digits) = integer.to_u32_digits();
+
+        assert!(!negative);
+        assert_eq!(digits, &[1, 4_294_967_295]);
     }
 
     #[test]

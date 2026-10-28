@@ -283,7 +283,9 @@ public class Loader {
         boolean negative = buffer.get() != 0;
 
         int wordsLength = loadVarUInt();
-        assert wordsLength > 0;
+        if (wordsLength == 0) {
+            return 0;
+        }
 
         // Load the first word. If it's the only word, then return an int if it
         // fits into one and a long otherwise.

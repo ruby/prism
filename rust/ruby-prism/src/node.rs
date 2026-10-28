@@ -269,14 +269,17 @@ impl Integer<'_> {
     pub const fn to_u32_digits(&self) -> (bool, &[u32]) {
         let negative = unsafe { (*self.pointer).negative };
         let length = unsafe { (*self.pointer).length };
-        let values = unsafe { (*self.pointer).values };
 
-        if values.is_null() {
-            let value_ptr = unsafe { std::ptr::addr_of!((*self.pointer).value) };
-            let slice = unsafe { std::slice::from_raw_parts(value_ptr, 1) };
+        if length == 0 {
+            // Zero has no words but is reported as a single 0 digit.
+            (negative, &[0])
+        } else if length <= 2 {
+            let value_ptr = unsafe { std::ptr::addr_of!((*self.pointer).words.value) }.cast::<u32>();
+            let slice = unsafe { std::slice::from_raw_parts(value_ptr, length as usize) };
             (negative, slice)
         } else {
-            let slice = unsafe { std::slice::from_raw_parts(values, length) };
+            let values = unsafe { (*self.pointer).words.values };
+            let slice = unsafe { std::slice::from_raw_parts(values, length as usize) };
             (negative, slice)
         }
     }
@@ -296,7 +299,9 @@ impl TryInto<i32> for Integer<'_> {
         let length = unsafe { (*self.pointer).length };
 
         if length == 0 {
-            i32::try_from(unsafe { (*self.pointer).value }).map_or(Err(()), |value| if negative { Ok(-value) } else { Ok(value) })
+            Ok(0)
+        } else if length == 1 {
+            i32::try_from(unsafe { (*self.pointer).words.value[0] }).map_or(Err(()), |value| if negative { Ok(-value) } else { Ok(value) })
         } else {
             Err(())
         }

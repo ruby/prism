@@ -209,6 +209,22 @@ suite("fields", () => {
       const result = parse("18446744073709552000");
       assert(statement(result).value === 18446744073709552000n);
     });
+
+    test("zero", () => {
+      assert(Object.is(statement(parse("0")).value, 0));
+      assert(Object.is(statement(parse("-0")).value, 0));
+    });
+
+    test("word with the high bit set", () => {
+      assert(statement(parse("2147483648")).value === 2147483648);
+      assert(statement(parse("4294967295")).value === 4294967295);
+      assert(statement(parse("-2147483648")).value === -2147483648n);
+    });
+
+    test("2 words with the high bit set", () => {
+      const result = parse("0xFFFFFFFFFFFFFFFF");
+      assert(statement(result).value === 18446744073709551615n);
+    });
   });
 
   test("double", () => {

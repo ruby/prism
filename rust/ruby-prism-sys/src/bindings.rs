@@ -2615,26 +2615,20 @@ pub struct pm_constant_id_list_t {
 pub struct pm_constant_t {
     _unused: [u8; 0],
 }
-/** A structure represents an arbitrary-sized integer.
+/** A structure represents an arbitrary-sized integer. The magnitude is stored as
+ 32-bit words, least significant first.
 */
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct pm_integer_t {
-    /** The number of allocated values. length is set to 0 if the integer fits
- into uint32_t.
+    /** The number of words in the magnitude, with no leading zero words. Zero
+ has no words, so a zeroed pm_integer_t is always positive zero.
 */
-    pub length: usize,
-    /** List of 32-bit integers. Set to NULL if the integer fits into uint32_t.
-*/
-    pub values: *mut u32,
-    /** Embedded value for small integer. This value is set to 0 if the value
- does not fit into uint32_t.
-*/
-    pub value: u32,
-    /** Whether or not the integer is negative. It is stored this way so that a
- zeroed pm_integer_t is always positive zero.
+    pub length: u32,
+    /** Whether or not the integer is negative.
 */
     pub negative: bool,
+    pub words: pm_integer_t__bindgen_ty_1,
 }
 /** A view of a sequence of bytes. The string does not own the bytes, so they
  must remain valid for as long as the string is in use.
@@ -6926,7 +6920,7 @@ pub struct pm_instance_variable_write_node {
  @extends pm_node_t
 */
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct pm_integer_node {
     /** The embedded base node.
 */
@@ -8619,7 +8613,7 @@ pub struct pm_range_node {
  @extends pm_node_t
 */
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct pm_rational_node {
     /** The embedded base node.
 */
@@ -10502,6 +10496,20 @@ pub enum pm_comment_type_t {
     PM_COMMENT_INLINE = 0,
     PM_COMMENT_EMBDOC = 1,
 }
+/** The words of the magnitude. Read them through pm_integer_words rather
+ than directly.
+*/
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union pm_integer_t__bindgen_ty_1 {
+    /** The words of an integer whose length is at most 2. Words past the
+ length are zero.
+*/
+    pub value: [u32; 2usize],
+    /** The words of an integer whose length is greater than 2.
+*/
+    pub values: *mut u32,
+}
 impl Default for pm_constant_id_list_t {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
@@ -10511,6 +10519,20 @@ impl Default for pm_constant_id_list_t {
         }
     }
 }
+impl Default for pm_integer_t__bindgen_ty_1 {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl ::std::fmt::Debug for pm_integer_t__bindgen_ty_1 {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "pm_integer_t__bindgen_ty_1 {{ union }}")
+    }
+}
 impl Default for pm_integer_t {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
@@ -10518,6 +10540,16 @@ impl Default for pm_integer_t {
             ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
+    }
+}
+impl ::std::fmt::Debug for pm_integer_t {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "pm_integer_t {{ negative: {:?}, words: {:?} }}",
+            self.negative,
+            self.words,
+        )
     }
 }
 impl Default for pm_string_t {
@@ -11141,6 +11173,11 @@ impl Default for pm_integer_node {
         }
     }
 }
+impl ::std::fmt::Debug for pm_integer_node {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "pm_integer_node {{ base: {:?}, value: {:?} }}", self.base, self.value)
+    }
+}
 impl Default for pm_interpolated_match_last_line_node {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
@@ -11418,6 +11455,17 @@ impl Default for pm_rational_node {
             ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
+    }
+}
+impl ::std::fmt::Debug for pm_rational_node {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "pm_rational_node {{ base: {:?}, numerator: {:?}, denominator: {:?} }}",
+            self.base,
+            self.numerator,
+            self.denominator,
+        )
     }
 }
 impl Default for pm_regular_expression_node {
