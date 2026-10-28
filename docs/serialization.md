@@ -85,8 +85,8 @@ Only nodes that own comments have an attachment, and there are none unless the `
 | # bytes | field |
 | --- | --- |
 | `1` | `1` if the integer is negative, `0` if the integer is positive |
-| varuint | the number of words in this integer |
-| varuint+ | the words of the integer, least-significant to most-significant |
+| varuint | the number of words in this integer, `0` if the integer is zero |
+| varuint* | the words of the integer, least-significant to most-significant |
 
 ## Structure
 
