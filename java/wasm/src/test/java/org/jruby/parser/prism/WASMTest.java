@@ -88,7 +88,7 @@ public class WASMTest {
     @Test
     public void testVersion() {
         try (Prism prism = new Prism()) {
-            assertEquals("2.0.0", prism.version());
+            assertEquals("2.1.0", prism.version());
         }
     }
 }
