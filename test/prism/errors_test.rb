@@ -125,6 +125,14 @@ module Prism
       assert_nil(statement.parts[0].statements)
     end
 
+    def test_nested_destructured_parameters
+      nested = "#{"(" * 10_000}a#{")" * 10_000}"
+
+      ["def foo(#{nested}); end", "foo { |#{nested}| }", "->(#{nested}) {}"].each do |source|
+        assert_includes Prism.parse(source).errors.map(&:type), :nesting_too_deep
+      end
+    end
+
     private
 
     def assert_errors(filepath, version)
