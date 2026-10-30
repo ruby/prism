@@ -1,0 +1,25 @@
+@ ProgramNode (location: (1,0)-(8,2))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(8,2))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ RegularExpressionNode (location: (1,0)-(2,1))
+        │   ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   ├── opening_loc: (1,0)-(1,1) = "/"
+        │   ├── content_loc: (1,1)-(2,0) = "\\c\\\r\n"
+        │   ├── closing_loc: (2,0)-(2,1) = "/"
+        │   └── unescaped: "\\x0A"
+        ├── @ RegularExpressionNode (location: (4,0)-(5,2))
+        │   ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   ├── opening_loc: (4,0)-(4,1) = "/"
+        │   ├── content_loc: (4,1)-(5,1) = "\\C-\\\r\nx"
+        │   ├── closing_loc: (5,1)-(5,2) = "/"
+        │   └── unescaped: "\\x0Ax"
+        └── @ RegularExpressionNode (location: (7,0)-(8,2))
+            ├── flags: newline, static_literal, ascii_8bit
+            ├── opening_loc: (7,0)-(7,1) = "/"
+            ├── content_loc: (7,1)-(8,0) = "\\M-\\\r\n"
+            ├── closing_loc: (8,0)-(8,2) = "/n"
+            └── unescaped: "\\x8A"
