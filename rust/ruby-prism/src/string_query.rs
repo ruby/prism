@@ -177,6 +177,14 @@ mod tests {
     }
 
     #[test]
+    fn subslice_test() {
+        // The byte after the slice is outside it and must not affect the result.
+        assert_eq!(Ok(true), StringQuery::new(&b"a!"[..1]).is_local());
+        assert_eq!(Ok(true), StringQuery::new(&b"Foo="[..3]).is_constant());
+        assert_eq!(Ok(true), StringQuery::new(&b"foo?"[..3]).is_method_name());
+    }
+
+    #[test]
     fn invalid_encoding_test() {
         assert_eq!(Err(InvalidEncodingError), query("A").encoding("UTF-16LE").is_local());
         assert_eq!(Err(InvalidEncodingError), query("end").encoding("UTF-16LE").is_keyword());
