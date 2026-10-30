@@ -14,7 +14,7 @@
   <url>https://github.com/ruby/prism</url>
 
   <properties>
-    <endive.version>1.1.0</endive.version>
+    <endive.version>1.2.0</endive.version>
   </properties>
 
   <dependencyManagement>
