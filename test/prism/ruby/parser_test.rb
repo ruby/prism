@@ -164,6 +164,22 @@ module Prism
       assert_raise(Parser::SyntaxError) { parser.tokenize(buffer) }
     end
 
+    def test_invalid_regexp_match_receiver
+      ["/(?:a)\\g<b>/ =~ x", "/(?<a>a)\\g<b>/ =~ x"].each do |code|
+        buffer = Parser::Source::Buffer.new("(string)")
+        buffer.source = code
+
+        diagnostics = []
+        parser = Prism::Translation::Parser34.new
+        parser.diagnostics.all_errors_are_fatal = false
+        parser.diagnostics.consumer = ->(diagnostic) { diagnostics << diagnostic }
+        parser.tokenize(buffer)
+
+        errors = diagnostics.select { |diagnostic| diagnostic.level == :error }
+        assert_equal([:invalid_regexp], errors.map(&:reason), code)
+      end
+    end
+
     def test_it_block_parameter_syntax
       assert_new_syntax("3.4/it.txt", Prism::Translation::Parser34) do
         s(:begin,
