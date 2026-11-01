@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- `Prism::Translation::Parser` now returns a `nil` AST whenever an error is reported and errors are not fatal, matching the parser gem.
+
 ## [2.1.0] - 2026-10-28
 
 ### Added

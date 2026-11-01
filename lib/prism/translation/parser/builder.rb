@@ -69,9 +69,9 @@ module Prism
 
         # The parser gem compiles a regular expression literal again when it is
         # the receiver of `=~`. If it doesn't compile, `regexp_compose` has
-        # already reported the error and the parser gem's grammar recovers from
-        # it, but prism keeps building the tree, so treat it as a plain `=~` call
-        # instead of letting `Regexp.new` raise.
+        # already reported the error, so build a plain `=~` call instead of
+        # letting `Regexp.new` raise. The tree is discarded either way, but
+        # building it to the end reports any later errors in the source.
         def static_regexp_node(node)
           super
         rescue RegexpError, Encoding::UndefinedConversionError

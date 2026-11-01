@@ -176,11 +176,40 @@ module Prism
         parser = Prism::Translation::Parser34.new
         parser.diagnostics.all_errors_are_fatal = false
         parser.diagnostics.consumer = ->(diagnostic) { diagnostics << diagnostic }
-        parser.tokenize(buffer)
+        ast, = parser.tokenize(buffer)
 
         errors = diagnostics.select { |diagnostic| diagnostic.level == :error }
         assert_equal([:invalid_regexp], errors.map(&:reason), code)
+        assert_nil(ast, code)
       end
+    end
+
+    def test_builder_errors_after_the_first_are_reported
+      buffer = Parser::Source::Buffer.new("(string)")
+      buffer.source = "/(?:a)\\g<b>/ =~ x\n/(?:a)\\g<c>/ =~ y\n"
+
+      diagnostics = []
+      parser = Prism::Translation::Parser34.new
+      parser.diagnostics.all_errors_are_fatal = false
+      parser.diagnostics.consumer = ->(diagnostic) { diagnostics << diagnostic }
+      ast, = parser.tokenize(buffer)
+
+      errors = diagnostics.select { |diagnostic| diagnostic.level == :error }
+      assert_equal([:invalid_regexp, :invalid_regexp], errors.map(&:reason))
+      assert_equal([1, 2], errors.map { |error| error.location.line })
+      assert_nil(ast)
+    end
+
+    def test_parse_returns_nil_on_syntax_error
+      buffer = Parser::Source::Buffer.new("(string)")
+      buffer.source = "1 + \n"
+
+      parser = Prism::Translation::Parser34.new
+      parser.diagnostics.all_errors_are_fatal = false
+      parser.diagnostics.consumer = ->(*) {}
+
+      assert_nil(parser.parse(buffer))
+      assert_nil(parser.parse_with_comments(buffer)[0])
     end
 
     def test_it_block_parameter_syntax
