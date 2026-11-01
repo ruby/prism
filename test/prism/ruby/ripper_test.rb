@@ -241,10 +241,10 @@ module Prism
       source = "foo".b
       assert_equal(Ripper.new(source).tap(&:parse).encoding, Prism::Translation::Ripper.new(source).tap(&:parse).encoding)
 
-      source = "# encoding: shift_jis"
+      source = "# encoding: euc-jp"
       assert_equal(Ripper.new(source).tap(&:parse).encoding, Prism::Translation::Ripper.new(source).tap(&:parse).encoding)
 
-      source = "# encoding: shift_jis".b
+      source = "# encoding: euc-jp".b
       assert_equal(Ripper.new(source).tap(&:parse).encoding, Prism::Translation::Ripper.new(source).tap(&:parse).encoding)
     end
 
