@@ -432,30 +432,86 @@ module Prism
       puts "};"
     end
 
-    # Generate lists of unicode codepoints for a given encoding.
+    # Generate the multistage lookup tables of unicode codepoint properties
+    # for a given encoding. A codepoint's properties live in the leaf table,
+    # reached by indexing the root table with its high bits and the middle
+    # table with its next five bits. Identical middle and leaf blocks are
+    # shared, which is what keeps the tables small. Titlecase letters count as
+    # uppercase because they can begin a constant name.
     def unicode_lists(encoding)
       encoding = Encoding::UTF_8
-      range = (0x100..0xD7FF).to_a.concat((0xE000..0x10FFFF).to_a)
 
-      { alpha: /[[:alpha:]]/, alnum: /[[:alnum:]]/, isupper: /[[:upper:]]/ }.map do |kind, regex|
-        codepoints = range.select { |codepoint| codepoint.chr(encoding).match?(regex) }
+      values =
+        (0...0x110000).map do |codepoint|
+          next 0 if (0xD800..0xDFFF).cover?(codepoint)
+          character = codepoint.chr(encoding)
 
-        previous = nil
-        groups =
-          codepoints.slice_before do |codepoint|
-            (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
-          end
+          value = 0
+          value |= (1 << 0) if character.match?(/[[:alpha:]]/)
+          value |= (1 << 1) if character.match?(/[[:alnum:]]/)
+          value |= (1 << 2) if character.match?(/[[:upper:]\p{Lt}]/)
+          value
+        end
 
-        matched =
-          groups.flat_map do |group|
-            ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
-          end
+      names = { 0 => "N", 2 => "D", 3 => "A", 7 => "U" }
+      unknown = values.uniq - names.keys
+      raise "unnamed property values: #{unknown.inspect}" if unknown.any?
 
-        puts "\n#define UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH #{matched.length}"
-        puts "unicode_codepoint_t unicode_#{kind}_codepoints[UNICODE_#{kind.upcase}_CODEPOINTS_LENGTH] = {"
-        matched.each_slice(2) { |slice| puts "    #{slice.join(", ")}," }
-        puts "};"
+      maximum = values.rindex { |value| value != 0 } + 1
+      maximum = (maximum + 0xFF) & ~0xFF
+
+      leaf_blocks, leaf_indices = unicode_blocks(values[0...maximum].each_slice(8).to_a, 0)
+      middle_blocks, root = unicode_blocks(leaf_indices.each_slice(32).to_a, leaf_indices.first)
+
+      raise "too many unique blocks" if leaf_blocks.length > 256 || middle_blocks.length > 256
+
+      puts "\n#define UNICODE_CODEPOINTS_MAXIMUM 0x#{maximum.to_s(16).upcase}"
+
+      puts "\nstatic const uint8_t pm_unicode_root[#{root.length}] = {"
+      root.each_slice(16).with_index do |slice, index|
+        puts "    /* U+%05X */ %s," % [index * 16 * 256, slice.map { |value| "0x%02X" % value }.join(", ")]
       end
+      puts "};"
+
+      puts "\nstatic const uint8_t pm_unicode_middle[#{middle_blocks.length}][32] = {"
+      middle_blocks.each_with_index do |block, index|
+        puts "    [0x%02X] = { %s }," % [index, block.map { |value| "0x%02X" % value }.join(", ")]
+      end
+      puts "};"
+
+      puts <<~C
+
+        /* No properties. */
+        #define N 0
+
+        /* A digit: alphanumeric but not alphabetic. */
+        #define D (PRISM_ENCODING_ALPHANUMERIC_BIT)
+
+        /* A letter that is not uppercase: alphabetic and alphanumeric. */
+        #define A (PRISM_ENCODING_ALPHABETIC_BIT | PRISM_ENCODING_ALPHANUMERIC_BIT)
+
+        /* An uppercase or titlecase letter: alphabetic, alphanumeric, and uppercase. */
+        #define U (PRISM_ENCODING_ALPHABETIC_BIT | PRISM_ENCODING_ALPHANUMERIC_BIT | PRISM_ENCODING_UPPERCASE_BIT)
+      C
+
+      puts "\nstatic const uint8_t pm_unicode_leaf[#{leaf_blocks.length}][8] = {"
+      leaf_blocks.each_with_index do |block, index|
+        puts "    [0x%02X] = { %s }," % [index, block.map { |value| names.fetch(value) }.join(", ")]
+      end
+      puts "};"
+
+      puts "\n#undef N\n#undef D\n#undef A\n#undef U"
+    end
+
+    # Deduplicate the given blocks. The block made entirely of the given empty
+    # value is numbered 0 and the rest are numbered from most to least used,
+    # so the tables that index them read as long runs of small numbers.
+    # Returns the unique blocks and the index of each original block.
+    def unicode_blocks(blocks, empty)
+      tally = blocks.tally
+      unique = tally.keys.sort_by.with_index { |block, index| [block.all?(empty) ? 0 : 1, -tally[block], index] }
+      indices = unique.each_with_index.to_h
+      [unique, blocks.map { |block| indices[block] }]
     end
 
     # Parse the source code indicated by the command-line arguments.
