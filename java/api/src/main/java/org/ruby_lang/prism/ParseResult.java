@@ -22,6 +22,9 @@ public final class ParseResult {
 
         /** For errors that should raise LoadError. */
         ERROR_LOAD,
+
+        /** For errors that should raise SystemStackError. */
+        ERROR_STACK,
     }
 
     public static ErrorLevel[] ERROR_LEVELS = ErrorLevel.values();
