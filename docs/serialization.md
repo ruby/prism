@@ -69,7 +69,7 @@ Only nodes that own comments have an attachment, and there are none unless the `
 | varuint | type |
 | string | error message (ASCII-only characters) |
 | location | the location in the source this error applies to |
-| `1` | the level of the error: `0` for `fatal`, `1` for `argument`, `2` for `load` |
+| `1` | the level of the error: `0` for `syntax`, `1` for `argument`, `2` for `load`, `3` for `stack` |
 
 ### warning
 

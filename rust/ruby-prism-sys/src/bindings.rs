@@ -10474,6 +10474,11 @@ pub enum pm_error_level_t {
     /** For errors that should raise a load error.
 */
     PM_ERROR_LEVEL_LOAD = 2,
+    /** For errors that should raise a system stack error. These mean that the
+ parser ran out of the stack it was given, not that the source is
+ invalid, so the same source may parse with more stack.
+*/
+    PM_ERROR_LEVEL_STACK = 3,
 }
 #[repr(u32)]
 #[non_exhaustive]
