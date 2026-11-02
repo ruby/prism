@@ -65,6 +65,7 @@ Gem::Specification.new do |spec|
     "include/prism/compiler/lifetimebound.hpp",
     "include/prism/compiler/nodiscard.h",
     "include/prism/compiler/nonnull.h",
+    "include/prism/compiler/stack.h",
     "include/prism/compiler/unused.h",
     "include/prism/internal/allocator.h",
     "include/prism/internal/allocator_debug.h",
