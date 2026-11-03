@@ -70,6 +70,7 @@ Gem::Specification.new do |spec|
     "include/prism/internal/allocator.h",
     "include/prism/internal/allocator_debug.h",
     "include/prism/internal/arena.h",
+    "include/prism/internal/assert.h",
     "include/prism/internal/bignum.h",
     "include/prism/internal/bit.h",
     "include/prism/internal/buffer.h",
