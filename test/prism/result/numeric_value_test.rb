@@ -28,5 +28,18 @@ module Prism
       assert_equal 0xFFri, Prism.parse_statement("0xFFri").value
       assert_equal 0xFFri, Prism.parse_statement("0xF_Fri").value
     end
+
+    def test_unary_plus
+      assert_equal 123, Prism.parse_statement("+123").value
+      assert_equal 3.14, Prism.parse_statement("+3.14").value
+      assert_equal 42i, Prism.parse_statement("+42i").value
+      assert_equal 3.14i, Prism.parse_statement("+3.14i").value
+      assert_equal 42r, Prism.parse_statement("+42r").value
+      assert_equal 1.2r, Prism.parse_statement("+1.2r").value
+      assert_equal 1.2r, Prism.parse_statement("+1.2_0r").value
+      assert_equal 0r, Prism.parse_statement("+0.0r").value
+      assert_equal 42ri, Prism.parse_statement("+42ri").value
+      assert_equal 1.2ri, Prism.parse_statement("+1.2ri").value
+    end
   end
 end
