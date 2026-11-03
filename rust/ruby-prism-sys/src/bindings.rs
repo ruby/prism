@@ -10491,8 +10491,8 @@ pub enum pm_comment_type_t {
     PM_COMMENT_INLINE = 0,
     PM_COMMENT_EMBDOC = 1,
 }
-/** The words of the magnitude. Read them through pm_integer_words rather
- than directly.
+/** The words of the magnitude. Read them through pm_integer_words or
+ pm_integer_uint64_value rather than directly.
 */
 #[repr(C)]
 #[derive(Copy, Clone)]
