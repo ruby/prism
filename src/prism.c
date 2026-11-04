@@ -5757,102 +5757,139 @@ pm_or_node_create(pm_parser_t *parser, pm_node_t *left, const pm_token_t *operat
 }
 
 /**
- * Allocate and initialize a new ParametersNode node.
+ * The parameters of a ParametersNode node that is still being parsed. The lists
+ * are open, and the location grows to cover each parameter as it is added.
  */
-static pm_parameters_node_t *
-pm_parameters_node_create(pm_parser_t *parser) {
-    return pm_parameters_node_new(
-        parser->arena,
-        ++parser->node_id,
-        0,
-        PM_LOCATION_INIT_UNSET,
-        ((pm_node_list_t) { 0 }),
-        ((pm_node_list_t) { 0 }),
-        NULL,
-        ((pm_node_list_t) { 0 }),
-        ((pm_node_list_t) { 0 }),
-        NULL,
-        NULL
-    );
-}
+typedef struct {
+    /* The location covering every parameter added so far. */
+    pm_location_t location;
+
+    /* The required parameters before any optional or rest parameter. */
+    pm_node_list_t requireds;
+
+    /* The optional parameters. */
+    pm_node_list_t optionals;
+
+    /* The rest parameter, or NULL if there is not one. */
+    pm_node_t *rest;
+
+    /* The required parameters after an optional or rest parameter. */
+    pm_node_list_t posts;
+
+    /* The keyword parameters. */
+    pm_node_list_t keywords;
+
+    /* The keyword rest parameter, or NULL if there is not one. */
+    pm_node_t *keyword_rest;
+
+    /* The block parameter, or NULL if there is not one. */
+    pm_node_t *block;
+} pm_parameters_t;
 
 /**
- * Set the location properly for the parameters node.
+ * Extend the location of the parameters to cover the given parameter.
+ * Parameters can be added out of source order during error recovery, so the
+ * location takes the earliest start and the latest end.
  */
 static void
-pm_parameters_node_location_set(pm_parameters_node_t *params, pm_node_t *param) {
-    if ((params->base.location.length == 0) || PM_NODE_START(params) > PM_NODE_START(param)) {
-        PM_NODE_START_SET_NODE(params, param);
+pm_parameters_location_extend(pm_parameters_t *params, const pm_node_t *param) {
+    if (params->location.length == 0 || params->location.start > PM_NODE_START(param)) {
+        params->location.start = PM_NODE_START(param);
     }
 
-    if ((params->base.location.length == 0) || (PM_NODE_END(params) < PM_NODE_END(param))) {
-        PM_NODE_LENGTH_SET_NODE(params, param);
+    if (params->location.length == 0 || PM_LOCATION_END(&params->location) < PM_NODE_END(param)) {
+        params->location.length = PM_NODE_END(param) - params->location.start;
     }
 }
 
 /**
- * Append a required parameter to a ParametersNode node.
+ * Append a required parameter to the parameters.
  */
 static void
-pm_parameters_node_requireds_append(pm_arena_t *arena, pm_parameters_node_t *params, pm_node_t *param) {
-    pm_parameters_node_location_set(params, param);
-    pm_node_list_append_inline(arena, &params->requireds, param);
+pm_parameters_requireds_append(pm_parser_t *parser, pm_parameters_t *params, pm_node_t *param) {
+    pm_parameters_location_extend(params, param);
+    pm_node_list_open_append(&parser->node_chunks, &params->requireds, param);
 }
 
 /**
- * Append an optional parameter to a ParametersNode node.
+ * Append an optional parameter to the parameters.
  */
 static void
-pm_parameters_node_optionals_append(pm_arena_t *arena, pm_parameters_node_t *params, pm_optional_parameter_node_t *param) {
-    pm_parameters_node_location_set(params, UP(param));
-    pm_node_list_append_inline(arena, &params->optionals, UP(param));
+pm_parameters_optionals_append(pm_parser_t *parser, pm_parameters_t *params, pm_optional_parameter_node_t *param) {
+    pm_parameters_location_extend(params, UP(param));
+    pm_node_list_open_append(&parser->node_chunks, &params->optionals, UP(param));
 }
 
 /**
- * Append a post optional arguments parameter to a ParametersNode node.
+ * Append a post optional arguments parameter to the parameters.
  */
 static void
-pm_parameters_node_posts_append(pm_arena_t *arena, pm_parameters_node_t *params, pm_node_t *param) {
-    pm_parameters_node_location_set(params, param);
-    pm_node_list_append_inline(arena, &params->posts, param);
+pm_parameters_posts_append(pm_parser_t *parser, pm_parameters_t *params, pm_node_t *param) {
+    pm_parameters_location_extend(params, param);
+    pm_node_list_open_append(&parser->node_chunks, &params->posts, param);
 }
 
 /**
- * Set the rest parameter on a ParametersNode node.
+ * Set the rest parameter of the parameters.
  */
 static void
-pm_parameters_node_rest_set(pm_parameters_node_t *params, pm_node_t *param) {
-    pm_parameters_node_location_set(params, param);
+pm_parameters_rest_set(pm_parameters_t *params, pm_node_t *param) {
+    pm_parameters_location_extend(params, param);
     params->rest = param;
 }
 
 /**
- * Append a keyword parameter to a ParametersNode node.
+ * Append a keyword parameter to the parameters.
  */
 static void
-pm_parameters_node_keywords_append(pm_arena_t *arena, pm_parameters_node_t *params, pm_node_t *param) {
-    pm_parameters_node_location_set(params, param);
-    pm_node_list_append_inline(arena, &params->keywords, param);
+pm_parameters_keywords_append(pm_parser_t *parser, pm_parameters_t *params, pm_node_t *param) {
+    pm_parameters_location_extend(params, param);
+    pm_node_list_open_append(&parser->node_chunks, &params->keywords, param);
 }
 
 /**
- * Set the keyword rest parameter on a ParametersNode node.
+ * Set the keyword rest parameter of the parameters.
  */
 static void
-pm_parameters_node_keyword_rest_set(pm_parameters_node_t *params, pm_node_t *param) {
+pm_parameters_keyword_rest_set(pm_parameters_t *params, pm_node_t *param) {
     PRISM_ASSERT(params->keyword_rest == NULL);
-    pm_parameters_node_location_set(params, param);
+    pm_parameters_location_extend(params, param);
     params->keyword_rest = param;
 }
 
 /**
- * Set the block parameter on a ParametersNode node.
+ * Set the block parameter of the parameters.
  */
 static void
-pm_parameters_node_block_set(pm_parameters_node_t *params, pm_node_t *param) {
+pm_parameters_block_set(pm_parameters_t *params, pm_node_t *param) {
     PRISM_ASSERT(params->block == NULL);
-    pm_parameters_node_location_set(params, param);
+    pm_parameters_location_extend(params, param);
     params->block = param;
+}
+
+/**
+ * Allocate and initialize a new ParametersNode node from its parameters.
+ */
+static pm_parameters_node_t *
+pm_parameters_node_create(pm_parser_t *parser, pm_parameters_t *params) {
+    pm_node_list_finalize(&parser->node_chunks, parser->arena, &params->requireds);
+    pm_node_list_finalize(&parser->node_chunks, parser->arena, &params->optionals);
+    pm_node_list_finalize(&parser->node_chunks, parser->arena, &params->posts);
+    pm_node_list_finalize(&parser->node_chunks, parser->arena, &params->keywords);
+
+    return pm_parameters_node_new(
+        parser->arena,
+        ++parser->node_id,
+        0,
+        params->location,
+        params->requireds,
+        params->optionals,
+        params->rest,
+        params->posts,
+        params->keywords,
+        params->keyword_rest,
+        params->block
+    );
 }
 
 /**
@@ -14538,7 +14575,7 @@ update_parameter_state(pm_parser_t *parser, pm_token_t *token, pm_parameters_ord
 static PRISM_INLINE void
 parse_parameters_handle_trailing_comma(
     pm_parser_t *parser,
-    pm_parameters_node_t *params,
+    pm_parameters_t *params,
     pm_parameters_order_t order,
     bool in_block,
     bool allows_trailing_comma
@@ -14554,10 +14591,10 @@ parse_parameters_handle_trailing_comma(
             pm_node_t *param = UP(pm_implicit_rest_node_create(parser, &parser->previous));
 
             if (params->rest == NULL) {
-                pm_parameters_node_rest_set(params, param);
+                pm_parameters_rest_set(params, param);
             } else {
                 pm_parser_err_node(parser, UP(param), PM_ERR_PARAMETER_SPLAT_MULTI);
-                pm_parameters_node_posts_append(parser->arena, params, UP(param));
+                pm_parameters_posts_append(parser, params, UP(param));
             }
         } else {
             // foo do |*bar,|; end
@@ -14589,7 +14626,7 @@ parse_parameters(
 ) {
     pm_do_loop_stack_push(parser, false);
 
-    pm_parameters_node_t *params = pm_parameters_node_create(parser);
+    pm_parameters_t params = { 0 };
     pm_parameters_order_t order = PM_PARAMETERS_ORDER_NONE;
 
     while (true) {
@@ -14601,9 +14638,9 @@ parse_parameters(
                 pm_node_t *param = UP(parse_required_destructured_parameter(parser));
 
                 if (order > PM_PARAMETERS_ORDER_AFTER_OPTIONAL) {
-                    pm_parameters_node_requireds_append(parser->arena, params, param);
+                    pm_parameters_requireds_append(parser, &params, param);
                 } else {
-                    pm_parameters_node_posts_append(parser->arena, params, param);
+                    pm_parameters_posts_append(parser, &params, param);
                 }
                 break;
             }
@@ -14635,11 +14672,11 @@ parse_parameters(
                     }
                 }
 
-                if (params->block == NULL) {
-                    pm_parameters_node_block_set(params, param);
+                if (params.block == NULL) {
+                    pm_parameters_block_set(&params, param);
                 } else {
                     pm_parser_err_node(parser, param, PM_ERR_PARAMETER_BLOCK_MULTI);
-                    pm_parameters_node_posts_append(parser->arena, params, UP(pm_error_recovery_node_create_unexpected(parser, param)));
+                    pm_parameters_posts_append(parser, &params, UP(pm_error_recovery_node_create_unexpected(parser, param)));
                 }
 
                 break;
@@ -14655,16 +14692,16 @@ parse_parameters(
                 parser->current_scope->parameters |= PM_SCOPE_PARAMETERS_FORWARDING_ALL;
                 pm_forwarding_parameter_node_t *param = pm_forwarding_parameter_node_create(parser, &parser->previous);
 
-                if (params->keyword_rest != NULL) {
+                if (params.keyword_rest != NULL) {
                     // If we already have a keyword rest parameter, then we replace it with the
                     // forwarding parameter and move the keyword rest parameter to the posts list.
-                    pm_node_t *keyword_rest = params->keyword_rest;
-                    pm_parameters_node_posts_append(parser->arena, params, UP(pm_error_recovery_node_create_unexpected(parser, keyword_rest)));
+                    pm_node_t *keyword_rest = params.keyword_rest;
+                    pm_parameters_posts_append(parser, &params, UP(pm_error_recovery_node_create_unexpected(parser, keyword_rest)));
                     if (succeeded) pm_parser_err_previous(parser, PM_ERR_PARAMETER_UNEXPECTED_FWD);
-                    params->keyword_rest = NULL;
+                    params.keyword_rest = NULL;
                 }
 
-                pm_parameters_node_keyword_rest_set(params, UP(param));
+                pm_parameters_keyword_rest_set(&params, UP(param));
                 break;
             }
             case PM_TOKEN_CLASS_VARIABLE:
@@ -14720,7 +14757,7 @@ parse_parameters(
                     if (repeated) {
                         pm_node_flag_set_repeated_parameter(UP(param));
                     }
-                    pm_parameters_node_optionals_append(parser->arena, params, param);
+                    pm_parameters_optionals_append(parser, &params, param);
 
                     // If the value of the parameter increased the number of
                     // reads of that parameter, then we need to warn that we
@@ -14743,13 +14780,13 @@ parse_parameters(
                     if (repeated) {
                         pm_node_flag_set_repeated_parameter(UP(param));
                     }
-                    pm_parameters_node_requireds_append(parser->arena, params, UP(param));
+                    pm_parameters_requireds_append(parser, &params, UP(param));
                 } else {
                     pm_required_parameter_node_t *param = pm_required_parameter_node_create(parser, &name);
                     if (repeated) {
                         pm_node_flag_set_repeated_parameter(UP(param));
                     }
-                    pm_parameters_node_posts_append(parser->arena, params, UP(param));
+                    pm_parameters_posts_append(parser, &params, UP(param));
                 }
 
                 break;
@@ -14785,7 +14822,7 @@ parse_parameters(
                             pm_node_flag_set_repeated_parameter(param);
                         }
 
-                        pm_parameters_node_keywords_append(parser->arena, params, param);
+                        pm_parameters_keywords_append(parser, &params, param);
                         break;
                     }
                     case PM_TOKEN_SEMICOLON:
@@ -14802,7 +14839,7 @@ parse_parameters(
                             pm_node_flag_set_repeated_parameter(param);
                         }
 
-                        pm_parameters_node_keywords_append(parser->arena, params, param);
+                        pm_parameters_keywords_append(parser, &params, param);
                         break;
                     }
                     default: {
@@ -14831,7 +14868,7 @@ parse_parameters(
                         }
 
                         context_pop(parser);
-                        pm_parameters_node_keywords_append(parser->arena, params, param);
+                        pm_parameters_keywords_append(parser, &params, param);
 
                         // If parsing the value of the parameter resulted in error recovery,
                         // then we can put a missing node in its place and stop parsing the
@@ -14868,11 +14905,11 @@ parse_parameters(
                     pm_node_flag_set_repeated_parameter(param);
                 }
 
-                if (params->rest == NULL) {
-                    pm_parameters_node_rest_set(params, param);
+                if (params.rest == NULL) {
+                    pm_parameters_rest_set(&params, param);
                 } else {
                     pm_parser_err_node(parser, param, PM_ERR_PARAMETER_SPLAT_MULTI);
-                    pm_parameters_node_posts_append(parser->arena, params, param);
+                    pm_parameters_posts_append(parser, &params, param);
                 }
 
                 break;
@@ -14910,18 +14947,18 @@ parse_parameters(
                     }
                 }
 
-                if (params->keyword_rest == NULL) {
-                    pm_parameters_node_keyword_rest_set(params, param);
+                if (params.keyword_rest == NULL) {
+                    pm_parameters_keyword_rest_set(&params, param);
                 } else {
                     pm_parser_err_node(parser, param, PM_ERR_PARAMETER_ASSOC_SPLAT_MULTI);
-                    pm_parameters_node_posts_append(parser->arena, params, UP(pm_error_recovery_node_create_unexpected(parser, param)));
+                    pm_parameters_posts_append(parser, &params, UP(pm_error_recovery_node_create_unexpected(parser, param)));
                 }
 
                 break;
             }
             default:
                 if (parser->previous.type == PM_TOKEN_COMMA) {
-                    parse_parameters_handle_trailing_comma(parser, params, order, in_block, allows_trailing_comma);
+                    parse_parameters_handle_trailing_comma(parser, &params, order, in_block, allows_trailing_comma);
                 }
 
                 parsing = false;
@@ -14953,11 +14990,11 @@ parse_parameters(
     pm_do_loop_stack_pop(parser);
 
     // If we don't have any parameters, return `NULL` instead of an empty `ParametersNode`.
-    if (PM_NODE_START(params) == PM_NODE_END(params)) {
+    if (params.location.length == 0) {
         return NULL;
     }
 
-    return params;
+    return pm_parameters_node_create(parser, &params);
 }
 
 /**
