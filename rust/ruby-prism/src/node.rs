@@ -28,7 +28,7 @@ impl<'pr> Iterator for NodeListIter<'pr> {
     type Item = Node<'pr>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= unsafe { self.pointer.as_ref().size } {
+        if self.index >= unsafe { self.pointer.as_ref().size } as usize {
             None
         } else {
             let node: *mut pm_node_t = unsafe { *(self.pointer.as_ref().nodes.add(self.index)) };
@@ -65,7 +65,7 @@ impl<'pr> NodeList<'pr> {
     /// Returns the length of the list.
     #[must_use]
     pub const fn len(&self) -> usize {
-        unsafe { self.pointer.as_ref().size }
+        unsafe { self.pointer.as_ref().size as usize }
     }
 
     /// Returns whether the list is empty.
