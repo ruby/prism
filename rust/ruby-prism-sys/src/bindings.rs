@@ -2666,12 +2666,11 @@ pub struct pm_location_t {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pm_node_list {
-    /** The number of nodes in the list.
+    /** The number of nodes in the list. Source offsets are 32 bits, so the
+ source is less than 4 GiB, and a list built from it stays far below what
+ this can count.
 */
-    pub size: usize,
-    /** The capacity of the list that has been allocated.
-*/
-    pub capacity: usize,
+    pub size: u32,
     /** The nodes in the list.
 */
     pub nodes: *mut *mut pm_node,
@@ -12142,10 +12141,10 @@ unsafe extern "C" {
  @returns The AST representing the source.
 */
     pub fn pm_parse(parser: *mut pm_parser_t) -> *mut pm_node_t;
-    /** Append a node to the end of a node list. If the list is full, its storage is
- grown by allocating from the given arena, so the arena must live as long as
- the list does. For a list in a parsed tree, that is the arena that was passed
- to pm_parser_new.
+    /** Append a node to the end of a node list. A node list's storage is always
+ exactly its size, so it is regrown to exactly one more node by allocating from
+ the given arena, which must live as long as the list does. For a list in a
+ parsed tree, that is the arena that was passed to pm_parser_new.
 
  @param arena The arena to allocate the list's storage from.
  @param list The list to append to.
