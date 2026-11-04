@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - A multiple assignment can write to an attribute whose name starts with a character that is not ASCII, as in `foo.☃, bar = 1, 2`.
 - A name that starts with `€` (0xA4) in ISO-8859-16, or with `¯` (0xAF) in Windows-1252, is a constant name. In encodings that are not Unicode, a character that is neither uppercase nor lowercase begins a constant if case folding changes it.
 
+- `pm_node_list_t` no longer has a `capacity` field, and its `size` field is now a `uint32_t`.
+
 ### Fixed
 
 - The `ruby-prism` and `ruby-prism-sys` crates ship `LICENSE.md` again. It had been missing from the published crates since 2.0.0.
