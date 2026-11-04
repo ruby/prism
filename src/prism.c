@@ -20255,7 +20255,6 @@ parse_interpolated_symbol_array(pm_parser_t *parser, uint16_t depth) {
                 break;
             }
             case PM_TOKEN_EMBVAR: {
-                bool start_location_set = false;
                 if (current == NULL) {
                     /* If we hit an embedded variable and the current node is
                      * NULL, then this is the start of a new string. We'll set
@@ -20270,8 +20269,6 @@ parse_interpolated_symbol_array(pm_parser_t *parser, uint16_t depth) {
 
                     current = UP(pm_symbol_node_to_string_node(parser, (pm_symbol_node_t *) current));
                     pm_interpolated_symbol_node_append(parser->arena, interpolated, current);
-                    PM_NODE_START_SET_NODE(interpolated, current);
-                    start_location_set = true;
                     current = UP(interpolated);
                 } else {
                     /* If we hit an embedded variable and the current node is an
@@ -20281,13 +20278,9 @@ parse_interpolated_symbol_array(pm_parser_t *parser, uint16_t depth) {
 
                 pm_node_t *part = parse_string_part(parser, (uint16_t) (depth + 1));
                 pm_interpolated_symbol_node_append(parser->arena, (pm_interpolated_symbol_node_t *) current, part);
-                if (!start_location_set) {
-                    PM_NODE_START_SET_NODE(current, part);
-                }
                 break;
             }
             case PM_TOKEN_EMBEXPR_BEGIN: {
-                bool start_location_set = false;
                 if (current == NULL) {
                     /* If we hit an embedded expression and the current node is
                      * NULL, then this is the start of a new string. We'll set
@@ -20302,8 +20295,6 @@ parse_interpolated_symbol_array(pm_parser_t *parser, uint16_t depth) {
 
                     current = UP(pm_symbol_node_to_string_node(parser, (pm_symbol_node_t *) current));
                     pm_interpolated_symbol_node_append(parser->arena, interpolated, current);
-                    PM_NODE_START_SET_NODE(interpolated, current);
-                    start_location_set = true;
                     current = UP(interpolated);
                 } else if (PM_NODE_TYPE_P(current, PM_INTERPOLATED_SYMBOL_NODE)) {
                     /* If we hit an embedded expression and the current node is
@@ -20314,9 +20305,6 @@ parse_interpolated_symbol_array(pm_parser_t *parser, uint16_t depth) {
 
                 pm_node_t *part = parse_string_part(parser, (uint16_t) (depth + 1));
                 pm_interpolated_symbol_node_append(parser->arena, (pm_interpolated_symbol_node_t *) current, part);
-                if (!start_location_set) {
-                    PM_NODE_START_SET_NODE(current, part);
-                }
                 break;
             }
             default:
