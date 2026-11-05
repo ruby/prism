@@ -10,6 +10,7 @@
 #include "prism/internal/constant_pool.h"
 #include "prism/internal/encoding.h"
 #include "prism/internal/list.h"
+#include "prism/internal/node.h"
 #include "prism/internal/options.h"
 #include "prism/internal/static_literals.h"
 #include "prism/internal/strpbrk.h"
@@ -540,7 +541,7 @@ typedef struct pm_scope {
      * of parameters node that should be used and to check if any errors need to
      * be added.
      */
-    pm_node_list_t implicit_parameters;
+    pm_scratch_node_list_t implicit_parameters;
 
     /*
      * This is a bitfield that indicates the parameters that are being used in
@@ -672,6 +673,12 @@ struct pm_parser_t {
          */
         pm_lex_mode_t *free;
     } lex_modes;
+
+    /*
+     * The chunks that open node lists are built in. They are carved from the
+     * scratch arena, so they are never freed individually.
+     */
+    pm_node_chunks_t node_chunks;
 
     /* The pointer to the start of the source. */
     const uint8_t *start;
@@ -885,7 +892,7 @@ struct pm_parser_t {
      * We use a pointer here because we don't want to keep a whole list attached
      * since this will only be used in the context of begin/end expressions.
      */
-    pm_node_list_t *current_block_exits;
+    pm_scratch_node_list_t *current_block_exits;
 
     /*
      * The address of the C stack when pm_parse was entered. The stack budget
