@@ -2598,12 +2598,11 @@ pub struct pm_arena_t {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pm_constant_id_list_t {
-    /** The number of constant ids in the list.
+    /** The number of constant ids in the list. Source offsets are 32 bits, so
+ the source is less than 4 GiB, and a list built from it stays far below
+ what this can count.
 */
-    pub size: usize,
-    /** The number of constant ids that have been allocated in the list.
-*/
-    pub capacity: usize,
+    pub size: u32,
     /** The constant ids in the list.
 */
     pub ids: *mut pm_constant_id_t,
