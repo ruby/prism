@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - A name that starts with `€` (0xA4) in ISO-8859-16, or with `¯` (0xAF) in Windows-1252, is a constant name. In encodings that are not Unicode, a character that is neither uppercase nor lowercase begins a constant if case folding changes it.
 
 - `pm_node_list_t` no longer has a `capacity` field, and its `size` field is now a `uint32_t`.
+- `pm_constant_id_list_t` no longer has a `capacity` field, and its `size` field is now a `uint32_t`.
 
 ### Fixed
 
