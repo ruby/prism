@@ -19,6 +19,19 @@ pm_integer_uint64(uint64_t value) {
     };
 }
 
+static PRISM_INLINE pm_integer_t
+pm_integer_int32(int32_t value) {
+    if (value < 0) {
+        return (pm_integer_t) {
+            .length = 1,
+            .negative = true,
+            .words = { .value = { (uint32_t) -value, 0 } }
+        };
+    } else {
+        return pm_integer_uint64((uint64_t) value);
+    }
+}
+
 /*
  * An enum controlling the base of an integer. It is expected that the base is
  * already known before parsing the integer, even though it could be derived

@@ -1539,6 +1539,19 @@ compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_nod
 }
 
 static uint32_t
+compile_source_line_node(PrismBuilder *builder, const pm_source_line_node_t *node) {
+    uint32_t object_id = make_object(builder, kPrismObjectInteger);
+    PrismObject *object = builder->unit->objects + object_id;
+
+    int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->base.location.start, builder->parser->start_line);
+    pm_integer_t *integer = pm_arena_alloc(builder->arena, sizeof(pm_integer_t), PRISM_ALIGNOF(pm_integer_t));
+    *integer = pm_integer_int32(lineno);
+    object->as.integer.value = integer;
+
+    return emit_load_object(builder, node->base.node_id, object_id);
+}
+
+static uint32_t
 compile_statements_node(PrismBuilder *builder, const pm_statements_node_t *node) {
     uint32_t value_id;
     for (size_t idx = 0; idx < node->body.size; ++idx) {
@@ -1713,6 +1726,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_self_node(builder, (const pm_self_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
             return compile_source_encoding_node(builder, (const pm_source_encoding_node_t *) node);
+        case PM_SOURCE_LINE_NODE:
+            return compile_source_line_node(builder, (const pm_source_line_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, (const pm_statements_node_t *) node);
         case PM_STRING_NODE:
