@@ -61,6 +61,7 @@ typedef enum {
     kPrismInsnNewRange,
     kPrismInsnNewRegexp,
     kPrismInsnNewString,
+    kPrismInsnNewSymbol,
     kPrismInsnReturn,
     kPrismInsnStoreCVar,
     kPrismInsnStoreGVar,
@@ -723,6 +724,18 @@ emit_new_regexp(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, ui
 static uint32_t
 emit_new_string(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, uint32_t *value_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewString, node_id, 1 + nvalue_ids);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    memcpy(graph->opnds + insn->opnds_off + 1, value_ids, nvalue_ids * sizeof(uint32_t));
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_symbol(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, uint32_t *value_ids) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewSymbol, node_id, 1 + nvalue_ids);
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -1402,6 +1415,18 @@ compile_interpolated_string_node(PrismBuilder *builder, const pm_interpolated_st
 }
 
 static uint32_t
+compile_interpolated_symbol_node(PrismBuilder *builder, const pm_interpolated_symbol_node_t *node) {
+    uint32_t nvalue_ids = (uint32_t) node->parts.size;
+    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
+        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
+    }
+
+    return emit_new_symbol(builder, node->base.node_id, nvalue_ids, value_ids);
+}
+
+static uint32_t
 compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_x_string_node_t *node) {
     uint32_t receiver_id = emit_load_self(builder, node->base.node_id);
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
@@ -1728,6 +1753,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_interpolated_regular_expression_node(builder, (const pm_interpolated_regular_expression_node_t *) node);
         case PM_INTERPOLATED_STRING_NODE:
             return compile_interpolated_string_node(builder, (const pm_interpolated_string_node_t *) node);
+        case PM_INTERPOLATED_SYMBOL_NODE:
+            return compile_interpolated_symbol_node(builder, (const pm_interpolated_symbol_node_t *) node);
         case PM_INTERPOLATED_X_STRING_NODE:
             return compile_interpolated_x_string_node(builder, (const pm_interpolated_x_string_node_t *) node);
         case PM_LOCAL_VARIABLE_READ_NODE:
@@ -2029,6 +2056,11 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 case kPrismInsnNewString:
                     printf("%%%" PRIu32 " = new_string", opnds[0]);
+                    dump_values(insn->opnds_len - 1, opnds + 1);
+                    printf("\n");
+                    break;
+                case kPrismInsnNewSymbol:
+                    printf("%%%" PRIu32 " = new_symbol", opnds[0]);
                     dump_values(insn->opnds_len - 1, opnds + 1);
                     printf("\n");
                     break;
