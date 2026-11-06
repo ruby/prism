@@ -36,6 +36,7 @@ typedef enum {
     kPrismInsnBranchIf,
     kPrismInsnCall,
     kPrismInsnCallToS,
+    kPrismInsnCoerceHash,
     kPrismInsnConvertToString,
     kPrismInsnDefineMethod,
     kPrismInsnDefinedCVar,
@@ -52,8 +53,11 @@ typedef enum {
     kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
+    kPrismInsnMergeHash,
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
+    kPrismInsnNewHash,
+    kPrismInsnNewHashStatic,
     kPrismInsnNewRange,
     kPrismInsnNewRegexp,
     kPrismInsnNewString,
@@ -100,6 +104,7 @@ typedef enum {
     kPrismObjectEncoding,
     kPrismObjectFalse,
     kPrismObjectFloat,
+    kPrismObjectHash,
     kPrismObjectImaginary,
     kPrismObjectInteger,
     kPrismObjectNil,
@@ -116,6 +121,7 @@ typedef struct {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
         struct { const char *name; } encoding;
         struct { double value; } floating;
+        struct { uint32_t nobject_ids; uint32_t *object_ids; } hash;
         struct { uint32_t numeric_id; } imaginary;
         struct { const pm_integer_t *value; } integer;
         struct { const pm_integer_t *numerator; const pm_integer_t *denominator; } rational;
@@ -427,6 +433,18 @@ emit_call_to_s(PrismBuilder *builder, uint32_t node_id, pm_location_t location, 
 }
 
 static uint32_t
+emit_coerce_hash(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceHash, node_id, location, 2);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t hash_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = hash_id;
+    graph->opnds[insn->opnds_off + 1] = value_id;
+
+    return hash_id;
+}
+
+static uint32_t
 emit_convert_to_string(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t string_id, uint32_t to_s_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnConvertToString, node_id, location, 3);
 
@@ -610,6 +628,19 @@ emit_load_self(PrismBuilder *builder, uint32_t node_id, pm_location_t location) 
 }
 
 static uint32_t
+emit_merge_hash(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t left_id, uint32_t right_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnMergeHash, node_id, location, 3);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = left_id;
+    graph->opnds[insn->opnds_off + 2] = right_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_new_array(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t nelement_ids, uint32_t *element_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewArray, node_id, location, 1 + nelement_ids);
 
@@ -624,6 +655,30 @@ emit_new_array(PrismBuilder *builder, uint32_t node_id, pm_location_t location, 
 static uint32_t
 emit_new_array_static(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t object_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewArrayStatic, node_id, location, 1);
+    insn->as.object.object_id = object_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_hash(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t nelement_ids, uint32_t *element_ids) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewHash, node_id, location, 1 + nelement_ids);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
+
+    return value_id;
+}
+
+static uint32_t
+emit_new_hash_static(PrismBuilder *builder, uint32_t node_id, pm_location_t location, uint32_t object_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewHashStatic, node_id, location, 1);
     insn->as.object.object_id = object_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -789,6 +844,24 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
             uint32_t object_id = make_object(builder, kPrismObjectFloat);
             PrismObject *object = builder->unit->objects + object_id;
             object->as.floating.value = cast->value;
+
+            return object_id;
+        }
+        case PM_HASH_NODE: {
+            const pm_hash_node_t *cast = (const pm_hash_node_t *) node;
+            uint32_t nobject_ids = (uint32_t) cast->elements.size * 2;
+            uint32_t *object_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nobject_ids, PRISM_ALIGNOF(uint32_t));
+
+            for (uint32_t idx = 0; idx < nobject_ids; idx += 2) {
+                const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) cast->elements.nodes[idx >> 1];
+                object_ids[idx] = static_literal(builder, assoc->key);
+                object_ids[idx + 1] = static_literal(builder, assoc->value);
+            }
+
+            uint32_t object_id = make_object(builder, kPrismObjectHash);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.hash.nobject_ids = nobject_ids;
+            object->as.hash.object_ids = object_ids;
 
             return object_id;
         }
@@ -1211,6 +1284,45 @@ compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_var
 }
 
 static uint32_t
+compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
+    size_t nelements = node->elements.size;
+    uint32_t value_id = UINT32_MAX;
+
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && nelements) {
+        uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
+        value_id = emit_new_hash_static(builder, node->base.node_id, node->base.location, object_id);
+    } else {
+        for (uint32_t element_idx = 0; element_idx < nelements; ++element_idx) {
+            uint32_t assocs_start_idx = element_idx;
+            while (element_idx < nelements && PM_NODE_TYPE_P(node->elements.nodes[element_idx], PM_ASSOC_NODE)) element_idx++;
+
+            if (assocs_start_idx < element_idx) {
+                uint32_t nvalue_ids = (element_idx - assocs_start_idx) * 2;
+                uint32_t *value_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nvalue_ids, PRISM_ALIGNOF(uint32_t));
+
+                for (uint32_t assoc_idx = assocs_start_idx; assoc_idx < element_idx; ++assoc_idx) {
+                    const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) node->elements.nodes[assoc_idx];
+                    value_ids[(assoc_idx - assocs_start_idx) * 2] = compile_node(builder, assoc->key);
+                    value_ids[(assoc_idx - assocs_start_idx) * 2 + 1] = compile_node(builder, assoc->value);
+                }
+
+                uint32_t hash_id = emit_new_hash(builder, node->base.node_id, node->base.location, nvalue_ids, value_ids);
+                value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->base.node_id, node->base.location, value_id, hash_id);
+            }
+
+            if (element_idx < nelements) {
+                const pm_assoc_splat_node_t *assoc_splat = (const pm_assoc_splat_node_t *) node->elements.nodes[element_idx];
+                uint32_t splat_id = compile_node(builder, assoc_splat->value);
+                uint32_t hash_id = emit_coerce_hash(builder, assoc_splat->base.node_id, assoc_splat->base.location, splat_id);
+                value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->base.node_id, node->base.location, value_id, hash_id);
+            }
+        }
+    }
+
+    return value_id;
+}
+
+static uint32_t
 compile_imaginary_node(PrismBuilder *builder, const pm_imaginary_node_t *node) {
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
@@ -1542,6 +1654,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_global_variable_and_write_node(builder, (const pm_global_variable_and_write_node_t *) node);
         case PM_GLOBAL_VARIABLE_OR_WRITE_NODE:
             return compile_global_variable_or_write_node(builder, (const pm_global_variable_or_write_node_t *) node);
+        case PM_HASH_NODE:
+            return compile_hash_node(builder, (const pm_hash_node_t *) node);
         case PM_IMAGINARY_NODE:
             return compile_imaginary_node(builder, (const pm_imaginary_node_t *) node);
         case PM_INSTANCE_VARIABLE_READ_NODE:
@@ -1608,6 +1722,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_while_node(builder, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
             return compile_x_string_node(builder, (const pm_x_string_node_t *) node);
+        case PM_ASSOC_NODE:
+        case PM_ASSOC_SPLAT_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
             abort();
@@ -1654,6 +1770,17 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
         case kPrismObjectFloat:
             printf("%f", object->as.floating.value);
             break;
+        case kPrismObjectHash: {
+            printf("{ ");
+            for (uint32_t idx = 0; idx < object->as.hash.nobject_ids; ++idx) {
+                if (idx > 0) printf(", ");
+                dump_object(builder, object->as.hash.object_ids[idx]);
+                printf(" => ");
+                dump_object(builder, object->as.hash.object_ids[++idx]);
+            }
+            printf(" }");
+            break;
+        }
         case kPrismObjectImaginary:
             dump_object(builder, object->as.imaginary.numeric_id);
             printf("i");
@@ -1740,10 +1867,12 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
-                case kPrismInsnCallToS: {
+                case kPrismInsnCallToS:
                     printf("%%%" PRIu32 " = call_to_s %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
-                }
+                case kPrismInsnCoerceHash:
+                    printf("%%%" PRIu32 " = coerce_hash %%%" PRIu32 "\n", opnds[0], opnds[1]);
+                    break;
                 case kPrismInsnConvertToString:
                     printf("%%%" PRIu32 " = convert_to_string %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
                     break;
@@ -1809,6 +1938,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnLoadSelf:
                     printf("%%%" PRIu32 " = load_self\n", opnds[0]);
                     break;
+                case kPrismInsnMergeHash:
+                    printf("%%%" PRIu32 " = merge_hash %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
+                    break;
                 case kPrismInsnNewArray:
                     printf("%%%" PRIu32 " = new_array", opnds[0]);
                     dump_values(insn->opnds_len - 1, opnds + 1);
@@ -1816,6 +1948,16 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 case kPrismInsnNewArrayStatic:
                     printf("%%%" PRIu32 " = new_array_static ", opnds[0]);
+                    dump_object(builder, insn->as.object.object_id);
+                    printf("\n");
+                    break;
+                case kPrismInsnNewHash:
+                    printf("%%%" PRIu32 " = new_hash", opnds[0]);
+                    dump_values(insn->opnds_len - 1, opnds + 1);
+                    printf("\n");
+                    break;
+                case kPrismInsnNewHashStatic:
+                    printf("%%%" PRIu32 " = new_hash_static ", opnds[0]);
                     dump_object(builder, insn->as.object.object_id);
                     printf("\n");
                     break;
