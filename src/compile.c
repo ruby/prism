@@ -57,6 +57,7 @@ typedef enum {
     kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
+    kPrismInsnMatch,
     kPrismInsnMergeHash,
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
@@ -719,6 +720,16 @@ emit_load_object(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
 }
 
 static uint32_t
+emit_load_true(PrismBuilder *builder, uint32_t node_id) {
+    return emit_load_object(builder, node_id, make_object(builder, kPrismObjectTrue));
+}
+
+static uint32_t
+emit_load_false(PrismBuilder *builder, uint32_t node_id) {
+    return emit_load_object(builder, node_id, make_object(builder, kPrismObjectFalse));
+}
+
+static uint32_t
 emit_load_nil(PrismBuilder *builder, uint32_t node_id) {
     return emit_load_object(builder, node_id, make_object(builder, kPrismObjectNil));
 }
@@ -732,6 +743,19 @@ emit_load_self(PrismBuilder *builder, uint32_t node_id) {
     graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
+}
+
+static uint32_t
+emit_match(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnMatch, node_id, 3);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t result_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = result_id;
+    graph->opnds[insn->opnds_off + 1] = value_id;
+    graph->opnds[insn->opnds_off + 2] = pattern_id;
+
+    return result_id;
 }
 
 static uint32_t
@@ -1064,6 +1088,8 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
     }
 }
 
+/******************************************************************************/
+
 static uint32_t compile_node(PrismBuilder *builder, const pm_node_t *node);
 
 static uint32_t
@@ -1153,6 +1179,44 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 
     builder->state.block_id = join_block_id;
     return emit_load_nil(builder, node->node_id);
+}
+
+static uint32_t
+compile_pattern(PrismBuilder *builder, const pm_node_t *node) {
+    switch (PM_NODE_TYPE(node)) {
+        case PM_ARRAY_NODE:
+        case PM_CONSTANT_PATH_NODE:
+        case PM_CONSTANT_READ_NODE:
+        case PM_FALSE_NODE:
+        case PM_FLOAT_NODE:
+        case PM_GLOBAL_VARIABLE_READ_NODE:
+        case PM_IMAGINARY_NODE:
+        case PM_INSTANCE_VARIABLE_READ_NODE:
+        /* case PM_IT_LOCAL_VARIABLE_READ_NODE: */
+        case PM_INTEGER_NODE:
+        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
+        case PM_INTERPOLATED_STRING_NODE:
+        case PM_INTERPOLATED_SYMBOL_NODE:
+        case PM_INTERPOLATED_X_STRING_NODE:
+        /* case PM_LAMBDA_NODE: */
+        case PM_LOCAL_VARIABLE_READ_NODE:
+        case PM_NIL_NODE:
+        case PM_SOURCE_ENCODING_NODE:
+        /* case PM_SOURCE_FILE_NODE: */
+        case PM_SOURCE_LINE_NODE:
+        case PM_RANGE_NODE:
+        case PM_RATIONAL_NODE:
+        case PM_REGULAR_EXPRESSION_NODE:
+        case PM_SELF_NODE:
+        case PM_STRING_NODE:
+        case PM_SYMBOL_NODE:
+        case PM_TRUE_NODE:
+        case PM_X_STRING_NODE:
+            return compile_node(builder, node);
+        default:
+            fprintf(stderr, "Unsupported pattern: %s\n", pm_node_type(node->type));
+            abort();
+    }
 }
 
 /******************************************************************************/
@@ -1472,8 +1536,7 @@ compile_embedded_variable_node(PrismBuilder *builder, const pm_embedded_variable
 
 static uint32_t
 compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
-    uint32_t object_id = make_object(builder, kPrismObjectFalse);
-    return emit_load_object(builder, node->base.node_id, object_id);
+    return emit_load_false(builder, node->base.node_id);
 }
 
 static uint32_t
@@ -1714,6 +1777,29 @@ compile_local_variable_or_write_node(PrismBuilder *builder, const pm_local_varia
 }
 
 static uint32_t
+compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_node_t *node) {
+    uint32_t matched_block_id = make_block(builder, 0);
+    uint32_t unmatched_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t pattern_id = compile_pattern(builder, node->pattern);
+    uint32_t predicate_id = emit_match(builder, node->base.node_id, value_id, pattern_id);
+    emit_branchif(builder, node->base.node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
+
+    builder->state.block_id = matched_block_id;
+    uint32_t result_id = emit_load_true(builder, node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = unmatched_block_id;
+    result_id = emit_load_false(builder, node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, object_id);
@@ -1904,8 +1990,7 @@ compile_symbol_node(PrismBuilder *builder, const pm_symbol_node_t *node) {
 
 static uint32_t
 compile_true_node(PrismBuilder *builder, const pm_true_node_t *node) {
-    uint32_t object_id = make_object(builder, kPrismObjectTrue);
-    return emit_load_object(builder, node->base.node_id, object_id);
+    return emit_load_true(builder, node->base.node_id);
 }
 
 static uint32_t
@@ -2039,6 +2124,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_and_write_node(builder, (const pm_local_variable_and_write_node_t *) node);
         case PM_LOCAL_VARIABLE_OR_WRITE_NODE:
             return compile_local_variable_or_write_node(builder, (const pm_local_variable_or_write_node_t *) node);
+        case PM_MATCH_PREDICATE_NODE:
+            return compile_match_predicate_node(builder, (const pm_match_predicate_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_NUMBERED_REFERENCE_READ_NODE:
@@ -2327,6 +2414,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnLoadSelf:
                     printf("%%%" PRIu32 " = load_self\n", opnds[0]);
+                    break;
+                case kPrismInsnMatch:
+                    printf("%%%" PRIu32 " = match %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
                     break;
                 case kPrismInsnMergeHash:
                     printf("%%%" PRIu32 " = merge_hash %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
