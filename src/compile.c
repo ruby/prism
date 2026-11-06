@@ -17,14 +17,19 @@
 #include <stdint.h>
 #include <string.h>
 
-#define PM_CONSTANT_BACKTICK (pm_constant_id_t) -1
+#define PM_CONSTANT_ID_BACKTICK (pm_constant_id_t) -1
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
+
+#define PM_CONSTANT_ID_OBJECT (pm_constant_id_t) -2
+static const pm_constant_t object_constant = { .start = (const uint8_t *) "Object", .length = 6 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     switch (constant_id) {
-        case PM_CONSTANT_BACKTICK:
+        case PM_CONSTANT_ID_BACKTICK:
             return &backtick_constant;
+        case PM_CONSTANT_ID_OBJECT:
+            return &object_constant;
         default:
             return pm_parser_constant(parser, constant_id);
     }
@@ -38,6 +43,9 @@ typedef enum {
     kPrismInsnCallToS,
     kPrismInsnCoerceHash,
     kPrismInsnConvertToString,
+    kPrismInsnDefineClassAbs,
+    kPrismInsnDefineClassNestRel,
+    kPrismInsnDefineClassRecvRel,
     kPrismInsnDefineMethod,
     kPrismInsnDefineSingletonClass,
     kPrismInsnDefinedCVar,
@@ -76,6 +84,8 @@ typedef enum {
     kPrismInsnStoreIVar,
     kPrismInsnStoreLVar,
     kPrismInsnTraceCall,
+    kPrismInsnTraceClass,
+    kPrismInsnTraceEnd,
     kPrismInsnTraceLine,
     kPrismInsnTraceReturn,
     kPrismInsnUndefMethod
@@ -98,6 +108,7 @@ typedef struct {
         struct { uint32_t block_id; } branch;
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
         PrismConstantPath constant_path;
+        struct { pm_constant_id_t name_id; uint32_t graph_id; } define_class;
         struct { uint32_t graph_id; } define_singleton_class;
         struct { uint32_t number; } extract_group;
         struct { uint32_t local_id; } lvar;
@@ -120,6 +131,7 @@ typedef struct {
 
 typedef enum {
     kPrismObjectArray,
+    kPrismObjectClass,
     kPrismObjectEncoding,
     kPrismObjectFalse,
     kPrismObjectFloat,
@@ -138,6 +150,7 @@ typedef struct {
     PrismObjectKind kind;
     union {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
+        struct { pm_constant_id_t name_id; } class;
         struct { const char *name; } encoding;
         struct { double value; } floating;
         struct { uint32_t nobject_ids; uint32_t *object_ids; } hash;
@@ -149,6 +162,7 @@ typedef struct {
 } PrismObject;
 
 typedef enum {
+    kPrismGraphClass,
     kPrismGraphDef,
     kPrismGraphProgram,
     kPrismGraphSingletonClass
@@ -512,6 +526,49 @@ emit_convert_to_string(PrismBuilder *builder, uint32_t node_id, uint32_t string_
     graph->opnds[insn->opnds_off] = value_id;
     graph->opnds[insn->opnds_off + 1] = string_id;
     graph->opnds[insn->opnds_off + 2] = to_s_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_define_class_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassAbs, node_id, 2);
+    insn->as.define_class.name_id = name_id;
+    insn->as.define_class.graph_id = graph_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = superclass_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_define_class_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassNestRel, node_id, 2);
+    insn->as.define_class.name_id = name_id;
+    insn->as.define_class.graph_id = graph_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = superclass_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_define_class_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t superclass_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassRecvRel, node_id, 3);
+    insn->as.define_class.name_id = name_id;
+    insn->as.define_class.graph_id = graph_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = receiver_id;
+    graph->opnds[insn->opnds_off + 2] = superclass_id;
 
     return value_id;
 }
@@ -951,6 +1008,16 @@ emit_trace_call(PrismBuilder *builder, uint32_t node_id) {
 }
 
 static void
+emit_trace_class(PrismBuilder *builder, uint32_t node_id) {
+    make_insn(builder, kPrismInsnTraceClass, node_id, 0);
+}
+
+static void
+emit_trace_end(PrismBuilder *builder, uint32_t node_id) {
+    make_insn(builder, kPrismInsnTraceEnd, node_id, 0);
+}
+
+static void
 emit_trace_line(PrismBuilder *builder, uint32_t node_id, int32_t lineno) {
     PrismInsn *insn = make_insn(builder, kPrismInsnTraceLine, node_id, 0);
     insn->as.trace_line.lineno = lineno;
@@ -1317,6 +1384,59 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
     uint32_t value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
     if (nargument_ids) xfree(argument_ids);
     return value_id;
+}
+
+static uint32_t
+compile_superclass(PrismBuilder *builder, const pm_class_node_t *node) {
+    uint32_t superclass_id;
+    if (node->superclass) {
+        superclass_id = compile_node(builder, node->superclass);
+    } else {
+        uint32_t object_id = make_object(builder, kPrismObjectClass);
+        builder->unit->objects[object_id].as.class.name_id = PM_CONSTANT_ID_OBJECT;
+        superclass_id = emit_load_object(builder, node->base.node_id, object_id);
+    }
+
+    return superclass_id;
+}
+
+static uint32_t
+compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
+    uint32_t graph_id = make_graph(builder, kPrismGraphClass, UINT32_MAX, (uint32_t) node->locals.size);
+    PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
+
+    emit_trace_class(builder, node->base.node_id);
+    uint32_t value_id = UINT32_MAX;
+
+    if (node->body) {
+        value_id = compile_node(builder, node->body);
+    }
+
+    if (value_id == UINT32_MAX) {
+        value_id = emit_load_nil(builder, node->base.node_id);
+    }
+
+    emit_trace_end(builder, node->base.node_id);
+    emit_return(builder, node->base.node_id, value_id);
+    pop_scope(builder, state);
+
+    uint32_t result_id;
+    if (PM_NODE_TYPE_P(node->constant_path, PM_CONSTANT_READ_NODE)) {
+        uint32_t superclass_id = compile_superclass(builder, node);
+        result_id = emit_define_class_nest_rel(builder, node->base.node_id, node->name, superclass_id, graph_id);
+    } else {
+        const pm_constant_path_node_t *constant_path = (const pm_constant_path_node_t *) node->constant_path;
+        if (constant_path->parent) {
+            uint32_t receiver_id = compile_node(builder, constant_path->parent);
+            uint32_t superclass_id = compile_superclass(builder, node);
+            result_id = emit_define_class_recv_rel(builder, node->base.node_id, node->name, receiver_id, superclass_id, graph_id);
+        } else {
+            uint32_t superclass_id = compile_superclass(builder, node);
+            result_id = emit_define_class_abs(builder, node->base.node_id, node->name, superclass_id, graph_id);
+        }
+    }
+
+    return result_id;
 }
 
 static uint32_t
@@ -1753,7 +1873,7 @@ compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_
     }
 
     uint32_t string_id = emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_BACKTICK, receiver_id, 1, &string_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &string_id);
 }
 
 static uint32_t
@@ -2034,7 +2154,7 @@ compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
 
     uint32_t receiver_id = emit_load_self(builder, node->base.node_id);
     uint32_t argument_id = emit_load_object(builder, node->base.node_id, object_id);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_BACKTICK, receiver_id, 1, &argument_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &argument_id);
 }
 
 static uint32_t
@@ -2058,6 +2178,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
         case PM_CALL_NODE:
             return compile_call_node(builder, (const pm_call_node_t *) node);
+        case PM_CLASS_NODE:
+            return compile_class_node(builder, (const pm_class_node_t *) node);
         case PM_CLASS_VARIABLE_READ_NODE:
             return compile_class_variable_read_node(builder, (const pm_class_variable_read_node_t *) node);
         case PM_CLASS_VARIABLE_WRITE_NODE:
@@ -2223,6 +2345,11 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             printf("]");
             break;
         }
+        case kPrismObjectClass: {
+            const pm_constant_t *constant = compile_constant(builder->parser, object->as.class.name_id);
+            printf("class(%.*s)", (int) pm_constant_length(constant), pm_constant_start(constant));
+            break;
+        }
         case kPrismObjectEncoding:
             printf("encoding(%s)", object->as.encoding.name);
             break;
@@ -2347,6 +2474,21 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnConvertToString:
                     printf("%%%" PRIu32 " = convert_to_string %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
                     break;
+                case kPrismInsnDefineClassAbs: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
+                    printf("%%%" PRIu32 " = define_class_abs(::%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define_class.graph_id);
+                    break;
+                }
+                case kPrismInsnDefineClassNestRel: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
+                    printf("%%%" PRIu32 " = define_class_nest_rel(%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define_class.graph_id);
+                    break;
+                }
+                case kPrismInsnDefineClassRecvRel: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
+                    printf("%%%" PRIu32 " = define_class_recv_rel(%.*s, %%%" PRIu32 ", %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], opnds[2], insn->as.define_class.graph_id);
+                    break;
+                }
                 case kPrismInsnDefineMethod: {
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.method.name_id);
                     printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.method.graph_id);
@@ -2510,6 +2652,12 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 case kPrismInsnTraceCall:
                     printf("trace_call\n");
+                    break;
+                case kPrismInsnTraceClass:
+                    printf("trace_class\n");
+                    break;
+                case kPrismInsnTraceEnd:
+                    printf("trace_end\n");
                     break;
                 case kPrismInsnTraceLine:
                     printf("trace_line %" PRId32 "\n", insn->as.trace_line.lineno);
