@@ -1807,6 +1807,9 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_while_node(builder, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
             return compile_x_string_node(builder, (const pm_x_string_node_t *) node);
+        case PM_ERROR_RECOVERY_NODE:
+            fprintf(stderr, "Cannot compile syntax errors\n");
+            abort();
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
