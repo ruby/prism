@@ -129,10 +129,16 @@ typedef struct {
     } as;
 } PrismObject;
 
+typedef enum {
+    kPrismGraphDef,
+    kPrismGraphProgram
+} PrismGraphKind;
+
 typedef struct {
     PrismBlock *blocks;
     uint32_t *opnds;
     uint32_t *local_ids;
+    PrismGraphKind kind;
     uint32_t nblocks;
     uint32_t nopnds;
     uint32_t nlocal_ids;
@@ -197,7 +203,7 @@ make_local(PrismBuilder *builder, pm_constant_id_t name_id) {
 }
 
 static uint32_t
-make_graph(PrismBuilder *builder, uint32_t parent_id, uint32_t nlocal_ids) {
+make_graph(PrismBuilder *builder, PrismGraphKind kind, uint32_t parent_id, uint32_t nlocal_ids) {
     PrismUnit *unit = builder->unit;
 
     if (unit->ngraphs == unit->graphs_capa) {
@@ -214,7 +220,7 @@ make_graph(PrismBuilder *builder, uint32_t parent_id, uint32_t nlocal_ids) {
     }
 
     uint32_t graph_id = unit->ngraphs++;
-    unit->graphs[graph_id] = (PrismGraph) { .parent_id = parent_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
+    unit->graphs[graph_id] = (PrismGraph) { .kind = kind, .parent_id = parent_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
     return graph_id;
 }
 
@@ -1075,8 +1081,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
 
     if (node->arguments) {
         nargument_ids = node->arguments->arguments.size;
-        argument_ids = xmalloc(sizeof(uint32_t) * nargument_ids);
-        if (!argument_ids) abort();
+        argument_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nargument_ids, PRISM_ALIGNOF(uint32_t));
 
         for (size_t idx = 0; idx < nargument_ids; ++idx) {
             argument_ids[idx] = compile_node(builder, node->arguments->arguments.nodes[idx]);
@@ -1150,7 +1155,7 @@ compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_varia
 
 static uint32_t
 compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
-    uint32_t graph_id = make_graph(builder, UINT32_MAX, (uint32_t) node->locals.size);
+    uint32_t graph_id = make_graph(builder, kPrismGraphDef, UINT32_MAX, (uint32_t) node->locals.size);
 
     uint32_t nparams = 0;
     const pm_parameters_node_t *parameters = node->parameters;
@@ -1174,10 +1179,12 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 
     emit_trace_call(builder, node->base.node_id);
 
-    uint32_t value_id;
+    uint32_t value_id = UINT32_MAX;
     if (node->body) {
         value_id = compile_node(builder, node->body);
-    } else {
+    }
+
+    if (value_id == UINT32_MAX) {
         value_id = emit_load_nil(builder, node->base.node_id);
     }
 
@@ -1470,15 +1477,17 @@ compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *nod
 
 static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
-    uint32_t graph_id = make_graph(builder, UINT32_MAX, (uint32_t) node->locals.size);
+    uint32_t graph_id = make_graph(builder, kPrismGraphProgram, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
 
     const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
-    uint32_t value_id;
+    uint32_t value_id = UINT32_MAX;
 
     if (statements->body.size) {
         value_id = compile_node(builder, PM_NODE_UPCAST(statements));
-    } else {
+    }
+
+    if (value_id == UINT32_MAX) {
         value_id = emit_load_nil(builder, node->base.node_id);
     }
 
@@ -1521,6 +1530,31 @@ compile_regular_expression_node(PrismBuilder *builder, const pm_regular_expressi
     object->as.string.unescaped = &node->unescaped;
 
     return emit_load_object(builder, node->base.node_id, object_id);
+}
+
+static uint32_t
+compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
+    uint32_t value_id;
+
+    if (node->arguments) {
+        uint32_t nargument_ids = (uint32_t) node->arguments->arguments.size;
+        uint32_t *argument_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nargument_ids, PRISM_ALIGNOF(uint32_t));
+
+        for (uint32_t idx = 0; idx < nargument_ids; ++idx) {
+            argument_ids[idx] = compile_node(builder, node->arguments->arguments.nodes[idx]);
+        }
+
+        value_id = emit_new_array(builder, node->base.node_id, nargument_ids, argument_ids);
+    } else {
+        value_id = emit_load_nil(builder, node->base.node_id);
+    }
+
+    if (builder->unit->graphs[builder->state.graph_id].kind == kPrismGraphDef) {
+        emit_trace_return(builder, node->base.node_id, value_id);
+    }
+
+    emit_return(builder, node->base.node_id, value_id);
+    return UINT32_MAX;
 }
 
 static uint32_t
@@ -1722,6 +1756,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_rational_node(builder, (const pm_rational_node_t *) node);
         case PM_REGULAR_EXPRESSION_NODE:
             return compile_regular_expression_node(builder, (const pm_regular_expression_node_t *) node);
+        case PM_RETURN_NODE:
+            return compile_return_node(builder, (const pm_return_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
