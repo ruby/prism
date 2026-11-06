@@ -1181,9 +1181,19 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
     return emit_load_nil(builder, node->node_id);
 }
 
-static uint32_t
-compile_pattern(PrismBuilder *builder, const pm_node_t *node) {
+static void
+compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t matched_block_id, uint32_t unmatched_block_id) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_ALTERNATION_PATTERN_NODE: {
+            const pm_alternation_pattern_node_t *cast = (const pm_alternation_pattern_node_t *) node;
+
+            uint32_t else_block_id = make_block(builder, 0);
+            compile_pattern_match(builder, cast->left, value_id, matched_block_id, else_block_id);
+
+            builder->state.block_id = else_block_id;
+            compile_pattern_match(builder, cast->right, value_id, matched_block_id, unmatched_block_id);
+            break;
+        }
         case PM_ARRAY_NODE:
         case PM_CONSTANT_PATH_NODE:
         case PM_CONSTANT_READ_NODE:
@@ -1211,8 +1221,12 @@ compile_pattern(PrismBuilder *builder, const pm_node_t *node) {
         case PM_STRING_NODE:
         case PM_SYMBOL_NODE:
         case PM_TRUE_NODE:
-        case PM_X_STRING_NODE:
-            return compile_node(builder, node);
+        case PM_X_STRING_NODE: {
+            uint32_t pattern_id = compile_node(builder, node);
+            uint32_t predicate_id = emit_match(builder, node->node_id, value_id, pattern_id);
+            emit_branchif(builder, node->node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
+            break;
+        }
         default:
             fprintf(stderr, "Unsupported pattern: %s\n", pm_node_type(node->type));
             abort();
@@ -1783,9 +1797,7 @@ compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_nod
     uint32_t join_block_id = make_block(builder, 1);
 
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t pattern_id = compile_pattern(builder, node->pattern);
-    uint32_t predicate_id = emit_match(builder, node->base.node_id, value_id, pattern_id);
-    emit_branchif(builder, node->base.node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
+    compile_pattern_match(builder, node->pattern, value_id, matched_block_id, unmatched_block_id);
 
     builder->state.block_id = matched_block_id;
     uint32_t result_id = emit_load_true(builder, node->base.node_id);
@@ -2171,6 +2183,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
             abort();
+        case PM_ALTERNATION_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
