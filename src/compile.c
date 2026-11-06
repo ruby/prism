@@ -1319,6 +1319,19 @@ compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_
 }
 
 static uint32_t
+compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_operator_write_node_t *node) {
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->name);
+
+    uint32_t receiver_id = emit_load_const_nesting_relative(builder, node->base.node_id, constant_path);
+    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+    emit_store_const_nesting_relative(builder, node->base.node_id, constant_path, result_id);
+
+    return result_id;
+}
+
+static uint32_t
 compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t *node) {
     const pm_node_t *current = PM_NODE_UPCAST(node);
     uint32_t depth = 0;
@@ -1943,6 +1956,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_constant_read_node(builder, (const pm_constant_read_node_t *) node);
         case PM_CONSTANT_WRITE_NODE:
             return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node);
+        case PM_CONSTANT_OPERATOR_WRITE_NODE:
+            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node);
         case PM_CONSTANT_PATH_NODE:
             return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
