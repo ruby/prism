@@ -177,7 +177,7 @@ make_local(PrismBuilder *builder, pm_constant_id_t name_id) {
 
     if (unit->nlocals == unit->locals_capa) {
         uint32_t next_capa = unit->locals_capa ? unit->locals_capa * 2 : 8;
-        PrismLocal *next_mem = pm_arena_realloc(builder->arena, unit->locals, sizeof(PrismLocal) * unit->locals_capa, sizeof(PrismLocal) * next_capa, PRISM_ALIGNOF(PrismLocal));
+        PrismLocal *next_mem = pm_arena_realloc(builder->arena, unit->locals, sizeof(PrismLocal) * next_capa, sizeof(PrismLocal) * unit->locals_capa, PRISM_ALIGNOF(PrismLocal));
 
         unit->locals_capa = next_capa;
         unit->locals = next_mem;
@@ -194,7 +194,7 @@ make_graph(PrismBuilder *builder, uint32_t parent_id, uint32_t nlocal_ids) {
 
     if (unit->ngraphs == unit->graphs_capa) {
         uint32_t next_capa = unit->graphs_capa ? unit->graphs_capa * 2 : 8;
-        PrismGraph *next_mem = pm_arena_realloc(builder->arena, unit->graphs, sizeof(PrismGraph) * unit->graphs_capa, sizeof(PrismGraph) * next_capa, PRISM_ALIGNOF(PrismGraph));
+        PrismGraph *next_mem = pm_arena_realloc(builder->arena, unit->graphs, sizeof(PrismGraph) * next_capa, sizeof(PrismGraph) * unit->graphs_capa, PRISM_ALIGNOF(PrismGraph));
 
         unit->graphs_capa = next_capa;
         unit->graphs = next_mem;
@@ -221,7 +221,7 @@ make_block(PrismBuilder *builder, uint32_t nparams) {
 
     if (graph->nblocks == graph->blocks_capa) {
         uint32_t next_capa = graph->blocks_capa ? graph->blocks_capa * 2 : 8;
-        PrismBlock *next_blocks = pm_arena_realloc(builder->arena, graph->blocks, sizeof(PrismBlock) * graph->blocks_capa, sizeof(PrismBlock) * next_capa, PRISM_ALIGNOF(PrismBlock));
+        PrismBlock *next_blocks = pm_arena_realloc(builder->arena, graph->blocks, sizeof(PrismBlock) * next_capa, sizeof(PrismBlock) * graph->blocks_capa, PRISM_ALIGNOF(PrismBlock));
 
         graph->blocks_capa = next_capa;
         graph->blocks = next_blocks;
@@ -293,7 +293,7 @@ make_object(PrismBuilder *builder, PrismObjectKind kind) {
 
     if (unit->nobjects == unit->objects_capa) {
         uint32_t next_capa = unit->objects_capa ? unit->objects_capa * 2 : 8;
-        PrismObject *next_mem = pm_arena_realloc(builder->arena, unit->objects, sizeof(PrismObject) * unit->objects_capa, sizeof(PrismObject) * next_capa, PRISM_ALIGNOF(PrismObject));
+        PrismObject *next_mem = pm_arena_realloc(builder->arena, unit->objects, sizeof(PrismObject) * next_capa, sizeof(PrismObject) * unit->objects_capa, PRISM_ALIGNOF(PrismObject));
 
         unit->objects_capa = next_capa;
         unit->objects = next_mem;
@@ -324,7 +324,7 @@ make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, pm_locati
 
     if (block->ninsns == block->insns_capa) {
         uint32_t next_capa = block->insns_capa ? block->insns_capa * 2 : 8;
-        PrismInsn *next_insns = pm_arena_realloc(builder->arena, block->insns, sizeof(PrismInsn) * block->insns_capa, sizeof(PrismInsn) * next_capa, PRISM_ALIGNOF(PrismInsn));
+        PrismInsn *next_insns = pm_arena_realloc(builder->arena, block->insns, sizeof(PrismInsn) * next_capa, sizeof(PrismInsn) * block->insns_capa, PRISM_ALIGNOF(PrismInsn));
 
         block->insns_capa = next_capa;
         block->insns = next_insns;
@@ -346,7 +346,7 @@ make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, pm_locati
                 next_capa *= 2;
             }
 
-            uint32_t *next_opnds = pm_arena_realloc(builder->arena, graph->opnds, sizeof(uint32_t) * graph->opnds_capa, sizeof(uint32_t) * next_capa, PRISM_ALIGNOF(uint32_t));
+            uint32_t *next_opnds = pm_arena_realloc(builder->arena, graph->opnds, sizeof(uint32_t) * next_capa, sizeof(uint32_t) * graph->opnds_capa, PRISM_ALIGNOF(uint32_t));
 
             graph->opnds_capa = next_capa;
             graph->opnds = next_opnds;
