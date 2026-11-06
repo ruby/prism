@@ -97,6 +97,7 @@ typedef struct {
 
 typedef enum {
     kPrismObjectArray,
+    kPrismObjectEncoding,
     kPrismObjectFalse,
     kPrismObjectFloat,
     kPrismObjectImaginary,
@@ -113,6 +114,7 @@ typedef struct {
     PrismObjectKind kind;
     union {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
+        struct { const char *name; } encoding;
         struct { double value; } floating;
         struct { uint32_t numeric_id; } imaginary;
         struct { const pm_integer_t *value; } integer;
@@ -1410,6 +1412,16 @@ compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
 }
 
 static uint32_t
+compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_node_t *node) {
+    uint32_t object_id = make_object(builder, kPrismObjectEncoding);
+    PrismObject *object = builder->unit->objects + object_id;
+
+    object->as.encoding.name = builder->parser->encoding->name;
+
+    return emit_load_object(builder, node->base.node_id, node->base.location, object_id);
+}
+
+static uint32_t
 compile_statements_node(PrismBuilder *builder, const pm_statements_node_t *node) {
     uint32_t value_id;
     for (size_t idx = 0; idx < node->body.size; ++idx) {
@@ -1578,6 +1590,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_regular_expression_node(builder, (const pm_regular_expression_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
+        case PM_SOURCE_ENCODING_NODE:
+            return compile_source_encoding_node(builder, (const pm_source_encoding_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, (const pm_statements_node_t *) node);
         case PM_STRING_NODE:
@@ -1631,6 +1645,9 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             printf("]");
             break;
         }
+        case kPrismObjectEncoding:
+            printf("encoding(%s)", object->as.encoding.name);
+            break;
         case kPrismObjectFalse:
             printf("false");
             break;
