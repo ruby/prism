@@ -39,6 +39,7 @@ typedef enum {
     kPrismInsnCoerceHash,
     kPrismInsnConvertToString,
     kPrismInsnDefineMethod,
+    kPrismInsnDefineSingletonClass,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
     kPrismInsnExtractLastMatchGroup,
@@ -81,6 +82,7 @@ typedef struct {
     union {
         struct { uint32_t block_id; } branch;
         struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
+        struct { uint32_t graph_id; } define_singleton_class;
         struct { uint32_t number; } extract_group;
         struct { uint32_t local_id; } lvar;
         struct { pm_constant_id_t name_id; uint32_t graph_id; } method;
@@ -132,7 +134,8 @@ typedef struct {
 
 typedef enum {
     kPrismGraphDef,
-    kPrismGraphProgram
+    kPrismGraphProgram,
+    kPrismGraphSingletonClass
 } PrismGraphKind;
 
 typedef struct {
@@ -468,6 +471,18 @@ emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t nam
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineMethod, node_id, 0);
     insn->as.method.name_id = name_id;
     insn->as.method.graph_id = graph_id;
+}
+
+static uint32_t
+emit_define_singleton_class(PrismBuilder *builder, uint32_t node_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonClass, node_id, 1);
+    insn->as.define_singleton_class.graph_id = graph_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
 }
 
 static uint32_t
@@ -1588,6 +1603,27 @@ compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
 }
 
 static uint32_t
+compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_node_t *node) {
+    uint32_t graph_id = make_graph(builder, kPrismGraphSingletonClass, UINT32_MAX, (uint32_t) node->locals.size);
+    PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
+
+    uint32_t value_id = UINT32_MAX;
+
+    if (node->body) {
+        value_id = compile_node(builder, node->body);
+    }
+
+    if (value_id == UINT32_MAX) {
+        value_id = emit_load_nil(builder, node->base.node_id);
+    }
+
+    emit_return(builder, node->base.node_id, value_id);
+    pop_scope(builder, state);
+
+    return emit_define_singleton_class(builder, node->base.node_id, graph_id);
+}
+
+static uint32_t
 compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectEncoding);
     PrismObject *object = builder->unit->objects + object_id;
@@ -1787,6 +1823,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_return_node(builder, (const pm_return_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
+        case PM_SINGLETON_CLASS_NODE:
+            return compile_singleton_class_node(builder, (const pm_singleton_class_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
             return compile_source_encoding_node(builder, (const pm_source_encoding_node_t *) node);
         case PM_SOURCE_LINE_NODE:
@@ -1967,6 +2005,10 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnDefineMethod: {
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.method.name_id);
                     printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.method.graph_id);
+                    break;
+                }
+                case kPrismInsnDefineSingletonClass: {
+                    printf("%%%" PRIu32 " = define_singleton_class g%" PRIu32 "\n", opnds[0], insn->as.define_singleton_class.graph_id);
                     break;
                 }
                 case kPrismInsnDefinedCVar: {
