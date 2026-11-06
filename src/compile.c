@@ -3,7 +3,9 @@
 #include "prism/compiler/align.h"
 #include "prism/internal/allocator.h"
 #include "prism/internal/arena.h"
+#include "prism/internal/buffer.h"
 #include "prism/internal/constant_pool.h"
+#include "prism/internal/integer.h"
 #include "prism/internal/line_offset_list.h"
 #include "prism/internal/parser.h"
 #include "prism/node.h"
@@ -1639,15 +1641,27 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             dump_object(builder, object->as.imaginary.numeric_id);
             printf("i");
             break;
-        case kPrismObjectInteger:
-            printf("%" PRIu32, object->as.integer.value->value); /* TODO */
+        case kPrismObjectInteger: {
+            pm_buffer_t buffer = { 0 };
+            pm_integer_string(&buffer, object->as.integer.value);
+            printf("%.*s", (int) pm_buffer_length(&buffer), (const char *) pm_buffer_value(&buffer));
+            pm_buffer_cleanup(&buffer);
             break;
+        }
         case kPrismObjectNil:
             printf("nil");
             break;
-        case kPrismObjectRational:
-            printf("(%" PRIu32 "/%" PRIu32 ")", object->as.rational.numerator->value, object->as.rational.denominator->value); /* TODO */
+        case kPrismObjectRational: {
+            pm_buffer_t buffer = { 0 };
+            PM_BUFFER_APPEND_LITERAL(&buffer, "(");
+            pm_integer_string(&buffer, object->as.rational.numerator);
+            PM_BUFFER_APPEND_LITERAL(&buffer, "/");
+            pm_integer_string(&buffer, object->as.rational.denominator);
+            PM_BUFFER_APPEND_LITERAL(&buffer, ")");
+            printf("%.*s", (int) pm_buffer_length(&buffer), (const char *) pm_buffer_value(&buffer));
+            pm_buffer_cleanup(&buffer);
             break;
+        }
         case kPrismObjectRegexp: {
             const pm_string_t *unescaped = object->as.string.unescaped;
             printf("/%.*s/", (int) pm_string_length(unescaped), (const char *) pm_string_source(unescaped));
