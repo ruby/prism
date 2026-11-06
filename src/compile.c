@@ -1329,6 +1329,11 @@ compile_imaginary_node(PrismBuilder *builder, const pm_imaginary_node_t *node) {
 }
 
 static uint32_t
+compile_implicit_node(PrismBuilder *builder, const pm_implicit_node_t *node) {
+    return compile_node(builder, node->value);
+}
+
+static uint32_t
 compile_instance_variable_read_node(PrismBuilder *builder, const pm_instance_variable_read_node_t *node) {
     return emit_load_ivar(builder, node->base.node_id, node->base.location, node->name);
 }
@@ -1658,6 +1663,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_hash_node(builder, (const pm_hash_node_t *) node);
         case PM_IMAGINARY_NODE:
             return compile_imaginary_node(builder, (const pm_imaginary_node_t *) node);
+        case PM_IMPLICIT_NODE:
+            return compile_implicit_node(builder, (const pm_implicit_node_t *) node);
         case PM_INSTANCE_VARIABLE_READ_NODE:
             return compile_instance_variable_read_node(builder, (const pm_instance_variable_read_node_t *) node);
         case PM_INSTANCE_VARIABLE_WRITE_NODE:
