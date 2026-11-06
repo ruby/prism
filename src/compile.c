@@ -47,9 +47,9 @@ typedef enum {
     kPrismInsnExtractLastMatchParen,
     kPrismInsnExtractLastMatchPost,
     kPrismInsnExtractLastMatchPre,
-    kPrismInsnLoadConstAbsolute,
-    kPrismInsnLoadConstNestingRelative,
-    kPrismInsnLoadConstReceiverRelative,
+    kPrismInsnLoadConstAbs,
+    kPrismInsnLoadConstNestRel,
+    kPrismInsnLoadConstRecvRel,
     kPrismInsnLoadCVar,
     kPrismInsnLoadGVar,
     kPrismInsnLoadIVar,
@@ -67,9 +67,9 @@ typedef enum {
     kPrismInsnNewString,
     kPrismInsnNewSymbol,
     kPrismInsnReturn,
-    kPrismInsnStoreConstAbsolute,
-    kPrismInsnStoreConstNestingRelative,
-    kPrismInsnStoreConstReceiverRelative,
+    kPrismInsnStoreConstAbs,
+    kPrismInsnStoreConstNestRel,
+    kPrismInsnStoreConstRecvRel,
     kPrismInsnStoreCVar,
     kPrismInsnStoreGVar,
     kPrismInsnStoreIVar,
@@ -620,8 +620,8 @@ emit_extract_last_match_pre(PrismBuilder *builder, uint32_t node_id, uint32_t la
 }
 
 static uint32_t
-emit_load_const_absolute(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstAbsolute, node_id, 1);
+emit_load_const_abs(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstAbs, node_id, 1);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -632,8 +632,8 @@ emit_load_const_absolute(PrismBuilder *builder, uint32_t node_id, PrismConstantP
 }
 
 static uint32_t
-emit_load_const_nesting_relative(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstNestingRelative, node_id, 1);
+emit_load_const_nest_rel(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstNestRel, node_id, 1);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -644,8 +644,8 @@ emit_load_const_nesting_relative(PrismBuilder *builder, uint32_t node_id, PrismC
 }
 
 static uint32_t
-emit_load_const_receiver_relative(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstReceiverRelative, node_id, 2);
+emit_load_const_recv_rel(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstRecvRel, node_id, 2);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -855,8 +855,8 @@ emit_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
 }
 
 static uint32_t
-emit_store_const_absolute(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstAbsolute, node_id, 1);
+emit_store_const_abs(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstAbs, node_id, 1);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -866,8 +866,8 @@ emit_store_const_absolute(PrismBuilder *builder, uint32_t node_id, PrismConstant
 }
 
 static uint32_t
-emit_store_const_nesting_relative(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstNestingRelative, node_id, 1);
+emit_store_const_nest_rel(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstNestRel, node_id, 1);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -877,8 +877,8 @@ emit_store_const_nesting_relative(PrismBuilder *builder, uint32_t node_id, Prism
 }
 
 static uint32_t
-emit_store_const_receiver_relative(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstReceiverRelative, node_id, 2);
+emit_store_const_recv_rel(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstRecvRel, node_id, 2);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -1305,7 +1305,7 @@ static uint32_t
 compile_constant_read_node(PrismBuilder *builder, const pm_constant_read_node_t *node) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
-    return emit_load_const_nesting_relative(builder, node->base.node_id, constant_path);
+    return emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
 }
 
 static uint32_t
@@ -1314,7 +1314,7 @@ compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_
     PrismConstantPath_set(&constant_path, 0, node->name);
 
     uint32_t value_id = compile_node(builder, node->value);
-    emit_store_const_nesting_relative(builder, node->base.node_id, constant_path, value_id);
+    emit_store_const_nest_rel(builder, node->base.node_id, constant_path, value_id);
     return value_id;
 }
 
@@ -1323,10 +1323,10 @@ compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_op
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
 
-    uint32_t receiver_id = emit_load_const_nesting_relative(builder, node->base.node_id, constant_path);
+    uint32_t receiver_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
     uint32_t value_id = compile_node(builder, node->value);
     uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
-    emit_store_const_nesting_relative(builder, node->base.node_id, constant_path, result_id);
+    emit_store_const_nest_rel(builder, node->base.node_id, constant_path, result_id);
 
     return result_id;
 }
@@ -1355,13 +1355,13 @@ compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t 
 
     uint32_t value_id;
     if (!current) {
-        value_id = emit_load_const_absolute(builder, node->base.node_id, constant_path);
+        value_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
     } else if (PM_NODE_TYPE_P(current, PM_CONSTANT_READ_NODE)) {
         PrismConstantPath_set(&constant_path, 0, (uint32_t) ((const pm_constant_read_node_t *) current)->name);
-        value_id = emit_load_const_nesting_relative(builder, node->base.node_id, constant_path);
+        value_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
     } else {
         uint32_t receiver_id = compile_node(builder, current);
-        value_id = emit_load_const_receiver_relative(builder, node->base.node_id, receiver_id, constant_path);
+        value_id = emit_load_const_recv_rel(builder, node->base.node_id, receiver_id, constant_path);
     }
 
     return value_id;
@@ -1376,10 +1376,10 @@ compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_w
         uint32_t receiver_id = compile_node(builder, node->target->parent);
         uint32_t value_id = compile_node(builder, node->value);
 
-        return emit_store_const_receiver_relative(builder, node->base.node_id, receiver_id, constant_path, value_id);
+        return emit_store_const_recv_rel(builder, node->base.node_id, receiver_id, constant_path, value_id);
     } else {
         uint32_t value_id = compile_node(builder, node->value);
-        return emit_store_const_absolute(builder, node->base.node_id, constant_path, value_id);
+        return emit_store_const_abs(builder, node->base.node_id, constant_path, value_id);
     }
 }
 
@@ -1391,17 +1391,17 @@ compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_consta
     if (node->target->parent) {
         uint32_t parent_id = compile_node(builder, node->target->parent);
 
-        uint32_t receiver_id = emit_load_const_receiver_relative(builder, node->base.node_id, parent_id, constant_path);
+        uint32_t receiver_id = emit_load_const_recv_rel(builder, node->base.node_id, parent_id, constant_path);
         uint32_t value_id = compile_node(builder, node->value);
         uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
 
-        return emit_store_const_receiver_relative(builder, node->base.node_id, parent_id, constant_path, result_id);
+        return emit_store_const_recv_rel(builder, node->base.node_id, parent_id, constant_path, result_id);
     } else {
-        uint32_t receiver_id = emit_load_const_absolute(builder, node->base.node_id, constant_path);
+        uint32_t receiver_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
         uint32_t value_id = compile_node(builder, node->value);
         uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
 
-        return emit_store_const_absolute(builder, node->base.node_id, constant_path, result_id);
+        return emit_store_const_abs(builder, node->base.node_id, constant_path, result_id);
     }
 }
 
@@ -2281,18 +2281,18 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnExtractLastMatchPre:
                     printf("%%%" PRIu32 " = extract_last_match_pre %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
-                case kPrismInsnLoadConstAbsolute:
-                    printf("%%%" PRIu32 " = load_const_absolute(::", opnds[0]);
+                case kPrismInsnLoadConstAbs:
+                    printf("%%%" PRIu32 " = load_const_abs(::", opnds[0]);
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(")\n");
                     break;
-                case kPrismInsnLoadConstNestingRelative:
-                    printf("%%%" PRIu32 " = load_const_nesting_relative(", opnds[0]);
+                case kPrismInsnLoadConstNestRel:
+                    printf("%%%" PRIu32 " = load_const_nest_rel(", opnds[0]);
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(")\n");
                     break;
-                case kPrismInsnLoadConstReceiverRelative:
-                    printf("%%%" PRIu32 " = load_const_receiver_relative(%%%" PRIu32 ", ", opnds[0], opnds[1]);
+                case kPrismInsnLoadConstRecvRel:
+                    printf("%%%" PRIu32 " = load_const_recv_rel(%%%" PRIu32 ", ", opnds[0], opnds[1]);
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(")\n");
                     break;
@@ -2372,18 +2372,18 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnReturn:
                     printf("return %%%" PRIu32 "\n", opnds[0]);
                     break;
-                case kPrismInsnStoreConstAbsolute:
-                    printf("store_const_absolute(::");
+                case kPrismInsnStoreConstAbs:
+                    printf("store_const_abs(::");
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(", %%%" PRIu32 ")\n", opnds[0]);
                     break;
-                case kPrismInsnStoreConstNestingRelative:
-                    printf("store_const_nesting_relative(");
+                case kPrismInsnStoreConstNestRel:
+                    printf("store_const_nest_rel(");
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(", %%%" PRIu32 ")\n", opnds[0]);
                     break;
-                case kPrismInsnStoreConstReceiverRelative:
-                    printf("store_const_receiver_relative(%%%" PRIu32 ", ", opnds[0]);
+                case kPrismInsnStoreConstRecvRel:
+                    printf("store_const_recv_rel(%%%" PRIu32 ", ", opnds[0]);
                     dump_constant_path(builder, &insn->as.constant_path);
                     printf(", %%%" PRIu32 ")\n", opnds[1]);
                     break;
