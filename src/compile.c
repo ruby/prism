@@ -878,7 +878,7 @@ emit_store_const_nesting_relative(PrismBuilder *builder, uint32_t node_id, Prism
 
 static uint32_t
 emit_store_const_receiver_relative(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstReceiverRelative, node_id, 1);
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstReceiverRelative, node_id, 2);
     insn->as.constant_path = constant_path;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -1369,20 +1369,39 @@ compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t 
 
 static uint32_t
 compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_write_node_t *node) {
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->target->name);
+
     if (node->target->parent) {
         uint32_t receiver_id = compile_node(builder, node->target->parent);
         uint32_t value_id = compile_node(builder, node->value);
 
-        PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
-        PrismConstantPath_set(&constant_path, 0, (uint32_t) node->target->name);
-
         return emit_store_const_receiver_relative(builder, node->base.node_id, receiver_id, constant_path, value_id);
     } else {
         uint32_t value_id = compile_node(builder, node->value);
-        PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
-        PrismConstantPath_set(&constant_path, 0, (uint32_t) node->target->name);
-
         return emit_store_const_absolute(builder, node->base.node_id, constant_path, value_id);
+    }
+}
+
+static uint32_t
+compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_constant_path_operator_write_node_t *node) {
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, (uint32_t) node->target->name);
+
+    if (node->target->parent) {
+        uint32_t parent_id = compile_node(builder, node->target->parent);
+
+        uint32_t receiver_id = emit_load_const_receiver_relative(builder, node->base.node_id, parent_id, constant_path);
+        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+
+        return emit_store_const_receiver_relative(builder, node->base.node_id, parent_id, constant_path, result_id);
+    } else {
+        uint32_t receiver_id = emit_load_const_absolute(builder, node->base.node_id, constant_path);
+        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+
+        return emit_store_const_absolute(builder, node->base.node_id, constant_path, result_id);
     }
 }
 
@@ -1962,6 +1981,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
             return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node);
+        case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
+            return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node);
         case PM_DEF_NODE:
             return compile_def_node(builder, (const pm_def_node_t *) node);
         case PM_EMBEDDED_STATEMENTS_NODE:
@@ -2299,9 +2320,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 }
                 case kPrismInsnLoadObject: {
-                    printf("%%%" PRIu32 " = load_object ", opnds[0]);
+                    printf("%%%" PRIu32 " = load_object(", opnds[0]);
                     dump_object(builder, insn->as.object.object_id);
-                    printf("\n");
+                    printf(")\n");
                     break;
                 }
                 case kPrismInsnLoadSelf:
