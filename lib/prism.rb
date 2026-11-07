@@ -15,6 +15,7 @@ module Prism
   # of these features.
 
   autoload :BasicVisitor, "prism/visitor"
+  autoload :Compile, "prism/compile"
   autoload :Compiler, "prism/compiler"
   autoload :DesugarCompiler, "prism/desugar_compiler"
   autoload :Dispatcher, "prism/dispatcher"

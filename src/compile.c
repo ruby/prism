@@ -4,9 +4,11 @@
 #include "prism/internal/allocator.h"
 #include "prism/internal/arena.h"
 #include "prism/internal/buffer.h"
+#include "prism/internal/compile.h"
 #include "prism/internal/constant_pool.h"
 #include "prism/internal/integer.h"
 #include "prism/internal/line_offset_list.h"
+#include "prism/internal/oom.h"
 #include "prism/internal/parser.h"
 #include "prism/node.h"
 
@@ -35,170 +37,6 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     }
 }
 
-typedef enum {
-    kPrismInsnAliasMethod,
-    kPrismInsnBranch,
-    kPrismInsnBranchIf,
-    kPrismInsnCall,
-    kPrismInsnCallToS,
-    kPrismInsnCoerceHash,
-    kPrismInsnConvertToString,
-    kPrismInsnDefineClassAbs,
-    kPrismInsnDefineClassNestRel,
-    kPrismInsnDefineClassRecvRel,
-    kPrismInsnDefineMethod,
-    kPrismInsnDefineSingletonClass,
-    kPrismInsnDefinedCVar,
-    kPrismInsnDefinedGVar,
-    kPrismInsnExtractLastMatchGroup,
-    kPrismInsnExtractLastMatchMatch,
-    kPrismInsnExtractLastMatchParen,
-    kPrismInsnExtractLastMatchPost,
-    kPrismInsnExtractLastMatchPre,
-    kPrismInsnLoadConstAbs,
-    kPrismInsnLoadConstNestRel,
-    kPrismInsnLoadConstRecvRel,
-    kPrismInsnLoadCVar,
-    kPrismInsnLoadGVar,
-    kPrismInsnLoadIVar,
-    kPrismInsnLoadLastMatch,
-    kPrismInsnLoadLVar,
-    kPrismInsnLoadObject,
-    kPrismInsnLoadSelf,
-    kPrismInsnMatch,
-    kPrismInsnMergeHash,
-    kPrismInsnNewArray,
-    kPrismInsnNewArrayStatic,
-    kPrismInsnNewHash,
-    kPrismInsnNewHashStatic,
-    kPrismInsnNewRange,
-    kPrismInsnNewRegexp,
-    kPrismInsnNewString,
-    kPrismInsnNewSymbol,
-    kPrismInsnReturn,
-    kPrismInsnStoreConstAbs,
-    kPrismInsnStoreConstNestRel,
-    kPrismInsnStoreConstRecvRel,
-    kPrismInsnStoreCVar,
-    kPrismInsnStoreGVar,
-    kPrismInsnStoreIVar,
-    kPrismInsnStoreLVar,
-    kPrismInsnTraceCall,
-    kPrismInsnTraceClass,
-    kPrismInsnTraceEnd,
-    kPrismInsnTraceLine,
-    kPrismInsnTraceReturn,
-    kPrismInsnUndefMethod
-} PrismInsnKind;
-
-typedef struct {
-    uint32_t size;
-    union {
-        pm_constant_id_t constant_id;
-        pm_constant_id_t *constant_ids;
-    } as;
-} PrismConstantPath;
-
-typedef struct {
-    PrismInsnKind kind;
-    uint32_t node_id;
-    uint32_t opnds_off;
-    uint32_t opnds_len;
-    union {
-        struct { uint32_t block_id; } branch;
-        struct { uint32_t then_block_id; uint32_t else_block_id; uint32_t then_opnds_len; } branchif;
-        PrismConstantPath constant_path;
-        struct { pm_constant_id_t name_id; uint32_t graph_id; } define_class;
-        struct { uint32_t graph_id; } define_singleton_class;
-        struct { uint32_t number; } extract_group;
-        struct { uint32_t local_id; } lvar;
-        struct { pm_constant_id_t name_id; uint32_t graph_id; } method;
-        struct { pm_constant_id_t name_id; } name;
-        struct { uint32_t object_id; } object;
-        struct { bool exclude_end; } range;
-        struct { pm_node_flags_t flags; } regexp;
-        struct { int32_t lineno; } trace_line;
-    } as;
-} PrismInsn;
-
-typedef struct {
-    PrismInsn *insns;
-    uint32_t *params;
-    uint32_t ninsns;
-    uint32_t nparams;
-    uint32_t insns_capa;
-} PrismBlock;
-
-typedef enum {
-    kPrismObjectArray,
-    kPrismObjectClass,
-    kPrismObjectEncoding,
-    kPrismObjectFalse,
-    kPrismObjectFloat,
-    kPrismObjectHash,
-    kPrismObjectImaginary,
-    kPrismObjectInteger,
-    kPrismObjectNil,
-    kPrismObjectRational,
-    kPrismObjectRegexp,
-    kPrismObjectString,
-    kPrismObjectSymbol,
-    kPrismObjectTrue
-} PrismObjectKind;
-
-typedef struct {
-    PrismObjectKind kind;
-    union {
-        struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
-        struct { pm_constant_id_t name_id; } class;
-        struct { const char *name; } encoding;
-        struct { double value; } floating;
-        struct { uint32_t nobject_ids; uint32_t *object_ids; } hash;
-        struct { uint32_t numeric_id; } imaginary;
-        struct { const pm_integer_t *value; } integer;
-        struct { const pm_integer_t *numerator; const pm_integer_t *denominator; } rational;
-        struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
-    } as;
-} PrismObject;
-
-typedef enum {
-    kPrismGraphClass,
-    kPrismGraphDef,
-    kPrismGraphProgram,
-    kPrismGraphSingletonClass
-} PrismGraphKind;
-
-typedef struct {
-    PrismBlock *blocks;
-    uint32_t *opnds;
-    uint32_t *local_ids;
-    PrismGraphKind kind;
-    uint32_t nblocks;
-    uint32_t nopnds;
-    uint32_t nlocal_ids;
-    uint32_t blocks_capa;
-    uint32_t opnds_capa;
-    uint32_t value_id;
-    uint32_t parent_id;
-} PrismGraph;
-
-typedef struct {
-    pm_constant_id_t name_id;
-    uint32_t graph_id;
-} PrismLocal;
-
-typedef struct {
-    PrismGraph *graphs;
-    PrismObject *objects;
-    PrismLocal *locals;
-    uint32_t ngraphs;
-    uint32_t nobjects;
-    uint32_t nlocals;
-    uint32_t graphs_capa;
-    uint32_t objects_capa;
-    uint32_t locals_capa;
-} PrismUnit;
-
 typedef struct {
     uint32_t graph_id;
     uint32_t block_id;
@@ -217,6 +55,285 @@ typedef struct {
 
 /******************************************************************************/
 
+PrismUnit *
+pm_unit_new(void) {
+    PrismUnit *unit = xcalloc(1, sizeof(PrismUnit));
+    if (!unit) PRISM_OOM();
+    return unit;
+}
+
+uint32_t
+pm_unit_nobjects(const PrismUnit *unit) {
+    return unit->nobjects;
+}
+
+const PrismObject *
+pm_unit_object(const PrismUnit *unit, uint32_t object_id) {
+    return unit->objects + object_id;
+}
+
+PrismObjectKind
+pm_object_kind(const PrismObject *object) {
+    return object->kind;
+}
+
+uint32_t
+pm_unit_nlocals(const PrismUnit *unit) {
+    return unit->nlocals;
+}
+
+const PrismLocal *
+pm_unit_local(const PrismUnit *unit, uint32_t local_id) {
+    return unit->locals + local_id;
+}
+
+const pm_constant_t *
+pm_local_name(const pm_parser_t *parser, const PrismLocal *local) {
+    return compile_constant(parser, local->name_id);
+}
+
+uint32_t
+pm_unit_ngraphs(const PrismUnit *unit) {
+    return unit->ngraphs;
+}
+
+const PrismGraph *
+pm_unit_graph(const PrismUnit *unit, uint32_t graph_id) {
+    return unit->graphs + graph_id;
+}
+
+PrismGraphKind
+pm_graph_kind(const PrismGraph *graph) {
+    return graph->kind;
+}
+
+uint32_t
+pm_graph_parent_id(const PrismGraph *graph) {
+    return graph->parent_id;
+}
+
+uint32_t
+pm_graph_nblocks(const PrismGraph *graph) {
+    return graph->nblocks;
+}
+
+const PrismBlock *
+pm_graph_block(const PrismGraph *graph, uint32_t block_id) {
+    assert(block_id < graph->nblocks);
+    return graph->blocks + block_id;
+}
+
+uint32_t
+pm_graph_nlocals(const PrismGraph *graph) {
+    return graph->nlocal_ids;
+}
+
+uint32_t
+pm_graph_local_id(const PrismGraph *graph, uint32_t local_idx) {
+    assert(local_idx < graph->nlocal_ids);
+    return graph->local_ids[local_idx];
+}
+
+uint32_t
+pm_block_ninsns(const PrismBlock *block) {
+    return block->ninsns;
+}
+
+uint32_t
+pm_block_nparams(const PrismBlock *block) {
+    return block->nparams;
+}
+
+uint32_t
+pm_block_param(const PrismBlock *block, uint32_t param_idx) {
+    assert(param_idx < block->nparams);
+    return block->params[param_idx];
+}
+
+const PrismInsn *
+pm_block_insn(const PrismBlock *block, uint32_t insn_idx) {
+    return block->insns + insn_idx;
+}
+
+PrismInsnKind
+pm_insn_kind(const PrismInsn *insn) {
+    return insn->kind;
+}
+
+uint32_t
+pm_insn_node_id(const PrismInsn *insn) {
+    return insn->node_id;
+}
+
+uint32_t
+pm_insn_nopnds(const PrismInsn *insn) {
+    return insn->opnds_len;
+}
+
+uint32_t
+pm_insn_opnd(const PrismGraph *graph, const PrismInsn *insn, uint32_t opnd_idx) {
+    return graph->opnds[insn->opnds_off + opnd_idx];
+}
+
+uint32_t
+pm_object_array_size(const PrismObject *object) {
+    return object->as.array.nobject_ids;
+}
+
+uint32_t
+pm_object_array_object_id(const PrismObject *object, uint32_t idx) {
+    return object->as.array.object_ids[idx];
+}
+
+const pm_constant_t *
+pm_object_class_name(const pm_parser_t *parser, const PrismObject *object) {
+    return compile_constant(parser, object->as.class_.name_id);
+}
+
+const char *
+pm_object_encoding_name(const PrismObject *object) {
+    return object->as.encoding.name;
+}
+
+double
+pm_object_float(const PrismObject *object) {
+    return object->as.floating.value;
+}
+
+uint32_t
+pm_object_hash_size(const PrismObject *object) {
+    return object->as.hash.nobject_ids / 2;
+}
+
+uint32_t
+pm_object_hash_key_object_id(const PrismObject *object, uint32_t idx) {
+    return object->as.hash.object_ids[idx * 2];
+}
+
+uint32_t
+pm_object_hash_value_object_id(const PrismObject *object, uint32_t idx) {
+    return object->as.hash.object_ids[idx * 2 + 1];
+}
+
+uint32_t
+pm_object_imaginary_object_id(const PrismObject *object) {
+    return object->as.imaginary.numeric_id;
+}
+
+const pm_integer_t *
+pm_object_integer(const PrismObject *object) {
+    return object->as.integer.value;
+}
+
+const pm_integer_t *
+pm_object_rational_numerator(const PrismObject *object) {
+    return object->as.rational.numerator;
+}
+
+const pm_integer_t *
+pm_object_rational_denominator(const PrismObject *object) {
+    return object->as.rational.denominator;
+}
+
+const pm_string_t *
+pm_object_string(const PrismObject *object) {
+    return object->as.string.unescaped;
+}
+
+pm_node_flags_t
+pm_object_flags(const PrismObject *object) {
+    return object->as.string.flags;
+}
+
+uint32_t
+pm_insn_branch_block_id(const PrismInsn *insn) {
+    return insn->as.branch.block_id;
+}
+
+PRISM_EXPORTED_FUNCTION uint32_t
+pm_insn_branchif_then_block_id(const PrismInsn *insn) {
+    return insn->as.branchif.then_block_id;
+}
+PRISM_EXPORTED_FUNCTION uint32_t
+pm_insn_branchif_else_block_id(const PrismInsn *insn) {
+    return insn->as.branchif.else_block_id;
+}
+PRISM_EXPORTED_FUNCTION uint32_t
+pm_insn_branchif_then_nopnds(const PrismInsn *insn) {
+    return insn->as.branchif.then_opnds_len;
+}
+
+const pm_constant_t *
+pm_insn_name(const pm_parser_t *parser, const PrismInsn *insn) {
+    return compile_constant(parser, insn->as.name.name_id);
+}
+
+const pm_constant_t *
+pm_insn_define_name(const pm_parser_t *parser, const PrismInsn *insn) {
+    return compile_constant(parser, insn->as.define.name_id);
+}
+
+uint32_t
+pm_insn_define_graph_id(const PrismInsn *insn) {
+    return insn->as.define.graph_id;
+}
+
+uint32_t
+pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
+    return insn->as.define_singleton_class.graph_id;
+}
+
+uint32_t
+pm_insn_extract_group_number(const PrismInsn *insn) {
+    return insn->as.extract_group.number;
+}
+
+const PrismConstantPath *
+pm_insn_constant_path(const PrismInsn *insn) {
+    return &insn->as.constant_path;
+}
+
+uint32_t
+pm_insn_local_id(const PrismInsn *insn) {
+    return insn->as.lvar.local_id;
+}
+
+uint32_t
+pm_insn_object_id(const PrismInsn *insn) {
+    return insn->as.object.object_id;
+}
+
+pm_node_flags_t
+pm_insn_regexp_flags(const PrismInsn *insn) {
+    return insn->as.regexp.flags;
+}
+
+int32_t
+pm_insn_trace_lineno(const PrismInsn *insn) {
+    return insn->as.trace_line.lineno;
+}
+
+uint32_t
+PrismConstantPath_size(const PrismConstantPath *constant_path) {
+    return constant_path->size;
+}
+
+const pm_constant_t *
+PrismConstantPath_constant(const pm_parser_t *parser, const PrismConstantPath *constant_path, uint32_t idx) {
+    assert(idx < constant_path->size);
+
+    pm_constant_id_t constant_id;
+    if (constant_path->size == 1) {
+        constant_id = constant_path->as.constant_id;
+    } else {
+        constant_id = constant_path->as.constant_ids[idx];
+    }
+
+    return compile_constant(parser, constant_id);
+}
+
+/******************************************************************************/
+
 static PrismConstantPath
 PrismConstantPath_new(PrismBuilder *builder, uint32_t size) {
     if (size == 1) {
@@ -227,6 +344,7 @@ PrismConstantPath_new(PrismBuilder *builder, uint32_t size) {
     }
 }
 
+/*
 static pm_constant_id_t
 PrismConstantPath_get(PrismConstantPath *constant_path, uint32_t index) {
     assert(index < constant_path->size);
@@ -237,6 +355,7 @@ PrismConstantPath_get(PrismConstantPath *constant_path, uint32_t index) {
         return constant_path->as.constant_ids[index];
     }
 }
+*/
 
 static void
 PrismConstantPath_set(PrismConstantPath *constant_path, uint32_t index, pm_constant_id_t constant_id) {
@@ -533,8 +652,8 @@ emit_convert_to_string(PrismBuilder *builder, uint32_t node_id, uint32_t string_
 static uint32_t
 emit_define_class_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassAbs, node_id, 2);
-    insn->as.define_class.name_id = name_id;
-    insn->as.define_class.graph_id = graph_id;
+    insn->as.define.name_id = name_id;
+    insn->as.define.graph_id = graph_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -547,8 +666,8 @@ emit_define_class_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t 
 static uint32_t
 emit_define_class_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassNestRel, node_id, 2);
-    insn->as.define_class.name_id = name_id;
-    insn->as.define_class.graph_id = graph_id;
+    insn->as.define.name_id = name_id;
+    insn->as.define.graph_id = graph_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -561,8 +680,8 @@ emit_define_class_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_
 static uint32_t
 emit_define_class_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t superclass_id, uint32_t graph_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassRecvRel, node_id, 3);
-    insn->as.define_class.name_id = name_id;
-    insn->as.define_class.graph_id = graph_id;
+    insn->as.define.name_id = name_id;
+    insn->as.define.graph_id = graph_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -576,8 +695,8 @@ emit_define_class_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_
 static void
 emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefineMethod, node_id, 0);
-    insn->as.method.name_id = name_id;
-    insn->as.method.graph_id = graph_id;
+    insn->as.define.name_id = name_id;
+    insn->as.define.graph_id = graph_id;
 }
 
 static uint32_t
@@ -877,9 +996,8 @@ emit_new_hash_static(PrismBuilder *builder, uint32_t node_id, uint32_t object_id
 }
 
 static uint32_t
-emit_new_range(PrismBuilder *builder, uint32_t node_id, uint32_t left_id, uint32_t right_id, bool exclude_end) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnNewRange, node_id, 3);
-    insn->as.range.exclude_end = exclude_end;
+emit_new_range(PrismBuilder *builder, bool exclusive, uint32_t node_id, uint32_t left_id, uint32_t right_id) {
+    PrismInsn *insn = make_insn(builder, exclusive ? kPrismInsnNewRangeExc : kPrismInsnNewRangeInc, node_id, 3);
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -1149,6 +1267,16 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_SYMBOL_NODE: {
+            const pm_symbol_node_t *cast = (const pm_symbol_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectSymbol);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = &cast->unescaped;
+
+            return object_id;
+        }
         default:
             fprintf(stderr, "unsupported static literal node type: %s\n", pm_node_type(node->type));
             abort();
@@ -1381,9 +1509,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         }
     }
 
-    uint32_t value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
-    if (nargument_ids) xfree(argument_ids);
-    return value_id;
+    return emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
 }
 
 static uint32_t
@@ -1393,7 +1519,7 @@ compile_superclass(PrismBuilder *builder, const pm_class_node_t *node) {
         superclass_id = compile_node(builder, node->superclass);
     } else {
         uint32_t object_id = make_object(builder, kPrismObjectClass);
-        builder->unit->objects[object_id].as.class.name_id = PM_CONSTANT_ID_OBJECT;
+        builder->unit->objects[object_id].as.class_.name_id = PM_CONSTANT_ID_OBJECT;
         superclass_id = emit_load_object(builder, node->base.node_id, object_id);
     }
 
@@ -1994,7 +2120,7 @@ compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
         right_id = emit_load_nil(builder, node->base.node_id);
     }
 
-    return emit_new_range(builder, node->base.node_id, left_id, right_id, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END));
+    return emit_new_range(builder, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END), node->base.node_id, left_id, right_id);
 }
 
 static uint32_t
@@ -2319,6 +2445,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
 
 /******************************************************************************/
 
+/*
 static void
 dump_values(uint32_t nvalues, uint32_t *values) {
     if (nvalues) {
@@ -2346,7 +2473,7 @@ dump_object(PrismBuilder *builder, uint32_t object_id) {
             break;
         }
         case kPrismObjectClass: {
-            const pm_constant_t *constant = compile_constant(builder->parser, object->as.class.name_id);
+            const pm_constant_t *constant = compile_constant(builder->parser, object->as.class_.name_id);
             printf("class(%.*s)", (int) pm_constant_length(constant), pm_constant_start(constant));
             break;
         }
@@ -2475,23 +2602,23 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = convert_to_string %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
                     break;
                 case kPrismInsnDefineClassAbs: {
-                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
-                    printf("%%%" PRIu32 " = define_class_abs(::%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define_class.graph_id);
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define.name_id);
+                    printf("%%%" PRIu32 " = define_class_abs(::%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define.graph_id);
                     break;
                 }
                 case kPrismInsnDefineClassNestRel: {
-                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
-                    printf("%%%" PRIu32 " = define_class_nest_rel(%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define_class.graph_id);
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define.name_id);
+                    printf("%%%" PRIu32 " = define_class_nest_rel(%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], insn->as.define.graph_id);
                     break;
                 }
                 case kPrismInsnDefineClassRecvRel: {
-                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define_class.name_id);
-                    printf("%%%" PRIu32 " = define_class_recv_rel(%.*s, %%%" PRIu32 ", %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], opnds[2], insn->as.define_class.graph_id);
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.define.name_id);
+                    printf("%%%" PRIu32 " = define_class_recv_rel(%.*s, %%%" PRIu32 ", %%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name), opnds[1], opnds[2], insn->as.define.graph_id);
                     break;
                 }
                 case kPrismInsnDefineMethod: {
-                    const pm_constant_t *constant = compile_constant(builder->parser, insn->as.method.name_id);
-                    printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.method.graph_id);
+                    const pm_constant_t *constant = compile_constant(builder->parser, insn->as.define.name_id);
+                    printf("define_method :%.*s, g%" PRIu32 "\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), insn->as.define.graph_id);
                     break;
                 }
                 case kPrismInsnDefineSingletonClass: {
@@ -2686,24 +2813,22 @@ dump_unit(PrismBuilder *builder) {
         dump_graph(builder, builder->unit->graphs + graph_id);
     }
 }
+*/
 
 void
-pm_compile(const pm_parser_t *parser, const pm_node_t *node) {
-    pm_arena_t arena = { 0 };
-    PrismUnit unit = { 0 };
+pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, PrismUnit *unit) {
     PrismBuilder builder = {
         .parser = parser,
-        .arena = &arena,
-        .unit = &unit,
+        .arena = arena,
+        .unit = unit,
         .state = {
             .graph_id = 0,
             .block_id = 0,
             .lineno = parser->start_line - 1
         },
-        .bindings = pm_arena_zalloc(&arena, sizeof(uint32_t) * ((size_t) parser->constant_pool.size + 1), PRISM_ALIGNOF(uint32_t))
+        .bindings = pm_arena_zalloc(arena, sizeof(uint32_t) * ((size_t) parser->constant_pool.size + 1), PRISM_ALIGNOF(uint32_t))
     };
 
     compile_node(&builder, node);
-    dump_unit(&builder);
-    pm_arena_cleanup(&arena);
+    /* dump_unit(&builder); */
 }
