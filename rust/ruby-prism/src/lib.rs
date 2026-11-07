@@ -44,7 +44,7 @@ pub enum Version {
     /// The vendored version of prism in `CRuby` 3.4.x.
     CRuby3_4,
     /// The vendored version of prism in `CRuby` 4.0.x, formerly known as 3.5.x.
-    #[deprecated(note = "Use Version::CRuby4_0 instead")]
+    #[deprecated(note = "Use Version::CRuby4_0 instead", since = "2.1.0")]
     CRuby3_5,
     /// The vendored version of prism in `CRuby` 4.0.x.
     CRuby4_0,
