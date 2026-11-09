@@ -262,7 +262,7 @@ module Prism
       ###
 
       def check_class(parent, name, const)
-        unless const.is_a?(Class)
+        unless Class === const
           message = +"#{name} is not a class"
 
           if (location = parent.const_source_location(name, false))
@@ -274,14 +274,14 @@ module Prism
       end
 
       def check_module(const)
-        unless const.is_a?(Module)
+        unless Module === const
           raise TypeError, "#{const.inspect} is not a class/module"
         end
       end
 
       def check_superclass(superclass)
-        unless superclass.is_a?(Class)
-          raise TypeError, "superclass must be an instance of Class (given an instance of #{superclass.class})"
+        unless Class === superclass
+          raise TypeError, "superclass must be an instance of Class (given an instance of #{Kernel.instance_method(:class).bind_call(superclass)})"
         end
       end
 

@@ -110,6 +110,14 @@ module Prism
       assert_run_raises(TypeError, "class CompileTestSuperFirst::P < 2; end", message)
     end
 
+    def test_define_class_basic_object_operands
+      assert_run_raises(TypeError, "class CompileTestBasicSuper < BasicObject.new; end", "superclass must be an instance of Class (given an instance of BasicObject)")
+      assert_run_raises(TypeError, "CompileTestBasicConst = BasicObject.new; class CompileTestBasicConst; end", /\ACompileTestBasicConst is not a class$/)
+      assert_run_raises(NoMethodError, "class BasicObject.new::CompileTestBasicScope; end", /undefined method 'inspect'/)
+      assert_run_raises(NoMethodError, "BasicObject.new::CompileTestBasicStore = 1", /undefined method 'inspect'/)
+      assert_run_raises(NoMethodError, "BasicObject.new::CompileTestBasicLoad", /undefined method 'inspect'/)
+    end
+
     def test_define_class_nesting
       assert_run([1, 2, 3], <<~RUBY)
         class CompileTestNesting
