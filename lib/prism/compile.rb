@@ -88,11 +88,39 @@ module Prism
             when :convert_to_string
               values[insn.opnds[0]] = values[insn.opnds[2]].is_a?(String) ? values[insn.opnds[2]] : Kernel.instance_method(:to_s).bind_call(values[insn.opnds[1]])
             when :define_class_abs
-              raise "todo"
+              name, class_graph = insn.data
+              klass = define_class(Object, name, true)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+            when :define_class_abs_super
+              name, class_graph = insn.data
+              superclass = values[insn.opnds[1]]
+              check_superclass(superclass)
+              klass = define_class_super(Object, name, true, superclass)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
             when :define_class_nest_rel
-              raise "todo"
+              name, class_graph = insn.data
+              klass = define_class(nest[0], name, false)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+            when :define_class_nest_rel_super
+              name, class_graph = insn.data
+              superclass = values[insn.opnds[1]]
+              check_superclass(superclass)
+              klass = define_class_super(nest[0], name, false, superclass)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
             when :define_class_recv_rel
-              raise "todo"
+              name, class_graph = insn.data
+              parent = values[insn.opnds[1]]
+              check_module(parent)
+              klass = define_class(parent, name, true)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+            when :define_class_recv_rel_super
+              name, class_graph = insn.data
+              parent = values[insn.opnds[1]]
+              superclass = values[insn.opnds[2]]
+              check_superclass(superclass)
+              check_module(parent)
+              klass = define_class_super(parent, name, true, superclass)
+              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
             when :define_method
               raise "todo"
             when :define_singleton_class
@@ -161,6 +189,7 @@ module Prism
             when :store_const_nest_rel
               nest[0].const_set(insn.data, values[insn.opnds[0]])
             when :store_const_recv_rel
+              check_module(values[insn.opnds[0]])
               values[insn.opnds[0]].const_set(insn.data, values[insn.opnds[1]])
             when :store_cvar
               Object.class_variable_set(insn.data, values[insn.opnds[0]])
@@ -183,6 +212,33 @@ module Prism
 
       private
 
+      def define_class(parent, name, check_public)
+        existing_class(parent, name, check_public) || parent.const_set(name, Class.new)
+      end
+
+      def define_class_super(parent, name, check_public, superclass)
+        if (klass = existing_class(parent, name, check_public))
+          unless klass.superclass.equal?(superclass)
+            raise TypeError, "superclass mismatch for class #{name}"
+          end
+
+          klass
+        else
+          parent.const_set(name, Class.new(superclass))
+        end
+      end
+
+      def existing_class(parent, name, check_public)
+        if parent.const_defined?(name, false)
+          check_public_const(parent, parent, name) if check_public
+          const = parent.const_get(name, false)
+          check_class(parent, name, const)
+          const
+        end
+      end
+
+      ###
+
       def const_get_nest_rel(nest, name)
         nest[0...-1].each do |scope|
           return scope.const_get(name, false) if scope.const_defined?(name, false)
@@ -192,15 +248,46 @@ module Prism
       end
 
       def const_get_recv_rel(recv, name)
-        raise TypeError, "#{recv.inspect} is not a class/module" unless recv.is_a?(Module)
+        check_module(recv)
         owner = recv.ancestors.find { |ancestor| ancestor.const_defined?(name, false) }
 
         if owner.nil? || (owner == Object && recv != Object)
           recv.const_missing(name)
-        elsif !owner.constants(false).include?(name)
-          raise NameError.new("private constant #{recv}::#{name} referenced", name, receiver: recv)
         else
+          check_public_const(owner, recv, name)
           owner.const_get(name, false)
+        end
+      end
+
+      ###
+
+      def check_class(parent, name, const)
+        unless const.is_a?(Class)
+          message = +"#{name} is not a class"
+
+          if (location = parent.const_source_location(name, false))
+            message << "\n#{location[0]}:#{location[1]}: previous definition of #{name} was here"
+          end
+
+          raise TypeError, message
+        end
+      end
+
+      def check_module(const)
+        unless const.is_a?(Module)
+          raise TypeError, "#{const.inspect} is not a class/module"
+        end
+      end
+
+      def check_superclass(superclass)
+        unless superclass.is_a?(Class)
+          raise TypeError, "superclass must be an instance of Class (given an instance of #{superclass.class})"
+        end
+      end
+
+      def check_public_const(parent, recv, name)
+        unless parent.constants(false).include?(name)
+          raise NameError.new("private constant #{recv}::#{name} referenced", name, receiver: recv)
         end
       end
     end
