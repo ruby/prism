@@ -63,7 +63,7 @@ module Prism
           block.insns.each do |insn|
             case insn.kind
             when :alias_method
-              raise "todo"
+              Module.instance_method(:alias_method).bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
             when :branch
               block = insn.data
               block.params.zip(insn.opnds.map { |opnd| values[opnd] }) { |param, value| values[param] = value }
@@ -200,7 +200,7 @@ module Prism
             when :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
               # ignore
             when :undef_method
-              raise "todo"
+              Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])
             else
               raise "Unknown instruction kind: #{insn.kind}"
             end

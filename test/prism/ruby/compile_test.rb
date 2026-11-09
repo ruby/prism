@@ -192,6 +192,78 @@ module Prism
       assert_run("private", '"#{CompileTestPrivateToS}"')
     end
 
+    def test_alias
+      Object.const_set(:CompileTestAlias, Class.new { def a = 1; private def secret = 2 })
+
+      assert_run(nil, "class CompileTestAlias; alias b a; end")
+      assert_run(1, "CompileTestAlias.new.b")
+      assert_run(1, %q{class CompileTestAlias; x = :c; alias :"#{x}" :a; end; CompileTestAlias.new.c})
+      assert_run(true, "class CompileTestAlias; alias hidden secret; end; CompileTestAlias.private_method_defined?(:hidden)")
+    end
+
+    def test_alias_targets_lexical_class
+      outer = Class.new { def a = 1 }
+      outer.const_set(:Inner, Class.new { def a = 2 })
+      Object.const_set(:CompileTestAliasOuter, outer)
+
+      assert_run(2, "class CompileTestAliasOuter; class Inner; alias b a; end; end; CompileTestAliasOuter::Inner.new.b")
+      assert_equal(false, outer.method_defined?(:b))
+
+      assert_run(1, "alias compile_test_top_alias itself; 1.compile_test_top_alias")
+      assert_equal(true, Object.method_defined?(:compile_test_top_alias))
+    end
+
+    def test_alias_errors
+      Object.const_set(:CompileTestAliasErrors, Class.new.freeze)
+
+      assert_run_raises(FrozenError, "class CompileTestAliasErrors; alias a to_s; end")
+      assert_run_raises(NameError, "class CompileTestAliasMissing; alias a nope; end", "undefined method 'nope' for class 'CompileTestAliasMissing'")
+    end
+
+    def test_undef
+      parent = Class.new { def a = 1; def b = 2; def c = 3; def d = 4; def e = 5 }
+      Object.const_set(:CompileTestUndef, Class.new(parent))
+
+      assert_run(nil, "class CompileTestUndef; undef a; end")
+      assert_equal(false, CompileTestUndef.method_defined?(:a))
+      assert_equal(true, parent.method_defined?(:a))
+
+      assert_run(nil, "class CompileTestUndef; undef b, c; end")
+      assert_equal(false, CompileTestUndef.method_defined?(:b))
+      assert_equal(false, CompileTestUndef.method_defined?(:c))
+
+      assert_run(nil, %q{class CompileTestUndef; x = :d; undef :"#{x}"; end})
+      assert_equal(false, CompileTestUndef.method_defined?(:d))
+      assert_equal(true, CompileTestUndef.method_defined?(:e))
+    end
+
+    def test_undef_errors
+      assert_run_raises(NameError, "class CompileTestUndefMissing; undef nope; end", "undefined method 'nope' for class 'CompileTestUndefMissing'")
+    end
+
+    def test_alias_undef_ignore_method_overrides
+      Object.const_set(:CompileTestAliasOverride, Class.new {
+        def a = 1
+        def self.alias_method(*) = raise("alias_method called")
+        def self.undef_method(*) = raise("undef_method called")
+      })
+
+      assert_run(1, "class CompileTestAliasOverride; alias b a; undef a; end; CompileTestAliasOverride.new.b")
+      assert_equal(false, CompileTestAliasOverride.method_defined?(:a))
+    end
+
+    def test_alias_undef_hooks
+      log = []
+      Object.const_set(:CompileTestAliasHooks, Class.new {
+        def a = 1
+        define_singleton_method(:method_added) { |name| log << [:added, name] }
+        define_singleton_method(:method_undefined) { |name| log << [:undefined, name] }
+      })
+
+      assert_run(nil, "class CompileTestAliasHooks; alias b a; undef a; end")
+      assert_equal([[:added, :b], [:undefined, :a]], log)
+    end
+
     private
 
     def assert_run(expected, source)
