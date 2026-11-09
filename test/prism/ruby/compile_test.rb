@@ -31,13 +31,28 @@ module Prism
         ["c", %q{/ab/ =~ "abc"; $'}],
         ["b", %q{/a(b)c/ =~ "abc"; $+}],
         ["b", %q{/a(b)c/ =~ "abc"; $1}],
-        [5, "::Foo = 5; ::Foo"],
-        [10, "Bar = 10; Bar"],
-        [15, "self.class::Baz = 15; self.class::Baz"],
-        [true, "1 in Integer"]
+        [5, "::CompileTestFoo = 5; ::CompileTestFoo"],
+        [10, "CompileTestBar = 10; CompileTestBar"],
+        [15, "self.class::CompileTestBaz = 15; self.class::CompileTestBaz"],
+        [true, "1 in Integer"],
+        [TOPLEVEL_BINDING.receiver, "self"]
       ].each do |(expected, source)|
-        assert_equal(expected, Prism::Compile::Runner.new.run_unit(Prism.compile(source)))
+        assert_equal(expected, Prism::Compile.run_unit(Prism.compile(source)))
       end
+    end
+
+    PRIVATE_CONSTANT = 1
+    private_constant :PRIVATE_CONSTANT
+
+    def test_const_get_recv_rel
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("String::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { Prism::Compile.run_unit(Prism.compile("Float::INFINITY::Foo")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("::String::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("::Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("String.itself::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("Prism::CompileTest.itself::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { Prism::Compile.run_unit(Prism.compile("1.itself::Foo")) }
     end
   end
 end

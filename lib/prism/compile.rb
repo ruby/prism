@@ -49,12 +49,12 @@ module Prism
       end
     end
 
-    class Runner
+    class << self
       def run_unit(unit)
-        run_graph(unit.graphs[0])
+        run_graph(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze)
       end
 
-      def run_graph(graph)
+      def run_graph(graph, recv, nest)
         values = []
         locals = graph.locals.to_h { |local| [local.name, nil] }
         block = graph.blocks[0]
@@ -114,23 +114,24 @@ module Prism
             when :load_object
               values[insn.opnds[0]] = insn.data
             when :load_const_abs
-              values[insn.opnds[0]] = insn.data.inject(Object) { |accum, name| accum.const_get(name) }
+              values[insn.opnds[0]] = insn.data.inject(Object) { |scope, name| const_get_recv_rel(scope, name) }
             when :load_const_nest_rel
-              values[insn.opnds[0]] = insn.data.inject(self.class) { |accum, name| accum.const_get(name) }
+              first, *rest = insn.data
+              values[insn.opnds[0]] = rest.inject(const_get_nest_rel(nest, first)) { |scope, name| const_get_recv_rel(scope, name) }
             when :load_const_recv_rel
-              values[insn.opnds[0]] = insn.data.inject(values[insn.opnds[1]]) { |accum, name| accum.const_get(name) }
+              values[insn.opnds[0]] = insn.data.inject(values[insn.opnds[1]]) { |scope, name| const_get_recv_rel(scope, name) }
             when :load_cvar
               values[insn.opnds[0]] = Object.class_variable_get(insn.data)
             when :load_gvar
               values[insn.opnds[0]] = eval(insn.data.name, TOPLEVEL_BINDING)
             when :load_ivar
-              values[insn.opnds[0]] = instance_variable_get(insn.data)
+              values[insn.opnds[0]] = recv.instance_variable_get(insn.data)
             when :load_last_match
               values[insn.opnds[0]] = $~
             when :load_lvar
               values[insn.opnds[0]] = locals[insn.data]
             when :load_self
-              values[insn.opnds[0]] = self
+              values[insn.opnds[0]] = recv
             when :match
               values[insn.opnds[0]] = values[insn.opnds[2]] === values[insn.opnds[1]]
             when :merge_hash
@@ -158,13 +159,13 @@ module Prism
             when :store_const_abs
               Object.const_set(insn.data, values[insn.opnds[0]])
             when :store_const_nest_rel
-              self.class.const_set(insn.data, values[insn.opnds[0]])
+              nest[0].const_set(insn.data, values[insn.opnds[0]])
             when :store_const_recv_rel
               values[insn.opnds[0]].const_set(insn.data, values[insn.opnds[1]])
             when :store_cvar
               Object.class_variable_set(insn.data, values[insn.opnds[0]])
             when :store_ivar
-              instance_variable_set(insn.data, values[insn.opnds[0]])
+              recv.instance_variable_set(insn.data, values[insn.opnds[0]])
             when :store_gvar
               eval("#{insn.data} = value", TOPLEVEL_BINDING.tap { |binding| binding.local_variable_set(:value, values[insn.opnds[0]]) })
             when :store_lvar
@@ -177,6 +178,29 @@ module Prism
               raise "Unknown instruction kind: #{insn.kind}"
             end
           end
+        end
+      end
+
+      private
+
+      def const_get_nest_rel(nest, name)
+        nest[0...-1].each do |scope|
+          return scope.const_get(name, false) if scope.const_defined?(name, false)
+        end
+
+        nest[0].const_get(name)
+      end
+
+      def const_get_recv_rel(recv, name)
+        raise TypeError, "#{recv.inspect} is not a class/module" unless recv.is_a?(Module)
+        owner = recv.ancestors.find { |ancestor| ancestor.const_defined?(name, false) }
+
+        if owner.nil? || (owner == Object && recv != Object)
+          recv.const_missing(name)
+        elsif !owner.constants(false).include?(name)
+          raise NameError.new("private constant #{recv}::#{name} referenced", name, receiver: recv)
+        else
+          owner.const_get(name, false)
         end
       end
     end
