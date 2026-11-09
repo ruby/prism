@@ -2151,7 +2151,11 @@ static uint32_t
 compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
     uint32_t value_id;
 
-    if (node->arguments) {
+    if (!node->arguments) {
+        value_id = emit_load_nil(builder, node->base.node_id);
+    } else if (node->arguments->arguments.size == 1 && !PM_NODE_TYPE_P(node->arguments->arguments.nodes[0], PM_SPLAT_NODE)) {
+        value_id = compile_node(builder, node->arguments->arguments.nodes[0]);
+    } else {
         uint32_t nargument_ids = (uint32_t) node->arguments->arguments.size;
         uint32_t *argument_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nargument_ids, PRISM_ALIGNOF(uint32_t));
 
@@ -2160,8 +2164,6 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
         }
 
         value_id = emit_new_array(builder, node->base.node_id, nargument_ids, argument_ids);
-    } else {
-        value_id = emit_load_nil(builder, node->base.node_id);
     }
 
     if (builder->unit->graphs[builder->state.graph_id].kind == kPrismGraphDef) {

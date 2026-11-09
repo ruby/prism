@@ -406,6 +406,15 @@ module Prism
       assert_run(3, "class CompileTestDefRecurse; def count(n); n > 0 && count(n - 1); n; end; end; CompileTestDefRecurse.new.count(3)")
     end
 
+    def test_return
+      source = "class CompileTestReturn; def none; return; 1; end; def one; return 1; 2; end; def many; return 1, 2; end; def array; return [1]; end; nil; end; CompileTestReturn.new"
+
+      assert_run(nil, "#{source}.none")
+      assert_run(1, "#{source}.one")
+      assert_run([1, 2], "#{source}.many")
+      assert_run([1], "#{source}.array")
+    end
+
     def test_define_method_nesting
       assert_run(1, "class CompileTestDefConst; A = 1; def a = A; end; CompileTestDefConst.new.a")
       assert_run(1, "class CompileTestDefNested; def a; def b = 1; end; end; CompileTestDefNested.new.a; CompileTestDefNested.new.b")
