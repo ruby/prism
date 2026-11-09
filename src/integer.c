@@ -382,7 +382,7 @@ pm_integer_parse(pm_arena_t *arena, pm_integer_t *integer, pm_integer_base_t bas
             break;
         case PM_INTEGER_BASE_OCTAL:
             start++; /* 0 */
-            if (*start == '_' || *start == 'o' || *start == 'O') start++; /* o */
+            if (start < end && (*start == '_' || *start == 'o' || *start == 'O')) start++; /* o */
             break;
         case PM_INTEGER_BASE_DECIMAL:
             if (*start == '0' && (end - start) > 1) start += 2; /* 0d */
