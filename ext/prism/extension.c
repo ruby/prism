@@ -1190,9 +1190,8 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnBranch: return rb_intern_const("branch");
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");
         case kPrismInsnCall: return rb_intern_const("call");
-        case kPrismInsnCallToS: return rb_intern_const("call_to_s");
         case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
-        case kPrismInsnConvertToString: return rb_intern_const("convert_to_string");
+        case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
         case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");
         case kPrismInsnDefineClassAbsSuper: return rb_intern_const("define_class_abs_super");
         case kPrismInsnDefineClassNestRel: return rb_intern_const("define_class_nest_rel");

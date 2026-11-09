@@ -135,6 +135,63 @@ module Prism
       assert_run_raises(NameError, "class CompileTestNesting::Inner; X; end")
     end
 
+    def test_coerce_hash
+      assert_run({}, "{ **nil }")
+      assert_run(false, "h = { a: 1 }; { **h }.equal?(h)")
+      assert_run(nil, "{ **Hash.new(5) }.default")
+
+      assert_run_raises(TypeError, "{ **1 }", "no implicit conversion of Integer into Hash")
+      assert_run_raises(TypeError, "{ **BasicObject.new }", "no implicit conversion of BasicObject into Hash")
+
+      Object.const_set(:CompileTestToHashNil, Class.new { def to_hash = nil }.new)
+      assert_run_raises(TypeError, "{ **CompileTestToHashNil }", /#to_hash gives nil/)
+    end
+
+    def test_new_hash_empty
+      assert_run({}, "{}")
+      assert_run(0, "h = {}; h.size")
+    end
+
+    def test_merge_hash
+      Object.const_set(:CompileTestHashSubclass, Class.new(Hash))
+
+      assert_run(Hash, "{ **CompileTestHashSubclass.new }.class")
+      assert_run(Hash, "{ **CompileTestHashSubclass.new, a: 1 }.class")
+      assert_run(nil, "{ **Hash.new(5), a: 1 }.default")
+      assert_run(nil, "{ **Hash.new(5), **Hash.new(5) }.default")
+      assert_run(nil, "{ **Hash.new(5), **{} }.default")
+      assert_run(nil, "{ **Hash.new(5), **nil }.default")
+      assert_run(nil, "{ **nil, **Hash.new(5) }.default")
+      assert_run(false, "{ **Hash.new.compare_by_identity }.compare_by_identity?")
+      assert_run(false, "{ **Hash.new.compare_by_identity, a: 1 }.compare_by_identity?")
+      assert_run_raises(TypeError, "{ **1, a: 1 }", "no implicit conversion of Integer into Hash")
+      assert_run_raises(TypeError, "{ **1, **nil }", "no implicit conversion of Integer into Hash")
+    end
+
+    def test_merge_hash_conversion_order
+      log = []
+      splat = ->(tag) { Class.new { define_method(:to_hash) { log << tag; { tag => 1 } } }.new }
+      Object.const_set(:CompileTestSplatX, splat[:x])
+      Object.const_set(:CompileTestSplatY, splat[:y])
+
+      assert_run({ x: 1, y: 1 }, "{ **CompileTestSplatX, **CompileTestSplatY }")
+      assert_equal([:x, :y], log)
+
+      log.clear
+      assert_run({ x: 1, a: { y: 1 } }, "{ **CompileTestSplatX, a: CompileTestSplatY.to_hash }")
+      assert_equal([:x, :y], log)
+
+      assert_run({ x: 1 }, "{ **CompileTestSplatX, **nil }")
+    end
+
+    def test_coerce_string
+      Object.const_set(:CompileTestBasicToS, Class.new { def to_s = BasicObject.new }.new)
+      Object.const_set(:CompileTestPrivateToS, Class.new { private def to_s = "private" }.new)
+
+      assert_run(String, '"#{CompileTestBasicToS}".class')
+      assert_run("private", '"#{CompileTestPrivateToS}"')
+    end
+
     private
 
     def assert_run(expected, source)

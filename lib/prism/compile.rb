@@ -80,13 +80,11 @@ module Prism
               break
             when :call
               values[insn.opnds[0]] = values[insn.opnds[1]].send(insn.data, *values.values_at(*insn.opnds[2..]))
-            when :call_to_s
-              values[insn.opnds[0]] = values[insn.opnds[1]].to_s
             when :coerce_hash
               value = values[insn.opnds[1]]
-              values[insn.opnds[0]] = value.nil? ? {} : value.to_hash
-            when :convert_to_string
-              values[insn.opnds[0]] = values[insn.opnds[2]].is_a?(String) ? values[insn.opnds[2]] : Kernel.instance_method(:to_s).bind_call(values[insn.opnds[1]])
+              values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)
+            when :coerce_string
+              values[insn.opnds[0]] = coerce_string(values[insn.opnds[1]])
             when :define_class_abs
               name, class_graph = insn.data
               klass = define_class(Object, name, true)
@@ -211,6 +209,13 @@ module Prism
       end
 
       private
+
+      def coerce_string(value)
+        string = value.__send__(:to_s)
+        String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
+      end
+
+      ###
 
       def define_class(parent, name, check_public)
         existing_class(parent, name, check_public) || parent.const_set(name, Class.new)

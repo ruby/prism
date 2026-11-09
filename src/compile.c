@@ -603,18 +603,6 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uin
 }
 
 static uint32_t
-emit_call_to_s(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnCallToS, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-
-    return value_id;
-}
-
-static uint32_t
 emit_coerce_hash(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnCoerceHash, node_id, 2);
 
@@ -627,16 +615,15 @@ emit_coerce_hash(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
 }
 
 static uint32_t
-emit_convert_to_string(PrismBuilder *builder, uint32_t node_id, uint32_t string_id, uint32_t to_s_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnConvertToString, node_id, 3);
+emit_coerce_string(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceString, node_id, 2);
 
     PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = string_id;
-    graph->opnds[insn->opnds_off + 2] = to_s_id;
+    uint32_t string_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = string_id;
+    graph->opnds[insn->opnds_off + 1] = value_id;
 
-    return value_id;
+    return string_id;
 }
 
 static uint32_t
@@ -1008,7 +995,7 @@ emit_new_hash(PrismBuilder *builder, uint32_t node_id, uint32_t nelement_ids, ui
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
     graph->opnds[insn->opnds_off] = value_id;
-    memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
+    if (nelement_ids != 0) memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
 
     return value_id;
 }
@@ -1803,15 +1790,13 @@ compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statem
         string_id = emit_load_nil(builder, node->base.node_id);
     }
 
-    uint32_t to_s_id = emit_call_to_s(builder, node->base.node_id, string_id);
-    return emit_convert_to_string(builder, node->base.node_id, string_id, to_s_id);
+    return emit_coerce_string(builder, node->base.node_id, string_id);
 }
 
 static uint32_t
 compile_embedded_variable_node(PrismBuilder *builder, const pm_embedded_variable_node_t *node) {
     uint32_t string_id = compile_node(builder, node->variable);
-    uint32_t to_s_id = emit_call_to_s(builder, node->base.node_id, string_id);
-    return emit_convert_to_string(builder, node->base.node_id, string_id, to_s_id);
+    return emit_coerce_string(builder, node->base.node_id, string_id);
 }
 
 static uint32_t
@@ -1921,6 +1906,7 @@ compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
         }
     }
 
+    if (value_id == UINT32_MAX) value_id = emit_new_hash(builder, node->base.node_id, 0, NULL);
     return value_id;
 }
 
@@ -2607,14 +2593,11 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
-                case kPrismInsnCallToS:
-                    printf("%%%" PRIu32 " = call_to_s %%%" PRIu32 "\n", opnds[0], opnds[1]);
-                    break;
                 case kPrismInsnCoerceHash:
                     printf("%%%" PRIu32 " = coerce_hash %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
-                case kPrismInsnConvertToString:
-                    printf("%%%" PRIu32 " = convert_to_string %%%" PRIu32 ", %%%" PRIu32 "\n", opnds[0], opnds[1], opnds[2]);
+                case kPrismInsnCoerceString:
+                    printf("%%%" PRIu32 " = coerce_string %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
                 case kPrismInsnDefineClassAbs: {
                     const pm_constant_t *name = compile_constant(builder->parser, insn->as.define.name_id);
