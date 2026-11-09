@@ -460,6 +460,61 @@ module Prism
       assert_equal([:a], log)
     end
 
+    def test_singleton_class
+      assert_run(1, "class << Object.new; 1; end")
+      assert_run(nil, "class << Object.new; end")
+      assert_run(Object.singleton_class, "class << Object; self; end")
+      assert_run(1, "class CompileTestSingleton; class << self; def a = 1; end; end; CompileTestSingleton.a")
+      assert_run(1, "o = Object.new; class << o; def a = 1; end; o.a")
+      assert_equal(false, CompileTestSingleton.method_defined?(:a))
+    end
+
+    def test_singleton_class_special_constants
+      assert_run(NilClass, "class << nil; self; end")
+      assert_run(TrueClass, "class << true; self; end")
+      assert_run(FalseClass, "class << false; self; end")
+    end
+
+    def test_singleton_class_errors
+      assert_run_raises(TypeError, "class << 1; end", "can't define singleton")
+      assert_run_raises(TypeError, "class << :a; end", "can't define singleton")
+      assert_run_raises(FrozenError, "o = Object.new.freeze; class << o; def a; end; end")
+    end
+
+    def test_singleton_class_scope
+      assert_run(1, "a = 1; class << Object.new; a = 2; end; a")
+      assert_run(1, "class CompileTestSingletonConst; A = 1; class << self; def a = A; end; end; CompileTestSingletonConst.a")
+
+      assert_run(2, "class CompileTestSingletonStore; class << self; B = 2; B; end; end")
+      assert_equal(2, CompileTestSingletonStore.singleton_class.const_get(:B, false))
+      assert_equal(false, CompileTestSingletonStore.const_defined?(:B, false))
+
+      assert_run(1, "class CompileTestSingletonCVar; @@a = 1; class << self; def a = @@a; end; end; CompileTestSingletonCVar.a")
+    end
+
+    def test_singleton_class_basic_object
+      assert_run(1, "class CompileTestSingletonBasic < BasicObject; end; class << CompileTestSingletonBasic.new; 1; end")
+    end
+
+    def test_singleton_class_ignores_method_overrides
+      Object.const_set(:CompileTestSingletonOverride, Class.new {
+        def self.singleton_class = raise("singleton_class called")
+      })
+
+      assert_run(1, "class << CompileTestSingletonOverride; def a = 1; end; CompileTestSingletonOverride.a")
+    end
+
+    def test_singleton_class_hooks
+      log = []
+      Object.const_set(:CompileTestSingletonHooks, Class.new {
+        define_singleton_method(:singleton_method_added) { |name| log << name }
+      })
+      log.clear
+
+      assert_run(:a, "class << CompileTestSingletonHooks; def a; end; end")
+      assert_equal([:a], log)
+    end
+
     private
 
     def assert_run(expected, source)
