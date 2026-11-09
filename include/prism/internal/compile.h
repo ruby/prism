@@ -48,7 +48,6 @@ struct PrismObject {
     PrismObjectKind kind;
     union {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } array;
-        struct { pm_constant_id_t name_id; } class_;
         struct { const char *name; } encoding;
         struct { double value; } floating;
         struct { uint32_t nobject_ids; uint32_t *object_ids; } hash;

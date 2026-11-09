@@ -1194,8 +1194,11 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
         case kPrismInsnConvertToString: return rb_intern_const("convert_to_string");
         case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");
+        case kPrismInsnDefineClassAbsSuper: return rb_intern_const("define_class_abs_super");
         case kPrismInsnDefineClassNestRel: return rb_intern_const("define_class_nest_rel");
+        case kPrismInsnDefineClassNestRelSuper: return rb_intern_const("define_class_nest_rel_super");
         case kPrismInsnDefineClassRecvRel: return rb_intern_const("define_class_recv_rel");
+        case kPrismInsnDefineClassRecvRelSuper: return rb_intern_const("define_class_recv_rel_super");
         case kPrismInsnDefineMethod: return rb_intern_const("define_method");
         case kPrismInsnDefineSingletonClass: return rb_intern_const("define_singleton_class");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
@@ -1270,8 +1273,11 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
         }
         case kPrismInsnDefineClassAbs:
+        case kPrismInsnDefineClassAbsSuper:
         case kPrismInsnDefineClassNestRel:
+        case kPrismInsnDefineClassNestRelSuper:
         case kPrismInsnDefineClassRecvRel:
+        case kPrismInsnDefineClassRecvRelSuper:
         case kPrismInsnDefineMethod: {
             const pm_constant_t *constant = pm_insn_define_name(parser, insn);
             VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
@@ -1342,12 +1348,6 @@ compile(int argc, VALUE *argv, VALUE self) {
                 for (uint32_t idx = 0; idx < size; ++idx) {
                     rb_ary_push(vobject, rb_ary_entry(vobjects_unit, pm_object_array_object_id(object, idx)));
                 }
-                break;
-            }
-            case kPrismObjectClass: {
-                const pm_constant_t *constant = pm_object_class_name(parser, object);
-                ID name = rb_intern3((const char *) pm_constant_start(constant), pm_constant_length(constant), encoding);
-                vobject = rb_const_get(rb_cObject, name);
                 break;
             }
             case kPrismObjectHash: {
