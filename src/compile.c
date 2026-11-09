@@ -717,13 +717,14 @@ emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t nam
 }
 
 static uint32_t
-emit_define_singleton_class(PrismBuilder *builder, uint32_t node_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonClass, node_id, 1);
+emit_define_singleton_class(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonClass, node_id, 2);
     insn->as.define_singleton_class.graph_id = graph_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
     graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = receiver_id;
 
     return value_id;
 }
@@ -2194,7 +2195,8 @@ compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_nod
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
 
-    return emit_define_singleton_class(builder, node->base.node_id, graph_id);
+    uint32_t receiver_id = compile_node(builder, node->expression);
+    return emit_define_singleton_class(builder, node->base.node_id, receiver_id, graph_id);
 }
 
 static uint32_t
@@ -2635,7 +2637,7 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     break;
                 }
                 case kPrismInsnDefineSingletonClass: {
-                    printf("%%%" PRIu32 " = define_singleton_class g%" PRIu32 "\n", opnds[0], insn->as.define_singleton_class.graph_id);
+                    printf("%%%" PRIu32 " = define_singleton_class(%%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], opnds[1], insn->as.define_singleton_class.graph_id);
                     break;
                 }
                 case kPrismInsnDefinedCVar: {
