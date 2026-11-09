@@ -84,7 +84,9 @@ module Prism
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)
             when :coerce_string
-              values[insn.opnds[0]] = coerce_string(values[insn.opnds[1]])
+              value = values[insn.opnds[1]]
+              string = value.__send__(:to_s)
+              values[insn.opnds[0]] = String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
             when :define_class_abs
               name, class_graph = insn.data
               klass = define_class(Object, name, true)
@@ -124,9 +126,9 @@ module Prism
             when :define_singleton_class
               raise "todo"
             when :defined_cvar
-              raise "todo"
+              values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
-              raise "todo"
+              values[insn.opnds[0]] = !eval("defined?(#{insn.data})", TOPLEVEL_BINDING).nil?
             when :extract_last_match_group
               values[insn.opnds[0]] = values[insn.opnds[1]]&.[](insn.data)
             when :extract_last_match_match
@@ -147,7 +149,9 @@ module Prism
             when :load_const_recv_rel
               values[insn.opnds[0]] = insn.data.inject(values[insn.opnds[1]]) { |scope, name| const_get_recv_rel(scope, name) }
             when :load_cvar
-              values[insn.opnds[0]] = Object.class_variable_get(insn.data)
+              parent = cvar_parent(nest)
+              check_cvar_parent(parent)
+              values[insn.opnds[0]] = Module.instance_method(:class_variable_get).bind_call(parent, insn.data)
             when :load_gvar
               values[insn.opnds[0]] = eval(insn.data.name, TOPLEVEL_BINDING)
             when :load_ivar
@@ -190,7 +194,9 @@ module Prism
               check_module(values[insn.opnds[0]])
               values[insn.opnds[0]].const_set(insn.data, values[insn.opnds[1]])
             when :store_cvar
-              Object.class_variable_set(insn.data, values[insn.opnds[0]])
+              parent = cvar_parent(nest)
+              check_cvar_parent(parent)
+              Module.instance_method(:class_variable_set).bind_call(parent, insn.data, values[insn.opnds[0]])
             when :store_ivar
               recv.instance_variable_set(insn.data, values[insn.opnds[0]])
             when :store_gvar
@@ -210,9 +216,8 @@ module Prism
 
       private
 
-      def coerce_string(value)
-        string = value.__send__(:to_s)
-        String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
+      def cvar_parent(nest)
+        nest[0...-1].find { |scope| !Module.instance_method(:singleton_class?).bind_call(scope) }
       end
 
       ###
@@ -275,6 +280,12 @@ module Prism
           end
 
           raise TypeError, message
+        end
+      end
+
+      def check_cvar_parent(parent)
+        unless parent
+          raise RuntimeError, "class variable access from toplevel"
         end
       end
 

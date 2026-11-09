@@ -18,7 +18,6 @@ module Prism
         [/a1c/, %q{/a#{1}c/}],
         [1, "a = 1; a"],
         [1, "@a = 1; @a"],
-        [1, "@@a = 1; @@a"],
         [1, "$a = 1; $a"],
         [5, "a = 1; while a < 5; a += 1; end; a"],
         [Object, "::Object::Object"],
@@ -262,6 +261,140 @@ module Prism
 
       assert_run(nil, "class CompileTestAliasHooks; alias b a; undef a; end")
       assert_equal([[:added, :b], [:undefined, :a]], log)
+    end
+
+    def test_cvar
+      assert_run(1, "class CompileTestCVar; @@a = 1; @@a; end")
+      assert_equal(1, CompileTestCVar.class_variable_get(:@@a))
+      assert_equal(false, Object.class_variable_defined?(:@@a))
+
+      assert_run_raises(NameError, "class CompileTestCVarMissing; @@a; end", "uninitialized class variable @@a in CompileTestCVarMissing")
+    end
+
+    def test_cvar_toplevel
+      message = "class variable access from toplevel"
+
+      assert_run_raises(RuntimeError, "@@compile_test_top", message)
+      assert_run_raises(RuntimeError, "@@compile_test_top = 1", message)
+      assert_run_raises(RuntimeError, "@@compile_test_top ||= 1", message)
+      assert_run_raises(RuntimeError, "@@compile_test_top &&= 1", message)
+      assert_run_raises(RuntimeError, "@@compile_test_top += 1", message)
+      assert_equal(false, Object.class_variable_defined?(:@@compile_test_top))
+    end
+
+    def test_cvar_or_write
+      Object.const_set(:CompileTestCVarSide, [])
+
+      assert_run(1, "class CompileTestCVarOr; @@a ||= 1; @@a ||= 2; @@a; end")
+      assert_run(3, "class CompileTestCVarOr; @@b = nil; @@b ||= 3; @@b; end")
+      assert_run(4, "class CompileTestCVarOr; @@c = false; @@c ||= 4; @@c; end")
+      assert_run(5, "class CompileTestCVarOr; @@d = 5; @@d ||= CompileTestCVarSide.push(1); @@d; end")
+      assert_equal([], CompileTestCVarSide)
+      assert_equal([:@@a, :@@b, :@@c, :@@d], CompileTestCVarOr.class_variables(false).sort)
+    end
+
+    def test_cvar_and_write_and_operator_write
+      assert_run(3, "class CompileTestCVarAnd; @@a = 1; @@a &&= 3; @@a; end")
+      assert_run(false, "class CompileTestCVarAnd; @@b = false; @@b &&= 3; @@b; end")
+      assert_run(4, "class CompileTestCVarAnd; @@c = 1; @@c += 3; @@c; end")
+
+      assert_run_raises(NameError, "class CompileTestCVarAnd; @@missing &&= 1; end", "uninitialized class variable @@missing in CompileTestCVarAnd")
+      assert_run_raises(NameError, "class CompileTestCVarAnd; @@missing += 1; end", "uninitialized class variable @@missing in CompileTestCVarAnd")
+    end
+
+    def test_cvar_or_write_inherits
+      Object.const_set(:CompileTestCVarParent, Class.new { class_variable_set(:@@a, 1) })
+      Object.const_set(:CompileTestCVarModule, Module.new { class_variable_set(:@@m, 2) })
+
+      assert_run(1, "class CompileTestCVarChild < CompileTestCVarParent; @@a ||= 5; @@a; end")
+      assert_equal([], CompileTestCVarChild.class_variables(false))
+
+      Object.const_set(:CompileTestCVarIncluder, Class.new { include CompileTestCVarModule })
+      assert_run(2, "class CompileTestCVarIncluder; @@m ||= 5; @@m; end")
+      assert_equal([], CompileTestCVarIncluder.class_variables(false))
+    end
+
+    def test_cvar_or_write_uses_innermost_scope
+      Object.const_set(:CompileTestCVarOuter, Class.new { class_variable_set(:@@a, 1) })
+
+      assert_run(9, "class CompileTestCVarOuter; class Inner; @@a ||= 9; @@a; end; end")
+      assert_equal(1, CompileTestCVarOuter.class_variable_get(:@@a))
+      assert_equal([:@@a], CompileTestCVarOuter::Inner.class_variables(false))
+    end
+
+    def test_cvar_skips_singleton_scopes
+      klass = Class.new { class_variable_set(:@@a, 1) }
+
+      graph = Prism.compile("@@a ||= 5").graphs[0]
+      assert_equal(1, Prism::Compile.run_graph(graph, klass, [klass.singleton_class, klass, Object].freeze))
+
+      error = assert_raise(RuntimeError) { Prism::Compile.run_graph(graph, klass, [klass.singleton_class, Object].freeze) }
+      assert_equal("class variable access from toplevel", error.message)
+    end
+
+    def test_cvar_or_write_reopened_object
+      assert_run(1, "class Object; @@compile_test_object ||= 1; @@compile_test_object; end")
+    ensure
+      Object.remove_class_variable(:@@compile_test_object) if Object.class_variable_defined?(:@@compile_test_object)
+    end
+
+    def test_cvar_or_write_errors
+      Object.const_set(:CompileTestCVarFrozen, Class.new.freeze)
+      assert_run_raises(FrozenError, "class CompileTestCVarFrozen; @@a ||= 1; end")
+
+      Object.const_set(:CompileTestCVarOvertaken, Class.new { class_variable_set(:@@compile_test_overtaken, 1) })
+
+      begin
+        Object.class_variable_set(:@@compile_test_overtaken, 2)
+        assert_run_raises(RuntimeError, "class CompileTestCVarOvertaken; @@compile_test_overtaken ||= 3; end", "class variable @@compile_test_overtaken of CompileTestCVarOvertaken is overtaken by Object")
+      ensure
+        Object.remove_class_variable(:@@compile_test_overtaken)
+      end
+    end
+
+    def test_cvar_ignores_method_overrides
+      Object.const_set(:CompileTestCVarOverride, Class.new {
+        def self.class_variable_defined?(*) = raise("class_variable_defined? called")
+        def self.class_variable_get(*) = raise("class_variable_get called")
+        def self.class_variable_set(*) = raise("class_variable_set called")
+        def self.singleton_class? = raise("singleton_class? called")
+      })
+
+      assert_run(1, "class CompileTestCVarOverride; @@a ||= 1; @@a; end")
+    end
+
+    def test_gvar_or_write
+      Object.const_set(:CompileTestGVarSide, [])
+
+      assert_run(1, "$compile_test_or_new ||= 1")
+      assert_run(1, "$compile_test_or_new ||= 2")
+      assert_run(3, "$compile_test_or_nil = nil; $compile_test_or_nil ||= 3; $compile_test_or_nil")
+      assert_run(4, "$compile_test_or_false = false; $compile_test_or_false ||= 4; $compile_test_or_false")
+      assert_run(5, "$compile_test_or_set = 5; $compile_test_or_set ||= CompileTestGVarSide.push(1)")
+      assert_equal([], CompileTestGVarSide)
+    end
+
+    def test_gvar_or_write_special_variables
+      assert_run(IO, "$stdout ||= 1; $stdout.class")
+      assert_run(String, "$PROGRAM_NAME ||= 'x'; $PROGRAM_NAME.class")
+    end
+
+    def test_gvar_or_write_does_not_read_undefined
+      verbose, stderr = $VERBOSE, $stderr
+      $VERBOSE = true
+      $stderr = StringIO.new
+
+      Prism::Compile.run_unit(Prism.compile("$compile_test_or_silent ||= 1"))
+      assert_equal("", $stderr.string)
+    ensure
+      $VERBOSE, $stderr = verbose, stderr
+    end
+
+    def test_gvar_and_write_leaves_undefined
+      assert_run(nil, "$compile_test_and_new &&= 5")
+      assert_nil(eval("defined?($compile_test_and_new)"))
+
+      assert_run(6, "$compile_test_and_set = 1; $compile_test_and_set &&= 6; $compile_test_and_set")
     end
 
     private
