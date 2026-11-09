@@ -397,6 +397,69 @@ module Prism
       assert_run(6, "$compile_test_and_set = 1; $compile_test_and_set &&= 6; $compile_test_and_set")
     end
 
+    def test_define_method
+      assert_run(:a, "class CompileTestDef; def a; end; end")
+      assert_nil(CompileTestDef.new.a)
+
+      assert_run(3, "class CompileTestDefArgs; def add(a, b) = a + b; end; CompileTestDefArgs.new.add(1, 2)")
+      assert_run(1, "class CompileTestDefSelf; def set(a) = @a = a; def get = @a; end; o = CompileTestDefSelf.new; o.set(1); o.get")
+      assert_run(3, "class CompileTestDefRecurse; def count(n); n > 0 && count(n - 1); n; end; end; CompileTestDefRecurse.new.count(3)")
+    end
+
+    def test_define_method_nesting
+      assert_run(1, "class CompileTestDefConst; A = 1; def a = A; end; CompileTestDefConst.new.a")
+      assert_run(1, "class CompileTestDefNested; def a; def b = 1; end; end; CompileTestDefNested.new.a; CompileTestDefNested.new.b")
+      assert_equal(true, CompileTestDefNested.public_method_defined?(:b))
+    end
+
+    def test_define_method_arguments
+      source = "class CompileTestDefArity; def a(b) = b; end; CompileTestDefArity.new"
+      assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1)")
+      assert_run_raises(ArgumentError, "#{source}.a(1, 2)", "wrong number of arguments (given 2, expected 1)")
+    end
+
+    def test_define_method_basic_object
+      source = "class CompileTestDefBasic < BasicObject; def a(b) = b; end; CompileTestDefBasic.new"
+      assert_run(1, "#{source}.a(1)")
+      assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1)")
+    end
+
+    def test_define_method_visibility
+      assert_run(:compile_test_toplevel, "def compile_test_toplevel = 1")
+      assert_equal(true, Object.private_method_defined?(:compile_test_toplevel))
+      assert_run(1, "compile_test_toplevel")
+
+      assert_run(:compile_test_inner, "def compile_test_outer; def compile_test_inner = 1; end; compile_test_outer")
+      assert_equal(true, Object.public_method_defined?(:compile_test_inner))
+
+      assert_run(nil, "class CompileTestDefVisibility; def a = 1; def initialize; end; nil; end")
+      assert_equal(true, CompileTestDefVisibility.public_method_defined?(:a))
+      assert_equal(true, CompileTestDefVisibility.private_method_defined?(:initialize))
+    ensure
+      [:compile_test_toplevel, :compile_test_outer, :compile_test_inner].each do |name|
+        Object.send(:remove_method, name) if Object.private_method_defined?(name, false) || Object.public_method_defined?(name, false)
+      end
+    end
+
+    def test_define_method_ignores_method_overrides
+      Object.const_set(:CompileTestDefOverride, Class.new {
+        def self.define_method(*) = raise("define_method called")
+        def self.private(*) = raise("private called")
+      })
+
+      assert_run(1, "class CompileTestDefOverride; def a = 1; end; CompileTestDefOverride.new.a")
+    end
+
+    def test_define_method_hooks
+      log = []
+      Object.const_set(:CompileTestDefHooks, Class.new {
+        define_singleton_method(:method_added) { |name| log << name }
+      })
+
+      assert_run(:a, "class CompileTestDefHooks; def a; end; end")
+      assert_equal([:a], log)
+    end
+
     private
 
     def assert_run(expected, source)

@@ -54,10 +54,16 @@ module Prism
         run_graph(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze)
       end
 
-      def run_graph(graph, recv, nest)
+      def run_graph(graph, recv, nest, args = [])
         values = []
         locals = graph.locals.to_h { |local| [local.name, nil] }
         block = graph.blocks[0]
+
+        if args.length != block.params.length
+          raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{block.params.length})"
+        end
+
+        block.params.zip(args) { |param, value| values[param] = value }
 
         while true
           block.insns.each do |insn|
@@ -79,7 +85,7 @@ module Prism
               end
               break
             when :call
-              values[insn.opnds[0]] = values[insn.opnds[1]].send(insn.data, *values.values_at(*insn.opnds[2..]))
+              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2..]))
             when :coerce_hash
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)
@@ -122,7 +128,9 @@ module Prism
               klass = define_class_super(parent, name, true, superclass)
               values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
             when :define_method
-              raise "todo"
+              name, method_graph = insn.data
+              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
+              Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_singleton_class
               raise "todo"
             when :defined_cvar
