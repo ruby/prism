@@ -1260,6 +1260,9 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnLoadCVar:
         case kPrismInsnLoadGVar:
         case kPrismInsnLoadIVar:
+        case kPrismInsnStoreConstAbs:
+        case kPrismInsnStoreConstNestRel:
+        case kPrismInsnStoreConstRecvRel:
         case kPrismInsnStoreCVar:
         case kPrismInsnStoreGVar:
         case kPrismInsnStoreIVar: {
@@ -1281,10 +1284,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return UINT2NUM(pm_insn_extract_group_number(insn));
         case kPrismInsnLoadConstAbs:
         case kPrismInsnLoadConstNestRel:
-        case kPrismInsnLoadConstRecvRel:
-        case kPrismInsnStoreConstAbs:
-        case kPrismInsnStoreConstNestRel:
-        case kPrismInsnStoreConstRecvRel: {
+        case kPrismInsnLoadConstRecvRel: {
             const PrismConstantPath *constant_path = pm_insn_constant_path(insn);
             uint32_t size = PrismConstantPath_size(constant_path);
 

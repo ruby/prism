@@ -156,11 +156,11 @@ module Prism
             when :return
               return values[insn.opnds[0]]
             when :store_const_abs
-              Object.const_set(insn.data.join("::"), values[insn.opnds[0]])
+              Object.const_set(insn.data, values[insn.opnds[0]])
             when :store_const_nest_rel
-              self.class.const_set(insn.data.join("::"), values[insn.opnds[0]])
+              self.class.const_set(insn.data, values[insn.opnds[0]])
             when :store_const_recv_rel
-              values[insn.opnds[0]].const_set(insn.data.join("::"), values[insn.opnds[1]])
+              values[insn.opnds[0]].const_set(insn.data, values[insn.opnds[1]])
             when :store_cvar
               Object.class_variable_set(insn.data, values[insn.opnds[0]])
             when :store_ivar
