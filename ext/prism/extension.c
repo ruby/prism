@@ -1200,6 +1200,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefineClassRecvRelSuper: return rb_intern_const("define_class_recv_rel_super");
         case kPrismInsnDefineMethod: return rb_intern_const("define_method");
         case kPrismInsnDefineSingletonClass: return rb_intern_const("define_singleton_class");
+        case kPrismInsnDefineSingletonMethod: return rb_intern_const("define_singleton_method");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
@@ -1277,7 +1278,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnDefineClassNestRelSuper:
         case kPrismInsnDefineClassRecvRel:
         case kPrismInsnDefineClassRecvRelSuper:
-        case kPrismInsnDefineMethod: {
+        case kPrismInsnDefineMethod:
+        case kPrismInsnDefineSingletonMethod: {
             const pm_constant_t *constant = pm_insn_define_name(parser, insn);
             VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
             VALUE graph = rb_ary_entry(vgraphs, pm_insn_define_graph_id(insn));

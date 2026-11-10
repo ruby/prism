@@ -38,6 +38,7 @@ typedef enum {
     kPrismInsnDefineClassRecvRelSuper,
     kPrismInsnDefineMethod,
     kPrismInsnDefineSingletonClass,
+    kPrismInsnDefineSingletonMethod,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
     kPrismInsnExtractLastMatchGroup,

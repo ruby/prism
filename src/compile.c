@@ -731,6 +731,16 @@ emit_define_singleton_class(PrismBuilder *builder, uint32_t node_id, uint32_t re
     return value_id;
 }
 
+static void
+emit_define_singleton_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonMethod, node_id, 1);
+    insn->as.define.name_id = name_id;
+    insn->as.define.graph_id = graph_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = receiver_id;
+}
+
 static uint32_t
 emit_defined_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefinedCVar, node_id, 1);
@@ -1778,7 +1788,13 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     emit_return(builder, node->base.node_id, value_id);
 
     pop_scope(builder, state);
-    emit_define_method(builder, node->base.node_id, node->name, graph_id);
+
+    if (node->receiver) {
+        uint32_t receiver_id = compile_node(builder, node->receiver);
+        emit_define_singleton_method(builder, node->base.node_id, node->name, receiver_id, graph_id);
+    } else {
+        emit_define_method(builder, node->base.node_id, node->name, graph_id);
+    }
 
     uint32_t object_id = make_object_constant_id(builder, node->name);
     return emit_load_object(builder, node->base.node_id, object_id);
@@ -2642,6 +2658,11 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnDefineSingletonClass: {
                     printf("%%%" PRIu32 " = define_singleton_class(%%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], opnds[1], insn->as.define_singleton_class.graph_id);
+                    break;
+                }
+                case kPrismInsnDefineSingletonMethod: {
+                    const pm_constant_t *constant = compile_constant(builder->parser, insn->as.define.name_id);
+                    printf("define_singleton_method(:%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0], insn->as.define.graph_id);
                     break;
                 }
                 case kPrismInsnDefinedCVar: {
