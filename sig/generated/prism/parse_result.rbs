@@ -86,6 +86,11 @@ module Prism
     # : (Integer checksum) -> void
     def replace_checksum: (Integer checksum) -> void
 
+    # Replace the value of encoding with the given value.
+    #
+    # : (Encoding encoding) -> void
+    def replace_encoding: (Encoding encoding) -> void
+
     # Replace the value of offsets with the given value.
     #
     # : (Array[Integer] offsets) -> void
@@ -100,9 +105,7 @@ module Prism
 
     # Returns the encoding of the source code, which is set by parameters to the
     # parser or by the encoding magic comment.
-    #
-    # : () -> Encoding
-    def encoding: () -> Encoding
+    attr_reader encoding: Encoding
 
     # Returns the lines of the source code as an array of strings.
     #

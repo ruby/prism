@@ -10,12 +10,17 @@ module Prism
     def deprecated: (*String replacements) -> void
   end
 
-  module RegularExpressionOptions
+  module RegularExpressionExt
     # Returns a numeric value that represents the flags that were used to create
     # the regular expression.
     #
     # : (Integer flags) -> Integer
     def self.options: (Integer flags) -> Integer
+
+    # Returns the encoding of the regular expression.
+    #
+    # : (Integer flags, Encoding source_encoding) -> Encoding
+    def self.encoding: (Integer flags, Encoding source_encoding) -> Encoding
   end
 
   class InterpolatedMatchLastLineNode < Node
@@ -40,6 +45,11 @@ module Prism
     #
     # : () -> Integer
     def options: () -> Integer
+
+    # Returns the encoding of the regular expression.
+    #
+    # : () -> Encoding
+    def encoding: () -> Encoding
   end
 
   class RegularExpressionNode < Node
@@ -48,6 +58,11 @@ module Prism
     #
     # : () -> Integer
     def options: () -> Integer
+
+    # Returns the encoding of the regular expression.
+    #
+    # : () -> Encoding
+    def encoding: () -> Encoding
   end
 
   module HeredocQuery
