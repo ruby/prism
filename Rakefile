@@ -86,6 +86,21 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     ext.lib_dir = "lib/prism"
     ext.cross_compile = true
     ext.cross_platform = RCD_CROSS_PLATFORMS
+
+    # The build options of extconf.rb are inputs to the build that
+    # rake-compiler does not track: it configures the extension again only
+    # when extconf.rb itself changes. So each combination of options builds in
+    # its own directory, and switching between them never reuses objects that
+    # were compiled with different flags. An option is on when its environment
+    # variable is set or its flag is passed after `--`, as extconf.rb reads it.
+    variant = ["debug", "minimal"].filter_map do |name|
+      name if ENV.key?("PRISM_BUILD_#{name.upcase}") || ext.extra_options.include?("--enable-build-#{name}")
+    end
+
+    unless variant.empty?
+      ext.tmp_dir = "tmp/#{variant.join("-")}"
+      task(:compile) { warn "Built the #{variant.join(" and ")} variant of the extension in #{ext.tmp_dir}" }
+    end
   end
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
