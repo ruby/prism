@@ -1323,6 +1323,11 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 static uint32_t compile_node(PrismBuilder *builder, const pm_node_t *node);
 
 static uint32_t
+compile_node_or_nil(PrismBuilder *builder, const pm_node_t *node, uint32_t node_id) {
+    return node ? compile_node(builder, node) : emit_load_nil(builder, node_id);
+}
+
+static uint32_t
 compile_instance_variable_logical_write_node(PrismBuilder *builder, const pm_node_t *node, pm_constant_id_t name, const pm_node_t *value) {
     uint32_t set_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
@@ -1553,15 +1558,7 @@ compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
 
     emit_trace_class(builder, node->base.node_id);
-    uint32_t value_id = UINT32_MAX;
-
-    if (node->body) {
-        value_id = compile_node(builder, node->body);
-    }
-
-    if (value_id == UINT32_MAX) {
-        value_id = emit_load_nil(builder, node->base.node_id);
-    }
+    uint32_t value_id = compile_node_or_nil(builder, node->body, node->base.node_id);
 
     emit_trace_end(builder, node->base.node_id);
     emit_return(builder, node->base.node_id, value_id);
@@ -1779,15 +1776,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     }
 
     emit_trace_call(builder, node->base.node_id);
-
-    uint32_t value_id = UINT32_MAX;
-    if (node->body) {
-        value_id = compile_node(builder, node->body);
-    }
-
-    if (value_id == UINT32_MAX) {
-        value_id = emit_load_nil(builder, node->base.node_id);
-    }
+    uint32_t value_id = compile_node_or_nil(builder, node->body, node->base.node_id);
 
     emit_trace_return(builder, node->base.node_id, value_id);
     emit_return(builder, node->base.node_id, value_id);
@@ -1807,13 +1796,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 
 static uint32_t
 compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statements_node_t *node) {
-    uint32_t string_id;
-    if (node->statements) {
-        string_id = compile_node(builder, PM_NODE_UPCAST(node->statements));
-    } else {
-        string_id = emit_load_nil(builder, node->base.node_id);
-    }
-
+    uint32_t string_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
     return emit_coerce_string(builder, node->base.node_id, string_id);
 }
 
@@ -2106,11 +2089,7 @@ compile_or_node(PrismBuilder *builder, const pm_or_node_t *node) {
 
 static uint32_t
 compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *node) {
-    if (node->body) {
-        return compile_node(builder, node->body);
-    } else {
-        return emit_load_nil(builder, node->base.node_id);
-    }
+    return compile_node_or_nil(builder, node->body, node->base.node_id);
 }
 
 static uint32_t
@@ -2119,15 +2098,7 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
 
     const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
-    uint32_t value_id = UINT32_MAX;
-
-    if (statements->body.size) {
-        value_id = compile_node(builder, PM_NODE_UPCAST(statements));
-    }
-
-    if (value_id == UINT32_MAX) {
-        value_id = emit_load_nil(builder, node->base.node_id);
-    }
+    uint32_t value_id = compile_node_or_nil(builder, statements->body.size ? PM_NODE_UPCAST(statements) : NULL, node->base.node_id);
 
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
@@ -2136,20 +2107,8 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
 
 static uint32_t
 compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
-    uint32_t left_id;
-    if (node->left) {
-        left_id = compile_node(builder, node->left);
-    } else {
-        left_id = emit_load_nil(builder, node->base.node_id);
-    }
-
-    uint32_t right_id;
-    if (node->right) {
-        right_id = compile_node(builder, node->right);
-    } else {
-        right_id = emit_load_nil(builder, node->base.node_id);
-    }
-
+    uint32_t left_id = compile_node_or_nil(builder, node->left, node->base.node_id);
+    uint32_t right_id = compile_node_or_nil(builder, node->right, node->base.node_id);
     return emit_new_range(builder, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END), node->base.node_id, left_id, right_id);
 }
 
@@ -2194,7 +2153,9 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
     }
 
     emit_return(builder, node->base.node_id, value_id);
-    return UINT32_MAX;
+
+    builder->state.block_id = make_block(builder, 0);
+    return emit_load_nil(builder, node->base.node_id);
 }
 
 static uint32_t
@@ -2206,16 +2167,7 @@ static uint32_t
 compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphSingletonClass, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
-
-    uint32_t value_id = UINT32_MAX;
-
-    if (node->body) {
-        value_id = compile_node(builder, node->body);
-    }
-
-    if (value_id == UINT32_MAX) {
-        value_id = emit_load_nil(builder, node->base.node_id);
-    }
+    uint32_t value_id = compile_node_or_nil(builder, node->body, node->base.node_id);
 
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
