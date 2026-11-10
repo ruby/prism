@@ -12,6 +12,14 @@
 typedef void (*pm_regexp_name_callback_t)(pm_parser_t *parser, const pm_string_t *name, void *data);
 
 /*
+ * Returns true if the given closing delimiter of a regular expression keeps
+ * its backslash in the content when it is escaped. These are the delimiters
+ * that mean something to the regular expression engine on their own, so that
+ * `%r{\}}` matches a literal brace as `/\}/` does.
+ */
+bool pm_regexp_terminator_escape_kept(uint8_t terminator);
+
+/*
  * Parse a regular expression, validate its encoding, and optionally extract
  * named capture groups. Returns the encoding flags to set on the node.
  */

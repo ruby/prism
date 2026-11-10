@@ -11951,16 +11951,9 @@ parser_lex(pm_parser_t *parser) {
                             default:
                                 if (lex_mode->as.regexp.terminator == peeked) {
                                     // Some characters when they are used as the
-                                    // terminator also receive an escape. They are
-                                    // enumerated here.
-                                    switch (peeked) {
-                                        case '$': case ')': case '*': case '+':
-                                        case '.': case '>': case '?': case ']':
-                                        case '^': case '|': case '}':
-                                            pm_token_buffer_push_byte(&token_buffer, '\\');
-                                            break;
-                                        default:
-                                            break;
+                                    // terminator also receive an escape.
+                                    if (pm_regexp_terminator_escape_kept(peeked)) {
+                                        pm_token_buffer_push_byte(&token_buffer, '\\');
                                     }
 
                                     pm_token_buffer_push_byte(&token_buffer, peeked);
