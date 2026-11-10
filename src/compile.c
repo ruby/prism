@@ -240,15 +240,17 @@ pm_insn_branch_block_id(const PrismInsn *insn) {
     return insn->as.branch.block_id;
 }
 
-PRISM_EXPORTED_FUNCTION uint32_t
+uint32_t
 pm_insn_branchif_then_block_id(const PrismInsn *insn) {
     return insn->as.branchif.then_block_id;
 }
-PRISM_EXPORTED_FUNCTION uint32_t
+
+uint32_t
 pm_insn_branchif_else_block_id(const PrismInsn *insn) {
     return insn->as.branchif.else_block_id;
 }
-PRISM_EXPORTED_FUNCTION uint32_t
+
+uint32_t
 pm_insn_branchif_then_nopnds(const PrismInsn *insn) {
     return insn->as.branchif.then_opnds_len;
 }
