@@ -2,6 +2,19 @@
 
 module Prism
   module Compile
+    class Result < Prism::Result
+      attr_reader :value
+
+      def initialize(value, magic_comments, data_loc, errors, warnings, continuable, source)
+        @value = value
+        super(magic_comments, data_loc, errors, warnings, continuable, source)
+      end
+
+      def deconstruct_keys(keys)
+        super.merge!(value: value)
+      end
+    end
+
     class Local
       attr_reader :name
 

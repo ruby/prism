@@ -31,11 +31,7 @@ VALUE rb_cPrismCurrentVersionError;
 
 VALUE rb_cPrismDebugEncoding;
 
-VALUE rb_cPrismCompileLocal;
-VALUE rb_cPrismCompileInsn;
-VALUE rb_cPrismCompileBlock;
-VALUE rb_cPrismCompileGraph;
-VALUE rb_cPrismCompileUnit;
+extern VALUE rb_cPrismCompileResult;
 
 ID rb_id_option_attach_comments;
 ID rb_id_option_command_line;
@@ -1183,142 +1179,58 @@ parse(int argc, VALUE *argv, VALUE self) {
     return result_get(result);
 }
 
-static ID
-compile_insn_kind(PrismInsnKind kind) {
-    switch (kind) {
-        case kPrismInsnAliasMethod: return rb_intern_const("alias_method");
-        case kPrismInsnBranch: return rb_intern_const("branch");
-        case kPrismInsnBranchIf: return rb_intern_const("branch_if");
-        case kPrismInsnCall: return rb_intern_const("call");
-        case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
-        case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
-        case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");
-        case kPrismInsnDefineClassAbsSuper: return rb_intern_const("define_class_abs_super");
-        case kPrismInsnDefineClassNestRel: return rb_intern_const("define_class_nest_rel");
-        case kPrismInsnDefineClassNestRelSuper: return rb_intern_const("define_class_nest_rel_super");
-        case kPrismInsnDefineClassRecvRel: return rb_intern_const("define_class_recv_rel");
-        case kPrismInsnDefineClassRecvRelSuper: return rb_intern_const("define_class_recv_rel_super");
-        case kPrismInsnDefineMethod: return rb_intern_const("define_method");
-        case kPrismInsnDefineSingletonClass: return rb_intern_const("define_singleton_class");
-        case kPrismInsnDefineSingletonMethod: return rb_intern_const("define_singleton_method");
-        case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
-        case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
-        case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
-        case kPrismInsnExtractLastMatchMatch: return rb_intern_const("extract_last_match_match");
-        case kPrismInsnExtractLastMatchParen: return rb_intern_const("extract_last_match_paren");
-        case kPrismInsnExtractLastMatchPost: return rb_intern_const("extract_last_match_post");
-        case kPrismInsnExtractLastMatchPre: return rb_intern_const("extract_last_match_pre");
-        case kPrismInsnLoadConstAbs: return rb_intern_const("load_const_abs");
-        case kPrismInsnLoadConstNestRel: return rb_intern_const("load_const_nest_rel");
-        case kPrismInsnLoadConstRecvRel: return rb_intern_const("load_const_recv_rel");
-        case kPrismInsnLoadCVar: return rb_intern_const("load_cvar");
-        case kPrismInsnLoadGVar: return rb_intern_const("load_gvar");
-        case kPrismInsnLoadIVar: return rb_intern_const("load_ivar");
-        case kPrismInsnLoadLastMatch: return rb_intern_const("load_last_match");
-        case kPrismInsnLoadLVar: return rb_intern_const("load_lvar");
-        case kPrismInsnLoadObject: return rb_intern_const("load_object");
-        case kPrismInsnLoadSelf: return rb_intern_const("load_self");
-        case kPrismInsnMatch: return rb_intern_const("match");
-        case kPrismInsnMergeHash: return rb_intern_const("merge_hash");
-        case kPrismInsnNewArray: return rb_intern_const("new_array");
-        case kPrismInsnNewArrayStatic: return rb_intern_const("new_array_static");
-        case kPrismInsnNewHash: return rb_intern_const("new_hash");
-        case kPrismInsnNewHashStatic: return rb_intern_const("new_hash_static");
-        case kPrismInsnNewRangeExc: return rb_intern_const("new_range_exc");
-        case kPrismInsnNewRangeInc: return rb_intern_const("new_range_inc");
-        case kPrismInsnNewRegexp: return rb_intern_const("new_regexp");
-        case kPrismInsnNewString: return rb_intern_const("new_string");
-        case kPrismInsnNewSymbol: return rb_intern_const("new_symbol");
-        case kPrismInsnReturn: return rb_intern_const("return");
-        case kPrismInsnStoreConstAbs: return rb_intern_const("store_const_abs");
-        case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");
-        case kPrismInsnStoreConstRecvRel: return rb_intern_const("store_const_recv_rel");
-        case kPrismInsnStoreCVar: return rb_intern_const("store_cvar");
-        case kPrismInsnStoreGVar: return rb_intern_const("store_gvar");
-        case kPrismInsnStoreIVar: return rb_intern_const("store_ivar");
-        case kPrismInsnStoreLVar: return rb_intern_const("store_lvar");
-        case kPrismInsnTraceCall: return rb_intern_const("trace_call");
-        case kPrismInsnTraceClass: return rb_intern_const("trace_class");
-        case kPrismInsnTraceEnd: return rb_intern_const("trace_end");
-        case kPrismInsnTraceLine: return rb_intern_const("trace_line");
-        case kPrismInsnTraceReturn: return rb_intern_const("trace_return");
-        case kPrismInsnUndefMethod: return rb_intern_const("undef_method");
+/**
+ * Parse and compile the given input and return a Prism::Compile::Result
+ * instance. The compiler only accepts syntax trees without errors, so when the
+ * parse fails the result is returned without compiling and its value is nil.
+ */
+static result_t
+compile_input(const uint8_t *input, size_t input_length, const pm_options_t *options, rb_encoding *path_encoding) {
+    pm_arena_t *arena = pm_arena_new();
+    pm_parser_t *parser = pm_parser_new(arena, input, input_length, options);
+
+    pm_node_t *node = pm_parse(parser);
+
+    result_t result = check_raise_error_option(parser, options, path_encoding);
+    if (result.type == RESULT_OK) {
+        rb_encoding *encoding = rb_enc_find(pm_parser_encoding_name(parser));
+
+        bool freeze = pm_options_freeze(options);
+        VALUE comments = rb_ary_new_capa(pm_parser_comments_size(parser));
+        VALUE attachments, ranges;
+        parser_attachments_new(parser, &attachments, &ranges);
+
+        VALUE source = pm_source_new(parser, encoding, comments, attachments, ranges, freeze);
+        parser_comments(parser, comments, source, freeze);
+        parser_attachments(parser, comments, attachments, ranges, freeze);
+
+        VALUE value = Qnil;
+        if (pm_parser_errors_size(parser) == 0) {
+            PrismUnit *unit = pm_unit_new();
+            pm_compile(parser, node, arena, unit);
+            value = pm_compile_unit_new(parser, unit, freeze);
+            pm_unit_free(unit);
+        }
+
+        result = result_ok(parse_result_create(rb_cPrismCompileResult, parser, value, encoding, source, freeze));
     }
+
+    pm_parser_free(parser);
+    pm_arena_free(arena);
+
+    return result;
 }
 
-static VALUE
-compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind) {
-    switch (kind) {
-        case kPrismInsnBranch:
-            return rb_ary_entry(vblocks, pm_insn_branch_block_id(insn));
-        case kPrismInsnBranchIf: {
-            VALUE then_block = rb_ary_entry(vblocks, pm_insn_branchif_then_block_id(insn));
-            VALUE else_block = rb_ary_entry(vblocks, pm_insn_branchif_else_block_id(insn));
-            VALUE then_nopnds = UINT2NUM(pm_insn_branchif_then_nopnds(insn));
-            return rb_ary_new_from_args(3, then_block, else_block, then_nopnds);
-        }
-        case kPrismInsnCall:
-        case kPrismInsnDefinedCVar:
-        case kPrismInsnDefinedGVar:
-        case kPrismInsnLoadCVar:
-        case kPrismInsnLoadGVar:
-        case kPrismInsnLoadIVar:
-        case kPrismInsnStoreConstAbs:
-        case kPrismInsnStoreConstNestRel:
-        case kPrismInsnStoreConstRecvRel:
-        case kPrismInsnStoreCVar:
-        case kPrismInsnStoreGVar:
-        case kPrismInsnStoreIVar: {
-            const pm_constant_t *constant = pm_insn_name(parser, insn);
-            return ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
-        }
-        case kPrismInsnDefineClassAbs:
-        case kPrismInsnDefineClassAbsSuper:
-        case kPrismInsnDefineClassNestRel:
-        case kPrismInsnDefineClassNestRelSuper:
-        case kPrismInsnDefineClassRecvRel:
-        case kPrismInsnDefineClassRecvRelSuper:
-        case kPrismInsnDefineMethod:
-        case kPrismInsnDefineSingletonMethod: {
-            const pm_constant_t *constant = pm_insn_define_name(parser, insn);
-            VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
-            VALUE graph = rb_ary_entry(vgraphs, pm_insn_define_graph_id(insn));
-            return rb_ary_new_from_args(2, name, graph);
-        }
-        case kPrismInsnDefineSingletonClass:
-            return rb_ary_entry(vgraphs, pm_insn_define_singleton_class_graph_id(insn));
-        case kPrismInsnExtractLastMatchGroup:
-            return UINT2NUM(pm_insn_extract_group_number(insn));
-        case kPrismInsnLoadConstAbs:
-        case kPrismInsnLoadConstNestRel:
-        case kPrismInsnLoadConstRecvRel: {
-            const PrismConstantPath *constant_path = pm_insn_constant_path(insn);
-            uint32_t size = PrismConstantPath_size(constant_path);
-
-            VALUE parts = rb_ary_new_capa(size);
-            for (uint32_t idx = 0; idx < size; ++idx) {
-                const pm_constant_t *constant = PrismConstantPath_constant(parser, constant_path, idx);
-                rb_ary_push(parts, ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))));
-            }
-
-            return parts;
-        }
-        case kPrismInsnLoadLVar:
-        case kPrismInsnStoreLVar:
-            return rb_ary_entry(vlocals_unit, pm_insn_local_id(insn));
-        case kPrismInsnLoadObject:
-        case kPrismInsnNewArrayStatic:
-        case kPrismInsnNewHashStatic:
-            return rb_ary_entry(vobjects_unit, pm_insn_object_id(insn));
-        case kPrismInsnNewRegexp:
-            return UINT2NUM(pm_insn_regexp_flags(insn));
-        case kPrismInsnTraceLine:
-            return INT2NUM(pm_insn_trace_lineno(insn));
-        default:
-            return Qnil;
-    }
-}
-
+/**
+ * :markup: markdown
+ * call-seq:
+ *   compile(source, **options) -> Compile::Result
+ *
+ * Parse and compile the given string and return a Prism::Compile::Result
+ * instance. The value of the result is the compiled Prism::Compile::Unit, or
+ * nil if the source contains syntax errors, in which case the errors are
+ * available on the result. For supported options, see Prism.parse.
+ */
 static VALUE
 compile(int argc, VALUE *argv, VALUE self) {
     pm_options_t *options = pm_options_new();
@@ -1327,186 +1239,31 @@ compile(int argc, VALUE *argv, VALUE self) {
     const uint8_t *source = (const uint8_t *) RSTRING_PTR(string);
     size_t length = RSTRING_LEN(string);
 
-    pm_arena_t *arena = pm_arena_new();
-    pm_parser_t *parser = pm_parser_new(arena, source, length, options);
-    pm_node_t *node = pm_parse(parser);
+    result_t result = compile_input(source, length, options, NULL);
+    pm_options_free(options);
+    return result_get(result);
+}
 
-    PrismUnit *unit = pm_unit_new();
-    pm_compile(parser, node, arena, unit);
+/**
+ * :markup: markdown
+ * call-seq:
+ *   compile_file(filepath, **options) -> Compile::Result
+ *
+ * Parse and compile the given file and return a Prism::Compile::Result
+ * instance. For supported options, see Prism.parse.
+ */
+static VALUE
+compile_file(int argc, VALUE *argv, VALUE self) {
+    pm_options_t *options = pm_options_new();
 
-    uint32_t nobjects_unit = pm_unit_nobjects(unit);
-    VALUE vobjects_unit = rb_ary_new_capa(nobjects_unit);
-    rb_encoding *encoding = rb_enc_find(pm_parser_encoding_name(parser));
+    VALUE encoded_filepath;
+    pm_source_t *src = file_options(argc, argv, options, &encoded_filepath);
 
-    for (uint32_t object_id = 0; object_id < nobjects_unit; ++object_id) {
-        const PrismObject *object = pm_unit_object(unit, object_id);
-        VALUE vobject;
-
-        switch (pm_object_kind(object)) {
-            case kPrismObjectArray: {
-                uint32_t size = pm_object_array_size(object);
-                vobject = rb_ary_new_capa(size);
-                for (uint32_t idx = 0; idx < size; ++idx) {
-                    rb_ary_push(vobject, rb_ary_entry(vobjects_unit, pm_object_array_object_id(object, idx)));
-                }
-                break;
-            }
-            case kPrismObjectHash: {
-                uint32_t size = pm_object_hash_size(object);
-
-                VALUE vbulk = rb_ary_hidden_new(size * 2);
-                for (uint32_t idx = 0; idx < size; ++idx) {
-                    VALUE vpair[] = {
-                        rb_ary_entry(vobjects_unit, pm_object_hash_key_object_id(object, idx)),
-                        rb_ary_entry(vobjects_unit, pm_object_hash_value_object_id(object, idx))
-                    };
-
-                    rb_ary_cat(vbulk, vpair, 2);
-                }
-
-                vobject = rb_hash_new();
-                rb_hash_bulk_insert(RARRAY_LEN(vbulk), RARRAY_CONST_PTR(vbulk), vobject);
-                break;
-            }
-            case kPrismObjectRegexp: {
-                const pm_string_t *string = pm_object_string(object);
-                vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), 0);
-                break;
-            }
-            case kPrismObjectString: {
-                const pm_string_t *string = pm_object_string(object);
-                vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), encoding);
-                break;
-            }
-            case kPrismObjectSymbol: {
-                const pm_string_t *string = pm_object_string(object);
-                vobject = ID2SYM(rb_intern3((const char *) pm_string_source(string), pm_string_length(string), encoding));
-                break;
-            }
-            case kPrismObjectEncoding: vobject = rb_enc_from_encoding(rb_enc_find(pm_object_encoding_name(object))); break;
-            case kPrismObjectFalse: vobject = Qfalse; break;
-            case kPrismObjectFloat: vobject = DBL2NUM(pm_object_float(object)); break;
-            case kPrismObjectImaginary: vobject = rb_complex_raw(INT2FIX(0), rb_ary_entry(vobjects_unit, pm_object_imaginary_object_id(object))); break;
-            case kPrismObjectInteger: vobject = pm_integer_new(pm_object_integer(object)); break;
-            case kPrismObjectNil: vobject = Qnil; break;
-            case kPrismObjectRational: vobject = rb_rational_new(pm_integer_new(pm_object_rational_numerator(object)), pm_integer_new(pm_object_rational_denominator(object))); break;
-            case kPrismObjectTrue: vobject = Qtrue; break;
-        }
-
-        rb_ary_push(vobjects_unit, vobject);
-    }
-
-    uint32_t nlocals_unit = pm_unit_nlocals(unit);
-    VALUE vlocals_unit = rb_ary_new_capa(nlocals_unit);
-
-    for (uint32_t local_id = 0; local_id < nlocals_unit; ++local_id) {
-        const PrismLocal *local = pm_unit_local(unit, local_id);
-        const pm_constant_t *constant = pm_local_name(parser, local);
-        VALUE vlocal_argv[] = { ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))) };
-        VALUE vlocal = rb_class_new_instance(1, vlocal_argv, rb_cPrismCompileLocal);
-        rb_ary_push(vlocals_unit, vlocal);
-    }
-
-    uint32_t ngraphs = pm_unit_ngraphs(unit);
-    VALUE vgraphs = rb_ary_new_capa(ngraphs);
-
-    for (uint32_t graph_id = 0; graph_id < ngraphs; ++graph_id) {
-        const PrismGraph *graph = pm_unit_graph(unit, graph_id);
-
-        VALUE vgraph_kind;
-        switch (pm_graph_kind(graph)) {
-            case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
-            case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
-            case kPrismGraphProgram: vgraph_kind = ID2SYM(rb_intern("program")); break;
-            case kPrismGraphSingletonClass: vgraph_kind = ID2SYM(rb_intern("singleton_class")); break;
-        }
-
-        VALUE vparent = Qnil;
-        uint32_t parent_id = pm_graph_parent_id(graph);
-        if (parent_id != UINT32_MAX) {
-            vparent = rb_ary_entry(vgraphs, parent_id);
-        }
-
-        uint32_t nblocks = pm_graph_nblocks(graph);
-        VALUE vblocks = rb_ary_new_capa(nblocks);
-        for (uint32_t block_id = 0; block_id < nblocks; ++block_id) {
-            const PrismBlock *block = pm_graph_block(graph, block_id);
-
-            uint32_t ninsns = pm_block_ninsns(block);
-            VALUE vinsns = rb_ary_new_capa(ninsns);
-
-            uint32_t nparams = pm_block_nparams(block);
-            VALUE vparams = rb_ary_new_capa(nparams);
-            for (uint32_t param_idx = 0; param_idx < nparams; ++param_idx) {
-                uint32_t param = pm_block_param(block, param_idx);
-                rb_ary_push(vparams, UINT2NUM(param));
-            }
-
-            VALUE vblock_argv[] = { vinsns, vparams };
-            VALUE vblock = rb_class_new_instance(2, vblock_argv, rb_cPrismCompileBlock);
-            rb_ary_push(vblocks, vblock);
-        }
-
-        uint32_t nlocals = pm_graph_nlocals(graph);
-        VALUE vlocals = rb_ary_new_capa(nlocals);
-        for (uint32_t local_idx = 0; local_idx < nlocals; ++local_idx) {
-            uint32_t local_id = pm_graph_local_id(graph, local_idx);
-            rb_ary_push(vlocals, rb_ary_entry(vlocals_unit, local_id));
-        }
-
-        uint32_t nvalues = pm_graph_nvalues(graph);
-        VALUE vnvalues = UINT2NUM(nvalues);
-
-        VALUE vgraph_argv[] = { vgraph_kind, vparent, vblocks, vlocals, vnvalues };
-        VALUE vgraph = rb_class_new_instance(5, vgraph_argv, rb_cPrismCompileGraph);
-        rb_ary_push(vgraphs, vgraph);
-    }
-
-    VALUE vunit_argv[] = { vgraphs };
-    VALUE vunit = rb_class_new_instance(1, vunit_argv, rb_cPrismCompileUnit);
-
-    for (uint32_t graph_id = 0; graph_id < ngraphs; ++graph_id) {
-        const PrismGraph *graph = pm_unit_graph(unit, graph_id);
-
-        VALUE vgraph = rb_ary_entry(vgraphs, graph_id);
-        VALUE vblocks = rb_ivar_get(vgraph, rb_intern_const("@blocks"));
-
-        for (uint32_t block_id = 0; block_id < pm_graph_nblocks(graph); ++block_id) {
-            const PrismBlock *block = pm_graph_block(graph, block_id);
-
-            VALUE vblock = rb_ary_entry(vblocks, block_id);
-            VALUE vinsns = rb_ivar_get(vblock, rb_intern_const("@insns"));
-
-            for (uint32_t insn_idx = 0; insn_idx < pm_block_ninsns(block); ++insn_idx) {
-                const PrismInsn *insn = pm_block_insn(block, insn_idx);
-
-                PrismInsnKind kind = pm_insn_kind(insn);
-                VALUE vkind = ID2SYM(compile_insn_kind(kind));
-
-                uint32_t nopnds = pm_insn_nopnds(insn);
-                VALUE vopnds = rb_ary_new_capa(nopnds);
-                for (uint32_t opnd_idx = 0; opnd_idx < nopnds; ++opnd_idx) {
-                    uint32_t opnd = pm_insn_opnd(graph, insn, opnd_idx);
-                    rb_ary_push(vopnds, UINT2NUM(opnd));
-                }
-
-                VALUE vdata = compile_insn_data(vobjects_unit, vlocals_unit, vgraphs, vblocks, parser, graph, insn, kind);
-
-                uint32_t node_id = pm_insn_node_id(insn);
-                VALUE vnode_id = UINT2NUM(node_id);
-
-                VALUE vinsn_argv[] = { vkind, vnode_id, vopnds, vdata };
-                VALUE vinsn = rb_class_new_instance(4, vinsn_argv, rb_cPrismCompileInsn);
-                rb_ary_push(vinsns, vinsn);
-            }
-        }
-    }
-
-    pm_parser_free(parser);
-    pm_arena_free(arena);
+    result_t result = compile_input(pm_source_source(src), pm_source_length(src), options, rb_enc_get(encoded_filepath));
+    pm_source_free(src);
     pm_options_free(options);
 
-    return vunit;
+    return result_get(result);
 }
 
 /**
@@ -2046,12 +1803,7 @@ Init_prism(void) {
 
     rb_cPrismCurrentVersionError = rb_const_get(rb_cPrism, rb_intern("CurrentVersionError"));
 
-    VALUE rb_cPrismCompile = rb_define_module_under(rb_cPrism, "Compile");
-    rb_cPrismCompileLocal = rb_define_class_under(rb_cPrismCompile, "Local", rb_cObject);
-    rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
-    rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
-    rb_cPrismCompileGraph = rb_define_class_under(rb_cPrismCompile, "Graph", rb_cObject);
-    rb_cPrismCompileUnit = rb_define_class_under(rb_cPrismCompile, "Unit", rb_cObject);
+    Init_prism_api_compile();
 
     /* Intern all of the IDs eagerly that we support so that we do not have to
      * do it every time we parse. */
@@ -2101,6 +1853,7 @@ Init_prism(void) {
     rb_define_singleton_method(rb_cPrism, "parse_file_failure?", parse_file_failure_p, -1);
 
     rb_define_singleton_method(rb_cPrism, "compile", compile, -1);
+    rb_define_singleton_method(rb_cPrism, "compile_file", compile_file, -1);
 
 #ifndef PRISM_EXCLUDE_SERIALIZATION
     rb_define_singleton_method(rb_cPrism, "dump", dump, -1);

@@ -50,7 +50,7 @@ module Prism
 
     def compile(argv)
       source, filepath = read_source(argv)
-      Prism.compile(source)
+      Prism.compile(source, filepath: filepath, raise_error: true)
     end
 
     ############################################################################

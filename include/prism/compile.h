@@ -107,6 +107,7 @@ typedef enum {
 } PrismObjectKind;
 
 PRISM_EXPORTED_FUNCTION PrismUnit * pm_unit_new(void);
+PRISM_EXPORTED_FUNCTION void pm_unit_free(PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nobjects(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION const PrismObject * pm_unit_object(const PrismUnit *unit, uint32_t object_id);
 PRISM_EXPORTED_FUNCTION PrismObjectKind pm_object_kind(const PrismObject *object);

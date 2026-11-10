@@ -36,7 +36,7 @@ module Prism
         [true, "1 in Integer"],
         [TOPLEVEL_BINDING.receiver, "self"]
       ].each do |(expected, source)|
-        assert_equal(expected, Prism::Compile.run_unit(Prism.compile(source)))
+        assert_equal(expected, Prism::Compile.run_unit(compile_unit(source)))
       end
     end
 
@@ -44,14 +44,14 @@ module Prism
     private_constant :PRIVATE_CONSTANT
 
     def test_const_get_recv_rel
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("String::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("Prism::CompileTest::PRIVATE_CONSTANT")) }
-      assert_raise(TypeError) { Prism::Compile.run_unit(Prism.compile("Float::INFINITY::Foo")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("::String::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("::Prism::CompileTest::PRIVATE_CONSTANT")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("String.itself::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(Prism.compile("Prism::CompileTest.itself::PRIVATE_CONSTANT")) }
-      assert_raise(TypeError) { Prism::Compile.run_unit(Prism.compile("1.itself::Foo")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("String::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { Prism::Compile.run_unit(compile_unit("Float::INFINITY::Foo")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("::String::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("::Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("String.itself::Integer")) }
+      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("Prism::CompileTest.itself::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { Prism::Compile.run_unit(compile_unit("1.itself::Foo")) }
     end
 
     def test_const_set_recv_rel
@@ -325,7 +325,7 @@ module Prism
     def test_cvar_skips_singleton_scopes
       klass = Class.new { class_variable_set(:@@a, 1) }
 
-      graph = Prism.compile("@@a ||= 5").graphs[0]
+      graph = compile_unit("@@a ||= 5").graphs[0]
       assert_equal(1, Prism::Compile.run_graph(graph, klass, [klass.singleton_class, klass, Object].freeze))
 
       error = assert_raise(RuntimeError) { Prism::Compile.run_graph(graph, klass, [klass.singleton_class, Object].freeze) }
@@ -384,7 +384,7 @@ module Prism
       $VERBOSE = true
       $stderr = StringIO.new
 
-      Prism::Compile.run_unit(Prism.compile("$compile_test_or_silent ||= 1"))
+      Prism::Compile.run_unit(compile_unit("$compile_test_or_silent ||= 1"))
       assert_equal("", $stderr.string)
     ensure
       $VERBOSE, $stderr = verbose, stderr
@@ -572,17 +572,126 @@ module Prism
       assert_equal([:a], log)
     end
 
+    def test_compile_result
+      result = Prism.compile("1 + 2 # comment")
+
+      assert_kind_of Compile::Result, result
+      assert_predicate result, :success?
+      assert_kind_of Compile::Unit, result.value
+      assert_equal 1, result.comments.length
+      assert_equal 3, Compile.run_unit(result.value)
+    end
+
+    def test_compile_errors
+      result = Prism.compile("1 +")
+
+      assert_predicate result, :failure?
+      assert_nil result.value
+      refute_empty result.errors
+    end
+
+    def test_compile_errors_without_error_nodes
+      result = Prism.compile("def foo; break; end")
+
+      assert_predicate result, :failure?
+      assert_nil result.value
+    end
+
+    def test_compile_warnings
+      result = Prism.compile("foo = 1")
+
+      assert_predicate result, :success?
+      refute_empty result.warnings
+    end
+
+    def test_compile_raise_error
+      error = assert_raise(SyntaxError) { Prism.compile("1 +\n", raise_error: :plain, filepath: "test.rb") }
+      assert_equal "test.rb", error.path
+
+      assert_nothing_raised { Prism.compile("1 +", raise_error: nil) }
+      assert_raise(ArgumentError) { Prism.compile("1", raise_error: :bogus) }
+    end
+
+    def test_compile_options
+      assert_raise(ArgumentError) { Prism.compile("1", bogus: true) }
+      assert_raise(TypeError) { Prism.compile(nil) }
+
+      unit = Prism.compile("1", line: 10).value
+      trace_line = unit.graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == :trace_line }
+      assert_equal 10, trace_line.data
+    end
+
+    def test_compile_freeze
+      result = Prism.compile("class CompileTestFreeze; def a(b) = b; end; CompileTestFreeze.new.a('c')", freeze: true)
+      assert_predicate result, :frozen?
+
+      unit = result.value
+      assert_predicate unit, :frozen?
+      assert_predicate unit.graphs, :frozen?
+
+      unit.graphs.each do |graph|
+        assert_predicate graph, :frozen?
+        assert_predicate graph.blocks, :frozen?
+        assert_predicate graph.locals, :frozen?
+        graph.locals.each { |local| assert_predicate local, :frozen? }
+
+        graph.blocks.each do |block|
+          assert_predicate block, :frozen?
+          assert_predicate block.insns, :frozen?
+          assert_predicate block.params, :frozen?
+
+          block.insns.each do |insn|
+            assert_predicate insn, :frozen?
+            assert_predicate insn.opnds, :frozen?
+          end
+        end
+      end
+
+      value = Compile.run_unit(unit)
+      assert_equal "c", value
+      refute_predicate value, :frozen?
+    end
+
+    def test_compile_file
+      Tempfile.create(["test_compile_file", ".rb"]) do |file|
+        file.write("1 + 2")
+        file.flush
+
+        assert_equal 3, Compile.run_unit(Prism.compile_file(file.path).value)
+        assert_equal 3, Compile.run_unit(Prism.compile_file(Pathname.new(file.path)).value)
+      end
+
+      assert_raise(Errno::ENOENT) { Prism.compile_file("idontexist.rb") }
+      assert_raise(TypeError) { Prism.compile_file(nil) }
+    end
+
+    def test_compile_file_raise_error
+      Tempfile.create(["test_compile_file_raise_error", ".rb"]) do |file|
+        file.write("1 +\n")
+        file.flush
+
+        assert_nil Prism.compile_file(file.path).value
+
+        error = assert_raise(SyntaxError) { Prism.compile_file(file.path, raise_error: :plain) }
+        assert_equal file.path, error.path
+      end
+    end
+
     private
 
+    def compile_unit(source)
+      Prism.compile(source, raise_error: :plain).value
+    end
+
     def assert_run(expected, source)
-      assert_equal(expected, Prism::Compile.run_unit(Prism.compile(source)))
+      assert_equal(expected, Prism::Compile.run_unit(compile_unit(source)))
     end
 
     def assert_run_raises(error, source, message = nil)
       if message
-        assert_raise_with_message(error, message) { Prism::Compile.run_unit(Prism.compile(source)) }
+        assert_raise_with_message(error, message) { Prism::Compile.run_unit(compile_unit(source)) }
       else
-        assert_raise(error) { Prism::Compile.run_unit(Prism.compile(source)) }
+        assert_raise(error) { Prism::Compile.run_unit(compile_unit(source)) }
       end
     end
   end

@@ -57,6 +57,11 @@ pm_unit_new(void) {
     return unit;
 }
 
+void
+pm_unit_free(PrismUnit *unit) {
+    xfree_sized(unit, sizeof(PrismUnit));
+}
+
 uint32_t
 pm_unit_nobjects(const PrismUnit *unit) {
     return unit->nobjects;
