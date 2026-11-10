@@ -106,9 +106,31 @@ CLOBBER.concat(["build"])
 CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
 CLOBBER << "java/wasm/src/main/resources/prism.wasm"
 
+# The generated files depend on the environment variables listed in
+# Prism::Template::ENVIRONMENT as well as on their templates. Rake only compares
+# file timestamps, so this stamp records the variables' values and is rewritten
+# whenever they differ from what it holds. Its timestamp then moves only when a
+# value changes, which makes the generated files out of date exactly then.
+class TemplateEnvironmentTask < Rake::FileTask
+  def contents
+    Prism::Template::ENVIRONMENT.map { |name, value| "#{name}=#{value.inspect}\n" }.join
+  end
+
+  def needed?
+    super || File.read(name) != contents
+  end
+end
+
+template_environment = "tmp/template.env"
+
+TemplateEnvironmentTask.define_task(template_environment) do |t|
+  mkdir_p(File.dirname(t.name))
+  File.write(t.name, t.contents)
+end
+
 Prism::Template::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"
-  file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
+  file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml", template_environment] do |t|
     Prism::Template.render(t.name)
   end
 end
