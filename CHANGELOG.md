@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `Prism::Translation::Parser` now returns a `nil` AST whenever an error is reported and errors are not fatal, matching the parser gem.
 - `PRISM_BUILD_MINIMAL` now excludes the full set of encodings, as `PRISM_ENCODING_EXCLUDE_FULL` does.
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
+- A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
 
 ## [2.1.0] - 2026-10-28
 
