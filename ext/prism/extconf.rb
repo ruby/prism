@@ -16,6 +16,10 @@ if ARGV.delete("--help")
               Enable minimal build.
               You may also set the PRISM_BUILD_MINIMAL environment variable.
 
+          --enable-build-ndebug
+              Enable build without assertions.
+              You may also set the PRISM_BUILD_NDEBUG environment variable.
+
           --help
               Display this message.
 
@@ -26,6 +30,9 @@ if ARGV.delete("--help")
 
           PRISM_BUILD_MINIMAL
               Equivalent to `--enable-build-minimal` when set, even if nil or blank.
+
+          PRISM_BUILD_NDEBUG
+              Equivalent to `--enable-build-ndebug` when set, even if nil or blank.
 
   TEXT
   exit!(0)
@@ -104,6 +111,16 @@ if enable_config("build-minimal", ENV["PRISM_BUILD_MINIMAL"] || false)
   append_cflags("-DPRISM_BUILD_MINIMAL")
 end
 
+# If `--enable-build-ndebug` is passed to this script or the
+# `PRISM_BUILD_NDEBUG` environment variable is defined, we'll build with the
+# `NDEBUG` macro defined, which compiles out the assertions in the parser. This
+# skips the check that append_cflags makes, which compiles ruby.h with -Werror:
+# a Ruby built with RUBY_DEBUG warns there that its own headers ignore NDEBUG.
+# The sources of libprism do not include ruby.h, so NDEBUG still applies to them.
+if enable_config("build-ndebug", ENV["PRISM_BUILD_NDEBUG"] || false)
+  $defs << "-DNDEBUG=1"
+end
+
 # By default, all symbols are hidden in the shared library.
 append_cflags("-fvisibility=hidden")
 
@@ -124,3 +141,9 @@ $headers += Dir["#{$srcdir}/../../include/**/*.h"]
 # Finally, we'll create the `Makefile` that is going to be used to configure and
 # build the C extension.
 create_makefile("prism/prism")
+
+# The Makefile that mkmf creates makes the objects depend on their sources and
+# headers, but not on the Makefile itself, which holds the flags they are
+# compiled with. This script writes a new Makefile whenever it runs, so with
+# this rule a change to the build options recompiles every object.
+File.open("Makefile", "a") { |file| file.puts("", "$(OBJS): Makefile") }

@@ -11,6 +11,21 @@ FUZZ_OUTPUT_DIR = $(CURDIR)/test/fuzz/output
 SOEXT ?= $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
 CPPFLAGS := -Iinclude $(CPPFLAGS)
+
+# The build variants. Each is on when its variable is set, even to an empty
+# value, in the environment or on the command line. ext/prism/extconf.rb reads
+# the same variables the same way, so one variable selects the same variant of
+# libprism and of the C extension.
+ifneq ($(origin PRISM_BUILD_DEBUG),undefined)
+CPPFLAGS += -DPRISM_BUILD_DEBUG
+endif
+ifneq ($(origin PRISM_BUILD_MINIMAL),undefined)
+CPPFLAGS += -DPRISM_BUILD_MINIMAL
+endif
+ifneq ($(origin PRISM_BUILD_NDEBUG),undefined)
+CPPFLAGS += -DNDEBUG=1
+endif
+
 CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(CFLAGS)
 JAVA_WASM_CFLAGS := -g0 -O2 -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fno-sanitize=all -fno-stack-protector -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(JAVA_WASM_CFLAGS)
 CC ?= cc

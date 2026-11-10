@@ -107,6 +107,22 @@ If you want to build prism as a shared library and link against it, you should c
 MAKEFLAGS="-j10" bundle exec rake compile
 ```
 
+## Build variants
+
+A build variant is chosen by an environment variable, which both the C extension (through `ext/prism/extconf.rb`) and `libprism` (through the `Makefile`) read. A variant is on when its variable is set, even to an empty value:
+
+* `PRISM_BUILD_DEBUG` - Defines the `PRISM_BUILD_DEBUG` build option below.
+* `PRISM_BUILD_MINIMAL` - Defines the `PRISM_BUILD_MINIMAL` build option below.
+* `PRISM_BUILD_NDEBUG` - Defines `NDEBUG`, which compiles out the assertions.
+
+For example, this builds the minimal variant and runs the tests against it:
+
+```
+PRISM_BUILD_MINIMAL=1 bundle exec rake
+```
+
+Each combination of variants builds the C extension in its own directory under `tmp/`, and `libprism` is rebuilt in `build/` whenever its flags change, so switching between variants never needs `rake clobber`. The `minimal` and `all-no-debug` targets of the `Makefile` remain as shorthands for building `libprism` alone; `all-no-debug` also compiles with `-O3`.
+
 ## Build options
 
 * `PRISM_BUILD_DEBUG` - Will cause all file reading to copy into its own allocation to allow easier tracking of reading off the end of the buffer. By default this is off.

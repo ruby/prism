@@ -24,12 +24,8 @@ task(make: :templates) {
   ENV["MAKEFLAGS"] ||= "-j"
   sh(make)
 }
-task(make_no_debug: :templates) { sh("#{make} all-no-debug") }
-task(make_minimal: :templates) { sh("#{make} minimal") }
 
 task compile: :make
-task compile_no_debug: %i[make_no_debug compile]
-task compile_minimal: %i[make_minimal compile]
 
 # decorate the gem build task with prerequisites
 task build: [:check_manifest, :templates]
@@ -93,7 +89,7 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     # its own directory, and switching between them never reuses objects that
     # were compiled with different flags. An option is on when its environment
     # variable is set or its flag is passed after `--`, as extconf.rb reads it.
-    variant = ["debug", "minimal"].filter_map do |name|
+    variant = ["debug", "minimal", "ndebug"].filter_map do |name|
       name if ENV.key?("PRISM_BUILD_#{name.upcase}") || ext.extra_options.include?("--enable-build-#{name}")
     end
 
