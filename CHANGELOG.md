@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- The Rust bindings now expose the `attach_comments` parse option, along with a `Node#comments` accessor for reading the comments attached to a node.
 - `pm_options_stack_budget_set` was added to the C API. It sets the number of bytes of C stack the parser may use before reporting a `stack_exhausted` error, instead of overflowing the stack. `SIZE_MAX` means no budget, which is the default. The nesting depth limit alone assumes a stack of roughly 8MB, so embedders that parse on a smaller stack, such as a thread's or a fiber's, should pass a budget.
 - A new `stack` error level, for errors that should raise `SystemStackError`. Its only error is `stack_exhausted`, reported once per parse when the stack budget is used up. It is separate from `nesting_too_deep`, which stays a syntax error, because the same source may parse with more stack. When errors are formatted, a `stack_exhausted` error takes precedence over the syntax errors around it, as argument and load errors do. The level is `:stack` in Ruby, `"stack"` in JavaScript, `ERROR_STACK` in Java, and `PM_ERROR_LEVEL_STACK` in C and Rust.
 

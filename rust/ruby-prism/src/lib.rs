@@ -30,8 +30,8 @@ pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnos
 pub use self::string_query::{InvalidEncodingError, StringQuery};
 
 use ruby_prism_sys::{
-    pm_arena_new, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new, pm_options_partial_script_set,
-    pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_init,
+    pm_arena_new, pm_options_attach_comments_set, pm_options_command_line_set, pm_options_encoding_locked_set, pm_options_encoding_set, pm_options_filepath_set, pm_options_free, pm_options_frozen_string_literal_set, pm_options_line_set, pm_options_main_script_set, pm_options_new,
+    pm_options_partial_script_set, pm_options_scope_forwarding_set, pm_options_scope_init, pm_options_scope_local_mut, pm_options_scope_mut, pm_options_scopes_init, pm_options_t, pm_options_version_set, pm_parse, pm_parser_new, pm_string_init,
 };
 
 /// The version of Ruby syntax to parse with.
@@ -155,6 +155,7 @@ impl Scope {
 }
 
 /// Options that can be passed to the parser.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, Default)]
 pub struct Options {
     filepath: Option<String>,
@@ -166,6 +167,7 @@ pub struct Options {
     version: Option<Version>,
     main_script: bool,
     partial_script: bool,
+    attach_comments: bool,
     scopes: Vec<Scope>,
 }
 
@@ -235,6 +237,14 @@ impl Options {
         self
     }
 
+    /// Sets the attach comments option. When enabled, comments are attached to
+    /// the nodes they belong to and can be read with [`Node::comments`].
+    #[must_use]
+    pub const fn attach_comments(mut self, attach_comments: bool) -> Self {
+        self.attach_comments = attach_comments;
+        self
+    }
+
     /// Adds a scope to the options.
     #[must_use]
     pub fn scope(mut self, scope: Scope) -> Self {
@@ -298,6 +308,10 @@ impl Options {
 
         if self.partial_script {
             unsafe { pm_options_partial_script_set(opts, true) };
+        }
+
+        if self.attach_comments {
+            unsafe { pm_options_attach_comments_set(opts, true) };
         }
 
         if !self.scopes.is_empty() {
@@ -384,7 +398,35 @@ pub fn parse_with_options<'a>(source: &'a [u8], options: &'a ParseOptions) -> Pa
 
 #[cfg(test)]
 mod tests {
-    use super::parse;
+    use super::{parse, parse_with_options, Options};
+
+    #[test]
+    fn attach_comments_test() {
+        let source = "foo # comment 1\nbar # comment 2\n";
+
+        let options = Options::default().attach_comments(true).build();
+        let result = parse_with_options(source.as_ref(), &options);
+        let statements = result.node().as_program_node().unwrap().statements();
+        let body: Vec<_> = statements.body().iter().collect();
+
+        assert_eq!(body.len(), 2);
+        assert_eq!(body[0].comments().len(), 1);
+
+        let comments: Vec<_> = body[0].comments().collect();
+        assert_eq!(comments.len(), 1);
+        assert_eq!(comments[0].text(), b"# comment 1");
+
+        let comments: Vec<_> = body[1].comments().collect();
+        assert_eq!(comments.len(), 1);
+        assert_eq!(comments[0].text(), b"# comment 2");
+
+        // Without the option, no comments are attached to the nodes.
+        let result = parse(source.as_ref());
+        let statements = result.node().as_program_node().unwrap().statements();
+        let body: Vec<_> = statements.body().iter().collect();
+        assert_eq!(body[0].comments().len(), 0);
+        assert_eq!(body[1].comments().len(), 0);
+    }
 
     #[test]
     fn comments_test() {
