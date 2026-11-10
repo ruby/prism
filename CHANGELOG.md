@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- The Rust bindings now expose the `attach_comments` parse option, along with a `Node#comments` accessor for reading the comments attached to a node.
 - `pm_options_stack_budget_set` was added to the C API. It sets the number of bytes of C stack the parser may use before reporting a `stack_exhausted` error, instead of overflowing the stack. `SIZE_MAX` means no budget, which is the default. The nesting depth limit alone assumes a stack of roughly 8MB, so embedders that parse on a smaller stack, such as a thread's or a fiber's, should pass a budget.
 - `Prism::StringQuery` methods accept a `version:` keyword, just like the parse methods. It defaults to the nearest version to the running Ruby. This matters for `constant?`, because Ruby 4.0 recognizes more uppercase letters than Ruby 3.4.
 - `StringQuery::version` was added to the Rust bindings. It picks the Ruby version that a query checks against. The default is the latest version.

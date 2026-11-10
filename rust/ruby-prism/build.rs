@@ -542,7 +542,7 @@ use std::marker::PhantomData;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
-use crate::{{ConstantId, ConstantList, Integer, Location, NodeList}};
+use crate::{{Comments, ConstantId, ConstantList, Integer, Location, NodeList}};
 "
     )?;
 
@@ -611,6 +611,24 @@ impl<'pr> Node<'pr> {{
         writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Location::new(parser, unsafe {{ &((*pointer.cast::<pm_node_t>()).location) }}),", node.name)?;
     }
     writeln!(file, "        }}")?;
+    writeln!(file, "    }}")?;
+    writeln!(file)?;
+
+    writeln!(file, "    /// Returns an iterator over the comments attached to this node, ordered by")?;
+    writeln!(file, "    /// start offset.")?;
+    writeln!(file, "    ///")?;
+    writeln!(file, "    /// Comments are only attached when the source is parsed with the")?;
+    writeln!(file, "    /// [`attach_comments`](crate::Options::attach_comments) option.")?;
+    writeln!(file, "    #[allow(clippy::match_same_arms)]")?;
+    writeln!(file, "    #[must_use]")?;
+    writeln!(file, "    pub fn comments(&self) -> Comments<'pr> {{")?;
+    writeln!(file, "        let (parser, node) = match *self {{")?;
+    for node in &config.nodes {
+        writeln!(file, "            Self::{} {{ parser, pointer, .. }} => (parser, pointer.cast::<pm_node_t>()),", node.name)?;
+    }
+    writeln!(file, "        }};")?;
+    writeln!(file, "        let count = unsafe {{ pm_node_comments_size(parser, node) }};")?;
+    writeln!(file, "        Comments::for_node(parser, node, count)")?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
 
