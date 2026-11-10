@@ -1454,8 +1454,11 @@ compile(int argc, VALUE *argv, VALUE self) {
             rb_ary_push(vlocals, rb_ary_entry(vlocals_unit, local_id));
         }
 
-        VALUE vgraph_argv[] = { vgraph_kind, vparent, vblocks, vlocals };
-        VALUE vgraph = rb_class_new_instance(4, vgraph_argv, rb_cPrismCompileGraph);
+        uint32_t nvalues = pm_graph_nvalues(graph);
+        VALUE vnvalues = UINT2NUM(nvalues);
+
+        VALUE vgraph_argv[] = { vgraph_kind, vparent, vblocks, vlocals, vnvalues };
+        VALUE vgraph = rb_class_new_instance(5, vgraph_argv, rb_cPrismCompileGraph);
         rb_ary_push(vgraphs, vgraph);
     }
 

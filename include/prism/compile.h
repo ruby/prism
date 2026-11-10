@@ -121,6 +121,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION const PrismBlock * pm_graph_block(const PrismGraph *graph, uint32_t block_id);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nlocals(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_local_id(const PrismGraph *graph, uint32_t local_idx);
+PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nvalues(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_ninsns(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_nparams(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_param(const PrismBlock *block, uint32_t param_idx);

@@ -130,6 +130,11 @@ pm_graph_local_id(const PrismGraph *graph, uint32_t local_idx) {
 }
 
 uint32_t
+pm_graph_nvalues(const PrismGraph *graph) {
+    return graph->value_id;
+}
+
+uint32_t
 pm_block_ninsns(const PrismBlock *block) {
     return block->ninsns;
 }

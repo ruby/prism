@@ -31,13 +31,14 @@ module Prism
     end
 
     class Graph
-      attr_reader :kind, :parent, :blocks, :locals
+      attr_reader :kind, :parent, :blocks, :locals, :nvalues
 
-      def initialize(kind, parent, blocks, locals)
+      def initialize(kind, parent, blocks, locals, nvalues)
         @kind = kind
         @parent = parent
         @blocks = blocks
         @locals = locals
+        @nvalues = nvalues
       end
     end
 
@@ -55,7 +56,7 @@ module Prism
       end
 
       def run_graph(graph, recv, nest, args = [])
-        values = []
+        values = Array.new(graph.nvalues)
         locals = graph.locals.to_h { |local| [local.name, nil] }
         block = graph.blocks[0]
 
