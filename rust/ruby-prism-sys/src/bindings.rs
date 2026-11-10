@@ -11899,6 +11899,18 @@ unsafe extern "C" {
         options: *mut pm_options_t,
         partial_script: bool,
     );
+    /** Set the attach_comments option on the given options struct. When this is
+ set, the parser's comment list is sorted by start offset after parsing and
+ every comment is assigned an owning node. Without it, comments are left in
+ the order they were lexed and no nodes own any comments.
+
+ @param options The options struct to set the attach_comments value on.
+ @param attach_comments The attach_comments value to set.
+*/
+    pub fn pm_options_attach_comments_set(
+        options: *mut pm_options_t,
+        attach_comments: bool,
+    );
     /** Allocate and zero out the scopes array on the given options struct.
 
  @param options The options struct to initialize the scopes array on.
@@ -12045,6 +12057,30 @@ unsafe extern "C" {
  @returns the first comment, or NULL if there are no comments
 */
     pub fn pm_parser_comments_first(parser: *const pm_parser_t) -> *const pm_comment_t;
+    /** Returns the number of comments owned by the given node. This is 0 if the
+ node owns no comments or if the attach_comments option was not set.
+
+ @param parser the parser that produced the node
+ @param node the node whose comments we want to count
+ @returns the number of comments owned by the given node
+*/
+    pub fn pm_node_comments_size(
+        parser: *const pm_parser_t,
+        node: *const pm_node_t,
+    ) -> u32;
+    /** Returns the comment at the given index among the comments owned by the given
+ node, which are ordered by start offset.
+
+ @param parser the parser that produced the node
+ @param node the node whose comment we want to get
+ @param index the index of the comment among those owned by the node
+ @returns the comment at the given index, or NULL if the index is out of range
+*/
+    pub fn pm_node_comment(
+        parser: *const pm_parser_t,
+        node: *const pm_node_t,
+        index: u32,
+    ) -> *const pm_comment_t;
     /** Returns the number of magic comments associated with the given parser.
 
  @param parser the parser whose magic comments we want to get the size of

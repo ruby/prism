@@ -2,7 +2,7 @@
 
 use std::marker::PhantomData;
 
-use ruby_prism_sys::{pm_comment_location, pm_comment_t, pm_comment_type, pm_comment_type_t, pm_magic_comment_key, pm_magic_comment_t, pm_magic_comment_value, pm_parser_start, pm_parser_t};
+use ruby_prism_sys::{pm_comment_location, pm_comment_t, pm_comment_type, pm_comment_type_t, pm_magic_comment_key, pm_magic_comment_t, pm_magic_comment_value, pm_node_comment, pm_node_t, pm_parser_start, pm_parser_t};
 
 use super::Location;
 
@@ -54,9 +54,14 @@ impl<'pr> Comment<'pr> {
     }
 }
 
-/// An iterator over comments collected from the parse result.
+enum CommentsSource {
+    Slice(Vec<*const pm_comment_t>),
+    Node { node: *const pm_node_t, count: u32 },
+}
+
+/// An iterator over comments collected from the parse result or attached to a node.
 pub struct Comments<'pr> {
-    ptrs: Vec<*const pm_comment_t>,
+    source: CommentsSource,
     index: usize,
     parser: *const pm_parser_t,
     marker: PhantomData<&'pr pm_comment_t>,
@@ -64,7 +69,28 @@ pub struct Comments<'pr> {
 
 impl Comments<'_> {
     pub(crate) const fn new(ptrs: Vec<*const pm_comment_t>, parser: *const pm_parser_t) -> Self {
-        Comments { ptrs, index: 0, parser, marker: PhantomData }
+        Comments {
+            source: CommentsSource::Slice(ptrs),
+            index: 0,
+            parser,
+            marker: PhantomData,
+        }
+    }
+
+    pub(crate) const fn for_node(parser: *const pm_parser_t, node: *const pm_node_t, count: u32) -> Self {
+        Comments {
+            source: CommentsSource::Node { node, count },
+            index: 0,
+            parser,
+            marker: PhantomData,
+        }
+    }
+
+    const fn remaining(&self) -> usize {
+        match &self.source {
+            CommentsSource::Slice(ptrs) => ptrs.len().saturating_sub(self.index),
+            CommentsSource::Node { count, .. } => (*count as usize).saturating_sub(self.index),
+        }
     }
 }
 
@@ -72,15 +98,28 @@ impl<'pr> Iterator for Comments<'pr> {
     type Item = Comment<'pr>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.ptrs.len() {
-            let comment = self.ptrs[self.index];
-            self.index += 1;
-            Some(Comment { raw: comment, parser: self.parser, marker: PhantomData })
-        } else {
-            None
-        }
+        let comment = match &self.source {
+            CommentsSource::Slice(ptrs) => *ptrs.get(self.index)?,
+            CommentsSource::Node { node, count } => {
+                if self.index >= *count as usize {
+                    return None;
+                }
+
+                unsafe { pm_node_comment(self.parser, *node, u32::try_from(self.index).ok()?) }
+            },
+        };
+
+        self.index += 1;
+        Some(Comment { raw: comment, parser: self.parser, marker: PhantomData })
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remaining = self.remaining();
+        (remaining, Some(remaining))
     }
 }
+
+impl ExactSizeIterator for Comments<'_> {}
 
 /// A magic comment that was found during parsing.
 #[derive(Debug)]
