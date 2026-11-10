@@ -98,6 +98,33 @@ typedef struct {
      */
     bool report_errors;
 
+    /**
+     * The source of the regular expression's content when the validation pass
+     * walks a copy of it with the bytes the lexer drops removed
+     * (see pm_regexp_content_unit), so that error locations can be mapped back
+     * into the source. NULL when the validation pass walks the source itself.
+     */
+    const uint8_t *content_start;
+
+    /** The end of the source of the content, set along with content_start. */
+    const uint8_t *content_end;
+
+    /**
+     * A position in the source that an earlier error location was mapped
+     * through, or NULL if there is none yet. Errors are mostly reported in
+     * source order, so resuming from here keeps mapping them linear overall.
+     */
+    const uint8_t *mapped_cursor;
+
+    /** The number of bytes that the copy holds before mapped_cursor. */
+    size_t mapped_kept;
+
+    /**
+     * The closing delimiter whose escaping backslash the lexer drops,
+     * or -1 if there is none.
+     */
+    int dropped_terminator;
+
     /** Whether a `\u{...}` escape with value >= 0x80 was seen. */
     bool has_unicode_escape;
 
@@ -127,15 +154,209 @@ typedef struct {
 } pm_regexp_parser_t;
 
 /**
+ * Returns the width of the character at the given position, treating invalid
+ * bytes as one byte wide. Only multibyte encodings that were set explicitly
+ * need the encoding's help, since a backslash can be a trailing byte in them.
+ */
+static PRISM_INLINE size_t
+pm_regexp_content_char_width(const uint8_t *cursor, const uint8_t *end, const pm_encoding_t *encoding, bool encoding_changed) {
+    if (!encoding_changed || !encoding->multibyte) return 1;
+
+    size_t width = encoding->char_width(cursor, (ptrdiff_t) (end - cursor));
+    return width == 0 ? 1 : width;
+}
+
+/**
+ * Returns the width of the escape starting with the backslash at the given
+ * position. Control and meta escapes (`\c`, `\C-`, `\M-`) take the character
+ * after them as their operand, which can itself be an escape, such as
+ * the escaped newline in `\M-\` followed by a newline, so they are taken whole.
+ */
+static size_t
+pm_regexp_content_escape_width(const uint8_t *cursor, const uint8_t *end, const pm_encoding_t *encoding, bool encoding_changed) {
+    const uint8_t *operand = cursor + 1;
+
+    while (operand < end) {
+        if (*operand == 'c') {
+            operand++;
+        } else if ((*operand == 'C' || *operand == 'M') && operand + 1 < end && operand[1] == '-') {
+            operand += 2;
+        } else {
+            break;
+        }
+
+        if (operand >= end || *operand != '\\') break;
+        operand++;
+    }
+
+    if (operand >= end) return (size_t) (end - cursor);
+    if (operand[0] == '\r' && operand + 1 < end && operand[1] == '\n') return (size_t) (operand - cursor) + 2;
+    return (size_t) (operand - cursor) + pm_regexp_content_char_width(operand, end, encoding, encoding_changed);
+}
+
+/**
+ * The lexer leaves a few bytes of a regular expression's source out of its
+ * content: the backslash of an escaped closing delimiter (except for
+ * the delimiters where Onigmo needs the backslash), the backslash of an escaped
+ * non-ASCII character, and a backslash followed by a newline. The validation pass
+ * walks the source rather than the unescaped content, so it has to leave
+ * these bytes out as well. Otherwise it reads `%r!(?\!x)!` as `(?\!x)` instead
+ * of `(?!x)`.
+ *
+ * Returns the width of the unit of source starting at the given position,
+ * and writes the number of leading bytes of it that the lexer drops to dropped.
+ */
+static size_t
+pm_regexp_content_unit(const uint8_t *cursor, const uint8_t *end, int dropped_terminator, const pm_encoding_t *encoding, bool encoding_changed, size_t *dropped) {
+    *dropped = 0;
+
+    if (*cursor != '\\' || cursor + 1 >= end) {
+        return pm_regexp_content_char_width(cursor, end, encoding, encoding_changed);
+    }
+
+    if (cursor[1] == '\n') {
+        *dropped = 2;
+        return 2;
+    }
+
+    if (cursor[1] == '\r' && cursor + 2 < end && cursor[2] == '\n') {
+        *dropped = 3;
+        return 3;
+    }
+
+    if (cursor[1] == dropped_terminator) {
+        *dropped = 1;
+        return 2;
+    }
+
+    if (cursor[1] >= 0x80) {
+        *dropped = 1;
+        return 1 + pm_regexp_content_char_width(cursor + 1, end, encoding, encoding_changed);
+    }
+
+    return pm_regexp_content_escape_width(cursor, end, encoding, encoding_changed);
+}
+
+/**
+ * Returns true if the given closing delimiter of a regular expression keeps
+ * its backslash in the content when it is escaped.
+ */
+bool
+pm_regexp_terminator_escape_kept(uint8_t terminator) {
+    switch (terminator) {
+        case '$': case ')': case '*': case '+':
+        case '.': case '>': case '?': case ']':
+        case '^': case '|': case '}':
+            return true;
+        default:
+            return false;
+    }
+}
+
+/**
+ * Returns the closing delimiter of the given regular expression whose escaping
+ * backslash the lexer drops, or -1 if the lexer keeps it.
+ */
+static int
+pm_regexp_dropped_terminator(const pm_parser_t *parser, const pm_regular_expression_node_t *node) {
+    if (node->closing_loc.length == 0) return -1;
+
+    uint8_t terminator = parser->start[node->closing_loc.start];
+    return pm_regexp_terminator_escape_kept(terminator) ? -1 : terminator;
+}
+
+/**
+ * Copy the source of a regular expression's content into the given buffer,
+ * leaving out the bytes that the lexer drops. Returns false without touching
+ * the buffer if there are no such bytes, which is the common case.
+ */
+static bool
+pm_regexp_content_copy(const uint8_t *start, const uint8_t *end, int dropped_terminator, const pm_encoding_t *encoding, bool encoding_changed, pm_buffer_t *buffer) {
+    const uint8_t *cursor = start;
+    size_t dropped = 0;
+
+    while (cursor < end) {
+        size_t width = pm_regexp_content_unit(cursor, end, dropped_terminator, encoding, encoding_changed, &dropped);
+        if (dropped > 0) break;
+        cursor += width;
+    }
+
+    if (cursor >= end) return false;
+
+    pm_buffer_init(buffer, (size_t) (end - start));
+    pm_buffer_append_bytes(buffer, start, (size_t) (cursor - start));
+
+    while (cursor < end) {
+        size_t width = pm_regexp_content_unit(cursor, end, dropped_terminator, encoding, encoding_changed, &dropped);
+        pm_buffer_append_bytes(buffer, cursor + dropped, width - dropped);
+        cursor += width;
+    }
+
+    return true;
+}
+
+/**
+ * Returns the offset in the source of the given position in the content that
+ * the validation pass walks.
+ */
+static uint32_t
+pm_regexp_source_offset(pm_regexp_parser_t *regexp_parser, const uint8_t *pointer) {
+    const pm_parser_t *parser = regexp_parser->parser;
+    if (regexp_parser->content_start == NULL) return (uint32_t) (pointer - parser->start);
+
+    size_t target = (size_t) (pointer - regexp_parser->start);
+    size_t kept = 0;
+    const uint8_t *cursor = regexp_parser->content_start;
+
+    if (regexp_parser->mapped_cursor != NULL && regexp_parser->mapped_kept <= target) {
+        kept = regexp_parser->mapped_kept;
+        cursor = regexp_parser->mapped_cursor;
+    }
+
+    size_t offset = 0;
+
+    while (cursor < regexp_parser->content_end) {
+        size_t dropped;
+        size_t width = pm_regexp_content_unit(cursor, regexp_parser->content_end, regexp_parser->dropped_terminator, regexp_parser->encoding, regexp_parser->encoding_changed, &dropped);
+
+        if (kept + (width - dropped) > target) {
+            offset = dropped + (target - kept);
+            break;
+        }
+
+        kept += width - dropped;
+        cursor += width;
+    }
+
+    regexp_parser->mapped_cursor = cursor;
+    regexp_parser->mapped_kept = kept;
+
+    return (uint32_t) (cursor + offset - parser->start);
+}
+
+/**
+ * Returns the length in the source of the given range of the content that
+ * the validation pass walks. The end is mapped from the last byte in the range,
+ * so that the range does not take in bytes the lexer drops right after it.
+ */
+static uint32_t
+pm_regexp_source_length(pm_regexp_parser_t *regexp_parser, const uint8_t *start, const uint8_t *end, uint32_t start_offset) {
+    if (end <= start) return 0;
+    return pm_regexp_source_offset(regexp_parser, end - 1) + 1 - start_offset;
+}
+
+/**
  * Append a syntax error to the parser's error list. Errors are only reported
  * when report_errors is set, which is the case for the validation pass that
- * walks the raw source, so start and end always point into the original source.
+ * walks the raw source (or a copy of it whose positions map back into the
+ * source), so start and end always have offsets in the original source.
  */
 static PRISM_INLINE void
 pm_regexp_parse_error(pm_regexp_parser_t *regexp_parser, const uint8_t *start, const uint8_t *end, const char *message) {
     if (regexp_parser->report_errors) {
         pm_parser_t *parser = regexp_parser->parser;
-        pm_diagnostic_list_append_format(&parser->metadata_arena, &parser->error_list, (uint32_t) (start - parser->start), (uint32_t) (end - start), PM_ERR_REGEXP_PARSE_ERROR, message);
+        uint32_t start_offset = pm_regexp_source_offset(regexp_parser, start);
+        pm_diagnostic_list_append_format(&parser->metadata_arena, &parser->error_list, start_offset, pm_regexp_source_length(regexp_parser, start, end, start_offset), PM_ERR_REGEXP_PARSE_ERROR, message);
     }
 }
 
@@ -152,7 +373,8 @@ pm_regexp_parse_stack_exhausted(pm_regexp_parser_t *regexp_parser) {
     pm_parser_t *parser = regexp_parser->parser;
 
     if (regexp_parser->report_errors) {
-        pm_parser_err_stack_exhausted(parser, (uint32_t) (regexp_parser->start - parser->start), (uint32_t) (regexp_parser->end - regexp_parser->start));
+        uint32_t start_offset = pm_regexp_source_offset(regexp_parser, regexp_parser->start);
+        pm_parser_err_stack_exhausted(parser, start_offset, pm_regexp_source_length(regexp_parser, regexp_parser->start, regexp_parser->end, start_offset));
     } else {
         pm_parser_err_stack_exhausted(parser, (uint32_t) (parser->current.start - parser->start), (uint32_t) (parser->current.end - parser->current.start));
     }
@@ -167,7 +389,8 @@ pm_regexp_parse_stack_exhausted(pm_regexp_parser_t *regexp_parser) {
     do { \
         if ((regexp_parser_)->report_errors) { \
             pm_parser_t *parser_ = (regexp_parser_)->parser; \
-            pm_diagnostic_list_append_format(&parser_->metadata_arena, &parser_->error_list, (uint32_t) ((err_start_) - parser_->start), (uint32_t) ((err_end_) - (err_start_)), diag_id, __VA_ARGS__); \
+            uint32_t start_offset_ = pm_regexp_source_offset((regexp_parser_), (err_start_)); \
+            pm_diagnostic_list_append_format(&parser_->metadata_arena, &parser_->error_list, start_offset_, pm_regexp_source_length((regexp_parser_), (err_start_), (err_end_), start_offset_), diag_id, __VA_ARGS__); \
         } \
     } while (0)
 
@@ -1639,10 +1862,11 @@ pm_regexp_validate_encoding(pm_regexp_parser_t *parser, bool ascii_only, pm_node
 
 /**
  * Parse a regular expression, validate its encoding, and optionally extract
- * named capture groups. Encoding validation walks the raw source (content_loc)
- * to distinguish escape-produced bytes from literal bytes. Named capture
- * extraction walks the unescaped content since escape sequences in group names
- * (e.g., line continuations) have already been processed by the lexer.
+ * named capture groups. Encoding validation walks the raw source (content_loc),
+ * less the bytes the lexer drops from it, to distinguish escape-produced bytes
+ * from literal bytes. Named capture extraction walks the unescaped content
+ * since escape sequences in group names (e.g., line continuations) have already
+ * been processed by the lexer.
  */
 pm_node_flags_t
 pm_regexp_parse(pm_parser_t *parser, pm_regular_expression_node_t *node, pm_regexp_name_callback_t name_callback, void *name_data) {
@@ -1653,6 +1877,21 @@ pm_regexp_parse(pm_parser_t *parser, pm_regular_expression_node_t *node, pm_rege
 
     const uint8_t *node_start = parser->start + node->base.location.start;
     const uint8_t *node_end = parser->start + node->base.location.start + node->base.location.length;
+
+    // The first pass walks the raw source, but it must not see the bytes that
+    // the lexer leaves out of the content, so if there are any, it walks a copy
+    // of the source without them instead.
+    int dropped_terminator = pm_regexp_dropped_terminator(parser, node);
+    pm_buffer_t content = { 0 };
+    const uint8_t *content_start = NULL;
+    const uint8_t *content_end = NULL;
+
+    if (pm_regexp_content_copy(source, source + size, dropped_terminator, parser->encoding, parser->encoding_changed, &content)) {
+        content_start = source;
+        content_end = source + size;
+        source = (const uint8_t *) content.value;
+        size = content.length;
+    }
 
     // First pass: walk raw source for encoding validation (no name extraction).
     pm_regexp_parser_t regexp_parser = {
@@ -1666,6 +1905,11 @@ pm_regexp_parse(pm_parser_t *parser, pm_regular_expression_node_t *node, pm_rege
         .name_callback = NULL,
         .name_data = NULL,
         .report_errors = true,
+        .content_start = content_start,
+        .content_end = content_end,
+        .mapped_cursor = NULL,
+        .mapped_kept = 0,
+        .dropped_terminator = dropped_terminator,
         .node_start = node_start,
         .node_end = node_end,
         .has_unicode_escape = false,
@@ -1698,6 +1942,7 @@ pm_regexp_parse(pm_parser_t *parser, pm_regular_expression_node_t *node, pm_rege
     int error_source_length = (int) pm_string_length(&node->unescaped);
     pm_node_flags_t encoding_flags = pm_regexp_validate_encoding(&regexp_parser, ascii_only, flags, error_source, error_source_length);
     pm_buffer_cleanup(&regexp_parser.hex_escape_buffer);
+    pm_buffer_cleanup(&content);
 
     // Second pass: walk unescaped content for named capture extraction.
     if (name_callback != NULL) {

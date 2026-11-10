@@ -281,6 +281,104 @@ module Prism
       assert_equal ["unknown regexp option - f"], errors.map(&:message)
     end
 
+    # The lexer drops the backslash of an escaped closing delimiter,
+    # so the validation sees the bare delimiter, as Onigmo does.
+    def test_escaped_delimiter
+      assert_empty Prism.parse('%r!(?\!x)!').errors
+      assert_empty Prism.parse('%r=(?\=x)=').errors
+      assert_empty Prism.parse('%r:(?\:x):').errors
+      assert_empty Prism.parse('%r#(?\#comment)#').errors
+      assert_empty Prism.parse(%q{%r'(?\'name\'x)'}).errors
+      assert_empty Prism.parse('%r!\\\\\!!').errors
+    end
+
+    # For these delimiters the lexer keeps the backslash, which Onigmo rejects.
+    def test_escaped_delimiter_kept
+      assert_equal ["undefined group option"], Prism.parse('%r{(?\}x)}').errors.map(&:message)
+      assert_equal ["undefined group option"], Prism.parse('%r|(?\|x)|').errors.map(&:message)
+    end
+
+    def test_escaped_delimiter_error_location
+      error = Prism.parse('%r!\!(?P!').errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal 7, error.location.start_offset
+      assert_equal "P", error.location.slice
+    end
+
+    def test_escaped_delimiter_error_location_before_escape
+      error = Prism.parse('%r!(?P\!!').errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal "P", error.location.slice
+    end
+
+    # The lexer drops a backslash followed by a newline.
+    def test_line_continuation
+      assert_empty Prism.parse("/(?\\\n!x)/").errors
+      assert_empty Prism.parse("/(?\\\r\n!x)/").errors
+    end
+
+    def test_line_continuation_error_location
+      error = Prism.parse("/a\\\n(?P/").errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal 6, error.location.start_offset
+      assert_equal "P", error.location.slice
+    end
+
+    # The lexer drops the backslash of an escaped non-ASCII character.
+    def test_escaped_non_ascii
+      error = Prism.parse("/\\あ(?P)/").errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal "P", error.location.slice
+
+      refute_predicate Prism.parse_statement("/\\あ/"), :forced_us_ascii_encoding?
+    end
+
+    # An escaped newline is the operand of a control or meta escape rather than
+    # a line continuation, so the lexer keeps it.
+    def test_control_and_meta_escapes_with_escaped_newline
+      error = Prism.parse("/\\c\\\n\\\n(?P)/").errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal 9, error.location.start_offset
+      assert_equal "P", error.location.slice
+
+      error = Prism.parse("/\\M-\\\n\\\n(?P)/n").errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal 10, error.location.start_offset
+      assert_equal "P", error.location.slice
+    end
+
+    # In Windows-31J, the trailing byte of U+8868 is a backslash.
+    def test_backslash_as_trailing_byte
+      assert_empty Prism.parse("# encoding: Windows-31J\n/表\n1/".encode("Windows-31J")).errors
+
+      error = Prism.parse("# encoding: Windows-31J\n%r!表\\!(?P)!".encode("Windows-31J")).errors.first
+
+      assert_equal "undefined group option", error.message
+      assert_equal 33, error.location.start_offset
+      assert_equal "P", error.location.slice
+    end
+
+    def test_escaped_delimiter_named_capture
+      result = Prism.parse('%r!(?\!x)(?<a>b)! =~ s')
+
+      assert_empty result.errors
+      assert_equal [:a], result.value.statements.body.first.targets.map(&:name)
+    end
+
+    # The second error starts before the first one.
+    def test_escaped_delimiter_error_locations_out_of_order
+      errors = Prism.parse('%r!\!(a(?P)\!b!').errors
+
+      assert_equal ["undefined group option", "end pattern with unmatched parenthesis"], errors.map(&:message)
+      assert_equal ["P", 'a(?P)\!b'], errors.map { |error| error.location.slice }
+    end
+
     def test_depth_limit_nested_character_sets
       assert_depth_limit("[" * 10_000)
     end
