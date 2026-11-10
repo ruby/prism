@@ -8,11 +8,15 @@ module Prism
     def deprecated(*replacements); end
   end
 
-  module RegularExpressionOptions
+  module RegularExpressionExt
     # Returns a numeric value that represents the flags that were used to create
     # the regular expression.
     sig { params(flags: Integer).returns(Integer) }
     def self.options(flags); end
+
+    # Returns the encoding of the regular expression.
+    sig { params(flags: Integer, source_encoding: Encoding).returns(Encoding) }
+    def self.encoding(flags, source_encoding); end
   end
 
   class InterpolatedMatchLastLineNode < Node
@@ -34,6 +38,10 @@ module Prism
     # the regular expression.
     sig { returns(Integer) }
     def options; end
+
+    # Returns the encoding of the regular expression.
+    sig { returns(Encoding) }
+    def encoding; end
   end
 
   class RegularExpressionNode < Node
@@ -41,6 +49,10 @@ module Prism
     # the regular expression.
     sig { returns(Integer) }
     def options; end
+
+    # Returns the encoding of the regular expression.
+    sig { returns(Encoding) }
+    def encoding; end
   end
 
   module HeredocQuery

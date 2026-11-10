@@ -81,6 +81,10 @@ module Prism
     sig { params(checksum: Integer).void }
     def replace_checksum(checksum); end
 
+    # Replace the value of encoding with the given value.
+    sig { params(encoding: Encoding).void }
+    def replace_encoding(encoding); end
+
     # Replace the value of offsets with the given value.
     sig { params(offsets: T::Array[Integer]).void }
     def replace_offsets(offsets); end
@@ -94,7 +98,7 @@ module Prism
     # Returns the encoding of the source code, which is set by parameters to the
     # parser or by the encoding magic comment.
     sig { returns(Encoding) }
-    def encoding; end
+    attr_reader :encoding
 
     # Returns the lines of the source code as an array of strings.
     sig { returns(T::Array[String]) }
