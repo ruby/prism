@@ -58,7 +58,7 @@ jobs:
     - name: Validate RBS
       run: bundle exec rake typecheck:rbs
     - name: Check field kinds
-      run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
+      run: CHECK_FIELD_KIND=true bundle exec rake
 
   build:
     strategy:
@@ -286,7 +286,7 @@ jobs:
     - name: Serialized size stats with all fields
       run: bundle exec rake serialized_size:topgems
     - name: Recompile with only semantic fields
-      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake clobber compile
+      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake compile
     - name: Serialized size stats with only semantic fields
       run: bundle exec rake serialized_size:topgems
 
