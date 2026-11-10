@@ -40,6 +40,20 @@ SOURCES := $(wildcard src/*.c src/*/*.c)
 SHARED_OBJECTS := $(subst src/,build/shared/,$(SOURCES:.c=.o))
 STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 
+# The objects depend on the flags they are compiled with as well as on their
+# sources. Make only compares timestamps, so build/.flags records the flags and
+# is rewritten whenever they differ from what it holds. Its timestamp then moves
+# only when the flags change, which makes the objects out of date exactly then.
+# Target-specific flags, such as those of `minimal`, reach it as a prerequisite.
+# In the same way, build/.sources records the list of sources, so that the
+# libraries are linked again when a source is removed.
+#
+# Some makes compare timestamps to the second, such as the GNU Make 3.81 that
+# ships with macOS. A stamp written in the same second as the last objects of
+# the previous build would not be newer than them, so a changed stamp is written
+# a second after it is found to differ.
+BUILD_FLAGS = $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS)
+
 all: shared static
 
 shared: build/libprism.$(SOEXT)
@@ -48,12 +62,23 @@ wasm: javascript/src/prism.wasm
 java-wasm: java/wasm/src/main/wasm/prism.wasm
 playground: doc/playground
 
-build/libprism.$(SOEXT): $(SHARED_OBJECTS)
-	$(ECHO) "linking $@ with $(CC)"
-	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
+build/.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(BUILD_FLAGS)' > $@; }
 
-build/libprism.a: $(STATIC_OBJECTS)
+build/.sources: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(SOURCES)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(SOURCES)' > $@; }
+
+build/libprism.$(SOEXT): $(SHARED_OBJECTS) build/.flags build/.sources
+	$(ECHO) "linking $@ with $(CC)"
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) $(OPTFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
+
+# `ar -r` only adds and replaces members, so the archive is created afresh to
+# hold exactly the current objects.
+build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources
 	$(ECHO) "building $@ with $(AR)"
+	$(Q) $(RMALL) $@
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
 
 javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
@@ -84,15 +109,15 @@ java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 		-Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
 		-o $@ $(SOURCES)
 
-build/shared/%.o: src/%.c Makefile $(HEADERS)
+build/shared/%.o: src/%.c Makefile $(HEADERS) build/.flags
 	$(ECHO) "compiling $@"
 	$(Q) $(MAKEDIRS) $(@D)
-	$(Q) $(CC) $(DEBUG_FLAGS) -DPRISM_EXPORT_SYMBOLS $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(Q) $(CC) $(DEBUG_FLAGS) -DPRISM_EXPORT_SYMBOLS $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
-build/static/%.o: src/%.c Makefile $(HEADERS)
+build/static/%.o: src/%.c Makefile $(HEADERS) build/.flags
 	$(ECHO) "compiling $@"
 	$(Q) $(MAKEDIRS) $(@D)
-	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
 build/fuzz.%: $(SOURCES) test/fuzz/%.c test/fuzz/fuzz.c
 	$(ECHO) "building $* fuzzer"
