@@ -135,6 +135,10 @@ module Prism
             when :define_singleton_class
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[1]])
               values[insn.opnds[0]] = run_graph(insn.data, klass, [klass, *nest].freeze)
+            when :define_singleton_method
+              name, method_graph = insn.data
+              klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
+              Module.instance_method(:define_method).bind_call(klass, name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
             when :defined_cvar
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar

@@ -469,6 +469,54 @@ module Prism
       assert_equal([:a], log)
     end
 
+    def test_define_singleton_method
+      assert_run(1, "o = Object.new; def o.a = 1; o.a")
+      assert_run(:a, "o = Object.new; def o.a; end")
+      assert_run(3, "o = Object.new; def o.add(a, b) = a + b; o.add(1, 2)")
+      assert_run(true, "o = Object.new; def o.me = self; o.me.equal?(o)")
+      assert_run(1, "class CompileTestDefs; def self.a = 1; end; CompileTestDefs.a")
+      assert_equal(false, CompileTestDefs.method_defined?(:a))
+    end
+
+    def test_define_singleton_method_visibility
+      assert_run(true, "o = Object.new; def o.a = 1; o.singleton_class.public_method_defined?(:a)")
+      assert_run(true, "o = Object.new; def o.initialize = 1; o.singleton_class.public_method_defined?(:initialize)")
+    end
+
+    def test_define_singleton_method_nesting
+      assert_run(1, "class CompileTestDefsNest; A = 1; O = Object.new; def O.a = A; end; CompileTestDefsNest::O.a")
+    end
+
+    def test_define_singleton_method_errors
+      assert_run_raises(TypeError, "def (1.itself).a; end", "can't define singleton")
+      assert_run_raises(TypeError, "def (:a.itself).a; end", "can't define singleton")
+      assert_run_raises(FrozenError, "o = Object.new.freeze; def o.a; end")
+    end
+
+    def test_define_singleton_method_basic_object
+      assert_run(1, "o = BasicObject.new; def o.a = 1; o.a")
+    end
+
+    def test_define_singleton_method_ignores_method_overrides
+      Object.const_set(:CompileTestDefsOverride, Class.new {
+        def self.singleton_class = raise("singleton_class called")
+        def self.define_singleton_method(*) = raise("define_singleton_method called")
+      })
+
+      assert_run(1, "def CompileTestDefsOverride.a = 1; CompileTestDefsOverride.a")
+    end
+
+    def test_define_singleton_method_hooks
+      log = []
+      Object.const_set(:CompileTestDefsHooks, Class.new {
+        define_singleton_method(:singleton_method_added) { |name| log << name }
+      })
+      log.clear
+
+      assert_run(:a, "def CompileTestDefsHooks.a; end")
+      assert_equal([:a], log)
+    end
+
     def test_singleton_class
       assert_run(1, "class << Object.new; 1; end")
       assert_run(nil, "class << Object.new; end")
