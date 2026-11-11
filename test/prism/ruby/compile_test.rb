@@ -41,6 +41,37 @@ module Prism
       end
     end
 
+    def test_pre_execution
+      [
+        [nil, "BEGIN {}"],
+        [nil, "BEGIN { 1 }"],
+        [nil, "1; BEGIN { 2 }"],
+        [2, "BEGIN { a = 2 }; a"],
+        [1, "a = 1; BEGIN { a = 2 }; a"],
+        [1, "BEGIN { a = 0; a += 1 }; a"],
+        [[1, 2, 3], "BEGIN { a = []; a << 1 }; a << 3; BEGIN { a << 2 }; a"],
+        [[1, 2], "BEGIN { BEGIN { a = []; a << 1 }; a << 2 }; a"],
+        [[1, 2, 3], "BEGIN { a = nil if false; a << 2 if true; BEGIN { a = []; a << 1 }; a << 3 }; a"],
+        [[1, 2, 3, 4], "BEGIN { a = []; if true; a << 1; end }; if true; a << 3; end; BEGIN { if false; a << 0; else; a << 2; end }; a << 4; a"],
+        [[1, 2, 3, 4], "BEGIN { BEGIN { BEGIN { a = []; a << 1 }; a << 2 }; a << 3 }; a << 4; a"],
+        [2, "BEGIN { a = (if true; 2; else; 3; end) }; a"],
+        [TOPLEVEL_BINDING.receiver, "BEGIN { a = self }; a"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+      assert_run_raises(RuntimeError, 'raise "body"; BEGIN { raise "pre" }', "pre")
+    end
+
+    def test_pre_execution_repeated_runs
+      unit = compile_unit("BEGIN { a = 0 }; a += 1")
+      assert_equal(1, vm.run(unit))
+      assert_equal(1, vm.run(unit))
+    end
+
+    def test_pre_and_post_execution
+      assert_post_execution("pre\nbody\n2\n", 'puts "body"; BEGIN { puts "pre"; a = 1; END { puts a } }; a = 2')
+    end
+
     def test_post_execution
       assert_post_execution("body\n2\n", 'a = 1; END { puts a }; a = 2; puts "body"')
       assert_post_execution("second\nfirst\n", 'END { puts "first" }; END { puts "second" }')

@@ -2485,12 +2485,44 @@ compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_
 }
 
 static uint32_t
+compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_t *statements, uint32_t node_id) {
+    PrismBuilderState pre_state = builder->state;
+    uint32_t body_block_id = make_block(builder, 0);
+    builder->state.block_id = body_block_id;
+    uint32_t value_id;
+
+    if (statements && statements->body.size) {
+        for (size_t idx = 0; idx < statements->body.size; ++idx) {
+            const pm_node_t *statement = statements->body.nodes[idx];
+
+            if (PM_NODE_TYPE_P(statement, PM_PRE_EXECUTION_NODE)) {
+                const pm_pre_execution_node_t *cast = (const pm_pre_execution_node_t *) statement;
+                PrismBuilderState body_state = builder->state;
+                builder->state = pre_state;
+                compile_program_node_statements(builder, cast->statements, statement->node_id);
+                pre_state = builder->state;
+                builder->state = body_state;
+                statement = NULL;
+            }
+
+            value_id = compile_node_or_nil(builder, statement, statement->node_id);
+        }
+    } else {
+        value_id = emit_load_nil(builder, node_id);
+    }
+
+    PrismBuilderState body_state = builder->state;
+    builder->state = pre_state;
+    emit_branch(builder, node_id, body_block_id, 0, NULL);
+    builder->state = body_state;
+    return value_id;
+}
+
+static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphProgram, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
-
-    const pm_statements_node_t *statements = (const pm_statements_node_t *) node->statements;
-    uint32_t value_id = compile_node_or_nil(builder, statements->body.size ? PM_NODE_UPCAST(statements) : NULL, node->base.node_id);
+    uint32_t value_id = compile_program_node_statements(builder, node->statements, node->base.node_id);
 
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
@@ -2843,6 +2875,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_PINNED_EXPRESSION_NODE:
         case PM_PINNED_VARIABLE_NODE:
+        case PM_PRE_EXECUTION_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
             abort();
