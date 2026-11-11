@@ -1482,6 +1482,21 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
             emit_store_cvar(builder, target->base.node_id, target->name, value_id);
             break;
         }
+        case PM_CONSTANT_TARGET_NODE: {
+            const pm_constant_target_node_t *target = (const pm_constant_target_node_t *) node;
+            emit_store_const_nest_rel(builder, target->base.node_id, target->name, value_id);
+            break;
+        }
+        case PM_CONSTANT_PATH_TARGET_NODE: {
+            const pm_constant_path_target_node_t *target = (const pm_constant_path_target_node_t *) node;
+            if (target->parent) {
+                uint32_t parent_id = compile_node(builder, target->parent);
+                emit_store_const_recv_rel(builder, target->base.node_id, parent_id, target->name, value_id);
+            } else {
+                emit_store_const_abs(builder, target->base.node_id, target->name, value_id);
+            }
+            break;
+        }
         case PM_GLOBAL_VARIABLE_TARGET_NODE: {
             const pm_global_variable_target_node_t *target = (const pm_global_variable_target_node_t *) node;
             emit_store_gvar(builder, target->base.node_id, target->name, value_id);
@@ -2949,6 +2964,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
         case PM_CLASS_VARIABLE_TARGET_NODE:
+        case PM_CONSTANT_PATH_TARGET_NODE:
+        case PM_CONSTANT_TARGET_NODE:
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
         case PM_INSTANCE_VARIABLE_TARGET_NODE:
         case PM_LOCAL_VARIABLE_TARGET_NODE:

@@ -132,6 +132,46 @@ module Prism
       $compile_test_for = nil
     end
 
+    def test_for_constant_target
+      ["A", "self::A"].each do |target|
+        scope = Module.new
+        graph = compile_unit("a = []; result = (for #{target} in [1, 2]; a << #{target}; end); [result, a, #{target}]").graphs[0]
+        capture_warnings do
+          assert_equal([[1, 2], [1, 2], 2], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+        end
+        assert_equal(2, scope.const_get(:A, false))
+
+        graph = compile_unit("for #{target} in []; end; #{target}").graphs[0]
+        assert_equal(2, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+
+        scope = Module.new
+        graph = compile_unit("for #{target} in []; end").graphs[0]
+        assert_equal([], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+        refute(scope.const_defined?(:A, false))
+      end
+
+      capture_warnings { assert_run(2, "for ::CompileTestForConstant in [1, 2]; end; ::CompileTestForConstant") }
+      assert_run(3, "module CompileTestForConstantScope; for A in [3]; end; end; CompileTestForConstantScope::A")
+    ensure
+      Object.send(:remove_const, :CompileTestForConstant) if Object.const_defined?(:CompileTestForConstant, false)
+    end
+
+    def test_for_constant_path_target_evaluation
+      scope = Module.new
+      graph = compile_unit("a = []; for (a << 1; self)::A in [1, 2]; a << 2; end; [a, A]").graphs[0]
+      capture_warnings do
+        assert_equal([[1, 2, 1, 2], 2], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      end
+      graph = compile_unit("a = []; for (a << 1; self)::A in []; end; a").graphs[0]
+      assert_equal([], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_run_raises(TypeError, "for 1.itself::A in [1]; end")
+      assert_run([], "for 1.itself::A in []; end")
+
+      graph = compile_unit("for self::A in [1]; end").graphs[0]
+      frozen_scope = Module.new.freeze
+      assert_raise(FrozenError) { vm.run_frame(Compile::Frame.new(graph, frozen_scope, [frozen_scope, Object].freeze)) }
+    end
+
     def test_for_custom_each
       collection = Object.new
       def collection.each
