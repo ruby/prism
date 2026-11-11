@@ -2840,6 +2840,15 @@ compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
 }
 
 static uint32_t
+compile_yield_node(PrismBuilder *builder, const pm_yield_node_t *node) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnYield, node->base.node_id, 1);
+    uint32_t value_id = make_value(builder);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 compile_node(PrismBuilder *builder, const pm_node_t *node) {
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
         int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
@@ -3012,6 +3021,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_while_node(builder, (const pm_while_node_t *) node);
         case PM_X_STRING_NODE:
             return compile_x_string_node(builder, (const pm_x_string_node_t *) node);
+        case PM_YIELD_NODE:
+            return compile_yield_node(builder, (const pm_yield_node_t *) node);
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
             abort();
@@ -3189,6 +3200,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnNewBlock:
                     printf("%%%" PRIu32 " = new_block g%" PRIu32 "\n", opnds[0], insn->as.new_block.graph_id);
+                    break;
+                case kPrismInsnYield:
+                    printf("%%%" PRIu32 " = yield\n", opnds[0]);
                     break;
                 case kPrismInsnCoerceHash:
                     printf("%%%" PRIu32 " = coerce_hash %%%" PRIu32 "\n", opnds[0], opnds[1]);

@@ -94,7 +94,8 @@ typedef enum {
     kPrismInsnTraceEnd,
     kPrismInsnTraceLine,
     kPrismInsnTraceReturn,
-    kPrismInsnUndefMethod
+    kPrismInsnUndefMethod,
+    kPrismInsnYield
 } PrismInsnKind;
 
 typedef enum {

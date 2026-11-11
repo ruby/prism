@@ -103,6 +103,62 @@ module Prism
       assert_post_execution("2\n", "a = 1; proc { END { puts a } }.call; a = 2")
     end
 
+    def test_yield_without_arguments
+      assert_run([6, 2], <<~RUBY)
+        class CompileTestYield
+          def twice
+            yield
+            yield
+          end
+          def nested
+            proc { yield }.call
+          end
+          def self.value
+            yield
+          end
+        end
+        a = 0
+        o = CompileTestYield.new
+        o.twice { a += 1 }
+        result = o.nested { a += 2 }
+        [result + CompileTestYield.value { 2 }, 2]
+      RUBY
+      assert_run_raises(LocalJumpError, "class CompileTestMissingYield; def value; yield; end; end; CompileTestMissingYield.new.value", "no block given (yield)")
+    end
+
+    def test_yield_captured_block
+      assert_run(42, <<~RUBY)
+        class CompileTestCapturedYield
+          def make
+            proc { yield() }
+          end
+        end
+        p = CompileTestCapturedYield.new.make { 42 }
+        p.call
+      RUBY
+      assert_run(6, <<~RUBY)
+        class CompileTestForYield
+          def value
+            a = 0
+            for i in [1, 2]
+              a += yield
+            end
+            a
+          end
+        end
+        CompileTestForYield.new.value { 3 }
+      RUBY
+      assert_run_raises(LocalJumpError, <<~RUBY, "no block given (yield)")
+        class CompileTestUncapturedYield
+          def make
+            proc { yield }
+          end
+        end
+        p = CompileTestUncapturedYield.new.make
+        p.call { 42 }
+      RUBY
+    end
+
     def test_block_graph
       unit = compile_unit("a = 1; proc { a += 1; b = 2 }")
       parent, child = unit.graphs

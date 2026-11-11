@@ -90,6 +90,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnTraceEnd: return rb_intern_const("trace_end");
         case kPrismInsnTraceLine: return rb_intern_const("trace_line");
         case kPrismInsnTraceReturn: return rb_intern_const("trace_return");
+        case kPrismInsnYield: return rb_intern_const("yield");
         case kPrismInsnUndefMethod: return rb_intern_const("undef_method");
     }
 }

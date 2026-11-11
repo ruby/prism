@@ -95,14 +95,15 @@ module Prism
     end
 
     class Frame
-      attr_reader :graph, :recv, :nest, :locals, :values
+      attr_reader :graph, :recv, :nest, :locals, :values, :block
 
-      def initialize(graph, recv, nest, locals = Locals.new(graph.locals))
+      def initialize(graph, recv, nest, locals = Locals.new(graph.locals), &block)
         @graph = graph
         @recv = recv
         @nest = nest
         @locals = locals
         @values = Array.new(graph.nvalues)
+        @block = block
       end
     end
 
@@ -196,7 +197,7 @@ module Prism
             when :define_method
               name, method_graph = insn.data
               vm = self
-              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| vm.run_frame(Frame.new(method_graph, self, nest), args) }
+              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args) }
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_module_abs
               name, module_graph = insn.data
@@ -219,7 +220,7 @@ module Prism
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
               vm = self
-              Module.instance_method(:define_method).bind_call(klass, name) { |*args| vm.run_frame(Frame.new(method_graph, self, nest), args) }
+              Module.instance_method(:define_method).bind_call(klass, name) { |*args, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args) }
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
@@ -242,7 +243,7 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
             when :for_each
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(:each) do |value|
-                run_frame(Frame.new(insn.data, recv, nest, locals), [value])
+                run_frame(Frame.new(insn.data, recv, nest, locals, &frame.block), [value])
               end
             when :nil_p
               values[insn.opnds[0]] = NilClass === values[insn.opnds[1]]
@@ -320,6 +321,9 @@ module Prism
               # ignore
             when :undef_method
               Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])
+            when :yield
+              raise LocalJumpError, "no block given (yield)" unless frame.block
+              values[insn.opnds[0]] = frame.block.call
             else
               raise "Unknown instruction kind: #{insn.kind}"
             end
@@ -339,9 +343,10 @@ module Prism
         vm = self
         locals = frame.locals
         nest = frame.nest
+        block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          Proc.new { vm.run_frame(Frame.new(graph, self, nest, Locals.new(graph.locals, locals))) }
+          Proc.new { vm.run_frame(Frame.new(graph, self, nest, Locals.new(graph.locals, locals), &block)) }
         end
       end
 
