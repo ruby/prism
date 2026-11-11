@@ -238,6 +238,10 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[1]]&.post_match
             when :extract_last_match_pre
               values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
+            when :for_each
+              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(:each) do |value|
+                run_frame(Frame.new(insn.data, recv, nest, locals), [value])
+              end
             when :nil_p
               values[insn.opnds[0]] = NilClass === values[insn.opnds[1]]
             when :load_object
@@ -308,7 +312,7 @@ module Prism
               eval("#{insn.data} = value", TOPLEVEL_BINDING.tap { |binding| binding.local_variable_set(:value, values[insn.opnds[0]]) })
             when :store_lvar
               locals[insn.data] = values[insn.opnds[0]]
-            when :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
+            when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
               # ignore
             when :undef_method
               Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])

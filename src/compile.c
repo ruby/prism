@@ -295,6 +295,11 @@ pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
 }
 
 uint32_t
+pm_insn_for_each_graph_id(const PrismInsn *insn) {
+    return insn->as.for_each.graph_id;
+}
+
+uint32_t
 pm_insn_post_execution_graph_id(const PrismInsn *insn) {
     return insn->as.post_execution.graph_id;
 }
@@ -1279,6 +1284,19 @@ emit_store_lvar(PrismBuilder *builder, uint32_t node_id, uint32_t local_id, uint
 }
 
 static void
+emit_trace_b_call(PrismBuilder *builder, uint32_t node_id) {
+    make_insn(builder, kPrismInsnTraceBCall, node_id, 0);
+}
+
+static void
+emit_trace_b_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnTraceBReturn, node_id, 1);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+}
+
+static void
 emit_trace_call(PrismBuilder *builder, uint32_t node_id) {
     make_insn(builder, kPrismInsnTraceCall, node_id, 0);
 }
@@ -1323,9 +1341,9 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
 
 #ifndef NDEBUG
     uint32_t graph_id = builder->state.graph_id;
-    /* END graphs share their parent's lexical scope. */
+    /* END and for graphs share their parent's lexical scope. */
     do {
-        if (builder->unit->graphs[graph_id].kind != kPrismGraphPostExecution) {
+        if (builder->unit->graphs[graph_id].kind != kPrismGraphPostExecution && builder->unit->graphs[graph_id].kind != kPrismGraphFor) {
             if (depth == 0) break;
             depth--;
         }
@@ -2102,6 +2120,42 @@ compile_float_node(PrismBuilder *builder, const pm_float_node_t *node) {
 }
 
 static uint32_t
+compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
+    uint32_t collection_id = compile_node(builder, node->collection);
+    uint32_t graph_id = make_graph(builder, kPrismGraphFor, builder->state.graph_id, 0);
+    PrismBuilderState state = push_scope(builder, graph_id, 1, NULL);
+    uint32_t param_id = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params[0];
+
+    switch (PM_NODE_TYPE(node->index)) {
+        case PM_LOCAL_VARIABLE_TARGET_NODE: {
+            const pm_local_variable_target_node_t *target = (const pm_local_variable_target_node_t *) node->index;
+            uint32_t local_id = resolve_local(builder, target->name, target->depth);
+            emit_store_lvar(builder, target->base.node_id, local_id, param_id);
+            break;
+        }
+        default:
+            fprintf(stderr, "Unsupported for target: %s\n", pm_node_type(node->index->type));
+            abort();
+    }
+
+    emit_trace_b_call(builder, node->base.node_id);
+    uint32_t body_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+    emit_trace_b_return(builder, node->base.node_id, body_id);
+    emit_return(builder, node->base.node_id, body_id);
+    pop_scope(builder, state);
+
+    PrismInsn *insn = make_insn(builder, kPrismInsnForEach, node->base.node_id, 2);
+    insn->as.for_each.graph_id = graph_id;
+
+    uint32_t value_id = make_value(builder);
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = collection_id;
+
+    return value_id;
+}
+
+static uint32_t
 compile_global_variable_read_node(PrismBuilder *builder, const pm_global_variable_read_node_t *node) {
     return emit_load_gvar(builder, node->base.node_id, node->name);
 }
@@ -2505,7 +2559,7 @@ compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_
                 statement = NULL;
             }
 
-            value_id = compile_node_or_nil(builder, statement, statement->node_id);
+            value_id = compile_node_or_nil(builder, statement, node_id);
         }
     } else {
         value_id = emit_load_nil(builder, node_id);
@@ -2762,6 +2816,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_false_node(builder, (const pm_false_node_t *) node);
         case PM_FLOAT_NODE:
             return compile_float_node(builder, (const pm_float_node_t *) node);
+        case PM_FOR_NODE:
+            return compile_for_node(builder, (const pm_for_node_t *) node);
         case PM_GLOBAL_VARIABLE_READ_NODE:
             return compile_global_variable_read_node(builder, (const pm_global_variable_read_node_t *) node);
         case PM_GLOBAL_VARIABLE_WRITE_NODE:
@@ -3169,6 +3225,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = load_lvar v%" PRIu32 "\n", opnds[0], insn->as.lvar.local_id);
                     break;
                 }
+                case kPrismInsnForEach:
+                    printf("%%%" PRIu32 " = for_each(%%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], opnds[1], insn->as.for_each.graph_id);
+                    break;
                 case kPrismInsnNilP:
                     printf("%%%" PRIu32 " = nil_p(%%%" PRIu32 ")\n", opnds[0], opnds[1]);
                     break;
@@ -3263,6 +3322,12 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 }
                 case kPrismInsnStoreLVar:
                     printf("store_lvar v%" PRIu32 ", %%%" PRIu32 "\n", insn->as.lvar.local_id, opnds[0]);
+                    break;
+                case kPrismInsnTraceBCall:
+                    printf("trace_b_call\n");
+                    break;
+                case kPrismInsnTraceBReturn:
+                    printf("trace_b_return %%%" PRIu32 "\n", opnds[0]);
                     break;
                 case kPrismInsnTraceCall:
                     printf("trace_call\n");

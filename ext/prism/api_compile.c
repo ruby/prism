@@ -49,6 +49,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnExtractLastMatchParen: return rb_intern_const("extract_last_match_paren");
         case kPrismInsnExtractLastMatchPost: return rb_intern_const("extract_last_match_post");
         case kPrismInsnExtractLastMatchPre: return rb_intern_const("extract_last_match_pre");
+        case kPrismInsnForEach: return rb_intern_const("for_each");
         case kPrismInsnNilP: return rb_intern_const("nil_p");
         case kPrismInsnLoadConstAbs: return rb_intern_const("load_const_abs");
         case kPrismInsnLoadConstNestRel: return rb_intern_const("load_const_nest_rel");
@@ -80,6 +81,8 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnStoreGVar: return rb_intern_const("store_gvar");
         case kPrismInsnStoreIVar: return rb_intern_const("store_ivar");
         case kPrismInsnStoreLVar: return rb_intern_const("store_lvar");
+        case kPrismInsnTraceBCall: return rb_intern_const("trace_b_call");
+        case kPrismInsnTraceBReturn: return rb_intern_const("trace_b_return");
         case kPrismInsnTraceCall: return rb_intern_const("trace_call");
         case kPrismInsnTraceClass: return rb_intern_const("trace_class");
         case kPrismInsnTraceEnd: return rb_intern_const("trace_end");
@@ -150,6 +153,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         }
         case kPrismInsnDefineSingletonClass:
             return rb_ary_entry(vgraphs, pm_insn_define_singleton_class_graph_id(insn));
+        case kPrismInsnForEach:
+            return rb_ary_entry(vgraphs, pm_insn_for_each_graph_id(insn));
         case kPrismInsnPostExecution:
             return rb_ary_entry(vgraphs, pm_insn_post_execution_graph_id(insn));
         case kPrismInsnExtractLastMatchGroup:
@@ -275,6 +280,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         switch (pm_graph_kind(graph)) {
             case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
             case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
+            case kPrismGraphFor: vgraph_kind = ID2SYM(rb_intern("for")); break;
             case kPrismGraphModule: vgraph_kind = ID2SYM(rb_intern("module")); break;
             case kPrismGraphPostExecution: vgraph_kind = ID2SYM(rb_intern("post_execution")); break;
             case kPrismGraphProgram: vgraph_kind = ID2SYM(rb_intern("program")); break;

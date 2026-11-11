@@ -41,6 +41,72 @@ module Prism
       end
     end
 
+    def test_for
+      [
+        [6, "a = 0; for i in [1, 2, 3]; a += i; end; a"],
+        [3, "for i in [1, 2, 3]; end; i"],
+        [nil, "for i in []; end; i"],
+        [4, "i = 4; for i in []; end; i"],
+        [[1, 2], "for i in [1, 2]; 99; end"],
+        [[1, 2], "for i in [1, 2]; end"],
+        [2, "for i in [1, 2]; a = i; end; a"],
+        [6, "a = 0; for i in 1..3; a += i; end; a"],
+        [[[:a, 1], [:b, 2]], "a = []; for i in { a: 1, b: 2 }; a << i; end; a"],
+        [[1, 2], "a = []; for i in [[1, 2]]; a = i; end; a"],
+        [nil, "for i in Array.new(1); end; i"],
+        [1, "a = 0; for i in (a += 1; [1, 2]); end; a"],
+        [9, "a = 0; for i in [1, 2]; for j in [3, 4]; a += i; end; a += i; end; a"],
+        [3, "a = 0; for i in [1, 2]; if i == 1; a += 1; else; a += 2; end; end; a"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+      assert_run_raises(NoMethodError, "for i in nil; end")
+      assert_post_execution("2\n", "for i in [1, 2]; END { puts i }; end")
+    end
+
+    def test_for_block_traces
+      ["for i in [1]; i + 1; end", "for i in [1]; end", "for i in [1]; if i; 2; else; 3; end; end"].each do |source|
+        graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :for }
+        entry = graph.blocks[0].insns
+        assert_equal([:store_lvar, :trace_b_call], entry.first(2).map(&:kind))
+        traces = graph.blocks.flat_map(&:insns).select { |insn| insn.kind == :trace_b_return }
+        assert_equal(1, traces.length)
+        tail = graph.blocks.find { |block| block.insns.include?(traces[0]) }.insns
+        assert_equal([:trace_b_return, :return], tail.last(2).map(&:kind))
+        assert_equal(tail.last.opnds, traces[0].opnds)
+      end
+    end
+
+    def test_for_custom_each
+      collection = Object.new
+      def collection.each
+        yield
+        yield 1
+        yield 2, 3
+        :finished
+      end
+      scope = Module.new
+      scope.const_set(:Items, collection)
+      graph = compile_unit("a = []; result = (for i in Items; a << i; end); [result, a, i]").graphs[0]
+      assert_equal([:finished, [nil, 1, 2], 2], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
+    def test_for_method_scope
+      assert_run([6, 2], <<~RUBY)
+        class CompileTestForMethod
+          def value(n)
+            total = 0
+            for i in 1..n
+              total += i
+            end
+            total
+          end
+        end
+        o = CompileTestForMethod.new
+        [o.value(3), o.value(1) + o.value(1)]
+      RUBY
+    end
+
     def test_pre_execution
       [
         [nil, "BEGIN {}"],
