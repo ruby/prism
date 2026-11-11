@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
 - A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
 - `pm_node_list_t` no longer has a `capacity` field, and its `size` field is now a `uint32_t`.
+- `pm_constant_id_list_t` no longer has a `capacity` field, and its `size` field is now a `uint32_t`.
 
 ## [2.1.0] - 2026-10-28
 
