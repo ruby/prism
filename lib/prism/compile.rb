@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "set"
+
 module Prism
   module Compile
     class Result < Prism::Result
@@ -105,6 +107,10 @@ module Prism
     end
 
     class VM
+      def initialize
+        @post_executions = Set.new.compare_by_identity
+      end
+
       def run(unit)
         run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end
@@ -279,6 +285,10 @@ module Prism
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join
             when :new_symbol
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join.to_sym
+            when :post_execution
+              if @post_executions.add?(insn.data)
+                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals)) }
+              end
             when :return
               return values[insn.opnds[0]]
             when :store_const_abs

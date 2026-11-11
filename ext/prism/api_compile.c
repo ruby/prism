@@ -71,6 +71,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnNewRegexp: return rb_intern_const("new_regexp");
         case kPrismInsnNewString: return rb_intern_const("new_string");
         case kPrismInsnNewSymbol: return rb_intern_const("new_symbol");
+        case kPrismInsnPostExecution: return rb_intern_const("post_execution");
         case kPrismInsnReturn: return rb_intern_const("return");
         case kPrismInsnStoreConstAbs: return rb_intern_const("store_const_abs");
         case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");
@@ -149,6 +150,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         }
         case kPrismInsnDefineSingletonClass:
             return rb_ary_entry(vgraphs, pm_insn_define_singleton_class_graph_id(insn));
+        case kPrismInsnPostExecution:
+            return rb_ary_entry(vgraphs, pm_insn_post_execution_graph_id(insn));
         case kPrismInsnExtractLastMatchGroup:
             return UINT2NUM(pm_insn_extract_group_number(insn));
         case kPrismInsnLoadConstAbs:
@@ -273,6 +276,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
             case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
             case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
             case kPrismGraphModule: vgraph_kind = ID2SYM(rb_intern("module")); break;
+            case kPrismGraphPostExecution: vgraph_kind = ID2SYM(rb_intern("post_execution")); break;
             case kPrismGraphProgram: vgraph_kind = ID2SYM(rb_intern("program")); break;
             case kPrismGraphSingletonClass: vgraph_kind = ID2SYM(rb_intern("singleton_class")); break;
         }

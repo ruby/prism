@@ -295,6 +295,11 @@ pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
 }
 
 uint32_t
+pm_insn_post_execution_graph_id(const PrismInsn *insn) {
+    return insn->as.post_execution.graph_id;
+}
+
+uint32_t
 pm_insn_extract_group_number(const PrismInsn *insn) {
     return insn->as.extract_group.number;
 }
@@ -464,7 +469,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_
 
     builder->state.block_id = make_block(builder, nparams);
 
-    if (locals->size) {
+    if (locals && locals->size) {
         PrismGraph *graph = PrismBuilder_graph(builder);
         uint32_t *shadowed = pm_arena_alloc(builder->arena, sizeof(uint32_t) * locals->size, PRISM_ALIGNOF(uint32_t));
 
@@ -492,8 +497,10 @@ static void
 pop_scope(PrismBuilder *builder, PrismBuilderState state) {
     const pm_constant_id_list_t *locals = builder->state.locals;
 
-    for (size_t idx = 0; idx < locals->size; ++idx) {
-        builder->bindings[locals->ids[idx]] = builder->state.shadowed[idx];
+    if (locals) {
+        for (size_t idx = 0; idx < locals->size; ++idx) {
+            builder->bindings[locals->ids[idx]] = builder->state.shadowed[idx];
+        }
     }
 
     builder->state = state;
@@ -1316,10 +1323,16 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
 
 #ifndef NDEBUG
     uint32_t graph_id = builder->state.graph_id;
-    for (uint32_t level = 0; level < depth; ++level) {
+    /* END graphs share their parent's lexical scope. */
+    do {
+        if (builder->unit->graphs[graph_id].kind != kPrismGraphPostExecution) {
+            if (depth == 0) break;
+            depth--;
+        }
+
         graph_id = builder->unit->graphs[graph_id].parent_id;
         assert(graph_id != UINT32_MAX);
-    }
+    } while (true);
 
     assert(local_id < builder->unit->nlocals);
     assert(builder->unit->locals[local_id].name_id == name_id);
@@ -2459,6 +2472,19 @@ compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *nod
 }
 
 static uint32_t
+compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_t *node) {
+    uint32_t graph_id = make_graph(builder, kPrismGraphPostExecution, builder->state.graph_id, 0);
+    PrismBuilderState state = push_scope(builder, graph_id, 0, NULL);
+    uint32_t value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+    emit_return(builder, node->base.node_id, value_id);
+    pop_scope(builder, state);
+
+    PrismInsn *insn = make_insn(builder, kPrismInsnPostExecution, node->base.node_id, 0);
+    insn->as.post_execution.graph_id = graph_id;
+    return emit_load_nil(builder, node->base.node_id);
+}
+
+static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphProgram, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
@@ -2770,6 +2796,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_or_node(builder, (const pm_or_node_t *) node);
         case PM_PARENTHESES_NODE:
             return compile_parentheses_node(builder, (const pm_parentheses_node_t *) node);
+        case PM_POST_EXECUTION_NODE:
+            return compile_post_execution_node(builder, (const pm_post_execution_node_t *) node);
         case PM_PROGRAM_NODE:
             return compile_program_node(builder, (const pm_program_node_t *) node);
         case PM_RANGE_NODE:
@@ -3163,6 +3191,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = new_symbol", opnds[0]);
                     dump_values(insn->opnds_len - 1, opnds + 1);
                     printf("\n");
+                    break;
+                case kPrismInsnPostExecution:
+                    printf("post_execution g%" PRIu32 "\n", insn->as.post_execution.graph_id);
                     break;
                 case kPrismInsnReturn:
                     printf("return %%%" PRIu32 "\n", opnds[0]);

@@ -2,6 +2,7 @@
 # typed: ignore
 
 require_relative "../test_helper"
+require "open3"
 
 module Prism
   class CompileTest < TestCase
@@ -38,6 +39,58 @@ module Prism
       ].each do |(expected, source)|
         assert_equal(expected, vm.run(compile_unit(source)))
       end
+    end
+
+    def test_post_execution
+      assert_post_execution("body\n2\n", 'a = 1; END { puts a }; a = 2; puts "body"')
+      assert_post_execution("second\nfirst\n", 'END { puts "first" }; END { puts "second" }')
+      assert_post_execution("3\n", 'a = 1; END { puts a }; END { a += 1 }; a = 2')
+      assert_post_execution("body\n", 'if false; END { puts "unreachable" }; end; END {}; puts "body"')
+      assert_post_execution("nil\n", 'END { a = 2 }; END { p a }')
+      assert_post_execution("outer\ninner\nfirst\n", 'END { puts "first" }; END { puts "outer"; END { puts "inner" } }')
+    end
+
+    def test_post_execution_registers_once
+      assert_post_execution("3\n", 'a = 0; while a < 3; END { puts a }; a += 1; end')
+      assert_post_execution("1\n", 'class CompileTestEndMethod; def value(a); END { puts a }; end; end; o = CompileTestEndMethod.new; o.value(1); o.value(2)')
+    end
+
+    def test_post_execution_vm_state
+      assert_post_execution("1\n1\n", <<~RUBY)
+        unit = Prism.compile("END { puts 1 }").value
+        machine = Prism::Compile::VM.new
+        machine.run(unit)
+        machine.run(unit)
+        Prism::Compile::VM.new.run(unit)
+      RUBY
+      assert_post_execution("second\nfirst\n", <<~RUBY)
+        machine = Prism::Compile::VM.new
+        machine.run(Prism.compile('END { puts "first" }').value)
+        machine.run(Prism.compile('END { puts "second" }').value)
+      RUBY
+    end
+
+    def test_post_execution_scope
+      assert_post_execution("CompileTestEndModule\n1\n3\n", <<~RUBY)
+        module CompileTestEndModule
+          A = 1
+          a = 2
+          END { puts self.name; puts A; puts a }
+          a = 3
+        end
+      RUBY
+      assert_post_execution("2\n", 'a = 1; END { END { puts a }; a = 2 }')
+    end
+
+    def test_post_execution_graph
+      unit = compile_unit("a = 1; END { a += 1 }")
+      parent, child = unit.graphs
+      assert_equal(:post_execution, child.kind)
+      assert_same(parent, child.parent)
+      assert_empty(child.locals)
+      local_insns = child.blocks.flat_map(&:insns).select { |insn| [:load_lvar, :store_lvar].include?(insn.kind) }
+      assert_equal(2, local_insns.length)
+      local_insns.each { |insn| assert_same(parent.locals[0], insn.data) }
     end
 
     def test_vm_runs_multiple_units
@@ -1239,6 +1292,13 @@ module Prism
     end
 
     private
+
+    def assert_post_execution(expected, source)
+      script = 'Prism::Compile::VM.new.run(Prism.compile(ARGV.fetch(0), raise_error: :plain).value)'
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, "-I", File.expand_path("../../../lib", __dir__), "-rprism", "-e", script, source)
+      assert_predicate(status, :success?, stderr)
+      assert_equal(expected, stdout)
+    end
 
     def vm
       @vm ||= Compile::VM.new
