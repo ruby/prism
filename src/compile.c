@@ -792,6 +792,43 @@ emit_define_singleton_method(PrismBuilder *builder, uint32_t node_id, pm_constan
 }
 
 static uint32_t
+emit_defined_const_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstAbs, node_id, 1);
+    insn->as.name.name_id = name_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_defined_const_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstNestRel, node_id, 1);
+    insn->as.name.name_id = name_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
+emit_defined_const_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t parent_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstRecvRel, node_id, 2);
+    insn->as.name.name_id = name_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = parent_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_defined_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnDefinedCVar, node_id, 1);
     insn->as.name.name_id = name_id;
@@ -1732,6 +1769,121 @@ compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_varia
 }
 
 static uint32_t
+compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_write_node_t *node) {
+    uint32_t set_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->name);
+    uint32_t current_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
+
+    emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, 1, &current_id);
+
+    builder->state.block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, node->value);
+    emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write_node_t *node) {
+    uint32_t read_block_id = make_block(builder, 0);
+    uint32_t set_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t defined_id = emit_defined_const_nest_rel(builder, node->base.node_id, node->name);
+    emit_branchif(builder, node->base.node_id, defined_id, read_block_id, 0, NULL, set_block_id, 0, NULL);
+
+    builder->state.block_id = read_block_id;
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->name);
+    uint32_t current_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
+
+    emit_branchif(builder, node->base.node_id, current_id, join_block_id, 1, &current_id, set_block_id, 0, NULL);
+
+    builder->state.block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, node->value);
+    emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_path_and_write_node_t *node) {
+    uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
+    uint32_t set_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->target->name);
+    uint32_t current_id;
+    if (node->target->parent) {
+        current_id = emit_load_const_recv_rel(builder, node->base.node_id, parent_id, constant_path);
+    } else {
+        current_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
+    }
+
+    emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, 1, &current_id);
+
+    builder->state.block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, node->value);
+    if (node->target->parent) {
+        emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, value_id);
+    } else {
+        emit_store_const_abs(builder, node->base.node_id, node->target->name, value_id);
+    }
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_path_or_write_node_t *node) {
+    uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
+    uint32_t read_block_id = make_block(builder, 0);
+    uint32_t set_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t defined_id;
+    if (node->target->parent) {
+        defined_id = emit_defined_const_recv_rel(builder, node->base.node_id, node->target->name, parent_id);
+    } else {
+        defined_id = emit_defined_const_abs(builder, node->base.node_id, node->target->name);
+    }
+    emit_branchif(builder, node->base.node_id, defined_id, read_block_id, 0, NULL, set_block_id, 0, NULL);
+
+    builder->state.block_id = read_block_id;
+    PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
+    PrismConstantPath_set(&constant_path, 0, node->target->name);
+    uint32_t current_id;
+    if (node->target->parent) {
+        current_id = emit_load_const_recv_rel(builder, node->base.node_id, parent_id, constant_path);
+    } else {
+        current_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
+    }
+
+    emit_branchif(builder, node->base.node_id, current_id, join_block_id, 1, &current_id, set_block_id, 0, NULL);
+
+    builder->state.block_id = set_block_id;
+    uint32_t value_id = compile_node(builder, node->value);
+    if (node->target->parent) {
+        emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, value_id);
+    } else {
+        emit_store_const_abs(builder, node->base.node_id, node->target->name, value_id);
+    }
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_constant_read_node(PrismBuilder *builder, const pm_constant_read_node_t *node) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
@@ -2447,12 +2599,20 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_constant_read_node(builder, (const pm_constant_read_node_t *) node);
         case PM_CONSTANT_WRITE_NODE:
             return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node);
+        case PM_CONSTANT_AND_WRITE_NODE:
+            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node);
+        case PM_CONSTANT_OR_WRITE_NODE:
+            return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
             return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node);
         case PM_CONSTANT_PATH_NODE:
             return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
             return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node);
+        case PM_CONSTANT_PATH_AND_WRITE_NODE:
+            return compile_constant_path_and_write_node(builder, (const pm_constant_path_and_write_node_t *) node);
+        case PM_CONSTANT_PATH_OR_WRITE_NODE:
+            return compile_constant_path_or_write_node(builder, (const pm_constant_path_or_write_node_t *) node);
         case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
             return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node);
         case PM_DEF_NODE:
@@ -2785,6 +2945,13 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnDefineSingletonMethod: {
                     const pm_constant_t *constant = compile_constant(builder->parser, insn->as.define.name_id);
                     printf("define_singleton_method(:%.*s, %%%" PRIu32 ", g%" PRIu32 ")\n", (int) pm_constant_length(constant), (const char *) pm_constant_start(constant), opnds[0], insn->as.define.graph_id);
+                    break;
+                }
+                case kPrismInsnDefinedConstAbs:
+                case kPrismInsnDefinedConstNestRel:
+                case kPrismInsnDefinedConstRecvRel: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.name.name_id);
+                    printf("%%%" PRIu32 " = defined_const(%.*s)\n", opnds[0], (int) pm_constant_length(name), (const char *) pm_constant_start(name));
                     break;
                 }
                 case kPrismInsnDefinedCVar: {

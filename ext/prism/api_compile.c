@@ -38,6 +38,9 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefineModuleRecvRel: return rb_intern_const("define_module_recv_rel");
         case kPrismInsnDefineSingletonClass: return rb_intern_const("define_singleton_class");
         case kPrismInsnDefineSingletonMethod: return rb_intern_const("define_singleton_method");
+        case kPrismInsnDefinedConstAbs: return rb_intern_const("defined_const_abs");
+        case kPrismInsnDefinedConstNestRel: return rb_intern_const("defined_const_nest_rel");
+        case kPrismInsnDefinedConstRecvRel: return rb_intern_const("defined_const_recv_rel");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
@@ -109,6 +112,9 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return compile_freeze(rb_ary_new_from_args(3, then_block, else_block, then_nopnds), freeze);
         }
         case kPrismInsnCall:
+        case kPrismInsnDefinedConstAbs:
+        case kPrismInsnDefinedConstNestRel:
+        case kPrismInsnDefinedConstRecvRel:
         case kPrismInsnDefinedCVar:
         case kPrismInsnDefinedGVar:
         case kPrismInsnLoadCVar:

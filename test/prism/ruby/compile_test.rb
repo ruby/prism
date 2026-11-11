@@ -217,6 +217,127 @@ module Prism
       assert_run_raises(TypeError, "1.itself::CompileTestNotModule = 1")
     end
 
+    def test_constant_logical_write
+      ["A", "self::A", "::CompileTestConstantAssignment"].each do |target|
+        ["&&=", "||="].each do |operator|
+          [:undefined, nil, false, 1].each do |initial|
+            scope = Module.new
+            owner, name = target.start_with?("::") ? [Object, :CompileTestConstantAssignment] : [scope, :A]
+            owner.const_set(name, initial) unless initial == :undefined
+            source = "a = 0; result = (#{target} #{operator} (a += 1; 2)); [result, a]"
+            graph = compile_unit(source).graphs[0]
+
+            if initial == :undefined && operator == "&&="
+              assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+              refute owner.const_defined?(name, false)
+            else
+              writes = operator == "&&=" ? !!initial : initial == :undefined || !initial
+              expected = [writes ? 2 : initial, writes ? 1 : 0]
+              capture_warnings do
+                assert_equal(expected, Compile.run_graph(graph, scope, [scope, Object].freeze), source)
+              end
+              assert_equal(writes ? 2 : initial, owner.const_get(name, false))
+            end
+          ensure
+            owner.send(:remove_const, name) if owner&.const_defined?(name, false)
+          end
+        end
+      end
+    end
+
+    def test_constant_operator_write
+      ["A", "self::A", "::CompileTestConstantOperatorAssignment"].each do |target|
+        scope = Module.new
+        owner, name = target.start_with?("::") ? [Object, :CompileTestConstantOperatorAssignment] : [scope, :A]
+        owner.const_set(name, 3)
+        graph = compile_unit("a = 0; result = (#{target} += (a += 1; 2)); [result, a]").graphs[0]
+        capture_warnings do
+          assert_equal([5, 1], Compile.run_graph(graph, scope, [scope, Object].freeze))
+        end
+        assert_equal(5, owner.const_get(name, false))
+        owner.send(:remove_const, name)
+        assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+      ensure
+        owner.send(:remove_const, name) if owner&.const_defined?(name, false)
+      end
+    end
+
+    def test_constant_compound_write_receiver
+      ["&&=", "||=", "+="].each do |operator|
+        scope = Module.new
+        scope.const_set(:A, operator == "||=" ? false : 1)
+        graph = compile_unit("a = []; result = ((a << 1; self)::A #{operator} (a << 2; 3)); [result, a]").graphs[0]
+        capture_warnings do
+          assert_equal([operator == "+=" ? 4 : 3, [1, 2]], Compile.run_graph(graph, scope, [scope, Object].freeze))
+        end
+      end
+
+      assert_run([1], "a = []; (a << 1; Object)::CompileTestConstReceiver ||= 3; a")
+      assert_run(2, "module CompileTestConstNested; A ||= (if true; 2; else; 3; end); end")
+    ensure
+      Object.send(:remove_const, :CompileTestConstReceiver) if Object.const_defined?(:CompileTestConstReceiver, false)
+    end
+
+    def test_constant_compound_write_lookup
+      scope = Class.new(Class.new { const_set(:A, 1) })
+      graph = compile_unit("A ||= 2").graphs[0]
+      assert_equal(1, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      refute scope.const_defined?(:A, false)
+
+      outer = Module.new { const_set(:A, 3) }
+      inner = Module.new
+      assert_equal(3, Compile.run_graph(graph, inner, [inner, outer, Object].freeze))
+      refute inner.const_defined?(:A, false)
+
+      scope = Module.new { const_set(:A, 4); private_constant :A }
+      assert_equal(4, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      graph = compile_unit("self::A ||= 2").graphs[0]
+      capture_warnings { assert_equal(2, Compile.run_graph(graph, scope, [scope, Object].freeze)) }
+      ["&&=", "+="].each do |operator|
+        graph = compile_unit("self::A #{operator} 2").graphs[0]
+        assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+      end
+
+      ["&&=", "||=", "+="].each do |operator|
+        assert_run_raises(TypeError, "1.itself::A #{operator} 2")
+      end
+    end
+
+    def test_constant_or_write_does_not_call_const_missing
+      scope = Module.new
+      def scope.const_missing(name) = raise("const_missing called")
+      graph = compile_unit("self::A ||= 2").graphs[0]
+      assert_equal(2, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      graph = compile_unit("B ||= 3").graphs[0]
+      assert_equal(3, Compile.run_graph(graph, scope, [scope, Object].freeze))
+    end
+
+    def test_constant_compound_write_const_missing
+      scope = Module.new
+      def scope.const_missing(name) = 4
+      ["A &&= 2", "self::B += 3"].zip([2, 7]) do |source, expected|
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      end
+      assert_equal(2, scope.const_get(:A, false))
+      assert_equal(7, scope.const_get(:B, false))
+    end
+
+    def test_constant_or_write_autoload
+      scope = Module.new
+      Object.const_set(:CompileTestConstAutoload, scope)
+      Tempfile.create(["compile_const_autoload", ".rb"]) do |file|
+        file.write("CompileTestConstAutoload::A = 3")
+        file.flush
+        scope.autoload(:A, file.path)
+        graph = compile_unit("self::A ||= 2").graphs[0]
+        assert_equal(3, Compile.run_graph(graph, scope, [scope, Object].freeze))
+        assert_equal(3, scope.const_get(:A, false))
+      end
+    ensure
+      Object.send(:remove_const, :CompileTestConstAutoload) if Object.const_defined?(:CompileTestConstAutoload, false)
+    end
+
     def test_define_module
       assert_run(42, "module CompileTestModuleBody; 42; end")
       assert_run(nil, "module CompileTestModuleEmpty; end")

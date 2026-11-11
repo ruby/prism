@@ -166,6 +166,12 @@ module Prism
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
               Module.instance_method(:define_method).bind_call(klass, name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
+            when :defined_const_abs
+              values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
+            when :defined_const_nest_rel
+              values[insn.opnds[0]] = nest[0...-1].any? { |scope| scope.const_defined?(insn.data, false) } || nest[0].const_defined?(insn.data)
+            when :defined_const_recv_rel
+              values[insn.opnds[0]] = const_defined_recv_rel?(values[insn.opnds[1]], insn.data)
             when :defined_cvar
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
@@ -315,6 +321,14 @@ module Prism
         end
 
         nest[0].const_get(name)
+      end
+
+      def const_defined_recv_rel?(recv, name)
+        check_module(recv)
+        owner = recv.ancestors.find { |ancestor| ancestor.const_defined?(name, false) }
+        return false if owner.nil? || (owner == Object && recv != Object)
+
+        owner.constants(false).include?(name)
       end
 
       def const_get_recv_rel(recv, name)
