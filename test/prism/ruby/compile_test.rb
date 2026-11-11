@@ -40,6 +40,28 @@ module Prism
       end
     end
 
+    def test_match_last_line
+      [
+        [1, '$_ = "abc"; if /b/; 1; else; 2; end'],
+        [2, '$_ = "abc"; if /z/; 1; else; 2; end'],
+        [2, '$_ = nil; if /a/; 1; else; 2; end'],
+        [1, '$_ = "A"; if /a/i; 1; else; 2; end'],
+        [1, '$_ = "a\nb"; if /a.b/m; 1; else; 2; end'],
+        [1, '$_ = "ab"; if /a b/x; 1; else; 2; end'],
+        ["b", '$_ = "abc"; if /a(b)c/; $1; end'],
+        [nil, '$_ = "abc"; if /a(b)c/; end; if /z/; end; $1'],
+        ["abc", '$_ = "abc"; if /a/; end; $_'],
+        [1, '$_ = "abc"; 1 if /a/'],
+        [2, '$_ = "abc"; unless /a/; 1; else; 2; end'],
+        [2, '$_ = "a"; n = 0; while /a/; n += 1; if n == 2; $_ = "b"; end; end; n']
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+      assert_run_raises(TypeError, '$_ = 1; if /a/; 1; else; 2; end')
+    ensure
+      TOPLEVEL_BINDING.eval("$_ = nil")
+    end
+
     def test_match_write
       [
         [[0, "abc"], 'result = (/(?<word>abc)/ =~ "abc"); [result, word]'],

@@ -224,7 +224,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
             }
             case kPrismObjectRegexp: {
                 const pm_string_t *string = pm_object_string(object);
-                vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), 0);
+                pm_node_flags_t flags = pm_object_flags(object);
+                vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), (flags >> 2) & 7);
                 break;
             }
             case kPrismObjectString: {

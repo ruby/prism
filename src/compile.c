@@ -20,13 +20,22 @@
 #include <string.h>
 
 #define PM_CONSTANT_ID_BACKTICK (pm_constant_id_t) -1
+#define PM_CONSTANT_ID_LAST_LINE (pm_constant_id_t) -2
+#define PM_CONSTANT_ID_MATCH (pm_constant_id_t) -3
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
+
+static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
+static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     switch (constant_id) {
         case PM_CONSTANT_ID_BACKTICK:
             return &backtick_constant;
+        case PM_CONSTANT_ID_LAST_LINE:
+            return &last_line_constant;
+        case PM_CONSTANT_ID_MATCH:
+            return &match_constant;
         default:
             return pm_parser_constant(parser, constant_id);
     }
@@ -2342,6 +2351,18 @@ compile_local_variable_or_write_node(PrismBuilder *builder, const pm_local_varia
 }
 
 static uint32_t
+compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_node_t *node) {
+    uint32_t object_id = make_object(builder, kPrismObjectRegexp);
+    PrismObject *object = builder->unit->objects + object_id;
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->unescaped;
+
+    uint32_t regexp_id = emit_load_object(builder, node->base.node_id, object_id);
+    uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id);
+}
+
+static uint32_t
 compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_node_t *node) {
     uint32_t matched_block_id = make_block(builder, 0);
     uint32_t unmatched_block_id = make_block(builder, 0);
@@ -2717,6 +2738,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_and_write_node(builder, (const pm_local_variable_and_write_node_t *) node);
         case PM_LOCAL_VARIABLE_OR_WRITE_NODE:
             return compile_local_variable_or_write_node(builder, (const pm_local_variable_or_write_node_t *) node);
+        case PM_MATCH_LAST_LINE_NODE:
+            return compile_match_last_line_node(builder, (const pm_match_last_line_node_t *) node);
         case PM_MATCH_PREDICATE_NODE:
             return compile_match_predicate_node(builder, (const pm_match_predicate_node_t *) node);
         case PM_MATCH_WRITE_NODE:
