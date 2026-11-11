@@ -36,8 +36,34 @@ module Prism
         [true, "1 in Integer"],
         [TOPLEVEL_BINDING.receiver, "self"]
       ].each do |(expected, source)|
-        assert_equal(expected, Prism::Compile.run_unit(compile_unit(source)))
+        assert_equal(expected, vm.run(compile_unit(source)))
       end
+    end
+
+    def test_vm_runs_multiple_units
+      assert_equal(40, vm.run(compile_unit("module CompileTestVMPersistent; A = 40; end")))
+      assert_equal(42, vm.run(compile_unit("CompileTestVMPersistent::A + 2")))
+    end
+
+    def test_compiled_methods_retain_vm
+      machine = Compile::VM.new
+      frames = []
+      machine.define_singleton_method(:run_frame) do |frame, args = []|
+        frames << frame
+        super(frame, args)
+      end
+
+      machine.run(compile_unit(<<~RUBY))
+        class CompileTestVMOwner
+          def value; 1; end
+          def self.value; 2; end
+        end
+      RUBY
+      frames.clear
+
+      assert_equal(1, CompileTestVMOwner.new.value)
+      assert_equal(2, CompileTestVMOwner.value)
+      assert_equal([:def, :def], frames.map { |frame| frame.graph.kind })
     end
 
     def test_frame_isolation
@@ -46,8 +72,8 @@ module Prism
       first = Compile::Frame.new(graph, recv, [Object].freeze)
       second = Compile::Frame.new(graph, recv, [Object].freeze)
 
-      assert_equal(1, Compile.run_frame(first))
-      assert_equal(1, Compile.run_frame(second))
+      assert_equal(1, vm.run_frame(first))
+      assert_equal(1, vm.run_frame(second))
       first.locals[graph.locals[0]] = 10
       assert_equal(1, second.locals[graph.locals[0]])
     end
@@ -59,8 +85,8 @@ module Prism
       first = Compile::Frame.new(graph, recv, [Object].freeze, locals)
       second = Compile::Frame.new(graph, recv, [Object].freeze, locals)
 
-      assert_equal(1, Compile.run_frame(first))
-      assert_equal(2, Compile.run_frame(second))
+      assert_equal(1, vm.run_frame(first))
+      assert_equal(2, vm.run_frame(second))
       refute_same(first.values, second.values)
       assert_equal(2, locals[graph.locals[0]])
     end
@@ -413,14 +439,14 @@ module Prism
     private_constant :PRIVATE_CONSTANT
 
     def test_const_get_recv_rel
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("String::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("Prism::CompileTest::PRIVATE_CONSTANT")) }
-      assert_raise(TypeError) { Prism::Compile.run_unit(compile_unit("Float::INFINITY::Foo")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("::String::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("::Prism::CompileTest::PRIVATE_CONSTANT")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("String.itself::Integer")) }
-      assert_raise(NameError) { Prism::Compile.run_unit(compile_unit("Prism::CompileTest.itself::PRIVATE_CONSTANT")) }
-      assert_raise(TypeError) { Prism::Compile.run_unit(compile_unit("1.itself::Foo")) }
+      assert_raise(NameError) { vm.run(compile_unit("String::Integer")) }
+      assert_raise(NameError) { vm.run(compile_unit("Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { vm.run(compile_unit("Float::INFINITY::Foo")) }
+      assert_raise(NameError) { vm.run(compile_unit("::String::Integer")) }
+      assert_raise(NameError) { vm.run(compile_unit("::Prism::CompileTest::PRIVATE_CONSTANT")) }
+      assert_raise(NameError) { vm.run(compile_unit("String.itself::Integer")) }
+      assert_raise(NameError) { vm.run(compile_unit("Prism::CompileTest.itself::PRIVATE_CONSTANT")) }
+      assert_raise(TypeError) { vm.run(compile_unit("1.itself::Foo")) }
     end
 
     def test_const_set_recv_rel
@@ -438,13 +464,13 @@ module Prism
             graph = compile_unit(source).graphs[0]
 
             if initial == :undefined && operator == "&&="
-              assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
+              assert_raise(NameError) { vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
               refute owner.const_defined?(name, false)
             else
               writes = operator == "&&=" ? !!initial : initial == :undefined || !initial
               expected = [writes ? 2 : initial, writes ? 1 : 0]
               capture_warnings do
-                assert_equal(expected, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)), source)
+                assert_equal(expected, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)), source)
               end
               assert_equal(writes ? 2 : initial, owner.const_get(name, false))
             end
@@ -462,11 +488,11 @@ module Prism
         owner.const_set(name, 3)
         graph = compile_unit("a = 0; result = (#{target} += (a += 1; 2)); [result, a]").graphs[0]
         capture_warnings do
-          assert_equal([5, 1], Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+          assert_equal([5, 1], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         end
         assert_equal(5, owner.const_get(name, false))
         owner.send(:remove_const, name)
-        assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
+        assert_raise(NameError) { vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
       ensure
         owner.send(:remove_const, name) if owner&.const_defined?(name, false)
       end
@@ -478,7 +504,7 @@ module Prism
         scope.const_set(:A, operator == "||=" ? false : 1)
         graph = compile_unit("a = []; result = ((a << 1; self)::A #{operator} (a << 2; 3)); [result, a]").graphs[0]
         capture_warnings do
-          assert_equal([operator == "+=" ? 4 : 3, [1, 2]], Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+          assert_equal([operator == "+=" ? 4 : 3, [1, 2]], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         end
       end
 
@@ -491,21 +517,21 @@ module Prism
     def test_constant_compound_write_lookup
       scope = Class.new(Class.new { const_set(:A, 1) })
       graph = compile_unit("A ||= 2").graphs[0]
-      assert_equal(1, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(1, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       refute scope.const_defined?(:A, false)
 
       outer = Module.new { const_set(:A, 3) }
       inner = Module.new
-      assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, inner, [inner, outer, Object].freeze)))
+      assert_equal(3, vm.run_frame(Compile::Frame.new(graph, inner, [inner, outer, Object].freeze)))
       refute inner.const_defined?(:A, false)
 
       scope = Module.new { const_set(:A, 4); private_constant :A }
-      assert_equal(4, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(4, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       graph = compile_unit("self::A ||= 2").graphs[0]
-      capture_warnings { assert_equal(2, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze))) }
+      capture_warnings { assert_equal(2, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze))) }
       ["&&=", "+="].each do |operator|
         graph = compile_unit("self::A #{operator} 2").graphs[0]
-        assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
+        assert_raise(NameError) { vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
       end
 
       ["&&=", "||=", "+="].each do |operator|
@@ -517,9 +543,9 @@ module Prism
       scope = Module.new
       def scope.const_missing(name) = raise("const_missing called")
       graph = compile_unit("self::A ||= 2").graphs[0]
-      assert_equal(2, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(2, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       graph = compile_unit("B ||= 3").graphs[0]
-      assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(3, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
     end
 
     def test_constant_compound_write_const_missing
@@ -527,7 +553,7 @@ module Prism
       def scope.const_missing(name) = 4
       ["A &&= 2", "self::B += 3"].zip([2, 7]) do |source, expected|
         graph = compile_unit(source).graphs[0]
-        assert_equal(expected, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal(expected, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       end
       assert_equal(2, scope.const_get(:A, false))
       assert_equal(7, scope.const_get(:B, false))
@@ -541,7 +567,7 @@ module Prism
         file.flush
         scope.autoload(:A, file.path)
         graph = compile_unit("self::A ||= 2").graphs[0]
-        assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal(3, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         assert_equal(3, scope.const_get(:A, false))
       end
     ensure
@@ -861,9 +887,9 @@ module Prism
       klass = Class.new { class_variable_set(:@@a, 1) }
 
       graph = compile_unit("@@a ||= 5").graphs[0]
-      assert_equal(1, Prism::Compile.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, klass, Object].freeze)))
+      assert_equal(1, vm.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, klass, Object].freeze)))
 
-      error = assert_raise(RuntimeError) { Prism::Compile.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, Object].freeze)) }
+      error = assert_raise(RuntimeError) { vm.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, Object].freeze)) }
       assert_equal("class variable access from toplevel", error.message)
     end
 
@@ -919,7 +945,7 @@ module Prism
       $VERBOSE = true
       $stderr = StringIO.new
 
-      Prism::Compile.run_unit(compile_unit("$compile_test_or_silent ||= 1"))
+      vm.run(compile_unit("$compile_test_or_silent ||= 1"))
       assert_equal("", $stderr.string)
     ensure
       $VERBOSE, $stderr = verbose, stderr
@@ -1114,7 +1140,7 @@ module Prism
       assert_predicate result, :success?
       assert_kind_of Compile::Unit, result.value
       assert_equal 1, result.comments.length
-      assert_equal 3, Compile.run_unit(result.value)
+      assert_equal 3, vm.run(result.value)
     end
 
     def test_compile_errors
@@ -1182,7 +1208,7 @@ module Prism
         end
       end
 
-      value = Compile.run_unit(unit)
+      value = vm.run(unit)
       assert_equal "c", value
       refute_predicate value, :frozen?
     end
@@ -1192,8 +1218,8 @@ module Prism
         file.write("1 + 2")
         file.flush
 
-        assert_equal 3, Compile.run_unit(Prism.compile_file(file.path).value)
-        assert_equal 3, Compile.run_unit(Prism.compile_file(Pathname.new(file.path)).value)
+        assert_equal 3, vm.run(Prism.compile_file(file.path).value)
+        assert_equal 3, vm.run(Prism.compile_file(Pathname.new(file.path)).value)
       end
 
       assert_raise(Errno::ENOENT) { Prism.compile_file("idontexist.rb") }
@@ -1214,19 +1240,23 @@ module Prism
 
     private
 
+    def vm
+      @vm ||= Compile::VM.new
+    end
+
     def compile_unit(source)
       Prism.compile(source, raise_error: :plain).value
     end
 
     def assert_run(expected, source)
-      assert_equal(expected, Prism::Compile.run_unit(compile_unit(source)))
+      assert_equal(expected, vm.run(compile_unit(source)))
     end
 
     def assert_run_raises(error, source, message = nil)
       if message
-        assert_raise_with_message(error, message) { Prism::Compile.run_unit(compile_unit(source)) }
+        assert_raise_with_message(error, message) { vm.run(compile_unit(source)) }
       else
-        assert_raise(error) { Prism::Compile.run_unit(compile_unit(source)) }
+        assert_raise(error) { vm.run(compile_unit(source)) }
       end
     end
   end

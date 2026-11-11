@@ -104,8 +104,8 @@ module Prism
       end
     end
 
-    class << self
-      def run_unit(unit)
+    class VM
+      def run(unit)
         run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end
 
@@ -187,7 +187,8 @@ module Prism
               values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_method
               name, method_graph = insn.data
-              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| Compile.run_frame(Frame.new(method_graph, self, nest), args) }
+              vm = self
+              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| vm.run_frame(Frame.new(method_graph, self, nest), args) }
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_module_abs
               name, module_graph = insn.data
@@ -209,7 +210,8 @@ module Prism
             when :define_singleton_method
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
-              Module.instance_method(:define_method).bind_call(klass, name) { |*args| Compile.run_frame(Frame.new(method_graph, self, nest), args) }
+              vm = self
+              Module.instance_method(:define_method).bind_call(klass, name) { |*args| vm.run_frame(Frame.new(method_graph, self, nest), args) }
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
