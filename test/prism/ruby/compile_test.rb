@@ -52,6 +52,36 @@ module Prism
       assert_equal(1, second.locals[graph.locals[0]])
     end
 
+    def test_frames_share_locals
+      graph = compile_unit("a ||= 0; a += 1").graphs[0]
+      locals = Compile::Locals.new(graph.locals)
+      recv = TOPLEVEL_BINDING.receiver
+      first = Compile::Frame.new(graph, recv, [Object].freeze, locals)
+      second = Compile::Frame.new(graph, recv, [Object].freeze, locals)
+
+      assert_equal(1, Compile.run_frame(first))
+      assert_equal(2, Compile.run_frame(second))
+      refute_same(first.values, second.values)
+      assert_equal(2, locals[graph.locals[0]])
+    end
+
+    def test_locals_parent
+      outer_local = Compile::Local.new(:a)
+      inner_local = Compile::Local.new(:a)
+      parent = Compile::Locals.new([outer_local])
+      child = Compile::Locals.new([inner_local], parent)
+
+      parent[outer_local] = 1
+      assert_nil(child[inner_local])
+      assert_equal(1, child[outer_local])
+      child[outer_local] = 2
+      child[inner_local] = 3
+      assert_equal(2, parent[outer_local])
+      assert_equal(3, child[inner_local])
+      assert_raise(KeyError) { child[Compile::Local.new(:a)] }
+      assert_raise(KeyError) { child[Compile::Local.new(:a)] = 4 }
+    end
+
     def test_recursive_frames
       assert_run([10, 6], <<~RUBY)
         class CompileTestRecursiveFrames

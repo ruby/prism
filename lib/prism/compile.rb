@@ -63,14 +63,43 @@ module Prism
       end
     end
 
+    class Locals
+      attr_reader :parent
+
+      def initialize(locals, parent = nil)
+        @locals = locals.to_h { |local| [local, nil] }
+        @parent = parent
+      end
+
+      def [](local)
+        if @locals.key?(local)
+          @locals.fetch(local)
+        elsif parent
+          parent[local]
+        else
+          raise KeyError, "unknown local: #{local.name}"
+        end
+      end
+
+      def []=(local, value)
+        if @locals.key?(local)
+          @locals[local] = value
+        elsif parent
+          parent[local] = value
+        else
+          raise KeyError, "unknown local: #{local.name}"
+        end
+      end
+    end
+
     class Frame
       attr_reader :graph, :recv, :nest, :locals, :values
 
-      def initialize(graph, recv, nest)
+      def initialize(graph, recv, nest, locals = Locals.new(graph.locals))
         @graph = graph
         @recv = recv
         @nest = nest
-        @locals = graph.locals.to_h { |local| [local, nil] }
+        @locals = locals
         @values = Array.new(graph.nvalues)
       end
     end
