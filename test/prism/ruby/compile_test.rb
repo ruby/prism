@@ -40,6 +40,43 @@ module Prism
       end
     end
 
+    def test_pinned_variable
+      [
+        [true, "a = 1; 1 in ^a"],
+        [false, "a = 1; 2 in ^a"],
+        [true, "a = Integer; 1 in ^a"],
+        [false, "a = Integer; nil in ^a"],
+        [true, "a = nil; nil in ^a"],
+        [true, "a = false; false in ^a"],
+        [true, "a = 1; (a = 2) in ^a"],
+        [true, "a = 1; b = 2; 2 in ^a | ^b"],
+        [false, "a = 1; b = 2; 3 in ^a | ^b"],
+        [true, "@compile_test_pin = 1; 1 in ^@compile_test_pin"],
+        [false, "@compile_test_pin = 1; 2 in ^@compile_test_pin"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+
+      assert_run([true, false], "class CompileTestPinnedCvar; @@pin = 1; [(1 in ^@@pin), (2 in ^@@pin)]; end")
+      assert_run([true, false], "$compile_test_pin = 1; [(1 in ^$compile_test_pin), (2 in ^$compile_test_pin)]")
+    ensure
+      TOPLEVEL_BINDING.receiver.remove_instance_variable(:@compile_test_pin) if TOPLEVEL_BINDING.receiver.instance_variable_defined?(:@compile_test_pin)
+      $compile_test_pin = nil
+    end
+
+    def test_pinned_variable_case_equality
+      assert_run([true, [2]], <<~RUBY)
+        class CompileTestPinnedMatcher
+          def initialize; @calls = []; end
+          def ===(value); @calls << value; :matched; end
+          def calls; @calls; end
+        end
+        a = CompileTestPinnedMatcher.new
+        result = (2 in ^a | ^a)
+        [result, a.calls]
+      RUBY
+    end
+
     def test_safe_navigation
       assert_run(nil, "nil&.missing")
       assert_run(false, "false&.itself")
