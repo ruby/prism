@@ -40,6 +40,38 @@ module Prism
       end
     end
 
+    def test_match_write
+      [
+        [[0, "abc"], 'result = (/(?<word>abc)/ =~ "abc"); [result, word]'],
+        [[1, "abc"], 'result = (/(?<word>abc)/ =~ "zabc"); [result, word]'],
+        [[nil, nil], 'word = 1; result = (/(?<word>abc)/ =~ "xyz"); [result, word]'],
+        [["a", "b"], '/(?<first>a)(?<second>b)/ =~ "ab"; [first, second]'],
+        [[nil, "b"], '/(?<first>a)?(?<second>b)/ =~ "b"; [first, second]'],
+        ["b", '/(?<word>a)|(?<word>b)/ =~ "b"; word'],
+        [nil, '/(?<word>a)/ =~ "a"; /(?<word>a)/ =~ "b"; word'],
+        [nil, '/(?<word>a)/ =~ nil; word'],
+        [["a", 1], 'a = 0; /(?<word>a)/ =~ (a += 1; "a"); [word, a]'],
+        ["a", 'if /(?<word>a)/ =~ "a"; word; else; 1; end'],
+        ["a", 'word = 1; /(?<word>a)/ =~ "a"; word'],
+        [["a", "a"], '/(?<word>a)/ =~ "a"; [word, $1]']
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_match_write_method_scope
+      assert_run(["a", nil, "a"], <<~RUBY)
+        class CompileTestMatchWrite
+          def value(string)
+            /(?<word>a)/ =~ string
+            word
+          end
+        end
+        o = CompileTestMatchWrite.new
+        [o.value("a"), o.value("b"), o.value("a")]
+      RUBY
+    end
+
     def test_pinned_variable
       [
         [true, "a = 1; 1 in ^a"],

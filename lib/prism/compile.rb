@@ -176,7 +176,7 @@ module Prism
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})", TOPLEVEL_BINDING).nil?
-            when :extract_last_match_group
+            when :extract_last_match_group, :extract_last_match_named_group
               values[insn.opnds[0]] = values[insn.opnds[1]]&.[](insn.data)
             when :extract_last_match_match
               values[insn.opnds[0]] = values[insn.opnds[1]]&.[](0)

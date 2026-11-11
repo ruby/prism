@@ -48,6 +48,7 @@ typedef enum {
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
     kPrismInsnExtractLastMatchGroup,
+    kPrismInsnExtractLastMatchNamedGroup,
     kPrismInsnExtractLastMatchMatch,
     kPrismInsnExtractLastMatchParen,
     kPrismInsnExtractLastMatchPost,

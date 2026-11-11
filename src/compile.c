@@ -866,6 +866,19 @@ emit_extract_last_match_group(PrismBuilder *builder, uint32_t node_id, uint32_t 
 }
 
 static uint32_t
+emit_extract_last_match_named_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, pm_constant_id_t name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchNamedGroup, node_id, 2);
+    insn->as.name.name_id = name_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = last_match_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_extract_last_match_match(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchMatch, node_id, 2);
 
@@ -2350,6 +2363,21 @@ compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_nod
 }
 
 static uint32_t
+compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *node) {
+    uint32_t result_id = compile_node(builder, PM_NODE_UPCAST(node->call));
+    uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
+
+    for (size_t idx = 0; idx < node->targets.size; ++idx) {
+        const pm_local_variable_target_node_t *target = (const pm_local_variable_target_node_t *) node->targets.nodes[idx];
+        uint32_t local_id = resolve_local(builder, target->name, target->depth);
+        uint32_t value_id = emit_extract_last_match_named_group(builder, target->base.node_id, last_match_id, target->name);
+        emit_store_lvar(builder, target->base.node_id, local_id, value_id);
+    }
+
+    return result_id;
+}
+
+static uint32_t
 compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphModule, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
@@ -2691,6 +2719,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_local_variable_or_write_node(builder, (const pm_local_variable_or_write_node_t *) node);
         case PM_MATCH_PREDICATE_NODE:
             return compile_match_predicate_node(builder, (const pm_match_predicate_node_t *) node);
+        case PM_MATCH_WRITE_NODE:
+            return compile_match_write_node(builder, (const pm_match_write_node_t *) node);
         case PM_MODULE_NODE:
             return compile_module_node(builder, (const pm_module_node_t *) node);
         case PM_NIL_NODE:
@@ -2743,6 +2773,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ALTERNATION_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
+        case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_PINNED_EXPRESSION_NODE:
         case PM_PINNED_VARIABLE_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
@@ -2983,6 +3014,11 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                 case kPrismInsnExtractLastMatchGroup:
                     printf("%%%" PRIu32 " = extract_last_match_group %%%" PRIu32 ", group=%" PRIu32 "\n", opnds[0], opnds[1], insn->as.extract_group.number);
                     break;
+                case kPrismInsnExtractLastMatchNamedGroup: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.name.name_id);
+                    printf("%%%" PRIu32 " = extract_last_match_named_group(%%%" PRIu32 ", %.*s)\n", opnds[0], opnds[1], (int) pm_constant_length(name), (const char *) pm_constant_start(name));
+                    break;
+                }
                 case kPrismInsnExtractLastMatchMatch:
                     printf("%%%" PRIu32 " = extract_last_match_match %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;
