@@ -1474,6 +1474,36 @@ compile_node_or_nil(PrismBuilder *builder, const pm_node_t *node, uint32_t node_
     return node ? compile_node(builder, node) : emit_load_nil(builder, node_id);
 }
 
+static void
+compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id) {
+    switch (PM_NODE_TYPE(node)) {
+        case PM_CLASS_VARIABLE_TARGET_NODE: {
+            const pm_class_variable_target_node_t *target = (const pm_class_variable_target_node_t *) node;
+            emit_store_cvar(builder, target->base.node_id, target->name, value_id);
+            break;
+        }
+        case PM_GLOBAL_VARIABLE_TARGET_NODE: {
+            const pm_global_variable_target_node_t *target = (const pm_global_variable_target_node_t *) node;
+            emit_store_gvar(builder, target->base.node_id, target->name, value_id);
+            break;
+        }
+        case PM_INSTANCE_VARIABLE_TARGET_NODE: {
+            const pm_instance_variable_target_node_t *target = (const pm_instance_variable_target_node_t *) node;
+            emit_store_ivar(builder, target->base.node_id, target->name, value_id);
+            break;
+        }
+        case PM_LOCAL_VARIABLE_TARGET_NODE: {
+            const pm_local_variable_target_node_t *target = (const pm_local_variable_target_node_t *) node;
+            uint32_t local_id = resolve_local(builder, target->name, target->depth);
+            emit_store_lvar(builder, target->base.node_id, local_id, value_id);
+            break;
+        }
+        default:
+            fprintf(stderr, "Unsupported target: %s\n", pm_node_type(node->type));
+            abort();
+    }
+}
+
 static uint32_t
 compile_instance_variable_logical_write_node(PrismBuilder *builder, const pm_node_t *node, pm_constant_id_t name, const pm_node_t *value) {
     uint32_t set_block_id = make_block(builder, 0);
@@ -2126,17 +2156,7 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     PrismBuilderState state = push_scope(builder, graph_id, 1, NULL);
     uint32_t param_id = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params[0];
 
-    switch (PM_NODE_TYPE(node->index)) {
-        case PM_LOCAL_VARIABLE_TARGET_NODE: {
-            const pm_local_variable_target_node_t *target = (const pm_local_variable_target_node_t *) node->index;
-            uint32_t local_id = resolve_local(builder, target->name, target->depth);
-            emit_store_lvar(builder, target->base.node_id, local_id, param_id);
-            break;
-        }
-        default:
-            fprintf(stderr, "Unsupported for target: %s\n", pm_node_type(node->index->type));
-            abort();
-    }
+    compile_target_node(builder, node->index, param_id);
 
     emit_trace_b_call(builder, node->base.node_id);
     uint32_t body_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
@@ -2928,6 +2948,9 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ALTERNATION_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
+        case PM_CLASS_VARIABLE_TARGET_NODE:
+        case PM_GLOBAL_VARIABLE_TARGET_NODE:
+        case PM_INSTANCE_VARIABLE_TARGET_NODE:
         case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_PINNED_EXPRESSION_NODE:
         case PM_PINNED_VARIABLE_NODE:

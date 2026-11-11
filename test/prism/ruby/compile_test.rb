@@ -65,16 +65,71 @@ module Prism
     end
 
     def test_for_block_traces
-      ["for i in [1]; i + 1; end", "for i in [1]; end", "for i in [1]; if i; 2; else; 3; end; end"].each do |source|
+      {
+        "for i in [1]; i + 1; end" => :store_lvar,
+        "for i in [1]; end" => :store_lvar,
+        "for i in [1]; if i; 2; else; 3; end; end" => :store_lvar,
+        "for @i in [1]; end" => :store_ivar,
+        "for @@i in [1]; end" => :store_cvar,
+        "for $i in [1]; end" => :store_gvar
+      }.each do |source, store|
         graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :for }
         entry = graph.blocks[0].insns
-        assert_equal([:store_lvar, :trace_b_call], entry.first(2).map(&:kind))
+        assert_equal([store, :trace_b_call], entry.first(2).map(&:kind))
         traces = graph.blocks.flat_map(&:insns).select { |insn| insn.kind == :trace_b_return }
         assert_equal(1, traces.length)
         tail = graph.blocks.find { |block| block.insns.include?(traces[0]) }.insns
         assert_equal([:trace_b_return, :return], tail.last(2).map(&:kind))
         assert_equal(tail.last.opnds, traces[0].opnds)
       end
+    end
+
+    def test_for_instance_variable_target
+      assert_run([[1, 2], 2], "a = []; for @compile_test_for in [1, 2]; a << @compile_test_for; end; [a, @compile_test_for]")
+      assert_run(4, "@compile_test_for = 4; for @compile_test_for in []; end; @compile_test_for")
+      assert_run(nil, "for @compile_test_for in Array.new(1); end; @compile_test_for")
+      assert_run([6, 3], <<~RUBY)
+        class CompileTestForIvar
+          def value
+            total = 0
+            for @item in [1, 2, 3]
+              total += @item
+            end
+            [total, @item]
+          end
+        end
+        CompileTestForIvar.new.value
+      RUBY
+
+      graph = compile_unit("for @item in [1]; end").graphs[0]
+      assert_raise(FrozenError) { vm.run_frame(Compile::Frame.new(graph, Object.new.freeze, [Object].freeze)) }
+    ensure
+      recv = TOPLEVEL_BINDING.receiver
+      recv.remove_instance_variable(:@compile_test_for) if recv.instance_variable_defined?(:@compile_test_for)
+    end
+
+    def test_for_class_variable_target
+      scope = Class.new
+      graph = compile_unit("a = []; for @@item in [1, 2]; a << @@item; end; [a, @@item]").graphs[0]
+      assert_equal([[1, 2], 2], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(2, scope.class_variable_get(:@@item))
+
+      graph = compile_unit("for @@item in []; end; @@item").graphs[0]
+      assert_equal(2, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      graph = compile_unit("for @@item in Array.new(1); end; @@item").graphs[0]
+      assert_nil(vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_run_raises(RuntimeError, "for @@compile_test_for in [1]; end", "class variable access from toplevel")
+      assert_run([], "for @@compile_test_for in []; end")
+      assert_run(2, "class CompileTestForCvar; def value; for @@item in [1, 2]; end; @@item; end; end; CompileTestForCvar.new.value")
+    end
+
+    def test_for_global_variable_target
+      assert_run([[1, 2], 2], "a = []; for $compile_test_for in [1, 2]; a << $compile_test_for; end; [a, $compile_test_for]")
+      assert_run(4, "$compile_test_for = 4; for $compile_test_for in []; end; $compile_test_for")
+      assert_run(nil, "for $compile_test_for in Array.new(1); end; $compile_test_for")
+      assert_run([1, 2], "for $compile_test_for in [1, 2]; 99; end")
+    ensure
+      $compile_test_for = nil
     end
 
     def test_for_custom_each
