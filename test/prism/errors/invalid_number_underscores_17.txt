@@ -1,0 +1,3 @@
+0b1__0__1
+    ^ invalid underscore placement in number
+
