@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `Prism::Source#encoding` and `Prism::Result#encoding` now return binary for a binary source that contains UTF-8 characters, instead of UTF-8. The string of such a source is still read as UTF-8 for locations.
 - Parsing a binary source that contains UTF-8 characters with `freeze: true` no longer raises a `FrozenError`.
 - `PRISM_BUILD_MINIMAL` now excludes the full set of encodings, as `PRISM_ENCODING_EXCLUDE_FULL` does.
+- Each byte in a regular expression that does not begin a character in the encoding of the source is reported as `invalid_multibyte_char` at that byte, in every encoding.
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
 - A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
 - The `pm_string_query_*` functions take a Ruby version as their last argument, written like the strings that `pm_options_version_set` accepts. Pass `NULL` for the latest version. An unknown version returns the new `PM_STRING_QUERY_ERROR_VERSION`.
