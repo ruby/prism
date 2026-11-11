@@ -40,6 +40,62 @@ module Prism
       end
     end
 
+    def test_if
+      [
+        [1, "if true; 1; else; 2; end"],
+        [2, "if false; 1; else; 2; end"],
+        [2, "if nil; 1; else; 2; end"],
+        [1, "if 0; 1; else; 2; end"],
+        [nil, "if false; 1; end"],
+        [nil, "if true; end"],
+        [nil, "if false; 1; else; end"],
+        [2, "if true; 1; 2; else; 3; end"],
+        [3, "if false; 1; elsif false; 2; elsif true; 3; else; 4; end"],
+        [4, "if false; 1; elsif false; 2; else; 4; end"],
+        [nil, "if false; 1; elsif false; 2; end"],
+        [2, "if true; if false; 1; else; 2; end; else; 3; end"],
+        [3, "1 + (if false; 1; else; 2; end)"],
+        [1, "1 if true"],
+        [nil, "1 if false"],
+        [1, "true ? 1 : 2"],
+        [2, "false ? 1 : 2"],
+        [3, "false ? 1 : true ? 3 : 4"],
+        [2, "if false || true; 2; else; 3; end"],
+        [1, "(if true; false; else; true; end) ? 2 : 1"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_if_evaluation_order
+      assert_run([1, 2], "a = []; if (a << 1); a << 2; else; a << 3; end; a")
+      assert_run([1, 3], "a = []; if (a << 1) && false; a << 2; elsif (a << 3); a; else; a << 4; end")
+      assert_run(2, "a = 0; if true; a = 2; else; a = 3; end; a")
+      assert_run(nil, "if false; a = 1; end; a")
+      assert_run(3, "a = 0; while a < 3; if a < 2; a += 1; else; a += 1; end; end; a")
+    end
+
+    def test_if_return
+      assert_run([1, 2, 3], <<~RUBY)
+        class CompileTestIfReturn
+          def value(a)
+            if a == 1
+              return 1
+            elsif a == 2
+              return 2
+            end
+            3
+          end
+        end
+        o = CompileTestIfReturn.new
+        [o.value(1), o.value(2), o.value(3)]
+      RUBY
+
+      assert_run(2, "class CompileTestIfReturnBoth; def value; if false; return 1; else; return 2; end; 3; end; end; CompileTestIfReturnBoth.new.value")
+      assert_run(1, "class CompileTestIfReturnExpression; def value; 10 + (if true; return 1; else; 2; end); end; end; CompileTestIfReturnExpression.new.value")
+      assert_run(1, "class CompileTestIfReturnModifier; def value; return 1 if true; 2; end; end; CompileTestIfReturnModifier.new.value")
+    end
+
     PRIVATE_CONSTANT = 1
     private_constant :PRIVATE_CONSTANT
 

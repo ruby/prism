@@ -1800,6 +1800,11 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 }
 
 static uint32_t
+compile_else_node(PrismBuilder *builder, const pm_else_node_t *node) {
+    return compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+}
+
+static uint32_t
 compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statements_node_t *node) {
     uint32_t string_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
     return emit_coerce_string(builder, node->base.node_id, string_id);
@@ -1920,6 +1925,27 @@ compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
 
     if (value_id == UINT32_MAX) value_id = emit_new_hash(builder, node->base.node_id, 0, NULL);
     return value_id;
+}
+
+static uint32_t
+compile_if_node(PrismBuilder *builder, const pm_if_node_t *node) {
+    uint32_t then_block_id = make_block(builder, 0);
+    uint32_t else_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t predicate_id = compile_node(builder, node->predicate);
+    emit_branchif(builder, node->base.node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+
+    builder->state.block_id = then_block_id;
+    uint32_t then_value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &then_value_id);
+
+    builder->state.block_id = else_block_id;
+    uint32_t else_value_id = compile_node_or_nil(builder, node->subsequent, node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &else_value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
 static uint32_t
@@ -2320,6 +2346,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node);
         case PM_DEF_NODE:
             return compile_def_node(builder, (const pm_def_node_t *) node);
+        case PM_ELSE_NODE:
+            return compile_else_node(builder, (const pm_else_node_t *) node);
         case PM_EMBEDDED_STATEMENTS_NODE:
             return compile_embedded_statements_node(builder, (const pm_embedded_statements_node_t *) node);
         case PM_EMBEDDED_VARIABLE_NODE:
@@ -2340,6 +2368,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_global_variable_or_write_node(builder, (const pm_global_variable_or_write_node_t *) node);
         case PM_HASH_NODE:
             return compile_hash_node(builder, (const pm_hash_node_t *) node);
+        case PM_IF_NODE:
+            return compile_if_node(builder, (const pm_if_node_t *) node);
         case PM_IMAGINARY_NODE:
             return compile_imaginary_node(builder, (const pm_imaginary_node_t *) node);
         case PM_IMPLICIT_NODE:
