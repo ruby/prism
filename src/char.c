@@ -147,7 +147,7 @@ pm_strspn_number_kind(const uint8_t *string, ptrdiff_t length, uint8_t kind) {
  * the string that match the given kind. Disallows searching past the given
  * maximum number of characters.
  *
- * Additionally, report the location of the last invalid underscore character
+ * Additionally, report the location of the first invalid underscore character
  * found in the string through the out invalid parameter.
  */
 static PRISM_INLINE size_t
@@ -160,7 +160,7 @@ pm_strspn_number_kind_underscores(const uint8_t *string, ptrdiff_t length, const
     bool underscore = false;
     while (size < maximum && (pm_number_table[string[size]] & kind)) {
         if (string[size] == '_') {
-            if (underscore) *invalid = string + size;
+            if (underscore && *invalid == NULL) *invalid = string + size;
             underscore = true;
         } else {
             underscore = false;
@@ -169,7 +169,7 @@ pm_strspn_number_kind_underscores(const uint8_t *string, ptrdiff_t length, const
         size++;
     }
 
-    if (size > 0 && string[size - 1] == '_') *invalid = string + size - 1;
+    if (size > 0 && string[size - 1] == '_' && *invalid == NULL) *invalid = string + size - 1;
     return size;
 }
 
