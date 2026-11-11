@@ -63,14 +63,29 @@ module Prism
       end
     end
 
+    class Frame
+      attr_reader :graph, :recv, :nest, :locals, :values
+
+      def initialize(graph, recv, nest)
+        @graph = graph
+        @recv = recv
+        @nest = nest
+        @locals = graph.locals.to_h { |local| [local, nil] }
+        @values = Array.new(graph.nvalues)
+      end
+    end
+
     class << self
       def run_unit(unit)
-        run_graph(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze)
+        run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end
 
-      def run_graph(graph, recv, nest, args = [])
-        values = Array.new(graph.nvalues)
-        locals = graph.locals.to_h { |local| [local.name, nil] }
+      def run_frame(frame, args = [])
+        graph = frame.graph
+        recv = frame.recv
+        nest = frame.nest
+        locals = frame.locals
+        values = frame.values
         block = graph.blocks[0]
 
         if args.length != block.params.length
@@ -110,29 +125,29 @@ module Prism
             when :define_class_abs
               name, class_graph = insn.data
               klass = define_class(Object, name, true)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_class_abs_super
               name, class_graph = insn.data
               superclass = values[insn.opnds[1]]
               check_superclass(superclass)
               klass = define_class_super(Object, name, true, superclass)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_class_nest_rel
               name, class_graph = insn.data
               klass = define_class(nest[0], name, false)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_class_nest_rel_super
               name, class_graph = insn.data
               superclass = values[insn.opnds[1]]
               check_superclass(superclass)
               klass = define_class_super(nest[0], name, false, superclass)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_class_recv_rel
               name, class_graph = insn.data
               parent = values[insn.opnds[1]]
               check_module(parent)
               klass = define_class(parent, name, true)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_class_recv_rel_super
               name, class_graph = insn.data
               parent = values[insn.opnds[1]]
@@ -140,32 +155,32 @@ module Prism
               check_superclass(superclass)
               check_module(parent)
               klass = define_class_super(parent, name, true, superclass)
-              values[insn.opnds[0]] = run_graph(class_graph, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_method
               name, method_graph = insn.data
-              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
+              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| Compile.run_frame(Frame.new(method_graph, self, nest), args) }
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_module_abs
               name, module_graph = insn.data
               mod = define_module(Object, name, true)
-              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(module_graph, mod, [mod, *nest].freeze))
             when :define_module_nest_rel
               name, module_graph = insn.data
               mod = define_module(nest[0], name, false)
-              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(module_graph, mod, [mod, *nest].freeze))
             when :define_module_recv_rel
               name, module_graph = insn.data
               parent = values[insn.opnds[1]]
               check_module(parent)
               mod = define_module(parent, name, true)
-              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(module_graph, mod, [mod, *nest].freeze))
             when :define_singleton_class
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[1]])
-              values[insn.opnds[0]] = run_graph(insn.data, klass, [klass, *nest].freeze)
+              values[insn.opnds[0]] = run_frame(Frame.new(insn.data, klass, [klass, *nest].freeze))
             when :define_singleton_method
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
-              Module.instance_method(:define_method).bind_call(klass, name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
+              Module.instance_method(:define_method).bind_call(klass, name) { |*args| Compile.run_frame(Frame.new(method_graph, self, nest), args) }
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel

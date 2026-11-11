@@ -40,6 +40,35 @@ module Prism
       end
     end
 
+    def test_frame_isolation
+      graph = compile_unit("a ||= 0; a += 1").graphs[0]
+      recv = TOPLEVEL_BINDING.receiver
+      first = Compile::Frame.new(graph, recv, [Object].freeze)
+      second = Compile::Frame.new(graph, recv, [Object].freeze)
+
+      assert_equal(1, Compile.run_frame(first))
+      assert_equal(1, Compile.run_frame(second))
+      first.locals[graph.locals[0]] = 10
+      assert_equal(1, second.locals[graph.locals[0]])
+    end
+
+    def test_recursive_frames
+      assert_run([10, 6], <<~RUBY)
+        class CompileTestRecursiveFrames
+          def sum(n)
+            if n == 0
+              0
+            else
+              subtotal = sum(n - 1)
+              n + subtotal
+            end
+          end
+        end
+        o = CompileTestRecursiveFrames.new
+        [o.sum(4), o.sum(3)]
+      RUBY
+    end
+
     def test_match_last_line
       [
         [1, '$_ = "abc"; if /b/; 1; else; 2; end'],
@@ -379,13 +408,13 @@ module Prism
             graph = compile_unit(source).graphs[0]
 
             if initial == :undefined && operator == "&&="
-              assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+              assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
               refute owner.const_defined?(name, false)
             else
               writes = operator == "&&=" ? !!initial : initial == :undefined || !initial
               expected = [writes ? 2 : initial, writes ? 1 : 0]
               capture_warnings do
-                assert_equal(expected, Compile.run_graph(graph, scope, [scope, Object].freeze), source)
+                assert_equal(expected, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)), source)
               end
               assert_equal(writes ? 2 : initial, owner.const_get(name, false))
             end
@@ -403,11 +432,11 @@ module Prism
         owner.const_set(name, 3)
         graph = compile_unit("a = 0; result = (#{target} += (a += 1; 2)); [result, a]").graphs[0]
         capture_warnings do
-          assert_equal([5, 1], Compile.run_graph(graph, scope, [scope, Object].freeze))
+          assert_equal([5, 1], Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         end
         assert_equal(5, owner.const_get(name, false))
         owner.send(:remove_const, name)
-        assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+        assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
       ensure
         owner.send(:remove_const, name) if owner&.const_defined?(name, false)
       end
@@ -419,7 +448,7 @@ module Prism
         scope.const_set(:A, operator == "||=" ? false : 1)
         graph = compile_unit("a = []; result = ((a << 1; self)::A #{operator} (a << 2; 3)); [result, a]").graphs[0]
         capture_warnings do
-          assert_equal([operator == "+=" ? 4 : 3, [1, 2]], Compile.run_graph(graph, scope, [scope, Object].freeze))
+          assert_equal([operator == "+=" ? 4 : 3, [1, 2]], Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         end
       end
 
@@ -432,21 +461,21 @@ module Prism
     def test_constant_compound_write_lookup
       scope = Class.new(Class.new { const_set(:A, 1) })
       graph = compile_unit("A ||= 2").graphs[0]
-      assert_equal(1, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      assert_equal(1, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       refute scope.const_defined?(:A, false)
 
       outer = Module.new { const_set(:A, 3) }
       inner = Module.new
-      assert_equal(3, Compile.run_graph(graph, inner, [inner, outer, Object].freeze))
+      assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, inner, [inner, outer, Object].freeze)))
       refute inner.const_defined?(:A, false)
 
       scope = Module.new { const_set(:A, 4); private_constant :A }
-      assert_equal(4, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      assert_equal(4, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       graph = compile_unit("self::A ||= 2").graphs[0]
-      capture_warnings { assert_equal(2, Compile.run_graph(graph, scope, [scope, Object].freeze)) }
+      capture_warnings { assert_equal(2, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze))) }
       ["&&=", "+="].each do |operator|
         graph = compile_unit("self::A #{operator} 2").graphs[0]
-        assert_raise(NameError) { Compile.run_graph(graph, scope, [scope, Object].freeze) }
+        assert_raise(NameError) { Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
       end
 
       ["&&=", "||=", "+="].each do |operator|
@@ -458,9 +487,9 @@ module Prism
       scope = Module.new
       def scope.const_missing(name) = raise("const_missing called")
       graph = compile_unit("self::A ||= 2").graphs[0]
-      assert_equal(2, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      assert_equal(2, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       graph = compile_unit("B ||= 3").graphs[0]
-      assert_equal(3, Compile.run_graph(graph, scope, [scope, Object].freeze))
+      assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
     end
 
     def test_constant_compound_write_const_missing
@@ -468,7 +497,7 @@ module Prism
       def scope.const_missing(name) = 4
       ["A &&= 2", "self::B += 3"].zip([2, 7]) do |source, expected|
         graph = compile_unit(source).graphs[0]
-        assert_equal(expected, Compile.run_graph(graph, scope, [scope, Object].freeze))
+        assert_equal(expected, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
       end
       assert_equal(2, scope.const_get(:A, false))
       assert_equal(7, scope.const_get(:B, false))
@@ -482,7 +511,7 @@ module Prism
         file.flush
         scope.autoload(:A, file.path)
         graph = compile_unit("self::A ||= 2").graphs[0]
-        assert_equal(3, Compile.run_graph(graph, scope, [scope, Object].freeze))
+        assert_equal(3, Compile.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
         assert_equal(3, scope.const_get(:A, false))
       end
     ensure
@@ -802,9 +831,9 @@ module Prism
       klass = Class.new { class_variable_set(:@@a, 1) }
 
       graph = compile_unit("@@a ||= 5").graphs[0]
-      assert_equal(1, Prism::Compile.run_graph(graph, klass, [klass.singleton_class, klass, Object].freeze))
+      assert_equal(1, Prism::Compile.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, klass, Object].freeze)))
 
-      error = assert_raise(RuntimeError) { Prism::Compile.run_graph(graph, klass, [klass.singleton_class, Object].freeze) }
+      error = assert_raise(RuntimeError) { Prism::Compile.run_frame(Compile::Frame.new(graph, klass, [klass.singleton_class, Object].freeze)) }
       assert_equal("class variable access from toplevel", error.message)
     end
 
