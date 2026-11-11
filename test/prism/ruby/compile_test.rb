@@ -301,6 +301,35 @@ module Prism
       assert_raise(FrozenError) { vm.run_frame(Compile::Frame.new(graph, frozen_scope, [frozen_scope, Object].freeze)) }
     end
 
+    def test_block_lexical_scopes
+      unit = compile_unit("a = 1; proc { proc { a } }; for i in [1]; proc { a += i }; end")
+      program, outer, inner, loop_graph, loop_block = unit.graphs
+      assert_same(program, program.scope)
+      assert_empty(outer.locals)
+      assert_same(outer, outer.scope)
+      assert_same(inner, inner.scope)
+      assert_same(program, loop_graph.scope)
+      assert_same(loop_graph, loop_block.parent)
+      assert_same(loop_block, loop_block.scope)
+
+      assert_run(1, "a = 1; proc { proc { a } }.call.call")
+      assert_run(12, "a = 0; 2.times { |; x| x = 1; for i in [1, 2]; proc { x += i; a += x }.call; end }; a")
+    end
+
+    def test_for_shares_locals_storage
+      machine = Compile::VM.new
+      frames = []
+      machine.define_singleton_method(:run_frame) do |frame, args = []|
+        frames << frame
+        super(frame, args)
+      end
+      machine.run(compile_unit("for i in [1]; end; proc {}.call"))
+      program, loop_frame, block_frame = frames
+      assert_same(program.locals, loop_frame.locals)
+      refute_same(program.locals, block_frame.locals)
+      assert_same(program.locals, block_frame.locals.parent)
+    end
+
     def test_for_custom_each
       collection = Object.new
       def collection.each
@@ -408,6 +437,7 @@ module Prism
       parent, child = unit.graphs
       assert_equal(:post_execution, child.kind)
       assert_same(parent, child.parent)
+      assert_same(parent.scope, child.scope)
       assert_empty(child.locals)
       local_insns = child.blocks.flat_map(&:insns).select { |insn| [:load_lvar, :store_lvar].include?(insn.kind) }
       assert_equal(2, local_insns.length)

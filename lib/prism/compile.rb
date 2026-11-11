@@ -46,11 +46,12 @@ module Prism
     end
 
     class Graph
-      attr_reader :kind, :parent, :blocks, :locals, :nvalues
+      attr_reader :kind, :parent, :scope, :blocks, :locals, :nvalues
 
-      def initialize(kind, parent, blocks, locals, nvalues)
+      def initialize(kind, parent, scope, blocks, locals, nvalues)
         @kind = kind
         @parent = parent
+        @scope = scope || self
         @blocks = blocks
         @locals = locals
         @nvalues = nvalues

@@ -335,8 +335,10 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         uint32_t nvalues = pm_graph_nvalues(graph);
         VALUE vnvalues = UINT2NUM(nvalues);
 
-        VALUE vgraph_argv[] = { vgraph_kind, vparent, vblocks, vlocals, vnvalues };
-        VALUE vgraph = compile_freeze(rb_class_new_instance(5, vgraph_argv, rb_cPrismCompileGraph), freeze);
+        uint32_t scope_id = pm_graph_scope_id(graph);
+        VALUE vscope = scope_id == graph_id ? Qnil : rb_ary_entry(vgraphs, scope_id);
+        VALUE vgraph_argv[] = { vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues };
+        VALUE vgraph = compile_freeze(rb_class_new_instance(6, vgraph_argv, rb_cPrismCompileGraph), freeze);
         rb_ary_push(vgraphs, vgraph);
     }
     compile_freeze(vgraphs, freeze);

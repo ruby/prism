@@ -122,6 +122,11 @@ pm_graph_parent_id(const PrismGraph *graph) {
 }
 
 uint32_t
+pm_graph_scope_id(const PrismGraph *graph) {
+    return graph->scope_id;
+}
+
+uint32_t
 pm_graph_nblocks(const PrismGraph *graph) {
     return graph->nblocks;
 }
@@ -433,7 +438,7 @@ make_graph(PrismBuilder *builder, PrismGraphKind kind, uint32_t parent_id, uint3
     }
 
     uint32_t graph_id = unit->ngraphs++;
-    unit->graphs[graph_id] = (PrismGraph) { .kind = kind, .parent_id = parent_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
+    unit->graphs[graph_id] = (PrismGraph) { .kind = kind, .parent_id = parent_id, .scope_id = graph_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
     return graph_id;
 }
 
@@ -478,6 +483,11 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_
     };
 
     builder->state.block_id = make_block(builder, nparams);
+
+    if (locals == NULL) {
+        uint32_t scope_id = builder->unit->graphs[state.graph_id].scope_id;
+        builder->unit->graphs[graph_id].scope_id = scope_id;
+    }
 
     if (locals && locals->size) {
         PrismGraph *graph = PrismBuilder_graph(builder);
@@ -1360,17 +1370,12 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
     uint32_t local_id = builder->bindings[name_id];
 
 #ifndef NDEBUG
-    uint32_t graph_id = builder->state.graph_id;
-    /* END and for graphs share their parent's lexical scope. */
-    do {
-        if (builder->unit->graphs[graph_id].kind != kPrismGraphPostExecution && builder->unit->graphs[graph_id].kind != kPrismGraphFor) {
-            if (depth == 0) break;
-            depth--;
-        }
-
-        graph_id = builder->unit->graphs[graph_id].parent_id;
-        assert(graph_id != UINT32_MAX);
-    } while (true);
+    uint32_t graph_id = builder->unit->graphs[builder->state.graph_id].scope_id;
+    for (uint32_t level = 0; level < depth; ++level) {
+        uint32_t parent_id = builder->unit->graphs[graph_id].parent_id;
+        assert(parent_id != UINT32_MAX);
+        graph_id = builder->unit->graphs[parent_id].scope_id;
+    }
 
     assert(local_id < builder->unit->nlocals);
     assert(builder->unit->locals[local_id].name_id == name_id);

@@ -73,6 +73,7 @@ struct PrismGraph {
     uint32_t opnds_capa;
     uint32_t value_id;
     uint32_t parent_id;
+    uint32_t scope_id;
 };
 
 struct PrismLocal {
