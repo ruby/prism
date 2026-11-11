@@ -49,6 +49,7 @@ typedef enum {
     kPrismInsnExtractLastMatchParen,
     kPrismInsnExtractLastMatchPost,
     kPrismInsnExtractLastMatchPre,
+    kPrismInsnNilP,
     kPrismInsnLoadConstAbs,
     kPrismInsnLoadConstNestRel,
     kPrismInsnLoadConstRecvRel,

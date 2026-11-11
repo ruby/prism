@@ -964,6 +964,18 @@ emit_load_lvar(PrismBuilder *builder, uint32_t node_id, uint32_t local_id) {
 }
 
 static uint32_t
+emit_nil_p(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNilP, node_id, 2);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t predicate_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = predicate_id;
+    graph->opnds[insn->opnds_off + 1] = value_id;
+
+    return predicate_id;
+}
+
+static uint32_t
 emit_load_object(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnLoadObject, node_id, 1);
     insn->as.object.object_id = object_id;
@@ -1582,6 +1594,16 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         receiver_id = emit_load_self(builder, node->base.node_id);
     }
 
+    bool safe_navigation = PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION);
+    uint32_t join_block_id = UINT32_MAX;
+    if (safe_navigation) {
+        uint32_t call_block_id = make_block(builder, 0);
+        join_block_id = make_block(builder, 1);
+        uint32_t predicate_id = emit_nil_p(builder, node->base.node_id, receiver_id);
+        emit_branchif(builder, node->base.node_id, predicate_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
+        builder->state.block_id = call_block_id;
+    }
+
     size_t nargument_ids = 0;
     uint32_t *argument_ids = NULL;
 
@@ -1594,7 +1616,18 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         }
     }
 
-    return emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
+    uint32_t value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
+    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
+        value_id = argument_ids[nargument_ids - 1];
+    }
+
+    if (safe_navigation) {
+        emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+        builder->state.block_id = join_block_id;
+        return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    }
+
+    return value_id;
 }
 
 static uint32_t
@@ -2817,6 +2850,9 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = load_lvar v%" PRIu32 "\n", opnds[0], insn->as.lvar.local_id);
                     break;
                 }
+                case kPrismInsnNilP:
+                    printf("%%%" PRIu32 " = nil_p(%%%" PRIu32 ")\n", opnds[0], opnds[1]);
+                    break;
                 case kPrismInsnLoadObject: {
                     printf("%%%" PRIu32 " = load_object(", opnds[0]);
                     dump_object(builder, insn->as.object.object_id);

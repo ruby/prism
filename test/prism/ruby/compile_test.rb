@@ -40,6 +40,57 @@ module Prism
       end
     end
 
+    def test_safe_navigation
+      assert_run(nil, "nil&.missing")
+      assert_run(false, "false&.itself")
+      assert_run(3, "1&.+(2)")
+      assert_run(nil, "nil&.missing&.another")
+      assert_run(3, "1&.+(1)&.+(1)")
+      assert_run(2, "(if true; 1; else; nil; end)&.+(1)")
+      assert_run(3, "1&.+(if false; 1; else; 2; end)")
+      assert_run(4, "1 + 1&.+(2)")
+      assert_run(nil, "nil&.missing(1&.+(2))")
+      assert_run_raises(NoMethodError, "false&.missing")
+      assert_run_raises(NoMethodError, "nil&.missing.another")
+      assert_run(3, "class CompileTestSafeBasic < BasicObject; def value; 3; end; end; CompileTestSafeBasic.new&.value")
+      assert_run(4, "class CompileTestSafeNilPredicate; def nil?; true; end; def value; 4; end; end; CompileTestSafeNilPredicate.new&.value")
+    end
+
+    def test_safe_navigation_evaluation_order
+      assert_run([], "a = []; nil&.missing(a << 1); a")
+      assert_run([], "a = []; nil&.missing(a << 1)&.another(a << 2); a")
+      assert_run([1, 2, 3], "a = []; (a << 1)&.push((a << 2; 3)); a")
+      assert_run(1, "a = 0; (a += 1)&.itself; a")
+      assert_run(3, "a = 0; while a < 3; nil&.missing(a += 10); a += 1; end; a")
+    end
+
+    def test_safe_navigation_assignment
+      assert_run(nil, "nil&.value = 1")
+      assert_run(0, "a = 0; nil&.value = (a += 1); a")
+      assert_run([2, 2], <<~RUBY)
+        class CompileTestSafeSetter
+          def value=(value); @value = value; 99; end
+          def value; @value; end
+        end
+        o = CompileTestSafeSetter.new
+        result = (o&.value = 2)
+        [result, o.value]
+      RUBY
+    end
+
+    def test_safe_navigation_return
+      assert_run([1, 2], <<~RUBY)
+        class CompileTestSafeReturn
+          def value(receiver)
+            receiver&.itself(if receiver; return 1; end)
+            2
+          end
+        end
+        o = CompileTestSafeReturn.new
+        [o.value(true), o.value(nil)]
+      RUBY
+    end
+
     def test_if
       [
         [1, "if true; 1; else; 2; end"],

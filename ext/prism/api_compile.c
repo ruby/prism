@@ -45,6 +45,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnExtractLastMatchParen: return rb_intern_const("extract_last_match_paren");
         case kPrismInsnExtractLastMatchPost: return rb_intern_const("extract_last_match_post");
         case kPrismInsnExtractLastMatchPre: return rb_intern_const("extract_last_match_pre");
+        case kPrismInsnNilP: return rb_intern_const("nil_p");
         case kPrismInsnLoadConstAbs: return rb_intern_const("load_const_abs");
         case kPrismInsnLoadConstNestRel: return rb_intern_const("load_const_nest_rel");
         case kPrismInsnLoadConstRecvRel: return rb_intern_const("load_const_recv_rel");

@@ -180,6 +180,8 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[1]]&.post_match
             when :extract_last_match_pre
               values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
+            when :nil_p
+              values[insn.opnds[0]] = NilClass === values[insn.opnds[1]]
             when :load_object
               values[insn.opnds[0]] = insn.data
             when :load_const_abs
