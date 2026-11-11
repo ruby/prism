@@ -150,6 +150,8 @@ module Prism
               break
             when :call
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2..]))
+            when :call_with_block
+              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2...-1]), &values[insn.opnds[-1]])
             when :coerce_hash
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)
@@ -275,6 +277,8 @@ module Prism
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..])
             when :new_array_static
               values[insn.opnds[0]] = insn.data.dup
+            when :new_block
+              values[insn.opnds[0]] = new_block(insn.data, frame)
             when :new_hash
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).each_slice(2).to_h
             when :new_hash_static
@@ -327,6 +331,18 @@ module Prism
 
       def cvar_parent(nest)
         nest[0...-1].find { |scope| !Module.instance_method(:singleton_class?).bind_call(scope) }
+      end
+
+      ###
+
+      def new_block(graph, frame)
+        vm = self
+        locals = frame.locals
+        nest = frame.nest
+
+        BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
+          Proc.new { vm.run_frame(Frame.new(graph, self, nest, Locals.new(graph.locals, locals))) }
+        end
       end
 
       ###

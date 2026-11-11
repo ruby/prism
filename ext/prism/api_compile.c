@@ -23,6 +23,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnAliasMethod: return rb_intern_const("alias_method");
         case kPrismInsnBranch: return rb_intern_const("branch");
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");
+        case kPrismInsnCallWithBlock: return rb_intern_const("call_with_block");
         case kPrismInsnCall: return rb_intern_const("call");
         case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
         case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
@@ -64,6 +65,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnMatch: return rb_intern_const("match");
         case kPrismInsnMergeHash: return rb_intern_const("merge_hash");
         case kPrismInsnNewArray: return rb_intern_const("new_array");
+        case kPrismInsnNewBlock: return rb_intern_const("new_block");
         case kPrismInsnNewArrayStatic: return rb_intern_const("new_array_static");
         case kPrismInsnNewHash: return rb_intern_const("new_hash");
         case kPrismInsnNewHashStatic: return rb_intern_const("new_hash_static");
@@ -117,6 +119,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return compile_freeze(rb_ary_new_from_args(3, then_block, else_block, then_nopnds), freeze);
         }
         case kPrismInsnExtractLastMatchNamedGroup:
+        case kPrismInsnCallWithBlock:
         case kPrismInsnCall:
         case kPrismInsnDefinedConstAbs:
         case kPrismInsnDefinedConstNestRel:
@@ -153,6 +156,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         }
         case kPrismInsnDefineSingletonClass:
             return rb_ary_entry(vgraphs, pm_insn_define_singleton_class_graph_id(insn));
+        case kPrismInsnNewBlock:
+            return rb_ary_entry(vgraphs, pm_insn_new_block_graph_id(insn));
         case kPrismInsnForEach:
             return rb_ary_entry(vgraphs, pm_insn_for_each_graph_id(insn));
         case kPrismInsnPostExecution:
@@ -278,6 +283,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         VALUE vgraph_kind;
         switch (pm_graph_kind(graph)) {
+            case kPrismGraphBlock: vgraph_kind = ID2SYM(rb_intern("block")); break;
             case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
             case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
             case kPrismGraphFor: vgraph_kind = ID2SYM(rb_intern("for")); break;

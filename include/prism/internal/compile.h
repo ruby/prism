@@ -28,6 +28,7 @@ struct PrismInsn {
         struct { pm_constant_id_t name_id; uint32_t graph_id; } define;
         struct { uint32_t graph_id; } define_singleton_class;
         struct { uint32_t graph_id; } post_execution;
+        struct { uint32_t graph_id; } new_block;
         struct { uint32_t graph_id; } for_each;
         struct { uint32_t number; } extract_group;
         struct { uint32_t local_id; } lvar;

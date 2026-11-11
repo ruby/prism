@@ -295,6 +295,11 @@ pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
 }
 
 uint32_t
+pm_insn_new_block_graph_id(const PrismInsn *insn) {
+    return insn->as.new_block.graph_id;
+}
+
+uint32_t
 pm_insn_for_each_graph_id(const PrismInsn *insn) {
     return insn->as.for_each.graph_id;
 }
@@ -631,6 +636,21 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uin
     graph->opnds[insn->opnds_off] = value_id;
     graph->opnds[insn->opnds_off + 1] = receiver_id;
     memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
+
+    return value_id;
+}
+
+static uint32_t
+emit_call_with_block(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids, uint32_t block_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnCallWithBlock, node_id, 3 + (uint32_t) nargument_ids);
+    insn->as.name.name_id = name_id;
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    uint32_t value_id = make_value(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = receiver_id;
+    memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
+    graph->opnds[insn->opnds_off + 2 + nargument_ids] = block_id;
 
     return value_id;
 }
@@ -1735,6 +1755,32 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
 }
 
 static uint32_t
+compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
+    if (node->parameters && (!PM_NODE_TYPE_P(node->parameters, PM_BLOCK_PARAMETERS_NODE) || ((const pm_block_parameters_node_t *) node->parameters)->parameters)) {
+        fprintf(stderr, "Block parameters are not supported yet\n");
+        abort();
+    }
+
+    uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, (uint32_t) node->locals.size);
+    PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
+
+    emit_trace_b_call(builder, node->base.node_id);
+    uint32_t body_id = compile_node_or_nil(builder, node->body, node->base.node_id);
+    emit_trace_b_return(builder, node->base.node_id, body_id);
+    emit_return(builder, node->base.node_id, body_id);
+
+    pop_scope(builder, state);
+
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewBlock, node->base.node_id, 1);
+    insn->as.new_block.graph_id = graph_id;
+
+    uint32_t value_id = make_value(builder);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
     uint32_t receiver_id;
     if (node->receiver) {
@@ -1765,7 +1811,14 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         }
     }
 
-    uint32_t value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
+    uint32_t value_id;
+    if (node->block) {
+        uint32_t block_id = compile_node(builder, node->block);
+        value_id = emit_call_with_block(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, block_id);
+    } else {
+        value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
+    }
+
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
         value_id = argument_ids[nargument_ids - 1];
     }
@@ -2805,6 +2858,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_array_node(builder, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
             return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
+        case PM_BLOCK_NODE:
+            return compile_block_node(builder, (const pm_block_node_t *) node);
         case PM_CALL_NODE:
             return compile_call_node(builder, (const pm_call_node_t *) node);
         case PM_CLASS_NODE:
@@ -2963,6 +3018,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ALTERNATION_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
+        case PM_BLOCK_LOCAL_VARIABLE_NODE:
+        case PM_BLOCK_PARAMETERS_NODE:
         case PM_CLASS_VARIABLE_TARGET_NODE:
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:
@@ -3125,6 +3182,14 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("\n");
                     break;
                 }
+                case kPrismInsnCallWithBlock: {
+                    const pm_constant_t *name = compile_constant(builder->parser, insn->as.name.name_id);
+                    printf("%%%" PRIu32 " = call_with_block %%%" PRIu32 ".%.*s\n", opnds[0], opnds[1], (int) pm_constant_length(name), (const char *) pm_constant_start(name));
+                    break;
+                }
+                case kPrismInsnNewBlock:
+                    printf("%%%" PRIu32 " = new_block g%" PRIu32 "\n", opnds[0], insn->as.new_block.graph_id);
+                    break;
                 case kPrismInsnCoerceHash:
                     printf("%%%" PRIu32 " = coerce_hash %%%" PRIu32 "\n", opnds[0], opnds[1]);
                     break;

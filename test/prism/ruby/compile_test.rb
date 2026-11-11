@@ -41,6 +41,79 @@ module Prism
       end
     end
 
+    def test_blocks_without_parameters
+      [
+        [3, "a = 0; 3.times { a += 1 }; a"],
+        [[2, 2], "[1, 2].map { 2 }"],
+        [nil, "proc {}.call"],
+        [1, "proc { || 1 }.call"],
+        [1, "proc { 1 }.call(2, 3)"],
+        [2, "a = 1; p = proc { a }; a = 2; p.call"],
+        [[1, 2], "a = 0; p = proc { a += 1 }; [p.call, p.call]"],
+        [[1, 1], "p = proc { a ||= 0; a += 1 }; [p.call, p.call]"],
+        [[2, 1], "a = 1; result = proc { |; a| a = 2 }.call; [result, a]"],
+        [4, "a = 0; 2.times { 2.times { a += 1 } }; a"],
+        [1, "a = 0; write = proc { a += 1 }; read = proc { a }; write.call; read.call"],
+        [3, "a = 0; for i in [1, 2]; proc { a += i }.call; end; a"],
+        [2, "p = proc { a = 1; proc { a += 1 } }.call; p.call"],
+        [2, "proc { if true; 2; else; 3; end }.call"],
+        [TOPLEVEL_BINDING.receiver, "proc { self }.call"],
+        [nil, "nil&.missing { raise 'not called' }"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_block_capture_lifetime
+      assert_run([2, 3], <<~RUBY)
+        class CompileTestBlockCapture
+          def make(a)
+            proc { a += 1 }
+          end
+        end
+        p = CompileTestBlockCapture.new.make(1)
+        [p.call, p.call]
+      RUBY
+      assert_run([1, 10, 2], <<~RUBY)
+        class CompileTestBlockInvocations
+          def make(a)
+            proc { a += 1 }
+          end
+        end
+        o = CompileTestBlockInvocations.new
+        first = o.make(0)
+        second = o.make(9)
+        [first.call, second.call, first.call]
+      RUBY
+    end
+
+    def test_block_self_and_nesting
+      assert_run([3, 4], <<~RUBY)
+        class CompileTestBlockContext
+          A = 3
+          def value
+            @a = 4
+            proc { [A, @a] }.call
+          end
+        end
+        CompileTestBlockContext.new.value
+      RUBY
+      assert_run(true, "object = Object.new; object.instance_exec { self }.equal?(object)")
+      assert_run(true, "object = BasicObject.new; object.instance_exec { self }.equal?(object)")
+      assert_post_execution("2\n", "a = 1; proc { END { puts a } }.call; a = 2")
+    end
+
+    def test_block_graph
+      unit = compile_unit("a = 1; proc { a += 1; b = 2 }")
+      parent, child = unit.graphs
+      assert_equal(:block, child.kind)
+      assert_same(parent, child.parent)
+      assert_equal([:b], child.locals.map(&:name))
+      assert_empty(child.blocks[0].params)
+      assert_equal(:trace_b_call, child.blocks[0].insns.first.kind)
+      assert_equal([:trace_b_return, :return], child.blocks[0].insns.last(2).map(&:kind))
+    end
+
     def test_for
       [
         [6, "a = 0; for i in [1, 2, 3]; a += i; end; a"],

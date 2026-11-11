@@ -28,6 +28,7 @@ typedef enum {
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnCall,
+    kPrismInsnCallWithBlock,
     kPrismInsnCoerceHash,
     kPrismInsnCoerceString,
     kPrismInsnDefineClassAbs,
@@ -69,6 +70,7 @@ typedef enum {
     kPrismInsnMergeHash,
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
+    kPrismInsnNewBlock,
     kPrismInsnNewHash,
     kPrismInsnNewHashStatic,
     kPrismInsnNewRangeInc,
@@ -96,6 +98,7 @@ typedef enum {
 } PrismInsnKind;
 
 typedef enum {
+    kPrismGraphBlock,
     kPrismGraphClass,
     kPrismGraphDef,
     kPrismGraphFor,
@@ -169,6 +172,7 @@ PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_name(const pm_parser_t *pa
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_define_name(const pm_parser_t *parser, const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_singleton_class_graph_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_new_block_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_for_each_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_post_execution_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_extract_group_number(const PrismInsn *insn);
