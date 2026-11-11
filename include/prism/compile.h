@@ -37,6 +37,9 @@ typedef enum {
     kPrismInsnDefineClassRecvRel,
     kPrismInsnDefineClassRecvRelSuper,
     kPrismInsnDefineMethod,
+    kPrismInsnDefineModuleAbs,
+    kPrismInsnDefineModuleNestRel,
+    kPrismInsnDefineModuleRecvRel,
     kPrismInsnDefineSingletonClass,
     kPrismInsnDefineSingletonMethod,
     kPrismInsnDefinedCVar,
@@ -86,6 +89,7 @@ typedef enum {
 typedef enum {
     kPrismGraphClass,
     kPrismGraphDef,
+    kPrismGraphModule,
     kPrismGraphProgram,
     kPrismGraphSingletonClass
 } PrismGraphKind;

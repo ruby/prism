@@ -145,6 +145,20 @@ module Prism
               name, method_graph = insn.data
               Module.instance_method(:define_method).bind_call(nest[0], name) { |*args| Compile.run_graph(method_graph, self, nest, args) }
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
+            when :define_module_abs
+              name, module_graph = insn.data
+              mod = define_module(Object, name, true)
+              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
+            when :define_module_nest_rel
+              name, module_graph = insn.data
+              mod = define_module(nest[0], name, false)
+              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
+            when :define_module_recv_rel
+              name, module_graph = insn.data
+              parent = values[insn.opnds[1]]
+              check_module(parent)
+              mod = define_module(parent, name, true)
+              values[insn.opnds[0]] = run_graph(module_graph, mod, [mod, *nest].freeze)
             when :define_singleton_class
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[1]])
               values[insn.opnds[0]] = run_graph(insn.data, klass, [klass, *nest].freeze)
@@ -248,6 +262,23 @@ module Prism
       end
 
       ###
+
+      def define_module(parent, name, check_public)
+        if parent.const_defined?(name, false)
+          check_public_const(parent, parent, name) if check_public
+          const = parent.const_get(name, false)
+          unless Module === const && !(Class === const)
+            message = +"#{name} is not a module"
+            if (location = parent.const_source_location(name, false))
+              message << "\n#{location[0]}:#{location[1]}: previous definition of #{name} was here"
+            end
+            raise TypeError, message
+          end
+          const
+        else
+          parent.const_set(name, Module.new)
+        end
+      end
 
       def define_class(parent, name, check_public)
         existing_class(parent, name, check_public) || parent.const_set(name, Class.new)

@@ -33,6 +33,9 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefineClassRecvRel: return rb_intern_const("define_class_recv_rel");
         case kPrismInsnDefineClassRecvRelSuper: return rb_intern_const("define_class_recv_rel_super");
         case kPrismInsnDefineMethod: return rb_intern_const("define_method");
+        case kPrismInsnDefineModuleAbs: return rb_intern_const("define_module_abs");
+        case kPrismInsnDefineModuleNestRel: return rb_intern_const("define_module_nest_rel");
+        case kPrismInsnDefineModuleRecvRel: return rb_intern_const("define_module_recv_rel");
         case kPrismInsnDefineSingletonClass: return rb_intern_const("define_singleton_class");
         case kPrismInsnDefineSingletonMethod: return rb_intern_const("define_singleton_method");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
@@ -125,6 +128,9 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnDefineClassNestRelSuper:
         case kPrismInsnDefineClassRecvRel:
         case kPrismInsnDefineClassRecvRelSuper:
+        case kPrismInsnDefineModuleAbs:
+        case kPrismInsnDefineModuleNestRel:
+        case kPrismInsnDefineModuleRecvRel:
         case kPrismInsnDefineMethod:
         case kPrismInsnDefineSingletonMethod: {
             const pm_constant_t *constant = pm_insn_define_name(parser, insn);
@@ -256,6 +262,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         switch (pm_graph_kind(graph)) {
             case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
             case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
+            case kPrismGraphModule: vgraph_kind = ID2SYM(rb_intern("module")); break;
             case kPrismGraphProgram: vgraph_kind = ID2SYM(rb_intern("program")); break;
             case kPrismGraphSingletonClass: vgraph_kind = ID2SYM(rb_intern("singleton_class")); break;
         }

@@ -166,6 +166,51 @@ module Prism
       assert_run_raises(TypeError, "1.itself::CompileTestNotModule = 1")
     end
 
+    def test_define_module
+      assert_run(42, "module CompileTestModuleBody; 42; end")
+      assert_run(nil, "module CompileTestModuleEmpty; end")
+      assert_run("CompileTestModuleSelf", "(module CompileTestModuleSelf; self; end).name")
+      assert_run("CompileTestModuleAbs", "(module ::CompileTestModuleAbs; self; end).name")
+      assert_run("CompileTestModuleOuter::Inner", "module CompileTestModuleOuter; (module Inner; self; end).name; end")
+      assert_run("CompileTestModuleOuter::Recv", "(module CompileTestModuleOuter::Recv; self; end).name")
+      assert_run("CompileTestModuleOuter::Dynamic", "(module CompileTestModuleOuter.itself::Dynamic; self; end).name")
+      assert_run([1, 2], "module CompileTestModuleReopen; A = 1; end; module CompileTestModuleReopen; B = 2; end; [CompileTestModuleReopen::A, CompileTestModuleReopen::B]")
+      assert_run(3, "module CompileTestModuleMethods; def value; 3; end; end; class CompileTestModuleUser; include CompileTestModuleMethods; end; CompileTestModuleUser.new.value")
+      assert_run(4, "module CompileTestModuleSingleton; def self.value; 4; end; end; CompileTestModuleSingleton.value")
+      assert_run(5, "module CompileTestModuleCvar; @@value = 5; def self.value; @@value; end; end; CompileTestModuleCvar.value")
+    end
+
+    def test_define_module_scope
+      assert_run([1, 2], <<~RUBY)
+        module CompileTestModuleScope
+          A = 1
+          module Inner
+            B = 2
+            def self.values; [A, B]; end
+          end
+        end
+        CompileTestModuleScope::Inner.values
+      RUBY
+      assert_run([2, 1], "a = 1; b = (module CompileTestModuleLocal; a = 2; end); [b, a]")
+      assert_run_raises(NameError, "module CompileTestModuleQualified; A = 1; end; module CompileTestModuleQualified::Inner; A; end")
+      assert_run(nil, "a = 1; module CompileTestModuleNoCapture; a = 2 if false; a; end")
+      assert_run(true, "module CompileTestModulePrivate; M = Module.new; private_constant :M; module M; end; true; end")
+      assert_run_raises(NameError, "module CompileTestModulePrivate::M; end")
+    end
+
+    def test_define_module_errors
+      assert_run_raises(TypeError, "CompileTestModuleNotModule = 1; module CompileTestModuleNotModule; end", /\ACompileTestModuleNotModule is not a module$/)
+      assert_run_raises(TypeError, "class CompileTestModuleIsClass; end; module CompileTestModuleIsClass; end", /\ACompileTestModuleIsClass is not a module$/)
+      assert_run_raises(TypeError, "module 1.itself::CompileTestModuleBadScope; end", "1 is not a class/module")
+      assert_run_raises(NameError, "module CompileTestModuleMissingParent::Inner; end")
+    end
+
+    def test_define_module_ir
+      unit = compile_unit("module CompileTestModuleIR; 1; end")
+      assert_equal(:module, unit.graphs[1].kind)
+      assert_equal([:trace_class, :trace_line, :load_object, :trace_end, :return], unit.graphs[1].blocks[0].insns.map(&:kind))
+    end
+
     def test_define_class
       assert_run(42, "class CompileTestBody; 42; end")
       assert_run(nil, "class CompileTestEmpty; end")
