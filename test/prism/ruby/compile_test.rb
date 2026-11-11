@@ -96,6 +96,58 @@ module Prism
       assert_run(1, "class CompileTestIfReturnModifier; def value; return 1 if true; 2; end; end; CompileTestIfReturnModifier.new.value")
     end
 
+    def test_unless
+      [
+        [1, "unless false; 1; else; 2; end"],
+        [1, "unless nil; 1; else; 2; end"],
+        [2, "unless true; 1; else; 2; end"],
+        [2, "unless 0; 1; else; 2; end"],
+        [nil, "unless true; 1; end"],
+        [nil, "unless false; end"],
+        [nil, "unless true; 1; else; end"],
+        [2, "unless false; 1; 2; else; 3; end"],
+        [3, "1 + (unless true; 1; else; 2; end)"],
+        [1, "1 unless false"],
+        [nil, "1 unless true"],
+        [2, "unless false; unless true; 1; else; 2; end; else; 3; end"],
+        [3, "unless true; 1; else; unless false; 3; else; 4; end; end"],
+        [2, "unless (unless false; true; else; false; end); 1; else; 2; end"],
+        [2, "if true; unless true; 1; else; 2; end; else; 3; end"],
+        [2, "unless false; if false; 1; else; 2; end; else; 3; end"],
+        [1, "unless false && true; 1; else; 2; end"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_unless_evaluation_order
+      assert_run([1, 3], "a = []; unless (a << 1); a << 2; else; a << 3; end; a")
+      assert_run([1, 2], "a = []; unless (a << 1) && false; a << 2; else; a << 3; end; a")
+      assert_run(2, "a = 0; unless false; a = 2; else; a = 3; end; a")
+      assert_run(nil, "unless true; a = 1; end; a")
+      assert_run(3, "a = 0; while a < 3; unless a > 1; a += 1; else; a += 1; end; end; a")
+    end
+
+    def test_unless_return
+      assert_run([1, 2], <<~RUBY)
+        class CompileTestUnlessReturn
+          def value(a)
+            unless a
+              return 1
+            else
+              return 2
+            end
+            3
+          end
+        end
+        o = CompileTestUnlessReturn.new
+        [o.value(false), o.value(true)]
+      RUBY
+
+      assert_run(1, "class CompileTestUnlessReturnExpression; def value; 10 + (unless false; return 1; else; 2; end); end; end; CompileTestUnlessReturnExpression.new.value")
+      assert_run(1, "class CompileTestUnlessReturnModifier; def value; return 1 unless false; 2; end; end; CompileTestUnlessReturnModifier.new.value")
+    end
+
     PRIVATE_CONSTANT = 1
     private_constant :PRIVATE_CONSTANT
 

@@ -1928,24 +1928,33 @@ compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
 }
 
 static uint32_t
-compile_if_node(PrismBuilder *builder, const pm_if_node_t *node) {
+compile_conditional_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements, const pm_node_t *subsequent) {
     uint32_t then_block_id = make_block(builder, 0);
     uint32_t else_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
 
-    uint32_t predicate_id = compile_node(builder, node->predicate);
-    emit_branchif(builder, node->base.node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+    uint32_t predicate_id = compile_node(builder, predicate);
+    if (PM_NODE_TYPE_P(node, PM_IF_NODE)) {
+        emit_branchif(builder, node->node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+    } else {
+        emit_branchif(builder, node->node_id, predicate_id, else_block_id, 0, NULL, then_block_id, 0, NULL);
+    }
 
     builder->state.block_id = then_block_id;
-    uint32_t then_value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
-    emit_branch(builder, node->base.node_id, join_block_id, 1, &then_value_id);
+    uint32_t then_value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(statements), node->node_id);
+    emit_branch(builder, node->node_id, join_block_id, 1, &then_value_id);
 
     builder->state.block_id = else_block_id;
-    uint32_t else_value_id = compile_node_or_nil(builder, node->subsequent, node->base.node_id);
-    emit_branch(builder, node->base.node_id, join_block_id, 1, &else_value_id);
+    uint32_t else_value_id = compile_node_or_nil(builder, subsequent, node->node_id);
+    emit_branch(builder, node->node_id, join_block_id, 1, &else_value_id);
 
     builder->state.block_id = join_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
+compile_if_node(PrismBuilder *builder, const pm_if_node_t *node) {
+    return compile_conditional_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements, node->subsequent);
 }
 
 static uint32_t
@@ -2277,6 +2286,11 @@ compile_undef_node(PrismBuilder *builder, const pm_undef_node_t *node) {
 }
 
 static uint32_t
+compile_unless_node(PrismBuilder *builder, const pm_unless_node_t *node) {
+    return compile_conditional_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements, PM_NODE_UPCAST(node->else_clause));
+}
+
+static uint32_t
 compile_until_node(PrismBuilder *builder, const pm_until_node_t *node) {
     return compile_loop_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements);
 }
@@ -2442,6 +2456,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_true_node(builder, (const pm_true_node_t *) node);
         case PM_UNDEF_NODE:
             return compile_undef_node(builder, (const pm_undef_node_t *) node);
+        case PM_UNLESS_NODE:
+            return compile_unless_node(builder, (const pm_unless_node_t *) node);
         case PM_UNTIL_NODE:
             return compile_until_node(builder, (const pm_until_node_t *) node);
         case PM_WHILE_NODE:
