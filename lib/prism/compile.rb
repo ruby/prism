@@ -228,7 +228,7 @@ module Prism
             when :new_range_inc
               values[insn.opnds[0]] = (values[insn.opnds[1]]..values[insn.opnds[2]])
             when :new_regexp
-              values[insn.opnds[0]] = Regexp.new(values.values_at(*insn.opnds[1..]).join)
+              values[insn.opnds[0]] = Regexp.new(values.values_at(*insn.opnds[1..]).join, (insn.data >> 2) & 7)
             when :new_string
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join
             when :new_symbol

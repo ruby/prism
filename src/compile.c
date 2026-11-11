@@ -2267,6 +2267,20 @@ compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
 }
 
 static uint32_t
+compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interpolated_match_last_line_node_t *node) {
+    uint32_t nvalue_ids = (uint32_t) node->parts.size;
+    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
+        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
+    }
+
+    uint32_t regexp_id = emit_new_regexp(builder, node->base.node_id, nvalue_ids, value_ids, node->base.flags);
+    uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id);
+}
+
+static uint32_t
 compile_interpolated_regular_expression_node(PrismBuilder *builder, const pm_interpolated_regular_expression_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
     uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
@@ -2720,6 +2734,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_instance_variable_or_write_node(builder, (const pm_instance_variable_or_write_node_t *) node);
         case PM_INTEGER_NODE:
             return compile_integer_node(builder, (const pm_integer_node_t *) node);
+        case PM_INTERPOLATED_MATCH_LAST_LINE_NODE:
+            return compile_interpolated_match_last_line_node(builder, (const pm_interpolated_match_last_line_node_t *) node);
         case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
             return compile_interpolated_regular_expression_node(builder, (const pm_interpolated_regular_expression_node_t *) node);
         case PM_INTERPOLATED_STRING_NODE:

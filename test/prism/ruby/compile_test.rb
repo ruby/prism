@@ -62,6 +62,32 @@ module Prism
       TOPLEVEL_BINDING.eval("$_ = nil")
     end
 
+    def test_interpolated_match_last_line
+      [
+        [1, '$_ = "abc"; a = "b"; if /#{a}/; 1; else; 2; end'],
+        [2, '$_ = "abc"; a = "z"; if /#{a}/; 1; else; 2; end'],
+        [2, '$_ = nil; if /#{"a"}/; 1; else; 2; end'],
+        [1, '$_ = "A"; if /#{"a"}/i; 1; else; 2; end'],
+        [1, '$_ = "a\nb"; if /a#{"."}b/m; 1; else; 2; end'],
+        [1, '$_ = "ab"; if /a #{"b"}/x; 1; else; 2; end'],
+        ["b", '$_ = "abc"; if /a(#{"b"})c/; $1; end'],
+        [nil, '$_ = "abc"; if /a(#{"b"})c/; end; if /#{"z"}/; end; $1'],
+        [1, '$_ = "abc"; 1 if /#{"a"}/'],
+        [2, '$_ = "abc"; unless /#{"a"}/; 1; else; 2; end'],
+        [1, '$_ = "a"; if /#{($_ = "b"; "b")}/; 1; else; 2; end'],
+        [[1, 2], '$_ = "ab"; a = []; if /#{(a << 1; "a")}#{(a << 2; "b")}/; end; a'],
+        [2, '$_ = "a"; n = 0; while /#{(n += 1; "a")}/; $_ = "b"; end; n'],
+        [1, '$_ = nil; n = 0; if /#{(n += 1; "a")}/; end; n'],
+        [1, '$_ = "a"; if /#{(if true; "a"; else; "b"; end)}/; 1; else; 2; end']
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+      assert_run_raises(TypeError, '$_ = 1; if /#{"a"}/; end')
+      assert_run_raises(RuntimeError, 'if /#{raise "interpolation failed"}/; end', "interpolation failed")
+    ensure
+      TOPLEVEL_BINDING.eval("$_ = nil")
+    end
+
     def test_match_write
       [
         [[0, "abc"], 'result = (/(?<word>abc)/ =~ "abc"); [result, word]'],
