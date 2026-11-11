@@ -77,6 +77,40 @@ module Prism
       RUBY
     end
 
+    def test_pinned_expression
+      [
+        [true, "3 in ^(1 + 2)"],
+        [false, "4 in ^(1 + 2)"],
+        [true, "1 in ^(Integer.itself)"],
+        [true, "nil in ^(nil)"],
+        [true, "false in ^(false)"],
+        [true, "2 in ^(if true; 2; else; 3; end)"],
+        [true, "2 in ^(nil&.missing || 2)"],
+        [true, "a = 1; (a = 2) in ^(a)"],
+        [[true, 1], "a = 0; result = (1 in ^(a += 1)); [result, a]"],
+        [[false, 1], "a = 0; result = (2 in ^(a += 1)); [result, a]"],
+        [[true, 1], "a = 0; result = (1 in ^(a += 1) | ^(a += 1)); [result, a]"],
+        [[true, 2], "a = 0; result = (2 in ^(a += 1) | ^(a += 1)); [result, a]"],
+        [[false, 2], "a = 0; result = (3 in ^(a += 1) | ^(a += 1)); [result, a]"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+      assert_run_raises(RuntimeError, '1 in ^(raise "pin failed")', "pin failed")
+    end
+
+    def test_pinned_expression_case_equality
+      assert_run([true, [2]], <<~RUBY)
+        class CompileTestPinnedExpressionMatcher
+          def initialize; @calls = []; end
+          def ===(value); @calls << value; :matched; end
+          def calls; @calls; end
+        end
+        a = CompileTestPinnedExpressionMatcher.new
+        result = (2 in ^(a.itself))
+        [result, a.calls]
+      RUBY
+    end
+
     def test_safe_navigation
       assert_run(nil, "nil&.missing")
       assert_run(false, "false&.itself")

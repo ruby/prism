@@ -1513,6 +1513,13 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 static void
 compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t matched_block_id, uint32_t unmatched_block_id) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_PINNED_EXPRESSION_NODE: {
+            const pm_pinned_expression_node_t *cast = (const pm_pinned_expression_node_t *) node;
+            uint32_t pattern_id = compile_node(builder, cast->expression);
+            uint32_t predicate_id = emit_match(builder, node->node_id, value_id, pattern_id);
+            emit_branchif(builder, node->node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
+            break;
+        }
         case PM_PINNED_VARIABLE_NODE: {
             const pm_pinned_variable_node_t *cast = (const pm_pinned_variable_node_t *) node;
             uint32_t pattern_id = compile_node(builder, cast->variable);
@@ -2736,6 +2743,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ALTERNATION_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
+        case PM_PINNED_EXPRESSION_NODE:
         case PM_PINNED_VARIABLE_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
