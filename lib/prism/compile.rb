@@ -125,7 +125,7 @@ module Prism
         values = frame.values
         block = graph.blocks[0]
 
-        if args.length != block.params.length
+        if graph.kind != :block && args.length != block.params.length
           raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{block.params.length})"
         end
 
@@ -242,10 +242,6 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[1]]&.post_match
             when :extract_last_match_pre
               values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
-            when :for_each
-              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(:each) do |value|
-                run_frame(Frame.new(insn.data, recv, nest, locals, &frame.block), [value])
-              end
             when :nil_p
               values[insn.opnds[0]] = NilClass === values[insn.opnds[1]]
             when :load_object
@@ -347,7 +343,10 @@ module Prism
         block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          Proc.new { vm.run_frame(Frame.new(graph, self, nest, Locals.new(graph.locals, locals), &block)) }
+          Proc.new do |*args|
+            block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
+            vm.run_frame(Frame.new(graph, self, nest, block_locals, &block), args)
+          end
         end
       end
 

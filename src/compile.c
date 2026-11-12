@@ -22,10 +22,12 @@
 #define PM_CONSTANT_ID_BACKTICK (pm_constant_id_t) -1
 #define PM_CONSTANT_ID_LAST_LINE (pm_constant_id_t) -2
 #define PM_CONSTANT_ID_MATCH (pm_constant_id_t) -3
+#define PM_CONSTANT_ID_EACH (pm_constant_id_t) -4
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
 static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
+static const pm_constant_t each_constant = { .start = (const uint8_t *) "each", .length = 4 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
@@ -36,6 +38,8 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
             return &last_line_constant;
         case PM_CONSTANT_ID_MATCH:
             return &match_constant;
+        case PM_CONSTANT_ID_EACH:
+            return &each_constant;
         default:
             return pm_parser_constant(parser, constant_id);
     }
@@ -302,11 +306,6 @@ pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
 uint32_t
 pm_insn_new_block_graph_id(const PrismInsn *insn) {
     return insn->as.new_block.graph_id;
-}
-
-uint32_t
-pm_insn_for_each_graph_id(const PrismInsn *insn) {
-    return insn->as.for_each.graph_id;
 }
 
 uint32_t
@@ -1153,6 +1152,17 @@ emit_new_array(PrismBuilder *builder, uint32_t node_id, uint32_t nelement_ids, u
 }
 
 static uint32_t
+emit_new_block(PrismBuilder *builder, uint32_t node_id, uint32_t graph_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnNewBlock, node_id, 1);
+    insn->as.new_block.graph_id = graph_id;
+
+    uint32_t value_id = make_value(builder);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+
+    return value_id;
+}
+
+static uint32_t
 emit_new_array_static(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewArrayStatic, node_id, 1);
     insn->as.object.object_id = object_id;
@@ -1776,13 +1786,7 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
 
     pop_scope(builder, state);
 
-    PrismInsn *insn = make_insn(builder, kPrismInsnNewBlock, node->base.node_id, 1);
-    insn->as.new_block.graph_id = graph_id;
-
-    uint32_t value_id = make_value(builder);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
-
-    return value_id;
+    return emit_new_block(builder, node->base.node_id, graph_id);
 }
 
 static uint32_t
@@ -2225,7 +2229,7 @@ compile_float_node(PrismBuilder *builder, const pm_float_node_t *node) {
 static uint32_t
 compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     uint32_t collection_id = compile_node(builder, node->collection);
-    uint32_t graph_id = make_graph(builder, kPrismGraphFor, builder->state.graph_id, 0);
+    uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, 0);
     PrismBuilderState state = push_scope(builder, graph_id, 1, NULL);
     uint32_t param_id = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params[0];
 
@@ -2237,15 +2241,8 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     emit_return(builder, node->base.node_id, body_id);
     pop_scope(builder, state);
 
-    PrismInsn *insn = make_insn(builder, kPrismInsnForEach, node->base.node_id, 2);
-    insn->as.for_each.graph_id = graph_id;
-
-    uint32_t value_id = make_value(builder);
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = collection_id;
-
-    return value_id;
+    uint32_t block_id = emit_new_block(builder, node->base.node_id, graph_id);
+    return emit_call_with_block(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id);
 }
 
 static uint32_t
@@ -3349,9 +3346,6 @@ dump_graph(PrismBuilder *builder, PrismGraph *graph) {
                     printf("%%%" PRIu32 " = load_lvar v%" PRIu32 "\n", opnds[0], insn->as.lvar.local_id);
                     break;
                 }
-                case kPrismInsnForEach:
-                    printf("%%%" PRIu32 " = for_each(%%%" PRIu32 ", g%" PRIu32 ")\n", opnds[0], opnds[1], insn->as.for_each.graph_id);
-                    break;
                 case kPrismInsnNilP:
                     printf("%%%" PRIu32 " = nil_p(%%%" PRIu32 ")\n", opnds[0], opnds[1]);
                     break;

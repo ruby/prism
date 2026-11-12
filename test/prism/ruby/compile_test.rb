@@ -202,7 +202,7 @@ module Prism
         "for @@i in [1]; end" => :store_cvar,
         "for $i in [1]; end" => :store_gvar
       }.each do |source, store|
-        graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :for }
+        graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :block }
         entry = graph.blocks[0].insns
         assert_equal([store, :trace_b_call], entry.first(2).map(&:kind))
         traces = graph.blocks.flat_map(&:insns).select { |insn| insn.kind == :trace_b_return }
@@ -328,6 +328,17 @@ module Prism
       assert_same(program.locals, loop_frame.locals)
       refute_same(program.locals, block_frame.locals)
       assert_same(program.locals, block_frame.locals.parent)
+    end
+
+    def test_for_uses_block_call
+      unit = compile_unit("for i in [1, 2]; end")
+      insns = unit.graphs[0].blocks.flat_map(&:insns)
+      block_insn = insns.find { |insn| insn.kind == :new_block }
+      call_insn = insns.find { |insn| insn.kind == :call_with_block }
+      assert_equal(:block, block_insn.data.kind)
+      assert_equal(:each, call_insn.data)
+      assert_equal(block_insn.opnds[0], call_insn.opnds[-1])
+      assert_same(unit.graphs[0].scope, block_insn.data.scope)
     end
 
     def test_for_custom_each
