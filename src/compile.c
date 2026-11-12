@@ -1859,9 +1859,11 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, (uint32_t) node->locals.size);
     uint32_t nrequired_ids = parameters ? (uint32_t) parameters->requireds.size : 0;
 
+    const pm_rest_parameter_node_t *rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE) ? (const pm_rest_parameter_node_t *) parameters->rest : NULL;
+
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, nrequired_ids, false);
-    signature.autosplat = nrequired_ids > 1;
+    make_signature(builder, graph_id, &signature, nrequired_ids, rest != NULL);
+    signature.autosplat = nrequired_ids > 1 || (nrequired_ids > 0 && rest != NULL);
 
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
     const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
@@ -1873,6 +1875,11 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
             uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
             emit_store_lvar(builder, required->node_id, local_id, required_ids[idx]);
         }
+    }
+
+    if (rest && rest->name) {
+        uint32_t local_id = resolve_local(builder, rest->name, 0);
+        emit_store_lvar(builder, rest->base.node_id, local_id, signature.rest_id);
     }
 
     emit_trace_b_call(builder, node->base.node_id);

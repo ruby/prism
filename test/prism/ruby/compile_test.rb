@@ -184,6 +184,57 @@ module Prism
       end
     end
 
+    def test_rest_block_parameters
+      [
+        [[], "proc { |*args| args }.call"],
+        [[1, 2], "proc { |*args| args }.call(1, 2)"],
+        [[[1, 2]], "proc { |*args| args }.call([1, 2])"],
+        [[nil], "proc { |*args| args }.call(nil)"],
+        [[nil, []], "proc { |a, *rest| [a, rest] }.call"],
+        [[1, []], "proc { |a, *rest| [a, rest] }.call(1)"],
+        [[1, [2, 3]], "proc { |a, *rest| [a, rest] }.call(1, 2, 3)"],
+        [[1, [2, 3]], "proc { |a, *rest| [a, rest] }.call([1, 2, 3])"],
+        [[1, nil, []], "proc { |a, b, *rest| [a, b, rest] }.call(1)"],
+        [[1, 2, [3]], "proc { |a, b, *rest| [a, b, rest] }.call([1, 2, 3])"],
+        [1, "proc { |*| 1 }.call(2, 3)"],
+        [nil, "proc { |a, *| a }.call"],
+        [1, "proc { |a, *| a }.call([1, 2])"],
+        [[[1], [2]], "[1, 2].map { |*args| args }"],
+        [[1, 2], "proc { |*args| proc { args << 2 }.call; args }.call(1)"],
+        [[2, 9], "args = 9; result = proc { |*args| args[0] }.call(2); [result, args]"],
+        [[[1, 2], [3, 2]], "p = proc { |*args| args << 2 }; [p.call(1), p.call(3)]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_rest_block_parameters_conversion
+      calls = []
+      value = Object.new
+      value.define_singleton_method(:to_ary) { calls << :to_ary; [1, 2, 3] }
+      scope = Module.new
+      scope.const_set(:Value, value)
+      run = ->(source) { vm.run_frame(Compile::VM::Frame.new(compile_unit(source).graphs[0], scope, [scope, Object].freeze)) }
+      assert_equal([value], run.call("proc { |*args| args }.call(Value)"))
+      assert_empty(calls)
+      assert_equal([1, [2, 3]], run.call("proc { |a, *rest| [a, rest] }.call(Value)"))
+      assert_equal([:to_ary], calls)
+      value.define_singleton_method(:to_ary) { nil }
+      assert_equal([value, []], run.call("proc { |a, *rest| [a, rest] }.call(Value)"))
+      value.define_singleton_method(:to_ary) { 1 }
+      assert_raise(TypeError) { run.call("proc { |a, *rest| [a, rest] }.call(Value)") }
+    end
+
+    def test_rest_block_parameters_metadata
+      { "proc { |*args| args }" => [[], 0, false], "proc { |*| 1 }" => [[], 0, false],
+        "proc { |a, *rest| rest }" => [[0], 1, true], "proc { |a, *| a }" => [[0], 1, true] }.each do |source, expected|
+        graph = Prism.compile(source, freeze: true).value.graphs[1]
+        signature = graph.signature
+        assert_equal(expected, [signature.requireds, signature.rest, signature.autosplat])
+        assert_equal([*signature.requireds, signature.rest], graph.blocks[0].params)
+      end
+      graph = compile_unit("proc { |a, *rest| rest }").graphs[1]
+      assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
+    end
+
     def test_required_block_parameters_conversion
       calls = []
       value = Object.new
