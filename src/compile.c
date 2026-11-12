@@ -155,6 +155,17 @@ pm_signature_rest_id(const PrismSignature *signature) {
     return signature->rest_id;
 }
 
+uint32_t
+pm_signature_npost_ids(const PrismSignature *signature) {
+    return signature->npost_ids;
+}
+
+uint32_t
+pm_signature_post_id(const PrismSignature *signature, uint32_t post_idx) {
+    assert(post_idx < signature->npost_ids);
+    return signature->post_ids[post_idx];
+}
+
 bool
 pm_signature_autosplat(const PrismSignature *signature) {
     return signature->autosplat;
@@ -465,8 +476,8 @@ make_value(PrismBuilder *builder) {
 }
 
 static void
-make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signature, uint32_t nrequired_ids, bool has_rest) {
-    *signature = (PrismSignature) { .nrequired_ids = nrequired_ids, .rest_id = UINT32_MAX };
+make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signature, uint32_t nrequired_ids, bool has_rest, uint32_t npost_ids) {
+    *signature = (PrismSignature) { .nrequired_ids = nrequired_ids, .rest_id = UINT32_MAX, .npost_ids = npost_ids };
     PrismGraph *graph = builder->unit->graphs + graph_id;
 
     if (nrequired_ids) {
@@ -476,6 +487,12 @@ make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signatu
         }
     }
     if (has_rest) signature->rest_id = graph->value_id++;
+    if (npost_ids) {
+        signature->post_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * npost_ids, PRISM_ALIGNOF(uint32_t));
+        for (uint32_t idx = 0; idx < npost_ids; ++idx) {
+            signature->post_ids[idx] = graph->value_id++;
+        }
+    }
 }
 
 static uint32_t
@@ -508,13 +525,17 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
     uint32_t block_id = make_block(builder, 0);
     if (signature) {
         PrismBlock *block = PrismBuilder_graph(builder)->blocks + block_id;
-        block->nparams = signature->nrequired_ids + (signature->rest_id != UINT32_MAX ? 1 : 0);
+        block->nparams = signature->nrequired_ids + (signature->rest_id != UINT32_MAX ? 1 : 0) + signature->npost_ids;
         if (block->nparams) {
             block->params = pm_arena_alloc(builder->arena, sizeof(uint32_t) * block->nparams, PRISM_ALIGNOF(uint32_t));
             if (signature->nrequired_ids) {
                 memcpy(block->params, signature->required_ids, sizeof(uint32_t) * signature->nrequired_ids);
             }
-            if (signature->rest_id != UINT32_MAX) block->params[signature->nrequired_ids] = signature->rest_id;
+            uint32_t idx = signature->nrequired_ids;
+            if (signature->rest_id != UINT32_MAX) block->params[idx++] = signature->rest_id;
+            if (signature->npost_ids) {
+                memcpy(block->params + idx, signature->post_ids, sizeof(uint32_t) * signature->npost_ids);
+            }
         }
     }
     return block_id;
@@ -1894,8 +1915,9 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, nlocal_ids);
 
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, nrequired_ids, rest != NULL);
-    signature.autosplat = nrequired_ids > 1 || (nrequired_ids > 0 && rest != NULL);
+    make_signature(builder, graph_id, &signature, nrequired_ids, rest != NULL, parameters ? (uint32_t) parameters->posts.size : 0);
+    uint32_t npositional_ids = nrequired_ids + signature.npost_ids;
+    signature.autosplat = npositional_ids > 1 || (npositional_ids > 0 && rest != NULL);
 
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
     const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
@@ -1926,6 +1948,16 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     if (rest && rest->name) {
         uint32_t local_id = resolve_local(builder, rest->name, 0);
         emit_store_lvar(builder, rest->base.node_id, local_id, signature.rest_id);
+    }
+
+    if (parameters) {
+        for (uint32_t idx = 0; idx < signature.npost_ids; ++idx) {
+            const pm_node_t *post = parameters->posts.nodes[idx];
+            if (PM_NODE_TYPE_P(post, PM_REQUIRED_PARAMETER_NODE)) {
+                uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) post)->name, 0);
+                emit_store_lvar(builder, post->node_id, local_id, signature.post_ids[idx]);
+            }
+        }
     }
 
     emit_trace_b_call(builder, node->base.node_id);
@@ -2316,7 +2348,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     const pm_rest_parameter_node_t *rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE) ? (const pm_rest_parameter_node_t *) parameters->rest : NULL;
 
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, nrequired_ids, rest != NULL);
+    make_signature(builder, graph_id, &signature, nrequired_ids, rest != NULL, parameters ? (uint32_t) parameters->posts.size : 0);
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
 
     if (parameters) {
@@ -2335,6 +2367,16 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     if (rest && rest->name) {
         uint32_t local_id = resolve_local(builder, rest->name, 0);
         emit_store_lvar(builder, rest->base.node_id, local_id, PrismBuilder_graph(builder)->signature.rest_id);
+    }
+
+    if (parameters) {
+        for (uint32_t idx = 0; idx < signature.npost_ids; ++idx) {
+            const pm_node_t *post = parameters->posts.nodes[idx];
+            if (PM_NODE_TYPE_P(post, PM_REQUIRED_PARAMETER_NODE)) {
+                uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) post)->name, 0);
+                emit_store_lvar(builder, post->node_id, local_id, signature.post_ids[idx]);
+            }
+        }
     }
 
     emit_trace_call(builder, node->base.node_id);
@@ -2389,7 +2431,7 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     uint32_t collection_id = compile_node(builder, node->collection);
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, 0);
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, 1, false);
+    make_signature(builder, graph_id, &signature, 1, false, 0);
     PrismBuilderState state = push_scope(builder, graph_id, &signature, NULL);
     uint32_t param_id = PrismBuilder_graph(builder)->signature.required_ids[0];
 

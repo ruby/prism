@@ -48,11 +48,12 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :rest, :autosplat
+      attr_reader :requireds, :rest, :posts, :autosplat
 
-      def initialize(requireds, rest, autosplat)
+      def initialize(requireds, rest, posts, autosplat)
         @requireds = requireds
         @rest = rest
+        @posts = posts
         @autosplat = autosplat
       end
     end
@@ -97,6 +98,7 @@ module Prism
           signature = graph.signature
           params = signature.requireds.map { |id| value(id) }
           params << "*#{value(signature.rest)}" if signature.rest
+          params.concat(signature.posts.map { |id| value(id) })
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -431,7 +433,7 @@ module Prism
         end
 
         if graph.kind != :block
-          required = signature.requireds.length
+          required = signature.requireds.length + signature.posts.length
           if signature.rest ? args.length < required : args.length != required
             expected = signature.rest ? "#{required}+" : required
             raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{expected})"
@@ -439,7 +441,11 @@ module Prism
         end
 
         signature.requireds.zip(args) { |param, value| values[param] = value }
-        values[signature.rest] = args.drop(signature.requireds.length) if signature.rest
+        if signature.rest || !signature.posts.empty?
+          remaining = args.drop(signature.requireds.length)
+          signature.posts.zip(remaining.last(signature.posts.length)) { |param, value| values[param] = value }
+          values[signature.rest] = remaining.take([remaining.length - signature.posts.length, 0].max) if signature.rest
+        end
 
         while true
           block.insns.each do |insn|

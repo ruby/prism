@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], nil, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], nil, [], false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -182,6 +182,50 @@ module Prism
       ].each do |expected, source|
         assert_run(expected, source)
       end
+    end
+
+    def test_post_block_parameters
+      [
+        [[nil, [], nil, nil], "proc { |a, *rest, b, c| [a, rest, b, c] }.call"],
+        [[1, [], nil, nil], "proc { |a, *rest, b, c| [a, rest, b, c] }.call(1)"],
+        [[1, [], 2, nil], "proc { |a, *rest, b, c| [a, rest, b, c] }.call(1, 2)"],
+        [[1, [], 2, 3], "proc { |a, *rest, b, c| [a, rest, b, c] }.call(1, 2, 3)"],
+        [[1, [2], 3, 4], "proc { |a, *rest, b, c| [a, rest, b, c] }.call(1, 2, 3, 4)"],
+        [[1, [2], 3], "proc { |a, *rest, b| [a, rest, b] }.call([1, 2, 3])"],
+        [[[], 1, nil], "proc { |*rest, a, b| [rest, a, b] }.call(1)"],
+        [[[1, 2], 3], "proc { |*rest, a| [rest, a] }.call([1, 2, 3])"],
+        [2, "proc { |*, a| a }.call([1, 2])"],
+        [[1, 3], "proc { |a, *, b| [a, b] }.call([1, 2, 3])"],
+        [[1, 2, [], nil], "proc { |a, b, *rest, c| [a, b, rest, c] }.call(1, 2)"],
+        [3, "proc { |*rest, a| proc { |b| a + b }.call(1) }.call(2)"],
+        [2, "proc { |_, *rest, _| _ }.call(1, 2)"],
+        [[[1, 2], [3]], "p = proc { |*rest, a| rest << a }; [p.call(1, 2), p.call(3)]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_post_method_parameters
+      source = "class CompileTestPosts; def value(a, *rest, b, c); [a, rest, b, c]; end; end; CompileTestPosts.new"
+      assert_run([1, [], 2, 3], "#{source}.value(1, 2, 3)")
+      assert_run([1, [2, 3], 4, 5], "#{source}.value(1, 2, 3, 4, 5)")
+      assert_run_raises(ArgumentError, "#{source}.value(1, 2)", "wrong number of arguments (given 2, expected 3+)")
+      assert_run_raises(ArgumentError, "#{source}.value([1, 2, 3])", "wrong number of arguments (given 1, expected 3+)")
+      assert_run([[], 1], "class CompileTestPostOnly; def value(*rest, a); [rest, a]; end; end; CompileTestPostOnly.new.value(1)")
+      assert_run([1, 3], "class CompileTestPostAnonymous; def value(a, *, b); [a, b]; end; end; CompileTestPostAnonymous.new.value(1, 2, 3)")
+      assert_run(2, "object = Object.new; def object.value(*, a); a; end; object.value(1, 2)")
+    end
+
+    def test_post_parameters_metadata
+      unit = Prism.compile("proc { |a, *rest, b, c| [a, rest, b, c] }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([0], graph.signature.requireds)
+      assert_equal(1, graph.signature.rest)
+      assert_equal([2, 3], graph.signature.posts)
+      assert_equal([0, 1, 2, 3], graph.blocks[0].params)
+      assert_equal(true, graph.signature.autosplat)
+      assert_predicate(graph.signature.posts, :frozen?)
+      assert_equal([:store_lvar] * 4 + [:trace_b_call], graph.blocks[0].insns.first(5).map(&:kind))
+      assert_include(unit.disasm, "g1(%0, *%1, %2, %3) [autosplat]")
+      assert_empty(compile_unit("proc { _1 }").graphs[1].signature.posts)
     end
 
     def test_numbered_block_parameters
@@ -1941,6 +1985,7 @@ module Prism
         assert_predicate graph.blocks, :frozen?
         assert_predicate graph.signature, :frozen?
         assert_predicate graph.signature.requireds, :frozen?
+        assert_predicate graph.signature.posts, :frozen?
         assert_predicate graph.locals, :frozen?
         graph.locals.each { |local| assert_predicate local, :frozen? }
 
@@ -1990,7 +2035,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], nil, false)
+      signature = Compile::Signature.new([0], nil, [], false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)

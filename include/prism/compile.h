@@ -142,6 +142,8 @@ PRISM_EXPORTED_FUNCTION const PrismSignature * pm_graph_signature(const PrismGra
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_nrequired_ids(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_required_id(const PrismSignature *signature, uint32_t required_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_rest_id(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_npost_ids(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_post_id(const PrismSignature *signature, uint32_t post_idx);
 PRISM_EXPORTED_FUNCTION bool pm_signature_autosplat(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION const PrismBlock * pm_graph_block(const PrismGraph *graph, uint32_t block_id);

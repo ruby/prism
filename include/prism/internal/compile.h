@@ -62,8 +62,10 @@ struct PrismObject {
 
 struct PrismSignature {
     uint32_t *required_ids;
+    uint32_t *post_ids;
     uint32_t nrequired_ids;
     uint32_t rest_id;
+    uint32_t npost_ids;
     bool autosplat;
 };
 
