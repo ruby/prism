@@ -161,6 +161,26 @@ module Prism
       assert_equal(2, vm.run(unit))
     end
 
+    def test_block_local_variables
+      [
+        [[nil, nil], "proc { |; a, b| [a, b] }.call(1, 2)"],
+        [[[nil, nil], 1, 2], "a = 1; b = 2; result = proc { |; a, b| [a, b] }.call; [result, a, b]"],
+        [[1, 1], "p = proc { |; a| a ||= 0; a += 1 }; [p.call, p.call]"],
+        [[2, 3, 2], "factory = proc { |; a| a = 1; proc { a += 1 } }; p = factory.call; q = factory.call; [p.call, p.call, q.call]"],
+        [[1, [2], 3, nil], "proc { |a, *rest, b; c| [a, rest, b, c] }.call(1, 2, 3)"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_block_local_variables_metadata
+      graph = compile_unit("proc { |; a, b| [a, b] }").graphs[1]
+      assert_equal([:a, :b], graph.locals.map(&:name))
+      assert_empty(graph.signature.requireds)
+      assert_nil(graph.signature.rest)
+      assert_empty(graph.signature.posts)
+      assert_empty(graph.blocks[0].params)
+      assert_not_include(graph.blocks[0].insns.map(&:kind), :store_lvar)
+    end
+
     def test_required_block_parameters
       [
         [[2, 3], "[1, 2].map { |a| a + 1 }"],
