@@ -67,6 +67,7 @@ module Prism
     def test_compile_ids
       unit = Prism.compile("a = 1; proc { |b, c| if b; c + a; else; a; end }.call(2, 3)", freeze: true).value
       unit.graphs.each_with_index do |graph, graph_id|
+        assert_equal(graph.signature.required_ids, graph.blocks[0].params)
         assert_equal(graph_id, graph.id)
         graph.blocks.each_with_index do |block, block_id|
           assert_equal(block_id, block.id)
@@ -99,8 +100,8 @@ module Prism
     def test_disasm_uses_ids
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
-      block = Compile::Block.new(4, [insn], [], false)
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1)
+      block = Compile::Block.new(4, [insn], [])
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -111,8 +112,8 @@ module Prism
       source = "a = 1; proc { |b, c| if b; c + a; else; a; end }.call(2, 3)"
       unit = Prism.compile(source, freeze: true).value
       output = unit.disasm
-      assert_include(output, "g1 (block, parent=g0, scope=g1):")
-      assert_include(output, "bb0(%0, %1) [autosplat]:")
+      assert_include(output, "g1(%0, %1) [autosplat] (block, parent=g0, scope=g1):")
+      assert_include(output, "bb0(%0, %1):")
       assert_match(/call_with_block %\d+\.proc &%\d+/, output)
       assert_match(/branchif %\d+ bb\d+ bb\d+/, output)
       assert_match(/branch bb\d+\(%\d+\)/, output)
@@ -149,6 +150,15 @@ module Prism
       assert_equal([item], run_instructions(insns, [item], 2))
       item.define_singleton_method(:to_ary) { 1 }
       assert_raise(TypeError) { run_instructions(insns, [item], 2) }
+    end
+
+    def test_signature_and_branch_parameters
+      unit = compile_unit("def signature_branch(first, second); if first; second; else; first; end; end; signature_branch(1, 2)")
+      graph = unit.graphs.find { |candidate| candidate.kind == :def }
+      assert_equal([0, 1], graph.signature.required_ids)
+      assert_equal(graph.signature.required_ids, graph.blocks[0].params)
+      assert(graph.blocks.drop(1).any? { |block| !block.params.empty? })
+      assert_equal(2, vm.run(unit))
     end
 
     def test_required_block_parameters
@@ -196,20 +206,21 @@ module Prism
     def test_required_block_parameters_trace
       unit = compile_unit("proc { |a, b| a + b }")
       graph = unit.graphs[1]
-      assert_equal(2, graph.blocks[0].params.length)
+      assert_equal(2, graph.signature.required_ids.length)
+      assert_equal(graph.signature.required_ids, graph.blocks[0].params)
       assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
     end
 
     def test_block_autosplat_metadata
       { "proc {}" => false, "proc { |a| a }" => false, "proc { |a, b| a }" => true }.each do |source, expected|
         unit = compile_unit(source)
-        assert_equal(expected, unit.graphs[1].blocks[0].autosplat)
-        assert_equal(false, unit.graphs[0].blocks[0].autosplat)
+        assert_equal(expected, unit.graphs[1].signature.autosplat)
+        assert_equal(false, unit.graphs[0].signature.autosplat)
       end
       unit = compile_unit("for i in [1]; end")
-      assert_equal(false, unit.graphs[1].blocks[0].autosplat)
+      assert_equal(false, unit.graphs[1].signature.autosplat)
       unit = compile_unit("class CompileTestAutosplat; def value(a, b); a; end; end")
-      assert_equal(false, unit.graphs[2].blocks[0].autosplat)
+      assert_equal(false, unit.graphs[2].signature.autosplat)
     end
 
     def test_block_capture_lifetime
@@ -1765,6 +1776,8 @@ module Prism
       unit.graphs.each do |graph|
         assert_predicate graph, :frozen?
         assert_predicate graph.blocks, :frozen?
+        assert_predicate graph.signature, :frozen?
+        assert_predicate graph.signature.required_ids, :frozen?
         assert_predicate graph.locals, :frozen?
         graph.locals.each { |local| assert_predicate local, :frozen? }
 
@@ -1813,8 +1826,9 @@ module Prism
     private
 
     def run_instructions(insns, args, nvalues)
-      block = Compile::Block.new(0, insns, [0], false)
-      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues)
+      block = Compile::Block.new(0, insns, [0])
+      signature = Compile::Signature.new([0], false)
+      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
     end

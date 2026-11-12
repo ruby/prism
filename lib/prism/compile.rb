@@ -38,20 +38,28 @@ module Prism
     end
 
     class Block
-      attr_reader :id, :insns, :params, :autosplat
+      attr_reader :id, :insns, :params
 
-      def initialize(id, insns, params, autosplat)
+      def initialize(id, insns, params)
         @id = id
         @insns = insns
         @params = params
+      end
+    end
+
+    class Signature
+      attr_reader :required_ids, :autosplat
+
+      def initialize(required_ids, autosplat)
+        @required_ids = required_ids
         @autosplat = autosplat
       end
     end
 
     class Graph
-      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues
+      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues, :signature
 
-      def initialize(id, kind, parent, scope, blocks, locals, nvalues)
+      def initialize(id, kind, parent, scope, blocks, locals, nvalues, signature)
         @id = id
         @kind = kind
         @parent = parent
@@ -59,6 +67,7 @@ module Prism
         @blocks = blocks
         @locals = locals
         @nvalues = nvalues
+        @signature = signature
       end
     end
 
@@ -84,10 +93,12 @@ module Prism
           context = [graph.kind]
           context << "parent=#{graph_ref(graph.parent)}" if graph.parent
           context << "scope=#{graph_ref(graph.scope)}"
-          output << "#{graph_ref(graph)} (#{context.join(', ')}):\n"
+          signature = graph.signature
+          params = signature.required_ids.map { |id| value(id) }
+          output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
-            output << "  #{block_ref(block)}#{values(block.params)}#{block.autosplat ? " [autosplat]" : ""}:\n"
+            output << "  #{block_ref(block)}#{values(block.params)}:\n"
             block.insns.each do |insn|
               output << "    #{instruction(insn)}\n"
             end
@@ -411,15 +422,17 @@ module Prism
         values = frame.values
         block = graph.blocks[0]
 
-        if block.autosplat && args.length == 1
+        signature = graph.signature
+
+        if signature.autosplat && args.length == 1
           args = Array.try_convert(args[0]) || args
         end
 
-        if graph.kind != :block && args.length != block.params.length
-          raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{block.params.length})"
+        if graph.kind != :block && args.length != signature.required_ids.length
+          raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{signature.required_ids.length})"
         end
 
-        block.params.zip(args) { |param, value| values[param] = value }
+        signature.required_ids.zip(args) { |param, value| values[param] = value }
 
         while true
           block.insns.each do |insn|

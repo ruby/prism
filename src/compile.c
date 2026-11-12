@@ -129,6 +129,27 @@ pm_graph_scope_id(const PrismGraph *graph) {
     return graph->scope_id;
 }
 
+const PrismSignature *
+pm_graph_signature(const PrismGraph *graph) {
+    return &graph->signature;
+}
+
+uint32_t
+pm_signature_nrequired_ids(const PrismSignature *signature) {
+    return signature->nrequired_ids;
+}
+
+uint32_t
+pm_signature_required_id(const PrismSignature *signature, uint32_t required_idx) {
+    assert(required_idx < signature->nrequired_ids);
+    return signature->required_ids[required_idx];
+}
+
+bool
+pm_signature_autosplat(const PrismSignature *signature) {
+    return signature->autosplat;
+}
+
 uint32_t
 pm_graph_nblocks(const PrismGraph *graph) {
     return graph->nblocks;
@@ -164,11 +185,6 @@ pm_block_ninsns(const PrismBlock *block) {
 uint32_t
 pm_block_nparams(const PrismBlock *block) {
     return block->nparams;
-}
-
-bool
-pm_block_autosplat(const PrismBlock *block) {
-    return block->autosplat;
 }
 
 uint32_t
@@ -464,7 +480,7 @@ make_block(PrismBuilder *builder, uint32_t nparams) {
 }
 
 static PrismBuilderState
-push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_constant_id_list_t *locals) {
+push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nrequired_ids, const pm_constant_id_list_t *locals) {
     PrismBuilderState state = builder->state;
 
     builder->state = (PrismBuilderState) {
@@ -473,7 +489,11 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_
         .locals = locals
     };
 
-    builder->state.block_id = make_block(builder, nparams);
+    builder->state.block_id = make_block(builder, nrequired_ids);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->signature.nrequired_ids = nrequired_ids;
+    graph->signature.required_ids = graph->blocks[builder->state.block_id].params;
 
     if (locals == NULL) {
         uint32_t scope_id = builder->unit->graphs[state.graph_id].scope_id;
@@ -481,7 +501,6 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_
     }
 
     if (locals && locals->size) {
-        PrismGraph *graph = PrismBuilder_graph(builder);
         uint32_t *shadowed = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * locals->size, PRISM_ALIGNOF(uint32_t));
 
         for (size_t idx = 0; idx < locals->size; ++idx) {
@@ -1803,18 +1822,18 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     }
 
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, (uint32_t) node->locals.size);
-    uint32_t nparams = parameters ? (uint32_t) parameters->requireds.size : 0;
-    PrismBuilderState state = push_scope(builder, graph_id, nparams, &node->locals);
+    uint32_t nrequired_ids = parameters ? (uint32_t) parameters->requireds.size : 0;
+    PrismBuilderState state = push_scope(builder, graph_id, nrequired_ids, &node->locals);
 
-    PrismBuilder_graph(builder)->blocks[builder->state.block_id].autosplat = nparams > 1;
-    const uint32_t *params = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params;
+    PrismBuilder_graph(builder)->signature.autosplat = nrequired_ids > 1;
+    const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
 
-    for (uint32_t idx = 0; idx < nparams; ++idx) {
+    for (uint32_t idx = 0; idx < nrequired_ids; ++idx) {
         const pm_node_t *required = parameters->requireds.nodes[idx];
 
         if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
             uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
-            emit_store_lvar(builder, required->node_id, local_id, params[idx]);
+            emit_store_lvar(builder, required->node_id, local_id, required_ids[idx]);
         }
     }
 
@@ -2197,14 +2216,14 @@ static uint32_t
 compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphDef, UINT32_MAX, (uint32_t) node->locals.size);
 
-    uint32_t nparams = 0;
+    uint32_t nrequired_ids = 0;
     const pm_parameters_node_t *parameters = node->parameters;
     if (parameters) {
-        nparams = (uint32_t) parameters->requireds.size;
+        nrequired_ids = (uint32_t) parameters->requireds.size;
     }
 
-    PrismBuilderState state = push_scope(builder, graph_id, nparams, &node->locals);
-    uint32_t *params = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params;
+    PrismBuilderState state = push_scope(builder, graph_id, nrequired_ids, &node->locals);
+    uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
 
     if (parameters) {
         for (size_t idx = 0; idx < parameters->requireds.size; ++idx) {
@@ -2212,7 +2231,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 
             if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
                 uint32_t resolved_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
-                emit_store_lvar(builder, required->node_id, resolved_id, params[idx]);
+                emit_store_lvar(builder, required->node_id, resolved_id, required_ids[idx]);
             }
         }
     }
@@ -2269,7 +2288,7 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     uint32_t collection_id = compile_node(builder, node->collection);
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, 0);
     PrismBuilderState state = push_scope(builder, graph_id, 1, NULL);
-    uint32_t param_id = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params[0];
+    uint32_t param_id = PrismBuilder_graph(builder)->signature.required_ids[0];
 
     PrismTargetParents parents = { 0 };
     compile_target_node_parents(builder, node->index, &parents);

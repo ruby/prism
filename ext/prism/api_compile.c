@@ -15,6 +15,7 @@ static VALUE rb_cPrismCompileLocal;
 static VALUE rb_cPrismCompileInsn;
 static VALUE rb_cPrismCompileBlock;
 static VALUE rb_cPrismCompileGraph;
+static VALUE rb_cPrismCompileSignature;
 static VALUE rb_cPrismCompileUnit;
 
 static ID
@@ -315,8 +316,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
             /* The instructions array is filled in once every graph and block
              * exists, since instructions refer to them. It is frozen then. */
-            VALUE vblock_argv[] = { UINT2NUM(block_id), vinsns, vparams, pm_block_autosplat(block) ? Qtrue : Qfalse };
-            VALUE vblock = compile_freeze(rb_class_new_instance(4, vblock_argv, rb_cPrismCompileBlock), freeze);
+            VALUE vblock_argv[] = { UINT2NUM(block_id), vinsns, vparams };
+            VALUE vblock = compile_freeze(rb_class_new_instance(3, vblock_argv, rb_cPrismCompileBlock), freeze);
             rb_ary_push(vblocks, vblock);
         }
         compile_freeze(vblocks, freeze);
@@ -329,13 +330,24 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         }
         compile_freeze(vlocals, freeze);
 
+        const PrismSignature *signature = pm_graph_signature(graph);
+        uint32_t nrequired_ids = pm_signature_nrequired_ids(signature);
+        VALUE vrequired_ids = rb_ary_new_capa(nrequired_ids);
+        for (uint32_t required_idx = 0; required_idx < nrequired_ids; ++required_idx) {
+            rb_ary_push(vrequired_ids, UINT2NUM(pm_signature_required_id(signature, required_idx)));
+        }
+        compile_freeze(vrequired_ids, freeze);
+
+        VALUE vsignature_argv[] = { vrequired_ids, pm_signature_autosplat(signature) ? Qtrue : Qfalse };
+        VALUE vsignature = compile_freeze(rb_class_new_instance(2, vsignature_argv, rb_cPrismCompileSignature), freeze);
+
         uint32_t nvalues = pm_graph_nvalues(graph);
         VALUE vnvalues = UINT2NUM(nvalues);
 
         uint32_t scope_id = pm_graph_scope_id(graph);
         VALUE vscope = scope_id == graph_id ? Qnil : rb_ary_entry(vgraphs, scope_id);
-        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues };
-        VALUE vgraph = compile_freeze(rb_class_new_instance(7, vgraph_argv, rb_cPrismCompileGraph), freeze);
+        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues, vsignature };
+        VALUE vgraph = compile_freeze(rb_class_new_instance(8, vgraph_argv, rb_cPrismCompileGraph), freeze);
         rb_ary_push(vgraphs, vgraph);
     }
     compile_freeze(vgraphs, freeze);
@@ -396,6 +408,7 @@ Init_prism_api_compile(void) {
     rb_cPrismCompileLocal = rb_define_class_under(rb_cPrismCompile, "Local", rb_cObject);
     rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
     rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
+    rb_cPrismCompileSignature = rb_define_class_under(rb_cPrismCompile, "Signature", rb_cObject);
     rb_cPrismCompileGraph = rb_define_class_under(rb_cPrismCompile, "Graph", rb_cObject);
     rb_cPrismCompileUnit = rb_define_class_under(rb_cPrismCompile, "Unit", rb_cObject);
 }

@@ -44,7 +44,6 @@ struct PrismBlock {
     uint32_t ninsns;
     uint32_t nparams;
     uint32_t insns_capa;
-    bool autosplat;
 };
 
 struct PrismObject {
@@ -61,7 +60,14 @@ struct PrismObject {
     } as;
 };
 
+struct PrismSignature {
+    uint32_t *required_ids;
+    uint32_t nrequired_ids;
+    bool autosplat;
+};
+
 struct PrismGraph {
+    PrismSignature signature;
     PrismBlock *blocks;
     uint32_t *opnds;
     uint32_t *local_ids;

@@ -18,6 +18,7 @@ extern "C" {
 typedef struct PrismUnit PrismUnit;
 typedef struct PrismLocal PrismLocal;
 typedef struct PrismGraph PrismGraph;
+typedef struct PrismSignature PrismSignature;
 typedef struct PrismBlock PrismBlock;
 typedef struct PrismInsn PrismInsn;
 typedef struct PrismConstantPath PrismConstantPath;
@@ -137,6 +138,10 @@ PRISM_EXPORTED_FUNCTION const PrismGraph * pm_unit_graph(const PrismUnit *unit, 
 PRISM_EXPORTED_FUNCTION PrismGraphKind pm_graph_kind(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_parent_id(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_scope_id(const PrismGraph *graph);
+PRISM_EXPORTED_FUNCTION const PrismSignature * pm_graph_signature(const PrismGraph *graph);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_nrequired_ids(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_required_id(const PrismSignature *signature, uint32_t required_idx);
+PRISM_EXPORTED_FUNCTION bool pm_signature_autosplat(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION const PrismBlock * pm_graph_block(const PrismGraph *graph, uint32_t block_id);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nlocals(const PrismGraph *graph);
@@ -144,7 +149,6 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_graph_local_id(const PrismGraph *graph, uint
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nvalues(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_ninsns(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_nparams(const PrismBlock *block);
-PRISM_EXPORTED_FUNCTION bool pm_block_autosplat(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_param(const PrismBlock *block, uint32_t param_idx);
 PRISM_EXPORTED_FUNCTION const PrismInsn * pm_block_insn(const PrismBlock *block, uint32_t insn_idx);
 PRISM_EXPORTED_FUNCTION PrismInsnKind pm_insn_kind(const PrismInsn *insn);
