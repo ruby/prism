@@ -184,6 +184,40 @@ module Prism
       end
     end
 
+    def test_numbered_block_parameters
+      [
+        [[2, 3], "[1, 2].map { _1 + 1 }"],
+        [nil, "proc { _1 }.call"],
+        [1, "proc { _1 }.call(1, 2)"],
+        [[1, 2], "proc { _1 }.call([1, 2])"],
+        [[nil, nil], "proc { [_1, _2] }.call"],
+        [[1, nil], "proc { [_1, _2] }.call(1)"],
+        [[1, 2], "proc { [_1, _2] }.call([1, 2, 3])"],
+        [3, "proc { _3 }.call(1, 2, 3, 4)"],
+        [4, "proc { x = 1; x + _3 }.call([1, 2, 3])"],
+        [9, "proc { _9 }.call(1, 2, 3, 4, 5, 6, 7, 8, 9)"],
+        [[[:a, 1]], "{ a: 1 }.map { [_1, _2] }"],
+        [[1, 3], "[proc { _1 }.call(1), proc { _2 }.call(2, 3)]"],
+        [2, "proc { proc { _2 }.call(1, 2) }.call"],
+        [4, "proc { for i in [1]; for j in [2]; a = _1 + i + j; end; end; a }.call(1)"],
+        [3, "a = 1; proc { a + _1 }.call(2)"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_numbered_block_parameters_metadata
+      unit = Prism.compile("proc { x = 1; _3 }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([0, 1, 2], graph.signature.requireds)
+      assert_equal(graph.signature.requireds, graph.blocks[0].params)
+      assert_equal(true, graph.signature.autosplat)
+      assert_nil(graph.signature.rest)
+      stores = graph.blocks[0].insns.first(3)
+      assert_equal([:store_lvar] * 3, stores.map(&:kind))
+      assert_equal([:_1, :_2, :_3], stores.map { |insn| insn.data.name })
+      assert_equal([0, 1, 2], stores.map { |insn| insn.opnds[0] })
+      assert_equal(false, compile_unit("proc { _1 }").graphs[1].signature.autosplat)
+    end
+
     def test_it_block_parameter
       [
         [[2, 3], "[1, 2].map { it + 1 }"],

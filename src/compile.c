@@ -1859,8 +1859,11 @@ static uint32_t
 compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     const pm_parameters_node_t *parameters = NULL;
     const pm_rest_parameter_node_t *rest = NULL;
+
     uint32_t nrequired_ids = 0;
     uint32_t nlocal_ids = (uint32_t) node->locals.size;
+
+    bool numbered = false;
     bool it = false;
 
     if (node->parameters) {
@@ -1873,6 +1876,10 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
                         rest = (const pm_rest_parameter_node_t *) parameters->rest;
                     }
                 }
+                break;
+            case PM_NUMBERED_PARAMETERS_NODE:
+                numbered = true;
+                nrequired_ids = ((const pm_numbered_parameters_node_t *) node->parameters)->maximum;
                 break;
             case PM_IT_PARAMETERS_NODE:
                 it = true;
@@ -1902,7 +1909,14 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
         }
     }
 
-    if (it) {
+    if (numbered) {
+        for (uint32_t idx = 0; idx < nrequired_ids; ++idx) {
+            const uint8_t name[] = { '_', (uint8_t) ('1' + idx) };
+            pm_constant_id_t name_id = pm_parser_constant_find(builder->parser, name, sizeof(name));
+            uint32_t local_id = resolve_local(builder, name_id, 0);
+            emit_store_lvar(builder, node->parameters->node_id, local_id, required_ids[idx]);
+        }
+    } else if (it) {
         uint32_t local_id = make_local(builder, PM_CONSTANT_ID_IT);
         builder->state.it_local_id = local_id;
         PrismBuilder_graph(builder)->local_ids[node->locals.size] = local_id;
@@ -3199,6 +3213,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_PINNED_VARIABLE_NODE:
         case PM_PRE_EXECUTION_NODE:
         case PM_IT_PARAMETERS_NODE:
+        case PM_NUMBERED_PARAMETERS_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
         case PM_REST_PARAMETER_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
