@@ -137,6 +137,9 @@ module Prism
         when :call
           opnds = insn.opnds
           "#{value(opnds[0])} = call #{value(opnds[1])}.#{insn.data}#{values(opnds[2..])}"
+        when :coerce_array
+          opnds = insn.opnds
+          "#{value(opnds[0])} = coerce_array#{values(opnds[1..])}"
         when :coerce_hash
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_hash#{values(opnds[1..])}"
@@ -441,6 +444,9 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2..]))
             when :call_with_block
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2...-1]), &values[insn.opnds[-1]])
+            when :coerce_array
+              value = values[insn.opnds[1]]
+              values[insn.opnds[0]] = Array.try_convert(value) || [value]
             when :coerce_hash
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)

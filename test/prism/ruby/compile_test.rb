@@ -136,6 +136,21 @@ module Prism
       assert_equal(compile_unit("1 + 2").disasm, stdout)
     end
 
+    def test_coerce_array_instruction
+      insns = [Compile::Insn.new(:coerce_array, 0, [1, 0], nil), Compile::Insn.new(:return, 0, [1], nil)]
+      array = [1, 2]
+      assert_same(array, run_instructions(insns, [array], 2))
+      assert_equal([nil], run_instructions(insns, [nil], 2))
+      assert_equal([1], run_instructions(insns, [1], 2))
+      item = Object.new
+      item.define_singleton_method(:to_ary) { array }
+      assert_same(array, run_instructions(insns, [item], 2))
+      item.define_singleton_method(:to_ary) { nil }
+      assert_equal([item], run_instructions(insns, [item], 2))
+      item.define_singleton_method(:to_ary) { 1 }
+      assert_raise(TypeError) { run_instructions(insns, [item], 2) }
+    end
+
     def test_required_block_parameters
       [
         [[2, 3], "[1, 2].map { |a| a + 1 }"],
@@ -1796,6 +1811,13 @@ module Prism
     end
 
     private
+
+    def run_instructions(insns, args, nvalues)
+      block = Compile::Block.new(0, insns, [0], false)
+      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues)
+      frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
+      vm.run_frame(frame, args)
+    end
 
     def assert_post_execution(expected, source)
       script = 'Prism::Compile::VM.new.run(Prism.compile(ARGV.fetch(0), raise_error: :plain).value)'

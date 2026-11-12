@@ -25,6 +25,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");
         case kPrismInsnCallWithBlock: return rb_intern_const("call_with_block");
         case kPrismInsnCall: return rb_intern_const("call");
+        case kPrismInsnCoerceArray: return rb_intern_const("coerce_array");
         case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
         case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
         case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");

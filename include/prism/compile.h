@@ -29,6 +29,7 @@ typedef enum {
     kPrismInsnBranchIf,
     kPrismInsnCall,
     kPrismInsnCallWithBlock,
+    kPrismInsnCoerceArray,
     kPrismInsnCoerceHash,
     kPrismInsnCoerceString,
     kPrismInsnDefineClassAbs,
