@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], nil, [], false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -202,6 +202,80 @@ module Prism
       ].each do |expected, source|
         assert_run(expected, source)
       end
+    end
+
+    def test_optional_method_parameters
+      source = "class CompileTestOptionals; def value(a = 1, b = a + 2); [a, b]; end; end; CompileTestOptionals.new"
+      assert_run([1, 3], "#{source}.value")
+      assert_run([4, 6], "#{source}.value(4)")
+      assert_run([4, 8], "#{source}.value(4, 8)")
+      assert_run([nil, nil], "#{source}.value(nil, nil)")
+      assert_run_raises(ArgumentError, "#{source}.value(1, 2, 3)", "wrong number of arguments (given 3, expected 0..2)")
+      source = "class CompileTestOptionalRequired; def value(a, b = a + 1); [a, b]; end; end; CompileTestOptionalRequired.new"
+      assert_run([2, 3], "#{source}.value(2)")
+      assert_run_raises(ArgumentError, "#{source}.value", "wrong number of arguments (given 0, expected 1..2)")
+      assert_run([1, 2], "object = Object.new; def object.value(a = 1, b = a + 1); [a, b]; end; object.value")
+    end
+
+    def test_optional_parameter_defaults
+      [
+        [[[1, 2], [1, 2]], "events = []; p = proc { |a = (events << 1; 1), b = (events << 2; a + 1)| [a, b] }; result = p.call; [result, events]"],
+        [[[4, 5], [2]], "events = []; p = proc { |a = (events << 1; 1), b = (events << 2; a + 1)| [a, b] }; result = p.call(4); [result, events]"],
+        [[nil, []], "events = []; p = proc { |a = (events << 1)| a }; result = p.call(nil); [result, events]"],
+        [3, "proc { |a = (if true; 3; else; 4; end)| a }.call"],
+        [2, "proc { |a = proc { 2 }.call| a }.call"],
+        [[1, 1], "proc { |a = 1, b = proc { a }.call| [a, b] }.call"],
+        [[[1], [1]], "p = proc { |a = []| a << 1 }; [p.call, p.call]"],
+        [4, "a = 3; proc { |b = (a + 1)| b }.call"],
+        [1, "proc { |a = raise('default ran')| a }.call(1)"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(RuntimeError, "proc { |a = raise('default ran')| a }.call", "default ran")
+    end
+
+    def test_optional_block_parameters
+      [
+        [[1, 2], "proc { |a = 1, b = (a + 1)| [a, b] }.call"],
+        [[3, 4], "proc { |a = 1, b = 2| [a, b] }.call([3, 4])"],
+        [[3, 4], "proc { |a = 1, b = 2| [a, b] }.call(3, 4, 5)"],
+        [[3, 4], "proc { |a = 1| a }.call([3, 4])"],
+        [[[3, 4], []], "proc { |a = 1, *rest| [a, rest] }.call([3, 4])"],
+        [[nil, 2], "proc { |a, b = 2| [a, b] }.call"],
+        [[1, 2, nil], "proc { |a, b = 2, c| [a, b, c] }.call(1)"],
+        [[1, 2, 3], "proc { |a, b = 2, c| [a, b, c] }.call(1, 3)"],
+        [[1, 2, [], 3], "proc { |a, b = 2, *rest, c| [a, b, rest, c] }.call(1, 3)"],
+        [[1, 4, [5], 6], "proc { |a, b = 2, *rest, c| [a, b, rest, c] }.call([1, 4, 5, 6])"],
+        [[2, [], 3], "proc { |a = 2, *rest, b| [a, rest, b] }.call(3)"],
+        [[2, 3], "proc { |a = 1, b| [a, b] }.call(2, 3, 4)"],
+        [[1, nil], "proc { |a = 1, b| [a, b] }.call"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_optional_method_parameters_with_posts_and_rest
+      source = "class CompileTestOptionalPosts; def value(a, b = 2, *rest, c); [a, b, rest, c]; end; end; CompileTestOptionalPosts.new"
+      assert_run([1, 2, [], 3], "#{source}.value(1, 3)")
+      assert_run([1, 4, [], 3], "#{source}.value(1, 4, 3)")
+      assert_run([1, 4, [5], 6], "#{source}.value(1, 4, 5, 6)")
+      assert_run_raises(ArgumentError, "#{source}.value(1)", "wrong number of arguments (given 1, expected 2+)")
+      source = "class CompileTestOptionalPost; def value(a = 2, b); [a, b]; end; end; CompileTestOptionalPost.new"
+      assert_run([2, 3], "#{source}.value(3)")
+      assert_run([4, 3], "#{source}.value(4, 3)")
+      assert_run_raises(ArgumentError, "#{source}.value(1, 2, 3)", "wrong number of arguments (given 3, expected 1..2)")
+    end
+
+    def test_optional_parameters_metadata
+      unit = Prism.compile("proc { |a, b = 1, c = (b + 1), *rest, d| [a, b, c, rest, d] }", freeze: true).value
+      graph = unit.graphs[1]
+      signature = graph.signature
+      assert_equal([0], signature.requireds)
+      assert_equal([1, 3], signature.optionals)
+      assert_equal([2, 4], signature.optional_specifieds)
+      assert_equal(5, signature.rest)
+      assert_equal([6], signature.posts)
+      assert_equal((0..6).to_a, graph.blocks[0].params)
+      assert_predicate(signature.optionals, :frozen?)
+      assert_predicate(signature.optional_specifieds, :frozen?)
+      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :branch_if })
+      assert_include(unit.disasm, "%1?%2, %3?%4")
     end
 
     def test_post_block_parameters
@@ -2006,6 +2080,8 @@ module Prism
         assert_predicate graph.signature, :frozen?
         assert_predicate graph.signature.requireds, :frozen?
         assert_predicate graph.signature.posts, :frozen?
+        assert_predicate graph.signature.optionals, :frozen?
+        assert_predicate graph.signature.optional_specifieds, :frozen?
         assert_predicate graph.locals, :frozen?
         graph.locals.each { |local| assert_predicate local, :frozen? }
 
@@ -2055,7 +2131,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], nil, [], false)
+      signature = Compile::Signature.new([0], [], [], nil, [], false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)

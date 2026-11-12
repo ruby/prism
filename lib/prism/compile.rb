@@ -48,10 +48,12 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :rest, :posts, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :autosplat
 
-      def initialize(requireds, rest, posts, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, autosplat)
         @requireds = requireds
+        @optionals = optionals
+        @optional_specifieds = optional_specifieds
         @rest = rest
         @posts = posts
         @autosplat = autosplat
@@ -97,6 +99,7 @@ module Prism
           context << "scope=#{graph_ref(graph.scope)}"
           signature = graph.signature
           params = signature.requireds.map { |id| value(id) }
+          signature.optionals.zip(signature.optional_specifieds) { |id, specified| params << "#{value(id)}?#{value(specified)}" }
           params << "*#{value(signature.rest)}" if signature.rest
           params.concat(signature.posts.map { |id| value(id) })
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
@@ -432,19 +435,27 @@ module Prism
           args = Array.try_convert(args[0]) || args
         end
 
-        if graph.kind != :block
-          required = signature.requireds.length + signature.posts.length
-          if signature.rest ? args.length < required : args.length != required
-            expected = signature.rest ? "#{required}+" : required
+        required = signature.requireds.length + signature.posts.length
+        maximum = required + signature.optionals.length
+        if graph.kind == :block
+          args = args.take(maximum) if !signature.rest && args.length > maximum
+        else
+          if args.length < required || (!signature.rest && args.length > maximum)
+            expected = signature.rest ? "#{required}+" : required == maximum ? required : "#{required}..#{maximum}"
             raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{expected})"
           end
         end
 
         signature.requireds.zip(args) { |param, value| values[param] = value }
-        if signature.rest || !signature.posts.empty?
+        if signature.rest || !signature.posts.empty? || !signature.optionals.empty?
           remaining = args.drop(signature.requireds.length)
           signature.posts.zip(remaining.last(signature.posts.length)) { |param, value| values[param] = value }
-          values[signature.rest] = remaining.take([remaining.length - signature.posts.length, 0].max) if signature.rest
+          middle = remaining.take([remaining.length - signature.posts.length, 0].max)
+          signature.optionals.each_with_index do |param, idx|
+            values[param] = middle[idx]
+            values[signature.optional_specifieds[idx]] = idx < middle.length
+          end
+          values[signature.rest] = middle.drop(signature.optionals.length) if signature.rest
         end
 
         while true
