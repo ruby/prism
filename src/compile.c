@@ -520,6 +520,15 @@ make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signatu
     }
 }
 
+static void
+compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signature, const pm_parameters_node_t *parameters) {
+    uint32_t nrequired_ids = parameters ? (uint32_t) parameters->requireds.size : 0;
+    uint32_t noptional_ids = parameters ? (uint32_t) parameters->optionals.size : 0;
+    uint32_t npost_ids = parameters ? (uint32_t) parameters->posts.size : 0;
+    bool has_rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE);
+    make_signature(builder, graph_id, signature, nrequired_ids, noptional_ids, has_rest, npost_ids);
+}
+
 static uint32_t
 make_block(PrismBuilder *builder, uint32_t nparams) {
     PrismGraph *graph = PrismBuilder_graph(builder);
@@ -1920,10 +1929,43 @@ compile_optional_parameter_node(PrismBuilder *builder, const pm_optional_paramet
     emit_store_lvar(builder, node->base.node_id, local_id, PrismBuilder_graph(builder)->blocks[join_block_id].params[0]);
 }
 
+static void
+compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters, const PrismSignature *signature) {
+    if (!parameters) return;
+
+    for (uint32_t idx = 0; idx < signature->nrequired_ids; ++idx) {
+        const pm_node_t *required = parameters->requireds.nodes[idx];
+        if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
+            uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
+            emit_store_lvar(builder, required->node_id, local_id, signature->required_ids[idx]);
+        }
+    }
+
+    if (parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE)) {
+        const pm_rest_parameter_node_t *rest = (const pm_rest_parameter_node_t *) parameters->rest;
+        if (rest->name) {
+            uint32_t local_id = resolve_local(builder, rest->name, 0);
+            emit_store_lvar(builder, rest->base.node_id, local_id, signature->rest_id);
+        }
+    }
+
+    for (uint32_t idx = 0; idx < signature->npost_ids; ++idx) {
+        const pm_node_t *post = parameters->posts.nodes[idx];
+        if (PM_NODE_TYPE_P(post, PM_REQUIRED_PARAMETER_NODE)) {
+            uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) post)->name, 0);
+            emit_store_lvar(builder, post->node_id, local_id, signature->post_ids[idx]);
+        }
+    }
+
+    for (uint32_t idx = 0; idx < signature->noptional_ids; ++idx) {
+        const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
+        compile_optional_parameter_node(builder, optional, signature->optional_ids[idx], signature->optional_specified_ids[idx]);
+    }
+}
+
 static uint32_t
 compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     const pm_parameters_node_t *parameters = NULL;
-    const pm_rest_parameter_node_t *rest = NULL;
 
     uint32_t nrequired_ids = 0;
     uint32_t nlocal_ids = (uint32_t) node->locals.size;
@@ -1935,12 +1977,6 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
         switch (PM_NODE_TYPE(node->parameters)) {
             case PM_BLOCK_PARAMETERS_NODE:
                 parameters = ((const pm_block_parameters_node_t *) node->parameters)->parameters;
-                if (parameters) {
-                    nrequired_ids = (uint32_t) parameters->requireds.size;
-                    if (parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE)) {
-                        rest = (const pm_rest_parameter_node_t *) parameters->rest;
-                    }
-                }
                 break;
             case PM_NUMBERED_PARAMETERS_NODE:
                 numbered = true;
@@ -1959,21 +1995,16 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, nlocal_ids);
 
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, nrequired_ids, parameters ? (uint32_t) parameters->optionals.size : 0, rest != NULL, parameters ? (uint32_t) parameters->posts.size : 0);
-    uint32_t npositional_ids = nrequired_ids + signature.npost_ids;
-    signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && rest != NULL);
+    if (parameters) {
+        compile_parameters_signature(builder, graph_id, &signature, parameters);
+    } else {
+        make_signature(builder, graph_id, &signature, nrequired_ids, 0, false, 0);
+    }
+    uint32_t npositional_ids = signature.nrequired_ids + signature.npost_ids;
+    signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && signature.rest_id != UINT32_MAX);
 
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
     const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
-
-    for (uint32_t idx = 0; parameters && idx < nrequired_ids; ++idx) {
-        const pm_node_t *required = parameters->requireds.nodes[idx];
-
-        if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
-            uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
-            emit_store_lvar(builder, required->node_id, local_id, required_ids[idx]);
-        }
-    }
 
     if (numbered) {
         for (uint32_t idx = 0; idx < nrequired_ids; ++idx) {
@@ -1989,25 +2020,7 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
         emit_store_lvar(builder, node->parameters->node_id, local_id, required_ids[0]);
     }
 
-    if (rest && rest->name) {
-        uint32_t local_id = resolve_local(builder, rest->name, 0);
-        emit_store_lvar(builder, rest->base.node_id, local_id, signature.rest_id);
-    }
-
-    if (parameters) {
-        for (uint32_t idx = 0; idx < signature.npost_ids; ++idx) {
-            const pm_node_t *post = parameters->posts.nodes[idx];
-            if (PM_NODE_TYPE_P(post, PM_REQUIRED_PARAMETER_NODE)) {
-                uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) post)->name, 0);
-                emit_store_lvar(builder, post->node_id, local_id, signature.post_ids[idx]);
-            }
-        }
-    }
-
-    for (uint32_t idx = 0; idx < signature.noptional_ids; ++idx) {
-        const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
-        compile_optional_parameter_node(builder, optional, signature.optional_ids[idx], signature.optional_specified_ids[idx]);
-    }
+    compile_parameters(builder, parameters, &signature);
 
     emit_trace_b_call(builder, node->base.node_id);
     uint32_t body_id = compile_node_or_nil(builder, node->body, node->base.node_id);
@@ -2388,50 +2401,10 @@ static uint32_t
 compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphDef, UINT32_MAX, (uint32_t) node->locals.size);
 
-    uint32_t nrequired_ids = 0;
-    const pm_parameters_node_t *parameters = node->parameters;
-    if (parameters) {
-        nrequired_ids = (uint32_t) parameters->requireds.size;
-    }
-
-    const pm_rest_parameter_node_t *rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE) ? (const pm_rest_parameter_node_t *) parameters->rest : NULL;
-
     PrismSignature signature;
-    make_signature(builder, graph_id, &signature, nrequired_ids, parameters ? (uint32_t) parameters->optionals.size : 0, rest != NULL, parameters ? (uint32_t) parameters->posts.size : 0);
+    compile_parameters_signature(builder, graph_id, &signature, node->parameters);
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
-
-    if (parameters) {
-        uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
-
-        for (size_t idx = 0; idx < parameters->requireds.size; ++idx) {
-            const pm_node_t *required = parameters->requireds.nodes[idx];
-
-            if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
-                uint32_t resolved_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
-                emit_store_lvar(builder, required->node_id, resolved_id, required_ids[idx]);
-            }
-        }
-    }
-
-    if (rest && rest->name) {
-        uint32_t local_id = resolve_local(builder, rest->name, 0);
-        emit_store_lvar(builder, rest->base.node_id, local_id, PrismBuilder_graph(builder)->signature.rest_id);
-    }
-
-    if (parameters) {
-        for (uint32_t idx = 0; idx < signature.npost_ids; ++idx) {
-            const pm_node_t *post = parameters->posts.nodes[idx];
-            if (PM_NODE_TYPE_P(post, PM_REQUIRED_PARAMETER_NODE)) {
-                uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) post)->name, 0);
-                emit_store_lvar(builder, post->node_id, local_id, signature.post_ids[idx]);
-            }
-        }
-    }
-
-    for (uint32_t idx = 0; idx < signature.noptional_ids; ++idx) {
-        const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
-        compile_optional_parameter_node(builder, optional, signature.optional_ids[idx], signature.optional_specified_ids[idx]);
-    }
+    compile_parameters(builder, node->parameters, &signature);
 
     emit_trace_call(builder, node->base.node_id);
     uint32_t value_id = compile_node_or_nil(builder, node->body, node->base.node_id);
