@@ -29,6 +29,7 @@ module Prism
           Usage:
             bin/prism bench [file ...]
             bin/prism bundle [...]
+            bin/prism compile [source]
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
@@ -50,7 +51,7 @@ module Prism
 
     def compile(argv)
       source, filepath = read_source(argv)
-      Prism.compile(source, filepath: filepath, raise_error: true)
+      puts Prism.compile(source, filepath: filepath, raise_error: true).value.disasm
     end
 
     ############################################################################
