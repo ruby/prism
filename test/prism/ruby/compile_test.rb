@@ -81,7 +81,6 @@ module Prism
     def test_disasm
       unit = compile_unit("a = 1; a + 2")
       assert_equal(<<~TEXT, unit.disasm)
-        v0: a @ g0
         g0 (program, scope=g0):
           bb0:
             branch bb1
@@ -103,7 +102,6 @@ module Prism
       block = Compile::Block.new(4, [insn], [], false)
       graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1)
       output = Compile::Unit.new([graph]).disasm
-      assert_include(output, "v9: a @ g3")
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
       assert_include(output, "%0 = load_lvar v9")

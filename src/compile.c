@@ -54,6 +54,7 @@ typedef struct {
 typedef struct {
     const pm_parser_t *parser;
     pm_arena_t *arena;
+    pm_arena_t scratch;
     PrismUnit *unit;
     PrismBuilderState state;
     uint32_t *bindings;
@@ -481,7 +482,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, uint32_t nparams, const pm_
 
     if (locals && locals->size) {
         PrismGraph *graph = PrismBuilder_graph(builder);
-        uint32_t *shadowed = pm_arena_alloc(builder->arena, sizeof(uint32_t) * locals->size, PRISM_ALIGNOF(uint32_t));
+        uint32_t *shadowed = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * locals->size, PRISM_ALIGNOF(uint32_t));
 
         for (size_t idx = 0; idx < locals->size; ++idx) {
             pm_constant_id_t name_id = locals->ids[idx];
@@ -1500,8 +1501,41 @@ compile_node_or_nil(PrismBuilder *builder, const pm_node_t *node, uint32_t node_
     return node ? compile_node(builder, node) : emit_load_nil(builder, node_id);
 }
 
+typedef struct {
+    uint32_t *ids;
+    uint32_t size;
+    uint32_t capacity;
+    uint32_t index;
+} PrismTargetParents;
+
 static void
-compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id) {
+PrismTargetParents_push(PrismBuilder *builder, PrismTargetParents *parents, uint32_t parent_id) {
+    if (parents->size == parents->capacity) {
+        uint32_t capacity = parents->capacity ? parents->capacity * 2 : 4;
+        parents->ids = pm_arena_realloc(&builder->scratch, parents->ids, capacity * sizeof(uint32_t), parents->capacity * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+        parents->capacity = capacity;
+    }
+    parents->ids[parents->size++] = parent_id;
+}
+
+static void
+compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismTargetParents *parents) {
+    switch (PM_NODE_TYPE(node)) {
+        case PM_CONSTANT_PATH_TARGET_NODE: {
+            const pm_constant_path_target_node_t *target = (const pm_constant_path_target_node_t *) node;
+            if (target->parent) {
+                uint32_t parent_id = compile_node(builder, target->parent);
+                PrismTargetParents_push(builder, parents, parent_id);
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+static void
+compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, PrismTargetParents *parents) {
     switch (PM_NODE_TYPE(node)) {
         case PM_CLASS_VARIABLE_TARGET_NODE: {
             const pm_class_variable_target_node_t *target = (const pm_class_variable_target_node_t *) node;
@@ -1516,7 +1550,8 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
         case PM_CONSTANT_PATH_TARGET_NODE: {
             const pm_constant_path_target_node_t *target = (const pm_constant_path_target_node_t *) node;
             if (target->parent) {
-                uint32_t parent_id = compile_node(builder, target->parent);
+                assert(parents->index < parents->size);
+                uint32_t parent_id = parents->ids[parents->index++];
                 emit_store_const_recv_rel(builder, target->base.node_id, parent_id, target->name, value_id);
             } else {
                 emit_store_const_abs(builder, target->base.node_id, target->name, value_id);
@@ -2236,7 +2271,10 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     PrismBuilderState state = push_scope(builder, graph_id, 1, NULL);
     uint32_t param_id = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params[0];
 
-    compile_target_node(builder, node->index, param_id);
+    PrismTargetParents parents = { 0 };
+    compile_target_node_parents(builder, node->index, &parents);
+    compile_target_node(builder, node->index, param_id, &parents);
+    assert(parents.index == parents.size);
 
     emit_trace_b_call(builder, node->base.node_id);
     uint32_t body_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
@@ -3067,9 +3105,10 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
             .graph_id = 0,
             .block_id = 0,
             .lineno = parser->start_line - 1
-        },
-        .bindings = pm_arena_zalloc(arena, sizeof(uint32_t) * ((size_t) parser->constant_pool.size + 1), PRISM_ALIGNOF(uint32_t))
+        }
     };
 
+    builder.bindings = pm_arena_zalloc(&builder.scratch, sizeof(uint32_t) * ((size_t) parser->constant_pool.size + 1), PRISM_ALIGNOF(uint32_t));
     compile_node(&builder, node);
+    pm_arena_cleanup(&builder.scratch);
 }
