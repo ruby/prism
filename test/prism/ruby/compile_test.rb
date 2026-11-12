@@ -67,7 +67,7 @@ module Prism
     def test_compile_ids
       unit = Prism.compile("a = 1; proc { |b, c| if b; c + a; else; a; end }.call(2, 3)", freeze: true).value
       unit.graphs.each_with_index do |graph, graph_id|
-        assert_equal(graph.signature.required_ids, graph.blocks[0].params)
+        assert_equal(graph.signature.requireds, graph.blocks[0].params)
         assert_equal(graph_id, graph.id)
         graph.blocks.each_with_index do |block, block_id|
           assert_equal(block_id, block.id)
@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], nil, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -155,8 +155,8 @@ module Prism
     def test_signature_and_branch_parameters
       unit = compile_unit("def signature_branch(first, second); if first; second; else; first; end; end; signature_branch(1, 2)")
       graph = unit.graphs.find { |candidate| candidate.kind == :def }
-      assert_equal([0, 1], graph.signature.required_ids)
-      assert_equal(graph.signature.required_ids, graph.blocks[0].params)
+      assert_equal([0, 1], graph.signature.requireds)
+      assert_equal(graph.signature.requireds, graph.blocks[0].params)
       assert(graph.blocks.drop(1).any? { |block| !block.params.empty? })
       assert_equal(2, vm.run(unit))
     end
@@ -206,8 +206,8 @@ module Prism
     def test_required_block_parameters_trace
       unit = compile_unit("proc { |a, b| a + b }")
       graph = unit.graphs[1]
-      assert_equal(2, graph.signature.required_ids.length)
-      assert_equal(graph.signature.required_ids, graph.blocks[0].params)
+      assert_equal(2, graph.signature.requireds.length)
+      assert_equal(graph.signature.requireds, graph.blocks[0].params)
       assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
     end
 
@@ -1571,6 +1571,54 @@ module Prism
       assert_run_raises(ArgumentError, "#{source}.a(1, 2)", "wrong number of arguments (given 2, expected 1)")
     end
 
+    def test_define_method_rest_parameter
+      source = "class CompileTestDefRest; def a(*args) = args; end; CompileTestDefRest.new"
+      assert_run([], "#{source}.a")
+      assert_run([1, 2, 3], "#{source}.a(1, 2, 3)")
+      assert_run([[1, 2]], "#{source}.a([1, 2])")
+      source = "class CompileTestDefRequiredRest; def a(first, *rest) = [first, rest]; end; CompileTestDefRequiredRest.new"
+      assert_run([1, []], "#{source}.a(1)")
+      assert_run([1, [2, 3]], "#{source}.a(1, 2, 3)")
+      assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1+)")
+      assert_run([[1, 2], [1]], "class CompileTestDefRestFresh; def a(*args); args << 2; end; end; input = [1]; [CompileTestDefRestFresh.new.a(input[0]), input]")
+      assert_run([1, 2], "class CompileTestDefRestCapture; def a(*args); proc { args << 2 }.call; args; end; end; CompileTestDefRestCapture.new.a(1)")
+    end
+
+    def test_define_method_anonymous_rest_parameter
+      source = "class CompileTestDefAnonymousRest; def a(*) = 1; end; CompileTestDefAnonymousRest.new"
+      assert_run(1, "#{source}.a")
+      assert_run(1, "#{source}.a(2, 3)")
+      source = "class CompileTestDefRequiredAnonymousRest; def a(first, *) = first; end; CompileTestDefRequiredAnonymousRest.new"
+      assert_run(1, "#{source}.a(1, 2, 3)")
+      assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1+)")
+    end
+
+    def test_define_singleton_method_rest_parameter
+      assert_run([1, [2, 3]], "object = Object.new; def object.a(first, *rest) = [first, rest]; object.a(1, 2, 3)")
+    end
+
+    def test_rest_parameter_entry_values
+      ["def rest_only(*args) = args", "def rest_only(*) = 1"].each do |source|
+        graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :def }
+        assert_empty(graph.signature.requireds)
+        assert_equal(0, graph.signature.rest)
+        assert_equal([0], graph.blocks[0].params)
+      end
+      assert_nil(compile_unit("1").graphs[0].signature.rest)
+    end
+
+    def test_compiled_method_rest_parameter
+      unit = Prism.compile("def a(first, *rest) = rest", freeze: true).value
+      graph = unit.graphs.find { |candidate| candidate.kind == :def }
+      entry = graph.blocks[0]
+      assert_equal([0, 1], entry.params)
+      assert_equal([0], graph.signature.requireds)
+      assert_equal(1, graph.signature.rest)
+      assert_include(unit.disasm, "g1(%0, *%1) (def, scope=g1):")
+      assert_include(unit.disasm, "bb0(%0, %1):")
+      assert_include(unit.disasm, "store_lvar v1, %1")
+    end
+
     def test_define_method_basic_object
       source = "class CompileTestDefBasic < BasicObject; def a(b) = b; end; CompileTestDefBasic.new"
       assert_run(1, "#{source}.a(1)")
@@ -1777,7 +1825,7 @@ module Prism
         assert_predicate graph, :frozen?
         assert_predicate graph.blocks, :frozen?
         assert_predicate graph.signature, :frozen?
-        assert_predicate graph.signature.required_ids, :frozen?
+        assert_predicate graph.signature.requireds, :frozen?
         assert_predicate graph.locals, :frozen?
         graph.locals.each { |local| assert_predicate local, :frozen? }
 
@@ -1827,7 +1875,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], false)
+      signature = Compile::Signature.new([0], nil, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)

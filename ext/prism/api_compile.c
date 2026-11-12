@@ -338,8 +338,9 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         }
         compile_freeze(vrequired_ids, freeze);
 
-        VALUE vsignature_argv[] = { vrequired_ids, pm_signature_autosplat(signature) ? Qtrue : Qfalse };
-        VALUE vsignature = compile_freeze(rb_class_new_instance(2, vsignature_argv, rb_cPrismCompileSignature), freeze);
+        uint32_t rest_id = pm_signature_rest_id(signature);
+        VALUE vsignature_argv[] = { vrequired_ids, rest_id == UINT32_MAX ? Qnil : UINT2NUM(rest_id), pm_signature_autosplat(signature) ? Qtrue : Qfalse };
+        VALUE vsignature = compile_freeze(rb_class_new_instance(3, vsignature_argv, rb_cPrismCompileSignature), freeze);
 
         uint32_t nvalues = pm_graph_nvalues(graph);
         VALUE vnvalues = UINT2NUM(nvalues);

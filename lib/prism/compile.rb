@@ -48,10 +48,11 @@ module Prism
     end
 
     class Signature
-      attr_reader :required_ids, :autosplat
+      attr_reader :requireds, :rest, :autosplat
 
-      def initialize(required_ids, autosplat)
-        @required_ids = required_ids
+      def initialize(requireds, rest, autosplat)
+        @requireds = requireds
+        @rest = rest
         @autosplat = autosplat
       end
     end
@@ -94,7 +95,8 @@ module Prism
           context << "parent=#{graph_ref(graph.parent)}" if graph.parent
           context << "scope=#{graph_ref(graph.scope)}"
           signature = graph.signature
-          params = signature.required_ids.map { |id| value(id) }
+          params = signature.requireds.map { |id| value(id) }
+          params << "*#{value(signature.rest)}" if signature.rest
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -428,11 +430,16 @@ module Prism
           args = Array.try_convert(args[0]) || args
         end
 
-        if graph.kind != :block && args.length != signature.required_ids.length
-          raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{signature.required_ids.length})"
+        if graph.kind != :block
+          required = signature.requireds.length
+          if signature.rest ? args.length < required : args.length != required
+            expected = signature.rest ? "#{required}+" : required
+            raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{expected})"
+          end
         end
 
-        signature.required_ids.zip(args) { |param, value| values[param] = value }
+        signature.requireds.zip(args) { |param, value| values[param] = value }
+        values[signature.rest] = args.drop(signature.requireds.length) if signature.rest
 
         while true
           block.insns.each do |insn|
