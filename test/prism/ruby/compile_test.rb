@@ -64,6 +64,67 @@ module Prism
       end
     end
 
+    def test_required_block_parameters
+      [
+        [[2, 3], "[1, 2].map { |a| a + 1 }"],
+        [nil, "proc { |a| a }.call"],
+        [1, "proc { |a| a }.call(1, 2)"],
+        [[1, 2], "proc { |a| a }.call([1, 2])"],
+        [[nil, nil], "proc { |a, b| [a, b] }.call"],
+        [[1, nil], "proc { |a, b| [a, b] }.call(1)"],
+        [[1, 2], "proc { |a, b| [a, b] }.call(1, 2, 3)"],
+        [[1, 2], "proc { |a, b| [a, b] }.call([1, 2, 3])"],
+        [[nil, nil], "proc { |a, b| [a, b] }.call(nil)"],
+        [[[1, 2], [3, nil]], "[[1, 2], [3]].map { |a, b| [a, b] }"],
+        [[[:a, 1]], "{ a: 1 }.map { |a, b| [a, b] }"],
+        [[2, 9], "a = 9; p = proc { |a| a += 1 }; [p.call(1), a]"],
+        [[1, 2], "p = proc { |a; b| b ||= a }; [p.call(1), p.call(2)]"],
+        [[2, 3], "p = proc { |a| proc { a += 1 } }.call(1); [p.call, p.call]"],
+        [6, "a = 1; proc { |b| proc { |c| a + b + c }.call(3) }.call(2)"],
+        [nil, "class CompileTestYieldRequired; def value; yield; end; end; CompileTestYieldRequired.new.value { |a| a }"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_required_block_parameters_conversion
+      calls = []
+      value = Object.new
+      value.define_singleton_method(:to_ary) { calls << :to_ary; [1, 2] }
+      scope = Module.new
+      scope.const_set(:Value, value)
+      graph = compile_unit("proc { |a, b| [a, b] }.call(Value)").graphs[0]
+      assert_equal([1, 2], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:to_ary], calls)
+
+      value.define_singleton_method(:to_ary) { nil }
+      assert_equal([value, nil], vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+      value.define_singleton_method(:to_ary) { 1 }
+      assert_raise(TypeError) { vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)) }
+
+      graph = compile_unit("proc { |a| a }.call(Value)").graphs[0]
+      assert_same(value, vm.run_frame(Compile::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
+    def test_required_block_parameters_trace
+      unit = compile_unit("proc { |a, b| a + b }")
+      graph = unit.graphs[1]
+      assert_equal(2, graph.blocks[0].params.length)
+      assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
+    end
+
+    def test_block_autosplat_metadata
+      { "proc {}" => false, "proc { |a| a }" => false, "proc { |a, b| a }" => true }.each do |source, expected|
+        unit = compile_unit(source)
+        assert_equal(expected, unit.graphs[1].blocks[0].autosplat)
+        assert_equal(false, unit.graphs[0].blocks[0].autosplat)
+      end
+      unit = compile_unit("for i in [1]; end")
+      assert_equal(false, unit.graphs[1].blocks[0].autosplat)
+      unit = compile_unit("class CompileTestAutosplat; def value(a, b); a; end; end")
+      assert_equal(false, unit.graphs[2].blocks[0].autosplat)
+    end
+
     def test_block_capture_lifetime
       assert_run([2, 3], <<~RUBY)
         class CompileTestBlockCapture

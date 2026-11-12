@@ -167,6 +167,11 @@ pm_block_nparams(const PrismBlock *block) {
     return block->nparams;
 }
 
+bool
+pm_block_autosplat(const PrismBlock *block) {
+    return block->autosplat;
+}
+
 uint32_t
 pm_block_param(const PrismBlock *block, uint32_t param_idx) {
     assert(param_idx < block->nparams);
@@ -1771,19 +1776,31 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
 
 static uint32_t
 compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
-    if (node->parameters && (!PM_NODE_TYPE_P(node->parameters, PM_BLOCK_PARAMETERS_NODE) || ((const pm_block_parameters_node_t *) node->parameters)->parameters)) {
-        fprintf(stderr, "Block parameters are not supported yet\n");
-        abort();
+    const pm_parameters_node_t *parameters = NULL;
+    if (node->parameters && PM_NODE_TYPE_P(node->parameters, PM_BLOCK_PARAMETERS_NODE)) {
+        parameters = ((const pm_block_parameters_node_t *) node->parameters)->parameters;
     }
 
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, (uint32_t) node->locals.size);
-    PrismBuilderState state = push_scope(builder, graph_id, 0, &node->locals);
+    uint32_t nparams = parameters ? (uint32_t) parameters->requireds.size : 0;
+    PrismBuilderState state = push_scope(builder, graph_id, nparams, &node->locals);
+
+    PrismBuilder_graph(builder)->blocks[builder->state.block_id].autosplat = nparams > 1;
+    const uint32_t *params = PrismBuilder_graph(builder)->blocks[builder->state.block_id].params;
+
+    for (uint32_t idx = 0; idx < nparams; ++idx) {
+        const pm_node_t *required = parameters->requireds.nodes[idx];
+
+        if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
+            uint32_t local_id = resolve_local(builder, ((const pm_required_parameter_node_t *) required)->name, 0);
+            emit_store_lvar(builder, required->node_id, local_id, params[idx]);
+        }
+    }
 
     emit_trace_b_call(builder, node->base.node_id);
     uint32_t body_id = compile_node_or_nil(builder, node->body, node->base.node_id);
     emit_trace_b_return(builder, node->base.node_id, body_id);
     emit_return(builder, node->base.node_id, body_id);
-
     pop_scope(builder, state);
 
     return emit_new_block(builder, node->base.node_id, graph_id);

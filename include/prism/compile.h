@@ -143,6 +143,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_graph_local_id(const PrismGraph *graph, uint
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nvalues(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_ninsns(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_nparams(const PrismBlock *block);
+PRISM_EXPORTED_FUNCTION bool pm_block_autosplat(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_block_param(const PrismBlock *block, uint32_t param_idx);
 PRISM_EXPORTED_FUNCTION const PrismInsn * pm_block_insn(const PrismBlock *block, uint32_t insn_idx);
 PRISM_EXPORTED_FUNCTION PrismInsnKind pm_insn_kind(const PrismInsn *insn);

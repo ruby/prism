@@ -44,6 +44,7 @@ struct PrismBlock {
     uint32_t ninsns;
     uint32_t nparams;
     uint32_t insns_capa;
+    bool autosplat;
 };
 
 struct PrismObject {

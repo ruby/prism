@@ -314,8 +314,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
             /* The instructions array is filled in once every graph and block
              * exists, since instructions refer to them. It is frozen then. */
-            VALUE vblock_argv[] = { vinsns, vparams };
-            VALUE vblock = compile_freeze(rb_class_new_instance(2, vblock_argv, rb_cPrismCompileBlock), freeze);
+            VALUE vblock_argv[] = { vinsns, vparams, pm_block_autosplat(block) ? Qtrue : Qfalse };
+            VALUE vblock = compile_freeze(rb_class_new_instance(3, vblock_argv, rb_cPrismCompileBlock), freeze);
             rb_ary_push(vblocks, vblock);
         }
         compile_freeze(vblocks, freeze);

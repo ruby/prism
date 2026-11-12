@@ -37,11 +37,12 @@ module Prism
     end
 
     class Block
-      attr_reader :insns, :params
+      attr_reader :insns, :params, :autosplat
 
-      def initialize(insns, params)
+      def initialize(insns, params, autosplat)
         @insns = insns
         @params = params
+        @autosplat = autosplat
       end
     end
 
@@ -124,6 +125,10 @@ module Prism
         locals = frame.locals
         values = frame.values
         block = graph.blocks[0]
+
+        if block.autosplat && args.length == 1
+          args = Array.try_convert(args[0]) || args
+        end
 
         if graph.kind != :block && args.length != block.params.length
           raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{block.params.length})"
