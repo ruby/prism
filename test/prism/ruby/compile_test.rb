@@ -184,6 +184,36 @@ module Prism
       end
     end
 
+    def test_it_block_parameter
+      [
+        [[2, 3], "[1, 2].map { it + 1 }"],
+        [nil, "proc { it }.call"],
+        [1, "proc { it }.call(1, 2)"],
+        [[1, 2], "proc { it }.call([1, 2])"],
+        [[nil, nil], "proc { [it, it] }.call"],
+        [3, "a = 1; proc { a + it }.call(2)"],
+        [[1, 2, 1], "proc { [it, proc { it }.call(2), it] }.call(1)"],
+        [2, "proc { proc { it }.call(2) }.call(1)"],
+        [3, "proc { for i in [1, 2]; a = it + i; end; a }.call(1)"],
+        [4, "proc { for i in [1]; for j in [2]; a = it + i + j; end; end; a }.call(1)"],
+        [[9, 9], "it = 9; [1, 2].map { it }"],
+        [2, "proc { it = 2; it }.call(1)"],
+        [3, "class CompileTestYieldIt; def value; yield; end; end; CompileTestYieldIt.new.value { it || 3 }"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_it_block_parameter_metadata
+      unit = Prism.compile("proc { it }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([0], graph.signature.requireds)
+      assert_nil(graph.signature.rest)
+      assert_equal(false, graph.signature.autosplat)
+      assert_equal([0], graph.blocks[0].params)
+      assert_equal([:it], graph.locals.map(&:name))
+      assert_equal([:store_lvar, :trace_b_call], graph.blocks[0].insns.first(2).map(&:kind))
+      assert_include(graph.blocks[0].insns.map(&:kind), :load_lvar)
+    end
+
     def test_rest_block_parameters
       [
         [[], "proc { |*args| args }.call"],
