@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `PRISM_BUILD_MINIMAL` now excludes the full set of encodings, as `PRISM_ENCODING_EXCLUDE_FULL` does.
 - Each byte in a regular expression that does not begin a character in the encoding of the source is reported as `invalid_multibyte_char` at that byte, in every encoding.
 - A regular expression followed by `=~` is validated and given its encoding flags even when it is not the receiver of the `=~`, as in `!/(/ =~ s` or `1 + /(/ =~ s`.
+- In a regular expression, a character that is not ASCII after a backslash is validated as the character itself, as CRuby reads it. For example, `/\é/` now has the encoding of the source rather than US-ASCII, and `/\é(/` reports its unmatched parenthesis.
+- In a regular expression, a `\M-`, `\C-`, or `\c` escape is validated as the byte that it stands for, so `/\M-a\M-a/` is now valid in EUC-JP and `/\M-a/` is now invalid in CP949.
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
 - A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
 - The `pm_string_query_*` functions take a Ruby version as their last argument, written like the strings that `pm_options_version_set` accepts. Pass `NULL` for the latest version. An unknown version returns the new `PM_STRING_QUERY_ERROR_VERSION`.
