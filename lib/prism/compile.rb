@@ -18,9 +18,10 @@ module Prism
     end
 
     class Local
-      attr_reader :name
+      attr_reader :id, :name
 
-      def initialize(name)
+      def initialize(id, name)
+        @id = id
         @name = name
       end
     end
@@ -37,9 +38,10 @@ module Prism
     end
 
     class Block
-      attr_reader :insns, :params, :autosplat
+      attr_reader :id, :insns, :params, :autosplat
 
-      def initialize(insns, params, autosplat)
+      def initialize(id, insns, params, autosplat)
+        @id = id
         @insns = insns
         @params = params
         @autosplat = autosplat
@@ -47,9 +49,10 @@ module Prism
     end
 
     class Graph
-      attr_reader :kind, :parent, :scope, :blocks, :locals, :nvalues
+      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues
 
-      def initialize(kind, parent, scope, blocks, locals, nvalues)
+      def initialize(id, kind, parent, scope, blocks, locals, nvalues)
+        @id = id
         @kind = kind
         @parent = parent
         @scope = scope || self
@@ -71,27 +74,27 @@ module Prism
       attr_reader :parent
 
       def initialize(locals, parent = nil)
-        @locals = locals.to_h { |local| [local, nil] }
+        @locals = locals.to_h { |local| [local.id, nil] }
         @parent = parent
       end
 
-      def [](local)
-        if @locals.key?(local)
-          @locals.fetch(local)
+      def [](id)
+        if @locals.key?(id)
+          @locals.fetch(id)
         elsif parent
-          parent[local]
+          parent[id]
         else
-          raise KeyError, "unknown local: #{local.name}"
+          raise KeyError, "unknown local: #{id}"
         end
       end
 
-      def []=(local, value)
-        if @locals.key?(local)
-          @locals[local] = value
+      def []=(id, value)
+        if @locals.key?(id)
+          @locals[id] = value
         elsif parent
-          parent[local] = value
+          parent[id] = value
         else
-          raise KeyError, "unknown local: #{local.name}"
+          raise KeyError, "unknown local: #{id}"
         end
       end
     end
@@ -269,7 +272,7 @@ module Prism
             when :load_last_match
               values[insn.opnds[0]] = $~
             when :load_lvar
-              values[insn.opnds[0]] = locals[insn.data]
+              values[insn.opnds[0]] = locals[insn.data.id]
             when :load_self
               values[insn.opnds[0]] = recv
             when :match
@@ -318,7 +321,7 @@ module Prism
             when :store_gvar
               eval("#{insn.data} = value", TOPLEVEL_BINDING.tap { |binding| binding.local_variable_set(:value, values[insn.opnds[0]]) })
             when :store_lvar
-              locals[insn.data] = values[insn.opnds[0]]
+              locals[insn.data.id] = values[insn.opnds[0]]
             when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
               # ignore
             when :undef_method

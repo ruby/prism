@@ -268,8 +268,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
     for (uint32_t local_id = 0; local_id < nlocals_unit; ++local_id) {
         const PrismLocal *local = pm_unit_local(unit, local_id);
         const pm_constant_t *constant = pm_local_name(parser, local);
-        VALUE vlocal_argv[] = { ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))) };
-        VALUE vlocal = compile_freeze(rb_class_new_instance(1, vlocal_argv, rb_cPrismCompileLocal), freeze);
+        VALUE vlocal_argv[] = { UINT2NUM(local_id), ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))) };
+        VALUE vlocal = compile_freeze(rb_class_new_instance(2, vlocal_argv, rb_cPrismCompileLocal), freeze);
         rb_ary_push(vlocals_unit, vlocal);
     }
 
@@ -314,8 +314,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
             /* The instructions array is filled in once every graph and block
              * exists, since instructions refer to them. It is frozen then. */
-            VALUE vblock_argv[] = { vinsns, vparams, pm_block_autosplat(block) ? Qtrue : Qfalse };
-            VALUE vblock = compile_freeze(rb_class_new_instance(3, vblock_argv, rb_cPrismCompileBlock), freeze);
+            VALUE vblock_argv[] = { UINT2NUM(block_id), vinsns, vparams, pm_block_autosplat(block) ? Qtrue : Qfalse };
+            VALUE vblock = compile_freeze(rb_class_new_instance(4, vblock_argv, rb_cPrismCompileBlock), freeze);
             rb_ary_push(vblocks, vblock);
         }
         compile_freeze(vblocks, freeze);
@@ -333,8 +333,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         uint32_t scope_id = pm_graph_scope_id(graph);
         VALUE vscope = scope_id == graph_id ? Qnil : rb_ary_entry(vgraphs, scope_id);
-        VALUE vgraph_argv[] = { vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues };
-        VALUE vgraph = compile_freeze(rb_class_new_instance(6, vgraph_argv, rb_cPrismCompileGraph), freeze);
+        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues };
+        VALUE vgraph = compile_freeze(rb_class_new_instance(7, vgraph_argv, rb_cPrismCompileGraph), freeze);
         rb_ary_push(vgraphs, vgraph);
     }
     compile_freeze(vgraphs, freeze);

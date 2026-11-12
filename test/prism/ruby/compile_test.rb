@@ -64,6 +64,20 @@ module Prism
       end
     end
 
+    def test_compile_ids
+      unit = Prism.compile("a = 1; proc { |b, c| if b; c + a; else; a; end }.call(2, 3)", freeze: true).value
+      unit.graphs.each_with_index do |graph, graph_id|
+        assert_equal(graph_id, graph.id)
+        graph.blocks.each_with_index do |block, block_id|
+          assert_equal(block_id, block.id)
+        end
+      end
+      locals = unit.graphs.flat_map(&:locals)
+      assert_equal((0...locals.length).to_a, locals.map(&:id))
+      assert_same(unit.graphs[0], unit.graphs[1].parent)
+      assert_equal(4, vm.run(unit))
+    end
+
     def test_required_block_parameters
       [
         [[2, 3], "[1, 2].map { |a| a + 1 }"],
@@ -550,8 +564,8 @@ module Prism
 
       assert_equal(1, vm.run_frame(first))
       assert_equal(1, vm.run_frame(second))
-      first.locals[graph.locals[0]] = 10
-      assert_equal(1, second.locals[graph.locals[0]])
+      first.locals[graph.locals[0].id] = 10
+      assert_equal(1, second.locals[graph.locals[0].id])
     end
 
     def test_frames_share_locals
@@ -564,24 +578,33 @@ module Prism
       assert_equal(1, vm.run_frame(first))
       assert_equal(2, vm.run_frame(second))
       refute_same(first.values, second.values)
-      assert_equal(2, locals[graph.locals[0]])
+      assert_equal(2, locals[graph.locals[0].id])
     end
 
     def test_locals_parent
-      outer_local = Compile::Local.new(:a)
-      inner_local = Compile::Local.new(:a)
+      outer_local = Compile::Local.new(0, :a)
+      inner_local = Compile::Local.new(1, :a)
       parent = Compile::Locals.new([outer_local])
       child = Compile::Locals.new([inner_local], parent)
 
-      parent[outer_local] = 1
-      assert_nil(child[inner_local])
-      assert_equal(1, child[outer_local])
-      child[outer_local] = 2
-      child[inner_local] = 3
-      assert_equal(2, parent[outer_local])
-      assert_equal(3, child[inner_local])
-      assert_raise(KeyError) { child[Compile::Local.new(:a)] }
-      assert_raise(KeyError) { child[Compile::Local.new(:a)] = 4 }
+      parent[outer_local.id] = 1
+      assert_nil(child[inner_local.id])
+      assert_equal(1, child[outer_local.id])
+      child[outer_local.id] = 2
+      child[inner_local.id] = 3
+      assert_equal(2, parent[outer_local.id])
+      assert_equal(3, child[inner_local.id])
+      assert_raise(KeyError) { child[2] }
+      assert_raise(KeyError) { child[2] = 4 }
+    end
+
+    def test_locals_ids_are_unit_relative
+      first = compile_unit("a = 1; proc { a }")
+      second = compile_unit("a = 2; a")
+      assert_equal(first.graphs[0].locals[0].id, second.graphs[0].locals[0].id)
+      captured = vm.run(first)
+      assert_equal(2, vm.run(second))
+      assert_equal(1, captured.call)
     end
 
     def test_recursive_frames
