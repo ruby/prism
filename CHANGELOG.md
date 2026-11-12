@@ -13,20 +13,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `Prism::StringQuery` methods accept a `version:` keyword, just like the parse methods. It defaults to the nearest version to the running Ruby. This matters for `constant?`, because Ruby 4.0 recognizes more uppercase letters than Ruby 3.4.
 - `StringQuery::version` was added to the Rust bindings. It picks the Ruby version that a query checks against. The default is the latest version.
 - A new `stack` error level, for errors that should raise `SystemStackError`. Its only error is `stack_exhausted`, reported once per parse when the stack budget is used up. It is separate from `nesting_too_deep`, which stays a syntax error, because the same source may parse with more stack. When errors are formatted, a `stack_exhausted` error takes precedence over the syntax errors around it, as argument and load errors do. The level is `:stack` in Ruby, `"stack"` in JavaScript, `ERROR_STACK` in Java, and `PM_ERROR_LEVEL_STACK` in C and Rust.
-- `Prism::RegularExpressionNode#encoding` and `Prism::MatchLastLineNode#encoding` were added. They return the encoding that CRuby gives the regular expression, according to its flags and the encoding of the source.
+- `Prism::RegularExpressionNode#encoding` and `Prism::MatchLastLineNode#encoding` were added. They return the encoding that the regular expression has when it is evaluated, according to its flags and the encoding of the source.
 
 ### Changed
 
 - `Prism::Translation::Parser` now returns a `nil` AST whenever an error is reported and errors are not fatal, matching the parser gem.
 - `Prism::Source#encoding` and `Prism::Result#encoding` now return binary for a binary source that contains UTF-8 characters, instead of UTF-8. The string of such a source is still read as UTF-8 for locations.
 - Parsing a binary source that contains UTF-8 characters with `freeze: true` no longer raises a `FrozenError`.
+- `Prism::ParseResult#errors_format` now measures its carets in characters rather than bytes, so they line up under lines that hold multibyte characters.
 - `PRISM_BUILD_MINIMAL` now excludes the full set of encodings, as `PRISM_ENCODING_EXCLUDE_FULL` does.
 - Each byte in a regular expression that does not begin a character in the encoding of the source is reported as `invalid_multibyte_char` at that byte, in every encoding.
 - A regular expression followed by `=~` is validated and given its encoding flags even when it is not the receiver of the `=~`, as in `!/(/ =~ s` or `1 + /(/ =~ s`.
-- In a regular expression, a character that is not ASCII after a backslash is validated as the character itself, as CRuby reads it. For example, `/\é/` now has the encoding of the source rather than US-ASCII, and `/\é(/` reports its unmatched parenthesis.
+- In a regular expression, a character that is not ASCII after a backslash is validated as the character itself. For example, `/\é/` now has the encoding of the source rather than US-ASCII, and `/\é(/` reports its unmatched parenthesis.
 - In a regular expression, a `\M-`, `\C-`, or `\c` escape is validated as the byte that it stands for, so `/\M-a\M-a/` is now valid in EUC-JP and `/\M-a/` is now invalid in CP949.
+- A regular expression with an encoding option (`/n`, `/u`, `/e`, or `/s`) that differs from the source encoding reports the difference whenever a character that is not ASCII is written in it, even when it also has escapes or invalid characters. For example, `/garçon\xC3\xA7/e` in a UTF-8 file is now an error. This error comes before any others in the regular expression, and with `/n` no errors in the pattern follow it.
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
-- A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
+- A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`.
 - The `pm_string_query_*` functions take a Ruby version as their last argument, written like the strings that `pm_options_version_set` accepts. Pass `NULL` for the latest version. An unknown version returns the new `PM_STRING_QUERY_ERROR_VERSION`.
 - Whether a name is a constant follows the version of Unicode of the Ruby that is targeted: Unicode 15.0.0 for Ruby 3.3 and 3.4, and Unicode 17.0.0 for Ruby 4.0 and 4.1. A name that starts with a letter that became uppercase in Unicode 16.0.0 or 17.0.0, such as the Garay capital letters, is now a local variable name when targeting Ruby 3.3 or 3.4.
 - A `?` followed by two identifier characters is a ternary operator, even when the first one is not ASCII. For example, `a ?☃b : c` used to read `?☃` as a character literal.
