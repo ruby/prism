@@ -141,6 +141,7 @@ typedef enum {
     kPrismObjectImaginary,
     kPrismObjectInteger,
     kPrismObjectNil,
+    kPrismObjectRange,
     kPrismObjectRational,
     kPrismObjectRegexp,
     kPrismObjectStandardError,
@@ -214,6 +215,9 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_object_hash_key_object_id(const PrismObject 
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_hash_value_object_id(const PrismObject *object, uint32_t idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_imaginary_object_id(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_integer_t * pm_object_integer(const PrismObject *object);
+PRISM_EXPORTED_FUNCTION uint32_t pm_object_range_left_id(const PrismObject *object);
+PRISM_EXPORTED_FUNCTION uint32_t pm_object_range_right_id(const PrismObject *object);
+PRISM_EXPORTED_FUNCTION bool pm_object_range_exclude_end(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_integer_t * pm_object_rational_numerator(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_integer_t * pm_object_rational_denominator(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_string_t * pm_object_string(const PrismObject *object);

@@ -436,6 +436,21 @@ pm_object_integer(const PrismObject *object) {
     return object->as.integer.value;
 }
 
+uint32_t
+pm_object_range_left_id(const PrismObject *object) {
+    return object->as.range.left_id;
+}
+
+uint32_t
+pm_object_range_right_id(const PrismObject *object) {
+    return object->as.range.right_id;
+}
+
+bool
+pm_object_range_exclude_end(const PrismObject *object) {
+    return object->as.range.exclude_end;
+}
+
 const pm_integer_t *
 pm_object_rational_numerator(const PrismObject *object) {
     return object->as.rational.numerator;
@@ -4632,9 +4647,30 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
 
 static uint32_t
 compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
-    uint32_t left_id = compile_node_or_nil(builder, node->left, node->base.node_id);
-    uint32_t right_id = compile_node_or_nil(builder, node->right, node->base.node_id);
-    return emit_new_range(builder, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END), node->base.node_id, left_id, right_id);
+    const pm_node_t *left = node->left;
+    const pm_node_t *right = node->right;
+
+    if (
+        (!left || PM_NODE_TYPE_P(left, PM_NIL_NODE) || PM_NODE_TYPE_P(left, PM_INTEGER_NODE)) &&
+        (!right || PM_NODE_TYPE_P(right, PM_NIL_NODE) || PM_NODE_TYPE_P(right, PM_INTEGER_NODE))
+    ) {
+        uint32_t left_id = left ? static_literal(builder, left) : UINT32_MAX;
+        uint32_t right_id = right ? static_literal(builder, right) : UINT32_MAX;
+
+        uint32_t object_id = make_object(builder, kPrismObjectRange);
+        PrismObject *object = builder->unit->objects + object_id;
+
+        object->as.range.left_id = left_id;
+        object->as.range.right_id = right_id;
+        object->as.range.exclude_end = PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END);
+
+        return emit_load_object(builder, node->base.node_id, object_id);
+    } else {
+        uint32_t left_id = compile_node_or_nil(builder, left, node->base.node_id);
+        uint32_t right_id = compile_node_or_nil(builder, right, node->base.node_id);
+
+        return emit_new_range(builder, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END), node->base.node_id, left_id, right_id);
+    }
 }
 
 static uint32_t

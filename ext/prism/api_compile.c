@@ -266,6 +266,14 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 rb_hash_bulk_insert(RARRAY_LEN(vbulk), RARRAY_CONST_PTR(vbulk), vobject);
                 break;
             }
+            case kPrismObjectRange: {
+                uint32_t left_id = pm_object_range_left_id(object);
+                uint32_t right_id = pm_object_range_right_id(object);
+                bool exclude_end = pm_object_range_exclude_end(object);
+
+                vobject = rb_range_new(rb_ary_entry(vobjects_unit, left_id), rb_ary_entry(vobjects_unit, right_id), exclude_end);
+                break;
+            }
             case kPrismObjectRegexp: {
                 const pm_string_t *string = pm_object_string(object);
                 pm_node_flags_t flags = pm_object_flags(object);

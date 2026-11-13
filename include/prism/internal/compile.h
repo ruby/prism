@@ -66,6 +66,7 @@ struct PrismObject {
         struct { uint32_t nobject_ids; uint32_t *object_ids; } hash;
         struct { uint32_t numeric_id; } imaginary;
         struct { const pm_integer_t *value; } integer;
+        struct { uint32_t left_id; uint32_t right_id; bool exclude_end; } range;
         struct { const pm_integer_t *numerator; const pm_integer_t *denominator; } rational;
         struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
     } as;
