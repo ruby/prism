@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -203,6 +203,41 @@ module Prism
       ].each do |expected, source|
         assert_run(expected, source)
       end
+    end
+
+    def test_no_keywords_method_parameters
+      vm.run(compile_unit("class CompileTestNoKeywords; def value(**nil); 1; end; end"))
+      assert_run(1, "CompileTestNoKeywords.new.value")
+      assert_run(1, "CompileTestNoKeywords.new.value(**{})")
+      assert_run_raises(ArgumentError, "CompileTestNoKeywords.new.value(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "CompileTestNoKeywords.new.value({ x: 1 })", "wrong number of arguments (given 1, expected 0)")
+      vm.run(compile_unit("class CompileTestNoKeywordsPositional; def value(a, **nil); a; end; end"))
+      assert_run({ x: 1 }, "CompileTestNoKeywordsPositional.new.value({ x: 1 })")
+      assert_run_raises(ArgumentError, "CompileTestNoKeywordsPositional.new.value(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "class CompileTestNoKeywordsDefault; def value(a = raise('default ran'), **nil); a; end; end; CompileTestNoKeywordsDefault.new.value(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "object = Object.new; def object.value(**nil); 1; end; object.value(x: 1)", "no keywords accepted")
+    end
+
+    def test_no_keywords_block_parameters
+      assert_run(1, "proc { |**nil| 1 }.call")
+      assert_run(1, "proc { |**nil| 1 }.call(**{})")
+      assert_run({ x: 1 }, "proc { |a, **nil| a }.call({ x: 1 })")
+      assert_run([[1, 2]], "proc { |a, **nil| [a] }.call([1, 2])")
+      assert_run([1, [2]], "proc { |a, *rest, **nil| [a, rest] }.call([1, 2])")
+      assert_run_raises(ArgumentError, "proc { |**nil| 1 }.call(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "proc { |*args, **nil| args }.call(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "proc { |a = raise('default ran'), **nil| a }.call(x: 1)", "no keywords accepted")
+    end
+
+    def test_no_keywords_parameters_metadata
+      unit = Prism.compile("proc { |**nil| 1 }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal(true, graph.signature.no_keywords)
+      assert_empty(graph.blocks[0].params)
+      assert_empty(graph.locals)
+      assert_include(unit.disasm, "g1(**nil)")
+      assert_equal(false, compile_unit("proc {}").graphs[1].signature.no_keywords)
+      assert_equal(true, compile_unit("def no_keywords(**nil); end").graphs[1].signature.no_keywords)
     end
 
     def test_optional_keyword_method_parameters
@@ -2267,7 +2302,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, false, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)

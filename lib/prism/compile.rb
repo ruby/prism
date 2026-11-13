@@ -57,9 +57,9 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :no_keywords, :autosplat
 
-      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, no_keywords, autosplat)
         @requireds = requireds
         @optionals = optionals
         @optional_specifieds = optional_specifieds
@@ -68,6 +68,7 @@ module Prism
         @required_keywords = required_keywords
         @optional_keywords = optional_keywords
         @optional_keyword_specifieds = optional_keyword_specifieds
+        @no_keywords = no_keywords
         @autosplat = autosplat
       end
     end
@@ -116,6 +117,7 @@ module Prism
           params.concat(signature.posts.map { |id| value(id) })
           signature.required_keywords.each { |name, id| params << "#{name}: #{value(id)}" }
           signature.optional_keywords.each { |name, id| params << "#{name}: #{value(id)}?#{value(signature.optional_keyword_specifieds.fetch(name))}" }
+          params << "**nil" if signature.no_keywords
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -446,6 +448,8 @@ module Prism
         block = graph.blocks[0]
 
         signature = graph.signature
+
+        raise ArgumentError, "no keywords accepted" if signature.no_keywords && !kwargs.empty?
 
         has_keywords = !signature.required_keywords.empty? || !signature.optional_keywords.empty?
         if !has_keywords && !kwargs.empty?

@@ -383,8 +383,19 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         compile_freeze(voptional_keyword_specifieds, freeze);
 
         uint32_t rest_id = pm_signature_rest_id(signature);
-        VALUE vsignature_argv[] = { vrequired_ids, voptional_ids, voptional_specified_ids, rest_id == UINT32_MAX ? Qnil : UINT2NUM(rest_id), vpost_ids, vrequired_keywords, voptional_keywords, voptional_keyword_specifieds, pm_signature_autosplat(signature) ? Qtrue : Qfalse };
-        VALUE vsignature = compile_freeze(rb_class_new_instance(9, vsignature_argv, rb_cPrismCompileSignature), freeze);
+        VALUE vsignature_argv[] = {
+            vrequired_ids,
+            voptional_ids,
+            voptional_specified_ids,
+            rest_id == UINT32_MAX ? Qnil : UINT2NUM(rest_id),
+            vpost_ids,
+            vrequired_keywords,
+            voptional_keywords,
+            voptional_keyword_specifieds,
+            pm_signature_no_keywords(signature) ? Qtrue : Qfalse,
+            pm_signature_autosplat(signature) ? Qtrue : Qfalse
+        };
+        VALUE vsignature = compile_freeze(rb_class_new_instance(10, vsignature_argv, rb_cPrismCompileSignature), freeze);
 
         uint32_t nvalues = pm_graph_nvalues(graph);
         VALUE vnvalues = UINT2NUM(nvalues);
