@@ -731,6 +731,46 @@ module Prism
       assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
     end
 
+    def test_implicit_rest_block_parameters
+      [
+        [1, "proc { |a,| a }.call([1, 2])"],
+        [1, "proc { |a,| a }.call(1, 2)"],
+        [1, "proc { |a,| a }.call(1)"],
+        [nil, "proc { |a,| a }.call"],
+        [nil, "proc { |a,| a }.call([])"],
+        [nil, "proc { |a,| a }.call(nil)"],
+        [[1, 2], "proc { |a, b,| [a, b] }.call([1, 2, 3])"],
+        [[1, nil], "proc { |a, b,| [a, b] }.call([1])"],
+        [[1, 3], "[[1, 2], [3, 4]].map { |a,| a }"],
+        [[1, 2], "proc { |a| a }.call([1, 2])"],
+        [[1, 2], "proc { |a,| a }.call([[1, 2], 3])"]
+      ].each { |expected, source| assert_run(expected, source) }
+
+      signature = compile_unit("proc { |a,| a }").graphs[1].signature
+      assert_equal(true, signature.autosplat)
+      assert_equal(1, signature.requireds.length)
+      assert_nil(signature.rest)
+    end
+
+    def test_implicit_rest_block_parameter_conversion
+      scope = Module.new
+      events = []
+      converted = [1, 2]
+      input = Object.new
+      input.define_singleton_method(:to_ary) { events << :convert; converted }
+      scope.const_set(:Input, input)
+      graph = compile_unit("proc { |a,| a }.call(Input)").graphs[0]
+      run = -> { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      assert_equal(1, run.call)
+      assert_equal([:convert], events)
+      events.clear
+      converted = nil
+      assert_same(input, run.call)
+      assert_equal([:convert], events)
+      converted = 1
+      assert_raise(TypeError) { run.call }
+    end
+
     def test_block_autosplat_metadata
       { "proc {}" => false, "proc { |a| a }" => false, "proc { |a, b| a }" => true }.each do |source, expected|
         unit = compile_unit(source)
@@ -1121,6 +1161,37 @@ module Prism
         [1, "a = 0; proc { a, b = 1, 2 }.call; a"],
         [[[2, 3], [1, 2]], "input = [1, 2]; a, *b = input; b << 3; [b, input]"]
       ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_multi_write_implicit_rest
+      [
+        [nil, "a, = []; a"],
+        [nil, "a, = nil; a"],
+        [1, "a, = 1; a"],
+        [[1, 2], "a, b, = [1, 2, 3]; [a, b]"],
+        [[1, nil], "a, b, = [1]; [a, b]"],
+        [[1, 3], "(a,), b = [1, 2], 3; [a, b]"],
+        [[1, 3], "a, (b,) = 1, [3, 4]; [a, b]"],
+        [[1, 2, 3], "a, (b, c,), = [1, [2, 3, 4], 5]; [a, b, c]"],
+        [[true, 1], "input = [1, 2]; result = (a, = input); [result.equal?(input), a]"],
+        [[1, 3], "out = []; for a, in [[1, 2], [3, 4]]; out << a; end; out"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_multi_write_implicit_rest_conversion
+      scope = Module.new
+      events = []
+      item = Object.new
+      item.define_singleton_method(:to_ary) { events << :convert; [1, 2, 3] }
+      receiver = Object.new
+      receiver.define_singleton_method(:value=) { |value| events << [:write, value] }
+      scope.const_set(:Item, item)
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Events, events)
+      source = "result = ((Events << :receiver; Receiver).value, = (Events << :rhs; Item)); result"
+      graph = compile_unit(source).graphs[0]
+      assert_same(item, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:receiver, :rhs, :convert, [:write, 1]], events)
     end
 
     def test_multi_write_evaluation

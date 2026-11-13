@@ -2567,7 +2567,7 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     }
 
     uint32_t npositional_ids = signature.nrequired_ids + signature.npost_ids;
-    signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && signature.rest_id != UINT32_MAX);
+    signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && parameters && parameters->rest);
 
     PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
     const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
@@ -3927,6 +3927,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
+        case PM_IMPLICIT_REST_NODE:
         case PM_INDEX_TARGET_NODE:
         case PM_INSTANCE_VARIABLE_TARGET_NODE:
         case PM_LOCAL_VARIABLE_TARGET_NODE:
