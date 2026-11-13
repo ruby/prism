@@ -227,6 +227,11 @@ pm_signature_optional_keyword_name(const pm_parser_t *parser, const PrismSignatu
     return compile_constant(parser, signature->optional_keyword_names[keyword_idx]);
 }
 
+uint32_t
+pm_signature_keyword_rest_id(const PrismSignature *signature) {
+    return signature->keyword_rest_id;
+}
+
 bool
 pm_signature_no_keywords(const PrismSignature *signature) {
     return signature->no_keywords;
@@ -542,7 +547,18 @@ make_graph(PrismBuilder *builder, PrismGraphKind kind, uint32_t parent_id, uint3
     }
 
     uint32_t graph_id = unit->ngraphs++;
-    unit->graphs[graph_id] = (PrismGraph) { .signature = { .rest_id = UINT32_MAX }, .kind = kind, .parent_id = parent_id, .scope_id = graph_id, .local_ids = local_ids, .nlocal_ids = nlocal_ids };
+    unit->graphs[graph_id] = (PrismGraph) {
+        .signature = {
+            .rest_id = UINT32_MAX,
+            .keyword_rest_id = UINT32_MAX
+        },
+        .kind = kind,
+        .parent_id = parent_id,
+        .scope_id = graph_id,
+        .local_ids = local_ids,
+        .nlocal_ids = nlocal_ids
+    };
+
     return graph_id;
 }
 
@@ -553,8 +569,15 @@ make_value(PrismBuilder *builder) {
 
 static void
 make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signature, uint32_t nrequired_ids, uint32_t noptional_ids, bool has_rest, uint32_t npost_ids) {
-    *signature = (PrismSignature) { .nrequired_ids = nrequired_ids, .noptional_ids = noptional_ids, .rest_id = UINT32_MAX, .npost_ids = npost_ids };
     PrismGraph *graph = builder->unit->graphs + graph_id;
+
+    *signature = (PrismSignature) {
+        .nrequired_ids = nrequired_ids,
+        .noptional_ids = noptional_ids,
+        .rest_id = UINT32_MAX,
+        .keyword_rest_id = UINT32_MAX,
+        .npost_ids = npost_ids
+    };
 
     if (nrequired_ids) {
         signature->required_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nrequired_ids, PRISM_ALIGNOF(uint32_t));
@@ -562,6 +585,7 @@ make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signatu
             signature->required_ids[idx] = graph->value_id++;
         }
     }
+
     if (noptional_ids) {
         signature->optional_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * noptional_ids, PRISM_ALIGNOF(uint32_t));
         signature->optional_specified_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * noptional_ids, PRISM_ALIGNOF(uint32_t));
@@ -570,7 +594,11 @@ make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signatu
             signature->optional_specified_ids[idx] = graph->value_id++;
         }
     }
-    if (has_rest) signature->rest_id = graph->value_id++;
+
+    if (has_rest) {
+        signature->rest_id = graph->value_id++;
+    }
+
     if (npost_ids) {
         signature->post_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * npost_ids, PRISM_ALIGNOF(uint32_t));
         for (uint32_t idx = 0; idx < npost_ids; ++idx) {
@@ -636,6 +664,9 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
             }
         }
     }
+    if (parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_KEYWORD_REST_PARAMETER_NODE)) {
+        signature->keyword_rest_id = builder->unit->graphs[graph_id].value_id++;
+    }
 }
 
 static uint32_t
@@ -669,7 +700,16 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
 
     if (signature) {
         PrismBlock *block = PrismBuilder_graph(builder)->blocks + block_id;
-        block->nparams = signature->nrequired_ids + 2 * signature->noptional_ids + (signature->rest_id != UINT32_MAX ? 1 : 0) + signature->npost_ids + signature->nrequired_keyword_ids + 2 * signature->noptional_keyword_ids;
+
+        block->nparams = (
+            signature->nrequired_ids +
+            2 * signature->noptional_ids +
+            (signature->rest_id != UINT32_MAX ? 1 : 0) +
+            signature->npost_ids +
+            signature->nrequired_keyword_ids +
+            2 * signature->noptional_keyword_ids +
+            (signature->keyword_rest_id != UINT32_MAX ? 1 : 0)
+        );
 
         if (block->nparams) {
             block->params = pm_arena_alloc(builder->arena, sizeof(uint32_t) * block->nparams, PRISM_ALIGNOF(uint32_t));
@@ -702,6 +742,10 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
             for (uint32_t keyword_idx = 0; keyword_idx < signature->noptional_keyword_ids; ++keyword_idx) {
                 block->params[idx++] = signature->optional_keyword_ids[keyword_idx];
                 block->params[idx++] = signature->optional_keyword_specified_ids[keyword_idx];
+            }
+
+            if (signature->keyword_rest_id != UINT32_MAX) {
+                block->params[idx] = signature->keyword_rest_id;
             }
         }
     }
@@ -2178,6 +2222,14 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
         }
     }
 
+    if (parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_KEYWORD_REST_PARAMETER_NODE)) {
+        const pm_keyword_rest_parameter_node_t *rest = (const pm_keyword_rest_parameter_node_t *) parameters->keyword_rest;
+        if (rest->name) {
+            uint32_t local_id = resolve_local(builder, rest->name, 0);
+            emit_store_lvar(builder, rest->base.node_id, local_id, signature->keyword_rest_id);
+        }
+    }
+
     for (uint32_t idx = 0; idx < signature->noptional_ids; ++idx) {
         const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
         compile_parameter_default(builder, optional->base.node_id, optional->name, optional->value, signature->optional_ids[idx], signature->optional_specified_ids[idx]);
@@ -3535,6 +3587,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_PRE_EXECUTION_NODE:
         case PM_IT_PARAMETERS_NODE:
         case PM_NUMBERED_PARAMETERS_NODE:
+        case PM_KEYWORD_REST_PARAMETER_NODE:
         case PM_NO_KEYWORDS_PARAMETER_NODE:
         case PM_OPTIONAL_KEYWORD_PARAMETER_NODE:
         case PM_OPTIONAL_PARAMETER_NODE:

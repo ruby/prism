@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, false, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -203,6 +203,51 @@ module Prism
       ].each do |expected, source|
         assert_run(expected, source)
       end
+    end
+
+    def test_keyword_rest_method_parameters
+      vm.run(compile_unit("class CompileTestKeywordRest; def value(**kwargs); kwargs; end; end"))
+      source = "CompileTestKeywordRest.new"
+      assert_run({}, "#{source}.value")
+      assert_run({ x: 1, y: 2 }, "#{source}.value(x: 1, y: 2)")
+      assert_run({ "x" => 1 }, "#{source}.value(**{ 'x' => 1 })")
+      assert_run_raises(ArgumentError, "#{source}.value({ x: 1 })", "wrong number of arguments (given 1, expected 0)")
+      assert_run([{ x: 1, y: 2 }, { x: 1 }], "input = { x: 1 }.freeze; result = #{source}.value(**input); result[:y] = 2; [result, input]")
+      assert_run([1, 2, { z: 3 }], "class CompileTestKeywordRestMixed; def value(x:, y: 2, **rest); [x, y, rest]; end; end; CompileTestKeywordRestMixed.new.value(x: 1, z: 3)")
+      assert_run([1, 4, {}], "object = Object.new; def object.value(x:, y: 2, **rest); [x, y, rest]; end; object.value(x: 1, y: 4)")
+      assert_run(1, "class CompileTestKeywordRestAnonymous; def value(**); 1; end; end; CompileTestKeywordRestAnonymous.new.value(x: 2)")
+      assert_run_raises(ArgumentError, "class CompileTestKeywordRestRequired; def value(x:, **rest); rest; end; end; CompileTestKeywordRestRequired.new.value(y: 1)", "missing keyword: :x")
+    end
+
+    def test_keyword_rest_block_parameters
+      [
+        [{}, "proc { |**kwargs| kwargs }.call"],
+        [{ x: 1 }, "proc { |**kwargs| kwargs }.call(x: 1)"],
+        [{}, "proc { |**kwargs| kwargs }.call({ x: 1 })"],
+        [[[1], { x: 2 }], "proc { |*args, **kwargs| [args, kwargs] }.call(1, x: 2)"],
+        [[1, 2, { z: 3 }], "proc { |x:, y: 2, **kwargs| [x, y, kwargs] }.call(x: 1, z: 3)"],
+        [[1, 2, {}], "proc { |x:, y: 2, **kwargs| [x, y, kwargs] }.call(x: 1)"],
+        [[1, 4, {}], "proc { |x:, y: 2, **kwargs| [x, y, kwargs] }.call(x: 1, y: 4)"],
+        [2, "proc { |**kwargs| proc { kwargs[:x] + 1 }.call }.call(x: 1)"],
+        [1, "proc { |**| 1 }.call(x: 2)"],
+        [[1, { y: 2 }], "proc { |x:, **| [x, { y: 2 }] }.call(x: 1, z: 3)"],
+        [[{ x: 1 }, {}], "p = proc { |**kwargs| kwargs }; a = p.call; a[:x] = 1; [a, p.call]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_keyword_rest_parameters_metadata
+      unit = Prism.compile("proc { |x:, y: 2, **rest| rest }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal({ x: 0 }, graph.signature.required_keywords)
+      assert_equal({ y: 1 }, graph.signature.optional_keywords)
+      assert_equal(3, graph.signature.keyword_rest)
+      assert_equal([0, 1, 2, 3], graph.blocks[0].params)
+      assert_include(unit.disasm, "**%3")
+      graph = compile_unit("proc { |**| 1 }").graphs[1]
+      assert_equal(0, graph.signature.keyword_rest)
+      assert_equal([0], graph.blocks[0].params)
+      assert_empty(graph.locals)
+      assert_nil(compile_unit("proc {}").graphs[1].signature.keyword_rest)
     end
 
     def test_no_keywords_method_parameters
@@ -2411,7 +2456,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, false, false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, false, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
