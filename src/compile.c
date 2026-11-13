@@ -245,6 +245,11 @@ pm_signature_no_keywords(const PrismSignature *signature) {
 }
 
 bool
+pm_signature_no_block(const PrismSignature *signature) {
+    return signature->no_block;
+}
+
+bool
 pm_signature_autosplat(const PrismSignature *signature) {
     return signature->autosplat;
 }
@@ -660,6 +665,7 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
 
     make_signature(builder, graph_id, signature, nrequired_ids, noptional_ids, has_rest, npost_ids);
     signature->no_keywords = parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_NO_KEYWORDS_PARAMETER_NODE);
+    signature->no_block = parameters && parameters->block && PM_NODE_TYPE_P(parameters->block, PM_NO_BLOCK_PARAMETER_NODE);
 
     if (parameters && parameters->keywords.size) {
         uint32_t nrequired_keyword_ids = 0;
@@ -3962,6 +3968,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_NUMBERED_PARAMETERS_NODE:
         case PM_KEYWORD_REST_PARAMETER_NODE:
         case PM_MULTI_TARGET_NODE:
+        case PM_NO_BLOCK_PARAMETER_NODE:
         case PM_NO_KEYWORDS_PARAMETER_NODE:
         case PM_OPTIONAL_KEYWORD_PARAMETER_NODE:
         case PM_OPTIONAL_PARAMETER_NODE:

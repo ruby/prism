@@ -82,6 +82,7 @@ struct PrismSignature {
     uint32_t nrequired_keyword_ids;
     uint32_t noptional_keyword_ids;
     bool no_keywords;
+    bool no_block;
     bool autosplat;
 };
 

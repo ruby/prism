@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -309,6 +309,62 @@ module Prism
       assert_equal([0], graph.blocks[0].params)
       assert_empty(graph.locals)
       assert_nil(compile_unit("proc {}").graphs[1].signature.keyword_rest)
+    end
+
+    def test_no_block_method_parameters
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestNoBlock
+          def value(&nil)
+            1
+          end
+
+          def positional(a, &nil)
+            a
+          end
+
+          def default(a = raise('default ran'), &nil)
+            a
+          end
+
+          def keyword(x:, &nil)
+            x
+          end
+
+          def no_keywords(**nil, &nil)
+            1
+          end
+        end
+      RUBY
+      assert_run(1, "CompileTestNoBlock.new.value")
+      assert_run(2, "CompileTestNoBlock.new.positional(2)")
+      assert_run(3, "CompileTestNoBlock.new.keyword(x: 3)")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.value { 2 }", "no block accepted")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.default { 2 }", "no block accepted")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.positional { 2 }", "wrong number of arguments (given 0, expected 1)")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.keyword { 2 }", "missing keyword: :x")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.keyword(x: 1, y: 2) { 2 }", "unknown keyword: :y")
+      assert_run_raises(ArgumentError, "CompileTestNoBlock.new.no_keywords(x: 1) { 2 }", "no keywords accepted")
+    end
+
+    def test_no_block_block_parameters
+      assert_run(1, "proc { |&nil| 1 }.call")
+      assert_run(2, "proc { |a, &nil| a }.call(2)")
+      assert_run([1, 2], "proc { |a, &nil| a }.call([1, 2])")
+      assert_run_raises(ArgumentError, "proc { |&nil| 1 }.call { 2 }", "no block accepted")
+      assert_run_raises(ArgumentError, "proc { |a = raise('default ran'), &nil| a }.call { 2 }", "no block accepted")
+      assert_run(3, "class CompileTestNoBlockYield; def make; proc { |&nil| yield }; end; end; CompileTestNoBlockYield.new.make { 3 }.call")
+    end
+
+    def test_no_block_parameter_signature
+      unit = Prism.compile("proc { |&nil| 1 }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal(true, graph.signature.no_block)
+      assert_nil(graph.signature.block)
+      assert_empty(graph.blocks[0].params)
+      assert_empty(graph.locals)
+      assert_include(unit.disasm, "g1(&nil)")
+      assert_equal(false, compile_unit("proc {}").graphs[1].signature.no_block)
+      assert_equal(true, compile_unit("def no_block(&nil); end").graphs[1].signature.no_block)
     end
 
     def test_no_keywords_method_parameters
@@ -3119,7 +3175,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, nil, false, false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, 0, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)

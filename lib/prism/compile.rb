@@ -57,9 +57,9 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :keyword_rest, :block, :no_keywords, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :keyword_rest, :block, :no_keywords, :no_block, :autosplat
 
-      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, keyword_rest, block, no_keywords, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, keyword_rest, block, no_keywords, no_block, autosplat)
         @requireds = requireds
         @optionals = optionals
         @optional_specifieds = optional_specifieds
@@ -71,6 +71,7 @@ module Prism
         @keyword_rest = keyword_rest
         @block = block
         @no_keywords = no_keywords
+        @no_block = no_block
         @autosplat = autosplat
       end
     end
@@ -124,6 +125,7 @@ module Prism
           params << "**#{value(signature.keyword_rest)}" if signature.keyword_rest
           params << "**nil" if signature.no_keywords
           params << "&#{value(signature.block)}" if signature.block
+          params << "&nil" if signature.no_block
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -512,6 +514,8 @@ module Prism
             values[signature.optional_keyword_specifieds.fetch(name)] = kwargs.key?(name)
           end
         end
+
+        raise ArgumentError, "no block accepted" if signature.no_block && passed_block
 
         signature.requireds.zip(args) { |param, value| values[param] = value }
         if signature.rest || !signature.posts.empty? || !signature.optionals.empty?
