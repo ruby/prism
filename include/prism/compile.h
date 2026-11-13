@@ -150,6 +150,10 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_signature_post_id(const PrismSignature *sign
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_nrequired_keyword_ids(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_required_keyword_id(const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_signature_required_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_noptional_keyword_ids(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_id(const PrismSignature *signature, uint32_t keyword_idx);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_specified_id(const PrismSignature *signature, uint32_t keyword_idx);
+PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_signature_optional_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION bool pm_signature_autosplat(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION const PrismBlock * pm_graph_block(const PrismGraph *graph, uint32_t block_id);

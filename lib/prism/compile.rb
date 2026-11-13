@@ -57,15 +57,17 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :autosplat
 
-      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, autosplat)
         @requireds = requireds
         @optionals = optionals
         @optional_specifieds = optional_specifieds
         @rest = rest
         @posts = posts
         @required_keywords = required_keywords
+        @optional_keywords = optional_keywords
+        @optional_keyword_specifieds = optional_keyword_specifieds
         @autosplat = autosplat
       end
     end
@@ -113,6 +115,7 @@ module Prism
           params << "*#{value(signature.rest)}" if signature.rest
           params.concat(signature.posts.map { |id| value(id) })
           signature.required_keywords.each { |name, id| params << "#{name}: #{value(id)}" }
+          signature.optional_keywords.each { |name, id| params << "#{name}: #{value(id)}?#{value(signature.optional_keyword_specifieds.fetch(name))}" }
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -444,7 +447,8 @@ module Prism
 
         signature = graph.signature
 
-        if signature.required_keywords.empty? && !kwargs.empty?
+        has_keywords = !signature.required_keywords.empty? || !signature.optional_keywords.empty?
+        if !has_keywords && !kwargs.empty?
           args = [*args, kwargs]
           kwargs = {}
         end
@@ -464,16 +468,20 @@ module Prism
           end
         end
 
-        unless signature.required_keywords.empty?
+        if has_keywords
           missing = signature.required_keywords.keys - kwargs.keys
           unless missing.empty?
             raise ArgumentError, "missing keyword#{missing.length == 1 ? '' : 's'}: #{missing.map(&:inspect).join(', ')}"
           end
-          unknown = kwargs.keys - signature.required_keywords.keys
+          unknown = kwargs.keys - signature.required_keywords.keys - signature.optional_keywords.keys
           unless unknown.empty?
             raise ArgumentError, "unknown keyword#{unknown.length == 1 ? '' : 's'}: #{unknown.map(&:inspect).join(', ')}"
           end
           signature.required_keywords.each { |name, param| values[param] = kwargs.fetch(name) }
+          signature.optional_keywords.each do |name, param|
+            values[param] = kwargs[name]
+            values[signature.optional_keyword_specifieds.fetch(name)] = kwargs.key?(name)
+          end
         end
 
         signature.requireds.zip(args) { |param, value| values[param] = value }

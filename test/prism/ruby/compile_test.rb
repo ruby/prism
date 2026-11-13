@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -203,6 +203,67 @@ module Prism
       ].each do |expected, source|
         assert_run(expected, source)
       end
+    end
+
+    def test_optional_keyword_method_parameters
+      vm.run(compile_unit("class CompileTestOptionalKeywords; def value(x: 1, y: x + 2); [x, y]; end; end"))
+      source = "CompileTestOptionalKeywords.new"
+      assert_run([1, 3], "#{source}.value")
+      assert_run([4, 6], "#{source}.value(x: 4)")
+      assert_run([1, 8], "#{source}.value(y: 8)")
+      assert_run([4, 8], "#{source}.value(y: 8, x: 4)")
+      assert_run([nil, false], "#{source}.value(x: nil, y: false)")
+      assert_run([1, 3], "#{source}.value(**{})")
+      assert_run_raises(ArgumentError, "#{source}.value(z: 1)", "unknown keyword: :z")
+      assert_run_raises(ArgumentError, "#{source}.value({ x: 1 })", "wrong number of arguments (given 1, expected 0)")
+      assert_run(3, "object = Object.new; def object.value(x: 3); x; end; object.value")
+      assert_run([1, 2, [], 3, 4, 5], "class CompileTestOptionalKeywordsMixed; def value(a, b = 2, *rest, c, x:, y: x + 1); [a, b, rest, c, x, y]; end; end; CompileTestOptionalKeywordsMixed.new.value(1, 3, x: 4)")
+    end
+
+    def test_optional_keyword_block_parameters
+      [
+        [[1, 2], "proc { |x: 1, y: (x + 1)| [x, y] }.call"],
+        [[1, 4], "proc { |x: 1, y: (x + 1)| [x, y] }.call(y: 4)"],
+        [[nil, false], "proc { |x: 1, y: 2| [x, y] }.call(x: nil, y: false)"],
+        [[1, 3], "proc { |x:, y: (x + 2)| [x, y] }.call(x: 1)"],
+        [[2, 1], "proc { |x: 2, y:| [x, y] }.call(y: 1)"],
+        [[2, 3], "proc { |a = 2, x: (a + 1)| [a, x] }.call"],
+        [[1, [], 2, 3], "proc { |a, *rest, b, x: 3| [a, rest, b, x] }.call([1, 2])"],
+        [[nil, { x: 2 }], "proc { |a, x: 1| [a, x] }.call(x: { x: 2 })"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(ArgumentError, "proc { |x: 1| x }.call(y: 2)", "unknown keyword: :y")
+      assert_run_raises(ArgumentError, "proc { |x:, y: 1| x }.call", "missing keyword: :x")
+    end
+
+    def test_optional_keyword_defaults
+      [
+        [[[1, 2], [1, 2]], "events = []; p = proc { |x: (events << 1; 1), y: (events << 2; x + 1)| [x, y] }; result = p.call; [result, events]"],
+        [[[4, 5], [2]], "events = []; p = proc { |x: (events << 1; 1), y: (events << 2; x + 1)| [x, y] }; result = p.call(x: 4); [result, events]"],
+        [[nil, []], "events = []; p = proc { |x: (events << 1)| x }; result = p.call(x: nil); [result, events]"],
+        [3, "proc { |x: (if true; 3; else; 4; end)| x }.call"],
+        [2, "proc { |x: proc { 2 }.call| x }.call"],
+        [[1, 1], "proc { |x: 1, y: proc { x }.call| [x, y] }.call"],
+        [[[1], [1]], "p = proc { |x: []| x << 1 }; [p.call, p.call]"],
+        [4, "a = 3; proc { |x: (a + 1)| x }.call"],
+        [[[1, 2], [:positional, :keyword]], "events = []; p = proc { |a = (events << :positional; 1), x: (events << :keyword; 2)| [a, x] }; result = p.call; [result, events]"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(RuntimeError, "proc { |x: raise('default ran')| x }.call", "default ran")
+      assert_run(1, "proc { |x: raise('default ran')| x }.call(x: 1)")
+      assert_run_raises(ArgumentError, "proc { |x:, y: raise('default ran')| y }.call", "missing keyword: :x")
+      assert_run_raises(ArgumentError, "proc { |x: raise('default ran')| x }.call(y: 1)", "unknown keyword: :y")
+    end
+
+    def test_optional_keyword_parameters_metadata
+      unit = Prism.compile("proc { |a, x:, y: 1, z: (y + 1)| [a, x, y, z] }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal({ x: 1 }, graph.signature.required_keywords)
+      assert_equal({ y: 2, z: 4 }, graph.signature.optional_keywords)
+      assert_equal({ y: 3, z: 5 }, graph.signature.optional_keyword_specifieds)
+      assert_equal((0..5).to_a, graph.blocks[0].params)
+      assert_predicate(graph.signature.optional_keywords, :frozen?)
+      assert_predicate(graph.signature.optional_keyword_specifieds, :frozen?)
+      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :branch_if })
+      assert_include(unit.disasm, "y: %2?%3, z: %4?%5")
     end
 
     def test_required_keyword_method_parameters
@@ -2153,6 +2214,8 @@ module Prism
         assert_predicate graph.signature.requireds, :frozen?
         assert_predicate graph.signature.posts, :frozen?
         assert_predicate graph.signature.required_keywords, :frozen?
+        assert_predicate graph.signature.optional_keywords, :frozen?
+        assert_predicate graph.signature.optional_keyword_specifieds, :frozen?
         assert_predicate graph.signature.optionals, :frozen?
         assert_predicate graph.signature.optional_specifieds, :frozen?
         assert_predicate graph.locals, :frozen?
@@ -2204,7 +2267,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], {}, false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
