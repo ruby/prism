@@ -4760,6 +4760,64 @@ module Prism
       assert_equal("failure", vm.run(unit))
     end
 
+    def test_rescue_modifier
+      [
+        [1, "1 rescue 2"],
+        [nil, "nil rescue 2"],
+        [false, "false rescue 2"],
+        [2, "raise('failure') rescue 2"],
+        [2, "raise(ArgumentError) rescue 2"],
+        [2, "missing_modifier_method() rescue 2"],
+        [3, "1 + (raise('failure') rescue 2)"],
+        [2, "value = (raise('failure') rescue 2); value"],
+        [2, "raise('first') rescue raise('second') rescue 2"],
+        [3, "(if true; raise 'failure'; else; 2; end) rescue 3"],
+        [3, "raise('failure') rescue (if true; 3; else; 4; end)"],
+        [[:expression], "events = []; (events << :expression; 1) rescue events << :fallback; events"],
+        [[:expression, :fallback], "events = []; (events << :expression; raise 'failure') rescue events << :fallback; events"],
+        [2, "f = -> { raise('failure') rescue (return 2); 3 }; f.call"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_rescue_modifier_failure
+      assert_run_raises(Exception, "raise(Exception, 'unhandled') rescue 2", "unhandled")
+      assert_run_raises(RuntimeError, "raise('first') rescue raise('second')", "second")
+      assert_run_raises(RuntimeError, "raise('first') rescue raise", "first")
+    end
+
+    def test_rescue_modifier_context
+      [
+        "raise('failure') rescue $!.message",
+        "before = $!; (raise('failure') rescue 2); $!.equal?(before)",
+        "begin; raise 'outer'; rescue; before = $!; inner = (raise('inner') rescue $!.message); [inner, $!.equal?(before)]; end",
+        "begin; raise('first') rescue raise('second'); rescue => e; [e.message, e.cause.message]; end",
+        "(raise('failure') rescue (/(a)/ =~ 'a')); $1",
+        "(/(a)/ =~ 'a'; raise 'failure') rescue $1"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_rescue_modifier_retry
+      [
+        "attempts = 0; (attempts += 1; raise if attempts < 2; attempts) rescue retry",
+        "attempts = 0; events = []; before = $!; (events << $!.equal?(before); attempts += 1; raise if attempts < 2) rescue retry; events",
+        "attempts = 0; begin; attempts += 1; raise if attempts < 2; rescue; (raise('inner') rescue 3); retry; end; attempts",
+        "attempts = 0; (attempts += 1; raise if attempts < 2; attempts) rescue (begin; raise 'inner'; rescue; 3; end; retry)"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_rescue_modifier_regions
+      unit = Prism.compile("raise('failure') rescue 2", freeze: true).value
+      graph = unit.graphs[0]
+      region = graph.regions.find { |candidate| candidate.kind == :rescue }
+      assert_same(region, region.entry.region)
+      assert_same(region.parent, region.handler.region.parent)
+      assert_equal(1, region.handler.params.length)
+      assert_include(unit.disasm, "rescue_match(")
+      assert_include(unit.disasm, "trace_rescue")
+      assert_include(unit.disasm, "reraise")
+      assert_equal(2, vm.run(unit))
+    end
+
     def test_retry
       [
         "attempts = 0; begin; attempts += 1; raise 'failure' if attempts < 3; attempts; rescue; retry; end",
