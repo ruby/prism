@@ -419,6 +419,92 @@ module Prism
       ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
     end
 
+    def test_anonymous_block_forwarding
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestAnonymousBlock
+          def capture(&block)
+            block
+          end
+
+          def forward(&)
+            capture(&)
+          end
+
+          def collect(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+
+          def all(*, **, &)
+            collect(*, **, &)
+          end
+
+          def make(&)
+            proc { proc { capture(&) } }
+          end
+
+          def distinguish(&)
+            proc { |&inner| [capture(&).call, inner.call, yield] }
+          end
+
+          def iter(&)
+            out = []
+            for i in [1, 2]
+              out << capture(&).call
+            end
+            out
+          end
+
+          def restore(&)
+            def inner_forward(&)
+              capture(&)
+            end
+            [inner_forward { :inner }.call, capture(&).call]
+          end
+
+          def safe(receiver, &)
+            receiver&.capture(&)
+          end
+        end
+      RUBY
+      receiver = "CompileTestAnonymousBlock.new"
+      [
+        [nil, "forward"],
+        [3, "forward { 3 }.call"],
+        [[[], {}, nil], "all"],
+        [[[1, 2], { x: 3 }, 4], "all(1, 2, x: 3) { 4 }"],
+        [3, "make { 3 }.call.call.call"],
+        [[:outer, :inner, :outer], "distinguish { :outer }.call { :inner }"],
+        [[3, 3], "iter { 3 }"],
+        [[:inner, :outer], "restore { :outer }"],
+        [nil, "safe(nil) { 3 }"],
+        [3, "safe(#{receiver}) { 3 }.call"]
+      ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
+      assert_run_raises(RuntimeError, "#{receiver}.all { raise('callback failed') }", "callback failed")
+      object = vm.run(compile_unit(receiver))
+      callback = proc { 3 }
+      assert_same(callback, object.forward(&callback))
+      assert_same(callback, object.make(&callback).call.call)
+    end
+
+    def test_anonymous_block_forwarding_signature
+      unit = Prism.compile("def forward(*, **, &); target(*, **, &); end", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([:*, :**, :&], graph.locals.map(&:name))
+      assert_not_nil(graph.signature.block)
+      assert_include(graph.blocks[0].params, graph.signature.block)
+      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call_with_block }
+      assert_equal(true, call.data.splat)
+      assert_equal(true, call.data.keywords)
+      load = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :load_lvar && insn.data.name == :& }
+      assert_equal(load.opnds[0], call.opnds[-1])
+    end
+
+    def test_block_argument_expressions
+      assert_run(3, "proc { |&block| proc { |&passed| passed.call }.call(&block) }.call { 3 }")
+      assert_run(nil, "proc { |&block| block }.call(&nil)")
+      assert_run(["1", "2"], "[1, 2].map(&:to_s)")
+    end
+
     def test_anonymous_forwarding_evaluation_order
       assert_run([[[0, 1, 2, 3], { x: 4, y: 5 }], [:receiver, :before, :after, :keyword]], <<~RUBY)
         class CompileTestForwardingOrder

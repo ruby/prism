@@ -28,6 +28,7 @@
 #define PM_CONSTANT_ID_LINE_NUMBER (pm_constant_id_t) -9
 #define PM_CONSTANT_ID_REST (pm_constant_id_t) -10
 #define PM_CONSTANT_ID_KEYWORD_REST (pm_constant_id_t) -11
+#define PM_CONSTANT_ID_BLOCK (pm_constant_id_t) -12
 
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
@@ -39,23 +40,25 @@ static const pm_constant_t length_constant = { .start = (const uint8_t *) "lengt
 static const pm_constant_t equal_constant = { .start = (const uint8_t *) "==", .length = 2 };
 static const pm_constant_t rest_constant = { .start = (const uint8_t *) "*", .length = 1 };
 static const pm_constant_t keyword_rest_constant = { .start = (const uint8_t *) "**", .length = 2 };
+static const pm_constant_t block_constant = { .start = (const uint8_t *) "&", .length = 1 };
 static const pm_constant_t line_number_constant = { .start = (const uint8_t *) "$.", .length = 2 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     switch (constant_id) {
-        case PM_CONSTANT_ID_BACKTICK:   return &backtick_constant;
-        case PM_CONSTANT_ID_LAST_LINE:  return &last_line_constant;
-        case PM_CONSTANT_ID_MATCH:      return &match_constant;
-        case PM_CONSTANT_ID_EACH:       return &each_constant;
-        case PM_CONSTANT_ID_IT:         return &it_constant;
-        case PM_CONSTANT_ID_ASET:       return &aset_constant;
-        case PM_CONSTANT_ID_LENGTH:     return &length_constant;
-        case PM_CONSTANT_ID_EQUAL:      return &equal_constant;
-        case PM_CONSTANT_ID_LINE_NUMBER: return &line_number_constant;
-        case PM_CONSTANT_ID_REST: return &rest_constant;
-        case PM_CONSTANT_ID_KEYWORD_REST: return &keyword_rest_constant;
-        default:                        return pm_parser_constant(parser, constant_id);
+        case PM_CONSTANT_ID_BACKTICK:       return &backtick_constant;
+        case PM_CONSTANT_ID_LAST_LINE:      return &last_line_constant;
+        case PM_CONSTANT_ID_MATCH:          return &match_constant;
+        case PM_CONSTANT_ID_EACH:           return &each_constant;
+        case PM_CONSTANT_ID_IT:             return &it_constant;
+        case PM_CONSTANT_ID_ASET:           return &aset_constant;
+        case PM_CONSTANT_ID_LENGTH:         return &length_constant;
+        case PM_CONSTANT_ID_EQUAL:          return &equal_constant;
+        case PM_CONSTANT_ID_LINE_NUMBER:    return &line_number_constant;
+        case PM_CONSTANT_ID_REST:           return &rest_constant;
+        case PM_CONSTANT_ID_KEYWORD_REST:   return &keyword_rest_constant;
+        case PM_CONSTANT_ID_BLOCK:          return &block_constant;
+        default:                            return pm_parser_constant(parser, constant_id);
     }
 }
 
@@ -65,6 +68,7 @@ typedef struct {
     uint32_t it_local_id;
     uint32_t rest_local_id;
     uint32_t keyword_rest_local_id;
+    uint32_t block_local_id;
     int32_t lineno;
     const pm_constant_id_list_t *locals;
     uint32_t *shadowed;
@@ -834,6 +838,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signa
         .it_local_id = locals == NULL ? state.it_local_id : UINT32_MAX,
         .rest_local_id = captures ? state.rest_local_id : UINT32_MAX,
         .keyword_rest_local_id = captures ? state.keyword_rest_local_id : UINT32_MAX,
+        .block_local_id = captures ? state.block_local_id : UINT32_MAX,
         .lineno = builder->parser->start_line - 1,
         .locals = locals
     };
@@ -2397,6 +2402,11 @@ anonymous_parameters(const pm_parameters_node_t *parameters) {
             const pm_keyword_rest_parameter_node_t *keyword_rest = (const pm_keyword_rest_parameter_node_t *) parameters->keyword_rest;
             if (!keyword_rest->name) nlocals++;
         }
+
+        if (parameters->block && PM_NODE_TYPE_P(parameters->block, PM_BLOCK_PARAMETER_NODE)) {
+            const pm_block_parameter_node_t *block = (const pm_block_parameter_node_t *) parameters->block;
+            if (!block->name) nlocals++;
+        }
     }
 
     return nlocals;
@@ -2462,6 +2472,11 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
         const pm_block_parameter_node_t *block = (const pm_block_parameter_node_t *) parameters->block;
         if (block->name) {
             uint32_t local_id = resolve_local(builder, block->name, 0);
+            emit_store_lvar(builder, block->base.node_id, local_id, signature->block_id);
+        } else {
+            uint32_t local_id = make_local(builder, PM_CONSTANT_ID_BLOCK);
+            PrismBuilder_graph(builder)->local_ids[local_index++] = local_id;
+            builder->state.block_local_id = local_id;
             emit_store_lvar(builder, block->base.node_id, local_id, signature->block_id);
         }
     }
@@ -2643,6 +2658,15 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
     }
 
     return value_id;
+}
+
+static uint32_t
+compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_t *node) {
+    if (node->expression) {
+        return compile_node(builder, node->expression);
+    } else {
+        return emit_load_lvar(builder, node->base.node_id, builder->state.block_local_id);
+    }
 }
 
 static uint32_t
@@ -3889,6 +3913,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_array_node(builder, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
             return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
+        case PM_BLOCK_ARGUMENT_NODE:
+            return compile_block_argument_node(builder, (const pm_block_argument_node_t *) node);
         case PM_BLOCK_NODE:
             return compile_block_node(builder, (const pm_block_node_t *) node);
         case PM_CALL_NODE:
@@ -4116,6 +4142,7 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
             .it_local_id = UINT32_MAX,
             .rest_local_id = UINT32_MAX,
             .keyword_rest_local_id = UINT32_MAX,
+            .block_local_id = UINT32_MAX,
             .lineno = parser->start_line - 1
         }
     };
