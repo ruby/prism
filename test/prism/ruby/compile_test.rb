@@ -2647,6 +2647,85 @@ module Prism
       RUBY
     end
 
+    def test_index_and_write
+      [
+        [[3, [3]], "a = [1]; result = (a[0] &&= 3); [result, a]"],
+        [[nil, [nil]], "a = Array.new(1); result = (a[0] &&= raise('rhs ran')); [result, a]"],
+        [[false, [false]], "a = Array.new(1, false); result = (a[0] &&= raise('rhs ran')); [result, a]"],
+        [[3, [3]], "a = [0]; result = (a[0] &&= 3); [result, a]"],
+        [[nil, [nil]], "a = [1]; result = (a[0] &&= nil); [result, a]"],
+        [[false, [false]], "a = [1]; result = (a[0] &&= false); [result, a]"],
+        [[3, { a: 3 }], "a = { a: 1 }; result = (a[:a] &&= 3); [result, a]"],
+        [[3, [3]], "a = [1]; result = (a[0] &&= (if true; 3; else; 4; end)); [result, a]"],
+        [[3, [3]], "a = [1]; result = (a[0] &&= proc { 3 }.call); [result, a]"],
+        [[3, [3, 2]], "a = [1, 2]; indices = [0]; result = (a[*indices] &&= 3); [result, a]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_index_and_write_evaluation
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      indices = Object.new
+      result = Object.new
+      current = true
+      fail_at = nil
+      indices.define_singleton_method(:to_a) do
+        events << :convert
+        raise 'convert failed' if fail_at == :convert
+        [1, 2]
+      end
+      receiver.define_singleton_method(:[]) do |*args|
+        events << [:getter, args]
+        raise 'getter failed' if fail_at == :getter
+        current
+      end
+      receiver.define_singleton_method(:[]=) do |*args|
+        events << [:setter, args]
+        raise 'setter failed' if fail_at == :setter
+        :ignored
+      end
+      rhs = proc do
+        raise 'rhs failed' if fail_at == :rhs
+        result
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Indices, indices)
+      scope.const_set(:Events, events)
+      scope.const_set(:Rhs, rhs)
+      source = "(Events << :receiver; Receiver)[*(Events << :index; Indices)] &&= (Events << :rhs; Rhs.call)"
+      graph = compile_unit(source).graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_same(result, vm.run_frame(frame.call))
+      expected = [:receiver, :index, :convert, [:getter, [1, 2]], :rhs, [:setter, [1, 2, result]]]
+      assert_equal(expected, events)
+      [nil, false].each do |value|
+        events.clear
+        current = value
+        assert_equal(value, vm.run_frame(frame.call))
+        assert_equal(expected.take(4), events)
+      end
+      current = true
+      { convert: 3, getter: 4, rhs: 5, setter: 6 }.each do |stage, length|
+        events.clear
+        fail_at = stage
+        assert_raise_with_message(RuntimeError, "#{stage} failed") { vm.run_frame(frame.call) }
+        assert_equal(expected.take(length), events)
+      end
+      fail_at = nil
+      [nil, false].each do |value|
+        events.clear
+        result = value
+        assert_equal(value, vm.run_frame(frame.call))
+        assert_equal([:receiver, :index, :convert, [:getter, [1, 2]], :rhs, [:setter, [1, 2, value]]], events)
+      end
+      events.clear
+      result = Object.new
+      graph = compile_unit("Receiver[] &&= (Events << :rhs; Rhs.call)").graphs[0]
+      assert_same(result, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([[:getter, []], :rhs, [:setter, [result]]], events)
+    end
+
     def test_index_operator_write
       [
         [[4, [4, 2]], "a = [1, 2]; result = (a[0] += 3); [result, a]"],
