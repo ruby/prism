@@ -1768,6 +1768,12 @@ PrismTargetParents_push(PrismBuilder *builder, PrismTargetParents *parents, uint
 static void
 compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismTargetParents *parents) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_CALL_TARGET_NODE: {
+            const pm_call_target_node_t *target = (const pm_call_target_node_t *) node;
+            uint32_t receiver_id = compile_node(builder, target->receiver);
+            PrismTargetParents_push(builder, parents, receiver_id);
+            break;
+        }
         case PM_CONSTANT_PATH_TARGET_NODE: {
             const pm_constant_path_target_node_t *target = (const pm_constant_path_target_node_t *) node;
             if (target->parent) {
@@ -1784,6 +1790,28 @@ compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismT
 static void
 compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, PrismTargetParents *parents) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_CALL_TARGET_NODE: {
+            const pm_call_target_node_t *target = (const pm_call_target_node_t *) node;
+            assert(parents->index < parents->size);
+            uint32_t receiver_id = parents->ids[parents->index++];
+            uint32_t join_block_id = UINT32_MAX;
+
+            if (PM_NODE_FLAG_P(target, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
+                uint32_t call_block_id = make_block(builder, 0);
+                join_block_id = make_block(builder, 0);
+                uint32_t nil_id = emit_nil_p(builder, node->node_id, receiver_id);
+                emit_branchif(builder, node->node_id, nil_id, join_block_id, 0, NULL, call_block_id, 0, NULL);
+                builder->state.block_id = call_block_id;
+            }
+
+            emit_call(builder, node->node_id, target->name, receiver_id, 1, &value_id, false);
+
+            if (join_block_id != UINT32_MAX) {
+                emit_branch(builder, node->node_id, join_block_id, 0, NULL);
+                builder->state.block_id = join_block_id;
+            }
+            break;
+        }
         case PM_CLASS_VARIABLE_TARGET_NODE: {
             const pm_class_variable_target_node_t *target = (const pm_class_variable_target_node_t *) node;
             emit_store_cvar(builder, target->base.node_id, target->name, value_id);
@@ -3437,6 +3465,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ASSOC_SPLAT_NODE:
         case PM_BLOCK_LOCAL_VARIABLE_NODE:
         case PM_BLOCK_PARAMETERS_NODE:
+        case PM_CALL_TARGET_NODE:
         case PM_CLASS_VARIABLE_TARGET_NODE:
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:

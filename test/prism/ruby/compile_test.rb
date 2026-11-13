@@ -834,6 +834,51 @@ module Prism
       $compile_test_for = nil
     end
 
+    def test_for_call_target
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:value=) { |value| events << [:write, value]; :ignored }
+      collection = Object.new
+      collection.define_singleton_method(:each) do |&block|
+        events << :each
+        block.call(1)
+        block.call(2, 3)
+        block.call([4, 5])
+        block.call
+        :finished
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Collection, collection)
+      scope.const_set(:Events, events)
+      source = "for (Events << :receiver; Receiver).value in (Events << :collection; Collection); Events << :body; end"
+      graph = compile_unit(source).graphs[0]
+      assert_equal(:finished, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:collection, :each, :receiver, [:write, 1], :body, :receiver, [:write, 2], :body,
+                    :receiver, [:write, [4, 5]], :body, :receiver, [:write, nil], :body], events)
+      assert_run([], "for (raise('receiver ran')).value in []; end")
+      assert_run_raises(RuntimeError, "for (raise('receiver failed')).value in [1]; end", "receiver failed")
+      assert_run_raises(RuntimeError, "object = Object.new; def object.value=(v); raise 'setter failed'; end; for object.value in [1]; end", "setter failed")
+    end
+
+    def test_for_call_target_safe_navigation
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:value=) { |value| events << [:write, value] }
+      scope.const_set(:Receivers, [nil, receiver])
+      scope.const_set(:Events, events)
+      source = "for (Events << :receiver; Receivers.shift)&.value in [1, 2]; Events << :body; end"
+      graph = compile_unit(source).graphs[0]
+      assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:receiver, :body, :receiver, [:write, 2], :body], events)
+      assert_run_raises(NoMethodError, "for false&.missing in [1]; end")
+      assert_run([], "for (raise('receiver ran'))&.value in []; end")
+      loop_graph = compile_unit("for nil&.value in [1]; end").graphs[1]
+      assert_include(loop_graph.blocks.flat_map(&:insns).map(&:kind), :nil_p)
+      assert_include(loop_graph.blocks.flat_map(&:insns).map(&:kind), :branch_if)
+    end
+
     def test_for_constant_target
       ["A", "self::A"].each do |target|
         scope = Module.new
