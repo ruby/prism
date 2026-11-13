@@ -180,6 +180,54 @@ module Prism
       RUBY
     end
 
+    def test_redo_loops
+      [
+        "i = 0; checks = 0; while (checks += 1; i < 3); i += 1; redo if i < 2; end; [i, checks]",
+        "i = 0; checks = 0; until (checks += 1; i == 3); i += 1; redo if i < 2; end; [i, checks]",
+        "i = 0; checks = 0; begin; i += 1; redo if i < 3; end while (checks += 1; false); [i, checks]",
+        "i = 0; checks = 0; begin; i += 1; redo if i < 3; end until (checks += 1; true); [i, checks]",
+        "i = 0; events = []; while i < 2; i += 1; j = 0; while j < 2; j += 1; redo if j == 1; events << j; end; redo if i == 1; events << i; end; events",
+        "i = 0; before = $!; events = []; while i < 2; events << $!.equal?(before); i += 1; begin; raise 'failure'; rescue; redo if i < 2; end; end; events",
+        "i = 0; result = while true; i += 1; redo if i < 2; break i; end; result"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_redo_blocks
+      [
+        "attempts = 0; result = [1, 2].map { |value| attempts += 1; redo if attempts == 1; value }; [result, attempts]",
+        "attempts = 0; [1].map { |value| attempts += 1; value += 1; redo if attempts < 2; value }",
+        "attempts = 0; events = []; proc { |value = (events << :default; 1)| attempts += 1; value += 1; redo if attempts < 2; [value, events] }.call",
+        "attempts = 0; proc { |(a, b)| attempts += 1; a += 1; redo if attempts < 2; [a, b] }.call([1, 2])",
+        "attempts = 0; ->(value) { attempts += 1; value += 1; redo if attempts < 2; value }.call(1)",
+        "attempts = 0; proc { attempts += 1; redo if attempts < 2; attempts }.call",
+        "attempts = 0; [1].each { attempts += 1; redo if attempts < 2; break attempts }",
+        "attempts = 0; [1].map { attempts += 1; redo if attempts < 2; next attempts }",
+        "attempts = 0; [1].map { i = 0; while i < 2; i += 1; redo if i == 1; end; attempts += 1; redo if attempts < 2; attempts }",
+        "attempts = 0; before = $!; events = []; result = [1].map { events << $!.equal?(before); attempts += 1; begin; raise 'failure'; rescue; redo if attempts < 2; attempts; end }; [result, events]",
+        "attempts = 0; events = []; for value in [1, 2]; attempts += 1; value += 1; redo if attempts == 1; events << value; end; events",
+        "attempts = 0; events = []; for a, b in [[1, 2]]; attempts += 1; a += 1; redo if attempts < 2; events << [a, b]; end; events"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_redo_for_target_assignment
+      assert_run([2, [1]], <<~RUBY)
+        object = Object.new
+        def object.value=(value)
+          @assignments ||= []
+          @assignments << value
+        end
+        def object.assignments
+          @assignments
+        end
+        attempts = 0
+        for object.value in [1]
+          attempts += 1
+          redo if attempts < 2
+        end
+        [attempts, object.assignments]
+      RUBY
+    end
+
     def test_blocks_without_parameters
       [
         [3, "a = 0; 3.times { a += 1 }; a"],
@@ -1124,8 +1172,8 @@ module Prism
       assert_equal(2, graph.signature.requireds.length)
       assert_include(unit.disasm, "(lambda, parent=g0, scope=g1)")
       assert_include(graph.blocks[0].insns.map(&:kind), :trace_b_call)
-      return_index = graph.blocks[0].insns.index { |insn| insn.kind == :return }
-      assert_equal(:trace_b_return, graph.blocks[0].insns[return_index - 1].kind)
+      body = graph.blocks[0].insns.last.data
+      assert_equal([:trace_b_return, :return], body.insns.last(2).map(&:kind))
       unit = compile_unit("->(x) { if x..false; true; else; false; end }")
       assert_equal([1, 0], unit.graphs.map(&:nflip_flops))
     end
@@ -1772,7 +1820,8 @@ module Prism
       assert_equal([0], graph.blocks[0].params)
       assert_equal([:it], graph.locals.map(&:name))
       assert_equal([:store_lvar, :trace_b_call], graph.blocks[0].insns.first(2).map(&:kind))
-      assert_include(graph.blocks[0].insns.map(&:kind), :load_lvar)
+      body = graph.blocks[0].insns.last.data
+      assert_include(body.insns.map(&:kind), :load_lvar)
     end
 
     def test_rest_block_parameters
@@ -2137,7 +2186,8 @@ module Prism
       assert_equal([:b], child.locals.map(&:name))
       assert_empty(child.blocks[0].params)
       assert_equal(:trace_b_call, child.blocks[0].insns.first.kind)
-      assert_equal([:trace_b_return, :return], child.blocks[0].insns.last(2).map(&:kind))
+      body = child.blocks[0].insns.last.data
+      assert_equal([:trace_b_return, :return], body.insns.last(2).map(&:kind))
     end
 
     def test_for
