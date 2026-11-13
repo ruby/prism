@@ -4471,6 +4471,23 @@ module Prism
       assert_equal 10, trace_line.data
     end
 
+    def test_begin
+      [
+        [nil, "begin; end"],
+        [2, "begin; 1; 2; end"],
+        [3, "1 + begin; 2; end"],
+        [2, "begin; begin; 2; end; end"],
+        [3, "begin; if true; 3; else; 4; end; end"],
+        [3, "begin; a = 3; end; a"],
+        [[1, 2], "events = []; begin; events << 1; events << 2; end; events"]
+      ].each { |expected, source| assert_run(expected, source) }
+
+      unit = compile_unit("begin; if true; 1; else; 2; end; end")
+      graph = unit.graphs[0]
+      assert_equal(1, graph.regions.length)
+      graph.blocks.each { |block| assert_same(graph.regions[0], block.region) }
+    end
+
     def test_compile_regions
       unit = compile_unit("def region_example(x); if x; [1].map { 2 }; else; 3; end; end")
       assert_operator(unit.graphs.length, :>, 1)

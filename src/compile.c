@@ -3166,6 +3166,11 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
 }
 
 static uint32_t
+compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
+    return compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+}
+
+static uint32_t
 compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_t *node) {
     if (node->expression) {
         return compile_node(builder, node->expression);
@@ -4736,6 +4741,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_array_node(builder, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
             return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
+        case PM_BEGIN_NODE:
+            return compile_begin_node(builder, (const pm_begin_node_t *) node);
         case PM_BLOCK_ARGUMENT_NODE:
             return compile_block_argument_node(builder, (const pm_block_argument_node_t *) node);
         case PM_BLOCK_NODE:
