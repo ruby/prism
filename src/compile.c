@@ -1868,6 +1868,15 @@ PrismTargetParents_push(PrismBuilder *builder, PrismTargetParents *parents, uint
     parents->ids[parents->size++] = parent_id;
 }
 
+static void compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismTargetParents *parents);
+
+static void
+compile_multi_target_parents(PrismBuilder *builder, const pm_node_list_t *lefts, const pm_node_t *rest, const pm_node_list_t *rights, PrismTargetParents *parents) {
+    for (size_t idx = 0; idx < lefts->size; ++idx) compile_target_node_parents(builder, lefts->nodes[idx], parents);
+    if (rest) compile_target_node_parents(builder, rest, parents);
+    for (size_t idx = 0; idx < rights->size; ++idx) compile_target_node_parents(builder, rights->nodes[idx], parents);
+}
+
 static void
 compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismTargetParents *parents) {
     switch (PM_NODE_TYPE(node)) {
@@ -1906,19 +1915,7 @@ compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismT
         }
         case PM_MULTI_TARGET_NODE: {
             const pm_multi_target_node_t *target = (const pm_multi_target_node_t *) node;
-
-            for (size_t idx = 0; idx < target->lefts.size; ++idx) {
-                compile_target_node_parents(builder, target->lefts.nodes[idx], parents);
-            }
-
-            if (target->rest) {
-                compile_target_node_parents(builder, target->rest, parents);
-            }
-
-            for (size_t idx = 0; idx < target->rights.size; ++idx) {
-                compile_target_node_parents(builder, target->rights.nodes[idx], parents);
-            }
-
+            compile_multi_target_parents(builder, &target->lefts, target->rest, &target->rights, parents);
             break;
         }
         case PM_SPLAT_NODE: {
@@ -1929,6 +1926,20 @@ compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismT
         default:
             break;
     }
+}
+
+static void compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, PrismTargetParents *parents);
+
+static void
+compile_multi_target(PrismBuilder *builder, uint32_t node_id, const pm_node_list_t *lefts, const pm_node_t *rest, const pm_node_list_t *rights, uint32_t value_id, PrismTargetParents *parents) {
+    const pm_node_t *rest_target = rest && PM_NODE_TYPE_P(rest, PM_SPLAT_NODE) ? ((const pm_splat_node_t *) rest)->expression : NULL;
+    uint32_t array_id = emit_coerce_array(builder, node_id, value_id);
+    uint32_t *value_ids = emit_expand_array(builder, node_id, array_id, (uint32_t) lefts->size, (uint32_t) rights->size, rest_target != NULL);
+    uint32_t idx = 0;
+
+    for (size_t left = 0; left < lefts->size; ++left) compile_target_node(builder, lefts->nodes[left], value_ids[idx++], parents);
+    if (rest_target) compile_target_node(builder, rest_target, value_ids[idx++], parents);
+    for (size_t right = 0; right < rights->size; ++right) compile_target_node(builder, rights->nodes[right], value_ids[idx++], parents);
 }
 
 static void
@@ -2018,22 +2029,7 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
         }
         case PM_MULTI_TARGET_NODE: {
             const pm_multi_target_node_t *target = (const pm_multi_target_node_t *) node;
-            const pm_node_t *rest = target->rest && PM_NODE_TYPE_P(target->rest, PM_SPLAT_NODE) ? ((const pm_splat_node_t *) target->rest)->expression : NULL;
-
-            uint32_t array_id = emit_coerce_array(builder, node->node_id, value_id);
-            uint32_t *value_ids = emit_expand_array(builder, node->node_id, array_id, (uint32_t) target->lefts.size, (uint32_t) target->rights.size, rest != NULL);
-            uint32_t idx = 0;
-
-            for (size_t left = 0; left < target->lefts.size; ++left) {
-                compile_target_node(builder, target->lefts.nodes[left], value_ids[idx++], parents);
-            }
-
-            if (rest) compile_target_node(builder, rest, value_ids[idx++], parents);
-
-            for (size_t right = 0; right < target->rights.size; ++right) {
-                compile_target_node(builder, target->rights.nodes[right], value_ids[idx++], parents);
-            }
-
+            compile_multi_target(builder, node->node_id, &target->lefts, target->rest, &target->rights, value_id, parents);
             break;
         }
         case PM_SPLAT_NODE: {
@@ -3359,6 +3355,16 @@ compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
 }
 
 static uint32_t
+compile_multi_write_node(PrismBuilder *builder, const pm_multi_write_node_t *node) {
+    PrismTargetParents parents = { 0 };
+    compile_multi_target_parents(builder, &node->lefts, node->rest, &node->rights, &parents);
+    uint32_t value_id = compile_node(builder, node->value);
+    compile_multi_target(builder, node->base.node_id, &node->lefts, node->rest, &node->rights, value_id, &parents);
+    assert(parents.index == parents.size);
+    return value_id;
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, object_id);
@@ -3716,6 +3722,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_match_write_node(builder, (const pm_match_write_node_t *) node);
         case PM_MODULE_NODE:
             return compile_module_node(builder, (const pm_module_node_t *) node);
+        case PM_MULTI_WRITE_NODE:
+            return compile_multi_write_node(builder, (const pm_multi_write_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_NUMBERED_REFERENCE_READ_NODE:

@@ -1100,6 +1100,77 @@ module Prism
       assert_same(unit.graphs[0].scope, block_insn.data.scope)
     end
 
+    def test_multi_write
+      [
+        [[1, 2], "a, b = 1, 2; [a, b]"],
+        [[1, nil], "a, b = 1; [a, b]"],
+        [[nil, nil], "a, b = nil; [a, b]"],
+        [[nil, nil], "a, b = []; [a, b]"],
+        [[2, 1], "a = 1; b = 2; a, b = b, a; [a, b]"],
+        [[1, [2, 3], 4], "a, *b, c = [1, 2, 3, 4]; [a, b, c]"],
+        [[1, [], 2, nil], "a, *b, c, d = [1, 2]; [a, b, c, d]"],
+        [[1, 4], "a, *, b = [1, 2, 3, 4]; [a, b]"],
+        [[1, 2], "*a = [1, 2]; a"],
+        [1, "a, = [1, 2]; a"],
+        [[1, 2, 3, [4], 5], "a, (b, c), *d, e = [1, [2, 3], 4, 5]; [a, b, c, d, e]"],
+        [[2, 3], "a, (a, b) = [1, [2, 3]]; [a, b]"],
+        [[1, 2, 1, 2], "a, b = (c, d = [1, 2]); [a, b, c, d]"],
+        [[1, 1, nil], "result = (a, b = 1); [result, a, b]"],
+        [[1, [1]], "result = (*a = 1); [result, a]"],
+        [[true, 1, 2], "input = [1, 2]; result = (a, b = input); [result.equal?(input), a, b]"],
+        [1, "a = 0; proc { a, b = 1, 2 }.call; a"],
+        [[[2, 3], [1, 2]], "input = [1, 2]; a, *b = input; b << 3; [b, input]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_multi_write_evaluation
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:[]=) { |index, value| events << [:index_write, index, value]; :ignored }
+      receiver.define_singleton_method(:value=) { |value| events << [:setter, value]; :ignored }
+      item = Object.new
+      fail_conversion = false
+      item.define_singleton_method(:to_ary) do
+        events << :convert
+        raise 'conversion failed' if fail_conversion
+        [1, 2]
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Item, item)
+      scope.const_set(:Events, events)
+      source = "(Events << :receiver; Receiver)[(Events << :index; 0)], (Events << :call_receiver; Receiver).value = (Events << :rhs; Item)"
+      graph = compile_unit(source).graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_same(item, vm.run_frame(frame.call))
+      assert_equal([:receiver, :index, :call_receiver, :rhs, :convert, [:index_write, 0, 1], [:setter, 2]], events)
+      events.clear
+      fail_conversion = true
+      assert_raise_with_message(RuntimeError, "conversion failed") { vm.run_frame(frame.call) }
+      assert_equal([:receiver, :index, :call_receiver, :rhs, :convert], events)
+    end
+
+    def test_multi_write_nested_conversion_order
+      scope = Module.new
+      events = []
+      item = Object.new
+      item.define_singleton_method(:to_ary) { events << [:convert, scope.const_get(:A)]; [2, 3] }
+      scope.const_set(:Item, item)
+      scope.const_set(:Events, events)
+      source = "(Events << :a; self)::A, ((Events << :b; self)::B, (Events << :c; self)::C) = (Events << :rhs; [1, Item]); [A, B, C]"
+      graph = compile_unit(source).graphs[0]
+      assert_equal([1, 2, 3], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:a, :b, :c, :rhs, [:convert, 1]], events)
+    end
+
+    def test_multi_write_variable_kinds
+      scope = Class.new
+      graph = compile_unit("@a, @@b, $compile_test_multi_write, A = 1, 2, 3, 4; [@a, @@b, $compile_test_multi_write, A]").graphs[0]
+      assert_equal([1, 2, 3, 4], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    ensure
+      $compile_test_multi_write = nil
+    end
+
     def test_for_multi_target
       [
         [[[1, 2], [3, 4]], "out = []; for a, b in [[1, 2], [3, 4]]; out << [a, b]; end; out"],
