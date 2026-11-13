@@ -31,7 +31,6 @@ typedef enum {
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnCall,
-    kPrismInsnCallWithBlock,
     kPrismInsnCoerceArrayToA,
     kPrismInsnCoerceArrayToAry,
     kPrismInsnCoerceHash,
@@ -229,6 +228,10 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branchif_else_block_id(const PrismInsn 
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branchif_then_nopnds(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_splat(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_keywords(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_call_ignore_visibility(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_call_variable_call(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_call_block(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_call_block_argument(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_call_name(const pm_parser_t *parser, const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_name(const pm_parser_t *parser, const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_define_name(const pm_parser_t *parser, const PrismInsn *insn);

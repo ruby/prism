@@ -98,6 +98,148 @@ module Prism
       assert_equal(3, vm.run(unit))
     end
 
+    def test_call_info_flags
+      [
+        ["target", true, true, false],
+        ["target()", true, false, false],
+        ["target(1)", true, false, false],
+        ["self.target", true, false, false],
+        ["object.target", false, false, false],
+        ["object&.target", false, false, false],
+        ["target {}", true, false, false],
+        ["object.target {}", false, false, false],
+        ["target(&block)", true, false, true],
+        ["object.target(&nil)", false, false, true],
+        ["def caller(&); target(&); end", true, false, true],
+        ["def caller(...); target(...); end", true, false, true]
+      ].each do |source, ignore_visibility, variable_call, block_argument|
+        unit = Prism.compile(source, freeze: true).value
+        call = unit.graphs.flat_map(&:blocks).flat_map(&:insns).find do |insn|
+          insn.kind == :call && insn.data.name == :target
+        end
+        assert_equal(ignore_visibility, call.data.ignore_visibility, source)
+        assert_equal(variable_call, call.data.variable_call, source)
+        assert_equal(block_argument, call.data.block_argument, source)
+        assert_equal(block_argument || source.include?("{}"), call.data.block, source)
+        assert_predicate(call.data, :frozen?)
+      end
+    end
+
+    def test_generated_call_info_flags
+      [
+        "self.target += 1", "self.target &&= 1", "self.target ||= 1",
+        "self[0] += 1", "self[0] &&= 1", "self[0] ||= 1",
+        "for self.target in []; end", "for self[0] in []; end"
+      ].each do |source|
+        calls = compile_unit(source).graphs.flat_map(&:blocks).flat_map(&:insns).select do |insn|
+          insn.kind == :call && [:target, :target=, :[], :[]=].include?(insn.data.name)
+        end
+        assert_not_empty(calls, source)
+        calls.each do |call|
+          assert_equal(true, call.data.ignore_visibility, source)
+          assert_equal(false, call.data.variable_call, source)
+        end
+      end
+    end
+
+    def test_super_call_info_flags
+      [
+        ["def caller; super; end", false],
+        ["def caller; super(); end", false],
+        ["def caller; super {}; end", false],
+        ["def caller; super() {}; end", false],
+        ["def caller(&block); super(&block); end", true],
+        ["def caller(&); super(&); end", true]
+      ].each do |source, block_argument|
+        call = compile_unit(source).graphs.flat_map(&:blocks).flat_map(&:insns).find { |insn| insn.kind == :call_super }
+        assert_equal(true, call.data.ignore_visibility, source)
+        assert_equal(false, call.data.variable_call, source)
+        assert_equal(block_argument, call.data.block_argument, source)
+      end
+    end
+
+    def test_call_info_flags_disasm
+      assert_include(compile_unit("target").disasm, "[ignore_visibility, variable_call]")
+      assert_include(compile_unit("target(&nil)").disasm, "[ignore_visibility, block_argument]")
+      assert_not_include(compile_unit("target {}").disasm, "block_argument")
+    end
+
+    def test_call_block_operands
+      [
+        ["target()", false, 2],
+        ["target(1)", false, 3],
+        ["target {}", true, 3],
+        ["target(1) {}", true, 4],
+        ["target(&nil)", true, 3],
+        ["target(*values, key: 1, &nil)", true, 5]
+      ].each do |source, block, noperands|
+        call = compile_unit(source).graphs[0].blocks.flat_map(&:insns).find do |insn|
+          insn.kind == :call && insn.data.name == :target
+        end
+        assert_equal(block, call.data.block, source)
+        assert_equal(noperands, call.opnds.length, source)
+      end
+
+      assert_run([[1, 2], { key: 3 }, 4], "->(*args, **kwargs, &block) { [args, kwargs, block.call] }.call(*[1, 2], key: 3) { 4 }")
+      assert_run(true, "f = ->(&block) { block.nil? }; f.call { 1 }; f.call")
+      assert_run(true, "f = ->(&block) { block.nil? }; f.call { 1 }; f.call(&nil)")
+    end
+
+    def test_call_visibility
+      klass = Class.new do
+        def secret(*args, **kwargs, &block)
+          [args, kwargs, block&.call]
+        end
+        private :secret
+
+        def shared = 42
+        protected :shared
+
+        def public_send(*) = raise("public_send called")
+        def protected_methods(*) = raise("protected_methods called")
+        def method(*) = raise("method called")
+      end
+      receiver = klass.new
+      [
+        ["secret(1, key: 2) { 3 }", [[1], { key: 2 }, 3]],
+        ["self.secret(*[1], key: 2, &-> { 3 })", [[1], { key: 2 }, 3]],
+        ["other = self; other.shared", 42],
+        ["other = self; other&.shared", 42]
+      ].each do |source, expected|
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, receiver, [Object].freeze)))
+      end
+
+      graph = compile_unit("other = self; other.secret").graphs[0]
+      error = assert_raise(NoMethodError) do
+        vm.run_frame(Compile::VM::Frame.new(graph, receiver, [Object].freeze))
+      end
+      assert_equal(:secret, error.name)
+      assert_equal(receiver, error.receiver)
+
+      scope = Module.new
+      scope.const_set(:Receiver, receiver)
+      ["Receiver.secret", "Receiver.shared", "Receiver.shared {}", "Receiver&.secret"].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert_raise(NoMethodError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      end
+    end
+
+    def test_call_visibility_method_missing
+      klass = Class.new do
+        def secret = :secret
+        private :secret
+
+        def method_missing(name, *args, **kwargs, &block)
+          [name, args, kwargs, block&.call]
+        end
+      end
+      receiver = klass.new
+      source = "other = self; other.secret(1, key: 2) { 3 }"
+      graph = compile_unit(source).graphs[0]
+      assert_equal([:secret, [1], { key: 2 }, 3], vm.run_frame(Compile::VM::Frame.new(graph, receiver, [Object].freeze)))
+    end
+
     def test_disasm_uses_ids
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
@@ -120,7 +262,7 @@ module Prism
       output = unit.disasm
       assert_include(output, "g1(%0, %1) [autosplat] (block, parent=g0, scope=g1):")
       assert_include(output, "bb0(%0, %1):")
-      assert_match(/call_with_block %\d+\.proc &%\d+/, output)
+      assert_match(/call %\d+\.proc &%\d+/, output)
       assert_match(/branchif %\d+ bb\d+ bb\d+/, output)
       assert_match(/branch bb\d+\(%\d+\)/, output)
       assert_not_include(output, "#<Prism::Compile::")
@@ -979,7 +1121,7 @@ module Prism
       assert_not_nil(signature.keyword_rest)
       assert_not_nil(signature.block)
       assert_equal([*signature.requireds, signature.rest, signature.keyword_rest, signature.block], graph.blocks[0].params)
-      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call_with_block }
+      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call && insn.data.block }
       assert_equal(true, call.data.splat)
       assert_equal(true, call.data.keywords)
     end
@@ -1057,7 +1199,7 @@ module Prism
       assert_equal([:*, :**, :&], graph.locals.map(&:name))
       assert_not_nil(graph.signature.block)
       assert_include(graph.blocks[0].params, graph.signature.block)
-      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call_with_block }
+      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call && insn.data.block }
       assert_equal(true, call.data.splat)
       assert_equal(true, call.data.keywords)
       load = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :load_lvar && insn.data.name == :& }
@@ -2032,7 +2174,7 @@ module Prism
       unit = compile_unit("for i in [1, 2]; end")
       insns = unit.graphs[0].blocks.flat_map(&:insns)
       block_insn = insns.find { |insn| insn.kind == :new_block }
-      call_insn = insns.find { |insn| insn.kind == :call_with_block }
+      call_insn = insns.find { |insn| insn.kind == :call && insn.data.block }
       assert_equal(:block, block_insn.data.kind)
       assert_equal(:each, call_insn.data.name)
       assert_equal(block_insn.opnds[0], call_insn.opnds[-1])

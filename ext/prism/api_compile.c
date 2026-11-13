@@ -27,7 +27,6 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnAliasMethod: return rb_intern_const("alias_method");
         case kPrismInsnBranch: return rb_intern_const("branch");
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");
-        case kPrismInsnCallWithBlock: return rb_intern_const("call_with_block");
         case kPrismInsnCall: return rb_intern_const("call");
         case kPrismInsnCoerceArrayToA: return rb_intern_const("coerce_array_to_a");
         case kPrismInsnCoerceArrayToAry: return rb_intern_const("coerce_array_to_ary");
@@ -137,7 +136,6 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             VALUE then_nopnds = UINT2NUM(pm_insn_branchif_then_nopnds(insn));
             return compile_freeze(rb_ary_new_from_args(3, then_block, else_block, then_nopnds), freeze);
         }
-        case kPrismInsnCallWithBlock:
         case kPrismInsnCall:
         case kPrismInsnCallSuper: {
             VALUE name = Qnil;
@@ -145,8 +143,16 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
                 const pm_constant_t *constant = pm_insn_call_name(parser, insn);
                 name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
             }
-            VALUE argv[] = { name, pm_insn_call_keywords(insn) ? Qtrue : Qfalse, pm_insn_call_splat(insn) ? Qtrue : Qfalse };
-            return compile_freeze(rb_class_new_instance(3, argv, rb_cPrismCompileCallInfo), freeze);
+            VALUE argv[] = {
+                name,
+                pm_insn_call_keywords(insn) ? Qtrue : Qfalse,
+                pm_insn_call_splat(insn) ? Qtrue : Qfalse,
+                pm_insn_call_ignore_visibility(insn) ? Qtrue : Qfalse,
+                pm_insn_call_variable_call(insn) ? Qtrue : Qfalse,
+                pm_insn_call_block(insn) ? Qtrue : Qfalse,
+                pm_insn_call_block_argument(insn) ? Qtrue : Qfalse
+            };
+            return compile_freeze(rb_class_new_instance(7, argv, rb_cPrismCompileCallInfo), freeze);
         }
         case kPrismInsnExtractLastMatchNamedGroup:
         case kPrismInsnDefinedConstAbs:

@@ -38,12 +38,16 @@ module Prism
     end
 
     class CallInfo
-      attr_reader :name, :keywords, :splat
+      attr_reader :name, :keywords, :splat, :ignore_visibility, :variable_call, :block, :block_argument
 
-      def initialize(name, keywords, splat)
+      def initialize(name, keywords, splat, ignore_visibility, variable_call, block, block_argument)
         @name = name
         @keywords = keywords
         @splat = splat
+        @ignore_visibility = ignore_visibility
+        @variable_call = variable_call
+        @block = block
+        @block_argument = block_argument
       end
     end
 
@@ -195,6 +199,14 @@ module Prism
         Encoding === object ? "encoding(#{object.name})" : object.inspect
       end
 
+      def call_flags(info)
+        flags = []
+        flags << "ignore_visibility" if info.ignore_visibility
+        flags << "variable_call" if info.variable_call
+        flags << "block_argument" if info.block_argument
+        flags.empty? ? "" : " [#{flags.join(', ')}]"
+      end
+
       def instruction(insn)
         case insn.kind
         when :alias_gvar
@@ -207,14 +219,11 @@ module Prism
           opnds = insn.opnds
           then_block, else_block, then_count = insn.data
           "branchif #{value(opnds[0])} #{block_ref(then_block)}#{values(opnds[1, then_count])} #{block_ref(else_block)}#{values(opnds[(then_count + 1)..])}"
-        when :call_with_block
-          opnds = insn.opnds
-          data = insn.data
-          "#{value(opnds[0])} = call_with_block #{value(opnds[1])}.#{data.name}#{values(opnds[2...-1])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
         when :call
           opnds = insn.opnds
           data = insn.data
-          "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(opnds[2..])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""}"
+          arguments = data.block ? opnds[2...-1] : opnds[2..]
+          "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(arguments)}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""}#{data.block ? " &#{value(opnds[-1])}" : ""}#{call_flags(data)}"
         when :coerce_array_to_a
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_array_to_a#{values(opnds[1..])}"
@@ -438,7 +447,7 @@ module Prism
         when :call_super
           opnds = insn.opnds
           data = insn.data
-          "#{value(opnds[0])} = call_super#{values(opnds[1...-1])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
+          "#{value(opnds[0])} = call_super#{values(opnds[1...-1])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}#{call_flags(data)}"
         when :trace_b_call
           "trace_b_call"
         when :trace_b_return
@@ -682,15 +691,15 @@ module Prism
             when :call
               call = insn.data
               arguments = values.values_at(*insn.opnds[2..])
+              passed_block = call.block ? arguments.pop : nil
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
-              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords)
-            when :call_with_block
-              call = insn.data
-              arguments = values.values_at(*insn.opnds[2...-1])
-              keywords = call.keywords ? arguments.pop : {}
-              arguments.concat(arguments.pop) if call.splat
-              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords, &values[insn.opnds[-1]])
+              receiver = values[insn.opnds[1]]
+              if call.ignore_visibility || protected_call?(receiver, call.name, recv)
+                values[insn.opnds[0]] = BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+              else
+                values[insn.opnds[0]] = Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+              end
             when :call_super
               raise NoMethodError, "super called outside of method" unless super_method
               call = insn.data
@@ -912,6 +921,13 @@ module Prism
         end
       ensure
         frame.last_match = $~
+      end
+
+      def protected_call?(receiver, name, caller)
+        return false unless Kernel.instance_method(:protected_methods).bind_call(receiver).include?(name)
+
+        owner = Kernel.instance_method(:method).bind_call(receiver, name).owner
+        Module.instance_method(:===).bind_call(owner, caller)
       end
 
       def rescue_match(exception, klass)
