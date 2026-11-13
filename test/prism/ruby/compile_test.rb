@@ -419,6 +419,141 @@ module Prism
       ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
     end
 
+    def test_forwarding_parameters
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestForwarding
+          def collect(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+
+          def forward(...)
+            collect(...)
+          end
+
+          def leading(first, ...)
+            [first, collect(0, ...)]
+          end
+
+          def optional(first = 7, ...)
+            [first, collect(...)]
+          end
+
+          def destructured((a, b), ...)
+            [a, b, collect(...)]
+          end
+
+          def chain(...)
+            forward(...)
+          end
+
+          def capture(...)
+            proc { |ignored| proc { collect(...) } }
+          end
+
+          def distinguish(...)
+            proc { |&inner| [collect(...), inner.call, yield] }
+          end
+
+          def iter(...)
+            out = []
+            for i in [1, 2]
+              out << collect(...)
+            end
+            out
+          end
+
+          def safe(receiver, ...)
+            receiver&.collect(...)
+          end
+
+          def restore(...)
+            def inner_dots(...)
+              collect(...)
+            end
+            [inner_dots(9, y: 10) { :inner }, collect(...)]
+          end
+
+          def capture_block(&block)
+            block
+          end
+
+          def forward_block(...)
+            capture_block(...)
+          end
+
+          def reject_target(**nil, &nil)
+            1
+          end
+
+          def reject(...)
+            reject_target(...)
+          end
+        end
+      RUBY
+      receiver = "CompileTestForwarding.new"
+      [
+        [[[], {}, nil], "forward"],
+        [[[1, 2], {}, nil], "forward(1, 2)"],
+        [[[], { x: 1 }, nil], "forward(x: 1)"],
+        [[[1, 2], { x: 3 }, 4], "forward(1, 2, x: 3) { 4 }"],
+        [[[{ x: 1 }], { y: 2 }, nil], "forward({ x: 1 }, y: 2)"],
+        [[[nil, false], {}, nil], "forward(nil, false)"],
+        [[1, [[0, 2, 3], { x: 4 }, 5]], "leading(1, 2, 3, x: 4) { 5 }"],
+        [[1, [[0], {}, nil]], "leading(1)"],
+        [[7, [[], {}, nil]], "optional"],
+        [[7, [[], { x: 1 }, nil]], "optional(x: 1)"],
+        [[1, [[2, 3], { x: 4 }, 5]], "optional(1, 2, 3, x: 4) { 5 }"],
+        [[1, 2, [[3], { x: 4 }, 5]], "destructured([1, 2], 3, x: 4) { 5 }"],
+        [[[1], { x: 2 }, 3], "chain(1, x: 2) { 3 }"],
+        [[[1], { x: 2 }, 3], "capture(1, x: 2) { 3 }.call(99).call"],
+        [[[[1], { x: 2 }, :outer], :inner, :outer], "distinguish(1, x: 2) { :outer }.call { :inner }"],
+        [[[[1], { x: 2 }, 3], [[1], { x: 2 }, 3]], "iter(1, x: 2) { 3 }"],
+        [nil, "safe(nil, 1, x: 2) { 3 }"],
+        [[[1], { x: 2 }, 3], "safe(#{receiver}, 1, x: 2) { 3 }"],
+        [[[[9], { y: 10 }, :inner], [[1], { x: 2 }, :outer]], "restore(1, x: 2) { :outer }"],
+        [1, "reject"]
+      ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
+      assert_run_raises(ArgumentError, "#{receiver}.leading(x: 1)", "wrong number of arguments (given 0, expected 1+)")
+      assert_run_raises(ArgumentError, "#{receiver}.reject(x: 1)", "no keywords accepted")
+      assert_run_raises(ArgumentError, "#{receiver}.reject { 2 }", "no block accepted")
+      assert_run_raises(RuntimeError, "#{receiver}.forward { raise('forwarded failure') }", "forwarded failure")
+      object = vm.run(compile_unit(receiver))
+      callback = proc { 3 }
+      assert_same(callback, object.forward_block(&callback))
+    end
+
+    def test_forwarding_argument_evaluation_order
+      assert_run([[[0, 1, 2, 3], { x: 4 }, 5], [:receiver, :first, :second, :block]], <<~RUBY)
+        class CompileTestDotsOrder
+          def collect(*args, **kwargs, &block)
+            [args, kwargs, block.call]
+          end
+
+          def forward(events, ...)
+            result = (events << :receiver; self).collect((events << :first; 0), (events << :second; 1), ...)
+            [result, events]
+          end
+        end
+        events = []
+        CompileTestDotsOrder.new.forward(events, 2, 3, x: 4) { events << :block; 5 }
+      RUBY
+    end
+
+    def test_forwarding_parameter_signature
+      unit = Prism.compile("def forward(a, ...); target(0, ...); end", freeze: true).value
+      graph = unit.graphs[1]
+      signature = graph.signature
+      assert_equal([:a, :*, :**, :&], graph.locals.map(&:name))
+      assert_equal(1, signature.requireds.length)
+      assert_not_nil(signature.rest)
+      assert_not_nil(signature.keyword_rest)
+      assert_not_nil(signature.block)
+      assert_equal([*signature.requireds, signature.rest, signature.keyword_rest, signature.block], graph.blocks[0].params)
+      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call_with_block }
+      assert_equal(true, call.data.splat)
+      assert_equal(true, call.data.keywords)
+    end
+
     def test_anonymous_block_forwarding
       vm.run(compile_unit(<<~RUBY))
         class CompileTestAnonymousBlock

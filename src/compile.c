@@ -678,7 +678,9 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
     uint32_t nrequired_ids = parameters ? (uint32_t) parameters->requireds.size : 0;
     uint32_t noptional_ids = parameters ? (uint32_t) parameters->optionals.size : 0;
     uint32_t npost_ids = parameters ? (uint32_t) parameters->posts.size : 0;
-    bool has_rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE);
+
+    bool forwarding = parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_FORWARDING_PARAMETER_NODE);
+    bool has_rest = forwarding || (parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE));
 
     make_signature(builder, graph_id, signature, nrequired_ids, noptional_ids, has_rest, npost_ids);
     signature->no_keywords = parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_NO_KEYWORDS_PARAMETER_NODE);
@@ -687,6 +689,7 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
     if (parameters && parameters->keywords.size) {
         uint32_t nrequired_keyword_ids = 0;
         uint32_t noptional_keyword_ids = 0;
+
         for (size_t idx = 0; idx < parameters->keywords.size; ++idx) {
             if (PM_NODE_TYPE_P(parameters->keywords.nodes[idx], PM_REQUIRED_KEYWORD_PARAMETER_NODE)) {
                 nrequired_keyword_ids++;
@@ -731,10 +734,12 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
             }
         }
     }
-    if (parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_KEYWORD_REST_PARAMETER_NODE)) {
+
+    if (forwarding || (parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_KEYWORD_REST_PARAMETER_NODE))) {
         signature->keyword_rest_id = builder->unit->graphs[graph_id].value_id++;
     }
-    if (parameters && parameters->block && PM_NODE_TYPE_P(parameters->block, PM_BLOCK_PARAMETER_NODE)) {
+
+    if (forwarding || (parameters && parameters->block && PM_NODE_TYPE_P(parameters->block, PM_BLOCK_PARAMETER_NODE))) {
         signature->block_id = builder->unit->graphs[graph_id].value_id++;
     }
 }
@@ -2389,10 +2394,22 @@ compile_parameter_default(PrismBuilder *builder, uint32_t node_id, pm_constant_i
 }
 
 static uint32_t
+compile_anonymous_parameter(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t value_id, uint32_t local_index) {
+    uint32_t local_id = make_local(builder, name_id);
+    PrismBuilder_graph(builder)->local_ids[local_index] = local_id;
+    emit_store_lvar(builder, node_id, local_id, value_id);
+    return local_id;
+}
+
+static uint32_t
 anonymous_parameters(const pm_parameters_node_t *parameters) {
     uint32_t nlocals = 0;
 
     if (parameters) {
+        if (parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_FORWARDING_PARAMETER_NODE)) {
+            nlocals += 3;
+        }
+
         if (parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE)) {
             const pm_rest_parameter_node_t *rest = (const pm_rest_parameter_node_t *) parameters->rest;
             if (!rest->name) nlocals++;
@@ -2417,6 +2434,13 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
     if (!parameters) return;
     uint32_t local_index = (uint32_t) builder->state.locals->size;
 
+    if (parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_FORWARDING_PARAMETER_NODE)) {
+        uint32_t node_id = parameters->keyword_rest->node_id;
+        builder->state.rest_local_id = compile_anonymous_parameter(builder, node_id, PM_CONSTANT_ID_REST, signature->rest_id, local_index++);
+        builder->state.keyword_rest_local_id = compile_anonymous_parameter(builder, node_id, PM_CONSTANT_ID_KEYWORD_REST, signature->keyword_rest_id, local_index++);
+        builder->state.block_local_id = compile_anonymous_parameter(builder, node_id, PM_CONSTANT_ID_BLOCK, signature->block_id, local_index++);
+    }
+
     for (uint32_t idx = 0; idx < signature->nrequired_ids; ++idx) {
         const pm_node_t *required = parameters->requireds.nodes[idx];
         if (PM_NODE_TYPE_P(required, PM_REQUIRED_PARAMETER_NODE)) {
@@ -2431,10 +2455,7 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
             uint32_t local_id = resolve_local(builder, rest->name, 0);
             emit_store_lvar(builder, rest->base.node_id, local_id, signature->rest_id);
         } else {
-            uint32_t local_id = make_local(builder, PM_CONSTANT_ID_REST);
-            PrismBuilder_graph(builder)->local_ids[local_index++] = local_id;
-            builder->state.rest_local_id = local_id;
-            emit_store_lvar(builder, rest->base.node_id, local_id, signature->rest_id);
+            builder->state.rest_local_id = compile_anonymous_parameter(builder, rest->base.node_id, PM_CONSTANT_ID_REST, signature->rest_id, local_index++);
         }
     }
 
@@ -2461,10 +2482,7 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
             uint32_t local_id = resolve_local(builder, rest->name, 0);
             emit_store_lvar(builder, rest->base.node_id, local_id, signature->keyword_rest_id);
         } else {
-            uint32_t local_id = make_local(builder, PM_CONSTANT_ID_KEYWORD_REST);
-            PrismBuilder_graph(builder)->local_ids[local_index++] = local_id;
-            builder->state.keyword_rest_local_id = local_id;
-            emit_store_lvar(builder, rest->base.node_id, local_id, signature->keyword_rest_id);
+            builder->state.keyword_rest_local_id = compile_anonymous_parameter(builder, rest->base.node_id, PM_CONSTANT_ID_KEYWORD_REST, signature->keyword_rest_id, local_index++);
         }
     }
 
@@ -2474,10 +2492,7 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
             uint32_t local_id = resolve_local(builder, block->name, 0);
             emit_store_lvar(builder, block->base.node_id, local_id, signature->block_id);
         } else {
-            uint32_t local_id = make_local(builder, PM_CONSTANT_ID_BLOCK);
-            PrismBuilder_graph(builder)->local_ids[local_index++] = local_id;
-            builder->state.block_local_id = local_id;
-            emit_store_lvar(builder, block->base.node_id, local_id, signature->block_id);
+            builder->state.block_local_id = compile_anonymous_parameter(builder, block->base.node_id, PM_CONSTANT_ID_BLOCK, signature->block_id, local_index++);
         }
     }
 
@@ -2763,6 +2778,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
 
     bool splat = false;
     bool keywords = false;
+    uint32_t block_id = UINT32_MAX;
 
     if (node->arguments) {
         size_t size = node->arguments->arguments.size;
@@ -2772,21 +2788,33 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
 
         for (size_t idx = 0; idx < size;) {
             const pm_node_t *argument = node->arguments->arguments.nodes[idx];
+            bool forwarding = PM_NODE_TYPE_P(argument, PM_FORWARDING_ARGUMENTS_NODE);
 
             if (PM_NODE_TYPE_P(argument, PM_KEYWORD_HASH_NODE)) {
                 keywords = true;
                 keyword_id = compile_node(builder, argument);
                 idx++;
-            } else if (PM_NODE_TYPE_P(argument, PM_SPLAT_NODE) && !((const pm_splat_node_t *) argument)->expression) {
+            } else if (forwarding || (PM_NODE_TYPE_P(argument, PM_SPLAT_NODE) && !((const pm_splat_node_t *) argument)->expression)) {
                 uint32_t value_id = emit_load_lvar(builder, argument->node_id, builder->state.rest_local_id);
                 splat_id = splat ? emit_concat_array(builder, argument->node_id, splat_id, value_id) : value_id;
                 splat = true;
+                if (forwarding) {
+                    keyword_id = emit_load_lvar(builder, argument->node_id, builder->state.keyword_rest_local_id);
+                    block_id = emit_load_lvar(builder, argument->node_id, builder->state.block_local_id);
+                    keywords = true;
+                }
                 idx++;
             } else {
                 uint32_t nvalue_ids = 0;
+
                 do {
                     argument_ids[nargument_ids + nvalue_ids++] = compile_node(builder, node->arguments->arguments.nodes[idx++]);
-                } while (idx < size && !PM_NODE_TYPE_P(node->arguments->arguments.nodes[idx], PM_SPLAT_NODE) && !PM_NODE_TYPE_P(node->arguments->arguments.nodes[idx], PM_KEYWORD_HASH_NODE));
+                } while (
+                    idx < size &&
+                    !PM_NODE_TYPE_P(node->arguments->arguments.nodes[idx], PM_SPLAT_NODE) &&
+                    !PM_NODE_TYPE_P(node->arguments->arguments.nodes[idx], PM_KEYWORD_HASH_NODE) &&
+                    !PM_NODE_TYPE_P(node->arguments->arguments.nodes[idx], PM_FORWARDING_ARGUMENTS_NODE)
+                );
 
                 if (splat) {
                     uint32_t array_id = emit_new_array(builder, argument->node_id, nvalue_ids, argument_ids + nargument_ids);
@@ -2801,11 +2829,12 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         if (keywords) argument_ids[nargument_ids++] = keyword_id;
     }
 
+    if (node->block) block_id = compile_node(builder, node->block);
+
     uint32_t value_id;
-    if (!node->block) {
+    if (block_id == UINT32_MAX) {
         value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, splat, keywords);
     } else {
-        uint32_t block_id = compile_node(builder, node->block);
         value_id = emit_call_with_block(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, block_id, splat, keywords);
     }
 
@@ -4099,6 +4128,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_CLASS_VARIABLE_TARGET_NODE:
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:
+        case PM_FORWARDING_ARGUMENTS_NODE:
+        case PM_FORWARDING_PARAMETER_NODE:
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
         case PM_IMPLICIT_REST_NODE:
         case PM_INDEX_TARGET_NODE:
