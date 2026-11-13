@@ -586,7 +586,7 @@ make_local(PrismBuilder *builder, pm_constant_id_t name_id) {
 static uint32_t
 make_flip_flop(PrismBuilder *builder) {
     uint32_t graph_id = PrismBuilder_graph(builder)->scope_id;
-    while (builder->unit->graphs[graph_id].kind == kPrismGraphBlock) {
+    while (builder->unit->graphs[graph_id].kind == kPrismGraphBlock || builder->unit->graphs[graph_id].kind == kPrismGraphLambda) {
         uint32_t parent_id = builder->unit->graphs[graph_id].parent_id;
         graph_id = builder->unit->graphs[parent_id].scope_id;
     }
@@ -836,7 +836,7 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
 static PrismBuilderState
 push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signature, const pm_constant_id_list_t *locals) {
     PrismBuilderState state = builder->state;
-    bool captures = locals == NULL || builder->unit->graphs[graph_id].kind == kPrismGraphBlock;
+    bool captures = locals == NULL || builder->unit->graphs[graph_id].kind == kPrismGraphBlock || builder->unit->graphs[graph_id].kind == kPrismGraphLambda;
 
     builder->state = (PrismBuilderState) {
         .graph_id = graph_id,
@@ -2317,7 +2317,7 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
         case PM_INTERPOLATED_STRING_NODE:
         case PM_INTERPOLATED_SYMBOL_NODE:
         case PM_INTERPOLATED_X_STRING_NODE:
-        /* case PM_LAMBDA_NODE: */
+        case PM_LAMBDA_NODE:
         case PM_LOCAL_VARIABLE_READ_NODE:
         case PM_NIL_NODE:
         case PM_SOURCE_ENCODING_NODE:
@@ -2575,6 +2575,76 @@ compile_flip_flop_bound(PrismBuilder *builder, const pm_node_t *node, uint32_t n
 }
 
 static uint32_t
+compile_closure(PrismBuilder *builder, const pm_node_t *node, PrismGraphKind kind, const pm_node_t *parameters_node, const pm_node_t *body, const pm_constant_id_list_t *locals) {
+    const pm_parameters_node_t *parameters = NULL;
+
+    uint32_t nrequired_ids = 0;
+    uint32_t nlocal_ids = (uint32_t) locals->size;
+
+    bool numbered = false;
+    bool it = false;
+
+    if (parameters_node) {
+        switch (PM_NODE_TYPE(parameters_node)) {
+            case PM_BLOCK_PARAMETERS_NODE:
+                parameters = ((const pm_block_parameters_node_t *) parameters_node)->parameters;
+                break;
+            case PM_NUMBERED_PARAMETERS_NODE:
+                numbered = true;
+                nrequired_ids = ((const pm_numbered_parameters_node_t *) parameters_node)->maximum;
+                break;
+            case PM_IT_PARAMETERS_NODE:
+                it = true;
+                nrequired_ids = 1;
+                nlocal_ids++;
+                break;
+            default:
+                break;
+        }
+    }
+
+    nlocal_ids += anonymous_parameters(parameters);
+    uint32_t graph_id = make_graph(builder, kind, builder->state.graph_id, nlocal_ids);
+
+    PrismSignature signature;
+    if (parameters) {
+        compile_parameters_signature(builder, graph_id, &signature, parameters);
+    } else {
+        make_signature(builder, graph_id, &signature, nrequired_ids, 0, false, 0);
+    }
+
+    uint32_t npositional_ids = signature.nrequired_ids + signature.npost_ids;
+    signature.autosplat = kind == kPrismGraphBlock && (npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && parameters && parameters->rest));
+
+    PrismBuilderState state = push_scope(builder, graph_id, &signature, locals);
+    const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
+
+    if (numbered) {
+        for (uint32_t idx = 0; idx < nrequired_ids; ++idx) {
+            const uint8_t name[] = { '_', (uint8_t) ('1' + idx) };
+            pm_constant_id_t name_id = pm_parser_constant_find(builder->parser, name, sizeof(name));
+            uint32_t local_id = resolve_local(builder, name_id, 0);
+            emit_store_lvar(builder, parameters_node->node_id, local_id, required_ids[idx]);
+        }
+    } else if (it) {
+        uint32_t local_id = make_local(builder, PM_CONSTANT_ID_IT);
+        builder->state.it_local_id = local_id;
+        PrismBuilder_graph(builder)->local_ids[locals->size] = local_id;
+        emit_store_lvar(builder, parameters_node->node_id, local_id, required_ids[0]);
+    }
+
+    compile_parameters(builder, parameters, &signature);
+
+    emit_trace_b_call(builder, node->node_id);
+    uint32_t body_id = compile_node_or_nil(builder, body, node->node_id);
+    emit_trace_b_return(builder, node->node_id, body_id);
+    emit_return(builder, node->node_id, body_id);
+    pop_scope(builder, state);
+
+    return emit_new_block(builder, node->node_id, graph_id);
+}
+
+static uint32_t
 compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
     pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
     pm_constant_id_t old_name;
@@ -2686,72 +2756,7 @@ compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_
 
 static uint32_t
 compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
-    const pm_parameters_node_t *parameters = NULL;
-
-    uint32_t nrequired_ids = 0;
-    uint32_t nlocal_ids = (uint32_t) node->locals.size;
-
-    bool numbered = false;
-    bool it = false;
-
-    if (node->parameters) {
-        switch (PM_NODE_TYPE(node->parameters)) {
-            case PM_BLOCK_PARAMETERS_NODE:
-                parameters = ((const pm_block_parameters_node_t *) node->parameters)->parameters;
-                break;
-            case PM_NUMBERED_PARAMETERS_NODE:
-                numbered = true;
-                nrequired_ids = ((const pm_numbered_parameters_node_t *) node->parameters)->maximum;
-                break;
-            case PM_IT_PARAMETERS_NODE:
-                it = true;
-                nrequired_ids = 1;
-                nlocal_ids++;
-                break;
-            default:
-                break;
-        }
-    }
-
-    nlocal_ids += anonymous_parameters(parameters);
-    uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, nlocal_ids);
-
-    PrismSignature signature;
-    if (parameters) {
-        compile_parameters_signature(builder, graph_id, &signature, parameters);
-    } else {
-        make_signature(builder, graph_id, &signature, nrequired_ids, 0, false, 0);
-    }
-
-    uint32_t npositional_ids = signature.nrequired_ids + signature.npost_ids;
-    signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && parameters && parameters->rest);
-
-    PrismBuilderState state = push_scope(builder, graph_id, &signature, &node->locals);
-    const uint32_t *required_ids = PrismBuilder_graph(builder)->signature.required_ids;
-
-    if (numbered) {
-        for (uint32_t idx = 0; idx < nrequired_ids; ++idx) {
-            const uint8_t name[] = { '_', (uint8_t) ('1' + idx) };
-            pm_constant_id_t name_id = pm_parser_constant_find(builder->parser, name, sizeof(name));
-            uint32_t local_id = resolve_local(builder, name_id, 0);
-            emit_store_lvar(builder, node->parameters->node_id, local_id, required_ids[idx]);
-        }
-    } else if (it) {
-        uint32_t local_id = make_local(builder, PM_CONSTANT_ID_IT);
-        builder->state.it_local_id = local_id;
-        PrismBuilder_graph(builder)->local_ids[node->locals.size] = local_id;
-        emit_store_lvar(builder, node->parameters->node_id, local_id, required_ids[0]);
-    }
-
-    compile_parameters(builder, parameters, &signature);
-
-    emit_trace_b_call(builder, node->base.node_id);
-    uint32_t body_id = compile_node_or_nil(builder, node->body, node->base.node_id);
-    emit_trace_b_return(builder, node->base.node_id, body_id);
-    emit_return(builder, node->base.node_id, body_id);
-    pop_scope(builder, state);
-
-    return emit_new_block(builder, node->base.node_id, graph_id);
+    return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphBlock, node->parameters, node->body, &node->locals);
 }
 
 static uint32_t
@@ -3574,6 +3579,11 @@ compile_keyword_hash_node(PrismBuilder *builder, const pm_node_t *node, const pm
 }
 
 static uint32_t
+compile_lambda_node(PrismBuilder *builder, const pm_lambda_node_t *node) {
+    return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphLambda, node->parameters, node->body, &node->locals);
+}
+
+static uint32_t
 compile_local_variable_and_write_node(PrismBuilder *builder, const pm_local_variable_and_write_node_t *node) {
     return compile_local_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->depth, node->value);
 }
@@ -3780,6 +3790,8 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
 
     if (builder->unit->graphs[builder->state.graph_id].kind == kPrismGraphDef) {
         emit_trace_return(builder, node->base.node_id, value_id);
+    } else if (builder->unit->graphs[builder->state.graph_id].kind == kPrismGraphLambda) {
+        emit_trace_b_return(builder, node->base.node_id, value_id);
     }
 
     emit_return(builder, node->base.node_id, value_id);
@@ -4044,6 +4056,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_it_local_variable_read_node(builder, (const pm_it_local_variable_read_node_t *) node);
         case PM_KEYWORD_HASH_NODE:
             return compile_keyword_hash_node(builder, node, (const pm_keyword_hash_node_t *) node);
+        case PM_LAMBDA_NODE:
+            return compile_lambda_node(builder, (const pm_lambda_node_t *) node);
         case PM_LOCAL_VARIABLE_READ_NODE:
             return compile_local_variable_read_node(builder, (const pm_local_variable_read_node_t *) node);
         case PM_LOCAL_VARIABLE_WRITE_NODE:

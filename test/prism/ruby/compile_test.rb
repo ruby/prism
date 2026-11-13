@@ -419,6 +419,109 @@ module Prism
       ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
     end
 
+    def test_lambdas
+      [
+        [nil, "-> {}.call"],
+        [1, "-> { 1 }.call"],
+        [1, "->() do 1 end.call"],
+        [true, "-> {}.lambda?"],
+        [false, "proc {}.lambda?"],
+        [[1, 2], "->(a, b) { [a, b] }.call(1, 2)"],
+        [[1, 2], "->(a) { a }.call([1, 2])"],
+        [[1, 2], "-> { it }.call([1, 2])"],
+        [3, "-> { _1 + _2 }.call(1, 2)"],
+        [[1, 2], "->((a, b)) { [a, b] }.call([1, 2])"],
+        [[1, 2, [3, 4], 5], "->(a, b = 2, *rest, c) { [a, b, rest, c] }.call(1, 2, 3, 4, 5)"],
+        [[1, 2, [], 3], "->(a, b = 2, *rest, c) { [a, b, rest, c] }.call(1, 3)"],
+        [[1, 2, { z: 3 }, 4], "->(x:, y: 2, **rest, &block) { [x, y, rest, block.call] }.call(x: 1, z: 3) { 4 }"],
+        [[1, 2], "a = 1; f = ->(a; b) { b = a + 1; [a, b] }; f.call(a)"],
+        [[2, 3, 3], "a = 1; f = -> { a += 1 }; [f.call, f.call, a]"],
+        [[2, 1], "a = 1; result = ->(a) { a += 1 }.call(1); [result, a]"],
+        [3, "a = 2; ->(b = a + 1) { b }.call"],
+        [3, "->(a = 1, b = a + 2) { b }.call"],
+        [3, "->(a = 1, b: a + 2) { b }.call"],
+        [3, "->(a) { ->(b) { a + b } }.call(1).call(2)"],
+        [[2, 4], "[1, 2].map(&->(a) { a * 2 })"],
+        [1, "-> { return 1; 2 }.call"],
+        [true, "1 in ->(value) { value == 1 }"],
+        [false, "2 in ->(value) { value == 1 }"],
+        [[true, true], "factory = -> { ->(x) { if x..false; true; else; false; end } }; a = factory.call; b = factory.call; [a.call(true), b.call(false)]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_lambda_arity
+      [
+        ["-> {}.call(1)", "wrong number of arguments (given 1, expected 0)"],
+        ["->(a) { a }.call", "wrong number of arguments (given 0, expected 1)"],
+        ["->(a, b) {}.call([1, 2])", "wrong number of arguments (given 1, expected 2)"],
+        ["->(a = 1) {}.call(1, 2)", "wrong number of arguments (given 2, expected 0..1)"],
+        ["->(a, *rest) {}.call", "wrong number of arguments (given 0, expected 1+)"],
+        ["-> { it }.call", "wrong number of arguments (given 0, expected 1)"],
+        ["-> { _2 }.call(1)", "wrong number of arguments (given 1, expected 2)"],
+        ["->(x:) {}.call", "missing keyword: :x"],
+        ["->(x:) {}.call(x: 1, y: 2)", "unknown keyword: :y"],
+        ["->(**nil) {}.call(x: 1)", "no keywords accepted"],
+        ["->(&nil) {}.call { 1 }", "no block accepted"],
+        ["->(a = raise('default ran'), x:) {}.call", "missing keyword: :x"]
+      ].each { |source, message| assert_run_raises(ArgumentError, source, message) }
+    end
+
+    def test_lambda_captures
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestLambda
+          A = 3
+
+          def make(a)
+            -> { a += 1 }
+          end
+
+          def context
+            @value = 2
+            -> { [self, @value, A] }
+          end
+
+          def local_return
+            result = -> { return 1 }.call
+            [result, 2]
+          end
+
+          def collect(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+
+          def forward(...)
+            -> { collect(...) }
+          end
+
+          def yield_and_block
+            ->(&block) { [block.call, yield] }
+          end
+        end
+      RUBY
+      receiver = "CompileTestLambda.new"
+      assert_run([2, 3, 11], "object = #{receiver}; a = object.make(1); b = object.make(10); [a.call, a.call, b.call]")
+      assert_run([true, 2, 3], "object = #{receiver}; result = object.context.call; [result[0].equal?(object), result[1], result[2]]")
+      assert_run([1, 2], "#{receiver}.local_return")
+      assert_run([[1], { x: 2 }, 3], "#{receiver}.forward(1, x: 2) { 3 }.call")
+      assert_run([:inner, :outer], "#{receiver}.yield_and_block { :outer }.call { :inner }")
+    end
+
+    def test_lambda_graph
+      unit = Prism.compile("->(a, b) { return a + b }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal(:lambda, graph.kind)
+      assert_same(unit.graphs[0], graph.parent)
+      assert_same(graph, graph.scope)
+      assert_equal(false, graph.signature.autosplat)
+      assert_equal(2, graph.signature.requireds.length)
+      assert_include(unit.disasm, "(lambda, parent=g0, scope=g1)")
+      assert_include(graph.blocks[0].insns.map(&:kind), :trace_b_call)
+      return_index = graph.blocks[0].insns.index { |insn| insn.kind == :return }
+      assert_equal(:trace_b_return, graph.blocks[0].insns[return_index - 1].kind)
+      unit = compile_unit("->(x) { if x..false; true; else; false; end }")
+      assert_equal([1, 0], unit.graphs.map(&:nflip_flops))
+    end
+
     def test_forwarding_parameters
       vm.run(compile_unit(<<~RUBY))
         class CompileTestForwarding

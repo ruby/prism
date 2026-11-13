@@ -779,9 +779,16 @@ module Prism
         block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          Proc.new do |*args, **kwargs, &passed_block|
-            block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-            vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
+          if graph.kind == :lambda
+            ->(*args, **kwargs, &passed_block) do
+              block_locals = Locals.new(graph.locals, locals)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
+            end
+          else
+            Proc.new do |*args, **kwargs, &passed_block|
+              block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
+            end
           end
         end
       end

@@ -302,6 +302,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
             case kPrismGraphBlock: vgraph_kind = ID2SYM(rb_intern("block")); break;
             case kPrismGraphClass: vgraph_kind = ID2SYM(rb_intern("class")); break;
             case kPrismGraphDef: vgraph_kind = ID2SYM(rb_intern("def")); break;
+            case kPrismGraphLambda: vgraph_kind = ID2SYM(rb_intern("lambda")); break;
             case kPrismGraphModule: vgraph_kind = ID2SYM(rb_intern("module")); break;
             case kPrismGraphPostExecution: vgraph_kind = ID2SYM(rb_intern("post_execution")); break;
             case kPrismGraphProgram: vgraph_kind = ID2SYM(rb_intern("program")); break;

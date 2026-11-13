@@ -108,6 +108,7 @@ typedef enum {
     kPrismGraphBlock,
     kPrismGraphClass,
     kPrismGraphDef,
+    kPrismGraphLambda,
     kPrismGraphModule,
     kPrismGraphPostExecution,
     kPrismGraphProgram,
