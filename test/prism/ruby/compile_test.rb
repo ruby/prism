@@ -2647,6 +2647,94 @@ module Prism
       RUBY
     end
 
+    def test_index_operator_write
+      [
+        [[4, [4, 2]], "a = [1, 2]; result = (a[0] += 3); [result, a]"],
+        [[6, { a: 6 }], "a = { a: 2 }; result = (a[:a] *= 3); [result, a]"],
+        [[8, [8]], "a = [2]; result = (a[0] **= 3); [result, a]"],
+        [["ab", ["ab"]], "a = ['a']; result = (a[0] <<= 'b'); [result, a]"],
+        [[4, [4]], "a = [1]; result = (a[0] += (if true; 3; else; 4; end)); [result, a]"],
+        [[3, [3]], "a = [1]; result = (a[0] += proc { 2 }.call); [result, a]"],
+        [[3, [3], 1], "i = 0; a = [1]; result = (a[(i += 1; 0)] += 2); [result, a, i]"],
+        [[3, [3, 2]], "a = [1, 2]; indices = [0]; result = (a[*indices] += 2); [result, a]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_index_operator_write_evaluation
+      scope = Module.new
+      events = []
+      result = Object.new
+      operand = Object.new
+      receiver = Object.new
+      indices = Object.new
+      fail_at = nil
+      indices.define_singleton_method(:to_a) do
+        events << :convert
+        raise 'convert failed' if fail_at == :convert
+        [1, 2]
+      end
+      indices.define_singleton_method(:to_ary) { raise 'to_ary called' }
+      receiver.define_singleton_method(:[]) do |*args|
+        events << [:getter, args]
+        raise 'getter failed' if fail_at == :getter
+        operand
+      end
+      operand.define_singleton_method(:+) do |value|
+        events << [:operator, value]
+        raise 'operator failed' if fail_at == :operator
+        result
+      end
+      receiver.define_singleton_method(:[]=) do |*args|
+        events << [:setter, args]
+        raise 'setter failed' if fail_at == :setter
+        :ignored
+      end
+      rhs = proc do
+        raise 'rhs failed' if fail_at == :rhs
+        2
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Indices, indices)
+      scope.const_set(:Events, events)
+      scope.const_set(:Rhs, rhs)
+      source = "(Events << :receiver; Receiver)[*(Events << :index; Indices)] += (Events << :rhs; Rhs.call)"
+      graph = compile_unit(source).graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_same(result, vm.run_frame(frame.call))
+      expected = [:receiver, :index, :convert, [:getter, [1, 2]], :rhs, [:operator, 2], [:setter, [1, 2, result]]]
+      assert_equal(expected, events)
+      { convert: 3, getter: 4, rhs: 5, operator: 6, setter: 7 }.each do |stage, length|
+        events.clear
+        fail_at = stage
+        assert_raise_with_message(RuntimeError, "#{stage} failed") { vm.run_frame(frame.call) }
+        assert_equal(expected.take(length), events)
+      end
+      events.clear
+      fail_at = nil
+      graph = compile_unit("Receiver[] += 2").graphs[0]
+      assert_same(result, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([[:getter, []], [:operator, 2], [:setter, [result]]], events)
+    end
+
+    def test_index_operator_write_preserves_indices
+      scope = Module.new
+      indices = [1, 2]
+      reads = []
+      writes = []
+      receiver = Object.new
+      receiver.define_singleton_method(:[]) { |*args| reads << args; indices << 3; 1 }
+      receiver.define_singleton_method(:[]=) { |*args| writes << args; :ignored }
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Indices, indices)
+      graph = compile_unit("Receiver[*Indices] += (Indices << 4; 2)").graphs[0]
+      assert_equal(3, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([[1, 2]], reads)
+      assert_equal([[1, 2, 3]], writes)
+      assert_equal([1, 2, 3, 4], indices)
+      graph = compile_unit("class Updater; def self.update(receiver, *); result = (receiver[*] += 2); [result, [*]]; end; end; Updater.update(Receiver, 1, 2)").graphs[0]
+      assert_equal([3, [1, 2]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
     def test_call_operator_write
       [
         [[3, 3], "o = Struct.new(:value).new(1); result = (o.value += 2); [result, o.value]"],

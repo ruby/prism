@@ -30,12 +30,14 @@
 #define PM_CONSTANT_ID_KEYWORD_REST (pm_constant_id_t) -11
 #define PM_CONSTANT_ID_BLOCK (pm_constant_id_t) -12
 #define PM_CONSTANT_ID_DESTRUCTURED (pm_constant_id_t) -13
+#define PM_CONSTANT_ID_AREF (pm_constant_id_t) -14
 
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
 static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
 static const pm_constant_t each_constant = { .start = (const uint8_t *) "each", .length = 4 };
 static const pm_constant_t it_constant = { .start = (const uint8_t *) "it", .length = 2 };
+static const pm_constant_t aref_constant = { .start = (const uint8_t *) "[]", .length = 2 };
 static const pm_constant_t aset_constant = { .start = (const uint8_t *) "[]=", .length = 3 };
 static const pm_constant_t length_constant = { .start = (const uint8_t *) "length", .length = 6 };
 static const pm_constant_t equal_constant = { .start = (const uint8_t *) "==", .length = 2 };
@@ -54,6 +56,7 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
         case PM_CONSTANT_ID_EACH:           return &each_constant;
         case PM_CONSTANT_ID_IT:             return &it_constant;
         case PM_CONSTANT_ID_ASET:           return &aset_constant;
+        case PM_CONSTANT_ID_AREF:           return &aref_constant;
         case PM_CONSTANT_ID_LENGTH:         return &length_constant;
         case PM_CONSTANT_ID_EQUAL:          return &equal_constant;
         case PM_CONSTANT_ID_LINE_NUMBER:    return &line_number_constant;
@@ -1154,6 +1157,15 @@ emit_call_with_block(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t n
     graph->opnds[insn->opnds_off + 2 + nargument_ids] = block_id;
 
     return value_id;
+}
+
+static uint32_t
+emit_call_arguments(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, const PrismArguments *arguments) {
+    if (arguments->block_id == UINT32_MAX) {
+        return emit_call(builder, node_id, name_id, receiver_id, arguments->size, arguments->ids, arguments->splat, arguments->keywords);
+    } else {
+        return emit_call_with_block(builder, node_id, name_id, receiver_id, arguments->size, arguments->ids, arguments->block_id, arguments->splat, arguments->keywords);
+    }
 }
 
 static uint32_t
@@ -3008,13 +3020,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
     }
 
     PrismArguments arguments = compile_arguments(builder, node->arguments, node->block);
-    uint32_t value_id;
-
-    if (arguments.block_id == UINT32_MAX) {
-        value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, arguments.size, arguments.ids, arguments.splat, arguments.keywords);
-    } else {
-        value_id = emit_call_with_block(builder, node->base.node_id, node->name, receiver_id, arguments.size, arguments.ids, arguments.block_id, arguments.splat, arguments.keywords);
-    }
+    uint32_t value_id = emit_call_arguments(builder, node->base.node_id, node->name, receiver_id, &arguments);
 
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
         value_id = arguments.ids[arguments.size - 1];
@@ -3719,6 +3725,41 @@ compile_implicit_node(PrismBuilder *builder, const pm_implicit_node_t *node) {
 }
 
 static uint32_t
+compile_index_operator_write_node(PrismBuilder *builder, const pm_index_operator_write_node_t *node) {
+    uint32_t receiver_id = compile_node(builder, node->receiver);
+    uint32_t join_block_id = UINT32_MAX;
+
+    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
+        uint32_t call_block_id = make_block(builder, 0);
+        join_block_id = make_block(builder, 1);
+        uint32_t nil_id = emit_nil_p(builder, node->base.node_id, receiver_id);
+        emit_branchif(builder, node->base.node_id, nil_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
+        builder->state.block_id = call_block_id;
+    }
+
+    PrismArguments arguments = compile_arguments(builder, node->arguments, PM_NODE_UPCAST(node->block));
+    uint32_t current_id = emit_call_arguments(builder, node->base.node_id, PM_CONSTANT_ID_AREF, receiver_id, &arguments);
+    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, current_id, 1, &value_id, false, false);
+
+    uint32_t *write_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * (arguments.size + 1), PRISM_ALIGNOF(uint32_t));
+    if (arguments.size) memcpy(write_ids, arguments.ids, sizeof(uint32_t) * arguments.size);
+    arguments.ids = write_ids;
+    uint32_t keyword_id = arguments.keywords ? arguments.ids[--arguments.size] : UINT32_MAX;
+    compile_arguments_append(builder, node->base.node_id, &arguments, 1, &result_id);
+    if (keyword_id != UINT32_MAX) arguments.ids[arguments.size++] = keyword_id;
+    emit_call_arguments(builder, node->base.node_id, PM_CONSTANT_ID_ASET, receiver_id, &arguments);
+
+    if (join_block_id != UINT32_MAX) {
+        emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+        builder->state.block_id = join_block_id;
+        result_id = PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    }
+
+    return result_id;
+}
+
+static uint32_t
 compile_instance_variable_and_write_node(PrismBuilder *builder, const pm_instance_variable_and_write_node_t *node) {
     return compile_instance_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->value);
 }
@@ -4312,6 +4353,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_instance_variable_write_node(builder, (const pm_instance_variable_write_node_t *) node);
         case PM_INSTANCE_VARIABLE_OPERATOR_WRITE_NODE:
             return compile_instance_variable_operator_write_node(builder, (const pm_instance_variable_operator_write_node_t *) node);
+        case PM_INDEX_OPERATOR_WRITE_NODE:
+            return compile_index_operator_write_node(builder, (const pm_index_operator_write_node_t *) node);
         case PM_INSTANCE_VARIABLE_AND_WRITE_NODE:
             return compile_instance_variable_and_write_node(builder, (const pm_instance_variable_and_write_node_t *) node);
         case PM_INSTANCE_VARIABLE_OR_WRITE_NODE:
