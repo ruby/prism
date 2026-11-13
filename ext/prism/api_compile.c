@@ -22,6 +22,7 @@ static VALUE rb_cPrismCompileUnit;
 static ID
 compile_insn_kind(PrismInsnKind kind) {
     switch (kind) {
+        case kPrismInsnAliasGVar: return rb_intern_const("alias_gvar");
         case kPrismInsnAliasMethod: return rb_intern_const("alias_method");
         case kPrismInsnBranch: return rb_intern_const("branch");
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");

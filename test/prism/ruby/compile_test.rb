@@ -2020,6 +2020,42 @@ module Prism
       assert_run("private", '"#{CompileTestPrivateToS}"')
     end
 
+    def test_alias_global_variable
+      assert_run(nil, "$compile_alias_source = 1; alias $compile_alias_target $compile_alias_source")
+      assert_run([2, 2], "$compile_alias_target = 2; [$compile_alias_source, $compile_alias_target]")
+      assert_run([3, 3], "$compile_alias_source = 3; [$compile_alias_source, $compile_alias_target]")
+      assert_run([1, 4, 4], "$compile_alias_a = 1; $compile_alias_c = 3; alias $compile_alias_b $compile_alias_a; alias $compile_alias_b $compile_alias_c; $compile_alias_b = 4; [$compile_alias_a, $compile_alias_b, $compile_alias_c]")
+      assert_run(2, "proc { alias $compile_alias_block $compile_alias_source }.call; $compile_alias_block = 2; $compile_alias_source")
+      assert_same($stdout, vm.run(compile_unit("alias $compile_alias_stdout $stdout; $compile_alias_stdout")))
+    end
+
+    def test_alias_global_variable_undefined
+      warnings = capture_warnings do
+        assert_run(nil, "alias $compile_alias_undefined_target $compile_alias_undefined_source")
+      end
+      assert_empty(warnings)
+      assert_nil(eval("defined?($compile_alias_undefined_source)", TOPLEVEL_BINDING))
+      assert_nil(eval("defined?($compile_alias_undefined_target)", TOPLEVEL_BINDING))
+    end
+
+    def test_alias_global_variable_back_reference
+      assert_run("abc", "alias $compile_alias_match $&; /abc/ =~ 'abc'; $compile_alias_match")
+      assert_run("before", "alias $compile_alias_pre $`; /abc/ =~ 'beforeabcafter'; $compile_alias_pre")
+      assert_run("after", "alias $compile_alias_post $'; /abc/ =~ 'beforeabcafter'; $compile_alias_post")
+      assert_run([true, true], "alias $compile_alias_matchdata $~; md = /abc/.match('abc'); $compile_alias_matchdata = md; [md.equal?($~), md.equal?($compile_alias_matchdata)]")
+      assert_run(nil, "alias $compile_alias_clear_match $~; /abc/ =~ 'abc'; $compile_alias_clear_match = nil; $~")
+      assert_run_raises(NameError, "alias $compile_alias_readonly $&; $compile_alias_readonly = 1")
+    end
+
+    def test_alias_global_variable_metadata
+      unit = Prism.compile("alias $compile_alias_metadata $compile_alias_original", freeze: true).value
+      insns = unit.graphs[0].blocks.flat_map(&:insns)
+      insn = insns.find { |candidate| candidate.kind == :alias_gvar }
+      names = insn.opnds.map { |id| insns.find { |candidate| candidate.kind == :load_object && candidate.opnds[0] == id }.data }
+      assert_equal([:$compile_alias_metadata, :$compile_alias_original], names)
+      assert_include(unit.disasm, "alias_gvar")
+    end
+
     def test_alias
       Object.const_set(:CompileTestAlias, Class.new { def a = 1; private def secret = 2 })
 

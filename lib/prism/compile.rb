@@ -159,6 +159,8 @@ module Prism
 
       def instruction(insn)
         case insn.kind
+        when :alias_gvar
+          "alias_gvar #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :alias_method
           "alias_method #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :branch
@@ -515,6 +517,8 @@ module Prism
         while true
           block.insns.each do |insn|
             case insn.kind
+            when :alias_gvar
+              eval("alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}", TOPLEVEL_BINDING)
             when :alias_method
               Module.instance_method(:alias_method).bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
             when :branch
@@ -621,7 +625,7 @@ module Prism
             when :defined_cvar
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
-              values[insn.opnds[0]] = !eval("defined?(#{insn.data})", TOPLEVEL_BINDING).nil?
+              values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
             when :expand_array
               lefts, rights, rest = insn.data
               array = Array.instance_method(:to_a).bind_call(values[insn.opnds[0]])
@@ -662,7 +666,7 @@ module Prism
               check_cvar_parent(parent)
               values[insn.opnds[0]] = Module.instance_method(:class_variable_get).bind_call(parent, insn.data)
             when :load_gvar
-              values[insn.opnds[0]] = eval(insn.data.name, TOPLEVEL_BINDING)
+              values[insn.opnds[0]] = eval(insn.data.name)
             when :load_ivar
               values[insn.opnds[0]] = recv.instance_variable_get(insn.data)
             when :load_last_match
@@ -715,7 +719,7 @@ module Prism
             when :store_ivar
               recv.instance_variable_set(insn.data, values[insn.opnds[0]])
             when :store_gvar
-              eval("#{insn.data} = value", TOPLEVEL_BINDING.tap { |binding| binding.local_variable_set(:value, values[insn.opnds[0]]) })
+              eval("#{insn.data} = values[#{insn.opnds[0]}]")
             when :store_lvar
               locals[insn.data.id] = values[insn.opnds[0]]
             when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_return

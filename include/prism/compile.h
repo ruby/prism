@@ -25,6 +25,7 @@ typedef struct PrismConstantPath PrismConstantPath;
 typedef struct PrismObject PrismObject;
 
 typedef enum {
+    kPrismInsnAliasGVar,
     kPrismInsnAliasMethod,
     kPrismInsnBranch,
     kPrismInsnBranchIf,

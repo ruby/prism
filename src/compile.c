@@ -898,6 +898,15 @@ make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, uint32_t 
 /******************************************************************************/
 
 static void
+emit_alias_gvar(PrismBuilder *builder, uint32_t node_id, uint32_t new_name_id, uint32_t old_name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnAliasGVar, node_id, 2);
+
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = new_name_id;
+    graph->opnds[insn->opnds_off + 1] = old_name_id;
+}
+
+static void
 emit_alias_method(PrismBuilder *builder, uint32_t node_id, uint32_t new_name_id, uint32_t old_name_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnAliasMethod, node_id, 2);
 
@@ -2376,6 +2385,24 @@ compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_
 /******************************************************************************/
 
 static uint32_t
+compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
+    pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
+    pm_constant_id_t old_name;
+
+    if (PM_NODE_TYPE_P(node->old_name, PM_BACK_REFERENCE_READ_NODE)) {
+        old_name = ((const pm_back_reference_read_node_t *) node->old_name)->name;
+    } else {
+        old_name = ((const pm_global_variable_read_node_t *) node->old_name)->name;
+    }
+
+    uint32_t new_name_id = emit_load_object(builder, node->new_name->node_id, make_object_constant_id(builder, new_name));
+    uint32_t old_name_id = emit_load_object(builder, node->old_name->node_id, make_object_constant_id(builder, old_name));
+
+    emit_alias_gvar(builder, node->base.node_id, new_name_id, old_name_id);
+    return emit_load_nil(builder, node->base.node_id);
+}
+
+static uint32_t
 compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *node) {
     uint32_t new_name_id = compile_node(builder, node->new_name);
     uint32_t old_name_id = compile_node(builder, node->old_name);
@@ -3517,6 +3544,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
     }
 
     switch (PM_NODE_TYPE(node)) {
+        case PM_ALIAS_GLOBAL_VARIABLE_NODE:
+            return compile_alias_global_variable_node(builder, (const pm_alias_global_variable_node_t *) node);
         case PM_ALIAS_METHOD_NODE:
             return compile_alias_method_node(builder, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
