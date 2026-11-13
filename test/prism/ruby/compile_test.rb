@@ -2547,6 +2547,76 @@ module Prism
       RUBY
     end
 
+    def test_match_required
+      [
+        [nil, "1 => 1"],
+        [nil, "1.5 => 1.5"],
+        [nil, "1 => Integer"],
+        [nil, "1 => 1 | 2"],
+        [nil, "2 => 1 | 2"],
+        [nil, "nil => nil"],
+        [1, "1 => a; a"],
+        [1, "1 => _; _"],
+        [nil, "nil => a; a"],
+        [false, "a = 1; false => a; a"],
+        [1, "1 => Integer => a; a"],
+        [nil, "a = 1; 1 => ^a"],
+        [2, "1 => Integer; 2"],
+        [nil, "proc { 1 => Integer }.call"],
+        [nil, "-> { 1 => Integer }.call"],
+        [1, "a = 0; proc { 1 => a }.call; a"],
+        [1, "proc { 1 => a; a }.call"],
+        [[true, 1], "matched = (1 in a); [matched, a]"],
+        [1, "case 1; in a; a; end"],
+        [1, "case 1; in a if false; 2; else; a; end"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(NoMatchingPatternError, "1 => 2", "1: 2 === 1 does not return true")
+      assert_run_raises(NoMatchingPatternError, "1.5 => 2.5", "1.5: 2.5 === 1.5 does not return true")
+      assert_run_raises(NoMatchingPatternError, "1 => 2 | 3", "1: 3 === 1 does not return true")
+      assert_run_raises(NoMatchingPatternError, "a = 2; 1 => ^a", "1: 2 === 1 does not return true")
+    end
+
+    def test_match_required_evaluation
+      scope = Module.new
+      events = []
+      value = Object.new
+      pattern = Object.new
+      matched = true
+      pattern.define_singleton_method(:===) { |candidate| events << [:match, candidate]; matched && :truthy }
+      scope.const_set(:Value, value)
+      scope.const_set(:Pattern, pattern)
+      scope.const_set(:Events, events)
+      source = "(Events << :value; Value) => ^((Events << :pattern; Pattern)) => captured; Events << :after; captured"
+      graph = compile_unit(source).graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_same(value, vm.run_frame(frame.call))
+      assert_equal([:value, :pattern, [:match, value], :after], events)
+      events.clear
+      matched = false
+      failed_frame = frame.call
+      assert_raise(NoMatchingPatternError) { vm.run_frame(failed_frame) }
+      assert_equal([:value, :pattern, [:match, value]], events)
+      captured = graph.locals.find { |local| local.name == :captured }
+      assert_nil(failed_frame.locals[captured.id])
+    end
+
+    def test_match_required_method
+      assert_run([nil, 2], <<~RUBY)
+        class CompileTestMatchRequired
+          def tail(value)
+            value => Integer
+          end
+
+          def capture(value)
+            2 => value
+            value
+          end
+        end
+        object = CompileTestMatchRequired.new
+        [object.tail(1), object.capture(1)]
+      RUBY
+    end
+
     def test_capture_pattern
       [
         [[true, 1], "matched = (1 in Integer => a); [matched, a]"],

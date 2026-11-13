@@ -2519,6 +2519,11 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
             pattern_id = compile_pattern_match(builder, cast->right, value_id, matched_block_id, unmatched_block_id);
             break;
         }
+        case PM_LOCAL_VARIABLE_TARGET_NODE:
+            compile_target_node(builder, node, value_id, NULL);
+            emit_branch(builder, node->node_id, matched_block_id, 0, NULL);
+            pattern_id = value_id;
+            break;
         case PM_ARRAY_NODE:
         case PM_CONSTANT_PATH_NODE:
         case PM_CONSTANT_READ_NODE:
@@ -4127,6 +4132,20 @@ compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_nod
 }
 
 static uint32_t
+compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_t *node) {
+    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t matched_block_id = make_block(builder, 0);
+    uint32_t unmatched_block_id = make_block(builder, 0);
+    uint32_t pattern_id = compile_pattern_match(builder, node->pattern, value_id, matched_block_id, unmatched_block_id);
+
+    builder->state.block_id = unmatched_block_id;
+    emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, pattern_id);
+
+    builder->state.block_id = matched_block_id;
+    return emit_load_nil(builder, node->base.node_id);
+}
+
+static uint32_t
 compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *node) {
     uint32_t result_id = compile_node(builder, PM_NODE_UPCAST(node->call));
     uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
@@ -4585,6 +4604,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_match_last_line_node(builder, (const pm_match_last_line_node_t *) node);
         case PM_MATCH_PREDICATE_NODE:
             return compile_match_predicate_node(builder, (const pm_match_predicate_node_t *) node);
+        case PM_MATCH_REQUIRED_NODE:
+            return compile_match_required_node(builder, (const pm_match_required_node_t *) node);
         case PM_MATCH_WRITE_NODE:
             return compile_match_write_node(builder, (const pm_match_write_node_t *) node);
         case PM_MODULE_NODE:
