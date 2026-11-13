@@ -307,8 +307,144 @@ module Prism
       graph = compile_unit("proc { |**| 1 }").graphs[1]
       assert_equal(0, graph.signature.keyword_rest)
       assert_equal([0], graph.blocks[0].params)
-      assert_empty(graph.locals)
+      assert_equal([:**], graph.locals.map(&:name))
       assert_nil(compile_unit("proc {}").graphs[1].signature.keyword_rest)
+    end
+
+    def test_anonymous_argument_forwarding
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestAnonymousForwarding
+          def collect(*args, **kwargs)
+            [args, kwargs]
+          end
+
+          def positional(*)
+            collect(*)
+          end
+
+          def keywords(**)
+            collect(**)
+          end
+
+          def both(*, **)
+            collect(*, **)
+          end
+
+          def mixed(first, optional = 2, *, last, x:, y: 5, **)
+            [first, optional, last, x, y, collect(0, *, 9, **, extra: 10)]
+          end
+
+          def repeated(*, **)
+            collect(*, 0, *, **)
+          end
+
+          def keyword_merge(**)
+            collect(x: 0, **, y: 3)
+          end
+
+          def batched(*, **)
+            collect(*, 1, 2, 3, *, 4, 5, **)
+          end
+
+          def restore(*, **)
+            def inner_forward(*, **)
+              collect(*, **)
+            end
+            [inner_forward(9, y: 10), proc { collect(*, **) }.call, collect(*, **)]
+          end
+
+          def capture(*, **)
+            proc { proc { collect(*, **) } }
+          end
+
+          def loop_forward(*, **)
+            out = []
+            for i in [1, 2]
+              out << collect(*, **)
+            end
+            out
+          end
+
+          def with_block(*, **)
+            collect_with_block(*, **) { 3 }
+          end
+
+          def collect_with_block(*args, **kwargs)
+            [args, kwargs, yield]
+          end
+
+          def safe(receiver, *, **)
+            receiver&.collect(*, **)
+          end
+
+          def arrays(*)
+            first = [0, *, 9, *]
+            first << 10
+            [first, [*]]
+          end
+
+          def hashes(**)
+            first = { x: 0, **, y: 3 }
+            first[:z] = 4
+            [first, { ** }]
+          end
+        end
+      RUBY
+      receiver = "CompileTestAnonymousForwarding.new"
+      [
+        [[[], {}], "positional"],
+        [[[1, 2], {}], "positional(1, 2)"],
+        [[[nil, false], {}], "positional(nil, false)"],
+        [[[{ x: 1 }], {}], "positional(x: 1)"],
+        [[[], {}], "keywords"],
+        [[[], { x: 1 }], "keywords(x: 1)"],
+        [[[], {}], "both"],
+        [[[1, 2], { x: 3 }], "both(1, 2, x: 3)"],
+        [[[{ x: 1 }], { y: 2 }], "both({ x: 1 }, y: 2)"],
+        [[1, 2, 5, 6, 5, [[0, 3, 4, 9], { z: 7, extra: 10 }]], "mixed(1, 2, 3, 4, 5, x: 6, z: 7)"],
+        [[1, 2, 3, 4, 5, [[0, 9], { extra: 10 }]], "mixed(1, 3, x: 4)"],
+        [[[1, 2, 0, 1, 2], { x: 3 }], "repeated(1, 2, x: 3)"],
+        [[[0], {}], "repeated"],
+        [[[], { x: 1, y: 3, z: 4 }], "keyword_merge(x: 1, y: 2, z: 4)"],
+        [[[7, 8, 1, 2, 3, 7, 8, 4, 5], { x: 6 }], "batched(7, 8, x: 6)"],
+        [[[[9], { y: 10 }], [[1, 2], { x: 3 }], [[1, 2], { x: 3 }]], "restore(1, 2, x: 3)"],
+        [[[1, 2], { x: 3 }], "capture(1, 2, x: 3).call.call"],
+        [[[[1], { x: 2 }], [[1], { x: 2 }]], "loop_forward(1, x: 2)"],
+        [[[1], { x: 2 }, 3], "with_block(1, x: 2)"],
+        [nil, "safe(nil, 1, x: 2)"],
+        [[[1], { x: 2 }], "safe(#{receiver}, 1, x: 2)"],
+        [[[0, 1, 2, 9, 1, 2, 10], [1, 2]], "arrays(1, 2)"],
+        [[[0, 9, 10], []], "arrays"],
+        [[{ x: 1, y: 3, z: 4 }, { x: 1 }], "hashes(x: 1)"]
+      ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
+    end
+
+    def test_anonymous_forwarding_evaluation_order
+      assert_run([[[0, 1, 2, 3], { x: 4, y: 5 }], [:receiver, :before, :after, :keyword]], <<~RUBY)
+        class CompileTestForwardingOrder
+          def collect(*args, **kwargs)
+            [args, kwargs]
+          end
+
+          def forward(events, *, **)
+            result = (events << :receiver; self).collect((events << :before; 0), *, (events << :after; 3), **, y: (events << :keyword; 5))
+            [result, events]
+          end
+        end
+        CompileTestForwardingOrder.new.forward([], 1, 2, x: 4)
+      RUBY
+    end
+
+    def test_anonymous_forwarding_metadata
+      unit = Prism.compile("def forward(*, **); target(*, **); end", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([:*, :**], graph.locals.map(&:name))
+      call = graph.blocks.flat_map(&:insns).find { |insn| insn.kind == :call }
+      assert_equal(true, call.data.splat)
+      assert_equal(true, call.data.keywords)
+      assert_equal(:target, call.data.name)
+      assert_include(unit.disasm, "[splat] [keywords]")
+      assert_equal(false, compile_unit("target(1)").graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == :call }.data.splat)
     end
 
     def test_no_block_method_parameters

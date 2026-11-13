@@ -38,11 +38,12 @@ module Prism
     end
 
     class CallInfo
-      attr_reader :name, :keywords
+      attr_reader :name, :keywords, :splat
 
-      def initialize(name, keywords)
+      def initialize(name, keywords, splat)
         @name = name
         @keywords = keywords
+        @splat = splat
       end
     end
 
@@ -178,11 +179,11 @@ module Prism
         when :call_with_block
           opnds = insn.opnds
           data = insn.data
-          "#{value(opnds[0])} = call_with_block #{value(opnds[1])}.#{data.name}#{values(opnds[2...-1])}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
+          "#{value(opnds[0])} = call_with_block #{value(opnds[1])}.#{data.name}#{values(opnds[2...-1])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
         when :call
           opnds = insn.opnds
           data = insn.data
-          "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(opnds[2..])}#{data.keywords ? " [keywords]" : ""}"
+          "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(opnds[2..])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""}"
         when :coerce_array
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_array#{values(opnds[1..])}"
@@ -192,6 +193,9 @@ module Prism
         when :coerce_string
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_string#{values(opnds[1..])}"
+        when :concat_array
+          opnds = insn.opnds
+          "#{value(opnds[0])} = concat_array#{values(opnds[1..])}"
         when :define_class_abs
           opnds = insn.opnds
           name, graph = insn.data
@@ -554,11 +558,13 @@ module Prism
               call = insn.data
               arguments = values.values_at(*insn.opnds[2..])
               keywords = call.keywords ? arguments.pop : {}
+              arguments.concat(arguments.pop) if call.splat
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords)
             when :call_with_block
               call = insn.data
               arguments = values.values_at(*insn.opnds[2...-1])
               keywords = call.keywords ? arguments.pop : {}
+              arguments.concat(arguments.pop) if call.splat
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords, &values[insn.opnds[-1]])
             when :coerce_array
               value = values[insn.opnds[1]]
@@ -570,6 +576,8 @@ module Prism
               value = values[insn.opnds[1]]
               string = value.__send__(:to_s)
               values[insn.opnds[0]] = String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
+            when :concat_array
+              values[insn.opnds[0]] = Array.instance_method(:+).bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
             when :define_class_abs
               name, class_graph = insn.data
               klass = define_class(Object, name, true)

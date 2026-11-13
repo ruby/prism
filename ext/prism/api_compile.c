@@ -31,6 +31,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnCoerceArray: return rb_intern_const("coerce_array");
         case kPrismInsnCoerceHash: return rb_intern_const("coerce_hash");
         case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
+        case kPrismInsnConcatArray: return rb_intern_const("concat_array");
         case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");
         case kPrismInsnDefineClassAbsSuper: return rb_intern_const("define_class_abs_super");
         case kPrismInsnDefineClassNestRel: return rb_intern_const("define_class_nest_rel");
@@ -129,8 +130,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnCall: {
             const pm_constant_t *constant = pm_insn_call_name(parser, insn);
             VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
-            VALUE argv[] = { name, pm_insn_call_keywords(insn) ? Qtrue : Qfalse };
-            return compile_freeze(rb_class_new_instance(2, argv, rb_cPrismCompileCallInfo), freeze);
+            VALUE argv[] = { name, pm_insn_call_keywords(insn) ? Qtrue : Qfalse, pm_insn_call_splat(insn) ? Qtrue : Qfalse };
+            return compile_freeze(rb_class_new_instance(3, argv, rb_cPrismCompileCallInfo), freeze);
         }
         case kPrismInsnExtractLastMatchNamedGroup:
         case kPrismInsnDefinedConstAbs:

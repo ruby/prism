@@ -34,7 +34,7 @@ struct PrismInsn {
         struct { uint32_t local_id; } lvar;
         struct { uint32_t index; } flip_flop;
         struct { pm_constant_id_t name_id; } name;
-        struct { pm_constant_id_t name_id; bool keywords; } call;
+        struct { pm_constant_id_t name_id; bool splat; bool keywords; } call;
         struct { uint32_t object_id; } object;
         struct { pm_node_flags_t flags; } regexp;
         struct { int32_t lineno; } trace_line;

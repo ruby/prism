@@ -34,6 +34,7 @@ typedef enum {
     kPrismInsnCoerceArray,
     kPrismInsnCoerceHash,
     kPrismInsnCoerceString,
+    kPrismInsnConcatArray,
     kPrismInsnDefineClassAbs,
     kPrismInsnDefineClassAbsSuper,
     kPrismInsnDefineClassNestRel,
@@ -196,6 +197,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branch_block_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branchif_then_block_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branchif_else_block_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branchif_then_nopnds(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_call_splat(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_keywords(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_call_name(const pm_parser_t *parser, const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_name(const pm_parser_t *parser, const PrismInsn *insn);

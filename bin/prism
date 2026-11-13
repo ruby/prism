@@ -15,6 +15,7 @@ module Prism
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
       when "error"      then error(argv)
+      when "interpret"  then interpret(argv)
       when "keywords"   then keywords
       when "lex"        then lex(argv)
       when "lex_compat" then lex_compat(argv)
@@ -52,6 +53,11 @@ module Prism
     def compile(argv)
       source, filepath = read_source(argv)
       puts Prism.compile(source, filepath: filepath, raise_error: true).value.disasm
+    end
+
+    def interpret(argv)
+      source, filepath = read_source(argv)
+      Prism::Compile::VM.new.run(Prism.compile(source, filepath: filepath, raise_error: true).value)
     end
 
     ############################################################################
