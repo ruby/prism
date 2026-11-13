@@ -1790,6 +1790,101 @@ module Prism
       RUBY
     end
 
+    def test_case
+      [
+        [2, "case 2; when 1; 1; when 2; 2; else; 3; end"],
+        [1, "case 2; when 1, 2, 3; 1; else; 2; end"],
+        [3, "case 4; when 1, 2; 1; when 3; 2; else; 3; end"],
+        [nil, "case 4; when 1; 1; end"],
+        [nil, "case 1; when 1; end"],
+        [nil, "case 4; when 1; 1; else; end"],
+        [1, "case nil; when nil; 1; else; 2; end"],
+        [1, "case false; when false; 1; else; 2; end"],
+        [1, "case 2; when Integer; 1; else; 2; end"],
+        [1, "case 2; when 1..3; 1; else; 2; end"],
+        [1, 'case "abc"; when /b/; 1; else; 2; end'],
+        [2, "case; when nil, false; 1; when 0; 2; else; 3; end"],
+        [3, "case; when false; 1; when nil; 2; else; 3; end"],
+        [nil, "case; when false; 1; end"],
+        [nil, "case; when true; end"],
+        [3, "case 1; when 1; case 2; when 2; 3; end; end"],
+        [3, "1 + (case 2; when 2; 2; else; 0; end)"],
+        [2, "case (if true; 2; else; 3; end); when (if false; 1; else; 2; end); 2; end"],
+        [3, "a = 0; while a < 3; case a; when 0, 1; a += 1; else; a += 1; end; end; a"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_case_evaluation_order
+      assert_run([:predicate, :first, :second, :body], <<~RUBY)
+        events = []
+        case (events << :predicate; 2)
+        when (events << :first; 1), (events << :second; 2), (events << :skipped; 3)
+          events << :body
+        when (events << :later; 2)
+          events << :later_body
+        else
+          events << :else
+        end
+        events
+      RUBY
+
+      assert_run([:first, :second, :body], <<~RUBY)
+        events = []
+        case
+        when (events << :first; false), (events << :second; 0), (events << :skipped; true)
+          events << :body
+        else
+          events << :else
+        end
+        events
+      RUBY
+    end
+
+    def test_case_custom_match
+      assert_run([:matched, [2]], <<~RUBY)
+        class CompileTestCaseMatcher
+          def initialize(events)
+            @events = events
+          end
+
+          def ===(value)
+            @events << value
+            :truthy
+          end
+        end
+        events = []
+        matcher = CompileTestCaseMatcher.new(events)
+        result = case 2
+        when matcher
+          :matched
+        else
+          :unmatched
+        end
+        [result, events]
+      RUBY
+    end
+
+    def test_case_return
+      assert_run([1, 2, 3], <<~RUBY)
+        class CompileTestCaseReturn
+          def value(input)
+            case input
+            when 1
+              return 1
+            when 2
+              return 2
+            else
+              return 3
+            end
+          end
+        end
+        object = CompileTestCaseReturn.new
+        [object.value(1), object.value(2), object.value(4)]
+      RUBY
+    end
+
     def test_if
       [
         [1, "if true; 1; else; 2; end"],

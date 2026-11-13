@@ -2680,6 +2680,39 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
 }
 
 static uint32_t
+compile_case_node(PrismBuilder *builder, const pm_case_node_t *node) {
+    uint32_t predicate_id = node->predicate ? compile_node(builder, node->predicate) : UINT32_MAX;
+    uint32_t join_block_id = make_block(builder, 1);
+
+    for (size_t index = 0; index < node->conditions.size; index++) {
+        const pm_when_node_t *condition = (const pm_when_node_t *) node->conditions.nodes[index];
+        uint32_t body_block_id = make_block(builder, 0);
+
+        for (size_t condition_index = 0; condition_index < condition->conditions.size; condition_index++) {
+            const pm_node_t *expression = condition->conditions.nodes[condition_index];
+            uint32_t next_block_id = make_block(builder, 0);
+            uint32_t condition_id = compile_node(builder, expression);
+            if (node->predicate) {
+                condition_id = emit_match(builder, expression->node_id, predicate_id, condition_id);
+            }
+            emit_branchif(builder, expression->node_id, condition_id, body_block_id, 0, NULL, next_block_id, 0, NULL);
+            builder->state.block_id = next_block_id;
+        }
+
+        uint32_t next_block_id = builder->state.block_id;
+        builder->state.block_id = body_block_id;
+        uint32_t value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(condition->statements), condition->base.node_id);
+        emit_branch(builder, condition->base.node_id, join_block_id, 1, &value_id);
+        builder->state.block_id = next_block_id;
+    }
+
+    uint32_t value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->else_clause), node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphClass, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, &node->locals);
@@ -3716,6 +3749,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_call_node(builder, (const pm_call_node_t *) node);
         case PM_CALL_OPERATOR_WRITE_NODE:
             return compile_call_operator_write_node(builder, (const pm_call_operator_write_node_t *) node);
+        case PM_CASE_NODE:
+            return compile_case_node(builder, (const pm_case_node_t *) node);
         case PM_CLASS_NODE:
             return compile_class_node(builder, (const pm_class_node_t *) node);
         case PM_CLASS_VARIABLE_READ_NODE:
@@ -3908,6 +3943,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
         case PM_REST_PARAMETER_NODE:
+        case PM_WHEN_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
             abort();
         default:
