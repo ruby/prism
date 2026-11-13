@@ -3190,6 +3190,10 @@ compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length
 
 /******************************************************************************/
 
+/*
+ * alias $foo $bar
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
     pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
@@ -3208,6 +3212,10 @@ compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * alias foo bar
+ * ^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *node) {
     uint32_t new_name_id = compile_node(builder, node->new_name);
@@ -3216,11 +3224,19 @@ compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *n
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * a and b
+ * ^^^^^^^
+ */
 static uint32_t
 compile_and_node(PrismBuilder *builder, const pm_and_node_t *node) {
     return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
 }
 
+/*
+ * [foo, bar, baz]
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_array_node(PrismBuilder *builder, const pm_array_node_t *node) {
     size_t nelements = node->elements.size;
@@ -3263,6 +3279,10 @@ compile_array_node(PrismBuilder *builder, const pm_array_node_t *node) {
     }
 }
 
+/*
+ * $+
+ * ^^
+ */
 static uint32_t
 compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_read_node_t *node) {
     const pm_constant_t *constant = compile_constant(builder->parser, node->name);
@@ -3291,6 +3311,10 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
     return value_id;
 }
 
+/*
+ * begin end
+ * ^^^^^^^^^
+ */
 static uint32_t
 compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
     if (node->rescue_clause) {
@@ -3383,6 +3407,10 @@ compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
     }
 }
 
+/*
+ * foo(&bar)
+ *     ^^^^
+ */
 static uint32_t
 compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_t *node) {
     if (node->expression) {
@@ -3397,6 +3425,10 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphBlock, node->parameters, node->body, &node->locals);
 }
 
+/*
+ * break foo
+ * ^^^^^^^^^
+ */
 static uint32_t
 compile_break_node(PrismBuilder *builder, const pm_break_node_t *node) {
     uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
@@ -3417,11 +3449,19 @@ compile_break_node(PrismBuilder *builder, const pm_break_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * foo.bar &&= baz
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_call_and_write_node(PrismBuilder *builder, const pm_call_and_write_node_t *node) {
     return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
+/*
+ * foo.bar() {}
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
     uint32_t receiver_id;
@@ -3457,6 +3497,10 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
     return value_id;
 }
 
+/*
+ * foo.bar += baz
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_write_node_t *node) {
     uint32_t receiver_id = node->receiver ? compile_node(builder, node->receiver) : emit_load_self(builder, node->base.node_id);
@@ -3484,11 +3528,19 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
     return result_id;
 }
 
+/*
+ * foo.bar ||= baz
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_call_or_write_node(PrismBuilder *builder, const pm_call_or_write_node_t *node) {
     return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
+/*
+ * case foo; in bar; end
+ * ^^^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node) {
     uint32_t value_id = compile_node_or_nil(builder, node->predicate, node->base.node_id);
@@ -3564,6 +3616,10 @@ compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node)
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * case foo; when bar; end
+ * ^^^^^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_case_node(PrismBuilder *builder, const pm_case_node_t *node) {
     uint32_t predicate_id = node->predicate ? compile_node(builder, node->predicate) : UINT32_MAX;
@@ -3597,6 +3653,10 @@ compile_case_node(PrismBuilder *builder, const pm_case_node_t *node) {
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * class Foo; end
+ * ^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphClass, UINT32_MAX, (uint32_t) node->locals.size);
@@ -3640,6 +3700,10 @@ compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
     return result_id;
 }
 
+/*
+ * @@foo &&= bar
+ * ^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_class_variable_and_write_node(PrismBuilder *builder, const pm_class_variable_and_write_node_t *node) {
     uint32_t set_block_id = make_block(builder, 0);
@@ -3657,6 +3721,10 @@ compile_class_variable_and_write_node(PrismBuilder *builder, const pm_class_vari
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * @@foo += bar
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_class_variable_operator_write_node(PrismBuilder *builder, const pm_class_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_cvar(builder, node->base.node_id, node->name);
@@ -3666,6 +3734,10 @@ compile_class_variable_operator_write_node(PrismBuilder *builder, const pm_class
     return result_id;
 }
 
+/*
+ * @@foo ||= bar
+ * ^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_variable_or_write_node_t *node) {
     uint32_t defined_block_id = make_block(builder, 0);
@@ -3688,11 +3760,19 @@ compile_class_variable_or_write_node(PrismBuilder *builder, const pm_class_varia
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * @@foo
+ * ^^^^^
+ */
 static uint32_t
 compile_class_variable_read_node(PrismBuilder *builder, const pm_class_variable_read_node_t *node) {
     return emit_load_cvar(builder, node->base.node_id, node->name);
 }
 
+/*
+ * @@foo = 1
+ * ^^^^^^^^^
+ */
 static uint32_t
 compile_class_variable_write_node(PrismBuilder *builder, const pm_class_variable_write_node_t *node) {
     uint32_t value_id = compile_node(builder, node->value);
@@ -3700,6 +3780,10 @@ compile_class_variable_write_node(PrismBuilder *builder, const pm_class_variable
     return value_id;
 }
 
+/*
+ * Foo &&= bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_write_node_t *node) {
     uint32_t set_block_id = make_block(builder, 0);
@@ -3720,6 +3804,10 @@ compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_wri
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * Foo += bar
+ * ^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_operator_write_node_t *node) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
@@ -3733,6 +3821,10 @@ compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_op
     return result_id;
 }
 
+/*
+ * Foo ||= bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write_node_t *node) {
     uint32_t read_block_id = make_block(builder, 0);
@@ -3758,6 +3850,10 @@ compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * Foo::Bar &&= baz
+ * ^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_path_and_write_node_t *node) {
     uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
@@ -3788,6 +3884,10 @@ compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_pa
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * Foo::Bar
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t *node) {
     const pm_node_t *current = PM_NODE_UPCAST(node);
@@ -3824,6 +3924,10 @@ compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t 
     return value_id;
 }
 
+/*
+ * Foo::Bar += baz
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_constant_path_operator_write_node_t *node) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
@@ -3846,6 +3950,10 @@ compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_consta
     }
 }
 
+/*
+ * Foo::Bar ||= baz
+ * ^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_path_or_write_node_t *node) {
     uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
@@ -3886,6 +3994,10 @@ compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_pat
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * Foo::Bar = 1
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_write_node_t *node) {
     if (node->target->parent) {
@@ -3899,6 +4011,10 @@ compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_w
     }
 }
 
+/*
+ * Foo
+ * ^^^
+ */
 static uint32_t
 compile_constant_read_node(PrismBuilder *builder, const pm_constant_read_node_t *node) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
@@ -3906,6 +4022,10 @@ compile_constant_read_node(PrismBuilder *builder, const pm_constant_read_node_t 
     return emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
 }
 
+/*
+ * Foo = 1
+ * ^^^^^^^
+ */
 static uint32_t
 compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_t *node) {
     uint32_t value_id = compile_node(builder, node->value);
@@ -3913,6 +4033,10 @@ compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_
     return value_id;
 }
 
+/*
+ * def foo; end
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphDef, UINT32_MAX, (uint32_t) node->locals.size + parameters_locals(node->parameters));
@@ -3946,6 +4070,10 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * defined?(a)
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_defined_node(PrismBuilder *builder, const pm_defined_node_t *node) {
     const pm_node_t *value = node->value;
@@ -4131,28 +4259,48 @@ compile_defined_node(PrismBuilder *builder, const pm_defined_node_t *node) {
     return value_id;
 }
 
+/*
+ * if foo then bar else baz end
+ *                 ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_else_node(PrismBuilder *builder, const pm_else_node_t *node) {
     return compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
 }
 
+/*
+ * "foo #{bar}"
+ *      ^^^^^^
+ */
 static uint32_t
 compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statements_node_t *node) {
     uint32_t string_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
     return emit_coerce_string(builder, node->base.node_id, string_id);
 }
 
+/*
+ * "foo #@bar"
+ *      ^^^^^
+ */
 static uint32_t
 compile_embedded_variable_node(PrismBuilder *builder, const pm_embedded_variable_node_t *node) {
     uint32_t string_id = compile_node(builder, node->variable);
     return emit_coerce_string(builder, node->base.node_id, string_id);
 }
 
+/*
+ * false
+ * ^^^^^
+ */
 static uint32_t
 compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
     return emit_load_false(builder, node->base.node_id);
 }
 
+/*
+ * if foo .. bar; end
+ *    ^^^^^^^^^^
+ */
 static uint32_t
 compile_flip_flop_node(PrismBuilder *builder, const pm_flip_flop_node_t *node) {
     uint32_t index = make_flip_flop(builder);
@@ -4197,12 +4345,20 @@ compile_flip_flop_node(PrismBuilder *builder, const pm_flip_flop_node_t *node) {
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * 1.0
+ * ^^^
+ */
 static uint32_t
 compile_float_node(PrismBuilder *builder, const pm_float_node_t *node) {
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * for foo in bar do end
+ * ^^^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     uint32_t collection_id = compile_node(builder, node->collection);
@@ -4249,6 +4405,10 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id, false, false, 0, false);
 }
 
+/*
+ * super {}
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_forwarding_super_node(PrismBuilder *builder, const pm_forwarding_super_node_t *node) {
     PrismArguments arguments = { .block_id = UINT32_MAX };
@@ -4322,6 +4482,10 @@ compile_forwarding_super_node(PrismBuilder *builder, const pm_forwarding_super_n
     return emit_call_super(builder, node->base.node_id, &arguments);
 }
 
+/*
+ * $foo &&= bar
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_global_variable_and_write_node(PrismBuilder *builder, const pm_global_variable_and_write_node_t *node) {
     uint32_t set_block_id = make_block(builder, 0);
@@ -4339,6 +4503,10 @@ compile_global_variable_and_write_node(PrismBuilder *builder, const pm_global_va
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * $foo += bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_global_variable_operator_write_node(PrismBuilder *builder, const pm_global_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_gvar(builder, node->base.node_id, node->name);
@@ -4348,6 +4516,10 @@ compile_global_variable_operator_write_node(PrismBuilder *builder, const pm_glob
     return result_id;
 }
 
+/*
+ * $foo ||= bar
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_variable_or_write_node_t *node) {
     uint32_t defined_block_id = make_block(builder, 0);
@@ -4370,11 +4542,19 @@ compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_var
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * $foo
+ * ^^^^
+ */
 static uint32_t
 compile_global_variable_read_node(PrismBuilder *builder, const pm_global_variable_read_node_t *node) {
     return emit_load_gvar(builder, node->base.node_id, node->name);
 }
 
+/*
+ * $foo = 1
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_global_variable_write_node(PrismBuilder *builder, const pm_global_variable_write_node_t *node) {
     uint32_t value_id = compile_node(builder, node->value);
@@ -4382,6 +4562,10 @@ compile_global_variable_write_node(PrismBuilder *builder, const pm_global_variab
     return value_id;
 }
 
+/*
+ * {}
+ * ^^
+ */
 static uint32_t
 compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && node->elements.size) {
@@ -4392,27 +4576,47 @@ compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
     return compile_hash_elements(builder, PM_NODE_UPCAST(node), &node->elements);
 }
 
+/*
+ * if foo then bar end
+ * ^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_if_node(PrismBuilder *builder, const pm_if_node_t *node) {
     return compile_conditional_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements, node->subsequent);
 }
 
+/*
+ * 1i
+ * ^^
+ */
 static uint32_t
 compile_imaginary_node(PrismBuilder *builder, const pm_imaginary_node_t *node) {
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * { foo: }
+ *   ^^^^
+ */
 static uint32_t
 compile_implicit_node(PrismBuilder *builder, const pm_implicit_node_t *node) {
     return compile_node(builder, node->value);
 }
 
+/*
+ * foo[bar] &&= baz
+ * ^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_index_and_write_node(PrismBuilder *builder, const pm_index_and_write_node_t *node) {
     return compile_index_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->arguments, PM_NODE_UPCAST(node->block), node->value);
 }
 
+/*
+ * foo[bar] += baz
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_index_operator_write_node(PrismBuilder *builder, const pm_index_operator_write_node_t *node) {
     uint32_t receiver_id = compile_node(builder, node->receiver);
@@ -4442,16 +4646,28 @@ compile_index_operator_write_node(PrismBuilder *builder, const pm_index_operator
     return result_id;
 }
 
+/*
+ * foo[bar] ||= baz
+ * ^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_index_or_write_node(PrismBuilder *builder, const pm_index_or_write_node_t *node) {
     return compile_index_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->arguments, PM_NODE_UPCAST(node->block), node->value);
 }
 
+/*
+ * @foo &&= bar
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_instance_variable_and_write_node(PrismBuilder *builder, const pm_instance_variable_and_write_node_t *node) {
     return compile_instance_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->value);
 }
 
+/*
+ * @foo += bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_instance_variable_operator_write_node(PrismBuilder *builder, const pm_instance_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_ivar(builder, node->base.node_id, node->name);
@@ -4461,16 +4677,28 @@ compile_instance_variable_operator_write_node(PrismBuilder *builder, const pm_in
     return result_id;
 }
 
+/*
+ * @foo ||= bar
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_instance_variable_or_write_node(PrismBuilder *builder, const pm_instance_variable_or_write_node_t *node) {
     return compile_instance_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->value);
 }
 
+/*
+ * @foo
+ * ^^^^
+ */
 static uint32_t
 compile_instance_variable_read_node(PrismBuilder *builder, const pm_instance_variable_read_node_t *node) {
     return emit_load_ivar(builder, node->base.node_id, node->name);
 }
 
+/*
+ * @foo = 1
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_instance_variable_write_node(PrismBuilder *builder, const pm_instance_variable_write_node_t *node) {
     uint32_t value_id = compile_node(builder, node->value);
@@ -4478,12 +4706,20 @@ compile_instance_variable_write_node(PrismBuilder *builder, const pm_instance_va
     return value_id;
 }
 
+/*
+ * 1
+ * ^
+ */
 static uint32_t
 compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * if /foo #{bar}/ then end
+ *    ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interpolated_match_last_line_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
@@ -4498,6 +4734,10 @@ compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interp
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, UINT32_MAX, false, false, 0, false);
 }
 
+/*
+ * /foo #{bar}/
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_interpolated_regular_expression_node(PrismBuilder *builder, const pm_interpolated_regular_expression_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
@@ -4510,6 +4750,10 @@ compile_interpolated_regular_expression_node(PrismBuilder *builder, const pm_int
     return emit_new_regexp(builder, node->base.node_id, nvalue_ids, value_ids, node->base.flags);
 }
 
+/*
+ * "foo #{bar}"
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_interpolated_string_node(PrismBuilder *builder, const pm_interpolated_string_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
@@ -4522,6 +4766,10 @@ compile_interpolated_string_node(PrismBuilder *builder, const pm_interpolated_st
     return emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
 }
 
+/*
+ * :"foo #{bar}"
+ * ^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_interpolated_symbol_node(PrismBuilder *builder, const pm_interpolated_symbol_node_t *node) {
     uint32_t nvalue_ids = (uint32_t) node->parts.size;
@@ -4534,6 +4782,10 @@ compile_interpolated_symbol_node(PrismBuilder *builder, const pm_interpolated_sy
     return emit_new_symbol(builder, node->base.node_id, nvalue_ids, value_ids);
 }
 
+/*
+ * `foo #{bar}`
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_x_string_node_t *node) {
     uint32_t receiver_id = emit_load_self(builder, node->base.node_id);
@@ -4548,26 +4800,46 @@ compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &string_id, UINT32_MAX, false, false, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
 }
 
+/*
+ * -> { it }
+ *      ^^
+ */
 static uint32_t
 compile_it_local_variable_read_node(PrismBuilder *builder, const pm_it_local_variable_read_node_t *node) {
     return emit_load_lvar(builder, node->base.node_id, builder->state.it_local_id);
 }
 
+/*
+ * foo(bar: baz)
+ *     ^^^^^^^^
+ */
 static uint32_t
 compile_keyword_hash_node(PrismBuilder *builder, const pm_node_t *node, const pm_keyword_hash_node_t *keyword_hash) {
     return compile_hash_elements(builder, node, &keyword_hash->elements);
 }
 
+/*
+ * -> {}
+ * ^^^^^
+ */
 static uint32_t
 compile_lambda_node(PrismBuilder *builder, const pm_lambda_node_t *node) {
     return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphLambda, node->parameters, node->body, &node->locals);
 }
 
+/*
+ * foo &&= bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_local_variable_and_write_node(PrismBuilder *builder, const pm_local_variable_and_write_node_t *node) {
     return compile_local_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->depth, node->value);
 }
 
+/*
+ * foo += bar
+ * ^^^^^^^^^^
+ */
 static uint32_t
 compile_local_variable_operator_write_node(PrismBuilder *builder, const pm_local_variable_operator_write_node_t *node) {
     uint32_t resolved_id = resolve_local(builder, node->name, node->depth);
@@ -4578,17 +4850,29 @@ compile_local_variable_operator_write_node(PrismBuilder *builder, const pm_local
     return result_id;
 }
 
+/*
+ * foo ||= bar
+ * ^^^^^^^^^^^
+ */
 static uint32_t
 compile_local_variable_or_write_node(PrismBuilder *builder, const pm_local_variable_or_write_node_t *node) {
     return compile_local_variable_logical_write_node(builder, PM_NODE_UPCAST(node), node->name, node->depth, node->value);
 }
 
+/*
+ * foo
+ * ^^^
+ */
 static uint32_t
 compile_local_variable_read_node(PrismBuilder *builder, const pm_local_variable_read_node_t *node) {
     uint32_t local_id = resolve_local(builder, node->name, node->depth);
     return emit_load_lvar(builder, node->base.node_id, local_id);
 }
 
+/*
+ * foo = 1
+ * ^^^^^^^
+ */
 static uint32_t
 compile_local_variable_write_node(PrismBuilder *builder, const pm_local_variable_write_node_t *node) {
     uint32_t local_id = resolve_local(builder, node->name, node->depth);
@@ -4597,6 +4881,10 @@ compile_local_variable_write_node(PrismBuilder *builder, const pm_local_variable
     return value_id;
 }
 
+/*
+ * if /foo/ then end
+ *    ^^^^^
+ */
 static uint32_t
 compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectRegexp);
@@ -4609,6 +4897,10 @@ compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_nod
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, UINT32_MAX, false, false, 0, false);
 }
 
+/*
+ * foo in bar
+ * ^^^^^^^^^^
+ */
 static uint32_t
 compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_node_t *node) {
     uint32_t matched_block_id = make_block(builder, 0);
@@ -4630,6 +4922,10 @@ compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_nod
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * foo => bar
+ * ^^^^^^^^^^
+ */
 static uint32_t
 compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_t *node) {
     uint32_t value_id = compile_node(builder, node->value);
@@ -4644,6 +4940,10 @@ compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * /(?<foo>foo)/ =~ bar
+ * ^^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *node) {
     uint32_t result_id = compile_node(builder, PM_NODE_UPCAST(node->call));
@@ -4659,6 +4959,10 @@ compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *nod
     return result_id;
 }
 
+/*
+ * module Foo; end
+ * ^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphModule, UINT32_MAX, (uint32_t) node->locals.size);
@@ -4683,6 +4987,10 @@ compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
     return emit_define_module_abs(builder, node->base.node_id, node->name, graph_id);
 }
 
+/*
+ * foo, bar = baz
+ * ^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_multi_write_node(PrismBuilder *builder, const pm_multi_write_node_t *node) {
     PrismTargetParents parents = { 0 };
@@ -4693,6 +5001,10 @@ compile_multi_write_node(PrismBuilder *builder, const pm_multi_write_node_t *nod
     return value_id;
 }
 
+/*
+ * next foo
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_next_node(PrismBuilder *builder, const pm_next_node_t *node) {
     uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
@@ -4707,28 +5019,48 @@ compile_next_node(PrismBuilder *builder, const pm_next_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * nil
+ * ^^^
+ */
 static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * $1
+ * ^^
+ */
 static uint32_t
 compile_numbered_reference_read_node(PrismBuilder *builder, const pm_numbered_reference_read_node_t *node) {
     uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
     return emit_extract_last_match_group(builder, node->base.node_id, last_match_id, node->number);
 }
 
+/*
+ * a or b
+ * ^^^^^^
+ */
 static uint32_t
 compile_or_node(PrismBuilder *builder, const pm_or_node_t *node) {
     return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
 }
 
+/*
+ * (1 + 2)
+ * ^^^^^^^
+ */
 static uint32_t
 compile_parentheses_node(PrismBuilder *builder, const pm_parentheses_node_t *node) {
     return compile_node_or_nil(builder, node->body, node->base.node_id);
 }
 
+/*
+ * END {}
+ * ^^^^^^
+ */
 static uint32_t
 compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphPostExecution, builder->state.graph_id, 0);
@@ -4753,6 +5085,10 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     return UINT32_MAX;
 }
 
+/*
+ * 0..5
+ * ^^^^
+ */
 static uint32_t
 compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
     const pm_node_t *left = node->left;
@@ -4781,12 +5117,20 @@ compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
     }
 }
 
+/*
+ * 1r
+ * ^^
+ */
 static uint32_t
 compile_rational_node(PrismBuilder *builder, const pm_rational_node_t *node) {
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * redo
+ * ^^^^
+ */
 static uint32_t
 compile_redo_node(PrismBuilder *builder, const pm_redo_node_t *node) {
     emit_branch(builder, node->base.node_id, builder->state.redo_block_id, 0, NULL);
@@ -4794,6 +5138,10 @@ compile_redo_node(PrismBuilder *builder, const pm_redo_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * /foo/
+ * ^^^^^
+ */
 static uint32_t
 compile_regular_expression_node(PrismBuilder *builder, const pm_regular_expression_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectRegexp);
@@ -4805,6 +5153,10 @@ compile_regular_expression_node(PrismBuilder *builder, const pm_regular_expressi
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * foo rescue bar
+ * ^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_rescue_modifier_node(PrismBuilder *builder, const pm_rescue_modifier_node_t *node) {
     uint32_t node_id = node->base.node_id;
@@ -4851,6 +5203,10 @@ compile_rescue_modifier_node(PrismBuilder *builder, const pm_rescue_modifier_nod
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+/*
+ * retry
+ * ^^^^^
+ */
 static uint32_t
 compile_retry_node(PrismBuilder *builder, const pm_retry_node_t *node) {
     emit_branch(builder, node->base.node_id, builder->state.retry_block_id, 0, NULL);
@@ -4858,6 +5214,10 @@ compile_retry_node(PrismBuilder *builder, const pm_retry_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * return 1
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
     uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
@@ -4874,11 +5234,19 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * self
+ * ^^^^
+ */
 static uint32_t
 compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
     return emit_load_self(builder, node->base.node_id);
 }
 
+/*
+ * class << self; end
+ * ^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphSingletonClass, UINT32_MAX, (uint32_t) node->locals.size);
@@ -4892,6 +5260,10 @@ compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_nod
     return emit_define_singleton_class(builder, node->base.node_id, receiver_id, graph_id);
 }
 
+/*
+ * __ENCODING__
+ * ^^^^^^^^^^^^
+ */
 static uint32_t
 compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectEncoding);
@@ -4902,6 +5274,10 @@ compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_nod
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * __FILE__
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_source_file_node(PrismBuilder *builder, const pm_source_file_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectString);
@@ -4911,6 +5287,10 @@ compile_source_file_node(PrismBuilder *builder, const pm_source_file_node_t *nod
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * __LINE__
+ * ^^^^^^^^
+ */
 static uint32_t
 compile_source_line_node(PrismBuilder *builder, const pm_source_line_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectInteger);
@@ -4924,6 +5304,10 @@ compile_source_line_node(PrismBuilder *builder, const pm_source_line_node_t *nod
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * foo(*bar)
+ *     ^^^^
+ */
 static uint32_t
 compile_splat_node(PrismBuilder *builder, const pm_splat_node_t *node) {
     if (node->expression) {
@@ -4933,7 +5317,6 @@ compile_splat_node(PrismBuilder *builder, const pm_splat_node_t *node) {
         return emit_load_lvar(builder, node->base.node_id, builder->state.rest_local_id);
     }
 }
-
 
 static uint32_t
 compile_statements_node(PrismBuilder *builder, const pm_statements_node_t *node) {
@@ -4945,6 +5328,10 @@ compile_statements_node(PrismBuilder *builder, const pm_statements_node_t *node)
     return value_id;
 }
 
+/*
+ * "foo"
+ * ^^^^^
+ */
 static uint32_t
 compile_string_node(PrismBuilder *builder, const pm_string_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectString);
@@ -4956,6 +5343,10 @@ compile_string_node(PrismBuilder *builder, const pm_string_node_t *node) {
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * super(foo)
+ * ^^^^^^^^^^
+ */
 static uint32_t
 compile_super_node(PrismBuilder *builder, const pm_super_node_t *node) {
     PrismArguments arguments = compile_arguments(builder, node->arguments, node->block);
@@ -4968,6 +5359,10 @@ compile_super_node(PrismBuilder *builder, const pm_super_node_t *node) {
 }
 
 
+/*
+ * :foo
+ * ^^^^
+ */
 static uint32_t
 compile_symbol_node(PrismBuilder *builder, const pm_symbol_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectSymbol);
@@ -4979,11 +5374,19 @@ compile_symbol_node(PrismBuilder *builder, const pm_symbol_node_t *node) {
     return emit_load_object(builder, node->base.node_id, object_id);
 }
 
+/*
+ * true
+ * ^^^^
+ */
 static uint32_t
 compile_true_node(PrismBuilder *builder, const pm_true_node_t *node) {
     return emit_load_true(builder, node->base.node_id);
 }
 
+/*
+ * undef foo
+ * ^^^^^^^^^
+ */
 static uint32_t
 compile_undef_node(PrismBuilder *builder, const pm_undef_node_t *node) {
     for (size_t idx = 0; idx < node->names.size; ++idx) {
@@ -4993,21 +5396,37 @@ compile_undef_node(PrismBuilder *builder, const pm_undef_node_t *node) {
     return emit_load_nil(builder, node->base.node_id);
 }
 
+/*
+ * unless foo; bar end
+ * ^^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_unless_node(PrismBuilder *builder, const pm_unless_node_t *node) {
     return compile_conditional_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements, PM_NODE_UPCAST(node->else_clause));
 }
 
+/*
+ * until foo; bar end
+ * ^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_until_node(PrismBuilder *builder, const pm_until_node_t *node) {
     return compile_loop_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements);
 }
 
+/*
+ * while foo; bar end
+ * ^^^^^^^^^^^^^^^^^^
+ */
 static uint32_t
 compile_while_node(PrismBuilder *builder, const pm_while_node_t *node) {
     return compile_loop_node(builder, PM_NODE_UPCAST(node), node->predicate, node->statements);
 }
 
+/*
+ * `foo`
+ * ^^^^^
+ */
 static uint32_t
 compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectString);
@@ -5021,6 +5440,10 @@ compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &argument_id, UINT32_MAX, false, false, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
 }
 
+/*
+ * yield 1
+ * ^^^^^^^
+ */
 static uint32_t
 compile_yield_node(PrismBuilder *builder, const pm_yield_node_t *node) {
     PrismArguments arguments = compile_arguments(builder, node->arguments, NULL);
