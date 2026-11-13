@@ -83,6 +83,9 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnNewString: return rb_intern_const("new_string");
         case kPrismInsnNewSymbol: return rb_intern_const("new_symbol");
         case kPrismInsnPostExecution: return rb_intern_const("post_execution");
+        case kPrismInsnRaisePatternGuard: return rb_intern_const("raise_pattern_guard");
+        case kPrismInsnRaisePatternMismatch: return rb_intern_const("raise_pattern_mismatch");
+        case kPrismInsnRaisePatternNomatch: return rb_intern_const("raise_pattern_nomatch");
         case kPrismInsnReturn: return rb_intern_const("return");
         case kPrismInsnStoreConstAbs: return rb_intern_const("store_const_abs");
         case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");

@@ -369,6 +369,12 @@ module Prism
           "#{value(opnds[0])} = new_symbol#{values(opnds[1..])}"
         when :post_execution
           "post_execution #{graph_ref(insn.data)}"
+        when :raise_pattern_guard
+          "raise_pattern_guard#{values(insn.opnds)}"
+        when :raise_pattern_mismatch
+          "raise_pattern_mismatch#{values(insn.opnds)}"
+        when :raise_pattern_nomatch
+          "raise_pattern_nomatch#{values(insn.opnds)}"
         when :return
           "return #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :store_const_abs
@@ -741,6 +747,14 @@ module Prism
               if @post_executions.add?(insn.data)
                 at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method)) }
               end
+            when :raise_pattern_guard
+              raise NoMatchingPatternError, "#{values[insn.opnds[0]].inspect}: guard clause does not return true"
+            when :raise_pattern_mismatch
+              value = values[insn.opnds[0]]
+              detail = "#{values[insn.opnds[1]].inspect} === #{value.inspect} does not return true"
+              raise NoMatchingPatternError, "#{value.inspect}: #{detail}"
+            when :raise_pattern_nomatch
+              raise NoMatchingPatternError, values[insn.opnds[0]]
             when :return
               return values[insn.opnds[0]]
             when :store_const_abs

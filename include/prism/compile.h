@@ -86,6 +86,9 @@ typedef enum {
     kPrismInsnNewString,
     kPrismInsnNewSymbol,
     kPrismInsnPostExecution,
+    kPrismInsnRaisePatternGuard,
+    kPrismInsnRaisePatternMismatch,
+    kPrismInsnRaisePatternNomatch,
     kPrismInsnReturn,
     kPrismInsnStoreConstAbs,
     kPrismInsnStoreConstNestRel,
@@ -106,6 +109,7 @@ typedef enum {
     kPrismInsnUndefMethod,
     kPrismInsnYield
 } PrismInsnKind;
+
 
 typedef enum {
     kPrismGraphBlock,

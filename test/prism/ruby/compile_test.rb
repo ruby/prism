@@ -3147,6 +3147,120 @@ module Prism
       RUBY
     end
 
+    def test_case_match
+      [
+        [:one, "case 1; in 1; :one; else; :other; end"],
+        [:float, "case 1.5; in 1; :integer; in 1.5; :float; else; :other; end"],
+        [:negative, "case -1.5; in -1.5; :negative; end"],
+        [:equal, "case 1; in 1.0; :equal; end"],
+        [:other, "case 3; in 1; :one; in 2; :two; else; :other; end"],
+        [nil, "case 3; in 1; :one; else; end"],
+        [nil, "case 1; in 1; end"],
+        [nil, "case 1; in 1; in 1; 2; else; 3; end"],
+        [3, "1 + (case 1; in 1; 2; else; 3; end)"],
+        [3, "case 1; in 1; case 2.5; in 2.5; 3; else; 4; end; else; 5; end"],
+        [2, "case (if true; 1; else; 2; end); in 1; if false; 3; else; 2; end; else; 4; end"],
+        [2, "case 2; in 1 | 2; 2; else; 3; end"],
+        [1, "case 1; in Integer => a; a; else; 2; end"],
+        [2, "a = 2; case 2; in ^a; a; else; 3; end"],
+        [[1, 2], "out = []; for value in [1, 2]; out << (case value; in 1; 1; in 2; 2; end); end; out"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_case_match_guards
+      [
+        [2, "case 1; in 1 if true; 2; else; 3; end"],
+        [3, "case 1; in 1 if false; 2; else; 3; end"],
+        [2, "case 1; in 1 unless false; 2; else; 3; end"],
+        [3, "case 1; in 1 unless true; 2; else; 3; end"],
+        [2, "case 1; in 1 if 0; 2; else; 3; end"],
+        [2, "case 1; in 1 if false; 3; in 1 if true; 2; else; 4; end"],
+        [1, "case 1; in Integer => a if false; 2; else; a; end"],
+        [2, "case 1; in 1 if (false ? false : true); 2; else; 3; end"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run([1, [:value, :guard]], "events = []; result = case (events << :value; 1); in 2 if (events << :skipped; true); 2; in 1 if (events << :guard; true); 1; in 1 if (events << :later; true); 3; else; 4; end; [result, events]")
+    end
+
+    def test_case_match_failure
+      assert_run_raises(NoMatchingPatternError, "case 1; in 2; end", "1: 2 === 1 does not return true")
+      assert_run_raises(NoMatchingPatternError, "case 1.5; in 2.5; end", "1.5: 2.5 === 1.5 does not return true")
+      assert_run_raises(NoMatchingPatternError, "case nil; in 1; end", "nil: 1 === nil does not return true")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 2; in 3; end", "1")
+      assert_run_raises(NoMatchingPatternError, "case 'subject'; in 1; in 2; end", "subject")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 1 if false; end", "1: guard clause does not return true")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 1 unless true; end", "1: guard clause does not return true")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 2 | 3; end", "1: 3 === 1 does not return true")
+    end
+
+    def test_case_match_evaluation
+      scope = Module.new
+      events = []
+      value = Object.new
+      pattern = Object.new
+      matched = false
+      value.define_singleton_method(:inspect) { events << :value_inspect; "subject" }
+      value.define_singleton_method(:to_s) { events << :value_string; "subject_string" }
+      pattern.define_singleton_method(:inspect) { events << :pattern_inspect; "pattern" }
+      pattern.define_singleton_method(:===) { |candidate| events << [:match, candidate]; matched && :truthy }
+      scope.const_set(:Value, value)
+      scope.const_set(:Pattern, pattern)
+      [
+        "case Value; in Pattern; :matched; end",
+        "case Value; in Pattern; 1; in Pattern; 2; end"
+      ].each do |source|
+        events.clear
+        native_error = assert_raise(NoMatchingPatternError) { scope.module_eval(source) }
+        native_events = events.dup
+        native_message = native_error.message
+        native_message_events = events.dup
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        error = assert_raise(NoMatchingPatternError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+        assert_equal(native_events, events)
+        assert_equal(native_message, error.message)
+        assert_equal(native_message_events, events)
+      end
+      matched = true
+      events.clear
+      graph = compile_unit("case Value; in Pattern; :matched; end").graphs[0]
+      assert_equal(:matched, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([[:match, value]], events)
+    end
+
+    def test_case_match_return
+      assert_run([1, 2, 3], <<~RUBY)
+        class CompileTestCaseMatchReturn
+          def value(input)
+            case input
+            in 1
+              return 1
+            in 2.5
+              return 2
+            else
+              return 3
+            end
+          end
+        end
+        object = CompileTestCaseMatchReturn.new
+        [object.value(1), object.value(2.5), object.value(4)]
+      RUBY
+    end
+
+    def test_case_match_disasm
+      [
+        ["case 1; in 2; :matched; end", :raise_pattern_mismatch, 2],
+        ["case 1; in 2; in 3; end", :raise_pattern_nomatch, 1],
+        ["case 1; in 1 if false; end", :raise_pattern_guard, 1]
+      ].each do |source, kind, noperands|
+        unit = Prism.compile(source, freeze: true).value
+        assert_include(unit.disasm, " = match(")
+        assert_include(unit.disasm, "#{kind}(")
+        instruction = unit.graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == kind }
+        assert_nil(instruction.data)
+        assert_equal(noperands, instruction.opnds.length)
+      end
+    end
+
     def test_case
       [
         [2, "case 2; when 1; 1; when 2; 2; else; 3; end"],

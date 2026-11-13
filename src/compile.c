@@ -523,6 +523,7 @@ pm_insn_object_id(const PrismInsn *insn) {
     return insn->as.object.object_id;
 }
 
+
 pm_node_flags_t
 pm_insn_regexp_flags(const PrismInsn *insn) {
     return insn->as.regexp.flags;
@@ -1847,6 +1848,26 @@ emit_new_symbol(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, ui
 }
 
 static void
+emit_raise_pattern_guard(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternGuard, node_id, 1);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+}
+
+static void
+emit_raise_pattern_mismatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternMismatch, node_id, 2);
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    graph->opnds[insn->opnds_off] = value_id;
+    graph->opnds[insn->opnds_off + 1] = pattern_id;
+}
+
+static void
+emit_raise_pattern_nomatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternNomatch, node_id, 1);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+}
+
+static void
 emit_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnReturn, node_id, 1);
 
@@ -2453,18 +2474,20 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
     return emit_load_nil(builder, node->node_id);
 }
 
-static void
+static uint32_t
 compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t matched_block_id, uint32_t unmatched_block_id) {
+    uint32_t pattern_id = UINT32_MAX;
+
     switch (PM_NODE_TYPE(node)) {
         case PM_PARENTHESES_NODE: {
             const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
-            compile_pattern_match(builder, cast->body, value_id, matched_block_id, unmatched_block_id);
+            pattern_id = compile_pattern_match(builder, cast->body, value_id, matched_block_id, unmatched_block_id);
             break;
         }
         case PM_CAPTURE_PATTERN_NODE: {
             const pm_capture_pattern_node_t *cast = (const pm_capture_pattern_node_t *) node;
             uint32_t capture_block_id = make_block(builder, 0);
-            compile_pattern_match(builder, cast->value, value_id, capture_block_id, unmatched_block_id);
+            pattern_id = compile_pattern_match(builder, cast->value, value_id, capture_block_id, unmatched_block_id);
 
             builder->state.block_id = capture_block_id;
             uint32_t local_id = resolve_local(builder, cast->target->name, cast->target->depth);
@@ -2474,14 +2497,14 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
         }
         case PM_PINNED_EXPRESSION_NODE: {
             const pm_pinned_expression_node_t *cast = (const pm_pinned_expression_node_t *) node;
-            uint32_t pattern_id = compile_node(builder, cast->expression);
+            pattern_id = compile_node(builder, cast->expression);
             uint32_t predicate_id = emit_match(builder, node->node_id, value_id, pattern_id);
             emit_branchif(builder, node->node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
             break;
         }
         case PM_PINNED_VARIABLE_NODE: {
             const pm_pinned_variable_node_t *cast = (const pm_pinned_variable_node_t *) node;
-            uint32_t pattern_id = compile_node(builder, cast->variable);
+            pattern_id = compile_node(builder, cast->variable);
             uint32_t predicate_id = emit_match(builder, node->node_id, value_id, pattern_id);
             emit_branchif(builder, node->node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
             break;
@@ -2493,7 +2516,7 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
             compile_pattern_match(builder, cast->left, value_id, matched_block_id, else_block_id);
 
             builder->state.block_id = else_block_id;
-            compile_pattern_match(builder, cast->right, value_id, matched_block_id, unmatched_block_id);
+            pattern_id = compile_pattern_match(builder, cast->right, value_id, matched_block_id, unmatched_block_id);
             break;
         }
         case PM_ARRAY_NODE:
@@ -2524,7 +2547,7 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
         case PM_SYMBOL_NODE:
         case PM_TRUE_NODE:
         case PM_X_STRING_NODE: {
-            uint32_t pattern_id = compile_node(builder, node);
+            pattern_id = compile_node(builder, node);
             uint32_t predicate_id = emit_match(builder, node->node_id, value_id, pattern_id);
             emit_branchif(builder, node->node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
             break;
@@ -2533,6 +2556,8 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
             fprintf(stderr, "Unsupported pattern: %s\n", pm_node_type(node->type));
             abort();
     }
+
+    return pattern_id;
 }
 
 static uint32_t
@@ -3140,6 +3165,81 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
 static uint32_t
 compile_call_or_write_node(PrismBuilder *builder, const pm_call_or_write_node_t *node) {
     return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
+}
+
+static uint32_t
+compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node) {
+    uint32_t value_id = compile_node_or_nil(builder, node->predicate, node->base.node_id);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t pattern_id = UINT32_MAX;
+    bool single = node->conditions.size == 1 && !node->else_clause;
+
+    for (size_t idx = 0; idx < node->conditions.size; ++idx) {
+        const pm_in_node_t *condition = (const pm_in_node_t *) node->conditions.nodes[idx];
+        const pm_node_t *pattern = condition->pattern;
+
+        const pm_node_t *predicate = NULL;
+        bool guard_if = true;
+
+        switch (PM_NODE_TYPE(pattern)) {
+            case PM_IF_NODE: {
+                const pm_if_node_t *guard = (const pm_if_node_t *) pattern;
+                pattern = guard->statements->body.nodes[0];
+                predicate = guard->predicate;
+                break;
+            }
+            case PM_UNLESS_NODE: {
+                const pm_unless_node_t *guard = (const pm_unless_node_t *) pattern;
+                pattern = guard->statements->body.nodes[0];
+                predicate = guard->predicate;
+                guard_if = false;
+                break;
+            }
+            default:
+                break;
+        }
+
+        uint32_t body_block_id = make_block(builder, 0);
+        uint32_t next_block_id = make_block(builder, 0);
+        uint32_t matched_block_id = predicate ? make_block(builder, 0) : body_block_id;
+        pattern_id = compile_pattern_match(builder, pattern, value_id, matched_block_id, next_block_id);
+
+        if (predicate) {
+            builder->state.block_id = matched_block_id;
+            uint32_t guard_id = compile_node(builder, predicate);
+            uint32_t failed_block_id = single ? make_block(builder, 0) : next_block_id;
+
+            if (guard_if) {
+                emit_branchif(builder, predicate->node_id, guard_id, body_block_id, 0, NULL, failed_block_id, 0, NULL);
+            } else {
+                emit_branchif(builder, predicate->node_id, guard_id, failed_block_id, 0, NULL, body_block_id, 0, NULL);
+            }
+
+            if (single) {
+                builder->state.block_id = failed_block_id;
+                emit_raise_pattern_guard(builder, node->base.node_id, value_id);
+            }
+        }
+
+        builder->state.block_id = body_block_id;
+        uint32_t result_id = compile_node_or_nil(builder, PM_NODE_UPCAST(condition->statements), condition->base.node_id);
+        emit_branch(builder, condition->base.node_id, join_block_id, 1, &result_id);
+
+        builder->state.block_id = next_block_id;
+    }
+
+    if (node->else_clause) {
+        uint32_t result_id = compile_node(builder, PM_NODE_UPCAST(node->else_clause));
+        emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+    } else if (single) {
+        emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, pattern_id);
+    } else {
+        emit_raise_pattern_nomatch(builder, node->base.node_id, value_id);
+    }
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
 static uint32_t
@@ -4365,6 +4465,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_call_operator_write_node(builder, (const pm_call_operator_write_node_t *) node);
         case PM_CALL_OR_WRITE_NODE:
             return compile_call_or_write_node(builder, (const pm_call_or_write_node_t *) node);
+        case PM_CASE_MATCH_NODE:
+            return compile_case_match_node(builder, (const pm_case_match_node_t *) node);
         case PM_CASE_NODE:
             return compile_case_node(builder, (const pm_case_node_t *) node);
         case PM_CLASS_NODE:
@@ -4562,6 +4664,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
         case PM_IMPLICIT_REST_NODE:
         case PM_INDEX_TARGET_NODE:
+        case PM_IN_NODE:
         case PM_INSTANCE_VARIABLE_TARGET_NODE:
         case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_PINNED_EXPRESSION_NODE:
