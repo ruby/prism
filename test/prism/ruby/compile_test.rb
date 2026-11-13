@@ -1100,6 +1100,130 @@ module Prism
       assert_same(unit.graphs[0].scope, block_insn.data.scope)
     end
 
+    def test_for_multi_target
+      [
+        [[[1, 2], [3, 4]], "out = []; for a, b in [[1, 2], [3, 4]]; out << [a, b]; end; out"],
+        [[1, nil], "for a, b in [1]; end; [a, b]"],
+        [[nil, nil], "for a, b in Array.new(1); end; [a, b]"],
+        [[nil, nil], "for a, b in []; end; [a, b]"],
+        [[1, [2, 3], 4], "for a, *b, c in [[1, 2, 3, 4]]; end; [a, b, c]"],
+        [[1, [], 2, nil], "for a, *b, c, d in [[1, 2]]; end; [a, b, c, d]"],
+        [[1, [], nil], "for a, *b, c in [[1]]; end; [a, b, c]"],
+        [[1, 4], "for a, *, b in [[1, 2, 3, 4]]; end; [a, b]"],
+        [1, "for a, in [[1, 2]]; end; a"],
+        [[1, 2], "for *a in [[1, 2]]; end; a"],
+        [[1, 2, 3], "for a, (b, c) in [[1, [2, 3]]]; end; [a, b, c]"],
+        [[1, 2, nil], "for a, (b, c) in [[1, 2]]; end; [a, b, c]"],
+        [[1, 2, [3, 4], 5], "for a, (b, *c), d in [[1, [2, 3, 4], 5]]; end; [a, b, c, d]"],
+        [2, "for a, a in [[1, 2]]; end; a"],
+        [[[1, 2]], "for a, b in [[1, 2]]; 99; end"],
+        [[[:a, 1]], "out = []; for a, b in { a: 1 }; out << [a, b]; end; out"],
+        [[[2, 3], [1, 2]], "items = [[1, 2]]; for a, *b in items; b << 3; end; [b, items[0]]"]
+      ].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
+    def test_for_multi_target_calls_and_indices
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:[]=) { |index, value| events << [:index_write, index, value] }
+      receiver.define_singleton_method(:value=) { |value| events << [:setter, value] }
+      item = Object.new
+      item.define_singleton_method(:to_ary) { events << :convert; [1, 2] }
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Items, [item])
+      scope.const_set(:Events, events)
+      source = "for (Events << :index_receiver; Receiver)[(Events << :index; 0)], (Events << :call_receiver; Receiver).value in Items; Events << :body; end"
+      graph = compile_unit(source).graphs[0]
+      vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      assert_equal([:index_receiver, :index, :call_receiver, :convert, [:index_write, 0, 1], [:setter, 2], :body], events)
+    end
+
+    def test_for_multi_target_signature
+      unit = compile_unit("for a, b in [[1, 2]]; end")
+      graph = unit.graphs[1]
+      assert_empty(graph.signature.requireds)
+      assert_equal(0, graph.signature.rest)
+      assert_equal(false, graph.signature.autosplat)
+      assert_equal([0], graph.blocks[0].params)
+      assert_include(unit.disasm, "coerce_array(")
+      assert_include(unit.disasm, "expand_array")
+    end
+
+    def test_for_multi_target_yields
+      collection = Object.new
+      def collection.each
+        yield
+        yield nil
+        yield 1
+        yield 2, 3, 4
+        yield [5, 6]
+        :finished
+      end
+      scope = Module.new
+      scope.const_set(:Items, collection)
+      graph = compile_unit("out = []; result = (for a, *b in Items; out << [a, b]; end); [result, out]").graphs[0]
+      assert_equal([:finished, [[nil, []], [nil, []], [1, []], [2, [3, 4]], [5, [6]]]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      graph = compile_unit("out = []; for *a in Items; out << a; end; out").graphs[0]
+      assert_equal([[], [nil], [1], [2, 3, 4], [5, 6]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
+    def test_for_multi_target_parent_order
+      events = []
+      item = Object.new
+      item.define_singleton_method(:to_ary) { events << :convert; [1, 2, 3, 4, 5] }
+      scope = Module.new
+      scope.const_set(:Items, [item])
+      scope.const_set(:Events, events)
+      targets = (0...5).map { |i| "(Events << #{i}; self)::A#{i}" }.join(", ")
+      graph = compile_unit("for #{targets} in Items; Events << :body; end; [A0, A1, A2, A3, A4]").graphs[0]
+      assert_equal([1, 2, 3, 4, 5], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([0, 1, 2, 3, 4, :convert, :body], events)
+
+      scope = Module.new
+      graph = compile_unit("a = 9; events = []; for a, (events << a; self)::A in [[1, 2]]; end; [a, A, events]").graphs[0]
+      assert_equal([1, 2, [9]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      graph = compile_unit("a = []; for (a << 1; self)::A, b in []; end; a").graphs[0]
+      assert_equal([], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
+    def test_for_multi_target_nested_conversion_order
+      events = []
+      scope = Module.new
+      item = Object.new
+      item.define_singleton_method(:to_ary) { events << [:convert, scope.const_get(:A)]; [2, 3] }
+      scope.const_set(:Items, [[1, item]])
+      scope.const_set(:Events, events)
+      source = "for (Events << :a; self)::A, ((Events << :b; self)::B, (Events << :c; self)::C) in Items; Events << :body; end; [A, B, C]"
+      graph = compile_unit(source).graphs[0]
+      assert_equal([1, 2, 3], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:a, :b, :c, [:convert, 1], :body], events)
+    end
+
+    def test_for_multi_target_conversion
+      item = Object.new
+      scope = Module.new
+      scope.const_set(:Items, [item])
+      graph = compile_unit("for a, b in Items; end; [a, b]").graphs[0]
+      conversion = -> { nil }
+      item.define_singleton_method(:to_ary) { conversion.call }
+      assert_equal([item, nil], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      conversion = -> { 1 }
+      assert_raise(TypeError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      conversion = -> { raise "conversion failed" }
+      assert_raise_with_message(RuntimeError, "conversion failed") { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+    end
+
+    def test_for_multi_target_variable_kinds
+      scope = Class.new
+      graph = compile_unit("for @a, @@b, $compile_test_multi, A in [[1, 2, 3, 4]]; end; [@a, @@b, $compile_test_multi, A]").graphs[0]
+      assert_equal([1, 2, 3, 4], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    ensure
+      $compile_test_multi = nil
+    end
+
     def test_for_custom_each
       collection = Object.new
       def collection.each
