@@ -2801,6 +2801,83 @@ module Prism
       assert_run(1, "if nil&.value &&= 2; 2; else; 1; end")
     end
 
+    def test_call_or_write
+      [
+        [[3, 3], "o = Struct.new(:value).new(nil); result = (o.value ||= 3); [result, o.value]"],
+        [[3, 3], "o = Struct.new(:value).new(false); result = (o.value ||= 3); [result, o.value]"],
+        [[1, 1], "o = Struct.new(:value).new(1); result = (o.value ||= raise('rhs ran')); [result, o.value]"],
+        [[0, 0], "o = Struct.new(:value).new(0); result = (o.value ||= raise('rhs ran')); [result, o.value]"],
+        [[nil, nil], "o = Struct.new(:value).new(nil); result = (o.value ||= nil); [result, o.value]"],
+        [[false, false], "o = Struct.new(:value).new(nil); result = (o.value ||= false); [result, o.value]"],
+        [[3, 3], "o = Struct.new(:value).new(nil); result = (o.value ||= (if true; 3; else; 4; end)); [result, o.value]"],
+        [[3, 3], "o = Struct.new(:value).new(nil); result = (o.value ||= proc { 3 }.call); [result, o.value]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_call_or_write_evaluation
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      result = Object.new
+      current = nil
+      fail_at = nil
+      receiver.define_singleton_method(:value) do
+        events << :getter
+        raise 'getter failed' if fail_at == :getter
+        current
+      end
+      receiver.define_singleton_method(:value=) do |value|
+        events << [:setter, value]
+        raise 'setter failed' if fail_at == :setter
+        :ignored
+      end
+      rhs = proc do
+        raise 'rhs failed' if fail_at == :rhs
+        result
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Events, events)
+      scope.const_set(:Rhs, rhs)
+      graph = compile_unit("(Events << :receiver; Receiver).value ||= (Events << :rhs; Rhs.call)").graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      expected = [:receiver, :getter, :rhs, [:setter, result]]
+      [nil, false].each do |value|
+        events.clear
+        current = value
+        assert_same(result, vm.run_frame(frame.call))
+        assert_equal(expected, events)
+      end
+      [true, 0, Object.new].each do |value|
+        events.clear
+        current = value
+        assert_same(value, vm.run_frame(frame.call))
+        assert_equal([:receiver, :getter], events)
+      end
+      current = nil
+      { getter: 2, rhs: 3, setter: 4 }.each do |stage, length|
+        events.clear
+        fail_at = stage
+        assert_raise_with_message(RuntimeError, "#{stage} failed") { vm.run_frame(frame.call) }
+        assert_equal(expected.take(length), events)
+      end
+      fail_at = nil
+      [nil, false].each do |value|
+        events.clear
+        result = value
+        assert_equal(value, vm.run_frame(frame.call))
+        assert_equal([:receiver, :getter, :rhs, [:setter, value]], events)
+      end
+    end
+
+    def test_call_or_write_safe_navigation
+      assert_run(nil, "nil&.value ||= raise('rhs ran')")
+      assert_run([nil, 1], "calls = 0; result = ((calls += 1; nil)&.value ||= raise('rhs ran')); [result, calls]")
+      assert_run([3, 3], "o = Struct.new(:value).new(nil); result = (o&.value ||= 3); [result, o.value]")
+      assert_run(1, "o = Struct.new(:value).new(1); o&.value ||= raise('rhs ran')")
+      assert_run_raises(NoMethodError, "false&.value ||= raise('rhs ran')")
+      assert_run(1, "if nil&.value ||= 2; 2; else; 1; end")
+    end
+
     def test_call_operator_write
       [
         [[3, 3], "o = Struct.new(:value).new(1); result = (o.value += 2); [result, o.value]"],

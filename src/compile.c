@@ -2311,6 +2311,35 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
 }
 
 static uint32_t
+compile_call_logical_write_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *receiver, pm_constant_id_t read_name, pm_constant_id_t write_name, const pm_node_t *value) {
+    uint32_t receiver_id = receiver ? compile_node(builder, receiver) : emit_load_self(builder, node->node_id);
+    uint32_t write_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
+        uint32_t read_block_id = make_block(builder, 0);
+        uint32_t nil_id = emit_nil_p(builder, node->node_id, receiver_id);
+        emit_branchif(builder, node->node_id, nil_id, join_block_id, 1, &receiver_id, read_block_id, 0, NULL);
+        builder->state.block_id = read_block_id;
+    }
+
+    uint32_t current_id = emit_call(builder, node->node_id, read_name, receiver_id, 0, NULL, false, false);
+    if (PM_NODE_TYPE_P(node, PM_CALL_AND_WRITE_NODE)) {
+        emit_branchif(builder, node->node_id, current_id, write_block_id, 0, NULL, join_block_id, 1, &current_id);
+    } else {
+        emit_branchif(builder, node->node_id, current_id, join_block_id, 1, &current_id, write_block_id, 0, NULL);
+    }
+
+    builder->state.block_id = write_block_id;
+    uint32_t value_id = compile_node(builder, value);
+    emit_call(builder, node->node_id, write_name, receiver_id, 1, &value_id, false, false);
+    emit_branch(builder, node->node_id, join_block_id, 1, &value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_conditional_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements, const pm_node_t *subsequent) {
     uint32_t then_block_id = make_block(builder, 0);
     uint32_t else_block_id = make_block(builder, 0);
@@ -3002,27 +3031,7 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
 
 static uint32_t
 compile_call_and_write_node(PrismBuilder *builder, const pm_call_and_write_node_t *node) {
-    uint32_t receiver_id = node->receiver ? compile_node(builder, node->receiver) : emit_load_self(builder, node->base.node_id);
-    uint32_t write_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
-
-    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
-        uint32_t read_block_id = make_block(builder, 0);
-        uint32_t nil_id = emit_nil_p(builder, node->base.node_id, receiver_id);
-        emit_branchif(builder, node->base.node_id, nil_id, join_block_id, 1, &receiver_id, read_block_id, 0, NULL);
-        builder->state.block_id = read_block_id;
-    }
-
-    uint32_t current_id = emit_call(builder, node->base.node_id, node->read_name, receiver_id, 0, NULL, false, false);
-    emit_branchif(builder, node->base.node_id, current_id, write_block_id, 0, NULL, join_block_id, 1, &current_id);
-
-    builder->state.block_id = write_block_id;
-    uint32_t value_id = compile_node(builder, node->value);
-    emit_call(builder, node->base.node_id, node->write_name, receiver_id, 1, &value_id, false, false);
-    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
-
-    builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
 static uint32_t
@@ -3085,6 +3094,11 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
     }
 
     return result_id;
+}
+
+static uint32_t
+compile_call_or_write_node(PrismBuilder *builder, const pm_call_or_write_node_t *node) {
+    return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
 static uint32_t
@@ -4304,6 +4318,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_call_node(builder, (const pm_call_node_t *) node);
         case PM_CALL_OPERATOR_WRITE_NODE:
             return compile_call_operator_write_node(builder, (const pm_call_operator_write_node_t *) node);
+        case PM_CALL_OR_WRITE_NODE:
+            return compile_call_or_write_node(builder, (const pm_call_or_write_node_t *) node);
         case PM_CASE_NODE:
             return compile_case_node(builder, (const pm_case_node_t *) node);
         case PM_CLASS_NODE:
