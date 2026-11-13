@@ -183,6 +183,23 @@ pm_signature_post_id(const PrismSignature *signature, uint32_t post_idx) {
     return signature->post_ids[post_idx];
 }
 
+uint32_t
+pm_signature_nrequired_keyword_ids(const PrismSignature *signature) {
+    return signature->nrequired_keyword_ids;
+}
+
+uint32_t
+pm_signature_required_keyword_id(const PrismSignature *signature, uint32_t keyword_idx) {
+    assert(keyword_idx < signature->nrequired_keyword_ids);
+    return signature->required_keyword_ids[keyword_idx];
+}
+
+const pm_constant_t *
+pm_signature_required_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx) {
+    assert(keyword_idx < signature->nrequired_keyword_ids);
+    return compile_constant(parser, signature->required_keyword_names[keyword_idx]);
+}
+
 bool
 pm_signature_autosplat(const PrismSignature *signature) {
     return signature->autosplat;
@@ -339,6 +356,16 @@ pm_insn_branchif_else_block_id(const PrismInsn *insn) {
 uint32_t
 pm_insn_branchif_then_nopnds(const PrismInsn *insn) {
     return insn->as.branchif.then_opnds_len;
+}
+
+bool
+pm_insn_call_keywords(const PrismInsn *insn) {
+    return insn->as.call.keywords;
+}
+
+const pm_constant_t *
+pm_insn_call_name(const pm_parser_t *parser, const PrismInsn *insn) {
+    return compile_constant(parser, insn->as.call.name_id);
 }
 
 const pm_constant_t *
@@ -526,7 +553,35 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
     uint32_t noptional_ids = parameters ? (uint32_t) parameters->optionals.size : 0;
     uint32_t npost_ids = parameters ? (uint32_t) parameters->posts.size : 0;
     bool has_rest = parameters && parameters->rest && PM_NODE_TYPE_P(parameters->rest, PM_REST_PARAMETER_NODE);
+
     make_signature(builder, graph_id, signature, nrequired_ids, noptional_ids, has_rest, npost_ids);
+
+    if (parameters && parameters->keywords.size) {
+        uint32_t nrequired_keyword_ids = 0;
+        for (size_t idx = 0; idx < parameters->keywords.size; ++idx) {
+            if (PM_NODE_TYPE_P(parameters->keywords.nodes[idx], PM_REQUIRED_KEYWORD_PARAMETER_NODE)) {
+                nrequired_keyword_ids++;
+            }
+        }
+
+        signature->nrequired_keyword_ids = nrequired_keyword_ids;
+
+        if (nrequired_keyword_ids) {
+            PrismGraph *graph = builder->unit->graphs + graph_id;
+            signature->required_keyword_names = pm_arena_alloc(builder->arena, sizeof(pm_constant_id_t) * nrequired_keyword_ids, PRISM_ALIGNOF(pm_constant_id_t));
+            signature->required_keyword_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nrequired_keyword_ids, PRISM_ALIGNOF(uint32_t));
+
+            uint32_t keyword_idx = 0;
+            for (size_t idx = 0; idx < parameters->keywords.size; ++idx) {
+                const pm_node_t *keyword = parameters->keywords.nodes[idx];
+
+                if (PM_NODE_TYPE_P(keyword, PM_REQUIRED_KEYWORD_PARAMETER_NODE)) {
+                    signature->required_keyword_names[keyword_idx] = ((const pm_required_keyword_parameter_node_t *) keyword)->name;
+                    signature->required_keyword_ids[keyword_idx++] = graph->value_id++;
+                }
+            }
+        }
+    }
 }
 
 static uint32_t
@@ -557,25 +612,40 @@ make_block(PrismBuilder *builder, uint32_t nparams) {
 static uint32_t
 make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
     uint32_t block_id = make_block(builder, 0);
+
     if (signature) {
         PrismBlock *block = PrismBuilder_graph(builder)->blocks + block_id;
-        block->nparams = signature->nrequired_ids + 2 * signature->noptional_ids + (signature->rest_id != UINT32_MAX ? 1 : 0) + signature->npost_ids;
+        block->nparams = signature->nrequired_ids + 2 * signature->noptional_ids + (signature->rest_id != UINT32_MAX ? 1 : 0) + signature->npost_ids + signature->nrequired_keyword_ids;
+
         if (block->nparams) {
             block->params = pm_arena_alloc(builder->arena, sizeof(uint32_t) * block->nparams, PRISM_ALIGNOF(uint32_t));
+
             if (signature->nrequired_ids) {
                 memcpy(block->params, signature->required_ids, sizeof(uint32_t) * signature->nrequired_ids);
             }
+
             uint32_t idx = signature->nrequired_ids;
+
             for (uint32_t optional_idx = 0; optional_idx < signature->noptional_ids; ++optional_idx) {
                 block->params[idx++] = signature->optional_ids[optional_idx];
                 block->params[idx++] = signature->optional_specified_ids[optional_idx];
             }
-            if (signature->rest_id != UINT32_MAX) block->params[idx++] = signature->rest_id;
+
+            if (signature->rest_id != UINT32_MAX) {
+                block->params[idx++] = signature->rest_id;
+            }
+
             if (signature->npost_ids) {
                 memcpy(block->params + idx, signature->post_ids, sizeof(uint32_t) * signature->npost_ids);
+                idx += signature->npost_ids;
+            }
+
+            if (signature->nrequired_keyword_ids) {
+                memcpy(block->params + idx, signature->required_keyword_ids, sizeof(uint32_t) * signature->nrequired_keyword_ids);
             }
         }
     }
+
     return block_id;
 }
 
@@ -747,9 +817,10 @@ emit_branchif(PrismBuilder *builder, uint32_t node_id, uint32_t predicate_id, ui
 }
 
 static uint32_t
-emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids) {
+emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids, bool keywords) {
     PrismInsn *insn = make_insn(builder, kPrismInsnCall, node_id, 2 + (uint32_t) nargument_ids);
-    insn->as.name.name_id = name_id;
+    insn->as.call.name_id = name_id;
+    insn->as.call.keywords = keywords;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -761,9 +832,10 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uin
 }
 
 static uint32_t
-emit_call_with_block(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids, uint32_t block_id) {
+emit_call_with_block(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, size_t nargument_ids, uint32_t *argument_ids, uint32_t block_id, bool keywords) {
     PrismInsn *insn = make_insn(builder, kPrismInsnCallWithBlock, node_id, 3 + (uint32_t) nargument_ids);
-    insn->as.name.name_id = name_id;
+    insn->as.call.name_id = name_id;
+    insn->as.call.keywords = keywords;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
@@ -1700,6 +1772,31 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
 }
 
 static uint32_t
+compile_conditional_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements, const pm_node_t *subsequent) {
+    uint32_t then_block_id = make_block(builder, 0);
+    uint32_t else_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t predicate_id = compile_node(builder, predicate);
+    if (PM_NODE_TYPE_P(node, PM_IF_NODE)) {
+        emit_branchif(builder, node->node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+    } else {
+        emit_branchif(builder, node->node_id, predicate_id, else_block_id, 0, NULL, then_block_id, 0, NULL);
+    }
+
+    builder->state.block_id = then_block_id;
+    uint32_t then_value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(statements), node->node_id);
+    emit_branch(builder, node->node_id, join_block_id, 1, &then_value_id);
+
+    builder->state.block_id = else_block_id;
+    uint32_t else_value_id = compile_node_or_nil(builder, subsequent, node->node_id);
+    emit_branch(builder, node->node_id, join_block_id, 1, &else_value_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_instance_variable_logical_write_node(PrismBuilder *builder, const pm_node_t *node, pm_constant_id_t name, const pm_node_t *value) {
     uint32_t set_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
@@ -1854,6 +1951,41 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
     }
 }
 
+static uint32_t
+compile_hash_elements(PrismBuilder *builder, const pm_node_t *node, const pm_node_list_t *elements) {
+    size_t nelements = elements->size;
+    uint32_t value_id = UINT32_MAX;
+
+    for (uint32_t element_idx = 0; element_idx < nelements; ++element_idx) {
+        uint32_t assocs_start_idx = element_idx;
+        while (element_idx < nelements && PM_NODE_TYPE_P(elements->nodes[element_idx], PM_ASSOC_NODE)) element_idx++;
+
+        if (assocs_start_idx < element_idx) {
+            uint32_t nvalue_ids = (element_idx - assocs_start_idx) * 2;
+            uint32_t *value_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nvalue_ids, PRISM_ALIGNOF(uint32_t));
+
+            for (uint32_t assoc_idx = assocs_start_idx; assoc_idx < element_idx; ++assoc_idx) {
+                const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) elements->nodes[assoc_idx];
+                value_ids[(assoc_idx - assocs_start_idx) * 2] = compile_node(builder, assoc->key);
+                value_ids[(assoc_idx - assocs_start_idx) * 2 + 1] = compile_node(builder, assoc->value);
+            }
+
+            uint32_t hash_id = emit_new_hash(builder, node->node_id, nvalue_ids, value_ids);
+            value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->node_id, value_id, hash_id);
+        }
+
+        if (element_idx < nelements) {
+            const pm_assoc_splat_node_t *assoc_splat = (const pm_assoc_splat_node_t *) elements->nodes[element_idx];
+            uint32_t splat_id = compile_node(builder, assoc_splat->value);
+            uint32_t hash_id = emit_coerce_hash(builder, assoc_splat->base.node_id, splat_id);
+            value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->node_id, value_id, hash_id);
+        }
+    }
+
+    if (value_id == UINT32_MAX) value_id = emit_new_hash(builder, node->node_id, 0, NULL);
+    return value_id;
+}
+
 /******************************************************************************/
 
 static uint32_t
@@ -1957,6 +2089,15 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
         }
     }
 
+    uint32_t keyword_idx = 0;
+    for (size_t idx = 0; idx < parameters->keywords.size; ++idx) {
+        const pm_node_t *keyword = parameters->keywords.nodes[idx];
+        if (PM_NODE_TYPE_P(keyword, PM_REQUIRED_KEYWORD_PARAMETER_NODE)) {
+            uint32_t local_id = resolve_local(builder, ((const pm_required_keyword_parameter_node_t *) keyword)->name, 0);
+            emit_store_lvar(builder, keyword->node_id, local_id, signature->required_keyword_ids[keyword_idx++]);
+        }
+    }
+
     for (uint32_t idx = 0; idx < signature->noptional_ids; ++idx) {
         const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
         compile_optional_parameter_node(builder, optional, signature->optional_ids[idx], signature->optional_specified_ids[idx]);
@@ -2000,6 +2141,7 @@ compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     } else {
         make_signature(builder, graph_id, &signature, nrequired_ids, 0, false, 0);
     }
+
     uint32_t npositional_ids = signature.nrequired_ids + signature.npost_ids;
     signature.autosplat = npositional_ids + signature.noptional_ids > 1 || (npositional_ids > 0 && signature.rest_id != UINT32_MAX);
 
@@ -2052,22 +2194,25 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
 
     size_t nargument_ids = 0;
     uint32_t *argument_ids = NULL;
+    bool keywords = false;
 
     if (node->arguments) {
         nargument_ids = node->arguments->arguments.size;
         argument_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nargument_ids, PRISM_ALIGNOF(uint32_t));
 
         for (size_t idx = 0; idx < nargument_ids; ++idx) {
-            argument_ids[idx] = compile_node(builder, node->arguments->arguments.nodes[idx]);
+            const pm_node_t *argument = node->arguments->arguments.nodes[idx];
+            if (PM_NODE_TYPE_P(argument, PM_KEYWORD_HASH_NODE)) keywords = true;
+            argument_ids[idx] = compile_node(builder, argument);
         }
     }
 
     uint32_t value_id;
     if (node->block) {
         uint32_t block_id = compile_node(builder, node->block);
-        value_id = emit_call_with_block(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, block_id);
+        value_id = emit_call_with_block(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, block_id, keywords);
     } else {
-        value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids);
+        value_id = emit_call(builder, node->base.node_id, node->name, receiver_id, nargument_ids, argument_ids, keywords);
     }
 
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
@@ -2105,8 +2250,10 @@ compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
         }
     } else {
         const pm_constant_path_node_t *constant_path = (const pm_constant_path_node_t *) node->constant_path;
+
         if (constant_path->parent) {
             uint32_t receiver_id = compile_node(builder, constant_path->parent);
+
             if (node->superclass) {
                 uint32_t superclass_id = compile_node(builder, node->superclass);
                 result_id = emit_define_class_recv_rel_super(builder, node->base.node_id, node->name, receiver_id, superclass_id, graph_id);
@@ -2140,7 +2287,7 @@ static uint32_t
 compile_class_variable_operator_write_node(PrismBuilder *builder, const pm_class_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_cvar(builder, node->base.node_id, node->name);
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
     emit_store_cvar(builder, node->base.node_id, node->name, result_id);
     return result_id;
 }
@@ -2320,7 +2467,7 @@ compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_op
 
     uint32_t receiver_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, result_id);
 
     return result_id;
@@ -2385,13 +2532,13 @@ compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_consta
 
         uint32_t receiver_id = emit_load_const_recv_rel(builder, node->base.node_id, parent_id, constant_path);
         uint32_t value_id = compile_node(builder, node->value);
-        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
 
         return emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, result_id);
     } else {
         uint32_t receiver_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
         uint32_t value_id = compile_node(builder, node->value);
-        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+        uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
 
         return emit_store_const_abs(builder, node->base.node_id, node->target->name, result_id);
     }
@@ -2474,7 +2621,7 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     pop_scope(builder, state);
 
     uint32_t block_id = emit_new_block(builder, node->base.node_id, graph_id);
-    return emit_call_with_block(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id);
+    return emit_call_with_block(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id, false);
 }
 
 static uint32_t
@@ -2493,7 +2640,7 @@ static uint32_t
 compile_global_variable_operator_write_node(PrismBuilder *builder, const pm_global_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_gvar(builder, node->base.node_id, node->name);
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
     emit_store_gvar(builder, node->base.node_id, node->name, result_id);
     return result_id;
 }
@@ -2539,67 +2686,12 @@ compile_global_variable_or_write_node(PrismBuilder *builder, const pm_global_var
 
 static uint32_t
 compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
-    size_t nelements = node->elements.size;
-    uint32_t value_id = UINT32_MAX;
-
-    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && nelements) {
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && node->elements.size) {
         uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
-        value_id = emit_new_hash_static(builder, node->base.node_id, object_id);
-    } else {
-        for (uint32_t element_idx = 0; element_idx < nelements; ++element_idx) {
-            uint32_t assocs_start_idx = element_idx;
-            while (element_idx < nelements && PM_NODE_TYPE_P(node->elements.nodes[element_idx], PM_ASSOC_NODE)) element_idx++;
-
-            if (assocs_start_idx < element_idx) {
-                uint32_t nvalue_ids = (element_idx - assocs_start_idx) * 2;
-                uint32_t *value_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nvalue_ids, PRISM_ALIGNOF(uint32_t));
-
-                for (uint32_t assoc_idx = assocs_start_idx; assoc_idx < element_idx; ++assoc_idx) {
-                    const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) node->elements.nodes[assoc_idx];
-                    value_ids[(assoc_idx - assocs_start_idx) * 2] = compile_node(builder, assoc->key);
-                    value_ids[(assoc_idx - assocs_start_idx) * 2 + 1] = compile_node(builder, assoc->value);
-                }
-
-                uint32_t hash_id = emit_new_hash(builder, node->base.node_id, nvalue_ids, value_ids);
-                value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->base.node_id, value_id, hash_id);
-            }
-
-            if (element_idx < nelements) {
-                const pm_assoc_splat_node_t *assoc_splat = (const pm_assoc_splat_node_t *) node->elements.nodes[element_idx];
-                uint32_t splat_id = compile_node(builder, assoc_splat->value);
-                uint32_t hash_id = emit_coerce_hash(builder, assoc_splat->base.node_id, splat_id);
-                value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->base.node_id, value_id, hash_id);
-            }
-        }
+        return emit_new_hash_static(builder, node->base.node_id, object_id);
     }
 
-    if (value_id == UINT32_MAX) value_id = emit_new_hash(builder, node->base.node_id, 0, NULL);
-    return value_id;
-}
-
-static uint32_t
-compile_conditional_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements, const pm_node_t *subsequent) {
-    uint32_t then_block_id = make_block(builder, 0);
-    uint32_t else_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
-
-    uint32_t predicate_id = compile_node(builder, predicate);
-    if (PM_NODE_TYPE_P(node, PM_IF_NODE)) {
-        emit_branchif(builder, node->node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
-    } else {
-        emit_branchif(builder, node->node_id, predicate_id, else_block_id, 0, NULL, then_block_id, 0, NULL);
-    }
-
-    builder->state.block_id = then_block_id;
-    uint32_t then_value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(statements), node->node_id);
-    emit_branch(builder, node->node_id, join_block_id, 1, &then_value_id);
-
-    builder->state.block_id = else_block_id;
-    uint32_t else_value_id = compile_node_or_nil(builder, subsequent, node->node_id);
-    emit_branch(builder, node->node_id, join_block_id, 1, &else_value_id);
-
-    builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return compile_hash_elements(builder, PM_NODE_UPCAST(node), &node->elements);
 }
 
 static uint32_t
@@ -2634,7 +2726,7 @@ static uint32_t
 compile_instance_variable_operator_write_node(PrismBuilder *builder, const pm_instance_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_ivar(builder, node->base.node_id, node->name);
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, false);
     emit_store_ivar(builder, node->base.node_id, node->name, result_id);
     return result_id;
 }
@@ -2666,7 +2758,7 @@ compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interp
 
     uint32_t regexp_id = emit_new_regexp(builder, node->base.node_id, nvalue_ids, value_ids, node->base.flags);
     uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, false);
 }
 
 static uint32_t
@@ -2716,12 +2808,17 @@ compile_interpolated_x_string_node(PrismBuilder *builder, const pm_interpolated_
     }
 
     uint32_t string_id = emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &string_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &string_id, false);
 }
 
 static uint32_t
 compile_it_local_variable_read_node(PrismBuilder *builder, const pm_it_local_variable_read_node_t *node) {
     return emit_load_lvar(builder, node->base.node_id, builder->state.it_local_id);
+}
+
+static uint32_t
+compile_keyword_hash_node(PrismBuilder *builder, const pm_node_t *node, const pm_keyword_hash_node_t *keyword_hash) {
+    return compile_hash_elements(builder, node, &keyword_hash->elements);
 }
 
 static uint32_t
@@ -2743,7 +2840,7 @@ compile_local_variable_operator_write_node(PrismBuilder *builder, const pm_local
     uint32_t resolved_id = resolve_local(builder, node->name, node->depth);
     uint32_t local_id = emit_load_lvar(builder, node->base.node_id, resolved_id);
     uint32_t value_id = compile_node(builder, node->value);
-    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, local_id, 1, &value_id);
+    uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, local_id, 1, &value_id, false);
     emit_store_lvar(builder, node->base.node_id, resolved_id, result_id);
     return result_id;
 }
@@ -2767,7 +2864,7 @@ compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_nod
 
     uint32_t regexp_id = emit_load_object(builder, node->base.node_id, object_id);
     uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, false);
 }
 
 static uint32_t
@@ -3075,7 +3172,7 @@ compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
 
     uint32_t receiver_id = emit_load_self(builder, node->base.node_id);
     uint32_t argument_id = emit_load_object(builder, node->base.node_id, object_id);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &argument_id);
+    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &argument_id, false);
 }
 
 static uint32_t
@@ -3198,6 +3295,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_interpolated_x_string_node(builder, (const pm_interpolated_x_string_node_t *) node);
         case PM_IT_LOCAL_VARIABLE_READ_NODE:
             return compile_it_local_variable_read_node(builder, (const pm_it_local_variable_read_node_t *) node);
+        case PM_KEYWORD_HASH_NODE:
+            return compile_keyword_hash_node(builder, node, (const pm_keyword_hash_node_t *) node);
         case PM_LOCAL_VARIABLE_READ_NODE:
             return compile_local_variable_read_node(builder, (const pm_local_variable_read_node_t *) node);
         case PM_LOCAL_VARIABLE_WRITE_NODE:
@@ -3284,6 +3383,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_IT_PARAMETERS_NODE:
         case PM_NUMBERED_PARAMETERS_NODE:
         case PM_OPTIONAL_PARAMETER_NODE:
+        case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
         case PM_REST_PARAMETER_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));

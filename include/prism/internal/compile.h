@@ -32,6 +32,7 @@ struct PrismInsn {
         struct { uint32_t number; } extract_group;
         struct { uint32_t local_id; } lvar;
         struct { pm_constant_id_t name_id; } name;
+        struct { pm_constant_id_t name_id; bool keywords; } call;
         struct { uint32_t object_id; } object;
         struct { pm_node_flags_t flags; } regexp;
         struct { int32_t lineno; } trace_line;
@@ -65,10 +66,13 @@ struct PrismSignature {
     uint32_t *post_ids;
     uint32_t *optional_ids;
     uint32_t *optional_specified_ids;
+    pm_constant_id_t *required_keyword_names;
+    uint32_t *required_keyword_ids;
     uint32_t nrequired_ids;
     uint32_t rest_id;
     uint32_t npost_ids;
     uint32_t noptional_ids;
+    uint32_t nrequired_keyword_ids;
     bool autosplat;
 };
 

@@ -13,6 +13,7 @@ VALUE rb_cPrismCompileResult;
 
 static VALUE rb_cPrismCompileLocal;
 static VALUE rb_cPrismCompileInsn;
+static VALUE rb_cPrismCompileCallInfo;
 static VALUE rb_cPrismCompileBlock;
 static VALUE rb_cPrismCompileGraph;
 static VALUE rb_cPrismCompileSignature;
@@ -120,9 +121,14 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             VALUE then_nopnds = UINT2NUM(pm_insn_branchif_then_nopnds(insn));
             return compile_freeze(rb_ary_new_from_args(3, then_block, else_block, then_nopnds), freeze);
         }
-        case kPrismInsnExtractLastMatchNamedGroup:
         case kPrismInsnCallWithBlock:
-        case kPrismInsnCall:
+        case kPrismInsnCall: {
+            const pm_constant_t *constant = pm_insn_call_name(parser, insn);
+            VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
+            VALUE argv[] = { name, pm_insn_call_keywords(insn) ? Qtrue : Qfalse };
+            return compile_freeze(rb_class_new_instance(2, argv, rb_cPrismCompileCallInfo), freeze);
+        }
+        case kPrismInsnExtractLastMatchNamedGroup:
         case kPrismInsnDefinedConstAbs:
         case kPrismInsnDefinedConstNestRel:
         case kPrismInsnDefinedConstRecvRel:
@@ -355,9 +361,18 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         }
         compile_freeze(vpost_ids, freeze);
 
+        uint32_t nrequired_keyword_ids = pm_signature_nrequired_keyword_ids(signature);
+        VALUE vrequired_keywords = rb_hash_new();
+        for (uint32_t keyword_idx = 0; keyword_idx < nrequired_keyword_ids; ++keyword_idx) {
+            const pm_constant_t *name = pm_signature_required_keyword_name(parser, signature, keyword_idx);
+            VALUE key = ID2SYM(rb_intern2((const char *) pm_constant_start(name), pm_constant_length(name)));
+            rb_hash_aset(vrequired_keywords, key, UINT2NUM(pm_signature_required_keyword_id(signature, keyword_idx)));
+        }
+        compile_freeze(vrequired_keywords, freeze);
+
         uint32_t rest_id = pm_signature_rest_id(signature);
-        VALUE vsignature_argv[] = { vrequired_ids, voptional_ids, voptional_specified_ids, rest_id == UINT32_MAX ? Qnil : UINT2NUM(rest_id), vpost_ids, pm_signature_autosplat(signature) ? Qtrue : Qfalse };
-        VALUE vsignature = compile_freeze(rb_class_new_instance(6, vsignature_argv, rb_cPrismCompileSignature), freeze);
+        VALUE vsignature_argv[] = { vrequired_ids, voptional_ids, voptional_specified_ids, rest_id == UINT32_MAX ? Qnil : UINT2NUM(rest_id), vpost_ids, vrequired_keywords, pm_signature_autosplat(signature) ? Qtrue : Qfalse };
+        VALUE vsignature = compile_freeze(rb_class_new_instance(7, vsignature_argv, rb_cPrismCompileSignature), freeze);
 
         uint32_t nvalues = pm_graph_nvalues(graph);
         VALUE vnvalues = UINT2NUM(nvalues);
@@ -424,6 +439,7 @@ Init_prism_api_compile(void) {
     VALUE rb_cPrismCompile = rb_define_module_under(rb_cPrism, "Compile");
     rb_cPrismCompileResult = rb_define_class_under(rb_cPrismCompile, "Result", rb_cPrismResult);
     rb_cPrismCompileLocal = rb_define_class_under(rb_cPrismCompile, "Local", rb_cObject);
+    rb_cPrismCompileCallInfo = rb_define_class_under(rb_cPrismCompile, "CallInfo", rb_cObject);
     rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
     rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
     rb_cPrismCompileSignature = rb_define_class_under(rb_cPrismCompile, "Signature", rb_cObject);

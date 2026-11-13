@@ -37,6 +37,15 @@ module Prism
       end
     end
 
+    class CallInfo
+      attr_reader :name, :keywords
+
+      def initialize(name, keywords)
+        @name = name
+        @keywords = keywords
+      end
+    end
+
     class Block
       attr_reader :id, :insns, :params
 
@@ -48,14 +57,15 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :autosplat
 
-      def initialize(requireds, optionals, optional_specifieds, rest, posts, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, autosplat)
         @requireds = requireds
         @optionals = optionals
         @optional_specifieds = optional_specifieds
         @rest = rest
         @posts = posts
+        @required_keywords = required_keywords
         @autosplat = autosplat
       end
     end
@@ -102,6 +112,7 @@ module Prism
           signature.optionals.zip(signature.optional_specifieds) { |id, specified| params << "#{value(id)}?#{value(specified)}" }
           params << "*#{value(signature.rest)}" if signature.rest
           params.concat(signature.posts.map { |id| value(id) })
+          signature.required_keywords.each { |name, id| params << "#{name}: #{value(id)}" }
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -151,10 +162,12 @@ module Prism
           "branchif #{value(opnds[0])} #{block_ref(then_block)}#{values(opnds[1, then_count])} #{block_ref(else_block)}#{values(opnds[(then_count + 1)..])}"
         when :call_with_block
           opnds = insn.opnds
-          "#{value(opnds[0])} = call_with_block #{value(opnds[1])}.#{insn.data}#{values(opnds[2...-1])} &#{value(opnds[-1])}"
+          data = insn.data
+          "#{value(opnds[0])} = call_with_block #{value(opnds[1])}.#{data.name}#{values(opnds[2...-1])}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
         when :call
           opnds = insn.opnds
-          "#{value(opnds[0])} = call #{value(opnds[1])}.#{insn.data}#{values(opnds[2..])}"
+          data = insn.data
+          "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(opnds[2..])}#{data.keywords ? " [keywords]" : ""}"
         when :coerce_array
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_array#{values(opnds[1..])}"
@@ -421,7 +434,7 @@ module Prism
         run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end
 
-      def run_frame(frame, args = [])
+      def run_frame(frame, args = [], kwargs = {})
         graph = frame.graph
         recv = frame.recv
         nest = frame.nest
@@ -431,7 +444,12 @@ module Prism
 
         signature = graph.signature
 
-        if signature.autosplat && args.length == 1
+        if signature.required_keywords.empty? && !kwargs.empty?
+          args = [*args, kwargs]
+          kwargs = {}
+        end
+
+        if signature.autosplat && args.length == 1 && kwargs.empty?
           args = Array.try_convert(args[0]) || args
         end
 
@@ -444,6 +462,18 @@ module Prism
             expected = signature.rest ? "#{required}+" : required == maximum ? required : "#{required}..#{maximum}"
             raise ArgumentError, "wrong number of arguments (given #{args.length}, expected #{expected})"
           end
+        end
+
+        unless signature.required_keywords.empty?
+          missing = signature.required_keywords.keys - kwargs.keys
+          unless missing.empty?
+            raise ArgumentError, "missing keyword#{missing.length == 1 ? '' : 's'}: #{missing.map(&:inspect).join(', ')}"
+          end
+          unknown = kwargs.keys - signature.required_keywords.keys
+          unless unknown.empty?
+            raise ArgumentError, "unknown keyword#{unknown.length == 1 ? '' : 's'}: #{unknown.map(&:inspect).join(', ')}"
+          end
+          signature.required_keywords.each { |name, param| values[param] = kwargs.fetch(name) }
         end
 
         signature.requireds.zip(args) { |param, value| values[param] = value }
@@ -478,9 +508,15 @@ module Prism
               end
               break
             when :call
-              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2..]))
+              call = insn.data
+              arguments = values.values_at(*insn.opnds[2..])
+              keywords = call.keywords ? arguments.pop : {}
+              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords)
             when :call_with_block
-              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(insn.data, *values.values_at(*insn.opnds[2...-1]), &values[insn.opnds[-1]])
+              call = insn.data
+              arguments = values.values_at(*insn.opnds[2...-1])
+              keywords = call.keywords ? arguments.pop : {}
+              values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords, &values[insn.opnds[-1]])
             when :coerce_array
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = Array.try_convert(value) || [value]
@@ -528,7 +564,7 @@ module Prism
             when :define_method
               name, method_graph = insn.data
               vm = self
-              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args) }
+              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args, **kwargs, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args, kwargs) }
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_module_abs
               name, module_graph = insn.data
@@ -551,7 +587,7 @@ module Prism
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
               vm = self
-              Module.instance_method(:define_method).bind_call(klass, name) { |*args, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args) }
+              Module.instance_method(:define_method).bind_call(klass, name) { |*args, **kwargs, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args, kwargs) }
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
@@ -673,9 +709,9 @@ module Prism
         block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          Proc.new do |*args|
+          Proc.new do |*args, **kwargs|
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-            vm.run_frame(Frame.new(graph, self, nest, block_locals, &block), args)
+            vm.run_frame(Frame.new(graph, self, nest, block_locals, &block), args, kwargs)
           end
         end
       end

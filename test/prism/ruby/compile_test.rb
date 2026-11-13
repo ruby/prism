@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -144,11 +144,12 @@ module Prism
       assert_equal([nil], run_instructions(insns, [nil], 2))
       assert_equal([1], run_instructions(insns, [1], 2))
       item = Object.new
-      item.define_singleton_method(:to_ary) { array }
+      converted = array
+      item.define_singleton_method(:to_ary) { converted }
       assert_same(array, run_instructions(insns, [item], 2))
-      item.define_singleton_method(:to_ary) { nil }
+      converted = nil
       assert_equal([item], run_instructions(insns, [item], 2))
-      item.define_singleton_method(:to_ary) { 1 }
+      converted = 1
       assert_raise(TypeError) { run_instructions(insns, [item], 2) }
     end
 
@@ -204,14 +205,73 @@ module Prism
       end
     end
 
+    def test_required_keyword_method_parameters
+      vm.run(compile_unit("class CompileTestKeywords; def value(x:, y:); [x, y]; end; end"))
+      source = "CompileTestKeywords.new"
+      assert_run([1, 2], "#{source}.value(x: 1, y: 2)")
+      assert_run([1, 2], "#{source}.value(y: 2, x: 1)")
+      assert_run([nil, false], "#{source}.value(x: nil, y: false)")
+      assert_run_raises(ArgumentError, "#{source}.value", "missing keywords: :x, :y")
+      assert_run_raises(ArgumentError, "#{source}.value(y: 2)", "missing keyword: :x")
+      assert_run_raises(ArgumentError, "#{source}.value(x: 1, y: 2, z: 3)", "unknown keyword: :z")
+      assert_run_raises(ArgumentError, "#{source}.value({ x: 1, y: 2 })", "wrong number of arguments (given 1, expected 0)")
+      assert_run([1, 2, [], 3, 4], "class CompileTestKeywordsMixed; def value(a, b = 2, *rest, c, x:); [a, b, rest, c, x]; end; end; CompileTestKeywordsMixed.new.value(1, 3, x: 4)")
+      assert_run(2, "object = Object.new; def object.value(x:); x; end; object.value(x: 2)")
+      assert_run(3, "class CompileTestKeywordYield; def value(x:); x + yield; end; end; CompileTestKeywordYield.new.value(x: 1) { 2 }")
+      assert_run(2, "class CompileTestKeywordCapture; def value(x:); proc { x + 1 }.call; end; end; CompileTestKeywordCapture.new.value(x: 1)")
+      assert_run_raises(ArgumentError, "class CompileTestKeywordDefault; def value(a = raise('default ran'), x:); a; end; end; CompileTestKeywordDefault.new.value", "missing keyword: :x")
+    end
+
+    def test_required_keyword_block_parameters
+      [
+        [1, "proc { |x:| x }.call(x: 1)"],
+        [[nil, false], "proc { |x:, y:| [x, y] }.call(y: false, x: nil)"],
+        [[1, 2], "proc { |a, x:| [a, x] }.call(1, x: 2)"],
+        [[[1, 2], nil, 3], "proc { |a, b, x:| [a, b, x] }.call([1, 2], x: 3)"],
+        [[2, [], 3], "proc { |a = 2, *rest, x:| [a, rest, x] }.call(x: 3)"],
+        [2, "proc { |x:| proc { x + 1 }.call }.call(x: 1)"],
+        [{ x: 1 }, "proc { |a| a }.call(x: 1)"],
+        [[{ x: 1 }], "proc { |*args| args }.call(x: 1)"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(ArgumentError, "proc { |x:| x }.call", "missing keyword: :x")
+      assert_run_raises(ArgumentError, "proc { |x:| x }.call({ x: 1 })", "missing keyword: :x")
+      assert_run_raises(ArgumentError, "proc { |x:| x }.call(x: 1, y: 2, z: 3)", "unknown keywords: :y, :z")
+    end
+
+    def test_keyword_calls
+      assert_run("abc", 'String.new("abc", capacity: 10)')
+      assert_run(3, "proc { |x:, y:| x + y }.call(**{ x: 1, y: 2 })")
+      assert_run(2, "proc { |x:| x }.call(**{ x: 1 }, x: 2)")
+      assert_run(nil, "nil&.missing(x: raise('not called'))")
+      vm.run(compile_unit("class CompileTestKeywordHash; def value(a); a; end; end"))
+      source = "CompileTestKeywordHash.new"
+      assert_run({ x: 1 }, "#{source}.value(x: 1)")
+      assert_run({ x: 1 }, "#{source}.value({ x: 1 })")
+    end
+
+    def test_required_keyword_parameters_metadata
+      unit = Prism.compile("proc { |a, x:, y:| [a, x, y] }.call(1, x: 2, y: 3)", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal({ x: 1, y: 2 }, graph.signature.required_keywords)
+      assert_equal([0, 1, 2], graph.blocks[0].params)
+      assert_predicate(graph.signature.required_keywords, :frozen?)
+      call = unit.graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == :call && insn.data.name == :call }
+      assert_equal(true, call.data.keywords)
+      assert_predicate(call.data, :frozen?)
+      assert_include(unit.disasm, "x: %1, y: %2")
+      assert_include(unit.disasm, "[keywords]")
+    end
+
     def test_optional_method_parameters
-      source = "class CompileTestOptionals; def value(a = 1, b = a + 2); [a, b]; end; end; CompileTestOptionals.new"
+      vm.run(compile_unit("class CompileTestOptionals; def value(a = 1, b = a + 2); [a, b]; end; end"))
+      source = "CompileTestOptionals.new"
       assert_run([1, 3], "#{source}.value")
       assert_run([4, 6], "#{source}.value(4)")
       assert_run([4, 8], "#{source}.value(4, 8)")
       assert_run([nil, nil], "#{source}.value(nil, nil)")
       assert_run_raises(ArgumentError, "#{source}.value(1, 2, 3)", "wrong number of arguments (given 3, expected 0..2)")
-      source = "class CompileTestOptionalRequired; def value(a, b = a + 1); [a, b]; end; end; CompileTestOptionalRequired.new"
+      vm.run(compile_unit("class CompileTestOptionalRequired; def value(a, b = a + 1); [a, b]; end; end"))
+      source = "CompileTestOptionalRequired.new"
       assert_run([2, 3], "#{source}.value(2)")
       assert_run_raises(ArgumentError, "#{source}.value", "wrong number of arguments (given 0, expected 1..2)")
       assert_run([1, 2], "object = Object.new; def object.value(a = 1, b = a + 1); [a, b]; end; object.value")
@@ -251,12 +311,14 @@ module Prism
     end
 
     def test_optional_method_parameters_with_posts_and_rest
-      source = "class CompileTestOptionalPosts; def value(a, b = 2, *rest, c); [a, b, rest, c]; end; end; CompileTestOptionalPosts.new"
+      vm.run(compile_unit("class CompileTestOptionalPosts; def value(a, b = 2, *rest, c); [a, b, rest, c]; end; end"))
+      source = "CompileTestOptionalPosts.new"
       assert_run([1, 2, [], 3], "#{source}.value(1, 3)")
       assert_run([1, 4, [], 3], "#{source}.value(1, 4, 3)")
       assert_run([1, 4, [5], 6], "#{source}.value(1, 4, 5, 6)")
       assert_run_raises(ArgumentError, "#{source}.value(1)", "wrong number of arguments (given 1, expected 2+)")
-      source = "class CompileTestOptionalPost; def value(a = 2, b); [a, b]; end; end; CompileTestOptionalPost.new"
+      vm.run(compile_unit("class CompileTestOptionalPost; def value(a = 2, b); [a, b]; end; end"))
+      source = "CompileTestOptionalPost.new"
       assert_run([2, 3], "#{source}.value(3)")
       assert_run([4, 3], "#{source}.value(4, 3)")
       assert_run_raises(ArgumentError, "#{source}.value(1, 2, 3)", "wrong number of arguments (given 3, expected 1..2)")
@@ -298,7 +360,8 @@ module Prism
     end
 
     def test_post_method_parameters
-      source = "class CompileTestPosts; def value(a, *rest, b, c); [a, rest, b, c]; end; end; CompileTestPosts.new"
+      vm.run(compile_unit("class CompileTestPosts; def value(a, *rest, b, c); [a, rest, b, c]; end; end"))
+      source = "CompileTestPosts.new"
       assert_run([1, [], 2, 3], "#{source}.value(1, 2, 3)")
       assert_run([1, [2, 3], 4, 5], "#{source}.value(1, 2, 3, 4, 5)")
       assert_run_raises(ArgumentError, "#{source}.value(1, 2)", "wrong number of arguments (given 2, expected 3+)")
@@ -411,7 +474,8 @@ module Prism
     def test_rest_block_parameters_conversion
       calls = []
       value = Object.new
-      value.define_singleton_method(:to_ary) { calls << :to_ary; [1, 2, 3] }
+      converted = [1, 2, 3]
+      value.define_singleton_method(:to_ary) { calls << :to_ary; converted }
       scope = Module.new
       scope.const_set(:Value, value)
       run = ->(source) { vm.run_frame(Compile::VM::Frame.new(compile_unit(source).graphs[0], scope, [scope, Object].freeze)) }
@@ -419,9 +483,9 @@ module Prism
       assert_empty(calls)
       assert_equal([1, [2, 3]], run.call("proc { |a, *rest| [a, rest] }.call(Value)"))
       assert_equal([:to_ary], calls)
-      value.define_singleton_method(:to_ary) { nil }
+      converted = nil
       assert_equal([value, []], run.call("proc { |a, *rest| [a, rest] }.call(Value)"))
-      value.define_singleton_method(:to_ary) { 1 }
+      converted = 1
       assert_raise(TypeError) { run.call("proc { |a, *rest| [a, rest] }.call(Value)") }
     end
 
@@ -440,16 +504,17 @@ module Prism
     def test_required_block_parameters_conversion
       calls = []
       value = Object.new
-      value.define_singleton_method(:to_ary) { calls << :to_ary; [1, 2] }
+      converted = [1, 2]
+      value.define_singleton_method(:to_ary) { calls << :to_ary; converted }
       scope = Module.new
       scope.const_set(:Value, value)
       graph = compile_unit("proc { |a, b| [a, b] }.call(Value)").graphs[0]
       assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
       assert_equal([:to_ary], calls)
 
-      value.define_singleton_method(:to_ary) { nil }
+      converted = nil
       assert_equal([value, nil], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
-      value.define_singleton_method(:to_ary) { 1 }
+      converted = 1
       assert_raise(TypeError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
 
       graph = compile_unit("proc { |a| a }.call(Value)").graphs[0]
@@ -731,9 +796,9 @@ module Prism
     def test_for_shares_locals_storage
       machine = Compile::VM.new
       frames = []
-      machine.define_singleton_method(:run_frame) do |frame, args = []|
+      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}|
         frames << frame
-        super(frame, args)
+        super(frame, args, kwargs)
       end
       machine.run(compile_unit("for i in [1]; end; proc {}.call"))
       program, loop_frame, block_frame = frames
@@ -748,7 +813,7 @@ module Prism
       block_insn = insns.find { |insn| insn.kind == :new_block }
       call_insn = insns.find { |insn| insn.kind == :call_with_block }
       assert_equal(:block, block_insn.data.kind)
-      assert_equal(:each, call_insn.data)
+      assert_equal(:each, call_insn.data.name)
       assert_equal(block_insn.opnds[0], call_insn.opnds[-1])
       assert_same(unit.graphs[0].scope, block_insn.data.scope)
     end
@@ -875,9 +940,9 @@ module Prism
     def test_compiled_methods_retain_vm
       machine = Compile::VM.new
       frames = []
-      machine.define_singleton_method(:run_frame) do |frame, args = []|
+      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}|
         frames << frame
-        super(frame, args)
+        super(frame, args, kwargs)
       end
 
       machine.run(compile_unit(<<~RUBY))
@@ -1788,7 +1853,7 @@ module Prism
     end
 
     def test_gvar_and_write_leaves_undefined
-      assert_run(nil, "$compile_test_and_new &&= 5")
+      ignore_warnings { assert_run(nil, "$compile_test_and_new &&= 5") }
       assert_nil(eval("defined?($compile_test_and_new)"))
 
       assert_run(6, "$compile_test_and_set = 1; $compile_test_and_set &&= 6; $compile_test_and_set")
@@ -1804,7 +1869,8 @@ module Prism
     end
 
     def test_return
-      source = "class CompileTestReturn; def none; return; 1; end; def one; return 1; 2; end; def many; return 1, 2; end; def array; return [1]; end; nil; end; CompileTestReturn.new"
+      vm.run(compile_unit("class CompileTestReturn; def none; return; 1; end; def one; return 1; 2; end; def many; return 1, 2; end; def array; return [1]; end; nil; end"))
+      source = "CompileTestReturn.new"
 
       assert_run(nil, "#{source}.none")
       assert_run(1, "#{source}.one")
@@ -1819,17 +1885,20 @@ module Prism
     end
 
     def test_define_method_arguments
-      source = "class CompileTestDefArity; def a(b) = b; end; CompileTestDefArity.new"
+      vm.run(compile_unit("class CompileTestDefArity; def a(b) = b; end"))
+      source = "CompileTestDefArity.new"
       assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1)")
       assert_run_raises(ArgumentError, "#{source}.a(1, 2)", "wrong number of arguments (given 2, expected 1)")
     end
 
     def test_define_method_rest_parameter
-      source = "class CompileTestDefRest; def a(*args) = args; end; CompileTestDefRest.new"
+      vm.run(compile_unit("class CompileTestDefRest; def a(*args) = args; end"))
+      source = "CompileTestDefRest.new"
       assert_run([], "#{source}.a")
       assert_run([1, 2, 3], "#{source}.a(1, 2, 3)")
       assert_run([[1, 2]], "#{source}.a([1, 2])")
-      source = "class CompileTestDefRequiredRest; def a(first, *rest) = [first, rest]; end; CompileTestDefRequiredRest.new"
+      vm.run(compile_unit("class CompileTestDefRequiredRest; def a(first, *rest) = [first, rest]; end"))
+      source = "CompileTestDefRequiredRest.new"
       assert_run([1, []], "#{source}.a(1)")
       assert_run([1, [2, 3]], "#{source}.a(1, 2, 3)")
       assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1+)")
@@ -1838,10 +1907,12 @@ module Prism
     end
 
     def test_define_method_anonymous_rest_parameter
-      source = "class CompileTestDefAnonymousRest; def a(*) = 1; end; CompileTestDefAnonymousRest.new"
+      vm.run(compile_unit("class CompileTestDefAnonymousRest; def a(*) = 1; end"))
+      source = "CompileTestDefAnonymousRest.new"
       assert_run(1, "#{source}.a")
       assert_run(1, "#{source}.a(2, 3)")
-      source = "class CompileTestDefRequiredAnonymousRest; def a(first, *) = first; end; CompileTestDefRequiredAnonymousRest.new"
+      vm.run(compile_unit("class CompileTestDefRequiredAnonymousRest; def a(first, *) = first; end"))
+      source = "CompileTestDefRequiredAnonymousRest.new"
       assert_run(1, "#{source}.a(1, 2, 3)")
       assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1+)")
     end
@@ -1873,7 +1944,8 @@ module Prism
     end
 
     def test_define_method_basic_object
-      source = "class CompileTestDefBasic < BasicObject; def a(b) = b; end; CompileTestDefBasic.new"
+      vm.run(compile_unit("class CompileTestDefBasic < BasicObject; def a(b) = b; end"))
+      source = "CompileTestDefBasic.new"
       assert_run(1, "#{source}.a(1)")
       assert_run_raises(ArgumentError, "#{source}.a", "wrong number of arguments (given 0, expected 1)")
     end
@@ -2080,6 +2152,7 @@ module Prism
         assert_predicate graph.signature, :frozen?
         assert_predicate graph.signature.requireds, :frozen?
         assert_predicate graph.signature.posts, :frozen?
+        assert_predicate graph.signature.required_keywords, :frozen?
         assert_predicate graph.signature.optionals, :frozen?
         assert_predicate graph.signature.optional_specifieds, :frozen?
         assert_predicate graph.locals, :frozen?
@@ -2131,7 +2204,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
