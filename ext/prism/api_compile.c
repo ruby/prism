@@ -60,6 +60,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnLoadConstNestRel: return rb_intern_const("load_const_nest_rel");
         case kPrismInsnLoadConstRecvRel: return rb_intern_const("load_const_recv_rel");
         case kPrismInsnLoadCVar: return rb_intern_const("load_cvar");
+        case kPrismInsnLoadFlipFlop: return rb_intern_const("load_flip_flop");
         case kPrismInsnLoadGVar: return rb_intern_const("load_gvar");
         case kPrismInsnLoadIVar: return rb_intern_const("load_ivar");
         case kPrismInsnLoadLastMatch: return rb_intern_const("load_last_match");
@@ -84,6 +85,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");
         case kPrismInsnStoreConstRecvRel: return rb_intern_const("store_const_recv_rel");
         case kPrismInsnStoreCVar: return rb_intern_const("store_cvar");
+        case kPrismInsnStoreFlipFlop: return rb_intern_const("store_flip_flop");
         case kPrismInsnStoreGVar: return rb_intern_const("store_gvar");
         case kPrismInsnStoreIVar: return rb_intern_const("store_ivar");
         case kPrismInsnStoreLVar: return rb_intern_const("store_lvar");
@@ -172,6 +174,9 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return rb_ary_entry(vgraphs, pm_insn_post_execution_graph_id(insn));
         case kPrismInsnExpandArray:
             return compile_freeze(rb_ary_new_from_args(3, UINT2NUM(pm_insn_expand_array_lefts(insn)), UINT2NUM(pm_insn_expand_array_rights(insn)), pm_insn_expand_array_rest(insn) ? Qtrue : Qfalse), freeze);
+        case kPrismInsnLoadFlipFlop:
+        case kPrismInsnStoreFlipFlop:
+            return UINT2NUM(pm_insn_flip_flop_index(insn));
         case kPrismInsnExtractLastMatchGroup:
             return UINT2NUM(pm_insn_extract_group_number(insn));
         case kPrismInsnLoadConstAbs:
@@ -408,8 +413,8 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         uint32_t scope_id = pm_graph_scope_id(graph);
         VALUE vscope = scope_id == graph_id ? Qnil : rb_ary_entry(vgraphs, scope_id);
-        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues, vsignature };
-        VALUE vgraph = compile_freeze(rb_class_new_instance(8, vgraph_argv, rb_cPrismCompileGraph), freeze);
+        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues, UINT2NUM(pm_graph_nflip_flops(graph)), vsignature };
+        VALUE vgraph = compile_freeze(rb_class_new_instance(9, vgraph_argv, rb_cPrismCompileGraph), freeze);
         rb_ary_push(vgraphs, vgraph);
     }
     compile_freeze(vgraphs, freeze);

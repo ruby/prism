@@ -25,6 +25,7 @@
 #define PM_CONSTANT_ID_ASET (pm_constant_id_t) -6
 #define PM_CONSTANT_ID_LENGTH (pm_constant_id_t) -7
 #define PM_CONSTANT_ID_EQUAL (pm_constant_id_t) -8
+#define PM_CONSTANT_ID_LINE_NUMBER (pm_constant_id_t) -9
 
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
@@ -34,6 +35,7 @@ static const pm_constant_t it_constant = { .start = (const uint8_t *) "it", .len
 static const pm_constant_t aset_constant = { .start = (const uint8_t *) "[]=", .length = 3 };
 static const pm_constant_t length_constant = { .start = (const uint8_t *) "length", .length = 6 };
 static const pm_constant_t equal_constant = { .start = (const uint8_t *) "==", .length = 2 };
+static const pm_constant_t line_number_constant = { .start = (const uint8_t *) "$.", .length = 2 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
@@ -46,6 +48,7 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
         case PM_CONSTANT_ID_ASET:       return &aset_constant;
         case PM_CONSTANT_ID_LENGTH:     return &length_constant;
         case PM_CONSTANT_ID_EQUAL:      return &equal_constant;
+        case PM_CONSTANT_ID_LINE_NUMBER: return &line_number_constant;
         default:                        return pm_parser_constant(parser, constant_id);
     }
 }
@@ -264,6 +267,11 @@ pm_graph_local_id(const PrismGraph *graph, uint32_t local_idx) {
 }
 
 uint32_t
+pm_graph_nflip_flops(const PrismGraph *graph) {
+    return graph->nflip_flops;
+}
+
+uint32_t
 pm_graph_nvalues(const PrismGraph *graph) {
     return graph->value_id;
 }
@@ -460,6 +468,11 @@ pm_insn_constant_path(const PrismInsn *insn) {
 }
 
 uint32_t
+pm_insn_flip_flop_index(const PrismInsn *insn) {
+    return insn->as.flip_flop.index;
+}
+
+uint32_t
 pm_insn_local_id(const PrismInsn *insn) {
     return insn->as.lvar.local_id;
 }
@@ -541,6 +554,16 @@ make_local(PrismBuilder *builder, pm_constant_id_t name_id) {
     uint32_t local_id = unit->nlocals++;
     unit->locals[local_id] = (PrismLocal) { .name_id = name_id, .graph_id = builder->state.graph_id };
     return local_id;
+}
+
+static uint32_t
+make_flip_flop(PrismBuilder *builder) {
+    uint32_t graph_id = PrismBuilder_graph(builder)->scope_id;
+    while (builder->unit->graphs[graph_id].kind == kPrismGraphBlock) {
+        uint32_t parent_id = builder->unit->graphs[graph_id].parent_id;
+        graph_id = builder->unit->graphs[parent_id].scope_id;
+    }
+    return builder->unit->graphs[graph_id].nflip_flops++;
 }
 
 static uint32_t
@@ -1373,6 +1396,15 @@ emit_load_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id
 }
 
 static uint32_t
+emit_load_flip_flop(PrismBuilder *builder, uint32_t node_id, uint32_t index) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnLoadFlipFlop, node_id, 1);
+    insn->as.flip_flop.index = index;
+    uint32_t value_id = make_value(builder);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    return value_id;
+}
+
+static uint32_t
 emit_load_gvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
     return emit_load_name(builder, node_id, kPrismInsnLoadGVar, name_id);
 }
@@ -1644,6 +1676,13 @@ emit_store_name(PrismBuilder *builder, uint32_t node_id, PrismInsnKind kind, pm_
 static void
 emit_store_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t value_id) {
     emit_store_name(builder, node_id, kPrismInsnStoreCVar, name_id, value_id);
+}
+
+static void
+emit_store_flip_flop(PrismBuilder *builder, uint32_t node_id, uint32_t index, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnStoreFlipFlop, node_id, 1);
+    insn->as.flip_flop.index = index;
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
 }
 
 static void
@@ -2404,6 +2443,16 @@ compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_
 /******************************************************************************/
 
 static uint32_t
+compile_flip_flop_bound(PrismBuilder *builder, const pm_node_t *node, uint32_t node_id) {
+    uint32_t value_id = compile_node_or_nil(builder, node, node_id);
+    if (node && PM_NODE_TYPE_P(node, PM_INTEGER_NODE)) {
+        uint32_t line_id = emit_load_gvar(builder, node->node_id, PM_CONSTANT_ID_LINE_NUMBER);
+        return emit_call(builder, node->node_id, PM_CONSTANT_ID_EQUAL, value_id, 1, &line_id, false);
+    }
+    return value_id;
+}
+
+static uint32_t
 compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
     pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
     pm_constant_id_t old_name;
@@ -2994,6 +3043,50 @@ compile_embedded_variable_node(PrismBuilder *builder, const pm_embedded_variable
 static uint32_t
 compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
     return emit_load_false(builder, node->base.node_id);
+}
+
+static uint32_t
+compile_flip_flop_node(PrismBuilder *builder, const pm_flip_flop_node_t *node) {
+    uint32_t index = make_flip_flop(builder);
+    uint32_t left_block_id = make_block(builder, 0);
+    uint32_t right_block_id = make_block(builder, 0);
+    uint32_t activate_block_id = make_block(builder, 0);
+    uint32_t deactivate_block_id = make_block(builder, 0);
+    uint32_t true_block_id = make_block(builder, 0);
+    uint32_t false_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+
+    uint32_t state_id = emit_load_flip_flop(builder, node->base.node_id, index);
+    emit_branchif(builder, node->base.node_id, state_id, right_block_id, 0, NULL, left_block_id, 0, NULL);
+
+    builder->state.block_id = left_block_id;
+    uint32_t left_id = compile_flip_flop_bound(builder, node->left, node->base.node_id);
+    emit_branchif(builder, node->base.node_id, left_id, activate_block_id, 0, NULL, false_block_id, 0, NULL);
+
+    builder->state.block_id = activate_block_id;
+    uint32_t active_id = emit_load_true(builder, node->base.node_id);
+    emit_store_flip_flop(builder, node->base.node_id, index, active_id);
+    emit_branch(builder, node->base.node_id, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END) ? true_block_id : right_block_id, 0, NULL);
+
+    builder->state.block_id = right_block_id;
+    uint32_t right_id = compile_flip_flop_bound(builder, node->right, node->base.node_id);
+    emit_branchif(builder, node->base.node_id, right_id, deactivate_block_id, 0, NULL, true_block_id, 0, NULL);
+
+    builder->state.block_id = deactivate_block_id;
+    uint32_t inactive_id = emit_load_false(builder, node->base.node_id);
+    emit_store_flip_flop(builder, node->base.node_id, index, inactive_id);
+    emit_branch(builder, node->base.node_id, true_block_id, 0, NULL);
+
+    builder->state.block_id = true_block_id;
+    uint32_t true_id = emit_load_true(builder, node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &true_id);
+
+    builder->state.block_id = false_block_id;
+    uint32_t false_id = emit_load_false(builder, node->base.node_id);
+    emit_branch(builder, node->base.node_id, join_block_id, 1, &false_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
 static uint32_t
@@ -3665,6 +3758,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_embedded_variable_node(builder, (const pm_embedded_variable_node_t *) node);
         case PM_FALSE_NODE:
             return compile_false_node(builder, (const pm_false_node_t *) node);
+        case PM_FLIP_FLOP_NODE:
+            return compile_flip_flop_node(builder, (const pm_flip_flop_node_t *) node);
         case PM_FLOAT_NODE:
             return compile_float_node(builder, (const pm_float_node_t *) node);
         case PM_FOR_NODE:

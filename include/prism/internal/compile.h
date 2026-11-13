@@ -32,6 +32,7 @@ struct PrismInsn {
         struct { uint32_t lefts; uint32_t rights; bool rest; } expand_array;
         struct { uint32_t number; } extract_group;
         struct { uint32_t local_id; } lvar;
+        struct { uint32_t index; } flip_flop;
         struct { pm_constant_id_t name_id; } name;
         struct { pm_constant_id_t name_id; bool keywords; } call;
         struct { uint32_t object_id; } object;
@@ -95,6 +96,7 @@ struct PrismGraph {
     uint32_t blocks_capa;
     uint32_t opnds_capa;
     uint32_t value_id;
+    uint32_t nflip_flops;
     uint32_t parent_id;
     uint32_t scope_id;
 };

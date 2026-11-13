@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, false, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -2727,6 +2727,76 @@ module Prism
       assert_raise(ArgumentError) { Prism.compile("1", raise_error: :bogus) }
     end
 
+    def test_flip_flop
+      [
+        [[2, 3, 4], "(1..6).select { |i| if (i == 2)..(i == 4); true; else; false; end }"],
+        [[2], "(1..6).select { |i| if (i == 2)..(i == 2); true; else; false; end }"],
+        [[2, 3, 4, 5, 6], "(1..6).select { |i| if (i == 2)...(i == 2); true; else; false; end }"],
+        [[1, 2, 1, 2], "[1, 2, 3, 1, 2, 3].select { |i| if (i == 1)..(i == 2); true; else; false; end }"],
+        [[2, 3, 4], "out = []; for i in [1, 2, 3, 4, 5]; if (i == 2)..(i == 4); out << i; end; end; out"],
+        [[2, 3, 4], "(1..4).select { |i| if (i == 2)..; true; else; false; end }"],
+        [[], "(1..4).select { |i| if ..(i == 2); true; else; false; end }"],
+        [["start", "middle", "stop"], "['skip', 'start', 'middle', 'stop', 'after'].select { |text| $_ = text; if /start/../stop/; true; else; false; end }"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_flip_flop_evaluation_order
+      { ".." => [[:left, 1], [:left, 2], [:right, 2], [:right, 3], [:left, 4]],
+        "..." => [[:left, 1], [:left, 2], [:right, 3], [:left, 4]] }.each do |operator, events|
+        source = "events = []; p = proc { |i| if (events << [:left, i]; i == 2)#{operator}(events << [:right, i]; i == 3); true; else; false; end }; result = [1, 2, 3, 4].map { |i| p.call(i) }; [result, events]"
+        assert_run([[false, true, true, false], events], source)
+      end
+    end
+
+    def test_flip_flop_scope
+      assert_run([true, true, false], <<~RUBY)
+        class CompileTestFlipFactory
+          def make
+            proc { |x| if x..false; true; else; false; end }
+          end
+        end
+        factory = CompileTestFlipFactory.new
+        a = factory.make
+        b = factory.make
+        [a.call(true), a.call(false), b.call(false)]
+      RUBY
+      assert_run([true, true], "factory = proc { proc { |x| if x..false; true; else; false; end } }; a = factory.call; b = factory.call; [a.call(true), b.call(false)]")
+      assert_run(false, "class CompileTestFlipRecursive; def value(start); if start..false; start ? value(false) : true; else; false; end; end; end; CompileTestFlipRecursive.new.value(true)")
+      assert_run([[true, false], [true, true]], "p = proc { |a, b| x = if a..false; true; else; false; end; y = if b..false; true; else; false; end; [x, y] }; [p.call(true, false), p.call(false, true)]")
+    end
+
+    def test_flip_flop_integer_bounds
+      previous_line = $.
+      assert_run([2, 3, 4], "out = []; [1, 2, 3, 4, 5].each { |i| $. = i; if 2..4; out << i; end }; out")
+    ensure
+      $. = previous_line
+    end
+
+    def test_flip_flop_state_after_exception
+      scope = Module.new
+      checker = Object.new
+      fail_check = true
+      checker.define_singleton_method(:check) { raise 'end failed' if fail_check; false }
+      scope.const_set(:Checker, checker)
+      graph = compile_unit("proc { |x| if x..Checker.check; true; else; false; end }").graphs[0]
+      block = vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      assert_raise_with_message(RuntimeError, "end failed") { block.call(true) }
+      fail_check = false
+      assert_equal(true, block.call(false))
+    end
+
+    def test_flip_flop_metadata
+      unit = Prism.compile("proc { if true..false; 1; end }; proc { if true...false; 1; end }", freeze: true).value
+      assert_equal([2, 0, 0], unit.graphs.map(&:nflip_flops))
+      unit.graphs.each { |graph| assert_empty(graph.locals) }
+      frame = Compile::VM::Frame.new(unit.graphs[0], self, [Object])
+      assert_equal([false, false], frame.flip_flops)
+      assert_include(unit.disasm, "flip_flops=2")
+      assert_include(unit.disasm, "load_flip_flop 0")
+      assert_include(unit.disasm, "load_flip_flop 1")
+      assert_include(unit.disasm, "store_flip_flop")
+    end
+
     def test_source_file
       assert_run("", "__FILE__")
       ["example.rb", "path/with spaces/example.rb", "例.rb"].each do |filepath|
@@ -2828,7 +2898,7 @@ module Prism
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
       signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, false, false)
-      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, signature)
+      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, 0, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
     end

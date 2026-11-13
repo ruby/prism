@@ -75,9 +75,9 @@ module Prism
     end
 
     class Graph
-      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues, :signature
+      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues, :nflip_flops, :signature
 
-      def initialize(id, kind, parent, scope, blocks, locals, nvalues, signature)
+      def initialize(id, kind, parent, scope, blocks, locals, nvalues, nflip_flops, signature)
         @id = id
         @kind = kind
         @parent = parent
@@ -85,6 +85,7 @@ module Prism
         @blocks = blocks
         @locals = locals
         @nvalues = nvalues
+        @nflip_flops = nflip_flops
         @signature = signature
       end
     end
@@ -111,6 +112,7 @@ module Prism
           context = [graph.kind]
           context << "parent=#{graph_ref(graph.parent)}" if graph.parent
           context << "scope=#{graph_ref(graph.scope)}"
+          context << "flip_flops=#{graph.nflip_flops}" if graph.nflip_flops > 0
           signature = graph.signature
           params = signature.requireds.map { |id| value(id) }
           signature.optionals.zip(signature.optional_specifieds) { |id, specified| params << "#{value(id)}?#{value(specified)}" }
@@ -303,6 +305,8 @@ module Prism
           "#{value(opnds[0])} = load_const_recv_rel(#{args.join(', ')})"
         when :load_cvar
           "#{value(insn.opnds[0])} = load_cvar #{insn.data}"
+        when :load_flip_flop
+          "#{value(insn.opnds[0])} = load_flip_flop #{insn.data}"
         when :load_gvar
           "#{value(insn.opnds[0])} = load_gvar #{insn.data}"
         when :load_ivar
@@ -365,6 +369,8 @@ module Prism
           "store_const_recv_rel(#{value(opnds[0])}, #{insn.data}, #{value(opnds[1])})"
         when :store_cvar
           "store_cvar #{insn.data}, #{value(insn.opnds[0])}"
+        when :store_flip_flop
+          "store_flip_flop #{insn.data}, #{value(insn.opnds[0])}"
         when :store_gvar
           "store_gvar #{insn.data}, #{value(insn.opnds[0])}"
         when :store_ivar
@@ -428,14 +434,15 @@ module Prism
       end
 
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :block
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :block
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), &block)
           @graph = graph
           @recv = recv
           @nest = nest
           @locals = locals
           @values = Array.new(graph.nvalues)
+          @flip_flops = flip_flops
           @block = block
         end
       end
@@ -454,6 +461,7 @@ module Prism
         nest = frame.nest
         locals = frame.locals
         values = frame.values
+        flip_flops = frame.flip_flops
         block = graph.blocks[0]
 
         signature = graph.signature
@@ -665,6 +673,8 @@ module Prism
               parent = cvar_parent(nest)
               check_cvar_parent(parent)
               values[insn.opnds[0]] = Module.instance_method(:class_variable_get).bind_call(parent, insn.data)
+            when :load_flip_flop
+              values[insn.opnds[0]] = flip_flops[insn.data]
             when :load_gvar
               values[insn.opnds[0]] = eval(insn.data.name)
             when :load_ivar
@@ -701,7 +711,7 @@ module Prism
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join.to_sym
             when :post_execution
               if @post_executions.add?(insn.data)
-                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals)) }
+                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops)) }
               end
             when :return
               return values[insn.opnds[0]]
@@ -718,6 +728,8 @@ module Prism
               Module.instance_method(:class_variable_set).bind_call(parent, insn.data, values[insn.opnds[0]])
             when :store_ivar
               recv.instance_variable_set(insn.data, values[insn.opnds[0]])
+            when :store_flip_flop
+              flip_flops[insn.data] = values[insn.opnds[0]]
             when :store_gvar
               eval("#{insn.data} = values[#{insn.opnds[0]}]")
             when :store_lvar
@@ -747,13 +759,14 @@ module Prism
       def new_block(graph, frame)
         vm = self
         locals = frame.locals
+        flip_flops = frame.flip_flops
         nest = frame.nest
         block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
           Proc.new do |*args, **kwargs|
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-            vm.run_frame(Frame.new(graph, self, nest, block_locals, &block), args, kwargs)
+            vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs)
           end
         end
       end
