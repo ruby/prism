@@ -82,6 +82,7 @@ typedef struct {
     uint32_t block_id;
     uint32_t region_id;
     uint32_t retry_block_id;
+    uint32_t break_block_id;
     uint32_t it_local_id;
     uint32_t rest_local_id;
     uint32_t keyword_rest_local_id;
@@ -1041,6 +1042,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signa
     builder->state = (PrismBuilderState) {
         .graph_id = graph_id,
         .retry_block_id = UINT32_MAX,
+        .break_block_id = UINT32_MAX,
         .it_local_id = locals == NULL ? state.it_local_id : UINT32_MAX,
         .rest_local_id = captures ? state.rest_local_id : UINT32_MAX,
         .keyword_rest_local_id = captures ? state.keyword_rest_local_id : UINT32_MAX,
@@ -1221,6 +1223,12 @@ emit_branchif(PrismBuilder *builder, uint32_t node_id, uint32_t predicate_id, ui
     if (else_opnds_len) {
         memcpy(graph->opnds + 1 + insn->opnds_off + then_opnds_len, else_opnd_ids, sizeof(uint32_t) * else_opnds_len);
     }
+}
+
+static void
+emit_break(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnBreak, node_id, 1);
+    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
 }
 
 static uint32_t
@@ -2565,18 +2573,21 @@ compile_logical_node(PrismBuilder *builder, const pm_node_t *node, const pm_node
 
 static uint32_t
 compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements) {
+    uint32_t break_block_id = builder->state.break_block_id;
     uint32_t predicate_block_id = make_block(builder, 0);
     uint32_t loop_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+    builder->state.break_block_id = join_block_id;
 
     emit_branch(builder, node->node_id, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
 
     builder->state.block_id = predicate_block_id;
     uint32_t predicate_id = compile_node(builder, predicate);
+    uint32_t nil_id = emit_load_nil(builder, node->node_id);
     if (PM_NODE_TYPE_P(node, PM_WHILE_NODE)) {
-        emit_branchif(builder, node->node_id, predicate_id, loop_block_id, 0, NULL, join_block_id, 0, NULL);
+        emit_branchif(builder, node->node_id, predicate_id, loop_block_id, 0, NULL, join_block_id, 1, &nil_id);
     } else {
-        emit_branchif(builder, node->node_id, predicate_id, join_block_id, 0, NULL, loop_block_id, 0, NULL);
+        emit_branchif(builder, node->node_id, predicate_id, join_block_id, 1, &nil_id, loop_block_id, 0, NULL);
     }
 
     builder->state.block_id = loop_block_id;
@@ -2586,7 +2597,8 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
     emit_branch(builder, node->node_id, predicate_block_id, 0, NULL);
 
     builder->state.block_id = join_block_id;
-    return emit_load_nil(builder, node->node_id);
+    builder->state.break_block_id = break_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
 static uint32_t
@@ -3069,6 +3081,33 @@ compile_arguments(PrismBuilder *builder, const pm_arguments_node_t *arguments, c
     return result;
 }
 
+static uint32_t
+compile_jump_arguments(PrismBuilder *builder, uint32_t node_id, const pm_arguments_node_t *arguments) {
+    if (!arguments) {
+        return emit_load_nil(builder, node_id);
+    } else if (arguments->arguments.size == 1 && !PM_NODE_TYPE_P(arguments->arguments.nodes[0], PM_SPLAT_NODE)) {
+        return compile_node(builder, arguments->arguments.nodes[0]);
+    } else {
+        PrismArguments values = compile_arguments(builder, arguments, NULL);
+        uint32_t array_id;
+
+        if (!values.splat) {
+            array_id = emit_new_array(builder, node_id, (uint32_t) values.size, values.ids);
+        } else {
+            uint32_t keyword_id = values.keywords ? values.ids[--values.size] : UINT32_MAX;
+            array_id = emit_new_array(builder, node_id, (uint32_t) values.size - 1, values.ids);
+            array_id = emit_concat_array(builder, node_id, array_id, values.ids[values.size - 1]);
+
+            if (keyword_id != UINT32_MAX) {
+                uint32_t keywords_id = emit_new_array(builder, node_id, 1, &keyword_id);
+                array_id = emit_concat_array(builder, node_id, array_id, keywords_id);
+            }
+        }
+
+        return array_id;
+    }
+}
+
 static void
 compile_index_write(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismArguments *arguments, uint32_t value_id, pm_node_flags_t flags) {
     uint32_t *write_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * (arguments->size + 1), PRISM_ALIGNOF(uint32_t));
@@ -3336,6 +3375,26 @@ compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_
 static uint32_t
 compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
     return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphBlock, node->parameters, node->body, &node->locals);
+}
+
+static uint32_t
+compile_break_node(PrismBuilder *builder, const pm_break_node_t *node) {
+    uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
+
+    if (builder->state.break_block_id != UINT32_MAX) {
+        emit_branch(builder, node->base.node_id, builder->state.break_block_id, 1, &value_id);
+    } else {
+        emit_trace_b_return(builder, node->base.node_id, value_id);
+
+        if (PrismBuilder_graph(builder)->kind == kPrismGraphLambda) {
+            emit_return(builder, node->base.node_id, value_id);
+        } else {
+            emit_break(builder, node->base.node_id, value_id);
+        }
+    }
+
+    builder->state.block_id = make_block(builder, 0);
+    return emit_load_nil(builder, node->base.node_id);
 }
 
 static uint32_t
@@ -4763,22 +4822,7 @@ compile_retry_node(PrismBuilder *builder, const pm_retry_node_t *node) {
 
 static uint32_t
 compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
-    uint32_t value_id;
-
-    if (!node->arguments) {
-        value_id = emit_load_nil(builder, node->base.node_id);
-    } else if (node->arguments->arguments.size == 1 && !PM_NODE_TYPE_P(node->arguments->arguments.nodes[0], PM_SPLAT_NODE)) {
-        value_id = compile_node(builder, node->arguments->arguments.nodes[0]);
-    } else {
-        uint32_t nargument_ids = (uint32_t) node->arguments->arguments.size;
-        uint32_t *argument_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nargument_ids, PRISM_ALIGNOF(uint32_t));
-
-        for (uint32_t idx = 0; idx < nargument_ids; ++idx) {
-            argument_ids[idx] = compile_node(builder, node->arguments->arguments.nodes[idx]);
-        }
-
-        value_id = emit_new_array(builder, node->base.node_id, nargument_ids, argument_ids);
-    }
+    uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
 
     if (builder->unit->graphs[builder->state.graph_id].kind == kPrismGraphDef) {
         emit_trace_return(builder, node->base.node_id, value_id);
@@ -4975,6 +5019,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_block_argument_node(builder, (const pm_block_argument_node_t *) node);
         case PM_BLOCK_NODE:
             return compile_block_node(builder, (const pm_block_node_t *) node);
+        case PM_BREAK_NODE:
+            return compile_break_node(builder, (const pm_break_node_t *) node);
         case PM_CALL_AND_WRITE_NODE:
             return compile_call_and_write_node(builder, (const pm_call_and_write_node_t *) node);
         case PM_CALL_NODE:
@@ -5174,7 +5220,6 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
             abort();
-        case PM_BREAK_NODE:
         case PM_NEXT_NODE:
         case PM_REDO_NODE:
         case PM_SHAREABLE_CONSTANT_NODE:
@@ -5240,6 +5285,7 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
             .graph_id = 0,
             .block_id = 0,
             .retry_block_id = UINT32_MAX,
+            .break_block_id = UINT32_MAX,
             .it_local_id = UINT32_MAX,
             .rest_local_id = UINT32_MAX,
             .keyword_rest_local_id = UINT32_MAX,

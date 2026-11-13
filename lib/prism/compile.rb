@@ -219,6 +219,8 @@ module Prism
           opnds = insn.opnds
           then_block, else_block, then_count = insn.data
           "branchif #{value(opnds[0])} #{block_ref(then_block)}#{values(opnds[1, then_count])} #{block_ref(else_block)}#{values(opnds[(then_count + 1)..])}"
+        when :break
+          "break#{values(insn.opnds)}"
         when :call
           opnds = insn.opnds
           data = insn.data
@@ -506,11 +508,24 @@ module Prism
         end
       end
 
+      class Block
+        attr_accessor :active
+
+        def initialize(callable)
+          @callable = callable
+          @active = false
+        end
+
+        def to_proc
+          @callable
+        end
+      end
+
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target
         attr_accessor :last_match
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, break_target = nil, &block)
           @graph = graph
           @recv = recv
           @nest = nest
@@ -518,6 +533,7 @@ module Prism
           @values = Array.new(graph.nvalues)
           @last_match = nil
           @flip_flops = flip_flops
+          @break_target = break_target
           @super_method = super_method
           @block = block
         end
@@ -688,6 +704,15 @@ module Prism
                 block.params.zip(insn.opnds[(then_block_nopnds + 1)..].map { |opnd| values[opnd] }) { |param, value| values[param] = value }
               end
               break
+            when :break
+              target = frame.break_target
+              unless target && target.active
+                error = LocalJumpError.new("break from proc-closure")
+                error.instance_variable_set(:@exit_value, values[insn.opnds[0]])
+                error.instance_variable_set(:@reason, :break)
+                raise error
+              end
+              throw target, values[insn.opnds[0]]
             when :call
               call = insn.data
               arguments = values.values_at(*insn.opnds[2..])
@@ -695,10 +720,12 @@ module Prism
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
               receiver = values[insn.opnds[1]]
-              if call.ignore_visibility || protected_call?(receiver, call.name, recv)
-                values[insn.opnds[0]] = BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
-              else
-                values[insn.opnds[0]] = Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+              values[insn.opnds[0]] = with_break_target(passed_block) do
+                if call.ignore_visibility || protected_call?(receiver, call.name, recv)
+                  BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                else
+                  Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                end
               end
             when :call_super
               raise NoMethodError, "super called outside of method" unless super_method
@@ -706,7 +733,10 @@ module Prism
               arguments = values.values_at(*insn.opnds[1...-1])
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
-              values[insn.opnds[0]] = BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, values[insn.opnds[-1]], &super_method)
+              passed_block = values[insn.opnds[-1]]
+              values[insn.opnds[0]] = with_break_target(passed_block) do
+                BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, passed_block, &super_method)
+              end
             when :coerce_array_to_a
               values[insn.opnds[0]] = [*values[insn.opnds[1]]]
             when :coerce_array_to_ary
@@ -923,6 +953,17 @@ module Prism
         frame.last_match = $~
       end
 
+      def with_break_target(block)
+        return yield unless Block === block
+
+        block.active = true
+        begin
+          catch(block) { yield }
+        ensure
+          block.active = false
+        end
+      end
+
       def protected_call?(receiver, name, caller)
         return false unless Kernel.instance_method(:protected_methods).bind_call(receiver).include?(name)
 
@@ -959,7 +1000,8 @@ module Prism
         nest = frame.nest
         block = frame.block
 
-        BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
+        target = nil
+        callable = BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
           if graph.kind == :lambda
             ->(*args, **kwargs, &passed_block) do
               block_locals = Locals.new(graph.locals, locals)
@@ -968,10 +1010,11 @@ module Prism
           else
             Proc.new do |*args, **kwargs, &passed_block|
               block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, target, &block), args, kwargs, passed_block)
             end
           end
         end
+        graph.kind == :lambda ? callable : (target = Block.new(callable))
       end
 
       ###

@@ -30,6 +30,7 @@ typedef enum {
     kPrismInsnAliasMethod,
     kPrismInsnBranch,
     kPrismInsnBranchIf,
+    kPrismInsnBreak,
     kPrismInsnCall,
     kPrismInsnCoerceArrayToA,
     kPrismInsnCoerceArrayToAry,

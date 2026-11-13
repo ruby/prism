@@ -41,6 +41,94 @@ module Prism
       end
     end
 
+    def test_break_loops
+      [
+        "while true; break; end",
+        "while true; break(); end",
+        "while true; break nil; end",
+        "while true; break false; end",
+        "while true; break 3; end",
+        "while true; break 1, 2; end",
+        "while true; break *[1, 2]; end",
+        "while true; break 1, *[2, 3], 4; end",
+        "while true; break *nil; end",
+        "until false; break 3; end",
+        "begin; break 3; end while false",
+        "begin; break 3; end until true",
+        "i = 0; while i < 2; i += 1; break i if i == 2; end",
+        "while true; inner = while true; break 2; end; break inner + 1; end",
+        "events = []; result = while true; events << 1; break(events << 2) if events.length == 1; events << 3; end; [result, events]",
+        "while true; begin; raise 'failure'; rescue; break 3; end; end",
+        "before = $!; result = while true; begin; raise 'failure'; rescue; break 3; end; end; [result, $!.equal?(before)]"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_break_blocks
+      [
+        "[1, 2].each { break }",
+        "[1, 2].each { break 3 }",
+        "[1, 2].map { break 1, 2 }",
+        "[1, 2].map { break 1, *[2, 3] }",
+        "events = []; result = [1, 2].each { |i| events << i; break i if i == 2 }; [result, events]",
+        "[1, 2].map { [3, 4].each { break 5 }; 6 }",
+        "[1, 2].map { result = while true; break 3; end; result + 1 }",
+        "while true; result = [1, 2].each { break 3 }; break result + 1; end",
+        "[1].each { begin; raise 'failure'; rescue; break 3; end }",
+        "[1].each { begin; break 3; rescue Exception; 4; end }",
+        "for i in [1, 2]; break i; end",
+        "for i in [1, 2]; for j in [3, 4]; break j; end; break i; end",
+        "-> { break 3 }.call",
+        "-> { inner = while true; break 3; end; inner + 1 }.call"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_break_forwarded_block
+      assert_run([3, 4, 5], <<~RUBY)
+        class CompileTestBreakForwarding
+          def invoke
+            yield
+            :unreachable
+          end
+
+          def forward(&block)
+            invoke(&block)
+            :unreachable
+          end
+
+          def call_block(&block)
+            block.call
+            :unreachable
+          end
+        end
+        object = CompileTestBreakForwarding.new
+        [object.invoke { break 3 }, object.forward { break 4 }, object.call_block { break 5 }]
+      RUBY
+    end
+
+    def test_break_super_block
+      assert_run([3, :after], <<~RUBY)
+        class CompileTestBreakSuperParent
+          def run
+            yield
+            :unreachable
+          end
+        end
+        class CompileTestBreakSuperChild < CompileTestBreakSuperParent
+          def run
+            [super { break 3 }, :after]
+          end
+        end
+        CompileTestBreakSuperChild.new.run
+      RUBY
+    end
+
+    def test_break_escaped_block
+      assert_run_raises(LocalJumpError, "proc { break 3 }.call", "break from proc-closure")
+      assert_run(:handled, "begin; proc { break 3 }.call; rescue LocalJumpError; :handled; end")
+      assert_run(true, "proc { break 3 }.instance_of?(Proc)")
+      assert_run([:break, 3], "begin; proc { break 3 }.call; rescue LocalJumpError => e; [e.reason, e.exit_value]; end")
+    end
+
     def test_blocks_without_parameters
       [
         [3, "a = 0; 3.times { a += 1 }; a"],
