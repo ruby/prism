@@ -137,8 +137,8 @@ module Prism
       assert_equal(compile_unit("1 + 2").disasm, stdout)
     end
 
-    def test_coerce_array_instruction
-      insns = [Compile::Insn.new(:coerce_array, 0, [1, 0], nil), Compile::Insn.new(:return, 0, [1], nil)]
+    def test_coerce_array_to_ary_instruction
+      insns = [Compile::Insn.new(:coerce_array_to_ary, 0, [1, 0], nil), Compile::Insn.new(:return, 0, [1], nil)]
       array = [1, 2]
       assert_same(array, run_instructions(insns, [array], 2))
       assert_equal([nil], run_instructions(insns, [nil], 2))
@@ -318,8 +318,8 @@ module Prism
       assert_equal([2], graph.signature.posts)
       assert_equal([0, 1, 2], graph.blocks[0].params)
       assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :expand_array })
-      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :coerce_array })
-      assert_include(unit.disasm, "coerce_array(%0)")
+      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :coerce_array_to_ary })
+      assert_include(unit.disasm, "coerce_array_to_ary(%0)")
       assert_match(/expand_array %\d+, lefts=2, rights=0, rest=false/, unit.disasm)
     end
 
@@ -474,6 +474,270 @@ module Prism
         [[[0, 9, 10], []], "arrays"],
         [[{ x: 1, y: 3, z: 4 }, { x: 1 }], "hashes(x: 1)"]
       ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
+    end
+
+    def test_super
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestSuperBase
+          def value(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+          alias explicit value
+          alias empty value
+          alias no_block value
+          alias replacement value
+          alias explicit_block value
+          alias defaults value
+          alias posts value
+          alias destructured value
+          alias anonymous value
+          alias dots value
+          alias reassigned value
+          alias capture value
+          alias iter value
+
+          def self.value(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+        end
+        class CompileTestSuperChild < CompileTestSuperBase
+          def value(a = 1, *rest, x: 2, **kwargs, &block)
+            a += 10
+            rest << 99
+            x += 10
+            kwargs[:extra] = 3
+            block = nil
+            super
+          end
+          alias renamed value
+
+          def explicit(a, *rest, **kwargs, &block)
+            super(a + 1, *rest, x: 2, **kwargs, &block)
+          end
+
+          def empty(...)
+            super()
+          end
+
+          def no_block(...)
+            super(&nil)
+          end
+
+          def replacement(...)
+            super { :replacement }
+          end
+
+          def explicit_block(...)
+            super(0) { :replacement }
+          end
+
+          def defaults(a = 1, b = 2, x: 3, y: 4)
+            super
+          end
+
+          def posts(a, *rest, b, c)
+            b = 8
+            super
+          end
+
+          def destructured((a, b), *rest, (c, d))
+            a = 9
+            c = 10
+            super
+          end
+
+          def anonymous(*, **, &)
+            super
+          end
+
+          def dots(...)
+            super(...)
+          end
+
+          def reassigned(*rest, **kwargs)
+            rest = 7
+            kwargs = nil
+            super
+          end
+
+          def capture(a, *rest, x:, **kwargs)
+            proc { |a| -> { super } }
+          end
+
+          def iter(a)
+            out = []
+            for a in [2, 3]
+              out << super
+            end
+            out
+          end
+
+          def missing
+            super
+          end
+
+          def self.value(...)
+            super
+          end
+        end
+      RUBY
+      receiver = "CompileTestSuperChild.new"
+      [
+        [[[11, 99], { x: 12, extra: 3 }, nil], "value"],
+        [[[13, 4, 99], { x: 15, y: 6, extra: 3 }, 7], "value(3, 4, x: 5, y: 6) { 7 }"],
+        [[[11, 99], { x: 12, extra: 3 }, 7], "renamed { 7 }"],
+        [[[2, 3, 4], { x: 5, y: 6 }, 7], "explicit(1, 3, 4, x: 5, y: 6) { 7 }"],
+        [[[], {}, 3], "empty(1, x: 2) { 3 }"],
+        [[[], {}, nil], "no_block(1, x: 2) { 3 }"],
+        [[[1], { x: 2 }, :replacement], "replacement(1, x: 2) { 3 }"],
+        [[[0], {}, :replacement], "explicit_block(1, x: 2) { 3 }"],
+        [[[1, 2], { x: 3, y: 4 }, nil], "defaults"],
+        [[[5, 2], { x: 6, y: 4 }, 7], "defaults(5, x: 6) { 7 }"],
+        [[[1, 2, 8, 4], {}, nil], "posts(1, 2, 3, 4)"],
+        [[[[1, 2], 3, [4, 5]], {}, nil], "destructured([1, 2], 3, [4, 5])"],
+        [[[1, 2], { x: 3 }, 4], "anonymous(1, 2, x: 3) { 4 }"],
+        [[[1, 2], { x: 3 }, 4], "dots(1, 2, x: 3) { 4 }"],
+        [[[7], {}, 4], "reassigned(1, x: 2) { 4 }"],
+        [[[1, 2], { x: 3, y: 4 }, 5], "capture(1, 2, x: 3, y: 4) { 5 }.call(99).call"],
+        [[[[2], {}, 4], [[3], {}, 4]], "iter(1) { 4 }"]
+      ].each { |expected, call| assert_run(expected, "#{receiver}.#{call}") }
+      assert_run([[1], { x: 2 }, 3], "CompileTestSuperChild.value(1, x: 2) { 3 }")
+      assert_run_raises(NoMethodError, "#{receiver}.missing")
+      assert_run_raises(NoMethodError, "super()", "super called outside of method")
+      assert_run_raises(NoMethodError, "super", "super called outside of method")
+    end
+
+    def test_super_parameter_local_layout
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestSuperLayoutBase
+          def value(*args, **kwargs, &block)
+            [args, kwargs, block && block.call]
+          end
+          alias repeated value
+        end
+        class CompileTestSuperLayoutChild < CompileTestSuperLayoutBase
+          def value(a, (b, c), d = 4, *rest, (e, f), opt: 5, req:, **kwargs, &block)
+            local = 100
+            b = 99
+            e = 88
+            d += 1
+            opt += 1
+            req += 1
+            kwargs[:extra] = 9
+            [super, local]
+          end
+
+          def repeated(_, _)
+            _ += 10
+            super
+          end
+        end
+      RUBY
+      assert_run([[[1, [2, 3], 5, 7, [8, 9]], { req: 11, opt: 6, z: 11, extra: 9 }, 12], 100], "CompileTestSuperLayoutChild.new.value(1, [2, 3], 4, 7, [8, 9], req: 10, z: 11) { 12 }")
+      assert_run([[11, 2], {}, nil], "CompileTestSuperLayoutChild.new.repeated(1, 2)")
+    end
+
+    def test_super_lookup
+      assert_run([:two, [:one, :base]], <<~RUBY)
+        class CompileTestSuperLookupBase
+          def value
+            :base
+          end
+        end
+        module CompileTestSuperLookupOne
+          def value
+            [:one, super]
+          end
+        end
+        module CompileTestSuperLookupTwo
+          def value
+            [:two, super()]
+          end
+        end
+        class CompileTestSuperLookupChild < CompileTestSuperLookupBase
+          include CompileTestSuperLookupOne
+          prepend CompileTestSuperLookupTwo
+        end
+        CompileTestSuperLookupChild.new.value
+      RUBY
+      assert_run([:missing, [1], { x: 2 }, 3], <<~RUBY)
+        class CompileTestSuperMissingBase
+          def method_missing(name, *args, **kwargs, &block)
+            [name, args, kwargs, block.call]
+          end
+        end
+        class CompileTestSuperMissingChild < CompileTestSuperMissingBase
+          def missing(...)
+            super
+          end
+        end
+        CompileTestSuperMissingChild.new.missing(1, x: 2) { 3 }
+      RUBY
+    end
+
+    def test_super_rebound_receiver
+      assert_run(2, <<~RUBY)
+        class CompileTestSuperReboundBase
+          def value
+            @value
+          end
+        end
+        class CompileTestSuperReboundChild < CompileTestSuperReboundBase
+          def initialize(value)
+            @value = value
+          end
+
+          def value
+            proc { super() }
+          end
+        end
+        first = CompileTestSuperReboundChild.new(1)
+        second = CompileTestSuperReboundChild.new(2)
+        second.instance_exec(&first.value)
+      RUBY
+    end
+
+    def test_super_argument_order
+      assert_run([[[1, 2, 3], { x: 4 }, 5], [:first, :splat, :keyword, :block]], <<~RUBY)
+        class CompileTestSuperOrderBase
+          def value(*args, **kwargs, &block)
+            [args, kwargs, block.call]
+          end
+        end
+        class CompileTestSuperOrderChild < CompileTestSuperOrderBase
+          def value(events)
+            result = super((events << :first; 1), *(events << :splat; [2, 3]), x: (events << :keyword; 4)) { events << :block; 5 }
+            [result, events]
+          end
+        end
+        CompileTestSuperOrderChild.new.value([])
+      RUBY
+    end
+
+    def test_super_signature_and_disasm
+      unit = compile_unit("class SuperMetadataParent; end; class SuperMetadataChild < SuperMetadataParent; def value(a = 1, *rest, x: 2, **kwargs); super; end; end")
+      graph = unit.graphs.find { |candidate| candidate.kind == :def }
+      kinds = graph.blocks.flat_map(&:insns).map(&:kind)
+      assert_include(kinds, :call_super)
+      assert_include(kinds, :load_block)
+      assert_include(kinds, :coerce_array_to_a)
+      assert_include(unit.disasm, " = call_super(")
+      assert_include(unit.disasm, "load_block")
+    end
+
+    def test_expression_splat_coercion
+      scope = Module.new
+      events = []
+      input = Object.new
+      input.define_singleton_method(:to_a) { events << :to_a; [1, 2] }
+      input.define_singleton_method(:to_ary) { raise "to_ary called" }
+      scope.const_set(:Input, input)
+      graph = compile_unit("[*Input, 3]").graphs[0]
+      assert_equal([1, 2, 3], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:to_a], events)
+      assert_run([1, 2, 3], "proc { |*args| args }.call(1, *[2, 3])")
+      assert_run([], "[*nil]")
+      assert_run([1], "[*1]")
     end
 
     def test_lambdas
@@ -1919,7 +2183,7 @@ module Prism
       assert_equal(0, graph.signature.rest)
       assert_equal(false, graph.signature.autosplat)
       assert_equal([0], graph.blocks[0].params)
-      assert_include(unit.disasm, "coerce_array(")
+      assert_include(unit.disasm, "coerce_array_to_ary(")
       assert_include(unit.disasm, "expand_array")
     end
 

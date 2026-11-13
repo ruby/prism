@@ -184,9 +184,12 @@ module Prism
           opnds = insn.opnds
           data = insn.data
           "#{value(opnds[0])} = call #{value(opnds[1])}.#{data.name}#{values(opnds[2..])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""}"
-        when :coerce_array
+        when :coerce_array_to_a
           opnds = insn.opnds
-          "#{value(opnds[0])} = coerce_array#{values(opnds[1..])}"
+          "#{value(opnds[0])} = coerce_array_to_a#{values(opnds[1..])}"
+        when :coerce_array_to_ary
+          opnds = insn.opnds
+          "#{value(opnds[0])} = coerce_array_to_ary#{values(opnds[1..])}"
         when :coerce_hash
           opnds = insn.opnds
           "#{value(opnds[0])} = coerce_hash#{values(opnds[1..])}"
@@ -311,6 +314,8 @@ module Prism
           path = insn.data.join("::")
           args = [*opnds[1..].map { |id| value(id) }, path]
           "#{value(opnds[0])} = load_const_recv_rel(#{args.join(', ')})"
+        when :load_block
+          "#{value(insn.opnds[0])} = load_block"
         when :load_cvar
           "#{value(insn.opnds[0])} = load_cvar #{insn.data}"
         when :load_flip_flop
@@ -385,6 +390,10 @@ module Prism
           "store_ivar #{insn.data}, #{value(insn.opnds[0])}"
         when :store_lvar
           "store_lvar #{local_ref(insn.data)}, #{value(insn.opnds[0])}"
+        when :call_super
+          opnds = insn.opnds
+          data = insn.data
+          "#{value(opnds[0])} = call_super#{values(opnds[1...-1])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""} &#{value(opnds[-1])}"
         when :trace_b_call
           "trace_b_call"
         when :trace_b_return
@@ -442,15 +451,16 @@ module Prism
       end
 
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :block
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, &block)
           @graph = graph
           @recv = recv
           @nest = nest
           @locals = locals
           @values = Array.new(graph.nvalues)
           @flip_flops = flip_flops
+          @super_method = super_method
           @block = block
         end
       end
@@ -470,6 +480,7 @@ module Prism
         locals = frame.locals
         values = frame.values
         flip_flops = frame.flip_flops
+        super_method = frame.super_method
         block = graph.blocks[0]
 
         signature = graph.signature
@@ -566,7 +577,9 @@ module Prism
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords, &values[insn.opnds[-1]])
-            when :coerce_array
+            when :coerce_array_to_a
+              values[insn.opnds[0]] = [*values[insn.opnds[1]]]
+            when :coerce_array_to_ary
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = Array.try_convert(value) || [value]
             when :coerce_hash
@@ -614,8 +627,7 @@ module Prism
               values[insn.opnds[0]] = run_frame(Frame.new(class_graph, klass, [klass, *nest].freeze))
             when :define_method
               name, method_graph = insn.data
-              vm = self
-              Module.instance_method(:define_method).bind_call(nest[0], name) { |*args, **kwargs, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args, kwargs) }
+              define_method(nest[0], name, method_graph, nest)
               Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
             when :define_module_abs
               name, module_graph = insn.data
@@ -637,8 +649,7 @@ module Prism
             when :define_singleton_method
               name, method_graph = insn.data
               klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
-              vm = self
-              Module.instance_method(:define_method).bind_call(klass, name) { |*args, **kwargs, &block| vm.run_frame(Frame.new(method_graph, self, nest, &block), args, kwargs) }
+              define_method(klass, name, method_graph, nest)
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
@@ -684,6 +695,8 @@ module Prism
               values[insn.opnds[0]] = rest.inject(const_get_nest_rel(nest, first)) { |scope, name| const_get_recv_rel(scope, name) }
             when :load_const_recv_rel
               values[insn.opnds[0]] = insn.data.inject(values[insn.opnds[1]]) { |scope, name| const_get_recv_rel(scope, name) }
+            when :load_block
+              values[insn.opnds[0]] = frame.block
             when :load_cvar
               parent = cvar_parent(nest)
               check_cvar_parent(parent)
@@ -726,7 +739,7 @@ module Prism
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join.to_sym
             when :post_execution
               if @post_executions.add?(insn.data)
-                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops)) }
+                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method)) }
               end
             when :return
               return values[insn.opnds[0]]
@@ -749,6 +762,13 @@ module Prism
               eval("#{insn.data} = values[#{insn.opnds[0]}]")
             when :store_lvar
               locals[insn.data.id] = values[insn.opnds[0]]
+            when :call_super
+              raise NoMethodError, "super called outside of method" unless super_method
+              call = insn.data
+              arguments = values.values_at(*insn.opnds[1...-1])
+              keywords = call.keywords ? arguments.pop : {}
+              arguments.concat(arguments.pop) if call.splat
+              values[insn.opnds[0]] = BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, values[insn.opnds[-1]], &super_method)
             when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
               # ignore
             when :undef_method
@@ -771,10 +791,21 @@ module Prism
 
       ###
 
+      def define_method(parent, name, graph, nest)
+        vm = self
+        Module.instance_method(:define_method).bind_call(parent, name) do |*args, **kwargs, &block|
+          super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
+          locals = Locals.new(graph.locals)
+          flip_flops = Array.new(graph.nflip_flops, false)
+          vm.run_frame(Frame.new(graph, self, nest, locals, flip_flops, super_method, &block), args, kwargs)
+        end
+      end
+
       def new_block(graph, frame)
         vm = self
         locals = frame.locals
         flip_flops = frame.flip_flops
+        super_method = frame.super_method
         nest = frame.nest
         block = frame.block
 
@@ -782,12 +813,12 @@ module Prism
           if graph.kind == :lambda
             ->(*args, **kwargs, &passed_block) do
               block_locals = Locals.new(graph.locals, locals)
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, &block), args, kwargs, passed_block)
             end
           else
             Proc.new do |*args, **kwargs, &passed_block|
               block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, &block), args, kwargs, passed_block)
             end
           end
         end
