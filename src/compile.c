@@ -2594,6 +2594,11 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
     uint32_t pattern_id = UINT32_MAX;
 
     switch (PM_NODE_TYPE(node)) {
+        case PM_ARRAY_PATTERN_NODE:
+        case PM_FIND_PATTERN_NODE:
+        case PM_HASH_PATTERN_NODE:
+            fprintf(stderr, "Unimplemented\n");
+            abort();
         case PM_PARENTHESES_NODE: {
             const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
             pattern_id = compile_pattern_match(builder, cast->body, value_id, matched_block_id, unmatched_block_id);
@@ -5169,7 +5174,15 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
             abort();
+        case PM_BREAK_NODE:
+        case PM_NEXT_NODE:
+        case PM_REDO_NODE:
+        case PM_SHAREABLE_CONSTANT_NODE:
+            fprintf(stderr, "Unimplemented\n");
+            abort();
         case PM_ALTERNATION_PATTERN_NODE:
+        case PM_ARGUMENTS_NODE:
+        case PM_ARRAY_PATTERN_NODE:
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
         case PM_BLOCK_LOCAL_VARIABLE_NODE:
@@ -5180,34 +5193,36 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_CLASS_VARIABLE_TARGET_NODE:
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:
+        case PM_ENSURE_NODE:
+        case PM_FIND_PATTERN_NODE:
         case PM_FORWARDING_ARGUMENTS_NODE:
         case PM_FORWARDING_PARAMETER_NODE:
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
+        case PM_HASH_PATTERN_NODE:
         case PM_IMPLICIT_REST_NODE:
-        case PM_INDEX_TARGET_NODE:
         case PM_IN_NODE:
+        case PM_INDEX_TARGET_NODE:
         case PM_INSTANCE_VARIABLE_TARGET_NODE:
-        case PM_LOCAL_VARIABLE_TARGET_NODE:
-        case PM_PINNED_EXPRESSION_NODE:
-        case PM_PINNED_VARIABLE_NODE:
-        case PM_PRE_EXECUTION_NODE:
         case PM_IT_PARAMETERS_NODE:
-        case PM_NUMBERED_PARAMETERS_NODE:
         case PM_KEYWORD_REST_PARAMETER_NODE:
+        case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_MULTI_TARGET_NODE:
         case PM_NO_BLOCK_PARAMETER_NODE:
         case PM_NO_KEYWORDS_PARAMETER_NODE:
+        case PM_NUMBERED_PARAMETERS_NODE:
         case PM_OPTIONAL_KEYWORD_PARAMETER_NODE:
         case PM_OPTIONAL_PARAMETER_NODE:
+        case PM_PARAMETERS_NODE:
+        case PM_PINNED_EXPRESSION_NODE:
+        case PM_PINNED_VARIABLE_NODE:
+        case PM_PRE_EXECUTION_NODE:
         case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
         case PM_RESCUE_NODE:
         case PM_REST_PARAMETER_NODE:
+        case PM_SCOPE_NODE:
         case PM_WHEN_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));
-            abort();
-        default:
-            fprintf(stderr, "Unhandled node type: %s\n", pm_node_type(node->type));
             abort();
     }
 }
