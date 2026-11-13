@@ -129,6 +129,57 @@ module Prism
       assert_run([:break, 3], "begin; proc { break 3 }.call; rescue LocalJumpError => e; [e.reason, e.exit_value]; end")
     end
 
+    def test_next_loops
+      [
+        "i = 0; while i < 3; i += 1; next; end",
+        "i = 0; events = []; while i < 3; i += 1; next if i < 2; events << i; end; events",
+        "i = 0; events = []; until i == 3; i += 1; next if i < 2; events << i; end; events",
+        "i = 0; events = []; begin; i += 1; next if i < 2; events << i; end while i < 3; events",
+        "i = 0; events = []; begin; i += 1; next if i < 2; events << i; end until i == 3; events",
+        "i = 0; events = []; while i < 2; i += 1; next(events << i); end; events",
+        "i = 0; events = []; while i < 2; i += 1; next 1, *(events << i; [2]); end; events",
+        "i = 0; events = []; while i < 2; i += 1; j = 0; while j < 2; j += 1; next if j == 1; events << j; end; next if i == 1; events << i; end; events",
+        "i = 0; events = []; while i < 2; i += 1; events << [1].map { next 3 }; events << 4; end; events",
+        "i = 0; before = $!; events = []; while i < 2; events << $!.equal?(before); i += 1; begin; raise 'failure'; rescue; next; end; end; events"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_next_blocks
+      [
+        "[1, 2].map { next }",
+        "[1, 2].map { next() }",
+        "[1, 2].map { next false }",
+        "[1, 2].map { |i| next i + 1 }",
+        "[1, 2].map { |i| next i if i == 1; i + 1 }",
+        "[1, 2].map { next 1, 2 }",
+        "[1, 2].map { next 1, *[2, 3] }",
+        "[1, 2].map { next *nil }",
+        "[1, 2].map { [3, 4].map { next 5 }; 6 }",
+        "proc { next 3 }.call",
+        "-> { next 3 }.call",
+        "-> { i = 0; while i < 2; i += 1; next; end; i + 1 }.call",
+        "[1, 2].map { |i| (raise 'failure') rescue (next i) }",
+        "before = $!; result = [1, 2].map { begin; raise 'failure'; rescue; next $!.message; end }; [result, $!.equal?(before)]",
+        "events = []; for i in [1, 2, 3]; next if i == 1; events << i; end; events",
+        "events = []; for i in [1, 2]; for j in [3, 4]; next if j == 3; events << j; end; next if i == 1; events << i; end; events"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_next_yielded_block
+      assert_run([2, 3, :after], <<~RUBY)
+        class CompileTestNextYield
+          def invoke
+            [yield(1), yield(2), :after]
+          end
+
+          def forward(&block)
+            invoke(&block)
+          end
+        end
+        CompileTestNextYield.new.forward { |i| next i + 1 }
+      RUBY
+    end
+
     def test_blocks_without_parameters
       [
         [3, "a = 0; 3.times { a += 1 }; a"],

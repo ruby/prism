@@ -83,6 +83,7 @@ typedef struct {
     uint32_t region_id;
     uint32_t retry_block_id;
     uint32_t break_block_id;
+    uint32_t next_block_id;
     uint32_t it_local_id;
     uint32_t rest_local_id;
     uint32_t keyword_rest_local_id;
@@ -1043,6 +1044,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signa
         .graph_id = graph_id,
         .retry_block_id = UINT32_MAX,
         .break_block_id = UINT32_MAX,
+        .next_block_id = UINT32_MAX,
         .it_local_id = locals == NULL ? state.it_local_id : UINT32_MAX,
         .rest_local_id = captures ? state.rest_local_id : UINT32_MAX,
         .keyword_rest_local_id = captures ? state.keyword_rest_local_id : UINT32_MAX,
@@ -2574,10 +2576,12 @@ compile_logical_node(PrismBuilder *builder, const pm_node_t *node, const pm_node
 static uint32_t
 compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *predicate, const pm_statements_node_t *statements) {
     uint32_t break_block_id = builder->state.break_block_id;
+    uint32_t next_block_id = builder->state.next_block_id;
     uint32_t predicate_block_id = make_block(builder, 0);
     uint32_t loop_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
     builder->state.break_block_id = join_block_id;
+    builder->state.next_block_id = predicate_block_id;
 
     emit_branch(builder, node->node_id, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
 
@@ -2598,6 +2602,7 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 
     builder->state.block_id = join_block_id;
     builder->state.break_block_id = break_block_id;
+    builder->state.next_block_id = next_block_id;
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
@@ -4677,6 +4682,20 @@ compile_multi_write_node(PrismBuilder *builder, const pm_multi_write_node_t *nod
 }
 
 static uint32_t
+compile_next_node(PrismBuilder *builder, const pm_next_node_t *node) {
+    uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
+    if (builder->state.next_block_id != UINT32_MAX) {
+        emit_branch(builder, node->base.node_id, builder->state.next_block_id, 0, NULL);
+    } else {
+        emit_trace_b_return(builder, node->base.node_id, value_id);
+        emit_return(builder, node->base.node_id, value_id);
+    }
+
+    builder->state.block_id = make_block(builder, 0);
+    return emit_load_nil(builder, node->base.node_id);
+}
+
+static uint32_t
 compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, object_id);
@@ -5164,6 +5183,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_module_node(builder, (const pm_module_node_t *) node);
         case PM_MULTI_WRITE_NODE:
             return compile_multi_write_node(builder, (const pm_multi_write_node_t *) node);
+        case PM_NEXT_NODE:
+            return compile_next_node(builder, (const pm_next_node_t *) node);
         case PM_NIL_NODE:
             return compile_nil_node(builder, (const pm_nil_node_t *) node);
         case PM_NUMBERED_REFERENCE_READ_NODE:
@@ -5225,7 +5246,6 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
             abort();
-        case PM_NEXT_NODE:
         case PM_REDO_NODE:
         case PM_SHAREABLE_CONSTANT_NODE:
             fprintf(stderr, "Unimplemented\n");
@@ -5291,6 +5311,7 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
             .block_id = 0,
             .retry_block_id = UINT32_MAX,
             .break_block_id = UINT32_MAX,
+            .next_block_id = UINT32_MAX,
             .it_local_id = UINT32_MAX,
             .rest_local_id = UINT32_MAX,
             .keyword_rest_local_id = UINT32_MAX,
