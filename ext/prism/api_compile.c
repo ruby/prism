@@ -15,6 +15,7 @@ static VALUE rb_cPrismCompileLocal;
 static VALUE rb_cPrismCompileInsn;
 static VALUE rb_cPrismCompileCallInfo;
 static VALUE rb_cPrismCompileBlock;
+static VALUE rb_cPrismCompileRegion;
 static VALUE rb_cPrismCompileGraph;
 static VALUE rb_cPrismCompileSignature;
 static VALUE rb_cPrismCompileUnit;
@@ -327,6 +328,38 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         uint32_t nblocks = pm_graph_nblocks(graph);
         VALUE vblocks = rb_ary_new_capa(nblocks);
+
+        uint32_t nregions = pm_graph_nregions(graph);
+        VALUE vregions = rb_ary_new_capa(nregions);
+
+        for (uint32_t region_id = 0; region_id < nregions; ++region_id) {
+            const PrismRegion *region = pm_graph_region(graph, region_id);
+
+            VALUE vkind;
+            switch (pm_region_kind(region)) {
+                case kPrismRegionDefault: vkind = ID2SYM(rb_intern_const("default")); break;
+                case kPrismRegionRescue: vkind = ID2SYM(rb_intern_const("rescue")); break;
+                case kPrismRegionEnsure: vkind = ID2SYM(rb_intern_const("ensure")); break;
+            }
+
+            uint32_t parent_id = pm_region_parent_id(region);
+            uint32_t handler_id = pm_region_handler_block_id(region);
+            assert(parent_id == UINT32_MAX || parent_id < region_id);
+
+            VALUE argv[] = {
+                UINT2NUM(region_id),
+                vkind,
+                parent_id == UINT32_MAX ? Qnil : rb_ary_entry(vregions, parent_id),
+                vblocks,
+                UINT2NUM(pm_region_entry_block_id(region)),
+                handler_id == UINT32_MAX ? Qnil : UINT2NUM(handler_id)
+            };
+
+            rb_ary_push(vregions, compile_freeze(rb_class_new_instance(6, argv, rb_cPrismCompileRegion), freeze));
+        }
+
+        compile_freeze(vregions, freeze);
+
         for (uint32_t block_id = 0; block_id < nblocks; ++block_id) {
             const PrismBlock *block = pm_graph_block(graph, block_id);
 
@@ -339,12 +372,17 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 uint32_t param = pm_block_param(block, param_idx);
                 rb_ary_push(vparams, UINT2NUM(param));
             }
+
             compile_freeze(vparams, freeze);
 
-            /* The instructions array is filled in once every graph and block
-             * exists, since instructions refer to them. It is frozen then. */
-            VALUE vblock_argv[] = { UINT2NUM(block_id), vinsns, vparams };
-            VALUE vblock = compile_freeze(rb_class_new_instance(3, vblock_argv, rb_cPrismCompileBlock), freeze);
+            VALUE vblock_argv[] = {
+                UINT2NUM(block_id),
+                vinsns,
+                vparams,
+                rb_ary_entry(vregions, pm_block_region_id(block))
+            };
+
+            VALUE vblock = compile_freeze(rb_class_new_instance(4, vblock_argv, rb_cPrismCompileBlock), freeze);
             rb_ary_push(vblocks, vblock);
         }
         compile_freeze(vblocks, freeze);
@@ -428,8 +466,21 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         uint32_t scope_id = pm_graph_scope_id(graph);
         VALUE vscope = scope_id == graph_id ? Qnil : rb_ary_entry(vgraphs, scope_id);
-        VALUE vgraph_argv[] = { UINT2NUM(graph_id), vgraph_kind, vparent, vscope, vblocks, vlocals, vnvalues, UINT2NUM(pm_graph_nflip_flops(graph)), vsignature };
-        VALUE vgraph = compile_freeze(rb_class_new_instance(9, vgraph_argv, rb_cPrismCompileGraph), freeze);
+
+        VALUE vgraph_argv[] = {
+            UINT2NUM(graph_id),
+            vgraph_kind,
+            vparent,
+            vscope,
+            vblocks,
+            vregions,
+            vlocals,
+            vnvalues,
+            UINT2NUM(pm_graph_nflip_flops(graph)),
+            vsignature
+        };
+
+        VALUE vgraph = compile_freeze(rb_class_new_instance(10, vgraph_argv, rb_cPrismCompileGraph), freeze);
         rb_ary_push(vgraphs, vgraph);
     }
     compile_freeze(vgraphs, freeze);
@@ -490,6 +541,7 @@ Init_prism_api_compile(void) {
     rb_cPrismCompileLocal = rb_define_class_under(rb_cPrismCompile, "Local", rb_cObject);
     rb_cPrismCompileCallInfo = rb_define_class_under(rb_cPrismCompile, "CallInfo", rb_cObject);
     rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
+    rb_cPrismCompileRegion = rb_define_class_under(rb_cPrismCompile, "Region", rb_cObject);
     rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
     rb_cPrismCompileSignature = rb_define_class_under(rb_cPrismCompile, "Signature", rb_cObject);
     rb_cPrismCompileGraph = rb_define_class_under(rb_cPrismCompile, "Graph", rb_cObject);

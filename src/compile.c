@@ -79,6 +79,7 @@ typedef struct {
 typedef struct {
     uint32_t graph_id;
     uint32_t block_id;
+    uint32_t region_id;
     uint32_t it_local_id;
     uint32_t rest_local_id;
     uint32_t keyword_rest_local_id;
@@ -278,6 +279,42 @@ pm_signature_no_block(const PrismSignature *signature) {
 bool
 pm_signature_autosplat(const PrismSignature *signature) {
     return signature->autosplat;
+}
+
+uint32_t
+pm_graph_nregions(const PrismGraph *graph) {
+    return graph->nregions;
+}
+
+const PrismRegion *
+pm_graph_region(const PrismGraph *graph, uint32_t region_id) {
+    assert(region_id < graph->nregions);
+    return graph->regions + region_id;
+}
+
+PrismRegionKind
+pm_region_kind(const PrismRegion *region) {
+    return region->kind;
+}
+
+uint32_t
+pm_region_parent_id(const PrismRegion *region) {
+    return region->parent_id;
+}
+
+uint32_t
+pm_region_entry_block_id(const PrismRegion *region) {
+    return region->entry_block_id;
+}
+
+uint32_t
+pm_region_handler_block_id(const PrismRegion *region) {
+    return region->handler_block_id;
+}
+
+uint32_t
+pm_block_region_id(const PrismBlock *block) {
+    return block->region_id;
 }
 
 uint32_t
@@ -760,6 +797,25 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
 }
 
 static uint32_t
+make_region(PrismBuilder *builder, PrismRegionKind kind, uint32_t parent_id, uint32_t entry_block_id, uint32_t handler_block_id) {
+    PrismGraph *graph = PrismBuilder_graph(builder);
+    if (graph->nregions == graph->regions_capa) {
+        uint32_t next_capa = graph->regions_capa ? graph->regions_capa * 2 : 4;
+        graph->regions = pm_arena_realloc(builder->arena, graph->regions, sizeof(PrismRegion) * next_capa, sizeof(PrismRegion) * graph->regions_capa, PRISM_ALIGNOF(PrismRegion));
+        graph->regions_capa = next_capa;
+    }
+
+    uint32_t region_id = graph->nregions++;
+    graph->regions[region_id] = (PrismRegion) {
+        .kind = kind,
+        .parent_id = parent_id,
+        .entry_block_id = entry_block_id,
+        .handler_block_id = handler_block_id
+    };
+    return region_id;
+}
+
+static uint32_t
 make_block(PrismBuilder *builder, uint32_t nparams) {
     PrismGraph *graph = PrismBuilder_graph(builder);
 
@@ -780,7 +836,7 @@ make_block(PrismBuilder *builder, uint32_t nparams) {
     }
 
     uint32_t block_id = graph->nblocks++;
-    graph->blocks[block_id] = (PrismBlock) { .insns = NULL, .params = params, .ninsns = 0, .nparams = nparams, .insns_capa = 0 };
+    graph->blocks[block_id] = (PrismBlock) { .insns = NULL, .params = params, .ninsns = 0, .nparams = nparams, .insns_capa = 0, .region_id = builder->state.region_id };
     return block_id;
 }
 
@@ -955,7 +1011,9 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signa
         .locals = locals
     };
 
+    builder->state.region_id = make_region(builder, kPrismRegionDefault, UINT32_MAX, UINT32_MAX, UINT32_MAX);
     builder->state.block_id = make_entry_block(builder, signature);
+    PrismBuilder_graph(builder)->regions[builder->state.region_id].entry_block_id = builder->state.block_id;
 
     PrismGraph *graph = PrismBuilder_graph(builder);
     if (signature) graph->signature = *signature;

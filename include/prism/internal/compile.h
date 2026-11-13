@@ -41,12 +41,20 @@ struct PrismInsn {
     } as;
 };
 
+struct PrismRegion {
+    PrismRegionKind kind;
+    uint32_t parent_id;
+    uint32_t entry_block_id;
+    uint32_t handler_block_id;
+};
+
 struct PrismBlock {
     PrismInsn *insns;
     uint32_t *params;
     uint32_t ninsns;
     uint32_t nparams;
     uint32_t insns_capa;
+    uint32_t region_id;
 };
 
 struct PrismObject {
@@ -89,10 +97,13 @@ struct PrismSignature {
 struct PrismGraph {
     PrismSignature signature;
     PrismBlock *blocks;
+    PrismRegion *regions;
     uint32_t *opnds;
     uint32_t *local_ids;
     PrismGraphKind kind;
     uint32_t nblocks;
+    uint32_t nregions;
+    uint32_t regions_capa;
     uint32_t nopnds;
     uint32_t nlocal_ids;
     uint32_t blocks_capa;

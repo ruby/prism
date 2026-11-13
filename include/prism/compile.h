@@ -20,6 +20,7 @@ typedef struct PrismLocal PrismLocal;
 typedef struct PrismGraph PrismGraph;
 typedef struct PrismSignature PrismSignature;
 typedef struct PrismBlock PrismBlock;
+typedef struct PrismRegion PrismRegion;
 typedef struct PrismInsn PrismInsn;
 typedef struct PrismConstantPath PrismConstantPath;
 typedef struct PrismObject PrismObject;
@@ -110,7 +111,6 @@ typedef enum {
     kPrismInsnYield
 } PrismInsnKind;
 
-
 typedef enum {
     kPrismGraphBlock,
     kPrismGraphClass,
@@ -121,6 +121,12 @@ typedef enum {
     kPrismGraphProgram,
     kPrismGraphSingletonClass
 } PrismGraphKind;
+
+typedef enum {
+    kPrismRegionDefault,
+    kPrismRegionRescue,
+    kPrismRegionEnsure
+} PrismRegionKind;
 
 typedef enum {
     kPrismObjectArray,
@@ -172,6 +178,13 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_signature_block_id(const PrismSignature *sig
 PRISM_EXPORTED_FUNCTION bool pm_signature_no_keywords(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION bool pm_signature_no_block(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION bool pm_signature_autosplat(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nregions(const PrismGraph *graph);
+PRISM_EXPORTED_FUNCTION const PrismRegion * pm_graph_region(const PrismGraph *graph, uint32_t region_id);
+PRISM_EXPORTED_FUNCTION PrismRegionKind pm_region_kind(const PrismRegion *region);
+PRISM_EXPORTED_FUNCTION uint32_t pm_region_parent_id(const PrismRegion *region);
+PRISM_EXPORTED_FUNCTION uint32_t pm_region_entry_block_id(const PrismRegion *region);
+PRISM_EXPORTED_FUNCTION uint32_t pm_region_handler_block_id(const PrismRegion *region);
+PRISM_EXPORTED_FUNCTION uint32_t pm_block_region_id(const PrismBlock *block);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);
 PRISM_EXPORTED_FUNCTION const PrismBlock * pm_graph_block(const PrismGraph *graph, uint32_t block_id);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nlocals(const PrismGraph *graph);

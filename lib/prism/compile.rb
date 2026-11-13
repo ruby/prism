@@ -47,11 +47,33 @@ module Prism
       end
     end
 
-    class Block
-      attr_reader :id, :insns, :params
+    class Region
+      attr_reader :id, :kind, :parent
 
-      def initialize(id, insns, params)
+      def initialize(id, kind, parent, blocks, entry_id, handler_id)
         @id = id
+        @kind = kind
+        @parent = parent
+        @blocks = blocks
+        @entry_id = entry_id
+        @handler_id = handler_id
+      end
+
+      def entry
+        @blocks.fetch(@entry_id)
+      end
+
+      def handler
+        @blocks.fetch(@handler_id) if @handler_id
+      end
+    end
+
+    class Block
+      attr_reader :id, :insns, :params, :region
+
+      def initialize(id, insns, params, region)
+        @id = id
+        @region = region
         @insns = insns
         @params = params
       end
@@ -78,13 +100,14 @@ module Prism
     end
 
     class Graph
-      attr_reader :id, :kind, :parent, :scope, :blocks, :locals, :nvalues, :nflip_flops, :signature
+      attr_reader :id, :kind, :parent, :scope, :blocks, :regions, :locals, :nvalues, :nflip_flops, :signature
 
-      def initialize(id, kind, parent, scope, blocks, locals, nvalues, nflip_flops, signature)
+      def initialize(id, kind, parent, scope, blocks, regions, locals, nvalues, nflip_flops, signature)
         @id = id
         @kind = kind
         @parent = parent
         @scope = scope || self
+        @regions = regions
         @blocks = blocks
         @locals = locals
         @nvalues = nvalues
@@ -129,8 +152,16 @@ module Prism
           params << "&nil" if signature.no_block
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
+          graph.regions.each do |region|
+            context = [region.kind]
+            context << "parent=r#{region.parent.id}" if region.parent
+            context << "entry=#{block_ref(region.entry)}"
+            context << "handler=#{block_ref(region.handler)}" if region.handler
+            output << "  r#{region.id} (#{context.join(', ')}):\n"
+          end
+
           graph.blocks.each do |block|
-            output << "  #{block_ref(block)}#{values(block.params)}:\n"
+            output << "  #{block_ref(block)}#{values(block.params)}: [region=r#{block.region.id}]\n"
             block.insns.each do |insn|
               output << "    #{instruction(insn)}\n"
             end

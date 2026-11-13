@@ -83,9 +83,10 @@ module Prism
       unit = compile_unit("a = 1; a + 2")
       assert_equal(<<~TEXT, unit.disasm)
         g0 (program, scope=g0):
-          bb0:
+          r0 (default, entry=bb0):
+          bb0: [region=r0]
             branch bb1
-          bb1:
+          bb1: [region=r0]
             trace_line 1
             %0 = load_object(1)
             store_lvar v0, %0
@@ -100,11 +101,16 @@ module Prism
     def test_disasm_uses_ids
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
-      block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false))
+      blocks = []
+      region = Compile::Region.new(7, :default, nil, blocks, 0, nil)
+      block = Compile::Block.new(4, [insn], [], region)
+      blocks << block
+      graph = Compile::Graph.new(3, :program, nil, nil, blocks, [region], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
+      assert_include(output, "r7 (default, entry=bb4):")
+      assert_include(output, "[region=r7]")
       assert_include(output, "%0 = load_lvar v9")
     end
 
@@ -4465,6 +4471,23 @@ module Prism
       assert_equal 10, trace_line.data
     end
 
+    def test_compile_regions
+      unit = compile_unit("def region_example(x); if x; [1].map { 2 }; else; 3; end; end")
+      assert_operator(unit.graphs.length, :>, 1)
+      unit.graphs.each do |graph|
+        assert_equal(1, graph.regions.length)
+        region = graph.regions[0]
+        assert_equal(0, region.id)
+        assert_equal(:default, region.kind)
+        assert_nil(region.parent)
+        assert_nil(region.handler)
+        assert_same(graph.blocks[0], region.entry)
+        graph.blocks.each { |block| assert_same(region, block.region) }
+      end
+      assert_include(unit.disasm, "r0 (default, entry=bb0):")
+      assert_include(unit.disasm, "[region=r0]")
+    end
+
     def test_compile_freeze
       result = Prism.compile("class CompileTestFreeze; def a(b) = b; end; CompileTestFreeze.new.a('c')", freeze: true)
       assert_predicate result, :frozen?
@@ -4475,6 +4498,8 @@ module Prism
 
       unit.graphs.each do |graph|
         assert_predicate graph, :frozen?
+        assert_predicate graph.regions, :frozen?
+        graph.regions.each { |region| assert_predicate region, :frozen? }
         assert_predicate graph.blocks, :frozen?
         assert_predicate graph.signature, :frozen?
         assert_predicate graph.signature.requireds, :frozen?
@@ -4532,9 +4557,12 @@ module Prism
     private
 
     def run_instructions(insns, args, nvalues)
-      block = Compile::Block.new(0, insns, [0])
+      blocks = []
+      region = Compile::Region.new(0, :default, nil, blocks, 0, nil)
+      block = Compile::Block.new(0, insns, [0], region)
+      blocks << block
       signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false)
-      graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, 0, signature)
+      graph = Compile::Graph.new(0, :block, nil, nil, blocks, [region], [], nvalues, 0, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
     end
