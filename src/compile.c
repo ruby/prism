@@ -1926,6 +1926,33 @@ emit_raise_pattern_nomatch(PrismBuilder *builder, uint32_t node_id, uint32_t val
 }
 
 static void
+emit_reraise(PrismBuilder *builder, uint32_t node_id) {
+    make_insn(builder, kPrismInsnReraise, node_id, 0);
+}
+
+static uint32_t
+emit_rescue_match(PrismBuilder *builder, uint32_t node_id, uint32_t exception_id, uint32_t class_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnRescueMatch, node_id, 3);
+    uint32_t value_id = make_value(builder);
+    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    opnds[0] = value_id;
+    opnds[1] = exception_id;
+    opnds[2] = class_id;
+    return value_id;
+}
+
+static uint32_t
+emit_rescue_match_array(PrismBuilder *builder, uint32_t node_id, uint32_t exception_id, uint32_t class_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnRescueMatchArray, node_id, 3);
+    uint32_t value_id = make_value(builder);
+    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    opnds[0] = value_id;
+    opnds[1] = exception_id;
+    opnds[2] = class_id;
+    return value_id;
+}
+
+static void
 emit_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     PrismInsn *insn = make_insn(builder, kPrismInsnReturn, node_id, 1);
 
@@ -2039,6 +2066,11 @@ static void
 emit_trace_line(PrismBuilder *builder, uint32_t node_id, int32_t lineno) {
     PrismInsn *insn = make_insn(builder, kPrismInsnTraceLine, node_id, 0);
     insn->as.trace_line.lineno = lineno;
+}
+
+static void
+emit_trace_rescue(PrismBuilder *builder, uint32_t node_id) {
+    make_insn(builder, kPrismInsnTraceRescue, node_id, 0);
 }
 
 static void
@@ -3167,7 +3199,90 @@ compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_
 
 static uint32_t
 compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
-    return compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+    if (node->rescue_clause) {
+        uint32_t node_id = node->base.node_id;
+        uint32_t parent_id = builder->state.region_id;
+        uint32_t join_block_id = make_block(builder, 1);
+        uint32_t else_block_id = node->else_clause ? make_block(builder, 0) : UINT32_MAX;
+
+        uint32_t handler_region_id = make_region(builder, kPrismRegionDefault, parent_id, UINT32_MAX, UINT32_MAX);
+        builder->state.region_id = handler_region_id;
+
+        uint32_t handler_block_id = make_block(builder, 1);
+        PrismBuilder_graph(builder)->regions[handler_region_id].entry_block_id = handler_block_id;
+
+        uint32_t region_id = make_region(builder, kPrismRegionRescue, parent_id, UINT32_MAX, handler_block_id);
+        builder->state.region_id = region_id;
+
+        uint32_t body_block_id = make_block(builder, 0);
+        PrismBuilder_graph(builder)->regions[region_id].entry_block_id = body_block_id;
+        emit_branch(builder, node_id, body_block_id, 0, NULL);
+
+        builder->state.block_id = body_block_id;
+        uint32_t value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node_id);
+
+        if (node->else_clause) {
+            emit_branch(builder, node_id, else_block_id, 0, NULL);
+            builder->state.region_id = parent_id;
+            builder->state.block_id = else_block_id;
+            value_id = compile_node(builder, PM_NODE_UPCAST(node->else_clause));
+        }
+
+        emit_branch(builder, node_id, join_block_id, 1, &value_id);
+
+        builder->state.region_id = handler_region_id;
+        builder->state.block_id = handler_block_id;
+        uint32_t exception_id = PrismBuilder_graph(builder)->blocks[handler_block_id].params[0];
+
+        for (const pm_rescue_node_t *clause = node->rescue_clause; clause; clause = clause->subsequent) {
+            uint32_t matched_block_id = make_block(builder, 0);
+            uint32_t next_block_id = make_block(builder, 0);
+
+            if (clause->exceptions.size) {
+                for (size_t idx = 0; idx < clause->exceptions.size; ++idx) {
+                    const pm_node_t *exception = clause->exceptions.nodes[idx];
+                    uint32_t predicate_id;
+
+                    if (!PM_NODE_TYPE_P(exception, PM_SPLAT_NODE)) {
+                        uint32_t class_id = compile_node(builder, exception);
+                        predicate_id = emit_rescue_match(builder, exception->node_id, exception_id, class_id);
+                    } else {
+                        uint32_t class_id = compile_node(builder, ((const pm_splat_node_t *) exception)->expression);
+                        class_id = emit_coerce_array_to_a(builder, exception->node_id, class_id);
+                        predicate_id = emit_rescue_match_array(builder, exception->node_id, exception_id, class_id);
+                    }
+
+                    uint32_t subsequent_block_id = idx + 1 == clause->exceptions.size ? next_block_id : make_block(builder, 0);
+                    emit_branchif(builder, exception->node_id, predicate_id, matched_block_id, 0, NULL, subsequent_block_id, 0, NULL);
+                    builder->state.block_id = subsequent_block_id;
+                }
+            } else {
+                uint32_t class_id = emit_load_object(builder, clause->base.node_id, make_object(builder, kPrismObjectStandardError));
+                uint32_t predicate_id = emit_rescue_match(builder, clause->base.node_id, exception_id, class_id);
+                emit_branchif(builder, clause->base.node_id, predicate_id, matched_block_id, 0, NULL, next_block_id, 0, NULL);
+            }
+
+            builder->state.block_id = matched_block_id;
+            emit_trace_rescue(builder, clause->base.node_id);
+
+            if (clause->reference) {
+                compile_target_node(builder, clause->reference, exception_id, NULL);
+            }
+
+            uint32_t result_id = compile_node_or_nil(builder, PM_NODE_UPCAST(clause->statements), clause->base.node_id);
+            emit_branch(builder, clause->base.node_id, join_block_id, 1, &result_id);
+
+            builder->state.block_id = next_block_id;
+        }
+
+        emit_reraise(builder, node_id);
+        builder->state.region_id = parent_id;
+        builder->state.block_id = join_block_id;
+
+        return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    } else {
+        return compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node->base.node_id);
+    }
 }
 
 static uint32_t
@@ -4974,6 +5089,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_OPTIONAL_PARAMETER_NODE:
         case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
+        case PM_RESCUE_NODE:
         case PM_REST_PARAMETER_NODE:
         case PM_WHEN_NODE:
             fprintf(stderr, "Handled elsewhere: %s\n", pm_node_type(node->type));

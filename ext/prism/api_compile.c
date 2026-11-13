@@ -87,6 +87,9 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnRaisePatternGuard: return rb_intern_const("raise_pattern_guard");
         case kPrismInsnRaisePatternMismatch: return rb_intern_const("raise_pattern_mismatch");
         case kPrismInsnRaisePatternNomatch: return rb_intern_const("raise_pattern_nomatch");
+        case kPrismInsnReraise: return rb_intern_const("reraise");
+        case kPrismInsnRescueMatch: return rb_intern_const("rescue_match");
+        case kPrismInsnRescueMatchArray: return rb_intern_const("rescue_match_array");
         case kPrismInsnReturn: return rb_intern_const("return");
         case kPrismInsnStoreConstAbs: return rb_intern_const("store_const_abs");
         case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");
@@ -103,6 +106,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnTraceClass: return rb_intern_const("trace_class");
         case kPrismInsnTraceEnd: return rb_intern_const("trace_end");
         case kPrismInsnTraceLine: return rb_intern_const("trace_line");
+        case kPrismInsnTraceRescue: return rb_intern_const("trace_rescue");
         case kPrismInsnTraceReturn: return rb_intern_const("trace_return");
         case kPrismInsnYield: return rb_intern_const("yield");
         case kPrismInsnUndefMethod: return rb_intern_const("undef_method");
@@ -268,6 +272,9 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), (flags >> 2) & 7);
                 break;
             }
+            case kPrismObjectStandardError:
+                vobject = rb_eStandardError;
+                break;
             case kPrismObjectString: {
                 const pm_string_t *string = pm_object_string(object);
                 vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), encoding);

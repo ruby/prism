@@ -406,6 +406,14 @@ module Prism
           "raise_pattern_mismatch#{values(insn.opnds)}"
         when :raise_pattern_nomatch
           "raise_pattern_nomatch#{values(insn.opnds)}"
+        when :reraise
+          "reraise"
+        when :rescue_match
+          opnds = insn.opnds
+          "#{value(opnds[0])} = rescue_match#{values(opnds[1..])}"
+        when :rescue_match_array
+          opnds = insn.opnds
+          "#{value(opnds[0])} = rescue_match_array#{values(opnds[1..])}"
         when :return
           "return #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :store_const_abs
@@ -443,6 +451,8 @@ module Prism
           "trace_end"
         when :trace_line
           "trace_line #{insn.data}"
+        when :trace_rescue
+          "trace_rescue"
         when :trace_return
           "trace_return #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :yield
@@ -489,6 +499,7 @@ module Prism
 
       class Frame
         attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block
+        attr_accessor :last_match
 
         def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, &block)
           @graph = graph
@@ -496,9 +507,19 @@ module Prism
           @nest = nest
           @locals = locals
           @values = Array.new(graph.nvalues)
+          @last_match = nil
           @flip_flops = flip_flops
           @super_method = super_method
           @block = block
+        end
+      end
+
+      class ExecutionResult
+        attr_reader :block, :value
+
+        def initialize(block, value)
+          @block = block
+          @value = value
         end
       end
 
@@ -512,12 +533,7 @@ module Prism
 
       def run_frame(frame, args = [], kwargs = {}, passed_block = frame.block)
         graph = frame.graph
-        recv = frame.recv
-        nest = frame.nest
-        locals = frame.locals
         values = frame.values
-        flip_flops = frame.flip_flops
-        super_method = frame.super_method
         block = graph.blocks[0]
 
         signature = graph.signature
@@ -537,6 +553,7 @@ module Prism
 
         required = signature.requireds.length + signature.posts.length
         maximum = required + signature.optionals.length
+
         if graph.kind == :block
           args = args.take(maximum) if !signature.rest && args.length > maximum
         else
@@ -551,16 +568,22 @@ module Prism
           unless missing.empty?
             raise ArgumentError, "missing keyword#{missing.length == 1 ? '' : 's'}: #{missing.map(&:inspect).join(', ')}"
           end
+
           unknown = kwargs.keys - signature.required_keywords.keys - signature.optional_keywords.keys
           if !signature.keyword_rest && !unknown.empty?
             raise ArgumentError, "unknown keyword#{unknown.length == 1 ? '' : 's'}: #{unknown.map(&:inspect).join(', ')}"
           end
+
           if signature.keyword_rest
             values[signature.keyword_rest] = kwargs.reject do |name, _|
               signature.required_keywords.key?(name) || signature.optional_keywords.key?(name)
             end
           end
-          signature.required_keywords.each { |name, param| values[param] = kwargs.fetch(name) }
+
+          signature.required_keywords.each do |name, param|
+            values[param] = kwargs.fetch(name)
+          end
+
           signature.optional_keywords.each do |name, param|
             values[param] = kwargs[name]
             values[signature.optional_keyword_specifieds.fetch(name)] = kwargs.key?(name)
@@ -570,18 +593,72 @@ module Prism
         raise ArgumentError, "no block accepted" if signature.no_block && passed_block
 
         signature.requireds.zip(args) { |param, value| values[param] = value }
+
         if signature.rest || !signature.posts.empty? || !signature.optionals.empty?
           remaining = args.drop(signature.requireds.length)
           signature.posts.zip(remaining.last(signature.posts.length)) { |param, value| values[param] = value }
+
           middle = remaining.take([remaining.length - signature.posts.length, 0].max)
           signature.optionals.each_with_index do |param, idx|
             values[param] = middle[idx]
             values[signature.optional_specifieds[idx]] = idx < middle.length
           end
+
           values[signature.rest] = middle.drop(signature.optionals.length) if signature.rest
         end
 
+        run_region(frame, graph.regions[0], block).value
+      end
+
+      private
+
+      def run_region(frame, region, block)
+        run_blocks(frame, region, block)
+      rescue Exception => exception
+        if region.kind == :rescue
+          handler = region.handler
+          frame.values[handler.params[0]] = exception
+          run_blocks(frame, handler.region, handler)
+        else
+          raise
+        end
+      end
+
+      def run_blocks(frame, region, block)
+        graph = frame.graph
+        recv = frame.recv
+        nest = frame.nest
+        locals = frame.locals
+        values = frame.values
+        flip_flops = frame.flip_flops
+        super_method = frame.super_method
+        $~ = frame.last_match
+
         while true
+          unless block.region.equal?(region)
+            child = block.region
+            child = child.parent until child.nil? || child.parent.equal?(region)
+
+            if child
+              frame.last_match = $~
+              result = nil
+
+              begin
+                result = run_region(frame, child, block)
+              ensure
+                $~ = frame.last_match
+              end
+
+              if (block = result.block)
+                next
+              else
+                return result
+              end
+            else
+              return ExecutionResult.new(block, nil)
+            end
+          end
+
           block.insns.each do |insn|
             case insn.kind
             when :alias_gvar
@@ -614,6 +691,13 @@ module Prism
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
               values[insn.opnds[0]] = values[insn.opnds[1]].__send__(call.name, *arguments, **keywords, &values[insn.opnds[-1]])
+            when :call_super
+              raise NoMethodError, "super called outside of method" unless super_method
+              call = insn.data
+              arguments = values.values_at(*insn.opnds[1...-1])
+              keywords = call.keywords ? arguments.pop : {}
+              arguments.concat(arguments.pop) if call.splat
+              values[insn.opnds[0]] = BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, values[insn.opnds[-1]], &super_method)
             when :coerce_array_to_a
               values[insn.opnds[0]] = [*values[insn.opnds[1]]]
             when :coerce_array_to_ary
@@ -786,8 +870,15 @@ module Prism
               raise NoMatchingPatternError, "#{value.inspect}: #{detail}"
             when :raise_pattern_nomatch
               raise NoMatchingPatternError, values[insn.opnds[0]]
+            when :reraise
+              raise
+            when :rescue_match
+              values[insn.opnds[0]] = rescue_match(values[insn.opnds[1]], values[insn.opnds[2]])
+            when :rescue_match_array
+              exception = values[insn.opnds[1]]
+              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |klass| rescue_match(exception, klass) }
             when :return
-              return values[insn.opnds[0]]
+              return ExecutionResult.new(nil, values[insn.opnds[0]])
             when :store_const_abs
               Object.const_set(insn.data, values[insn.opnds[0]])
             when :store_const_nest_rel
@@ -807,14 +898,7 @@ module Prism
               eval("#{insn.data} = values[#{insn.opnds[0]}]")
             when :store_lvar
               locals[insn.data.id] = values[insn.opnds[0]]
-            when :call_super
-              raise NoMethodError, "super called outside of method" unless super_method
-              call = insn.data
-              arguments = values.values_at(*insn.opnds[1...-1])
-              keywords = call.keywords ? arguments.pop : {}
-              arguments.concat(arguments.pop) if call.splat
-              values[insn.opnds[0]] = BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, values[insn.opnds[-1]], &super_method)
-            when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_return
+            when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_rescue, :trace_return
               # ignore
             when :undef_method
               Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])
@@ -826,9 +910,14 @@ module Prism
             end
           end
         end
+      ensure
+        frame.last_match = $~
       end
 
-      private
+      def rescue_match(exception, klass)
+        raise TypeError, "class or module required for rescue clause" unless Module === klass
+        klass === exception
+      end
 
       def cvar_parent(nest)
         nest[0...-1].find { |scope| !Module.instance_method(:singleton_class?).bind_call(scope) }

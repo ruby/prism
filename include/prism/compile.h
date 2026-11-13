@@ -90,6 +90,9 @@ typedef enum {
     kPrismInsnRaisePatternGuard,
     kPrismInsnRaisePatternMismatch,
     kPrismInsnRaisePatternNomatch,
+    kPrismInsnReraise,
+    kPrismInsnRescueMatch,
+    kPrismInsnRescueMatchArray,
     kPrismInsnReturn,
     kPrismInsnStoreConstAbs,
     kPrismInsnStoreConstNestRel,
@@ -106,6 +109,7 @@ typedef enum {
     kPrismInsnTraceClass,
     kPrismInsnTraceEnd,
     kPrismInsnTraceLine,
+    kPrismInsnTraceRescue,
     kPrismInsnTraceReturn,
     kPrismInsnUndefMethod,
     kPrismInsnYield
@@ -139,6 +143,7 @@ typedef enum {
     kPrismObjectNil,
     kPrismObjectRational,
     kPrismObjectRegexp,
+    kPrismObjectStandardError,
     kPrismObjectString,
     kPrismObjectSymbol,
     kPrismObjectTrue

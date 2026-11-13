@@ -4488,6 +4488,136 @@ module Prism
       graph.blocks.each { |block| assert_same(graph.regions[0], block.region) }
     end
 
+    def test_begin_rescue
+      [
+        [1, "begin; 1; rescue; 2; end"],
+        [2, "begin; raise 'failure'; rescue; 2; end"],
+        [nil, "begin; raise 'failure'; rescue; end"],
+        [2, "begin; raise ArgumentError; rescue ArgumentError; 2; end"],
+        [3, "begin; raise TypeError; rescue ArgumentError; 2; rescue TypeError; 3; end"],
+        [3, "begin; raise TypeError; rescue ArgumentError, TypeError; 3; end"],
+        [3, "classes = [ArgumentError, TypeError]; begin; raise TypeError; rescue *classes; 3; end"],
+        [3, "begin; raise TypeError; rescue *[], TypeError; 3; end"],
+        [3, "begin; raise Exception; rescue Exception; 3; end"],
+        ["failure", "begin; raise 'failure'; rescue => e; e.message; end"],
+        ["failure", "begin; raise 'failure'; rescue => @rescue_error; @rescue_error.message; end"],
+        [2, "a = 1; begin; a = 2; raise 'failure'; rescue; a; end"],
+        [3, "1 + begin; raise 'failure'; rescue; 2; end"],
+        [3, "begin; raise 'failure'; rescue; if true; 3; else; 4; end; end"],
+        [3, "begin; if true; raise 'failure'; end; rescue; 3; end"],
+        [3, "begin; begin; raise ArgumentError; rescue TypeError; 2; end; rescue ArgumentError; 3; end"],
+        [3, "begin; begin; raise ArgumentError; rescue ArgumentError; raise TypeError; end; rescue TypeError; 3; end"],
+        [[2, 2], "a = []; i = 0; while i < 2; a << (begin; raise 'failure'; rescue; 2; end); i += 1; end; a"],
+        [[2, 2], "[1, 2].map { begin; raise 'failure'; rescue; 2; end }"],
+        [2, "f = -> { begin; raise 'failure'; rescue; return 2; end; 3 }; f.call"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_begin_rescue_else
+      [
+        [3, "begin; 1; rescue; 2; else; 3; end"],
+        [nil, "begin; 1; rescue; 2; else; end"],
+        [2, "begin; raise 'failure'; rescue; 2; else; 3; end"],
+        [3, "begin; begin; 1; rescue; 2; else; raise 'failure'; end; rescue; 3; end"],
+        [[:body, :else], "events = []; begin; events << :body; rescue; events << :rescue; else; events << :else; end; events"],
+        [[:rescue], "events = []; begin; raise 'failure'; rescue; events << :rescue; else; events << :else; end; events"]
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(RuntimeError, "begin; 1; rescue; 2; else; raise 'else'; end", "else")
+    end
+
+    def test_begin_rescue_exception_context
+      [
+        "begin; raise 'outer'; rescue => e; [$!.equal?(e), $!.message]; end",
+        "begin; raise 'outer'; rescue; a = $!; begin; raise 'inner'; rescue; b = $!.message; end; [b, $!.equal?(a)]; end",
+        "begin; raise 'outer'; rescue; a = $!; begin; 1; rescue; 2; else; b = $!.equal?(a); end; b; end",
+        "before = $!; begin; raise 'failure'; rescue; 1; end; $!.equal?(before)",
+        "begin; begin; raise 'failure'; rescue; raise; end; rescue => e; [e.message, e.cause]; end",
+        "begin; begin; raise 'original'; rescue; raise 'replacement'; end; rescue => e; [e.message, e.cause.message]; end",
+        "begin; raise 'outer'; rescue => e; f = -> { $!.equal?(e) }; f.call; end"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_begin_rescue_failure
+      assert_run_raises(ArgumentError, "begin; raise ArgumentError, 'unhandled'; rescue TypeError; 1; end", "unhandled")
+      assert_run_raises(Exception, "begin; raise Exception, 'unhandled'; rescue; 1; end", "unhandled")
+      assert_run_raises(TypeError, "begin; raise 'failure'; rescue 1; 2; end", "class or module required for rescue clause")
+      assert_run_raises(TypeError, "begin; raise 'failure'; rescue *[1]; 2; end", "class or module required for rescue clause")
+      assert_run_raises(RuntimeError, "begin; raise 'first'; rescue; raise 'second'; end", "second")
+    end
+
+    def test_begin_rescue_backreferences
+      [
+        "begin; /(a)/ =~ 'a'; rescue; end; $1",
+        "/(a)/ =~ 'a'; begin; $1; rescue; end",
+        "begin; /(a)/ =~ 'a'; raise 'failure'; rescue; $1; end",
+        "begin; raise 'failure'; rescue; /(a)/ =~ 'a'; end; $1",
+        "begin; /(a)/ =~ 'a'; rescue; else; $1; end",
+        "begin; raise 'outer'; rescue; /(a)/ =~ 'a'; begin; /(b)/ =~ 'b'; raise 'inner'; rescue; $1; end; end",
+        "begin; /(a)/ =~ 'a'; begin; /(b)/ =~ 'b'; raise 'inner'; rescue TypeError; end; rescue; $1; end"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_begin_rescue_matching
+      scope = Module.new
+      events = []
+      matcher = Module.new
+      matcher.define_singleton_method(:===) { |exception| events << exception.message; :matched }
+      scope.const_set(:Matcher, matcher)
+      source = "begin; raise 'failure'; rescue (Events << :first; TypeError), Matcher, (Events << :skipped; RuntimeError); :handled; end"
+      scope.const_set(:Events, events)
+      expected = scope.module_eval(source)
+      native_events = events.dup
+      events.clear
+      graph = compile_unit(source).graphs[0]
+      assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(native_events, events)
+
+      scope.const_set(:StandardError, Exception)
+      graph = compile_unit("begin; raise Exception, 'unhandled'; rescue; :handled; end").graphs[0]
+      assert_raise_with_message(Exception, "unhandled") do
+        vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      end
+    end
+
+    def test_begin_rescue_method_return
+      assert_run([1, 2], <<~RUBY)
+        class CompileTestRescueReturn
+          def from_body
+            begin
+              return 1
+            rescue
+              3
+            end
+          end
+
+          def from_handler
+            raise 'failure'
+          rescue
+            return 2
+          end
+        end
+        object = CompileTestRescueReturn.new
+        [object.from_body, object.from_handler]
+      RUBY
+    end
+
+    def test_begin_rescue_regions
+      unit = Prism.compile("begin; raise 'failure'; rescue => e; e.message; else; :success; end", freeze: true).value
+      graph = unit.graphs[0]
+      region = graph.regions.find { |candidate| candidate.kind == :rescue }
+      assert_same(graph.regions[0], region.parent)
+      assert_same(region, region.entry.region)
+      assert_same(region.parent, region.handler.region.parent)
+      assert_equal(:default, region.handler.region.kind)
+      assert_equal(1, region.handler.params.length)
+      assert_predicate(graph.regions, :frozen?)
+      graph.regions.each { |candidate| assert_predicate(candidate, :frozen?) }
+      assert_include(unit.disasm, "rescue_match(")
+      assert_include(unit.disasm, "trace_rescue")
+      assert_include(unit.disasm, "reraise")
+      assert_equal("failure", vm.run(unit))
+    end
+
     def test_compile_regions
       unit = compile_unit("def region_example(x); if x; [1].map { 2 }; else; 3; end; end")
       assert_operator(unit.graphs.length, :>, 1)
