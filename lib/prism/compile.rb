@@ -257,6 +257,11 @@ module Prism
           "#{value(insn.opnds[0])} = defined_cvar #{insn.data}"
         when :defined_gvar
           "#{value(insn.opnds[0])} = defined_gvar #{insn.data}"
+        when :expand_array
+          opnds = insn.opnds
+          lefts, rights, rest = insn.data
+          outputs = opnds[1..].map { |id| value(id) }
+          "#{outputs.empty? ? "" : "#{outputs.join(', ')} = "}expand_array #{value(opnds[0])}, lefts=#{lefts}, rights=#{rights}, rest=#{rest}"
         when :extract_last_match_group
           opnds = insn.opnds
           "#{value(opnds[0])} = extract_last_match_group #{value(opnds[1])}, group=#{insn.data}"
@@ -617,6 +622,20 @@ module Prism
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})", TOPLEVEL_BINDING).nil?
+            when :expand_array
+              lefts, rights, rest = insn.data
+              array = Array.instance_method(:to_a).bind_call(values[insn.opnds[0]])
+
+              leading = array.take(lefts)
+              leading.fill(nil, leading.length...lefts)
+
+              remaining = array.drop(lefts)
+              trailing = remaining.last(rights)
+              trailing.fill(nil, trailing.length...rights)
+
+              leading << remaining.take([remaining.length - rights, 0].max) if rest
+
+              insn.opnds[1..].zip(leading.concat(trailing)) { |opnd, element| values[opnd] = element }
             when :extract_last_match_group, :extract_last_match_named_group
               values[insn.opnds[0]] = values[insn.opnds[1]]&.[](insn.data)
             when :extract_last_match_match

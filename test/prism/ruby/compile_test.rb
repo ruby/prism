@@ -205,6 +205,67 @@ module Prism
       end
     end
 
+    def test_destructured_block_parameters
+      [
+        [[1, 2], "proc { |(a, b)| [a, b] }.call([1, 2])"],
+        [[1, nil], "proc { |(a, b)| [a, b] }.call(1, 2)"],
+        [[nil, nil], "proc { |(a, b)| [a, b] }.call"],
+        [[[1, 2], nil], "proc { |(a, b)| [a, b] }.call([[1, 2]])"],
+        [[1, 2, 3], "proc { |(a, b), c| [a, b, c] }.call([[1, 2], 3])"],
+        [[1, 2, 3], "proc { |(a, (b, c))| [a, b, c] }.call([1, [2, 3]])"],
+        [[1, [], 2, nil], "proc { |(a, *b, c, d)| [a, b, c, d] }.call([1, 2])"],
+        [[1, 4], "proc { |(a, *, b)| [a, b] }.call([1, 2, 3, 4])"],
+        [[1, 2], "proc { |(*a)| a }.call([1, 2])"],
+        [[1, 2, [3]], "proc { |(a, b), *rest| [a, b, rest] }.call([[1, 2], 3])"],
+        [[[1], 2, 3], "proc { |*rest, (a, b)| [rest, a, b] }.call(1, [2, 3])"],
+        [[[], 1, nil, nil, nil], "proc { |*rest, (a, b), (c, d)| [rest, a, b, c, d] }.call(1)"],
+        [[1, 2, 3], "proc { |(a, b), c = (a || 3), x:| [a, b, c] }.call([1, 2], x: 1)"],
+        [[1, 2], "proc { |(a, b)| proc { [a, b] }.call }.call([1, 2])"],
+        [[[1, [2, 3]], [1, 2]], "input = [1, 2]; result = proc { |(a, *b)| b << 3; [a, b] }.call(input); [result, input]"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_destructured_method_parameters
+      vm.run(compile_unit("class CompileTestDestructured; def value((a, b), *rest, (c, d)); [a, b, rest, c, d]; end; end"))
+      source = "CompileTestDestructured.new"
+      assert_run([1, 2, [], 3, 4], "#{source}.value([1, 2], [3, 4])")
+      assert_run([1, nil, [2], 3, nil], "#{source}.value(1, 2, 3)")
+      assert_run_raises(ArgumentError, "#{source}.value([1, 2])", "wrong number of arguments (given 1, expected 2+)")
+      assert_run([1, 2, 3], "class CompileTestDestructuredDefault; def value((a, b), c = (a || 3)); [a, b, c]; end; end; CompileTestDestructuredDefault.new.value([1, 2])")
+      assert_run([1, 2, [3], 4], "object = Object.new; def object.value((a, (b, *c, d))); [a, b, c, d]; end; object.value([1, [2, 3, 4]])")
+    end
+
+    def test_destructured_parameter_conversion
+      scope = Module.new
+      events = []
+      converted = [1, 2]
+      value = Object.new
+      value.define_singleton_method(:to_ary) { events << :convert; converted }
+      scope.const_set(:Value, value)
+      scope.const_set(:Events, events)
+      graph = compile_unit("proc { |(a, b), c = (Events << :default; 3), x:| Events << :body; [a, b, c] }.call(Value, x: 1)").graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_equal([1, 2, 3], vm.run_frame(frame.call))
+      assert_equal([:default, :convert, :body], events)
+      events.clear
+      converted = nil
+      assert_equal([value, nil, 3], vm.run_frame(frame.call))
+      converted = 1
+      assert_raise(TypeError) { vm.run_frame(frame.call) }
+    end
+
+    def test_destructured_parameters_metadata
+      unit = Prism.compile("proc { |(a, b), *rest, (c, d)| [a, b, c, d] }", freeze: true).value
+      graph = unit.graphs[1]
+      assert_equal([0], graph.signature.requireds)
+      assert_equal([2], graph.signature.posts)
+      assert_equal([0, 1, 2], graph.blocks[0].params)
+      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :expand_array })
+      assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :coerce_array })
+      assert_include(unit.disasm, "coerce_array(%0)")
+      assert_match(/expand_array %\d+, lefts=2, rights=0, rest=false/, unit.disasm)
+    end
+
     def test_keyword_rest_method_parameters
       vm.run(compile_unit("class CompileTestKeywordRest; def value(**kwargs); kwargs; end; end"))
       source = "CompileTestKeywordRest.new"

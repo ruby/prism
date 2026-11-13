@@ -50,6 +50,7 @@ typedef enum {
     kPrismInsnDefinedConstRecvRel,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
+    kPrismInsnExpandArray,
     kPrismInsnExtractLastMatchGroup,
     kPrismInsnExtractLastMatchNamedGroup,
     kPrismInsnExtractLastMatchMatch,
@@ -197,6 +198,9 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_singleton_class_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_new_block_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_post_execution_graph_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_lefts(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_rights(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION bool pm_insn_expand_array_rest(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_extract_group_number(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const PrismConstantPath * pm_insn_constant_path(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_local_id(const PrismInsn *insn);

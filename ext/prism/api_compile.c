@@ -47,6 +47,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefinedConstRecvRel: return rb_intern_const("defined_const_recv_rel");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
+        case kPrismInsnExpandArray: return rb_intern_const("expand_array");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
         case kPrismInsnExtractLastMatchNamedGroup: return rb_intern_const("extract_last_match_named_group");
         case kPrismInsnExtractLastMatchMatch: return rb_intern_const("extract_last_match_match");
@@ -168,6 +169,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return rb_ary_entry(vgraphs, pm_insn_new_block_graph_id(insn));
         case kPrismInsnPostExecution:
             return rb_ary_entry(vgraphs, pm_insn_post_execution_graph_id(insn));
+        case kPrismInsnExpandArray:
+            return compile_freeze(rb_ary_new_from_args(3, UINT2NUM(pm_insn_expand_array_lefts(insn)), UINT2NUM(pm_insn_expand_array_rights(insn)), pm_insn_expand_array_rest(insn) ? Qtrue : Qfalse), freeze);
         case kPrismInsnExtractLastMatchGroup:
             return UINT2NUM(pm_insn_extract_group_number(insn));
         case kPrismInsnLoadConstAbs:
