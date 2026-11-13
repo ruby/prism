@@ -159,6 +159,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_id(const PrismSig
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_specified_id(const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_signature_optional_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_keyword_rest_id(const PrismSignature *signature);
+PRISM_EXPORTED_FUNCTION uint32_t pm_signature_block_id(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION bool pm_signature_no_keywords(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION bool pm_signature_autosplat(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_graph_nblocks(const PrismGraph *graph);

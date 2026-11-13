@@ -234,6 +234,11 @@ pm_signature_keyword_rest_id(const PrismSignature *signature) {
     return signature->keyword_rest_id;
 }
 
+uint32_t
+pm_signature_block_id(const PrismSignature *signature) {
+    return signature->block_id;
+}
+
 bool
 pm_signature_no_keywords(const PrismSignature *signature) {
     return signature->no_keywords;
@@ -587,7 +592,8 @@ make_graph(PrismBuilder *builder, PrismGraphKind kind, uint32_t parent_id, uint3
     unit->graphs[graph_id] = (PrismGraph) {
         .signature = {
             .rest_id = UINT32_MAX,
-            .keyword_rest_id = UINT32_MAX
+            .keyword_rest_id = UINT32_MAX,
+            .block_id = UINT32_MAX
         },
         .kind = kind,
         .parent_id = parent_id,
@@ -613,6 +619,7 @@ make_signature(PrismBuilder *builder, uint32_t graph_id, PrismSignature *signatu
         .noptional_ids = noptional_ids,
         .rest_id = UINT32_MAX,
         .keyword_rest_id = UINT32_MAX,
+        .block_id = UINT32_MAX,
         .npost_ids = npost_ids
     };
 
@@ -704,6 +711,9 @@ compile_parameters_signature(PrismBuilder *builder, uint32_t graph_id, PrismSign
     if (parameters && parameters->keyword_rest && PM_NODE_TYPE_P(parameters->keyword_rest, PM_KEYWORD_REST_PARAMETER_NODE)) {
         signature->keyword_rest_id = builder->unit->graphs[graph_id].value_id++;
     }
+    if (parameters && parameters->block && PM_NODE_TYPE_P(parameters->block, PM_BLOCK_PARAMETER_NODE)) {
+        signature->block_id = builder->unit->graphs[graph_id].value_id++;
+    }
 }
 
 static uint32_t
@@ -745,7 +755,8 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
             signature->npost_ids +
             signature->nrequired_keyword_ids +
             2 * signature->noptional_keyword_ids +
-            (signature->keyword_rest_id != UINT32_MAX ? 1 : 0)
+            (signature->keyword_rest_id != UINT32_MAX ? 1 : 0) +
+            (signature->block_id != UINT32_MAX ? 1 : 0)
         );
 
         if (block->nparams) {
@@ -782,7 +793,11 @@ make_entry_block(PrismBuilder *builder, const PrismSignature *signature) {
             }
 
             if (signature->keyword_rest_id != UINT32_MAX) {
-                block->params[idx] = signature->keyword_rest_id;
+                block->params[idx++] = signature->keyword_rest_id;
+            }
+
+            if (signature->block_id != UINT32_MAX) {
+                block->params[idx] = signature->block_id;
             }
         }
     }
@@ -2376,6 +2391,14 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
         }
     }
 
+    if (parameters->block && PM_NODE_TYPE_P(parameters->block, PM_BLOCK_PARAMETER_NODE)) {
+        const pm_block_parameter_node_t *block = (const pm_block_parameter_node_t *) parameters->block;
+        if (block->name) {
+            uint32_t local_id = resolve_local(builder, block->name, 0);
+            emit_store_lvar(builder, block->base.node_id, local_id, signature->block_id);
+        }
+    }
+
     for (uint32_t idx = 0; idx < signature->noptional_ids; ++idx) {
         const pm_optional_parameter_node_t *optional = (const pm_optional_parameter_node_t *) parameters->optionals.nodes[idx];
         compile_parameter_default(builder, optional->base.node_id, optional->name, optional->value, signature->optional_ids[idx], signature->optional_specified_ids[idx]);
@@ -3920,6 +3943,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_ASSOC_NODE:
         case PM_ASSOC_SPLAT_NODE:
         case PM_BLOCK_LOCAL_VARIABLE_NODE:
+        case PM_BLOCK_PARAMETER_NODE:
         case PM_BLOCK_PARAMETERS_NODE:
         case PM_CALL_TARGET_NODE:
         case PM_CAPTURE_PATTERN_NODE:

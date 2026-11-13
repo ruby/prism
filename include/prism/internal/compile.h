@@ -76,6 +76,7 @@ struct PrismSignature {
     uint32_t nrequired_ids;
     uint32_t rest_id;
     uint32_t keyword_rest_id;
+    uint32_t block_id;
     uint32_t npost_ids;
     uint32_t noptional_ids;
     uint32_t nrequired_keyword_ids;

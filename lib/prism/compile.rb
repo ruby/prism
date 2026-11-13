@@ -57,9 +57,9 @@ module Prism
     end
 
     class Signature
-      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :keyword_rest, :no_keywords, :autosplat
+      attr_reader :requireds, :optionals, :optional_specifieds, :rest, :posts, :required_keywords, :optional_keywords, :optional_keyword_specifieds, :keyword_rest, :block, :no_keywords, :autosplat
 
-      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, keyword_rest, no_keywords, autosplat)
+      def initialize(requireds, optionals, optional_specifieds, rest, posts, required_keywords, optional_keywords, optional_keyword_specifieds, keyword_rest, block, no_keywords, autosplat)
         @requireds = requireds
         @optionals = optionals
         @optional_specifieds = optional_specifieds
@@ -69,6 +69,7 @@ module Prism
         @optional_keywords = optional_keywords
         @optional_keyword_specifieds = optional_keyword_specifieds
         @keyword_rest = keyword_rest
+        @block = block
         @no_keywords = no_keywords
         @autosplat = autosplat
       end
@@ -122,6 +123,7 @@ module Prism
           signature.optional_keywords.each { |name, id| params << "#{name}: #{value(id)}?#{value(signature.optional_keyword_specifieds.fetch(name))}" }
           params << "**#{value(signature.keyword_rest)}" if signature.keyword_rest
           params << "**nil" if signature.no_keywords
+          params << "&#{value(signature.block)}" if signature.block
           output << "#{graph_ref(graph)}#{params.empty? ? "" : "(#{params.join(', ')})"}#{signature.autosplat ? " [autosplat]" : ""} (#{context.join(', ')}):\n"
 
           graph.blocks.each do |block|
@@ -455,7 +457,7 @@ module Prism
         run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end
 
-      def run_frame(frame, args = [], kwargs = {})
+      def run_frame(frame, args = [], kwargs = {}, passed_block = frame.block)
         graph = frame.graph
         recv = frame.recv
         nest = frame.nest
@@ -465,6 +467,7 @@ module Prism
         block = graph.blocks[0]
 
         signature = graph.signature
+        values[signature.block] = passed_block if signature.block
 
         raise ArgumentError, "no keywords accepted" if signature.no_keywords && !kwargs.empty?
 
@@ -764,9 +767,9 @@ module Prism
         block = frame.block
 
         BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          Proc.new do |*args, **kwargs|
+          Proc.new do |*args, **kwargs, &passed_block|
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-            vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs)
+            vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, &block), args, kwargs, passed_block)
           end
         end
       end

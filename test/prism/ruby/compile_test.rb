@@ -101,7 +101,7 @@ module Prism
       local = Compile::Local.new(9, :a)
       insn = Compile::Insn.new(:load_lvar, 0, [0], local)
       block = Compile::Block.new(4, [insn], [])
-      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, false, false))
+      graph = Compile::Graph.new(3, :program, nil, nil, [block], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false))
       output = Compile::Unit.new([graph]).disasm
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
@@ -731,6 +731,62 @@ module Prism
       assert_equal([:store_lvar, :store_lvar, :trace_b_call], graph.blocks[0].insns.first(3).map(&:kind))
     end
 
+    def test_block_parameters
+      [
+        [nil, "proc { |&block| block }.call"],
+        [3, "proc { |&block| block.call }.call { 3 }"],
+        [true, "proc { |&block| block.is_a?(Proc) }.call { 3 }"],
+        [[1, 2, 3], "proc { |a, b = 2, &block| [a, b, block.call] }.call(1) { 3 }"],
+        [[1, 2, [3], 4, 5], "proc { |a, b = 2, *rest, c, &block| [a, b, rest, c, block.call] }.call(1, 2, 3, 4) { 5 }"],
+        [[1, 2, { z: 3 }, 4], "proc { |x:, y: 2, **rest, &block| [x, y, rest, block.call] }.call(x: 1, z: 3) { 4 }"],
+        [[1, 2], "proc { |a, &block| a }.call([1, 2])"],
+        [3, "proc { |&| 3 }.call { 4 }"],
+        [3, "proc { |&| 3 }.call"],
+        [3, "proc { |&block| proc { block.call } }.call { 3 }.call"],
+        [3, "proc { |&block| block = 3; block }.call { 4 }"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_method_block_parameters
+      vm.run(compile_unit(<<~RUBY))
+        class CompileTestBlockParameter
+          def capture(&block)
+            block
+          end
+
+          def mixed(a, b = 2, *rest, c, x:, y: 5, **keywords, &block)
+            [a, b, rest, c, x, y, keywords, block.call]
+          end
+
+          def make(&outer)
+            proc { |&inner| [inner.call, yield, outer.call] }
+          end
+
+          def anonymous(&)
+            yield
+          end
+        end
+      RUBY
+      assert_run(nil, "CompileTestBlockParameter.new.capture")
+      assert_run(3, "CompileTestBlockParameter.new.capture { 3 }.call")
+      assert_run([1, 2, [3], 4, 5, 5, { z: 6 }, 7], "CompileTestBlockParameter.new.mixed(1, 2, 3, 4, x: 5, z: 6) { 7 }")
+      assert_run([:inner, :outer, :outer], "CompileTestBlockParameter.new.make { :outer }.call { :inner }")
+      assert_run(3, "CompileTestBlockParameter.new.anonymous { 3 }")
+      object = vm.run(compile_unit("CompileTestBlockParameter.new"))
+      callback = proc { 3 }
+      assert_same(callback, object.capture(&callback))
+    end
+
+    def test_block_parameter_signature
+      unit = compile_unit("proc { |a, &block| block }")
+      graph = unit.graphs[1]
+      signature = graph.signature
+      assert_not_nil(signature.block)
+      assert_include(graph.blocks[0].params, signature.block)
+      assert_equal(false, signature.autosplat)
+      assert_include(unit.disasm, "&%#{signature.block}")
+    end
+
     def test_implicit_rest_block_parameters
       [
         [1, "proc { |a,| a }.call([1, 2])"],
@@ -1118,9 +1174,9 @@ module Prism
     def test_for_shares_locals_storage
       machine = Compile::VM.new
       frames = []
-      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}|
+      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}, passed_block = frame.block|
         frames << frame
-        super(frame, args, kwargs)
+        super(frame, args, kwargs, passed_block)
       end
       machine.run(compile_unit("for i in [1]; end; proc {}.call"))
       program, loop_frame, block_frame = frames
@@ -1488,9 +1544,9 @@ module Prism
     def test_compiled_methods_retain_vm
       machine = Compile::VM.new
       frames = []
-      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}|
+      machine.define_singleton_method(:run_frame) do |frame, args = [], kwargs = {}, passed_block = frame.block|
         frames << frame
-        super(frame, args, kwargs)
+        super(frame, args, kwargs, passed_block)
       end
 
       machine.run(compile_unit(<<~RUBY))
@@ -3063,7 +3119,7 @@ module Prism
 
     def run_instructions(insns, args, nvalues)
       block = Compile::Block.new(0, insns, [0])
-      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, false, false)
+      signature = Compile::Signature.new([0], [], [], nil, [], {}, {}, {}, nil, nil, false, false)
       graph = Compile::Graph.new(0, :block, nil, nil, [block], [], nvalues, 0, signature)
       frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
       vm.run_frame(frame, args)
