@@ -2222,7 +2222,7 @@ compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t val
         case PM_LOCAL_VARIABLE_READ_NODE:
         case PM_NIL_NODE:
         case PM_SOURCE_ENCODING_NODE:
-        /* case PM_SOURCE_FILE_NODE: */
+        case PM_SOURCE_FILE_NODE:
         case PM_SOURCE_LINE_NODE:
         case PM_RANGE_NODE:
         case PM_RATIONAL_NODE:
@@ -3492,6 +3492,15 @@ compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_nod
 }
 
 static uint32_t
+compile_source_file_node(PrismBuilder *builder, const pm_source_file_node_t *node) {
+    uint32_t object_id = make_object(builder, kPrismObjectString);
+    PrismObject *object = builder->unit->objects + object_id;
+    object->as.string.flags = node->base.flags;
+    object->as.string.unescaped = &node->filepath;
+    return emit_load_object(builder, node->base.node_id, object_id);
+}
+
+static uint32_t
 compile_source_line_node(PrismBuilder *builder, const pm_source_line_node_t *node) {
     uint32_t object_id = make_object(builder, kPrismObjectInteger);
     PrismObject *object = builder->unit->objects + object_id;
@@ -3750,6 +3759,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_singleton_class_node(builder, (const pm_singleton_class_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
             return compile_source_encoding_node(builder, (const pm_source_encoding_node_t *) node);
+        case PM_SOURCE_FILE_NODE:
+            return compile_source_file_node(builder, (const pm_source_file_node_t *) node);
         case PM_SOURCE_LINE_NODE:
             return compile_source_line_node(builder, (const pm_source_line_node_t *) node);
         case PM_STATEMENTS_NODE:

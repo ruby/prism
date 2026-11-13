@@ -2727,6 +2727,29 @@ module Prism
       assert_raise(ArgumentError) { Prism.compile("1", raise_error: :bogus) }
     end
 
+    def test_source_file
+      assert_run("", "__FILE__")
+      ["example.rb", "path/with spaces/example.rb", "例.rb"].each do |filepath|
+        unit = Prism.compile("__FILE__", filepath: filepath, raise_error: :plain).value
+        assert_equal(filepath, vm.run(unit))
+        assert_include(unit.disasm, filepath.inspect)
+      end
+      unit = Prism.compile("proc { __FILE__ }.call", filepath: "block.rb", raise_error: :plain).value
+      assert_equal("block.rb", vm.run(unit))
+      unit = Prism.compile("class CompileTestSourceFile; def value; __FILE__; end; end; CompileTestSourceFile.new.value", filepath: "method.rb", raise_error: :plain).value
+      assert_equal("method.rb", vm.run(unit))
+      unit = Prism.compile("[__FILE__, (__FILE__ in __FILE__)]", filepath: "pattern.rb", raise_error: :plain).value
+      assert_equal(["pattern.rb", true], vm.run(unit))
+    end
+
+    def test_source_file_from_file
+      Tempfile.create(["compile_source_file", ".rb"]) do |file|
+        file.write("__FILE__")
+        file.flush
+        assert_equal(file.path, vm.run(Prism.compile_file(file.path, raise_error: :plain).value))
+      end
+    end
+
     def test_compile_options
       assert_raise(ArgumentError) { Prism.compile("1", bogus: true) }
       assert_raise(TypeError) { Prism.compile(nil) }
