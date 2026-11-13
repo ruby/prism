@@ -4618,6 +4618,60 @@ module Prism
       assert_equal("failure", vm.run(unit))
     end
 
+    def test_retry
+      [
+        "attempts = 0; begin; attempts += 1; raise 'failure' if attempts < 3; attempts; rescue; retry; end",
+        "attempts = 0; begin; attempts += 1; raise TypeError if attempts < 2; rescue ArgumentError; 0; rescue TypeError; retry; end; attempts",
+        "attempts = 0; events = []; begin; attempts += 1; events << :body; raise if attempts < 2; rescue; events << :rescue; retry; else; events << :else; end; events",
+        "attempts = 0; begin; attempts += 1; raise if attempts < 2; 3; rescue; retry if attempts < 2; 4; end",
+        "attempts = 0; begin; attempts += 1; raise if attempts < 2; rescue; begin; raise 'inner'; rescue; 3; end; retry; end; attempts",
+        "attempts = 0; begin; attempts += 1; raise if attempts < 2; rescue; begin; retry; rescue TypeError; 3; end; end; attempts",
+        "outer = 0; inner = 0; begin; outer += 1; raise if outer < 2; rescue; begin; inner += 1; raise if inner < 2; rescue; retry; end; retry; end; [outer, inner]"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_retry_exception_context
+      [
+        "attempts = 0; events = []; before = $!; begin; events << $!.equal?(before); attempts += 1; raise 'failure' if attempts < 2; rescue; events << $!.message; retry; end; events << $!.equal?(before); events",
+        "begin; raise 'outer'; rescue; before = $!; attempts = 0; events = []; begin; events << $!.equal?(before); attempts += 1; raise 'inner' if attempts < 2; rescue; events << $!.message; retry; end; events << $!.equal?(before); events; end",
+        "attempts = 0; begin; attempts += 1; if attempts < 2; raise 'first'; else; raise 'last'; end; rescue => e; retry if attempts < 2; [e.message, e.cause]; end"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_retry_backreferences
+      source = "attempts = 0; events = []; /(a)/ =~ 'a'; begin; events << $1; attempts += 1; raise if attempts < 2; rescue; /(b)/ =~ 'b'; retry; end; events"
+      assert_run(eval(source), source)
+    end
+
+    def test_retry_method_parameters
+      assert_run([2, [:default]], <<~RUBY)
+        class CompileTestRetryParameters
+          def run(events, value = (events << :default; 0))
+            value += 1
+            raise 'failure' if value < 2
+            value
+          rescue
+            retry
+          end
+        end
+        events = []
+        result = CompileTestRetryParameters.new.run(events)
+        [result, events]
+      RUBY
+    end
+
+    def test_retry_regions
+      unit = compile_unit("attempts = 0; begin; attempts += 1; raise if attempts < 2; rescue; retry; end; attempts")
+      graph = unit.graphs[0]
+      region = graph.regions.find { |candidate| candidate.kind == :rescue }
+      retry_branch = graph.blocks.select { |block| block.region.equal?(region.handler.region) }.flat_map(&:insns).find do |insn|
+        insn.kind == :branch && insn.data.equal?(region.entry)
+      end
+      assert_not_nil(retry_branch)
+      assert_empty(retry_branch.opnds)
+      assert_equal(2, vm.run(unit))
+    end
+
     def test_compile_regions
       unit = compile_unit("def region_example(x); if x; [1].map { 2 }; else; 3; end; end")
       assert_operator(unit.graphs.length, :>, 1)

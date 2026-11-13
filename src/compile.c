@@ -80,6 +80,7 @@ typedef struct {
     uint32_t graph_id;
     uint32_t block_id;
     uint32_t region_id;
+    uint32_t retry_block_id;
     uint32_t it_local_id;
     uint32_t rest_local_id;
     uint32_t keyword_rest_local_id;
@@ -1003,6 +1004,7 @@ push_scope(PrismBuilder *builder, uint32_t graph_id, const PrismSignature *signa
 
     builder->state = (PrismBuilderState) {
         .graph_id = graph_id,
+        .retry_block_id = UINT32_MAX,
         .it_local_id = locals == NULL ? state.it_local_id : UINT32_MAX,
         .rest_local_id = captures ? state.rest_local_id : UINT32_MAX,
         .keyword_rest_local_id = captures ? state.keyword_rest_local_id : UINT32_MAX,
@@ -3201,7 +3203,9 @@ static uint32_t
 compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
     if (node->rescue_clause) {
         uint32_t node_id = node->base.node_id;
+        uint32_t retry_block_id = builder->state.retry_block_id;
         uint32_t parent_id = builder->state.region_id;
+
         uint32_t join_block_id = make_block(builder, 1);
         uint32_t else_block_id = node->else_clause ? make_block(builder, 0) : UINT32_MAX;
 
@@ -3232,6 +3236,7 @@ compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
 
         builder->state.region_id = handler_region_id;
         builder->state.block_id = handler_block_id;
+        builder->state.retry_block_id = body_block_id;
         uint32_t exception_id = PrismBuilder_graph(builder)->blocks[handler_block_id].params[0];
 
         for (const pm_rescue_node_t *clause = node->rescue_clause; clause; clause = clause->subsequent) {
@@ -3276,6 +3281,7 @@ compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
         }
 
         emit_reraise(builder, node_id);
+        builder->state.retry_block_id = retry_block_id;
         builder->state.region_id = parent_id;
         builder->state.block_id = join_block_id;
 
@@ -4649,6 +4655,13 @@ compile_regular_expression_node(PrismBuilder *builder, const pm_regular_expressi
 }
 
 static uint32_t
+compile_retry_node(PrismBuilder *builder, const pm_retry_node_t *node) {
+    emit_branch(builder, node->base.node_id, builder->state.retry_block_id, 0, NULL);
+    builder->state.block_id = make_block(builder, 0);
+    return emit_load_nil(builder, node->base.node_id);
+}
+
+static uint32_t
 compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
     uint32_t value_id;
 
@@ -5018,6 +5031,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_rational_node(builder, (const pm_rational_node_t *) node);
         case PM_REGULAR_EXPRESSION_NODE:
             return compile_regular_expression_node(builder, (const pm_regular_expression_node_t *) node);
+        case PM_RETRY_NODE:
+            return compile_retry_node(builder, (const pm_retry_node_t *) node);
         case PM_RETURN_NODE:
             return compile_return_node(builder, (const pm_return_node_t *) node);
         case PM_SELF_NODE:
@@ -5112,6 +5127,7 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
         .state = {
             .graph_id = 0,
             .block_id = 0,
+            .retry_block_id = UINT32_MAX,
             .it_local_id = UINT32_MAX,
             .rest_local_id = UINT32_MAX,
             .keyword_rest_local_id = UINT32_MAX,
