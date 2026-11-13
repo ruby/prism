@@ -2012,6 +2012,22 @@ compile_loop_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t 
 static void
 compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t matched_block_id, uint32_t unmatched_block_id) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_PARENTHESES_NODE: {
+            const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
+            compile_pattern_match(builder, cast->body, value_id, matched_block_id, unmatched_block_id);
+            break;
+        }
+        case PM_CAPTURE_PATTERN_NODE: {
+            const pm_capture_pattern_node_t *cast = (const pm_capture_pattern_node_t *) node;
+            uint32_t capture_block_id = make_block(builder, 0);
+            compile_pattern_match(builder, cast->value, value_id, capture_block_id, unmatched_block_id);
+
+            builder->state.block_id = capture_block_id;
+            uint32_t local_id = resolve_local(builder, cast->target->name, cast->target->depth);
+            emit_store_lvar(builder, cast->target->base.node_id, local_id, value_id);
+            emit_branch(builder, node->node_id, matched_block_id, 0, NULL);
+            break;
+        }
         case PM_PINNED_EXPRESSION_NODE: {
             const pm_pinned_expression_node_t *cast = (const pm_pinned_expression_node_t *) node;
             uint32_t pattern_id = compile_node(builder, cast->expression);
@@ -3506,6 +3522,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_BLOCK_LOCAL_VARIABLE_NODE:
         case PM_BLOCK_PARAMETERS_NODE:
         case PM_CALL_TARGET_NODE:
+        case PM_CAPTURE_PATTERN_NODE:
         case PM_CLASS_VARIABLE_TARGET_NODE:
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:

@@ -1282,6 +1282,35 @@ module Prism
       RUBY
     end
 
+    def test_capture_pattern
+      [
+        [[true, 1], "matched = (1 in Integer => a); [matched, a]"],
+        [[false, nil], "matched = (1 in String => a); [matched, a]"],
+        [[false, 2], "a = 2; matched = (1 in String => a); [matched, a]"],
+        [[true, nil], "matched = (nil in nil => a); [matched, a]"],
+        [[true, 1, 1], "matched = (1 in (Integer => a) => b); [matched, a, b]"],
+        [[false, 2, 3], "a = 2; b = 3; matched = (1 in (String => a) => b); [matched, a, b]"],
+        [[true, 1], "matched = (1 in (String | Integer) => a); [matched, a]"],
+        [1, "a = 0; proc { 1 in Integer => a }.call; a"],
+        [2, "for i in [1, 2]; i in Integer => a; end; a"],
+        [[true, 1, [:value, :pattern]], "events = []; matched = ((events << :value; 1) in ^((events << :pattern; Integer)) => a); [matched, a, events]"],
+        [[true, 2], "class CompileTestCapturePattern; def value(x); matched = (x in Integer => a); [matched, a]; end; end; CompileTestCapturePattern.new.value(2)"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_capture_pattern_case_equality
+      scope = Module.new
+      value = Object.new
+      calls = []
+      pattern = Object.new
+      pattern.define_singleton_method(:===) { |candidate| calls << candidate; :matched }
+      scope.const_set(:Value, value)
+      scope.const_set(:Pattern, pattern)
+      graph = compile_unit("Value in Pattern => a; a").graphs[0]
+      assert_same(value, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([value], calls)
+    end
+
     def test_pinned_variable
       [
         [true, "a = 1; 1 in ^a"],
