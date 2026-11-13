@@ -254,6 +254,63 @@ module Prism
       assert_raise(TypeError) { vm.run_frame(frame.call) }
     end
 
+    def test_parameter_local_layout
+      source = "def value(a, (b, c), d = 4, *rest, e, opt: 5, req:, **kwargs, &block); extra = 6; [a, b, c, d, rest, e, opt, req, kwargs, block.call, extra]; end"
+      graph = Prism.compile(source, freeze: true).value.graphs[1]
+      signature = graph.signature
+      assert_equal([:a, :"<destructured>", :d, :rest, :e, :req, :opt, :kwargs, :block, :b, :c, :extra], graph.locals.map(&:name))
+      inputs = [*signature.requireds, *signature.optionals, signature.rest, *signature.posts, *signature.required_keywords.values, *signature.optional_keywords.values, signature.keyword_rest, signature.block]
+      stores = graph.blocks[0].insns.select { |insn| insn.kind == :store_lvar }.take(inputs.length)
+      assert_equal(inputs, stores.map { |insn| insn.opnds[0] })
+      assert_equal(graph.locals.take(inputs.length), stores.map(&:data))
+      tuple = [2, 3]
+      callback = proc { 9 }
+      frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze, &callback)
+      assert_equal([1, 2, 3, 4, [5], 6, 5, 7, { z: 8 }, 9, 6], vm.run_frame(frame, [1, tuple, 4, 5, 6], { req: 7, z: 8 }))
+      assert_same(tuple, frame.locals[graph.locals[1].id])
+      assert_same(callback, frame.locals[graph.locals[8].id])
+    end
+
+    def test_destructured_parameter_local_layout
+      graph = compile_unit("def value((a, b), *, (c, d), **, &); a = 9; c = 10; local = 1; [a, b, c, d, local]; end").graphs[1]
+      assert_equal([:"<destructured>", :*, :"<destructured>", :**, :&, :a, :b, :c, :d, :local], graph.locals.map(&:name))
+      left = [1, 2]
+      right = [3, 4]
+      callback = proc { 5 }
+      frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze, &callback)
+      assert_equal([9, 2, 10, 4, 1], vm.run_frame(frame, [left, 6, right], { x: 7 }))
+      assert_same(left, frame.locals[graph.locals[0].id])
+      assert_equal([6], frame.locals[graph.locals[1].id])
+      assert_same(right, frame.locals[graph.locals[2].id])
+      assert_equal({ x: 7 }, frame.locals[graph.locals[3].id])
+      assert_same(callback, frame.locals[graph.locals[4].id])
+    end
+
+    def test_forwarding_parameter_local_layout
+      graph = compile_unit("def value(a, ...); local = 1; local; end").graphs[1]
+      assert_equal([:a, :*, :**, :&, :local], graph.locals.map(&:name))
+      graph = compile_unit("proc { |opt: 1, req:| local = 2; [opt, req, local] }").graphs[1]
+      assert_equal([:req, :opt, :local], graph.locals.map(&:name))
+      assert_run([1, 3, 2], "proc { |opt: 1, req:| local = 2; [opt, req, local] }.call(req: 3)")
+      graph = compile_unit("->(opt: 1, req:) { local = 2; [opt, req, local] }").graphs[1]
+      assert_equal([:req, :opt, :local], graph.locals.map(&:name))
+      assert_run([1, 3, 2], "->(opt: 1, req:) { local = 2; [opt, req, local] }.call(req: 3)")
+    end
+
+    def test_repeated_parameter_local_layout
+      graph = compile_unit("def value(_, _); _; end").graphs[1]
+      assert_equal([:_, :_], graph.locals.map(&:name))
+      assert_equal(2, graph.locals.map(&:id).uniq.length)
+      frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
+      assert_equal(1, vm.run_frame(frame, [1, 2]))
+      assert_equal([1, 2], graph.locals.map { |local| frame.locals[local.id] })
+      graph = compile_unit("def value(_ = 1, _ = 2); _; end").graphs[1]
+      [[[], 2], [[3], 2], [[3, 4], 3]].each do |args, expected|
+        frame = Compile::VM::Frame.new(graph, TOPLEVEL_BINDING.receiver, [Object].freeze)
+        assert_equal(expected, vm.run_frame(frame, args))
+      end
+    end
+
     def test_destructured_parameters_metadata
       unit = Prism.compile("proc { |(a, b), *rest, (c, d)| [a, b, c, d] }", freeze: true).value
       graph = unit.graphs[1]
@@ -1072,7 +1129,7 @@ module Prism
         [[1, 3], "proc { |a, *, b| [a, b] }.call([1, 2, 3])"],
         [[1, 2, [], nil], "proc { |a, b, *rest, c| [a, b, rest, c] }.call(1, 2)"],
         [3, "proc { |*rest, a| proc { |b| a + b }.call(1) }.call(2)"],
-        [2, "proc { |_, *rest, _| _ }.call(1, 2)"],
+        [1, "proc { |_, *rest, _| _ }.call(1, 2)"],
         [[[1, 2], [3]], "p = proc { |*rest, a| rest << a }; [p.call(1, 2), p.call(3)]"]
       ].each { |expected, source| assert_run(expected, source) }
     end
