@@ -22,12 +22,14 @@
 #define PM_CONSTANT_ID_MATCH (pm_constant_id_t) -3
 #define PM_CONSTANT_ID_EACH (pm_constant_id_t) -4
 #define PM_CONSTANT_ID_IT (pm_constant_id_t) -5
+#define PM_CONSTANT_ID_ASET (pm_constant_id_t) -6
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
 static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
 static const pm_constant_t each_constant = { .start = (const uint8_t *) "each", .length = 4 };
 static const pm_constant_t it_constant = { .start = (const uint8_t *) "it", .length = 2 };
+static const pm_constant_t aset_constant = { .start = (const uint8_t *) "[]=", .length = 3 };
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
@@ -42,6 +44,8 @@ compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
             return &each_constant;
         case PM_CONSTANT_ID_IT:
             return &it_constant;
+        case PM_CONSTANT_ID_ASET:
+            return &aset_constant;
         default:
             return pm_parser_constant(parser, constant_id);
     }
@@ -1770,16 +1774,35 @@ compile_target_node_parents(PrismBuilder *builder, const pm_node_t *node, PrismT
     switch (PM_NODE_TYPE(node)) {
         case PM_CALL_TARGET_NODE: {
             const pm_call_target_node_t *target = (const pm_call_target_node_t *) node;
+
             uint32_t receiver_id = compile_node(builder, target->receiver);
             PrismTargetParents_push(builder, parents, receiver_id);
+
             break;
         }
         case PM_CONSTANT_PATH_TARGET_NODE: {
             const pm_constant_path_target_node_t *target = (const pm_constant_path_target_node_t *) node;
+
             if (target->parent) {
                 uint32_t parent_id = compile_node(builder, target->parent);
                 PrismTargetParents_push(builder, parents, parent_id);
             }
+
+            break;
+        }
+        case PM_INDEX_TARGET_NODE: {
+            const pm_index_target_node_t *target = (const pm_index_target_node_t *) node;
+
+            uint32_t receiver_id = compile_node(builder, target->receiver);
+            PrismTargetParents_push(builder, parents, receiver_id);
+
+            if (target->arguments) {
+                for (size_t idx = 0; idx < target->arguments->arguments.size; ++idx) {
+                    uint32_t argument_id = compile_node(builder, target->arguments->arguments.nodes[idx]);
+                    PrismTargetParents_push(builder, parents, argument_id);
+                }
+            }
+
             break;
         }
         default:
@@ -1836,6 +1859,23 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
         case PM_GLOBAL_VARIABLE_TARGET_NODE: {
             const pm_global_variable_target_node_t *target = (const pm_global_variable_target_node_t *) node;
             emit_store_gvar(builder, target->base.node_id, target->name, value_id);
+            break;
+        }
+        case PM_INDEX_TARGET_NODE: {
+            const pm_index_target_node_t *target = (const pm_index_target_node_t *) node;
+            uint32_t nindex_ids = target->arguments ? (uint32_t) target->arguments->arguments.size : 0;
+            assert(parents->index + nindex_ids < parents->size);
+
+            uint32_t receiver_id = parents->ids[parents->index++];
+            uint32_t *argument_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * (nindex_ids + 1), PRISM_ALIGNOF(uint32_t));
+
+            if (nindex_ids) {
+                memcpy(argument_ids, parents->ids + parents->index, sizeof(uint32_t) * nindex_ids);
+                parents->index += nindex_ids;
+            }
+
+            argument_ids[nindex_ids] = value_id;
+            emit_call(builder, node->node_id, PM_CONSTANT_ID_ASET, receiver_id, nindex_ids + 1, argument_ids, false);
             break;
         }
         case PM_INSTANCE_VARIABLE_TARGET_NODE: {
@@ -3470,6 +3510,7 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_CONSTANT_PATH_TARGET_NODE:
         case PM_CONSTANT_TARGET_NODE:
         case PM_GLOBAL_VARIABLE_TARGET_NODE:
+        case PM_INDEX_TARGET_NODE:
         case PM_INSTANCE_VARIABLE_TARGET_NODE:
         case PM_LOCAL_VARIABLE_TARGET_NODE:
         case PM_PINNED_EXPRESSION_NODE:

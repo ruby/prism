@@ -834,6 +834,41 @@ module Prism
       $compile_test_for = nil
     end
 
+    def test_for_index_target
+      assert_run([1, 2, 3], "a = []; i = 0; for a[i] in [1, 2, 3]; i += 1; end; a")
+      assert_run({ a: 2 }, "h = {}; for h[:a] in [1, 2]; end; h")
+      assert_run([0, 4, 5, 3], "a = [0, 1, 2, 3]; for a[1, 2] in [[4, 5]]; end; a")
+      assert_run([], "for (raise('receiver ran'))[raise('index ran')] in []; end")
+      assert_run_raises(RuntimeError, "for [][raise('index failed')] in [1]; end", "index failed")
+      assert_run_raises(NoMethodError, "for nil[0] in [1]; end")
+    end
+
+    def test_for_index_target_evaluation
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:[]=) { |*args| events << [:write, args]; :ignored }
+      collection = Object.new
+      collection.define_singleton_method(:each) do |&block|
+        events << :each
+        block.call(1)
+        block.call(2, 3)
+        :finished
+      end
+      scope.const_set(:Receiver, receiver)
+      scope.const_set(:Collection, collection)
+      scope.const_set(:Events, events)
+      source = "for (Events << :receiver; Receiver)[(Events << :first; 4), (Events << :second; 5)] in (Events << :collection; Collection); Events << :body; end"
+      graph = compile_unit(source).graphs[0]
+      assert_equal(:finished, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:collection, :each, :receiver, :first, :second, [:write, [4, 5, 1]], :body,
+                    :receiver, :first, :second, [:write, [4, 5, 2]], :body], events)
+      events.clear
+      graph = compile_unit("for Receiver[] in [[1, 2]]; end").graphs[0]
+      assert_equal([[1, 2]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([[:write, [[1, 2]]]], events)
+    end
+
     def test_for_call_target
       scope = Module.new
       events = []
