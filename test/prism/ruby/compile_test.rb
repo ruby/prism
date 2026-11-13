@@ -1974,6 +1974,77 @@ module Prism
       assert_run_raises(LocalJumpError, "class CompileTestMissingYield; def value; yield; end; end; CompileTestMissingYield.new.value", "no block given (yield)")
     end
 
+    def test_yield_arguments
+      [
+        [[1, 2], "yield(1, 2)", "", "{ |*values| values }"],
+        [[[1, 2]], "yield([1, 2])", "", "{ |*values| values }"],
+        [[1, 2], "yield([1, 2])", "", "{ |a, b| [a, b] }"],
+        [[], "yield(*nil)", "", "{ |*values| values }"],
+        [[1, 2, 3, 4], "yield(1, *[2, 3], 4)", "", "{ |*values| values }"],
+        [[1, 2], "yield(*[1], *[2])", "", "{ |*values| values }"],
+        [[[1, 2], { key: 3 }], "yield(*args, **kwargs)", "(1, 2, key: 3)", "{ |*values, **keys| [values, keys] }"],
+        [{ key: 3 }, "yield(key: 3)", "", "{ |value| value }"],
+        [{ key: 3 }, "yield(**kwargs)", "(key: 3)", "{ |key:| { key: key } }"],
+        [:ok, "yield(**{})", "(&-> { :ok })", ""],
+        [3, "yield(1, 2)", "(&->(a, b) { a + b })", ""],
+        [3, "yield(key: 3)", "(&->(key:) { key })", ""],
+        [[1, 2], "proc { yield(1, 2) }.call", "", "{ |a, b| [a, b] }"],
+        [3, "yield(1, 2)", "", "{ |a, b| break a + b }"]
+      ].each_with_index do |(expected, expression, arguments, block), index|
+        assert_run(expected, <<~RUBY)
+          class CompileTestYieldArguments#{index}
+            def value(*args, **kwargs)
+              #{expression}
+            end
+          end
+          CompileTestYieldArguments#{index}.new.value#{arguments} #{block}
+        RUBY
+      end
+    end
+
+    def test_yield_anonymous_arguments
+      assert_run([[1, 2], { key: 3 }], <<~RUBY)
+        class CompileTestYieldAnonymousArguments
+          def value(*, **)
+            yield(*, **)
+          end
+        end
+        CompileTestYieldAnonymousArguments.new.value(1, 2, key: 3) { |*args, **kwargs| [args, kwargs] }
+      RUBY
+    end
+
+    def test_yield_argument_evaluation
+      assert_run([[1, 2], { key: 3 }, [:first, :splat, :keyword]], <<~RUBY)
+        class CompileTestYieldArgumentEvaluation
+          def value(events)
+            yield((events << :first; 1), *(events << :splat; [2]), key: (events << :keyword; 3))
+          end
+        end
+        events = []
+        CompileTestYieldArgumentEvaluation.new.value(events) { |*args, **kwargs| [args, kwargs, events] }
+      RUBY
+      assert_run_raises(RuntimeError, <<~RUBY, "argument")
+        class CompileTestYieldArgumentFailure
+          def value
+            yield(raise 'argument')
+          end
+        end
+        CompileTestYieldArgumentFailure.new.value
+      RUBY
+    end
+
+    def test_yield_argument_metadata
+      unit = Prism.compile("def compile_test_yield_metadata(*args, **kwargs); yield(1, *args, **kwargs); end", freeze: true).value
+      insn = unit.graphs.flat_map(&:blocks).flat_map(&:insns).find { |candidate| candidate.kind == :yield }
+      assert_equal(4, insn.opnds.length)
+      assert_equal(true, insn.data.splat)
+      assert_equal(true, insn.data.keywords)
+      assert_equal(false, insn.data.block)
+      assert_nil(insn.data.name)
+      assert_predicate(insn.data, :frozen?)
+      assert_match(/yield\([^\n]+\) \[splat\] \[keywords\]/, unit.disasm)
+    end
+
     def test_yield_captured_block
       assert_run(42, <<~RUBY)
         class CompileTestCapturedYield

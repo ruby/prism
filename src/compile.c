@@ -4985,9 +4985,14 @@ compile_x_string_node(PrismBuilder *builder, const pm_x_string_node_t *node) {
 
 static uint32_t
 compile_yield_node(PrismBuilder *builder, const pm_yield_node_t *node) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnYield, node->base.node_id, 1);
+    PrismArguments arguments = compile_arguments(builder, node->arguments, NULL);
+    PrismInsn *insn = make_insn(builder, kPrismInsnYield, node->base.node_id, 1 + (uint32_t) arguments.size);
+    insn->as.call.splat = arguments.splat;
+    insn->as.call.keywords = arguments.keywords;
     uint32_t value_id = make_value(builder);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    opnds[0] = value_id;
+    if (arguments.size) memcpy(opnds + 1, arguments.ids, arguments.size * sizeof(uint32_t));
 
     return value_id;
 }

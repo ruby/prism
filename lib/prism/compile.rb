@@ -468,7 +468,8 @@ module Prism
           "trace_return #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :yield
           opnds = insn.opnds
-          "#{value(opnds[0])} = yield#{values(opnds[1..])}"
+          data = insn.data
+          "#{value(opnds[0])} = yield#{values(opnds[1..])}#{data.splat ? " [splat]" : ""}#{data.keywords ? " [keywords]" : ""}"
         when :undef_method
           "undef_method #{insn.opnds.map { |id| value(id) }.join(', ')}"
         else
@@ -943,7 +944,11 @@ module Prism
               Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])
             when :yield
               raise LocalJumpError, "no block given (yield)" unless frame.block
-              values[insn.opnds[0]] = frame.block.call
+              call = insn.data
+              arguments = values.values_at(*insn.opnds[1..])
+              keywords = call.keywords ? arguments.pop : {}
+              arguments.concat(arguments.pop) if call.splat
+              values[insn.opnds[0]] = frame.block.call(*arguments, **keywords)
             else
               raise "Unknown instruction kind: #{insn.kind}"
             end

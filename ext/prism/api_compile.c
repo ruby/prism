@@ -138,9 +138,10 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
             return compile_freeze(rb_ary_new_from_args(3, then_block, else_block, then_nopnds), freeze);
         }
         case kPrismInsnCall:
-        case kPrismInsnCallSuper: {
+        case kPrismInsnCallSuper:
+        case kPrismInsnYield: {
             VALUE name = Qnil;
-            if (pm_insn_kind(insn) != kPrismInsnCallSuper) {
+            if (pm_insn_kind(insn) == kPrismInsnCall) {
                 const pm_constant_t *constant = pm_insn_call_name(parser, insn);
                 name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
             }
