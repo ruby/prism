@@ -2986,6 +2986,27 @@ compile_index_logical_write_node(PrismBuilder *builder, const pm_node_t *node, c
 }
 
 static uint32_t
+compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length) {
+    void *allocation = pm_arena_alloc(builder->arena, sizeof(pm_string_t) + length, PRISM_ALIGNOF(pm_string_t));
+
+    pm_string_t *unescaped = (pm_string_t *) allocation;
+    uint8_t *source = ((uint8_t *) allocation) + sizeof(pm_string_t);
+
+    *unescaped = (pm_string_t) { .length = length, .source = source };
+    memcpy(source, value, length);
+
+    uint32_t object_id = make_object(builder, kPrismObjectString);
+    PrismObject *object = builder->unit->objects + object_id;
+
+    object->as.string.flags = 0;
+    object->as.string.unescaped = unescaped;
+
+    return emit_load_object(builder, UINT32_MAX, object_id);
+}
+
+/******************************************************************************/
+
+static uint32_t
 compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
     pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
     pm_constant_id_t old_name;
@@ -3627,6 +3648,191 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
 
     uint32_t object_id = make_object_constant_id(builder, node->name);
     return emit_load_object(builder, node->base.node_id, object_id);
+}
+
+static uint32_t
+compile_defined_node(PrismBuilder *builder, const pm_defined_node_t *node) {
+    const pm_node_t *value = node->value;
+    uint32_t value_id;
+
+    switch (PM_NODE_TYPE(value)) {
+        case PM_INSTANCE_VARIABLE_READ_NODE:
+        case PM_LOCAL_VARIABLE_READ_NODE:
+        case PM_IT_LOCAL_VARIABLE_READ_NODE:
+        case PM_GLOBAL_VARIABLE_READ_NODE:
+        case PM_CLASS_VARIABLE_READ_NODE:
+        case PM_CONSTANT_READ_NODE:
+        case PM_YIELD_NODE:
+        case PM_SUPER_NODE:
+        case PM_FORWARDING_SUPER_NODE:
+        case PM_BACK_REFERENCE_READ_NODE:
+        case PM_NUMBERED_REFERENCE_READ_NODE:
+        case PM_CONSTANT_PATH_NODE:
+        case PM_BEGIN_NODE:
+        case PM_PARENTHESES_NODE:
+        case PM_ARRAY_NODE:
+        case PM_HASH_NODE:
+        case PM_KEYWORD_HASH_NODE:
+        case PM_ASSOC_NODE:
+        case PM_ASSOC_SPLAT_NODE:
+        case PM_IMPLICIT_NODE:
+        case PM_CALL_NODE:
+        case PM_ARGUMENTS_NODE:
+        case PM_BLOCK_ARGUMENT_NODE:
+        case PM_FORWARDING_ARGUMENTS_NODE:
+        case PM_SPLAT_NODE:
+        case PM_SHAREABLE_CONSTANT_NODE:
+            fprintf(stderr, "Unimplemented\n");
+            abort();
+        case PM_FALSE_NODE:
+            value_id = compile_constexpr_string(builder, "false", 5);
+            break;
+        case PM_TRUE_NODE:
+            value_id = compile_constexpr_string(builder, "true", 4);
+            break;
+        case PM_NIL_NODE:
+            value_id = compile_constexpr_string(builder, "nil", 3);
+            break;
+        case PM_SELF_NODE:
+            value_id = compile_constexpr_string(builder, "self", 4);
+            break;
+        case PM_CALL_AND_WRITE_NODE:
+        case PM_CALL_OPERATOR_WRITE_NODE:
+        case PM_CALL_OR_WRITE_NODE:
+        case PM_CLASS_VARIABLE_AND_WRITE_NODE:
+        case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE:
+        case PM_CLASS_VARIABLE_OR_WRITE_NODE:
+        case PM_CLASS_VARIABLE_WRITE_NODE:
+        case PM_CONSTANT_AND_WRITE_NODE:
+        case PM_CONSTANT_OPERATOR_WRITE_NODE:
+        case PM_CONSTANT_OR_WRITE_NODE:
+        case PM_CONSTANT_PATH_AND_WRITE_NODE:
+        case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
+        case PM_CONSTANT_PATH_OR_WRITE_NODE:
+        case PM_CONSTANT_PATH_WRITE_NODE:
+        case PM_CONSTANT_WRITE_NODE:
+        case PM_GLOBAL_VARIABLE_AND_WRITE_NODE:
+        case PM_GLOBAL_VARIABLE_OPERATOR_WRITE_NODE:
+        case PM_GLOBAL_VARIABLE_OR_WRITE_NODE:
+        case PM_GLOBAL_VARIABLE_WRITE_NODE:
+        case PM_INDEX_AND_WRITE_NODE:
+        case PM_INDEX_OPERATOR_WRITE_NODE:
+        case PM_INDEX_OR_WRITE_NODE:
+        case PM_INSTANCE_VARIABLE_AND_WRITE_NODE:
+        case PM_INSTANCE_VARIABLE_OPERATOR_WRITE_NODE:
+        case PM_INSTANCE_VARIABLE_OR_WRITE_NODE:
+        case PM_INSTANCE_VARIABLE_WRITE_NODE:
+        case PM_LOCAL_VARIABLE_AND_WRITE_NODE:
+        case PM_LOCAL_VARIABLE_OPERATOR_WRITE_NODE:
+        case PM_LOCAL_VARIABLE_OR_WRITE_NODE:
+        case PM_LOCAL_VARIABLE_WRITE_NODE:
+        case PM_MULTI_WRITE_NODE:
+            value_id = compile_constexpr_string(builder, "assignment", 10);
+            break;
+        case PM_ALIAS_GLOBAL_VARIABLE_NODE:
+        case PM_ALIAS_METHOD_NODE:
+        case PM_AND_NODE:
+        case PM_BREAK_NODE:
+        case PM_CASE_MATCH_NODE:
+        case PM_CASE_NODE:
+        case PM_CLASS_NODE:
+        case PM_DEF_NODE:
+        case PM_DEFINED_NODE:
+        case PM_FLIP_FLOP_NODE:
+        case PM_FLOAT_NODE:
+        case PM_FOR_NODE:
+        case PM_IF_NODE:
+        case PM_IMAGINARY_NODE:
+        case PM_INTEGER_NODE:
+        case PM_INTERPOLATED_MATCH_LAST_LINE_NODE:
+        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
+        case PM_INTERPOLATED_STRING_NODE:
+        case PM_INTERPOLATED_SYMBOL_NODE:
+        case PM_INTERPOLATED_X_STRING_NODE:
+        case PM_LAMBDA_NODE:
+        case PM_MATCH_LAST_LINE_NODE:
+        case PM_MATCH_PREDICATE_NODE:
+        case PM_MATCH_REQUIRED_NODE:
+        case PM_MATCH_WRITE_NODE:
+        case PM_MODULE_NODE:
+        case PM_NEXT_NODE:
+        case PM_OR_NODE:
+        case PM_POST_EXECUTION_NODE:
+        case PM_RANGE_NODE:
+        case PM_RATIONAL_NODE:
+        case PM_REDO_NODE:
+        case PM_REGULAR_EXPRESSION_NODE:
+        case PM_RESCUE_MODIFIER_NODE:
+        case PM_RETRY_NODE:
+        case PM_RETURN_NODE:
+        case PM_SINGLETON_CLASS_NODE:
+        case PM_SOURCE_ENCODING_NODE:
+        case PM_SOURCE_FILE_NODE:
+        case PM_SOURCE_LINE_NODE:
+        case PM_STRING_NODE:
+        case PM_SYMBOL_NODE:
+        case PM_UNDEF_NODE:
+        case PM_UNLESS_NODE:
+        case PM_UNTIL_NODE:
+        case PM_WHILE_NODE:
+        case PM_X_STRING_NODE:
+            value_id = compile_constexpr_string(builder, "expression", 10);
+            break;
+        /* unreachable (parameters) *******************************************/
+        case PM_BLOCK_LOCAL_VARIABLE_NODE:
+        case PM_BLOCK_PARAMETER_NODE:
+        case PM_BLOCK_PARAMETERS_NODE:
+        case PM_FORWARDING_PARAMETER_NODE:
+        case PM_IMPLICIT_REST_NODE:
+        case PM_IT_PARAMETERS_NODE:
+        case PM_PARAMETERS_NODE:
+        case PM_KEYWORD_REST_PARAMETER_NODE:
+        case PM_NO_KEYWORDS_PARAMETER_NODE:
+        case PM_NO_BLOCK_PARAMETER_NODE:
+        case PM_NUMBERED_PARAMETERS_NODE:
+        case PM_OPTIONAL_KEYWORD_PARAMETER_NODE:
+        case PM_OPTIONAL_PARAMETER_NODE:
+        case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
+        case PM_REQUIRED_PARAMETER_NODE:
+        case PM_REST_PARAMETER_NODE:
+        /* unreachable (pattern matching) *************************************/
+        case PM_ALTERNATION_PATTERN_NODE:
+        case PM_ARRAY_PATTERN_NODE:
+        case PM_CAPTURE_PATTERN_NODE:
+        case PM_FIND_PATTERN_NODE:
+        case PM_HASH_PATTERN_NODE:
+        case PM_PINNED_EXPRESSION_NODE:
+        case PM_PINNED_VARIABLE_NODE:
+        /* unreachable (indirect writes) **************************************/
+        case PM_CALL_TARGET_NODE:
+        case PM_CLASS_VARIABLE_TARGET_NODE:
+        case PM_CONSTANT_PATH_TARGET_NODE:
+        case PM_CONSTANT_TARGET_NODE:
+        case PM_GLOBAL_VARIABLE_TARGET_NODE:
+        case PM_INDEX_TARGET_NODE:
+        case PM_INSTANCE_VARIABLE_TARGET_NODE:
+        case PM_LOCAL_VARIABLE_TARGET_NODE:
+        case PM_MULTI_TARGET_NODE:
+        /* unreachable (clauses) **********************************************/
+        case PM_ELSE_NODE:
+        case PM_ENSURE_NODE:
+        case PM_IN_NODE:
+        case PM_RESCUE_NODE:
+        case PM_WHEN_NODE:
+        /* unreachable (miscellaneous) ****************************************/
+        case PM_BLOCK_NODE:
+        case PM_EMBEDDED_STATEMENTS_NODE:
+        case PM_EMBEDDED_VARIABLE_NODE:
+        case PM_ERROR_RECOVERY_NODE:
+        case PM_PRE_EXECUTION_NODE:
+        case PM_PROGRAM_NODE:
+        case PM_SCOPE_NODE:
+        case PM_STATEMENTS_NODE:
+            fprintf(stderr, "Unreachable\n");
+            abort();
+    }
+
+    return value_id;
 }
 
 static uint32_t
@@ -4522,6 +4728,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node);
         case PM_DEF_NODE:
             return compile_def_node(builder, (const pm_def_node_t *) node);
+        case PM_DEFINED_NODE:
+            return compile_defined_node(builder, (const pm_defined_node_t *) node);
         case PM_ELSE_NODE:
             return compile_else_node(builder, (const pm_else_node_t *) node);
         case PM_EMBEDDED_STATEMENTS_NODE:
