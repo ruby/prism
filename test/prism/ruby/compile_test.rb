@@ -3625,6 +3625,270 @@ module Prism
       RUBY
     end
 
+    def test_array_pattern
+      [
+        [true, "[] in []"],
+        [false, "[1] in []"],
+        [false, "1 in []"],
+        [false, "[1] in [a, b]"],
+        [true, "[1, 2] in [Integer, 2]"],
+        [false, "[1, 2] in [Integer, 3]"],
+        [[1, 2], "[1, 2] => [a, b]; [a, b]"],
+        [[1, [2, 3], 4], "[1, 2, 3, 4] => [a, *b, c]; [a, b, c]"],
+        [[1, [], 2], "[1, 2] => [a, *b, c]; [a, b, c]"],
+        [[1, 2], "[1, 2] => [*a]; a"],
+        [true, "[1, 2] in [*]"],
+        [1, "[1, 2] => [a,]; a"],
+        [[1, 3], "[1, 2, 3] => [a, *, b]; [a, b]"],
+        [[1, 2], "[[1], 2] => [[a], b]; [a, b]"],
+        [[1, 2], "[1, 2] => Array[Integer, Integer] => a; a"],
+        [false, "[1] in String[Integer]"],
+        [true, "[2] in [1] | [2]"],
+        [2, "a = 2; [2] => [^a]; a"],
+        [nil, "[1] => [Integer]"],
+        [2, "case [2]; in [1]; 1; in [a] if a == 2; a; else; 3; end"],
+        [1, "case [1, 2]; in [a, 3]; 0; else; a; end"]
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_array_pattern_failure
+      [
+        "1 => []",
+        "[1] => []",
+        "[1] => [a, b]",
+        "[] => [a, *b]",
+        "[1, 2] => [3, 4]",
+        "[[1]] => [[2]]",
+        "[[1]] => [[a, b]]",
+        "[1] => [[]]",
+        "[1] => String[Integer]",
+        "case [1]; in [2]; end",
+        "case [1]; in [1] if false; end",
+        "case [1]; in [2]; in [3]; end"
+      ].each do |source|
+        native_error = assert_raise(NoMatchingPatternError) { eval(source) }
+        assert_run_raises(NoMatchingPatternError, source, native_error.message)
+      end
+    end
+
+    def test_array_pattern_deconstruction
+      scope = Module.new
+      events = []
+      value = Object.new
+      result = [1, 2]
+      value.define_singleton_method(:deconstruct) { events << :deconstruct; result }
+      scope.const_set(:Value, value)
+      [
+        ["Value in [1, 2]", 1],
+        ["case Value; in [0, *]; 0; in [a, b]; [a, b]; end", 2],
+        ["Value in [0, *] | [1, 2]", 2],
+        ["case Value; in [a, b] if false; 0; in [a, b]; [a, b]; end", 2],
+        ["[Value, Value] in [[1, 2], [1, 2]]", 2],
+        ["Value in String[1, 2]", 0]
+      ].each do |source, ndeconstructs|
+        events.clear
+        expected = scope.module_eval(source)
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal([:deconstruct] * ndeconstructs, events)
+      end
+
+      result = 1
+      ["Value in [*]", "Value => [*]", "case Value; in [*]; 1; else; 2; end"].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert_raise_with_message(TypeError, "deconstruct must return Array") do
+          vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+        end
+      end
+    end
+
+    def test_array_pattern_missing_deconstruction
+      scope = Module.new
+      events = []
+      value = Object.new
+      value.define_singleton_method(:respond_to?) do |name|
+        events << name
+        false
+      end
+      value.define_singleton_method(:to_ary) { events << :to_ary; [1] }
+      value.define_singleton_method(:to_a) { events << :to_a; [1] }
+      scope.const_set(:Value, value)
+      source = "case Value; in [1]; 1; in [*]; 2; else; 3; end"
+      graph = compile_unit(source).graphs[0]
+      2.times do
+        events.clear
+        assert_equal(3, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal([:deconstruct, :deconstruct], events)
+      end
+    end
+
+    def test_array_pattern_element_evaluation
+      scope = Module.new
+      events = []
+      array_class = Class.new(Array) do
+        define_method(:length) { events << :length; super() }
+        define_method(:[]) { |*args| events << [:read, args]; super(*args) }
+      end
+      array = array_class.new([1, 2, 3, 4])
+      pattern = Object.new
+      pattern.define_singleton_method(:===) { |value| events << [:match, value]; array << 5; true }
+      scope.const_set(:Value, array)
+      scope.const_set(:Pattern, pattern)
+      [
+        "Value => [Pattern, *rest, last]; [rest, last]",
+        "Value in [Pattern, *, Integer]",
+        "Value in [Pattern, Integer, Integer, Integer]"
+      ].each do |source|
+        array.replace([1, 2, 3, 4])
+        events.clear
+        expected = scope.module_eval(source)
+        native_events = events.dup
+        array.replace([1, 2, 3, 4])
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal(native_events, events)
+      end
+    end
+
+    def test_array_pattern_control_flow
+      [
+        "[[1], [2]].map { |value| case value; in [a]; next a + 1; end }",
+        "while true; case [1, 2]; in [a, b]; break a + b; end; end",
+        "attempts = 0; while attempts < 2; attempts += 1; case [attempts]; in [1]; redo; in [a]; break a; end; end",
+        "begin; [1] => [2]; rescue NoMatchingPatternError => error; error.message; end",
+        "[1].map { |value| begin; [value] => [2]; rescue NoMatchingPatternError; next value + 1; end }"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_pattern_recoverable_failure_effects
+      scope = Module.new
+      events = []
+      matched = true
+      inspect_raises = false
+      element = Object.new
+      element.define_singleton_method(:inspect) { events << :element_inspect; "element" }
+      value = Object.new
+      value.define_singleton_method(:deconstruct) { events << :deconstruct; [element] }
+      value.define_singleton_method(:inspect) { events << :value_inspect; "value" }
+      absent = Object.new
+      absent.define_singleton_method(:inspect) { events << :absent_inspect; "absent" }
+      first = Module.new
+      first.define_singleton_method(:===) { |_| events << :first; false }
+      first.define_singleton_method(:inspect) do
+        events << :first_inspect
+        raise "inspect failed" if inspect_raises
+        "first"
+      end
+      second = Module.new
+      second.define_singleton_method(:===) { |_| events << :second; matched }
+      second.define_singleton_method(:inspect) { events << :second_inspect; "second" }
+      scope.const_set(:Value, value)
+      scope.const_set(:Absent, absent)
+      scope.const_set(:First, first)
+      scope.const_set(:Second, second)
+
+      sources = [
+        "Value => [First] | [Second]",
+        "case Value; in [First] | [Second]; :matched; end",
+        "case Value; in [First] | [Second] if false; :matched; end",
+        "Value in [First] | [Second]",
+        "case Value; in [First]; :first; in [Second]; :second; else; :other; end",
+        "Value => [] | [Second]",
+        "Value => [First] | []",
+        "Value => [First, First, *] | [Second]",
+        "Value => [First, *] | [Second]",
+        "Absent => [] | Second",
+        "Absent => [] | []",
+        "Absent => [] | [] | Second",
+        "[Value] => [[First]] | [[Second]]"
+      ]
+      [true, false].each do |result|
+        matched = result
+        sources.each do |source|
+          events.clear
+          expected = begin
+            scope.module_eval(source)
+          rescue NoMatchingPatternError => error
+            [error.class, error.message]
+          end
+          native_events = events.dup
+          events.clear
+          graph = compile_unit(source).graphs[0]
+          actual = begin
+            vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+          rescue NoMatchingPatternError => error
+            [error.class, error.message]
+          end
+          assert_equal(expected, actual, source)
+          assert_equal(native_events.reject { |event| event == :deconstruct || event.to_s.end_with?("_inspect") }, events.reject { |event| event == :deconstruct || event.to_s.end_with?("_inspect") }, source)
+        end
+      end
+
+      matched = true
+      inspect_raises = true
+      source = sources.first
+      events.clear
+      assert_raise_with_message(RuntimeError, "inspect failed") { scope.module_eval(source) }
+      events.clear
+      graph = compile_unit(source).graphs[0]
+      # Unlike CRuby, recoverable failures do not format diagnostics or call inspect.
+      assert_nil(vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:deconstruct, :first, :deconstruct, :second], events)
+    end
+
+    def test_pattern_block_parameters
+      [
+        "1 in 1",
+        "[1] in [1]",
+        "[1] in [2] | [1]",
+        "1 in (2 | 1) => value",
+        "case 1; in 2; false; in 1 if true; true; else; false; end",
+        "case 1; in 1 unless false; true; end"
+      ].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :load_nil, source)
+        # Only the expression's result join needs a parameter.
+        assert_equal(1, graph.blocks.sum { |block| block.params.length }, source)
+        assert_run(eval(source), source)
+      end
+
+      graph = compile_unit("1 => (2 | 1) => value").graphs[0]
+      assert_equal(0, graph.blocks.sum { |block| block.params.length })
+      assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :load_nil)
+    end
+
+    def test_pattern_terminal_failures
+      [
+        ["1 => []", :raise_pattern_deconstruct, 2],
+        ["[1] => []", :raise_pattern_length, 4],
+        ["[] => [a, *b]", :raise_pattern_min_length, 4],
+        ["[1] => [2]", :raise_pattern_mismatch, 3]
+      ].each do |source, kind, noperands|
+        graph = compile_unit(source).graphs[0]
+        instructions = graph.blocks.flat_map(&:insns)
+        assert_not_include(instructions.map(&:kind), :format_string, source)
+        failure = instructions.find { |insn| insn.kind == kind }
+        assert_equal(noperands, failure.opnds.length, source)
+        graph.blocks.each do |block|
+          assert_operator(block.params.length, :<=, 1, source)
+          block.insns.each_with_index do |insn, index|
+            assert_equal(block.insns.length - 1, index, source) if insn.kind.to_s.start_with?("raise_pattern_")
+          end
+        end
+      end
+      instructions = compile_unit("[1] => [2] | [1]").graphs[0].blocks.flat_map(&:insns)
+      assert_not_include(instructions.map(&:kind), :format_string)
+    end
+
+    def test_array_pattern_disasm
+      unit = compile_unit("[1, 2] => [a, *b]")
+      assert_include(unit.disasm, " = deconstruct_array(")
+      assert_include(unit.disasm, "raise_pattern_min_length(")
+      assert_include(unit.disasm, "raise_pattern_deconstruct(")
+    end
+
     def test_raise_pattern_instructions
       [
         [:raise_pattern_deconstruct, [1, 1], "1: 1 does not respond to #deconstruct"],

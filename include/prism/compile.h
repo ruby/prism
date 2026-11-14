@@ -37,6 +37,7 @@ typedef enum {
     kPrismInsnCoerceHash,
     kPrismInsnCoerceString,
     kPrismInsnConcatArray,
+    kPrismInsnDeconstructArray,
     kPrismInsnDefineClassAbs,
     kPrismInsnDefineClassAbsSuper,
     kPrismInsnDefineClassNestRel,

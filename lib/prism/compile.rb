@@ -241,6 +241,9 @@ module Prism
         when :concat_array
           opnds = insn.opnds
           "#{value(opnds[0])} = concat_array#{values(opnds[1..])}"
+        when :deconstruct_array
+          opnds = insn.opnds
+          "#{value(opnds[0])} = deconstruct_array#{values(opnds[1..])}"
         when :define_class_abs
           opnds = insn.opnds
           name, graph = insn.data
@@ -767,6 +770,15 @@ module Prism
               values[insn.opnds[0]] = String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
             when :concat_array
               values[insn.opnds[0]] = Array.instance_method(:+).bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
+            when :deconstruct_array
+              value = values[insn.opnds[1]]
+              if value.respond_to?(:deconstruct)
+                array = value.__send__(:deconstruct)
+                raise TypeError, "deconstruct must return Array" unless Array === array
+                values[insn.opnds[0]] = array
+              else
+                values[insn.opnds[0]] = false
+              end
             when :define_class_abs
               name, class_graph = insn.data
               klass = define_class(Object, name, true)
