@@ -425,6 +425,8 @@ module Prism
           "post_execution #{graph_ref(insn.data)}"
         when :raise_pattern_deconstruct
           "raise_pattern_deconstruct#{values(insn.opnds)}"
+        when :raise_pattern_find
+          "raise_pattern_find#{values(insn.opnds)}"
         when :raise_pattern_guard
           "raise_pattern_guard#{values(insn.opnds)}"
         when :raise_pattern_length
@@ -941,6 +943,8 @@ module Prism
               end
             when :raise_pattern_deconstruct
               raise_pattern_error(values[insn.opnds[0]], "%p does not respond to #deconstruct", values[insn.opnds[1]])
+            when :raise_pattern_find
+              raise_pattern_error(values[insn.opnds[0]], "%p does not match to find pattern", values[insn.opnds[1]])
             when :raise_pattern_guard
               raise NoMatchingPatternError, "#{values[insn.opnds[0]].inspect}: guard clause does not return true"
             when :raise_pattern_length

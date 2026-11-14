@@ -92,6 +92,7 @@ typedef enum {
     kPrismInsnNewSymbol,
     kPrismInsnPostExecution,
     kPrismInsnRaisePatternDeconstruct,
+    kPrismInsnRaisePatternFind,
     kPrismInsnRaisePatternGuard,
     kPrismInsnRaisePatternLength,
     kPrismInsnRaisePatternMinLength,

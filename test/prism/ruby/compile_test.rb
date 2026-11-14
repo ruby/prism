@@ -3625,6 +3625,110 @@ module Prism
       RUBY
     end
 
+    def test_find_pattern
+      [
+        "[] in [*, 1, *]",
+        "[1] in [*, 1, *]",
+        "[0, 1, 2, 3] in [*, 1, 2, *]",
+        "[1, 0, 2] in [*, 1, 2, *]",
+        "1 in [*, 1, *]",
+        "[1, 2] in String[*, 1, *]",
+        "[1, 2] in Array[*, Integer, 2, *]",
+        "[0, 1, 2, 3] => [*left, 1, 2, *right]; [left, right]",
+        "[1, 2] => [*left, 1, 2, *right]; [left, right]",
+        "[0, 1, 1, 2, 3] => [*left, 1, 2, *right]; [left, right]",
+        "[0, 1, 2, 1, 2] => [*left, 1, 2, *right]; [left, right]",
+        "[0, [1], 2] => [*, [value], *right]; [value, right]",
+        "[[0, 1]] => [[*left, 1, *right]]; [left, right]",
+        "[0, 1] => Array[*, 1, *] => value; value",
+        "[1, 2] in [*, 3, *] | [*, 2, *]",
+        "a = 2; [1, 2, 3] in [*, ^a, *]",
+        "[1] => [*, 1, *]",
+        "case [1, 2]; in [*, 3, *]; :no; in [*, 2, *]; :yes; end",
+        "case [1, 2]; in [*, 1, *] if false; :no; in [*, 2, *]; :yes; end",
+        "case [1, 2]; in [*, 3, *]; :no; else; :other; end",
+        "case [1, 2]; in [*, value, 3, *]; :no; else; value; end"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_find_pattern_failure
+      [
+        "1 => [*, 1, *]",
+        "[] => [*, 1, *]",
+        "[1] => [*, 1, 2, *]",
+        "[1, 2] => [*, 3, *]",
+        "[[1, 2]] => [[*, 3, *]]",
+        "[1, 2] => String[*, 1, *]",
+        "case [1, 2]; in [*, 3, *]; end",
+        "case [1, 2]; in [*, 1, *] if false; end",
+        "[1, 2] => [*, 0, *] | [*, 3, *]",
+        "case [1, 2]; in [*, 0, *]; in [*, 3, *]; end"
+      ].each do |source|
+        error = assert_raise(NoMatchingPatternError) { eval(source) }
+        assert_run_raises(NoMatchingPatternError, source, error.message)
+      end
+    end
+
+    def test_find_pattern_deconstruction
+      scope = Module.new
+      events = []
+      result = [0, 1, 2, 3]
+      value = Object.new
+      value.define_singleton_method(:deconstruct) { events << :deconstruct; result }
+      scope.const_set(:Value, value)
+      source = "Value => [*left, 1, 2, *right]; [left, right]"
+      graph = compile_unit(source).graphs[0]
+      assert_equal([[0], [3]], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:deconstruct], events)
+
+      result = nil
+      assert_raise_with_message(TypeError, "deconstruct must return Array") do
+        vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      end
+    end
+
+    def test_find_pattern_evaluation
+      scope = Module.new
+      events = []
+      array_class = Class.new(Array) do
+        define_method(:length) { events << :length; super() }
+        define_method(:[]) { |*args| events << [:read, *args]; super(*args) }
+      end
+      value = array_class.new([1, 0, 1, 2, 3])
+      mutate = false
+      first = Module.new
+      first.define_singleton_method(:===) do |item|
+        events << [:first, item]
+        value.shift if mutate
+        item == 1
+      end
+      second = Module.new
+      second.define_singleton_method(:===) { |item| events << [:second, item]; item == 2 }
+      scope.const_set(:Value, value)
+      scope.const_set(:First, first)
+      scope.const_set(:Second, second)
+      source = "Value in [*left, First, Second, *right]"
+      graph = compile_unit(source).graphs[0]
+      [false, true].each do |mutating|
+        mutate = mutating
+        value.replace([1, 0, 1, 2, 3])
+        events.clear
+        expected = scope.module_eval(source)
+        native_events = events.dup
+        value.replace([1, 0, 1, 2, 3])
+        events.clear
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal(native_events, events)
+      end
+    end
+
+    def test_find_pattern_disasm
+      unit = compile_unit("[1, 2] => [*, 3, *]")
+      assert_include(unit.disasm, "raise_pattern_find(")
+      assert_include(unit.disasm, " = deconstruct_array(")
+      assert_equal(1, unit.graphs[0].blocks.count { |block| !block.params.empty? })
+    end
+
     def test_array_pattern
       [
         [true, "[] in []"],
