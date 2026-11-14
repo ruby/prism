@@ -31,7 +31,9 @@
 #define PM_CONSTANT_ID_BLOCK (pm_constant_id_t) -12
 #define PM_CONSTANT_ID_DESTRUCTURED (pm_constant_id_t) -13
 #define PM_CONSTANT_ID_AREF (pm_constant_id_t) -14
+#define PM_CONSTANT_ID_UMINUS (pm_constant_id_t) -15
 
+static const pm_constant_t uminus_constant = { .start = (const uint8_t *) "-@", .length = 2 };
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
 static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
@@ -50,6 +52,7 @@ static const pm_constant_t line_number_constant = { .start = (const uint8_t *) "
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     switch (constant_id) {
+        case PM_CONSTANT_ID_UMINUS:         return &uminus_constant;
         case PM_CONSTANT_ID_BACKTICK:       return &backtick_constant;
         case PM_CONSTANT_ID_LAST_LINE:      return &last_line_constant;
         case PM_CONSTANT_ID_MATCH:          return &match_constant;
@@ -1558,6 +1561,17 @@ emit_defined_gvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name
     return value_id;
 }
 
+static uint32_t
+emit_ensure_shareable(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t name_id) {
+    PrismInsn *insn = make_insn(builder, kPrismInsnEnsureShareable, node_id, 2);
+    insn->as.object.object_id = name_id;
+    uint32_t result_id = make_value(builder);
+    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    opnds[0] = result_id;
+    opnds[1] = value_id;
+    return result_id;
+}
+
 static uint32_t *
 emit_expand_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t lefts, uint32_t rights, bool rest) {
     uint32_t nvalues = lefts + rights + (rest ? 1 : 0);
@@ -1805,6 +1819,16 @@ emit_load_self(PrismBuilder *builder, uint32_t node_id) {
     graph->opnds[insn->opnds_off] = value_id;
 
     return value_id;
+}
+
+static uint32_t
+emit_make_shareable(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, bool copy) {
+    PrismInsn *insn = make_insn(builder, copy ? kPrismInsnMakeShareableCopy : kPrismInsnMakeShareable, node_id, 2);
+    uint32_t result_id = make_value(builder);
+    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    opnds[0] = result_id;
+    opnds[1] = value_id;
+    return result_id;
 }
 
 static uint32_t
@@ -3170,7 +3194,7 @@ compile_index_logical_write_node(PrismBuilder *builder, const pm_node_t *node, c
 }
 
 static uint32_t
-compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length) {
+make_object_string(PrismBuilder *builder, const char *value, size_t length) {
     void *allocation = pm_arena_alloc(builder->arena, sizeof(pm_string_t) + length, PRISM_ALIGNOF(pm_string_t));
 
     pm_string_t *unescaped = (pm_string_t *) allocation;
@@ -3185,7 +3209,183 @@ compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length
     object->as.string.flags = 0;
     object->as.string.unescaped = unescaped;
 
-    return emit_load_object(builder, UINT32_MAX, object_id);
+    return object_id;
+}
+
+static uint32_t
+compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length) {
+    return emit_load_object(builder, UINT32_MAX, make_object_string(builder, value, length));
+}
+
+static uint32_t
+make_constant_name(PrismBuilder *builder, pm_constant_id_t name_id, const pm_constant_path_node_t *target) {
+    if (!target) {
+        const pm_constant_t *name = compile_constant(builder->parser, name_id);
+        return make_object_string(builder, (const char *) name->start, name->length);
+    }
+
+    size_t capacity = target->base.location.length + 5;
+    char *buffer = pm_arena_alloc(&builder->scratch, capacity, 1);
+    char *end = buffer + capacity;
+    char *cursor = end;
+    const pm_node_t *current = PM_NODE_UPCAST(target);
+    while (current && PM_NODE_TYPE_P(current, PM_CONSTANT_PATH_NODE)) {
+        const pm_constant_path_node_t *path = (const pm_constant_path_node_t *) current;
+        const pm_constant_t *name = compile_constant(builder->parser, path->name);
+        cursor -= name->length;
+        memcpy(cursor, name->start, name->length);
+        cursor -= 2;
+        memcpy(cursor, "::", 2);
+        current = path->parent;
+    }
+    if (current) {
+        if (PM_NODE_TYPE_P(current, PM_CONSTANT_READ_NODE)) {
+            const pm_constant_t *name = compile_constant(builder->parser, ((const pm_constant_read_node_t *) current)->name);
+            cursor -= name->length;
+            memcpy(cursor, name->start, name->length);
+        } else {
+            cursor -= 3;
+            memcpy(cursor, "...", 3);
+        }
+    }
+    return make_object_string(builder, cursor, (size_t) (end - cursor));
+}
+
+/* UINT32_MAX means this expression must be evaluated at runtime. */
+static uint32_t
+shareable_literal(PrismBuilder *builder, const pm_node_t *node) {
+    switch (PM_NODE_TYPE(node)) {
+        case PM_ARRAY_NODE: {
+            const pm_array_node_t *array = (const pm_array_node_t *) node;
+            uint32_t *ids = pm_arena_alloc(builder->arena, array->elements.size * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+            for (size_t idx = 0; idx < array->elements.size; ++idx) {
+                ids[idx] = shareable_literal(builder, array->elements.nodes[idx]);
+                if (ids[idx] == UINT32_MAX) return UINT32_MAX;
+            }
+            uint32_t object_id = make_object(builder, kPrismObjectArray);
+            builder->unit->objects[object_id].as.array.nobject_ids = (uint32_t) array->elements.size;
+            builder->unit->objects[object_id].as.array.object_ids = ids;
+            return object_id;
+        }
+        case PM_HASH_NODE: {
+            const pm_hash_node_t *hash = (const pm_hash_node_t *) node;
+            uint32_t *ids = pm_arena_alloc(builder->arena, hash->elements.size * 2 * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+            for (size_t idx = 0; idx < hash->elements.size; ++idx) {
+                if (!PM_NODE_TYPE_P(hash->elements.nodes[idx], PM_ASSOC_NODE)) return UINT32_MAX;
+                const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) hash->elements.nodes[idx];
+                ids[idx * 2] = shareable_literal(builder, assoc->key);
+                ids[idx * 2 + 1] = shareable_literal(builder, assoc->value);
+                if (ids[idx * 2] == UINT32_MAX || ids[idx * 2 + 1] == UINT32_MAX) return UINT32_MAX;
+            }
+            uint32_t object_id = make_object(builder, kPrismObjectHash);
+            builder->unit->objects[object_id].as.hash.nobject_ids = (uint32_t) hash->elements.size * 2;
+            builder->unit->objects[object_id].as.hash.object_ids = ids;
+            return object_id;
+        }
+        case PM_TRUE_NODE: return make_object(builder, kPrismObjectTrue);
+        case PM_FALSE_NODE: return make_object(builder, kPrismObjectFalse);
+        case PM_NIL_NODE: return make_object(builder, kPrismObjectNil);
+        case PM_STRING_NODE: {
+            const pm_string_node_t *string = (const pm_string_node_t *) node;
+            uint32_t object_id = make_object(builder, kPrismObjectString);
+            builder->unit->objects[object_id].as.string.flags = node->flags;
+            builder->unit->objects[object_id].as.string.unescaped = &string->unescaped;
+            return object_id;
+        }
+        case PM_SYMBOL_NODE:
+        case PM_INTEGER_NODE:
+        case PM_FLOAT_NODE:
+        case PM_RATIONAL_NODE:
+        case PM_IMAGINARY_NODE:
+            return static_literal(builder, node);
+        case PM_REGULAR_EXPRESSION_NODE: {
+            const pm_regular_expression_node_t *regexp = (const pm_regular_expression_node_t *) node;
+            uint32_t object_id = make_object(builder, kPrismObjectRegexp);
+            builder->unit->objects[object_id].as.string.flags = node->flags;
+            builder->unit->objects[object_id].as.string.unescaped = &regexp->unescaped;
+            return object_id;
+        }
+        case PM_SOURCE_LINE_NODE: {
+            pm_integer_t *integer = pm_arena_alloc(builder->arena, sizeof(pm_integer_t), PRISM_ALIGNOF(pm_integer_t));
+            *integer = pm_integer_int32(pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line));
+            uint32_t object_id = make_object(builder, kPrismObjectInteger);
+            builder->unit->objects[object_id].as.integer.value = integer;
+            return object_id;
+        }
+        case PM_SOURCE_ENCODING_NODE: {
+            uint32_t object_id = make_object(builder, kPrismObjectEncoding);
+            builder->unit->objects[object_id].as.encoding.name = builder->parser->encoding->name;
+            return object_id;
+        }
+        default:
+            return UINT32_MAX;
+    }
+}
+
+static uint32_t
+compile_shareable_constant_value(PrismBuilder *builder, const pm_node_t *node, pm_node_flags_t shareability, uint32_t name_id, bool top) {
+    uint32_t literal_id = shareable_literal(builder, node);
+    if (literal_id != UINT32_MAX) {
+        uint32_t value_id = emit_load_object(builder, node->node_id, literal_id);
+        return emit_make_shareable(builder, node->node_id, value_id, false);
+    }
+
+    uint32_t value_id;
+    switch (PM_NODE_TYPE(node)) {
+        case PM_ARRAY_NODE: {
+            const pm_array_node_t *array = (const pm_array_node_t *) node;
+            uint32_t *ids = pm_arena_alloc(&builder->scratch, array->elements.size * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+            for (size_t idx = 0; idx < array->elements.size; ++idx) {
+                ids[idx] = compile_shareable_constant_value(builder, array->elements.nodes[idx], shareability, name_id, false);
+            }
+            value_id = emit_new_array(builder, node->node_id, (uint32_t) array->elements.size, ids);
+            break;
+        }
+        case PM_HASH_NODE: {
+            const pm_hash_node_t *hash = (const pm_hash_node_t *) node;
+            value_id = UINT32_MAX;
+            for (size_t idx = 0; idx < hash->elements.size; ++idx) {
+                const pm_node_t *element = hash->elements.nodes[idx];
+                uint32_t hash_id;
+                if (PM_NODE_TYPE_P(element, PM_ASSOC_NODE)) {
+                    const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) element;
+                    uint32_t ids[2];
+                    ids[0] = compile_shareable_constant_value(builder, assoc->key, shareability, name_id, false);
+                    ids[1] = compile_shareable_constant_value(builder, assoc->value, shareability, name_id, false);
+                    hash_id = emit_new_hash(builder, element->node_id, 2, ids);
+                } else {
+                    uint32_t splat_id = compile_shareable_constant_value(builder, element, shareability, name_id, false);
+                    hash_id = emit_coerce_hash(builder, element->node_id, splat_id);
+                }
+                value_id = value_id == UINT32_MAX ? hash_id : emit_merge_hash(builder, node->node_id, value_id, hash_id);
+            }
+            if (value_id == UINT32_MAX) value_id = emit_new_hash(builder, node->node_id, 0, NULL);
+            break;
+        }
+        default:
+            if (PM_NODE_TYPE_P(node, PM_ASSOC_SPLAT_NODE)) {
+                const pm_assoc_splat_node_t *splat = (const pm_assoc_splat_node_t *) node;
+                value_id = splat->value ? compile_node(builder, splat->value) : emit_load_lvar(builder, node->node_id, builder->state.keyword_rest_local_id);
+            } else {
+                value_id = compile_node(builder, node);
+            }
+            if (PM_NODE_TYPE_P(node, PM_INTERPOLATED_STRING_NODE)) {
+                value_id = emit_call(builder, node->node_id, PM_CONSTANT_ID_UMINUS, value_id, 0, NULL, UINT32_MAX, false, false, 0, false);
+            }
+            if (shareability & PM_SHAREABLE_CONSTANT_NODE_FLAGS_LITERAL) {
+                return emit_ensure_shareable(builder, node->node_id, value_id, name_id);
+            }
+            break;
+    }
+
+    return top ? emit_make_shareable(builder, node->node_id, value_id, (shareability & PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_COPY) != 0) : value_id;
+}
+
+static uint32_t
+compile_constant_value(PrismBuilder *builder, const pm_node_t *value, pm_node_flags_t shareability, pm_constant_id_t name_id, const pm_constant_path_node_t *target) {
+    if (!shareability) return compile_node(builder, value);
+    uint32_t path_id = make_constant_name(builder, name_id, target);
+    return compile_shareable_constant_value(builder, value, shareability, path_id, true);
 }
 
 /******************************************************************************/
@@ -3785,7 +3985,7 @@ compile_class_variable_write_node(PrismBuilder *builder, const pm_class_variable
  * ^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_write_node_t *node) {
+compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_write_node_t *node, pm_node_flags_t shareability) {
     uint32_t set_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
 
@@ -3796,7 +3996,7 @@ compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_wri
     emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, 1, &current_id);
 
     builder->state.block_id = set_block_id;
-    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
     emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
 
@@ -3809,12 +4009,12 @@ compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_wri
  * ^^^^^^^^^^
  */
 static uint32_t
-compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_operator_write_node_t *node) {
+compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_operator_write_node_t *node, pm_node_flags_t shareability) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
 
     uint32_t receiver_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
-    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, UINT32_MAX, false, false, 0, false);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, result_id);
 
@@ -3826,7 +4026,7 @@ compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_op
  * ^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write_node_t *node) {
+compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write_node_t *node, pm_node_flags_t shareability) {
     uint32_t read_block_id = make_block(builder, 0);
     uint32_t set_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
@@ -3842,7 +4042,7 @@ compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write
     emit_branchif(builder, node->base.node_id, current_id, join_block_id, 1, &current_id, set_block_id, 0, NULL);
 
     builder->state.block_id = set_block_id;
-    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
     emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
 
@@ -3855,7 +4055,7 @@ compile_constant_or_write_node(PrismBuilder *builder, const pm_constant_or_write
  * ^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_path_and_write_node_t *node) {
+compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_path_and_write_node_t *node, pm_node_flags_t shareability) {
     uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
     uint32_t set_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
@@ -3872,7 +4072,7 @@ compile_constant_path_and_write_node(PrismBuilder *builder, const pm_constant_pa
     emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, 1, &current_id);
 
     builder->state.block_id = set_block_id;
-    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
     if (node->target->parent) {
         emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, value_id);
     } else {
@@ -3929,7 +4129,7 @@ compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t 
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_constant_path_operator_write_node_t *node) {
+compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_constant_path_operator_write_node_t *node, pm_node_flags_t shareability) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, (uint32_t) node->target->name);
 
@@ -3937,13 +4137,13 @@ compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_consta
         uint32_t parent_id = compile_node(builder, node->target->parent);
 
         uint32_t receiver_id = emit_load_const_recv_rel(builder, node->base.node_id, parent_id, constant_path);
-        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
         uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, UINT32_MAX, false, false, 0, false);
 
         return emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, result_id);
     } else {
         uint32_t receiver_id = emit_load_const_abs(builder, node->base.node_id, constant_path);
-        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
         uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, UINT32_MAX, false, false, 0, false);
 
         return emit_store_const_abs(builder, node->base.node_id, node->target->name, result_id);
@@ -3955,7 +4155,7 @@ compile_constant_path_operator_write_node(PrismBuilder *builder, const pm_consta
  * ^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_path_or_write_node_t *node) {
+compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_path_or_write_node_t *node, pm_node_flags_t shareability) {
     uint32_t parent_id = node->target->parent ? compile_node(builder, node->target->parent) : UINT32_MAX;
     uint32_t read_block_id = make_block(builder, 0);
     uint32_t set_block_id = make_block(builder, 0);
@@ -3982,7 +4182,7 @@ compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_pat
     emit_branchif(builder, node->base.node_id, current_id, join_block_id, 1, &current_id, set_block_id, 0, NULL);
 
     builder->state.block_id = set_block_id;
-    uint32_t value_id = compile_node(builder, node->value);
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
     if (node->target->parent) {
         emit_store_const_recv_rel(builder, node->base.node_id, parent_id, node->target->name, value_id);
     } else {
@@ -3999,14 +4199,14 @@ compile_constant_path_or_write_node(PrismBuilder *builder, const pm_constant_pat
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_write_node_t *node) {
+compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_write_node_t *node, pm_node_flags_t shareability) {
     if (node->target->parent) {
         uint32_t receiver_id = compile_node(builder, node->target->parent);
-        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
 
         return emit_store_const_recv_rel(builder, node->base.node_id, receiver_id, node->target->name, value_id);
     } else {
-        uint32_t value_id = compile_node(builder, node->value);
+        uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
         return emit_store_const_abs(builder, node->base.node_id, node->target->name, value_id);
     }
 }
@@ -4027,8 +4227,8 @@ compile_constant_read_node(PrismBuilder *builder, const pm_constant_read_node_t 
  * ^^^^^^^
  */
 static uint32_t
-compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_t *node) {
-    uint32_t value_id = compile_node(builder, node->value);
+compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_t *node, pm_node_flags_t shareability) {
+    uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
     return value_id;
 }
@@ -5244,6 +5444,35 @@ compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
 }
 
 /*
+ * A value that is being written to a constant that is being marked as
+ * shared depending on the current lexical context.
+ */
+static uint32_t
+compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_constant_node_t *node) {
+    pm_node_flags_t shareability = node->base.flags & (PM_SHAREABLE_CONSTANT_NODE_FLAGS_LITERAL | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_COPY | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_EVERYTHING);
+    switch (PM_NODE_TYPE(node->write)) {
+        case PM_CONSTANT_AND_WRITE_NODE:
+            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_OPERATOR_WRITE_NODE:
+            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_OR_WRITE_NODE:
+            return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_PATH_AND_WRITE_NODE:
+            return compile_constant_path_and_write_node(builder, (const pm_constant_path_and_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
+            return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_PATH_OR_WRITE_NODE:
+            return compile_constant_path_or_write_node(builder, (const pm_constant_path_or_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_PATH_WRITE_NODE:
+            return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node->write, shareability);
+        case PM_CONSTANT_WRITE_NODE:
+            return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node->write, shareability);
+        default:
+            return compile_node(builder, node->write);
+    }
+}
+
+/*
  * class << self; end
  * ^^^^^^^^^^^^^^^^^^
  */
@@ -5514,23 +5743,23 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
         case PM_CONSTANT_READ_NODE:
             return compile_constant_read_node(builder, (const pm_constant_read_node_t *) node);
         case PM_CONSTANT_WRITE_NODE:
-            return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node);
+            return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node, 0);
         case PM_CONSTANT_AND_WRITE_NODE:
-            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node);
+            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node, 0);
         case PM_CONSTANT_OR_WRITE_NODE:
-            return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node);
+            return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node, 0);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
-            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node);
+            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_NODE:
             return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
-            return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node);
+            return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_AND_WRITE_NODE:
-            return compile_constant_path_and_write_node(builder, (const pm_constant_path_and_write_node_t *) node);
+            return compile_constant_path_and_write_node(builder, (const pm_constant_path_and_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_OR_WRITE_NODE:
-            return compile_constant_path_or_write_node(builder, (const pm_constant_path_or_write_node_t *) node);
+            return compile_constant_path_or_write_node(builder, (const pm_constant_path_or_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
-            return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node);
+            return compile_constant_path_operator_write_node(builder, (const pm_constant_path_operator_write_node_t *) node, 0);
         case PM_DEF_NODE:
             return compile_def_node(builder, (const pm_def_node_t *) node);
         case PM_DEFINED_NODE:
@@ -5655,6 +5884,8 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_return_node(builder, (const pm_return_node_t *) node);
         case PM_SELF_NODE:
             return compile_self_node(builder, (const pm_self_node_t *) node);
+        case PM_SHAREABLE_CONSTANT_NODE:
+            return compile_shareable_constant_node(builder, (const pm_shareable_constant_node_t *) node);
         case PM_SINGLETON_CLASS_NODE:
             return compile_singleton_class_node(builder, (const pm_singleton_class_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
@@ -5689,9 +5920,6 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
             return compile_yield_node(builder, (const pm_yield_node_t *) node);
         case PM_ERROR_RECOVERY_NODE:
             fprintf(stderr, "Cannot compile syntax errors\n");
-            abort();
-        case PM_SHAREABLE_CONSTANT_NODE:
-            fprintf(stderr, "Unimplemented\n");
             abort();
         case PM_ALTERNATION_PATTERN_NODE:
         case PM_ARGUMENTS_NODE:
@@ -5741,7 +5969,6 @@ compile_node(PrismBuilder *builder, const pm_node_t *node) {
 }
 
 /******************************************************************************/
-
 
 void
 pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, PrismUnit *unit) {

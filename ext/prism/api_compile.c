@@ -51,6 +51,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefinedConstRecvRel: return rb_intern_const("defined_const_recv_rel");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
+        case kPrismInsnEnsureShareable: return rb_intern_const("ensure_shareable");
         case kPrismInsnExpandArray: return rb_intern_const("expand_array");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
         case kPrismInsnExtractLastMatchNamedGroup: return rb_intern_const("extract_last_match_named_group");
@@ -71,6 +72,8 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnLoadLVar: return rb_intern_const("load_lvar");
         case kPrismInsnLoadObject: return rb_intern_const("load_object");
         case kPrismInsnLoadSelf: return rb_intern_const("load_self");
+        case kPrismInsnMakeShareable: return rb_intern_const("make_shareable");
+        case kPrismInsnMakeShareableCopy: return rb_intern_const("make_shareable_copy");
         case kPrismInsnMatch: return rb_intern_const("match");
         case kPrismInsnMergeHash: return rb_intern_const("merge_hash");
         case kPrismInsnNewArray: return rb_intern_const("new_array");
@@ -220,6 +223,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnLoadLVar:
         case kPrismInsnStoreLVar:
             return rb_ary_entry(vlocals_unit, pm_insn_local_id(insn));
+        case kPrismInsnEnsureShareable:
         case kPrismInsnLoadObject:
         case kPrismInsnNewArrayStatic:
         case kPrismInsnNewHashStatic:

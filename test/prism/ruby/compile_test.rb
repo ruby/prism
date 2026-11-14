@@ -5132,6 +5132,170 @@ module Prism
       assert_equal(2, vm.run(unit))
     end
 
+    def test_shareable_constant_literals
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        [
+          '"value"',
+          '["value", { key: [1, nil, true, false, 1.5, 1r, 1i] }]',
+          '{}', '[]', '/value/i', '__LINE__', '__ENCODING__',
+          '"value#{1}"', ':"value#{1}"'
+        ].each do |expression|
+          source = "# shareable_constant_value: #{mode}\nValue = #{expression}; [Value, Value.frozen?, Ractor.shareable?(Value)]"
+          assert_shareable_constant(source)
+        end
+      end
+    end
+
+    def test_shareable_constant_dynamic_values
+      [:experimental_copy, :experimental_everything].each do |mode|
+        [
+          'value', '[value]', '{ key: value }', '[*value]', '{ **value }'
+        ].each do |expression|
+          value = expression.include?("**") ? '{ key: +"value" }' : '[+"value"]'
+          source = "value = #{value}\n# shareable_constant_value: #{mode}\nValue = #{expression}; [Value, Value.equal?(value), value.frozen?, value.values_at(0).first&.frozen?, Ractor.shareable?(Value)]"
+          # Both Array and Hash implement values_at, keeping the source common.
+          assert_shareable_constant(source)
+        end
+      end
+      assert_shareable_constant("value = Ractor.make_shareable([+'value']);\n# shareable_constant_value: literal\nValue = [value]; [Value, Value[0].equal?(value), Ractor.shareable?(Value)]")
+    end
+
+    def test_shareable_constant_literal_rejection
+      [
+        "value", "[value, (events << :later; 1)]", "{ value => (events << :later; 1) }",
+        "{ key: value }", "[*value]", "{ **value }"
+      ].each do |expression|
+        input = expression.include?("**") ? '{ key: +"value" }' : '[+"value"]'
+        assert_shareable_constant(<<~RUBY)
+          events = []
+          value = #{input}
+          # shareable_constant_value: literal
+          begin
+            Value = #{expression}
+          rescue Ractor::IsolationError => error
+            [error.message, events, value.frozen?, self.const_defined?(:Value, false)]
+          end
+        RUBY
+      end
+    end
+
+    def test_shareable_constant_writes
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        ["Value", "Holder::Value", "holder::Value"].each do |target|
+          ["=", "||=", "&&=", "+="].each do |operator|
+            seed = operator == "&&=" || operator == "+=" ? "#{target} = 1" : ""
+            assert_shareable_constant(<<~RUBY)
+              module Holder; end
+              holder = Holder
+              #{seed}
+              # shareable_constant_value: #{mode}
+              #{target} #{operator} 2
+              [#{target}, Ractor.shareable?(#{target})]
+            RUBY
+          end
+        end
+      end
+    end
+
+    def test_shareable_constant_short_circuit
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        ["Value", "Holder::Value"].each do |target|
+          assert_shareable_constant(<<~RUBY, [1, false])
+            module Holder; end
+            #{target} = 1
+            value = +"value"
+            # shareable_constant_value: #{mode}
+            #{target} ||= value
+            [#{target}, value.frozen?]
+          RUBY
+          assert_shareable_constant(<<~RUBY, [false, false])
+            module Holder; end
+            #{target} = false
+            value = +"value"
+            # shareable_constant_value: #{mode}
+            #{target} &&= value
+            [#{target}, value.frozen?]
+          RUBY
+        end
+      end
+    end
+
+    def test_shareable_constant_paths
+      ["Holder::Value", "holder::Value", "Holder::Nested::Value"].each do |target|
+        assert_shareable_constant(<<~RUBY)
+          module Holder; module Nested; end; end
+          holder = Holder
+          value = +"value"
+          # shareable_constant_value: literal
+          begin
+            #{target} = value
+          rescue Ractor::IsolationError => error
+            error.message
+          end
+        RUBY
+      end
+    end
+
+    def test_shareable_constant_operator_rhs
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        assert_shareable_constant(<<~RUBY)
+          Value = +"first"
+          # shareable_constant_value: #{mode}
+          Value += "second"
+          [Value, Value.frozen?, Ractor.shareable?(Value)]
+        RUBY
+      end
+    end
+
+    def test_shareable_constant_receiver_evaluation
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        assert_shareable_constant(<<~RUBY)
+          events = []
+          holder = Module.new
+          # shareable_constant_value: #{mode}
+          (events << :receiver; holder)::Value = (events << :value; "value".freeze)
+          [events, holder::Value, Ractor.shareable?(holder::Value)]
+        RUBY
+      end
+      assert_shareable_constant(<<~RUBY)
+        events = []
+        holder = Module.new
+        # shareable_constant_value: literal
+        begin
+          (events << :receiver; holder)::Value = (events << :value; +"value")
+        rescue Ractor::IsolationError => error
+          [events, error.message, holder.const_defined?(:Value, false)]
+        end
+      RUBY
+    end
+
+    def test_shareable_constant_literal_identity
+      unit = compile_unit("# shareable_constant_value: literal\nValue = ['value', { key: 1 }]")
+      graph = unit.graphs[0]
+      first_scope = Module.new
+      second_scope = Module.new
+      first = vm.run_frame(Compile::VM::Frame.new(graph, first_scope, [first_scope, Object].freeze))
+      second = vm.run_frame(Compile::VM::Frame.new(graph, second_scope, [second_scope, Object].freeze))
+      assert_same(first, second)
+      assert_predicate(first, :frozen?)
+      assert_predicate(first[0], :frozen?)
+      assert_predicate(first[1], :frozen?)
+    end
+
+    def test_shareable_constant_disasm
+      [
+        [:literal, :ensure_shareable],
+        [:experimental_copy, :make_shareable_copy],
+        [:experimental_everything, :make_shareable]
+      ].each do |mode, kind|
+        unit = Prism.compile("value = +'value';\n# shareable_constant_value: #{mode}\nValue = value", freeze: true).value
+        assert_include(unit.disasm, " = #{kind}(")
+        insn = unit.graphs[0].blocks.flat_map(&:insns).find { |candidate| candidate.kind == kind }
+        assert_equal(2, insn.opnds.length)
+        assert_equal(mode == :literal ? "Value" : nil, insn.data)
+      end
+    end
+
     def test_compile_regions
       unit = compile_unit("def region_example(x); if x; [1].map { 2 }; else; 3; end; end")
       assert_operator(unit.graphs.length, :>, 1)
@@ -5216,6 +5380,16 @@ module Prism
     end
 
     private
+
+    def assert_shareable_constant(source, expected = :native)
+      capture_warnings do
+        expected = Module.new.module_eval(source) if expected == :native
+        scope = Module.new
+        graph = compile_unit(source).graphs[0]
+        actual = vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+        assert_equal(expected, actual, source)
+      end
+    end
 
     def run_instructions(insns, args, nvalues)
       blocks = []

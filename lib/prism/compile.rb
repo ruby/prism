@@ -314,6 +314,9 @@ module Prism
           "#{value(insn.opnds[0])} = defined_cvar #{insn.data}"
         when :defined_gvar
           "#{value(insn.opnds[0])} = defined_gvar #{insn.data}"
+        when :ensure_shareable
+          opnds = insn.opnds
+          "#{value(opnds[0])} = ensure_shareable#{values(opnds[1..])}, #{literal(insn.data)}"
         when :expand_array
           opnds = insn.opnds
           lefts, rights, rest = insn.data
@@ -376,6 +379,12 @@ module Prism
         when :load_self
           opnds = insn.opnds
           "#{value(opnds[0])} = load_self#{values(opnds[1..])}"
+        when :make_shareable
+          opnds = insn.opnds
+          "#{value(opnds[0])} = make_shareable#{values(opnds[1..])}"
+        when :make_shareable_copy
+          opnds = insn.opnds
+          "#{value(opnds[0])} = make_shareable_copy#{values(opnds[1..])}"
         when :match
           opnds = insn.opnds
           "#{value(opnds[0])} = match#{values(opnds[1..])}"
@@ -821,6 +830,12 @@ module Prism
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
+            when :ensure_shareable
+              value = values[insn.opnds[1]]
+              unless Ractor.shareable?(value)
+                raise Ractor::IsolationError, "cannot assign unshareable object to #{insn.data}"
+              end
+              values[insn.opnds[0]] = value
             when :expand_array
               lefts, rights, rest = insn.data
               array = Array.instance_method(:to_a).bind_call(values[insn.opnds[0]])
@@ -874,6 +889,10 @@ module Prism
               values[insn.opnds[0]] = locals[insn.data.id]
             when :load_self
               values[insn.opnds[0]] = recv
+            when :make_shareable
+              values[insn.opnds[0]] = Ractor.make_shareable(values[insn.opnds[1]])
+            when :make_shareable_copy
+              values[insn.opnds[0]] = Ractor.make_shareable(values[insn.opnds[1]], copy: true)
             when :match
               values[insn.opnds[0]] = values[insn.opnds[2]] === values[insn.opnds[1]]
             when :merge_hash
