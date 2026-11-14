@@ -65,6 +65,22 @@ PRISM_TEST(line_column_locates_an_offset) {
     CHECK(second.line == 2 && second.column == 2);
 }
 
+PRISM_TEST(line_column_wraps_at_the_line_number_boundary) {
+    prism_test::parse_result result("a\nb\nc");
+    const pm_line_offset_list_t *offsets = pm_parser_line_offsets(result.parser.get());
+
+    for (int32_t start_line : { INT32_MIN, INT32_MAX }) {
+        for (uint32_t cursor = 0; cursor <= 5; cursor++) {
+            int64_t expected = static_cast<int64_t>(start_line) + cursor / 2;
+            if (expected > INT32_MAX) expected -= INT64_C(4294967296);
+
+            pm_line_column_t position = pm_line_offset_list_line_column(offsets, cursor, start_line);
+            CHECK(position.line == expected);
+            CHECK(position.column == cursor % 2);
+        }
+    }
+}
+
 PRISM_TEST(errors_are_all_visited) {
     std::string_view source = "def (; 1 +; [";
     prism_test::parse_result result(source);
