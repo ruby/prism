@@ -1767,8 +1767,8 @@ emit_raise_pattern_guard(PrismBuilder *builder, uint32_t node_id, uint32_t value
 }
 
 static void
-emit_raise_pattern_mismatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
-    emit_insn(builder, kPrismInsnRaisePatternMismatch, node_id, 2, (uint32_t[]) { value_id, pattern_id });
+emit_raise_pattern_mismatch(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id, uint32_t pattern_id) {
+    emit_insn(builder, kPrismInsnRaisePatternMismatch, node_id, 3, (uint32_t[]) { root_id, value_id, pattern_id });
 }
 
 static void
@@ -3557,7 +3557,7 @@ compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node)
         uint32_t result_id = compile_node(builder, PM_NODE_UPCAST(node->else_clause));
         emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
     } else if (single) {
-        emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, pattern_id);
+        emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, value_id, pattern_id);
     } else {
         emit_raise_pattern_nomatch(builder, node->base.node_id, value_id);
     }
@@ -4884,7 +4884,7 @@ compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_
     uint32_t pattern_id = compile_pattern_match(builder, node->pattern, value_id, matched_block_id, unmatched_block_id);
 
     builder->state.block_id = unmatched_block_id;
-    emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, pattern_id);
+    emit_raise_pattern_mismatch(builder, node->base.node_id, value_id, value_id, pattern_id);
 
     builder->state.block_id = matched_block_id;
     return emit_load_nil(builder, node->base.node_id);

@@ -420,8 +420,14 @@ module Prism
           "#{value(opnds[0])} = new_symbol#{values(opnds[1..])}"
         when :post_execution
           "post_execution #{graph_ref(insn.data)}"
+        when :raise_pattern_deconstruct
+          "raise_pattern_deconstruct#{values(insn.opnds)}"
         when :raise_pattern_guard
           "raise_pattern_guard#{values(insn.opnds)}"
+        when :raise_pattern_length
+          "raise_pattern_length#{values(insn.opnds)}"
+        when :raise_pattern_min_length
+          "raise_pattern_min_length#{values(insn.opnds)}"
         when :raise_pattern_mismatch
           "raise_pattern_mismatch#{values(insn.opnds)}"
         when :raise_pattern_nomatch
@@ -921,12 +927,16 @@ module Prism
               if @post_executions.add?(insn.data)
                 at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method)) }
               end
+            when :raise_pattern_deconstruct
+              raise_pattern_error(values[insn.opnds[0]], "%p does not respond to #deconstruct", values[insn.opnds[1]])
             when :raise_pattern_guard
               raise NoMatchingPatternError, "#{values[insn.opnds[0]].inspect}: guard clause does not return true"
+            when :raise_pattern_length
+              raise_pattern_error(values[insn.opnds[0]], "%p length mismatch (given %p, expected %p)", *values.values_at(*insn.opnds[1..]))
+            when :raise_pattern_min_length
+              raise_pattern_error(values[insn.opnds[0]], "%p length mismatch (given %p, expected %p+)", *values.values_at(*insn.opnds[1..]))
             when :raise_pattern_mismatch
-              value = values[insn.opnds[0]]
-              detail = "#{values[insn.opnds[1]].inspect} === #{value.inspect} does not return true"
-              raise NoMatchingPatternError, "#{value.inspect}: #{detail}"
+              raise_pattern_error(values[insn.opnds[0]], "%p === %p does not return true", values[insn.opnds[2]], values[insn.opnds[1]])
             when :raise_pattern_nomatch
               raise NoMatchingPatternError, values[insn.opnds[0]]
             when :reraise
@@ -993,6 +1003,12 @@ module Prism
 
         owner = Kernel.instance_method(:method).bind_call(receiver, name).owner
         Module.instance_method(:===).bind_call(owner, caller)
+      end
+
+      def raise_pattern_error(root, format, *arguments)
+        detail = Kernel.instance_method(:sprintf).bind_call(self, format, *arguments)
+        message = Kernel.instance_method(:sprintf).bind_call(self, "%p: %s", root, detail)
+        raise NoMatchingPatternError, message
       end
 
       def rescue_match(exception, klass)

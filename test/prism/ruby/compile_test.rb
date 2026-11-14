@@ -3625,6 +3625,21 @@ module Prism
       RUBY
     end
 
+    def test_raise_pattern_instructions
+      [
+        [:raise_pattern_deconstruct, [1, 1], "1: 1 does not respond to #deconstruct"],
+        [:raise_pattern_length, [[[1]], [1], 1, 2], "[[1]]: [1] length mismatch (given 1, expected 2)"],
+        [:raise_pattern_min_length, [[], [], 0, 1], "[]: [] length mismatch (given 0, expected 1+)"],
+        [:raise_pattern_mismatch, [[1], 1, 2], "[1]: 2 === 1 does not return true"]
+      ].each do |kind, operands, message|
+        insns = operands.each_with_index.map { |value, index| Compile::Insn.new(:load_object, 0, [index], value) }
+        insns << Compile::Insn.new(kind, 0, operands.each_index.to_a, nil)
+        assert_raise_with_message(NoMatchingPatternError, message) do
+          run_instructions(insns, [nil], operands.length)
+        end
+      end
+    end
+
     def test_case_match
       [
         [:one, "case 1; in 1; :one; else; :other; end"],
@@ -3726,7 +3741,7 @@ module Prism
 
     def test_case_match_disasm
       [
-        ["case 1; in 2; :matched; end", :raise_pattern_mismatch, 2],
+        ["case 1; in 2; :matched; end", :raise_pattern_mismatch, 3],
         ["case 1; in 2; in 3; end", :raise_pattern_nomatch, 1],
         ["case 1; in 1 if false; end", :raise_pattern_guard, 1]
       ].each do |source, kind, noperands|
