@@ -1183,34 +1183,31 @@ make_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, uint32_t 
     return insn;
 }
 
+static PrismInsn *
+emit_insn(PrismBuilder *builder, PrismInsnKind kind, uint32_t node_id, uint32_t opnds_len, const uint32_t *opnd_ids) {
+    PrismInsn *insn = make_insn(builder, kind, node_id, opnds_len);
+    if (opnds_len) {
+        memcpy(PrismBuilder_graph(builder)->opnds + insn->opnds_off, opnd_ids, opnds_len * sizeof(uint32_t));
+    }
+    return insn;
+}
+
 /******************************************************************************/
 
 static void
 emit_alias_gvar(PrismBuilder *builder, uint32_t node_id, uint32_t new_name_id, uint32_t old_name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnAliasGVar, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = new_name_id;
-    graph->opnds[insn->opnds_off + 1] = old_name_id;
+    emit_insn(builder, kPrismInsnAliasGVar, node_id, 2, (uint32_t[]) { new_name_id, old_name_id });
 }
 
 static void
 emit_alias_method(PrismBuilder *builder, uint32_t node_id, uint32_t new_name_id, uint32_t old_name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnAliasMethod, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = new_name_id;
-    graph->opnds[insn->opnds_off + 1] = old_name_id;
+    emit_insn(builder, kPrismInsnAliasMethod, node_id, 2, (uint32_t[]) { new_name_id, old_name_id });
 }
 
 static void
 emit_branch(PrismBuilder *builder, uint32_t node_id, uint32_t block_id, uint32_t opnds_len, uint32_t *opnd_ids) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnBranch, node_id, opnds_len);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnBranch, node_id, opnds_len, opnd_ids);
     insn->as.branch.block_id = block_id;
-
-    if (opnds_len) {
-        memcpy(PrismBuilder_graph(builder)->opnds + insn->opnds_off, opnd_ids, sizeof(uint32_t) * opnds_len);
-    }
 }
 
 static void
@@ -1220,22 +1217,20 @@ emit_branchif(PrismBuilder *builder, uint32_t node_id, uint32_t predicate_id, ui
     insn->as.branchif.else_block_id = else_block_id;
     insn->as.branchif.then_opnds_len = then_opnds_len;
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = predicate_id;
-
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = predicate_id;
     if (then_opnds_len) {
-        memcpy(graph->opnds + 1 + insn->opnds_off, then_opnd_ids, sizeof(uint32_t) * then_opnds_len);
+        memcpy(cursor, then_opnd_ids, then_opnds_len * sizeof(uint32_t));
+        cursor += then_opnds_len;
     }
-
     if (else_opnds_len) {
-        memcpy(graph->opnds + 1 + insn->opnds_off + then_opnds_len, else_opnd_ids, sizeof(uint32_t) * else_opnds_len);
+        memcpy(cursor, else_opnd_ids, else_opnds_len * sizeof(uint32_t));
     }
 }
 
 static void
 emit_break(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnBreak, node_id, 1);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnBreak, node_id, 1, &value_id);
 }
 
 static uint32_t
@@ -1249,12 +1244,15 @@ emit_call(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uin
     insn->as.call.block = block_id != UINT32_MAX;
     insn->as.call.block_argument = block_argument;
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-    memcpy(graph->opnds + insn->opnds_off + 2, argument_ids, sizeof(uint32_t) * nargument_ids);
-    if (block_id != UINT32_MAX) graph->opnds[insn->opnds_off + 2 + nargument_ids] = block_id;
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    *cursor++ = receiver_id;
+    if (nargument_ids) {
+        memcpy(cursor, argument_ids, nargument_ids * sizeof(uint32_t));
+        cursor += nargument_ids;
+    }
+    if (block_id != UINT32_MAX) *cursor = block_id;
 
     return value_id;
 }
@@ -1274,301 +1272,200 @@ emit_call_super(PrismBuilder *builder, uint32_t node_id, const PrismArguments *a
     insn->as.call.block_argument = arguments->block_argument;
 
     uint32_t value_id = make_value(builder);
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
     if (arguments->size) {
-        memcpy(graph->opnds + insn->opnds_off + 1, arguments->ids, sizeof(uint32_t) * arguments->size);
+        memcpy(cursor, arguments->ids, arguments->size * sizeof(uint32_t));
+        cursor += arguments->size;
     }
-
-    graph->opnds[insn->opnds_off + arguments->size + 1] = arguments->block_id;
+    *cursor = arguments->block_id;
 
     return value_id;
 }
 
-
 static uint32_t
 emit_coerce_array_to_a(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceArrayToA, node_id, 2);
     uint32_t array_id = make_value(builder);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = array_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
+    emit_insn(builder, kPrismInsnCoerceArrayToA, node_id, 2, (uint32_t[]) { array_id, value_id });
     return array_id;
 }
 
-
 static uint32_t
 emit_coerce_array_to_ary(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceArrayToAry, node_id, 2);
     uint32_t array_id = make_value(builder);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = array_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
+    emit_insn(builder, kPrismInsnCoerceArrayToAry, node_id, 2, (uint32_t[]) { array_id, value_id });
     return array_id;
 }
 
 static uint32_t
 emit_coerce_hash(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceHash, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t hash_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = hash_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
+    emit_insn(builder, kPrismInsnCoerceHash, node_id, 2, (uint32_t[]) { hash_id, value_id });
     return hash_id;
 }
 
 static uint32_t
 emit_coerce_string(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnCoerceString, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t string_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = string_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
+    emit_insn(builder, kPrismInsnCoerceString, node_id, 2, (uint32_t[]) { string_id, value_id });
     return string_id;
 }
 
 static uint32_t
 emit_concat_array(PrismBuilder *builder, uint32_t node_id, uint32_t left_id, uint32_t right_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnConcatArray, node_id, 3);
     uint32_t value_id = make_value(builder);
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = left_id;
-    graph->opnds[insn->opnds_off + 2] = right_id;
+    emit_insn(builder, kPrismInsnConcatArray, node_id, 3, (uint32_t[]) { value_id, left_id, right_id });
     return value_id;
 }
 
 static uint32_t
 emit_define_class_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassAbs, node_id, 1);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassAbs, node_id, 1, &value_id);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_class_abs_super(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassAbsSuper, node_id, 2);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassAbsSuper, node_id, 2, (uint32_t[]) { value_id, superclass_id });
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = superclass_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_class_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassNestRel, node_id, 1);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassNestRel, node_id, 1, &value_id);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_class_nest_rel_super(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t superclass_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassNestRelSuper, node_id, 2);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassNestRelSuper, node_id, 2, (uint32_t[]) { value_id, superclass_id });
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = superclass_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_class_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassRecvRel, node_id, 2);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassRecvRel, node_id, 2, (uint32_t[]) { value_id, receiver_id });
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_class_recv_rel_super(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t superclass_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineClassRecvRelSuper, node_id, 3);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassRecvRelSuper, node_id, 3, (uint32_t[]) { value_id, receiver_id, superclass_id });
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-    graph->opnds[insn->opnds_off + 2] = superclass_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_module_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineModuleAbs, node_id, 1);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineModuleAbs, node_id, 1, &value_id);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_module_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineModuleNestRel, node_id, 1);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineModuleNestRel, node_id, 1, &value_id);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_define_module_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineModuleRecvRel, node_id, 2);
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineModuleRecvRel, node_id, 2, (uint32_t[]) { value_id, receiver_id });
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-
     return value_id;
 }
 
 static void
 emit_define_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineMethod, node_id, 0);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineMethod, node_id, 0, NULL);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
 }
 
 static uint32_t
 emit_define_singleton_class(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonClass, node_id, 2);
-    insn->as.define_singleton_class.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineSingletonClass, node_id, 2, (uint32_t[]) { value_id, receiver_id });
+    insn->as.define_singleton_class.graph_id = graph_id;
     return value_id;
 }
 
 static void
 emit_define_singleton_method(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t receiver_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefineSingletonMethod, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefineSingletonMethod, node_id, 1, &receiver_id);
     insn->as.define.name_id = name_id;
     insn->as.define.graph_id = graph_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = receiver_id;
 }
 
 static uint32_t
 emit_defined_const_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstAbs, node_id, 1);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedConstAbs, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_defined_const_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstNestRel, node_id, 1);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedConstNestRel, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_defined_const_recv_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t parent_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedConstRecvRel, node_id, 2);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = parent_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedConstRecvRel, node_id, 2, (uint32_t[]) { value_id, parent_id });
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_defined_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedCVar, node_id, 1);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedCVar, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_defined_gvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnDefinedGVar, node_id, 1);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedGVar, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_ensure_shareable(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnEnsureShareable, node_id, 2);
-    insn->as.object.object_id = name_id;
     uint32_t result_id = make_value(builder);
-    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
-    opnds[0] = result_id;
-    opnds[1] = value_id;
+    PrismInsn *insn = emit_insn(builder, kPrismInsnEnsureShareable, node_id, 2, (uint32_t[]) { result_id, value_id });
+    insn->as.object.object_id = name_id;
     return result_id;
 }
 
@@ -1582,12 +1479,12 @@ emit_expand_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, ui
     insn->as.expand_array.rights = rights;
     insn->as.expand_array.rest = rest;
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
 
     for (uint32_t idx = 0; idx < nvalues; ++idx) {
         value_ids[idx] = make_value(builder);
-        graph->opnds[insn->opnds_off + idx + 1] = value_ids[idx];
+        *cursor++ = value_ids[idx];
     }
 
     return value_ids;
@@ -1595,132 +1492,84 @@ emit_expand_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, ui
 
 static uint32_t
 emit_extract_last_match_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, uint32_t number) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchGroup, node_id, 2);
-    insn->as.extract_group.number = number;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnExtractLastMatchGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    insn->as.extract_group.number = number;
     return value_id;
 }
 
 static uint32_t
 emit_extract_last_match_named_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchNamedGroup, node_id, 2);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnExtractLastMatchNamedGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
 static uint32_t
 emit_extract_last_match_match(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchMatch, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    emit_insn(builder, kPrismInsnExtractLastMatchMatch, node_id, 2, (uint32_t[]) { value_id, last_match_id });
     return value_id;
 }
 
 static uint32_t
 emit_extract_last_match_paren(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchParen, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    emit_insn(builder, kPrismInsnExtractLastMatchParen, node_id, 2, (uint32_t[]) { value_id, last_match_id });
     return value_id;
 }
 
 static uint32_t
 emit_extract_last_match_post(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchPost, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    emit_insn(builder, kPrismInsnExtractLastMatchPost, node_id, 2, (uint32_t[]) { value_id, last_match_id });
     return value_id;
 }
 
 static uint32_t
 emit_extract_last_match_pre(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnExtractLastMatchPre, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = last_match_id;
-
+    emit_insn(builder, kPrismInsnExtractLastMatchPre, node_id, 2, (uint32_t[]) { value_id, last_match_id });
     return value_id;
 }
 
 static uint32_t
 emit_load_block(PrismBuilder *builder, uint32_t node_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadBlock, node_id, 1);
     uint32_t value_id = make_value(builder);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnLoadBlock, node_id, 1, &value_id);
     return value_id;
 }
 
 static uint32_t
 emit_load_const_abs(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstAbs, node_id, 1);
-    insn->as.constant_path = constant_path;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadConstAbs, node_id, 1, &value_id);
+    insn->as.constant_path = constant_path;
     return value_id;
 }
 
 static uint32_t
 emit_load_const_nest_rel(PrismBuilder *builder, uint32_t node_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstNestRel, node_id, 1);
-    insn->as.constant_path = constant_path;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadConstNestRel, node_id, 1, &value_id);
+    insn->as.constant_path = constant_path;
     return value_id;
 }
 
 static uint32_t
 emit_load_const_recv_rel(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, PrismConstantPath constant_path) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadConstRecvRel, node_id, 2);
-    insn->as.constant_path = constant_path;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = receiver_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadConstRecvRel, node_id, 2, (uint32_t[]) { value_id, receiver_id });
+    insn->as.constant_path = constant_path;
     return value_id;
 }
 
 static uint32_t
 emit_load_name(PrismBuilder *builder, uint32_t node_id, PrismInsnKind kind, pm_constant_id_t name_id) {
-    PrismInsn *insn = make_insn(builder, kind, node_id, 1);
-    insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kind, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
     return value_id;
 }
 
@@ -1731,10 +1580,9 @@ emit_load_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id
 
 static uint32_t
 emit_load_flip_flop(PrismBuilder *builder, uint32_t node_id, uint32_t index) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadFlipFlop, node_id, 1);
-    insn->as.flip_flop.index = index;
     uint32_t value_id = make_value(builder);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadFlipFlop, node_id, 1, &value_id);
+    insn->as.flip_flop.index = index;
     return value_id;
 }
 
@@ -1750,48 +1598,31 @@ emit_load_ivar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id
 
 static uint32_t
 emit_load_last_match(PrismBuilder *builder, uint32_t node_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadLastMatch, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    emit_insn(builder, kPrismInsnLoadLastMatch, node_id, 1, &value_id);
     return value_id;
 }
 
 static uint32_t
 emit_load_lvar(PrismBuilder *builder, uint32_t node_id, uint32_t local_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadLVar, node_id, 1);
-    insn->as.lvar.local_id = local_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadLVar, node_id, 1, &value_id);
+    insn->as.lvar.local_id = local_id;
     return value_id;
 }
 
 static uint32_t
 emit_nil_p(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnNilP, node_id, 2);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t predicate_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = predicate_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
+    emit_insn(builder, kPrismInsnNilP, node_id, 2, (uint32_t[]) { predicate_id, value_id });
     return predicate_id;
 }
 
 static uint32_t
 emit_load_object(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadObject, node_id, 1);
-    insn->as.object.object_id = object_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadObject, node_id, 1, &value_id);
+    insn->as.object.object_id = object_id;
     return value_id;
 }
 
@@ -1812,48 +1643,29 @@ emit_load_nil(PrismBuilder *builder, uint32_t node_id) {
 
 static uint32_t
 emit_load_self(PrismBuilder *builder, uint32_t node_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnLoadSelf, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    emit_insn(builder, kPrismInsnLoadSelf, node_id, 1, &value_id);
     return value_id;
 }
 
 static uint32_t
 emit_make_shareable(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, bool copy) {
-    PrismInsn *insn = make_insn(builder, copy ? kPrismInsnMakeShareableCopy : kPrismInsnMakeShareable, node_id, 2);
     uint32_t result_id = make_value(builder);
-    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
-    opnds[0] = result_id;
-    opnds[1] = value_id;
+    emit_insn(builder, copy ? kPrismInsnMakeShareableCopy : kPrismInsnMakeShareable, node_id, 2, (uint32_t[]) { result_id, value_id });
     return result_id;
 }
 
 static uint32_t
 emit_match(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnMatch, node_id, 3);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t result_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = result_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-    graph->opnds[insn->opnds_off + 2] = pattern_id;
-
+    emit_insn(builder, kPrismInsnMatch, node_id, 3, (uint32_t[]) { result_id, value_id, pattern_id });
     return result_id;
 }
 
 static uint32_t
 emit_merge_hash(PrismBuilder *builder, uint32_t node_id, uint32_t left_id, uint32_t right_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnMergeHash, node_id, 3);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = left_id;
-    graph->opnds[insn->opnds_off + 2] = right_id;
-
+    emit_insn(builder, kPrismInsnMergeHash, node_id, 3, (uint32_t[]) { value_id, left_id, right_id });
     return value_id;
 }
 
@@ -1861,34 +1673,27 @@ static uint32_t
 emit_new_array(PrismBuilder *builder, uint32_t node_id, uint32_t nelement_ids, uint32_t *element_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewArray, node_id, 1 + nelement_ids);
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    if (nelement_ids) memcpy(cursor, element_ids, nelement_ids * sizeof(uint32_t));
 
     return value_id;
 }
 
 static uint32_t
 emit_new_block(PrismBuilder *builder, uint32_t node_id, uint32_t graph_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnNewBlock, node_id, 1);
-    insn->as.new_block.graph_id = graph_id;
-
     uint32_t value_id = make_value(builder);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnNewBlock, node_id, 1, &value_id);
+    insn->as.new_block.graph_id = graph_id;
     return value_id;
 }
 
 static uint32_t
 emit_new_array_static(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnNewArrayStatic, node_id, 1);
-    insn->as.object.object_id = object_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnNewArrayStatic, node_id, 1, &value_id);
+    insn->as.object.object_id = object_id;
     return value_id;
 }
 
@@ -1896,36 +1701,26 @@ static uint32_t
 emit_new_hash(PrismBuilder *builder, uint32_t node_id, uint32_t nelement_ids, uint32_t *element_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewHash, node_id, 1 + nelement_ids);
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    if (nelement_ids != 0) memcpy(graph->opnds + insn->opnds_off + 1, element_ids, nelement_ids * sizeof(uint32_t));
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    if (nelement_ids) memcpy(cursor, element_ids, nelement_ids * sizeof(uint32_t));
 
     return value_id;
 }
 
 static uint32_t
 emit_new_hash_static(PrismBuilder *builder, uint32_t node_id, uint32_t object_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnNewHashStatic, node_id, 1);
-    insn->as.object.object_id = object_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
+    PrismInsn *insn = emit_insn(builder, kPrismInsnNewHashStatic, node_id, 1, &value_id);
+    insn->as.object.object_id = object_id;
     return value_id;
 }
 
 static uint32_t
 emit_new_range(PrismBuilder *builder, bool exclusive, uint32_t node_id, uint32_t left_id, uint32_t right_id) {
-    PrismInsn *insn = make_insn(builder, exclusive ? kPrismInsnNewRangeExc : kPrismInsnNewRangeInc, node_id, 3);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off + 0] = value_id;
-    graph->opnds[insn->opnds_off + 1] = left_id;
-    graph->opnds[insn->opnds_off + 2] = right_id;
-
+    emit_insn(builder, exclusive ? kPrismInsnNewRangeExc : kPrismInsnNewRangeInc, node_id, 3, (uint32_t[]) { value_id, left_id, right_id });
     return value_id;
 }
 
@@ -1934,10 +1729,10 @@ emit_new_regexp(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, ui
     PrismInsn *insn = make_insn(builder, kPrismInsnNewRegexp, node_id, 1 + nvalue_ids);
     insn->as.regexp.flags = flags;
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    memcpy(graph->opnds + insn->opnds_off + 1, value_ids, nvalue_ids * sizeof(uint32_t));
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    if (nvalue_ids) memcpy(cursor, value_ids, nvalue_ids * sizeof(uint32_t));
 
     return value_id;
 }
@@ -1946,10 +1741,10 @@ static uint32_t
 emit_new_string(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, uint32_t *value_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewString, node_id, 1 + nvalue_ids);
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    memcpy(graph->opnds + insn->opnds_off + 1, value_ids, nvalue_ids * sizeof(uint32_t));
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    if (nvalue_ids) memcpy(cursor, value_ids, nvalue_ids * sizeof(uint32_t));
 
     return value_id;
 }
@@ -1958,110 +1753,78 @@ static uint32_t
 emit_new_symbol(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, uint32_t *value_ids) {
     PrismInsn *insn = make_insn(builder, kPrismInsnNewSymbol, node_id, 1 + nvalue_ids);
 
-    PrismGraph *graph = PrismBuilder_graph(builder);
     uint32_t value_id = make_value(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    memcpy(graph->opnds + insn->opnds_off + 1, value_ids, nvalue_ids * sizeof(uint32_t));
+    uint32_t *cursor = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
+    *cursor++ = value_id;
+    if (nvalue_ids) memcpy(cursor, value_ids, nvalue_ids * sizeof(uint32_t));
 
     return value_id;
 }
 
 static void
 emit_raise_pattern_guard(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternGuard, node_id, 1);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnRaisePatternGuard, node_id, 1, &value_id);
 }
 
 static void
 emit_raise_pattern_mismatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternMismatch, node_id, 2);
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-    graph->opnds[insn->opnds_off + 1] = pattern_id;
+    emit_insn(builder, kPrismInsnRaisePatternMismatch, node_id, 2, (uint32_t[]) { value_id, pattern_id });
 }
 
 static void
 emit_raise_pattern_nomatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnRaisePatternNomatch, node_id, 1);
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnRaisePatternNomatch, node_id, 1, &value_id);
 }
 
 static void
 emit_reraise(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnReraise, node_id, 0);
+    emit_insn(builder, kPrismInsnReraise, node_id, 0, NULL);
 }
 
 static uint32_t
 emit_rescue_match(PrismBuilder *builder, uint32_t node_id, uint32_t exception_id, uint32_t class_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnRescueMatch, node_id, 3);
     uint32_t value_id = make_value(builder);
-    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
-    opnds[0] = value_id;
-    opnds[1] = exception_id;
-    opnds[2] = class_id;
+    emit_insn(builder, kPrismInsnRescueMatch, node_id, 3, (uint32_t[]) { value_id, exception_id, class_id });
     return value_id;
 }
 
 static uint32_t
 emit_rescue_match_array(PrismBuilder *builder, uint32_t node_id, uint32_t exception_id, uint32_t class_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnRescueMatchArray, node_id, 3);
     uint32_t value_id = make_value(builder);
-    uint32_t *opnds = PrismBuilder_graph(builder)->opnds + insn->opnds_off;
-    opnds[0] = value_id;
-    opnds[1] = exception_id;
-    opnds[2] = class_id;
+    emit_insn(builder, kPrismInsnRescueMatchArray, node_id, 3, (uint32_t[]) { value_id, exception_id, class_id });
     return value_id;
 }
 
 static void
 emit_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnReturn, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnReturn, node_id, 1, &value_id);
 }
 
 static uint32_t
 emit_store_const_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstAbs, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnStoreConstAbs, node_id, 1, &value_id);
     insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_store_const_nest_rel(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstNestRel, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnStoreConstNestRel, node_id, 1, &value_id);
     insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
-
     return value_id;
 }
 
 static uint32_t
 emit_store_const_recv_rel(PrismBuilder *builder, uint32_t node_id, uint32_t receiver_id, pm_constant_id_t name_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreConstRecvRel, node_id, 2);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnStoreConstRecvRel, node_id, 2, (uint32_t[]) { receiver_id, value_id });
     insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = receiver_id;
-    graph->opnds[insn->opnds_off + 1] = value_id;
-
     return value_id;
 }
 
 static void
 emit_store_name(PrismBuilder *builder, uint32_t node_id, PrismInsnKind kind, pm_constant_id_t name_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kind, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kind, node_id, 1, &value_id);
     insn->as.name.name_id = name_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
 }
 
 static void
@@ -2071,9 +1834,8 @@ emit_store_cvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_i
 
 static void
 emit_store_flip_flop(PrismBuilder *builder, uint32_t node_id, uint32_t index, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreFlipFlop, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnStoreFlipFlop, node_id, 1, &value_id);
     insn->as.flip_flop.index = index;
-    PrismBuilder_graph(builder)->opnds[insn->opnds_off] = value_id;
 }
 
 static void
@@ -2088,66 +1850,54 @@ emit_store_ivar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_i
 
 static void
 emit_store_lvar(PrismBuilder *builder, uint32_t node_id, uint32_t local_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnStoreLVar, node_id, 1);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnStoreLVar, node_id, 1, &value_id);
     insn->as.lvar.local_id = local_id;
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
 }
 
 static void
 emit_trace_b_call(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnTraceBCall, node_id, 0);
+    emit_insn(builder, kPrismInsnTraceBCall, node_id, 0, NULL);
 }
 
 static void
 emit_trace_b_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnTraceBReturn, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnTraceBReturn, node_id, 1, &value_id);
 }
 
 static void
 emit_trace_call(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnTraceCall, node_id, 0);
+    emit_insn(builder, kPrismInsnTraceCall, node_id, 0, NULL);
 }
 
 static void
 emit_trace_class(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnTraceClass, node_id, 0);
+    emit_insn(builder, kPrismInsnTraceClass, node_id, 0, NULL);
 }
 
 static void
 emit_trace_end(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnTraceEnd, node_id, 0);
+    emit_insn(builder, kPrismInsnTraceEnd, node_id, 0, NULL);
 }
 
 static void
 emit_trace_line(PrismBuilder *builder, uint32_t node_id, int32_t lineno) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnTraceLine, node_id, 0);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnTraceLine, node_id, 0, NULL);
     insn->as.trace_line.lineno = lineno;
 }
 
 static void
 emit_trace_rescue(PrismBuilder *builder, uint32_t node_id) {
-    make_insn(builder, kPrismInsnTraceRescue, node_id, 0);
+    emit_insn(builder, kPrismInsnTraceRescue, node_id, 0, NULL);
 }
 
 static void
 emit_trace_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnTraceReturn, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = value_id;
+    emit_insn(builder, kPrismInsnTraceReturn, node_id, 1, &value_id);
 }
 
 static void
 emit_undef_method(PrismBuilder *builder, uint32_t node_id, uint32_t name_id) {
-    PrismInsn *insn = make_insn(builder, kPrismInsnUndefMethod, node_id, 1);
-
-    PrismGraph *graph = PrismBuilder_graph(builder);
-    graph->opnds[insn->opnds_off] = name_id;
+    emit_insn(builder, kPrismInsnUndefMethod, node_id, 1, &name_id);
 }
 
 /******************************************************************************/
@@ -5269,7 +5019,7 @@ compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
 
-    PrismInsn *insn = make_insn(builder, kPrismInsnPostExecution, node->base.node_id, 0);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnPostExecution, node->base.node_id, 0, NULL);
     insn->as.post_execution.graph_id = graph_id;
     return emit_load_nil(builder, node->base.node_id);
 }
