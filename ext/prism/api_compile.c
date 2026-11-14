@@ -89,12 +89,16 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnNewSymbol: return rb_intern_const("new_symbol");
         case kPrismInsnPostExecution: return rb_intern_const("post_execution");
         case kPrismInsnRaisePatternDeconstruct: return rb_intern_const("raise_pattern_deconstruct");
-        case kPrismInsnRaisePatternLength: return rb_intern_const("raise_pattern_length");
-        case kPrismInsnRaisePatternMinLength: return rb_intern_const("raise_pattern_min_length");
+        case kPrismInsnRaisePatternDeconstructKeys: return rb_intern_const("raise_pattern_deconstruct_keys");
+        case kPrismInsnRaisePatternEmpty: return rb_intern_const("raise_pattern_empty");
         case kPrismInsnRaisePatternFind: return rb_intern_const("raise_pattern_find");
         case kPrismInsnRaisePatternGuard: return rb_intern_const("raise_pattern_guard");
+        case kPrismInsnRaisePatternKey: return rb_intern_const("raise_pattern_key");
+        case kPrismInsnRaisePatternLength: return rb_intern_const("raise_pattern_length");
+        case kPrismInsnRaisePatternMinLength: return rb_intern_const("raise_pattern_min_length");
         case kPrismInsnRaisePatternMismatch: return rb_intern_const("raise_pattern_mismatch");
         case kPrismInsnRaisePatternNomatch: return rb_intern_const("raise_pattern_nomatch");
+        case kPrismInsnRaisePatternRestEmpty: return rb_intern_const("raise_pattern_rest_empty");
         case kPrismInsnReraise: return rb_intern_const("reraise");
         case kPrismInsnRescueMatch: return rb_intern_const("rescue_match");
         case kPrismInsnRescueMatchArray: return rb_intern_const("rescue_match_array");

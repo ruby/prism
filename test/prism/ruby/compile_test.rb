@@ -3996,6 +3996,9 @@ module Prism
     def test_raise_pattern_instructions
       [
         [:raise_pattern_deconstruct, [1, 1], "1: 1 does not respond to #deconstruct"],
+        [:raise_pattern_deconstruct_keys, [1, 1], "1: 1 does not respond to #deconstruct_keys"],
+        [:raise_pattern_empty, [[{a: 1}], {a: 1}], "[{a: 1}]: {a: 1} is not empty"],
+        [:raise_pattern_rest_empty, [{a: 1, b: 2}, {b: 2}], "{a: 1, b: 2}: rest of {b: 2} is not empty"],
         [:raise_pattern_length, [[[1]], [1], 1, 2], "[[1]]: [1] length mismatch (given 1, expected 2)"],
         [:raise_pattern_min_length, [[], [], 0, 1], "[]: [] length mismatch (given 0, expected 1+)"],
         [:raise_pattern_mismatch, [[1], 1, 2], "[1]: 2 === 1 does not return true"]
@@ -4006,6 +4009,22 @@ module Prism
           run_instructions(insns, [nil], operands.length)
         end
       end
+    end
+
+    def test_raise_pattern_key_instruction
+      root = [{a: 1}]
+      matchee = root.first
+      insns = [
+        Compile::Insn.new(:load_object, 0, [0], root),
+        Compile::Insn.new(:load_object, 0, [1], matchee),
+        Compile::Insn.new(:load_object, 0, [2], :missing),
+        Compile::Insn.new(:raise_pattern_key, 0, [0, 1, 2], nil)
+      ]
+      error = assert_raise_with_message(NoMatchingPatternKeyError, "[{a: 1}]: key not found: :missing") do
+        run_instructions(insns, [nil], 3)
+      end
+      assert_same(matchee, error.matchee)
+      assert_equal(:missing, error.key)
     end
 
     def test_case_match

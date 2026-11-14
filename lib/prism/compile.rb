@@ -425,10 +425,16 @@ module Prism
           "post_execution #{graph_ref(insn.data)}"
         when :raise_pattern_deconstruct
           "raise_pattern_deconstruct#{values(insn.opnds)}"
+        when :raise_pattern_deconstruct_keys
+          "raise_pattern_deconstruct_keys#{values(insn.opnds)}"
+        when :raise_pattern_empty
+          "raise_pattern_empty#{values(insn.opnds)}"
         when :raise_pattern_find
           "raise_pattern_find#{values(insn.opnds)}"
         when :raise_pattern_guard
           "raise_pattern_guard#{values(insn.opnds)}"
+        when :raise_pattern_key
+          "raise_pattern_key#{values(insn.opnds)}"
         when :raise_pattern_length
           "raise_pattern_length#{values(insn.opnds)}"
         when :raise_pattern_min_length
@@ -437,6 +443,8 @@ module Prism
           "raise_pattern_mismatch#{values(insn.opnds)}"
         when :raise_pattern_nomatch
           "raise_pattern_nomatch#{values(insn.opnds)}"
+        when :raise_pattern_rest_empty
+          "raise_pattern_rest_empty#{values(insn.opnds)}"
         when :reraise
           "reraise"
         when :rescue_match
@@ -943,10 +951,18 @@ module Prism
               end
             when :raise_pattern_deconstruct
               raise_pattern_error(values[insn.opnds[0]], "%p does not respond to #deconstruct", values[insn.opnds[1]])
+            when :raise_pattern_deconstruct_keys
+              raise_pattern_error(values[insn.opnds[0]], "%p does not respond to #deconstruct_keys", values[insn.opnds[1]])
+            when :raise_pattern_empty
+              raise_pattern_error(values[insn.opnds[0]], "%p is not empty", values[insn.opnds[1]])
             when :raise_pattern_find
               raise_pattern_error(values[insn.opnds[0]], "%p does not match to find pattern", values[insn.opnds[1]])
             when :raise_pattern_guard
               raise NoMatchingPatternError, "#{values[insn.opnds[0]].inspect}: guard clause does not return true"
+            when :raise_pattern_key
+              root, matchee, key = values.values_at(*insn.opnds)
+              message = Kernel.instance_method(:sprintf).bind_call(self, "%p: key not found: %p", root, key)
+              raise NoMatchingPatternKeyError.new(message, matchee: matchee, key: key)
             when :raise_pattern_length
               raise_pattern_error(values[insn.opnds[0]], "%p length mismatch (given %p, expected %p)", *values.values_at(*insn.opnds[1..]))
             when :raise_pattern_min_length
@@ -955,6 +971,8 @@ module Prism
               raise_pattern_error(values[insn.opnds[0]], "%p === %p does not return true", values[insn.opnds[2]], values[insn.opnds[1]])
             when :raise_pattern_nomatch
               raise NoMatchingPatternError, values[insn.opnds[0]]
+            when :raise_pattern_rest_empty
+              raise_pattern_error(values[insn.opnds[0]], "rest of %p is not empty", values[insn.opnds[1]])
             when :reraise
               raise
             when :rescue_match
