@@ -244,6 +244,9 @@ module Prism
         when :deconstruct_array
           opnds = insn.opnds
           "#{value(opnds[0])} = deconstruct_array#{values(opnds[1..])}"
+        when :deconstruct_hash
+          opnds = insn.opnds
+          "#{value(opnds[0])} = deconstruct_hash#{values(opnds[1..])}"
         when :define_class_abs
           opnds = insn.opnds
           name, graph = insn.data
@@ -786,6 +789,15 @@ module Prism
                 array = value.__send__(:deconstruct)
                 raise TypeError, "deconstruct must return Array" unless Array === array
                 values[insn.opnds[0]] = array
+              else
+                values[insn.opnds[0]] = false
+              end
+            when :deconstruct_hash
+              value = values[insn.opnds[1]]
+              if value.respond_to?(:deconstruct_keys)
+                hash = value.__send__(:deconstruct_keys, values[insn.opnds[2]])
+                raise TypeError, "deconstruct_keys must return Hash" unless Hash === hash
+                values[insn.opnds[0]] = hash
               else
                 values[insn.opnds[0]] = false
               end

@@ -35,6 +35,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnCoerceString: return rb_intern_const("coerce_string");
         case kPrismInsnConcatArray: return rb_intern_const("concat_array");
         case kPrismInsnDeconstructArray: return rb_intern_const("deconstruct_array");
+        case kPrismInsnDeconstructHash: return rb_intern_const("deconstruct_hash");
         case kPrismInsnDefineClassAbs: return rb_intern_const("define_class_abs");
         case kPrismInsnDefineClassAbsSuper: return rb_intern_const("define_class_abs_super");
         case kPrismInsnDefineClassNestRel: return rb_intern_const("define_class_nest_rel");

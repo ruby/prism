@@ -3625,6 +3625,155 @@ module Prism
       RUBY
     end
 
+    def test_hash_pattern
+      [
+        "{} in {}",
+        "{a: 1} in {}",
+        "1 in {}",
+        "{a: 1, b: 2} in {a: 1}",
+        "value = nil; {a: value} in {a: nil}",
+        "{} in {a: nil}",
+        "{a: 1} in {a: 2}",
+        "{a: 1, b: 2} => {a:, b:}; [a, b]",
+        "{a: 1, b: 2} => {a: Integer => value}; value",
+        "{a: [0, 1]} => {a: [*, value, 1, *]}; value",
+        "[{a: {b: 1}}] => [{a: {b:}}]; b",
+        "{a: 1} => Hash[a:] => value; [a, value]",
+        "{a: 1} in String[a: 1]",
+        "{a: 1} in {a: 2} | {a: 1}",
+        "{a: 1, b: 2} => {a:, **rest}; [a, rest]",
+        "{a: 1} => {a:, **rest}; [a, rest]",
+        "{a: 1} => {**rest}; rest",
+        "{} => {**rest}; rest",
+        "{a: 1} in {**}",
+        "{a: 1, b: 2} in {a: 1, **}",
+        "{a: 1} in {a: 1, **nil}",
+        "{a: 1, b: 2} in {a: 1, **nil}",
+        "{} in {**nil}",
+        "{a: 1} in {**nil}",
+        "a = 1; {a: 1} in {a: ^a}",
+        '{"a b": 1} => {"a b": value}; value',
+        "value = {a: 1, b: 2}; value => {a:, **rest}; [value, rest]",
+        "a = :before; case {a: 1}; in {a:, b:}; :no; else; a; end",
+        "a = :before; case {a: 1, b: 2}; in {a:, b: 3}; :no; else; a; end",
+        "case {a: 1}; in {b:}; :no; in {a:}; a; end",
+        "case {a: 1}; in {a:} if false; :no; in {a:}; a; end",
+        "case {a: 1}; in {b:}; :no; else; :other; end"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_hash_pattern_failure
+      [
+        "1 => {}",
+        "{a: 1} => {}",
+        "{} => {a:}",
+        "{a: 1} => {a: 2}",
+        "{a: 1} => String[a: 1]",
+        "{a: 1, b: 2} => {a: 1, **nil}",
+        "{a: 1} => {**nil}",
+        "[{a: 1}] => [{b:}]",
+        "{a: {b: 1}} => {a: {c:}}",
+        "{a: 1} => {b:, **rest}",
+        "case {a: 1}; in {b:}; end",
+        "case {a: 1}; in {a:} if false; end",
+        "{a: 1} => {a: 2} | {b: 1}",
+        "case {a: 1}; in {b:}; in {c:}; end"
+      ].each do |source|
+        expected = assert_raise(NoMatchingPatternError, NoMatchingPatternKeyError) { eval(source) }
+        scope = Module.new
+        graph = compile_unit(source).graphs[0]
+        actual = assert_raise(expected.class) do
+          vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+        end
+        assert_equal(expected.message, actual.message, source)
+        if NoMatchingPatternKeyError === expected
+          assert_equal(expected.key, actual.key, source)
+          assert_equal(expected.matchee, actual.matchee, source)
+        end
+      end
+    end
+
+    def test_hash_pattern_deconstruction
+      scope = Module.new
+      requests = []
+      result = {a: 1, b: 2}
+      value = Object.new
+      value.define_singleton_method(:deconstruct_keys) { |keys| requests << keys&.dup; keys&.clear; result }
+      scope.const_set(:Value, value)
+      [
+        ["Value in {a: 1}", true, [:a]],
+        ["Value in {}", false, nil],
+        ["Value in {**}", true, []],
+        ["Value in {a: 1, **}", true, [:a]],
+        ["Value in {a: 1, **nil}", false, nil],
+        ["Value => {a:, **rest}; [a, rest]", [1, {b: 2}], nil],
+        ["Value => {**rest}; rest", result, nil],
+        ["Value in String[a: 1]", false, :none]
+      ].each do |source, expected, keys|
+        graph = compile_unit(source).graphs[0]
+        2.times do
+          requests.clear
+          assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+          assert_equal(keys == :none ? [] : [keys], requests)
+          assert_equal({a: 1, b: 2}, result)
+        end
+      end
+
+      result = []
+      graph = compile_unit("Value in {a: 1}").graphs[0]
+      assert_raise_with_message(TypeError, "deconstruct_keys must return Hash") do
+        vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      end
+    end
+
+    def test_hash_pattern_evaluation
+      scope = Module.new
+      events = []
+      hash_class = Class.new(Hash) do
+        define_method(:deconstruct_keys) { |keys| events << [:deconstruct_keys, keys]; self }
+        define_method(:dup) { events << :dup; super() }
+        define_method(:key?) { |key| events << [:key?, key]; super(key) }
+        define_method(:[]) { |key| events << [:read, key]; super(key) }
+        define_method(:delete) { |key| events << [:delete, key]; super(key) }
+        define_method(:empty?) { events << :empty?; super() }
+      end
+      value = hash_class.new.merge!(a: 1, b: 2, c: 3)
+      pattern = Module.new
+      pattern.define_singleton_method(:===) { |item| events << [:match, item]; true }
+      scope.const_set(:Value, value)
+      scope.const_set(:Pattern, pattern)
+      [
+        "Value in {a: Pattern, b: Pattern}",
+        "Value in {a: Pattern, missing: Pattern}",
+        "Value in {a: Pattern, b: Pattern, **rest}",
+        "Value in {a: Pattern, **nil}",
+        "Value in {}",
+        "Value in {**}"
+      ].each do |source|
+        events.clear
+        expected = scope.module_eval(source)
+        native_events = events.dup
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_equal(native_events, events, source)
+        assert_equal({a: 1, b: 2, c: 3}, value)
+      end
+    end
+
+    def test_hash_pattern_disasm
+      [
+        ["1 => {}", "raise_pattern_deconstruct_keys"],
+        ["{a: 1} => {}", "raise_pattern_empty"],
+        ["{} => {a:}", "raise_pattern_key"],
+        ["{a: 1} => {**nil}", "raise_pattern_rest_empty"]
+      ].each do |source, instruction|
+        unit = compile_unit(source)
+        assert_include(unit.disasm, " = deconstruct_hash(")
+        assert_include(unit.disasm, "#{instruction}(")
+      end
+    end
+
     def test_find_pattern
       [
         "[] in [*, 1, *]",

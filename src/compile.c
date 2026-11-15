@@ -36,7 +36,15 @@
 #define PM_CONSTANT_ID_ADD (pm_constant_id_t) -17
 #define PM_CONSTANT_ID_SUBTRACT (pm_constant_id_t) -18
 #define PM_CONSTANT_ID_LESS_EQUAL (pm_constant_id_t) -19
+#define PM_CONSTANT_ID_DUP (pm_constant_id_t) -20
+#define PM_CONSTANT_ID_KEY_P (pm_constant_id_t) -21
+#define PM_CONSTANT_ID_DELETE (pm_constant_id_t) -22
+#define PM_CONSTANT_ID_EMPTY_P (pm_constant_id_t) -23
 
+static const pm_constant_t dup_constant = { .start = (const uint8_t *) "dup", .length = 3 };
+static const pm_constant_t key_p_constant = { .start = (const uint8_t *) "key?", .length = 4 };
+static const pm_constant_t delete_constant = { .start = (const uint8_t *) "delete", .length = 6 };
+static const pm_constant_t empty_p_constant = { .start = (const uint8_t *) "empty?", .length = 6 };
 static const pm_constant_t uminus_constant = { .start = (const uint8_t *) "-@", .length = 2 };
 static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
 static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
@@ -60,6 +68,10 @@ static const pm_constant_t line_number_constant = { .start = (const uint8_t *) "
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
     switch (constant_id) {
+        case PM_CONSTANT_ID_DUP:          return &dup_constant;
+        case PM_CONSTANT_ID_KEY_P:        return &key_p_constant;
+        case PM_CONSTANT_ID_DELETE:       return &delete_constant;
+        case PM_CONSTANT_ID_EMPTY_P:      return &empty_p_constant;
         case PM_CONSTANT_ID_UMINUS:         return &uminus_constant;
         case PM_CONSTANT_ID_BACKTICK:       return &backtick_constant;
         case PM_CONSTANT_ID_LAST_LINE:      return &last_line_constant;
@@ -1357,6 +1369,13 @@ emit_deconstruct_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_i
 }
 
 static uint32_t
+emit_deconstruct_hash(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t keys_id) {
+    uint32_t result_id = make_value(builder);
+    emit_insn(builder, kPrismInsnDeconstructHash, node_id, 3, (uint32_t[]) { result_id, value_id, keys_id });
+    return result_id;
+}
+
+static uint32_t
 emit_define_class_abs(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id, uint32_t graph_id) {
     uint32_t value_id = make_value(builder);
     PrismInsn *insn = emit_insn(builder, kPrismInsnDefineClassAbs, node_id, 1, &value_id);
@@ -1815,6 +1834,16 @@ emit_raise_pattern_deconstruct(PrismBuilder *builder, uint32_t node_id, uint32_t
 }
 
 static void
+emit_raise_pattern_deconstruct_keys(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id) {
+    emit_insn(builder, kPrismInsnRaisePatternDeconstructKeys, node_id, 2, (uint32_t[]) { root_id, value_id });
+}
+
+static void
+emit_raise_pattern_empty(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id) {
+    emit_insn(builder, kPrismInsnRaisePatternEmpty, node_id, 2, (uint32_t[]) { root_id, value_id });
+}
+
+static void
 emit_raise_pattern_find(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t array_id) {
     emit_insn(builder, kPrismInsnRaisePatternFind, node_id, 2, (uint32_t[]) { root_id, array_id });
 }
@@ -1822,6 +1851,11 @@ emit_raise_pattern_find(PrismBuilder *builder, uint32_t node_id, uint32_t root_i
 static void
 emit_raise_pattern_guard(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     emit_insn(builder, kPrismInsnRaisePatternGuard, node_id, 1, &value_id);
+}
+
+static void
+emit_raise_pattern_key(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id, uint32_t key_id) {
+    emit_insn(builder, kPrismInsnRaisePatternKey, node_id, 3, (uint32_t[]) { root_id, value_id, key_id });
 }
 
 static void
@@ -1842,6 +1876,11 @@ emit_raise_pattern_mismatch(PrismBuilder *builder, uint32_t node_id, uint32_t ro
 static void
 emit_raise_pattern_nomatch(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     emit_insn(builder, kPrismInsnRaisePatternNomatch, node_id, 1, &value_id);
+}
+
+static void
+emit_raise_pattern_rest_empty(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id) {
+    emit_insn(builder, kPrismInsnRaisePatternRestEmpty, node_id, 2, (uint32_t[]) { root_id, value_id });
 }
 
 static void
@@ -2510,6 +2549,7 @@ compile_pattern_length(PrismBuilder *builder, uint32_t node_id, uint32_t array_i
 static void compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 static void compile_array_pattern_node(PrismBuilder *builder, const pm_array_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 static void compile_find_pattern_node(PrismBuilder *builder, const pm_find_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
+static void compile_hash_pattern_node(PrismBuilder *builder, const pm_hash_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 
 static void
 compile_pattern_step(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t root_id, PrismPatternFailure failure) {
@@ -2537,12 +2577,20 @@ compile_pattern_compare(PrismBuilder *builder, uint32_t node_id, uint32_t value_
 static void
 compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure) {
     switch (PM_NODE_TYPE(node)) {
+        case PM_HASH_PATTERN_NODE:
+            compile_hash_pattern_node(builder, (const pm_hash_pattern_node_t *) node, value_id, root_id, matched_block_id, failure);
+            break;
         case PM_FIND_PATTERN_NODE:
             compile_find_pattern_node(builder, (const pm_find_pattern_node_t *) node, value_id, root_id, matched_block_id, failure);
             break;
         case PM_ARRAY_PATTERN_NODE:
             compile_array_pattern_node(builder, (const pm_array_pattern_node_t *) node, value_id, root_id, matched_block_id, failure);
             break;
+        case PM_IMPLICIT_NODE: {
+            const pm_implicit_node_t *cast = (const pm_implicit_node_t *) node;
+            compile_pattern_match(builder, cast->value, value_id, root_id, matched_block_id, failure);
+            break;
+        }
         case PM_PARENTHESES_NODE: {
             const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
             compile_pattern_match(builder, cast->body, value_id, root_id, matched_block_id, failure);
@@ -4442,10 +4490,12 @@ compile_find_pattern_node(PrismBuilder *builder, const pm_find_pattern_node_t *n
     builder->state.block_id = body_block_id;
     for (size_t idx = 0; idx < node->requireds.size; ++idx) {
         uint32_t offset_id = index_id;
+
         if (idx != 0) {
             uint32_t increment_id = emit_load_integer(builder, node_id, (uint32_t) idx);
             offset_id = emit_call(builder, node_id, PM_CONSTANT_ID_ADD, index_id, 1, &increment_id, UINT32_MAX, false, false, 0, false);
         }
+
         uint32_t element_id = emit_call(builder, node_id, PM_CONSTANT_ID_AREF, array_id, 1, &offset_id, UINT32_MAX, false, false, 0, false);
         compile_pattern_step(builder, node->requireds.nodes[idx], element_id, root_id, (PrismPatternFailure) { .block_id = next_block_id });
     }
@@ -4456,12 +4506,14 @@ compile_find_pattern_node(PrismBuilder *builder, const pm_find_pattern_node_t *n
         uint32_t left_id = emit_call(builder, node_id, PM_CONSTANT_ID_AREF, array_id, 2, ids, UINT32_MAX, false, false, 0, false);
         compile_pattern_step(builder, node->left->expression, left_id, root_id, rest_failure);
     }
+
     if (node->right->expression) {
         uint32_t start_id = emit_call(builder, node_id, PM_CONSTANT_ID_ADD, index_id, 1, &requireds_id, UINT32_MAX, false, false, 0, false);
         uint32_t ids[] = { start_id, limit_id };
         uint32_t right_id = emit_call(builder, node_id, PM_CONSTANT_ID_AREF, array_id, 2, ids, UINT32_MAX, false, false, 0, false);
         compile_pattern_step(builder, node->right->expression, right_id, root_id, rest_failure);
     }
+
     emit_branch(builder, node_id, matched_block_id, 0, NULL);
 
     builder->state.block_id = next_block_id;
@@ -4752,6 +4804,91 @@ compile_hash_node(PrismBuilder *builder, const pm_hash_node_t *node) {
     }
 
     return compile_hash_elements(builder, PM_NODE_UPCAST(node), &node->elements);
+}
+
+/*
+ * foo => { a: 1, b: 2, **rest }
+ *        ^^^^^^^^^^^^^^^^^^^^^^
+ */
+static void
+compile_hash_pattern_node(PrismBuilder *builder, const pm_hash_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure) {
+    uint32_t node_id = node->base.node_id;
+    bool has_rest = node->rest && !(PM_NODE_TYPE_P(node->rest, PM_ASSOC_SPLAT_NODE) && !((const pm_assoc_splat_node_t *) node->rest)->value);
+    bool has_keys = node->elements.size || node->rest;
+
+    if (node->constant) {
+        compile_pattern_step(builder, node->constant, value_id, root_id, failure);
+    }
+
+    uint32_t *key_ids = node->elements.size ? pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * node->elements.size, PRISM_ALIGNOF(uint32_t)) : NULL;
+    for (size_t idx = 0; idx < node->elements.size; ++idx) {
+        const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) node->elements.nodes[idx];
+        key_ids[idx] = compile_node(builder, assoc->key);
+    }
+
+    uint32_t keys_id = has_keys && !has_rest ? emit_new_array(builder, node_id, (uint32_t) node->elements.size, key_ids) : emit_load_nil(builder, node_id);
+    uint32_t hash_id = emit_deconstruct_hash(builder, node_id, value_id, keys_id);
+    uint32_t deconstructed_block_id = make_block(builder, 0);
+
+    if (failure.terminal) {
+        uint32_t error_block_id = make_block(builder, 0);
+        emit_branchif(builder, node_id, hash_id, deconstructed_block_id, 0, NULL, error_block_id, 0, NULL);
+        builder->state.block_id = error_block_id;
+        emit_raise_pattern_deconstruct_keys(builder, node_id, root_id, value_id);
+    } else {
+        emit_branchif(builder, node_id, hash_id, deconstructed_block_id, 0, NULL, failure.block_id, 0, NULL);
+    }
+
+    builder->state.block_id = deconstructed_block_id;
+    if (has_rest) {
+        hash_id = emit_call(builder, node_id, PM_CONSTANT_ID_DUP, hash_id, 0, NULL, UINT32_MAX, false, false, 0, false);
+    }
+
+    for (size_t idx = 0; idx < node->elements.size; ++idx) {
+        uint32_t predicate_id = emit_call(builder, node_id, PM_CONSTANT_ID_KEY_P, hash_id, 1, &key_ids[idx], UINT32_MAX, false, false, 0, false);
+        uint32_t next_block_id = make_block(builder, 0);
+
+        if (failure.terminal) {
+            uint32_t error_block_id = make_block(builder, 0);
+            emit_branchif(builder, node_id, predicate_id, next_block_id, 0, NULL, error_block_id, 0, NULL);
+
+            builder->state.block_id = error_block_id;
+            emit_raise_pattern_key(builder, node_id, root_id, hash_id, key_ids[idx]);
+        } else {
+            emit_branchif(builder, node_id, predicate_id, next_block_id, 0, NULL, failure.block_id, 0, NULL);
+        }
+
+        builder->state.block_id = next_block_id;
+    }
+
+    for (size_t idx = 0; idx < node->elements.size; ++idx) {
+        const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) node->elements.nodes[idx];
+        uint32_t element_id = emit_call(builder, node_id, has_rest ? PM_CONSTANT_ID_DELETE : PM_CONSTANT_ID_AREF, hash_id, 1, &key_ids[idx], UINT32_MAX, false, false, 0, false);
+
+        compile_pattern_step(builder, assoc->value, element_id, root_id, failure);
+    }
+
+    if (!has_keys || (has_rest && PM_NODE_TYPE_P(node->rest, PM_NO_KEYWORDS_PARAMETER_NODE))) {
+        uint32_t predicate_id = emit_call(builder, node_id, PM_CONSTANT_ID_EMPTY_P, hash_id, 0, NULL, UINT32_MAX, false, false, 0, false);
+
+        if (failure.terminal) {
+            uint32_t error_block_id = make_block(builder, 0);
+            emit_branchif(builder, node_id, predicate_id, matched_block_id, 0, NULL, error_block_id, 0, NULL);
+            builder->state.block_id = error_block_id;
+
+            if (has_rest) {
+                emit_raise_pattern_rest_empty(builder, node_id, root_id, hash_id);
+            } else {
+                emit_raise_pattern_empty(builder, node_id, root_id, hash_id);
+            }
+        } else {
+            emit_branchif(builder, node_id, predicate_id, matched_block_id, 0, NULL, failure.block_id, 0, NULL);
+        }
+    } else if (has_rest) {
+        compile_pattern_match(builder, ((const pm_assoc_splat_node_t *) node->rest)->value, hash_id, root_id, matched_block_id, failure);
+    } else {
+        emit_branch(builder, node_id, matched_block_id, 0, NULL);
+    }
 }
 
 /*
