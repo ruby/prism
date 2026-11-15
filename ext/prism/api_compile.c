@@ -308,6 +308,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
             case kPrismObjectString: {
                 const pm_string_t *string = pm_object_string(object);
                 vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), encoding);
+                if (pm_object_flags(object) & PM_STRING_FLAGS_FROZEN) rb_obj_freeze(vobject);
                 break;
             }
             case kPrismObjectSymbol: {

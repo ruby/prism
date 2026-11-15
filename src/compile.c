@@ -2031,10 +2031,42 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
     return local_id;
 }
 
-static uint32_t
-static_literal(PrismBuilder *builder, const pm_node_t *node) {
-    assert(PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL));
+static const pm_string_t *
+static_literal_concat(PrismBuilder *builder, const pm_node_list_t *parts) {
+    const pm_string_t **strings = pm_arena_alloc(&builder->scratch, sizeof(pm_string_t *) * parts->size, PRISM_ALIGNOF(pm_string_t *));
+    size_t length = 0;
 
+    for (size_t idx = 0; idx < parts->size; ++idx) {
+        const pm_node_t *part = parts->nodes[idx];
+
+        if (PM_NODE_TYPE_P(part, PM_STRING_NODE)) {
+            strings[idx] = &((const pm_string_node_t *) part)->unescaped;
+        } else if (PM_NODE_TYPE_P(part, PM_EMBEDDED_STATEMENTS_NODE)) {
+            const pm_embedded_statements_node_t *cast = (const pm_embedded_statements_node_t *) part;
+            strings[idx] = static_literal_concat(builder, &cast->statements->body);
+        } else {
+            assert(PM_NODE_TYPE_P(part, PM_INTERPOLATED_STRING_NODE));
+            strings[idx] = static_literal_concat(builder, &((const pm_interpolated_string_node_t *) part)->parts);
+        }
+
+        length += pm_string_length(strings[idx]);
+    }
+
+    pm_string_t *string = pm_arena_alloc(builder->arena, sizeof(pm_string_t) + length, PRISM_ALIGNOF(pm_string_t));
+    uint8_t *cursor = (uint8_t *) (string + 1);
+    *string = (pm_string_t) { .source = cursor, .length = length };
+
+    for (size_t idx = 0; idx < parts->size; ++idx) {
+        size_t size = pm_string_length(strings[idx]);
+        memcpy(cursor, pm_string_source(strings[idx]), size);
+        cursor += size;
+    }
+
+    return string;
+}
+
+static uint32_t
+literal_value(PrismBuilder *builder, const pm_node_t *node) {
     switch (PM_NODE_TYPE(node)) {
         case PM_ARRAY_NODE: {
             const pm_array_node_t *cast = (const pm_array_node_t *) node;
@@ -2042,7 +2074,7 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
             uint32_t *object_ids = pm_arena_alloc(builder->arena, sizeof(uint32_t) * nobject_ids, PRISM_ALIGNOF(uint32_t));
 
             for (uint32_t idx = 0; idx < nobject_ids; ++idx) {
-                object_ids[idx] = static_literal(builder, cast->elements.nodes[idx]);
+                object_ids[idx] = literal_value(builder, cast->elements.nodes[idx]);
             }
 
             uint32_t object_id = make_object(builder, kPrismObjectArray);
@@ -2052,6 +2084,8 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_FALSE_NODE:
+            return make_object(builder, kPrismObjectFalse);
         case PM_FLOAT_NODE: {
             const pm_float_node_t *cast = (const pm_float_node_t *) node;
 
@@ -2068,8 +2102,8 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             for (uint32_t idx = 0; idx < nobject_ids; idx += 2) {
                 const pm_assoc_node_t *assoc = (const pm_assoc_node_t *) cast->elements.nodes[idx >> 1];
-                object_ids[idx] = static_literal(builder, assoc->key);
-                object_ids[idx + 1] = static_literal(builder, assoc->value);
+                object_ids[idx] = literal_value(builder, assoc->key);
+                object_ids[idx + 1] = literal_value(builder, assoc->value);
             }
 
             uint32_t object_id = make_object(builder, kPrismObjectHash);
@@ -2082,7 +2116,7 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
         case PM_IMAGINARY_NODE: {
             const pm_imaginary_node_t *cast = (const pm_imaginary_node_t *) node;
 
-            uint32_t numeric_id = static_literal(builder, cast->numeric);
+            uint32_t numeric_id = literal_value(builder, cast->numeric);
             uint32_t object_id = make_object(builder, kPrismObjectImaginary);
             PrismObject *object = builder->unit->objects + object_id;
             object->as.imaginary.numeric_id = numeric_id;
@@ -2098,6 +2132,54 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE: {
+            const pm_interpolated_regular_expression_node_t *cast = (const pm_interpolated_regular_expression_node_t *) node;
+            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
+
+            uint32_t object_id = make_object(builder, kPrismObjectRegexp);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = string;
+
+            return object_id;
+        }
+        case PM_INTERPOLATED_STRING_NODE: {
+            const pm_interpolated_string_node_t *cast = (const pm_interpolated_string_node_t *) node;
+            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
+
+            uint32_t object_id = make_object(builder, kPrismObjectString);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = PM_STRING_FLAGS_FROZEN;
+            object->as.string.unescaped = string;
+
+            return object_id;
+        }
+        case PM_INTERPOLATED_SYMBOL_NODE: {
+            const pm_interpolated_symbol_node_t *cast = (const pm_interpolated_symbol_node_t *) node;
+            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
+
+            uint32_t object_id = make_object(builder, kPrismObjectSymbol);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = string;
+
+            return object_id;
+        }
+        case PM_NIL_NODE:
+            return make_object(builder, kPrismObjectNil);
+        case PM_RANGE_NODE: {
+            const pm_range_node_t *cast = (const pm_range_node_t *) node;
+            uint32_t left_id = cast->left ? literal_value(builder, cast->left) : UINT32_MAX;
+            uint32_t right_id = cast->right ? literal_value(builder, cast->right) : UINT32_MAX;
+
+            uint32_t object_id = make_object(builder, kPrismObjectRange);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.range.left_id = left_id;
+            object->as.range.right_id = right_id;
+            object->as.range.exclude_end = PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END);
+
+            return object_id;
+        }
         case PM_RATIONAL_NODE: {
             const pm_rational_node_t *cast = (const pm_rational_node_t *) node;
 
@@ -2105,6 +2187,40 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
             PrismObject *object = builder->unit->objects + object_id;
             object->as.rational.numerator = &cast->numerator;
             object->as.rational.denominator = &cast->denominator;
+
+            return object_id;
+        }
+        case PM_REGULAR_EXPRESSION_NODE: {
+            const pm_regular_expression_node_t *cast = (const pm_regular_expression_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectRegexp);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = &cast->unescaped;
+
+            return object_id;
+        }
+        case PM_SOURCE_ENCODING_NODE: {
+            uint32_t object_id = make_object(builder, kPrismObjectEncoding);
+            builder->unit->objects[object_id].as.encoding.name = builder->parser->encoding->name;
+            return object_id;
+        }
+        case PM_SOURCE_FILE_NODE: {
+            const pm_source_file_node_t *cast = (const pm_source_file_node_t *) node;
+
+            uint32_t object_id = make_object(builder, kPrismObjectString);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = &cast->filepath;
+
+            return object_id;
+        }
+        case PM_SOURCE_LINE_NODE: {
+            pm_integer_t *integer = pm_arena_alloc(builder->arena, sizeof(pm_integer_t), PRISM_ALIGNOF(pm_integer_t));
+            *integer = pm_integer_int32(pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line));
+
+            uint32_t object_id = make_object(builder, kPrismObjectInteger);
+            builder->unit->objects[object_id].as.integer.value = integer;
 
             return object_id;
         }
@@ -2128,10 +2244,18 @@ static_literal(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
+        case PM_TRUE_NODE:
+            return make_object(builder, kPrismObjectTrue);
         default:
             fprintf(stderr, "unsupported static literal node type: %s\n", pm_node_type(node->type));
             abort();
     }
+}
+
+static uint32_t
+static_literal(PrismBuilder *builder, const pm_node_t *node) {
+    assert(PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL));
+    return literal_value(builder, node);
 }
 
 /******************************************************************************/
@@ -3200,41 +3324,19 @@ shareable_literal(PrismBuilder *builder, const pm_node_t *node) {
             builder->unit->objects[object_id].as.hash.object_ids = ids;
             return object_id;
         }
-        case PM_TRUE_NODE: return make_object(builder, kPrismObjectTrue);
-        case PM_FALSE_NODE: return make_object(builder, kPrismObjectFalse);
-        case PM_NIL_NODE: return make_object(builder, kPrismObjectNil);
-        case PM_STRING_NODE: {
-            const pm_string_node_t *string = (const pm_string_node_t *) node;
-            uint32_t object_id = make_object(builder, kPrismObjectString);
-            builder->unit->objects[object_id].as.string.flags = node->flags;
-            builder->unit->objects[object_id].as.string.unescaped = &string->unescaped;
-            return object_id;
-        }
-        case PM_SYMBOL_NODE:
-        case PM_INTEGER_NODE:
+        case PM_FALSE_NODE:
         case PM_FLOAT_NODE:
-        case PM_RATIONAL_NODE:
         case PM_IMAGINARY_NODE:
-            return static_literal(builder, node);
-        case PM_REGULAR_EXPRESSION_NODE: {
-            const pm_regular_expression_node_t *regexp = (const pm_regular_expression_node_t *) node;
-            uint32_t object_id = make_object(builder, kPrismObjectRegexp);
-            builder->unit->objects[object_id].as.string.flags = node->flags;
-            builder->unit->objects[object_id].as.string.unescaped = &regexp->unescaped;
-            return object_id;
-        }
-        case PM_SOURCE_LINE_NODE: {
-            pm_integer_t *integer = pm_arena_alloc(builder->arena, sizeof(pm_integer_t), PRISM_ALIGNOF(pm_integer_t));
-            *integer = pm_integer_int32(pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line));
-            uint32_t object_id = make_object(builder, kPrismObjectInteger);
-            builder->unit->objects[object_id].as.integer.value = integer;
-            return object_id;
-        }
-        case PM_SOURCE_ENCODING_NODE: {
-            uint32_t object_id = make_object(builder, kPrismObjectEncoding);
-            builder->unit->objects[object_id].as.encoding.name = builder->parser->encoding->name;
-            return object_id;
-        }
+        case PM_INTEGER_NODE:
+        case PM_NIL_NODE:
+        case PM_RATIONAL_NODE:
+        case PM_REGULAR_EXPRESSION_NODE:
+        case PM_SOURCE_ENCODING_NODE:
+        case PM_SOURCE_LINE_NODE:
+        case PM_STRING_NODE:
+        case PM_SYMBOL_NODE:
+        case PM_TRUE_NODE:
+            return literal_value(builder, node);
         default:
             return UINT32_MAX;
     }
@@ -3362,39 +3464,39 @@ compile_array_node(PrismBuilder *builder, const pm_array_node_t *node) {
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && nelements) {
         uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
         return emit_new_array_static(builder, node->base.node_id, object_id);
-    } else {
-        uint32_t *element_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * nelements, PRISM_ALIGNOF(uint32_t));
-        uint32_t nelement_ids = 0;
-        uint32_t array_id = UINT32_MAX;
-
-        for (size_t idx = 0; idx < nelements; ++idx) {
-            const pm_node_t *element = node->elements.nodes[idx];
-
-            if (PM_NODE_TYPE_P(element, PM_SPLAT_NODE)) {
-                if (array_id == UINT32_MAX || nelement_ids) {
-                    uint32_t elements_id = emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
-                    array_id = array_id == UINT32_MAX ? elements_id : emit_concat_array(builder, node->base.node_id, array_id, elements_id);
-                    nelement_ids = 0;
-                }
-
-                uint32_t rest_id = compile_node(builder, element);
-                array_id = emit_concat_array(builder, element->node_id, array_id, rest_id);
-            } else {
-                element_ids[nelement_ids++] = compile_node(builder, element);
-            }
-        }
-
-        if (array_id == UINT32_MAX) {
-            return emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
-        }
-
-        if (nelement_ids) {
-            uint32_t elements_id = emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
-            array_id = emit_concat_array(builder, node->base.node_id, array_id, elements_id);
-        }
-
-        return array_id;
     }
+
+    uint32_t *element_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * nelements, PRISM_ALIGNOF(uint32_t));
+    uint32_t nelement_ids = 0;
+    uint32_t array_id = UINT32_MAX;
+
+    for (size_t idx = 0; idx < nelements; ++idx) {
+        const pm_node_t *element = node->elements.nodes[idx];
+
+        if (PM_NODE_TYPE_P(element, PM_SPLAT_NODE)) {
+            if (array_id == UINT32_MAX || nelement_ids) {
+                uint32_t elements_id = emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
+                array_id = array_id == UINT32_MAX ? elements_id : emit_concat_array(builder, node->base.node_id, array_id, elements_id);
+                nelement_ids = 0;
+            }
+
+            uint32_t rest_id = compile_node(builder, element);
+            array_id = emit_concat_array(builder, element->node_id, array_id, rest_id);
+        } else {
+            element_ids[nelement_ids++] = compile_node(builder, element);
+        }
+    }
+
+    if (array_id == UINT32_MAX) {
+        return emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
+    }
+
+    if (nelement_ids) {
+        uint32_t elements_id = emit_new_array(builder, node->base.node_id, nelement_ids, element_ids);
+        array_id = emit_concat_array(builder, node->base.node_id, array_id, elements_id);
+    }
+
+    return array_id;
 }
 
 /*
@@ -5401,28 +5503,11 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
  */
 static uint32_t
 compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
-    const pm_node_t *left = node->left;
-    const pm_node_t *right = node->right;
-
-    if (
-        (!left || PM_NODE_TYPE_P(left, PM_NIL_NODE) || PM_NODE_TYPE_P(left, PM_INTEGER_NODE)) &&
-        (!right || PM_NODE_TYPE_P(right, PM_NIL_NODE) || PM_NODE_TYPE_P(right, PM_INTEGER_NODE))
-    ) {
-        uint32_t left_id = left ? static_literal(builder, left) : UINT32_MAX;
-        uint32_t right_id = right ? static_literal(builder, right) : UINT32_MAX;
-
-        uint32_t object_id = make_object(builder, kPrismObjectRange);
-        PrismObject *object = builder->unit->objects + object_id;
-
-        object->as.range.left_id = left_id;
-        object->as.range.right_id = right_id;
-        object->as.range.exclude_end = PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END);
-
-        return emit_load_object(builder, node->base.node_id, object_id);
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL)) {
+        return emit_load_object(builder, node->base.node_id, static_literal(builder, PM_NODE_UPCAST(node)));
     } else {
-        uint32_t left_id = compile_node_or_nil(builder, left, node->base.node_id);
-        uint32_t right_id = compile_node_or_nil(builder, right, node->base.node_id);
-
+        uint32_t left_id = compile_node_or_nil(builder, node->left, node->base.node_id);
+        uint32_t right_id = compile_node_or_nil(builder, node->right, node->base.node_id);
         return emit_new_range(builder, PM_NODE_FLAG_P(node, PM_RANGE_FLAGS_EXCLUDE_END), node->base.node_id, left_id, right_id);
     }
 }

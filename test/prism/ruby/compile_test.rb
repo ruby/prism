@@ -457,6 +457,59 @@ module Prism
       assert_equal(4, vm.run(unit))
     end
 
+    def test_static_literal_collections
+      [
+        "[nil, true, false]",
+        "{nil => true, false => nil, true => false}",
+        "{a: nil, b: true, c: false}",
+        "[/a/i, /b/mx, __LINE__, __ENCODING__]",
+        "{/a/i => nil, __LINE__ => true, __ENCODING__ => false}",
+        "[1, 1.5, 2r, 3i, :value, nil, true, false]",
+        "[[nil, true], {a: false}, (nil..1)]"
+      ].each { |source| assert_run(eval(source), source) }
+
+      [
+        ["[nil, true, false, /a/i, __LINE__, __ENCODING__]", :new_array_static],
+        ["{a: nil, b: true, c: false, d: /a/i, e: __LINE__, f: __ENCODING__}", :new_hash_static]
+      ].each do |source, kind|
+        instructions = compile_unit(source).graphs[0].blocks.flat_map(&:insns)
+        assert_include(instructions.map(&:kind), kind)
+      end
+      assert_run([[nil, true, false], [nil, true, false]], "2.times.map { [nil, true, false] }")
+      assert_run([false, false], "values = 2.times.map { {a: nil} }; [values[0].equal?(values[1]), values[0].frozen?]")
+    end
+
+    def test_static_literal_source_location
+      source = "[\n__LINE__,\n__ENCODING__\n]"
+      unit = Prism.compile(source, line: 10, raise_error: :plain).value
+      assert_equal([11, Encoding::UTF_8], vm.run(unit))
+      source = "# frozen_string_literal: true\n[__FILE__]"
+      unit = Prism.compile(source, version: "3.4", filepath: "literal.rb", raise_error: :plain).value
+      assert_equal(["literal.rb"], vm.run(unit))
+      assert_include(unit.graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
+    end
+
+    def test_static_literal_nil_ranges
+      ["nil..1", "1..nil", "nil..nil", "nil...1", "1...nil", "nil...nil", "(..1)", "(1..)", "(...1)", "(1...)"].each do |source|
+        assert_run(eval(source), source)
+        instructions = compile_unit(source).graphs[0].blocks.flat_map(&:insns)
+        assert_not_include(instructions.map(&:kind), :new_range_inc)
+        assert_not_include(instructions.map(&:kind), :new_range_exc)
+      end
+    end
+
+    def test_static_literal_interpolation
+      [
+        '["#{"a"}"]',
+        '{a: "#{"a"}"}',
+        '[:"#{"a"}", /#{"a"}/i]',
+        '{:"#{"a"}" => /#{"a"}/i}',
+        '# frozen_string_literal: true' + "\n" + '["a" "b", "#{"a"}"]'
+      ].each { |source| assert_run(eval(source), source) }
+      assert_run([true, true], 'values = 2.times.map { ["#{"a"}"] }; [values[0][0].frozen?, values[0][0].equal?(values[1][0])]')
+      assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
+    end
+
     def test_disasm_literals
       output = compile_unit('"a\\nb"').disasm
       assert_include(output, 'load_object("a\nb")')
