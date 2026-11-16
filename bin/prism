@@ -148,7 +148,7 @@ module Prism
       end
 
       lookup_table(found)
-      unicode_lists(found) if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
+      unicode_lists if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
     end
 
     # bin/prism error [source]
@@ -432,26 +432,69 @@ module Prism
       puts "};"
     end
 
+    # The version of the Unicode Character Database that the unicode tables
+    # are generated from. It is the newest version that any version of Ruby
+    # that prism supports uses: Unicode 17.0.0, for Ruby 4.0 and 4.1.
+    UNICODE_VERSION = "17.0.0"
+
+    # Read a file of the Unicode Character Database at UNICODE_VERSION. Each
+    # file is downloaded once from unicode.org and kept in tmp/unicode.
+    def unicode_data(path)
+      cache = File.expand_path("../tmp/unicode/#{UNICODE_VERSION}/#{path}", __dir__)
+
+      unless File.exist?(cache)
+        require "fileutils"
+        require "net/http"
+
+        uri = URI("https://www.unicode.org/Public/#{UNICODE_VERSION}/ucd/#{path}")
+        response = Net::HTTP.get_response(uri)
+        raise "could not download #{uri}: #{response.code} #{response.message}" unless response.is_a?(Net::HTTPSuccess)
+
+        FileUtils.mkdir_p(File.dirname(cache))
+        File.write(cache, response.body)
+      end
+
+      File.read(cache)
+    end
+
+    # Return the codepoints that have the given property in the given file of
+    # the Unicode Character Database. Each line of the file gives a codepoint
+    # or a range of codepoints and a property, as in "0041..005A ; Alphabetic".
+    def unicode_property(path, property)
+      codepoints = []
+
+      unicode_data(path).each_line do |line|
+        fields = line.sub(/#.*/, "").split(";").map(&:strip)
+        next unless fields.length == 2 && fields[1] == property
+
+        low, high = fields[0].split("..").map { |value| Integer(value, 16) }
+        codepoints.concat((low..(high || low)).to_a)
+      end
+
+      raise "no codepoints have #{property} in #{path}" if codepoints.empty?
+      codepoints
+    end
+
     # Generate the multistage lookup tables of unicode codepoint properties
     # for a given encoding. A codepoint's properties live in the leaf table,
     # reached by indexing the root table with its high bits and the middle
     # table with its next five bits. Identical middle and leaf blocks are
-    # shared, which is what keeps the tables small. Titlecase letters count as
-    # uppercase because they can begin a constant name.
-    def unicode_lists(encoding)
-      encoding = Encoding::UTF_8
+    # shared, which is what keeps the tables small.
+    #
+    # The properties are those that the regular expression engine gives the
+    # POSIX classes, from the Unicode Character Database at UNICODE_VERSION:
+    #
+    # * Alphabetic is the Alphabetic property, as in [[:alpha:]].
+    # * Alphanumeric is Alphabetic or a decimal digit (Nd), as in [[:alnum:]].
+    # * Uppercase is the Uppercase property, as in [[:upper:]], or a titlecase
+    #   letter (Lt), since either can begin a constant name.
+    def unicode_lists
+      values = Array.new(0x110000, 0)
 
-      values =
-        (0...0x110000).map do |codepoint|
-          next 0 if (0xD800..0xDFFF).cover?(codepoint)
-          character = codepoint.chr(encoding)
-
-          value = 0
-          value |= (1 << 0) if character.match?(/[[:alpha:]]/)
-          value |= (1 << 1) if character.match?(/[[:alnum:]]/)
-          value |= (1 << 2) if character.match?(/[[:upper:]\p{Lt}]/)
-          value
-        end
+      unicode_property("DerivedCoreProperties.txt", "Alphabetic").each { |codepoint| values[codepoint] |= (1 << 0) | (1 << 1) }
+      unicode_property("extracted/DerivedGeneralCategory.txt", "Nd").each { |codepoint| values[codepoint] |= (1 << 1) }
+      unicode_property("DerivedCoreProperties.txt", "Uppercase").each { |codepoint| values[codepoint] |= (1 << 2) }
+      unicode_property("extracted/DerivedGeneralCategory.txt", "Lt").each { |codepoint| values[codepoint] |= (1 << 2) }
 
       names = { 0 => "N", 2 => "D", 3 => "A", 7 => "U" }
       unknown = values.uniq - names.keys
