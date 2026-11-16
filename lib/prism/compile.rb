@@ -101,6 +101,15 @@ module Prism
         @no_block = no_block
         @autosplat = autosplat
       end
+
+      def arity
+        required = requireds.length + posts.length + (required_keywords.empty? ? 0 : 1)
+        if rest || !optionals.empty? || (required_keywords.empty? && (!optional_keywords.empty? || keyword_rest))
+          -required - 1
+        else
+          required
+        end
+      end
     end
 
     class Graph

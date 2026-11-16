@@ -510,6 +510,16 @@ module Prism
       assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
     end
 
+    def test_signature_arity
+      ["", "a", "a, b", "a = 1", "*a", "a, *b, c", "a = 1, b", "a:", "a:, b: 1", "a: 1", "a:, **kw", "a: 1, **kw", "**kw", "**nil", "&block", "...", "a, ...", "(a, b)"].each do |parameters|
+        source = "def value(#{parameters}); end"
+        klass = Class.new
+        klass.class_eval(source)
+        graph = compile_unit(source).graphs.find { |candidate| candidate.kind == :def }
+        assert_equal(klass.instance_method(:value).arity, graph.signature.arity, parameters)
+      end
+    end
+
     def test_defined_containers
       [
         "defined?([])",
