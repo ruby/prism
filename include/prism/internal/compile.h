@@ -28,6 +28,7 @@ struct PrismInsn {
         struct { pm_constant_id_t name_id; uint32_t graph_id; } define;
         struct { uint32_t graph_id; } define_singleton_class;
         struct { uint32_t graph_id; } post_execution;
+        struct { uint32_t region_id; uint32_t site_id; } once;
         struct { uint32_t graph_id; } new_block;
         struct { uint32_t lefts; uint32_t rights; bool rest; } expand_array;
         struct { uint32_t number; } extract_group;
@@ -127,6 +128,7 @@ struct PrismUnit {
     uint32_t ngraphs;
     uint32_t nobjects;
     uint32_t nlocals;
+    uint32_t nonce_sites;
     uint32_t graphs_capa;
     uint32_t objects_capa;
     uint32_t locals_capa;

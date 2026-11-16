@@ -16,6 +16,7 @@ static VALUE rb_cPrismCompileInsn;
 static VALUE rb_cPrismCompileCallInfo;
 static VALUE rb_cPrismCompileBlock;
 static VALUE rb_cPrismCompileRegion;
+static VALUE rb_cPrismCompileOnceSite;
 static VALUE rb_cPrismCompileGraph;
 static VALUE rb_cPrismCompileSignature;
 static VALUE rb_cPrismCompileUnit;
@@ -92,6 +93,8 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnNewRegexp: return rb_intern_const("new_regexp");
         case kPrismInsnNewString: return rb_intern_const("new_string");
         case kPrismInsnNewSymbol: return rb_intern_const("new_symbol");
+        case kPrismInsnOnce: return rb_intern_const("once");
+        case kPrismInsnOnceReturn: return rb_intern_const("once_return");
         case kPrismInsnPostExecution: return rb_intern_const("post_execution");
         case kPrismInsnRaisePatternDeconstruct: return rb_intern_const("raise_pattern_deconstruct");
         case kPrismInsnRaisePatternDeconstructKeys: return rb_intern_const("raise_pattern_deconstruct_keys");
@@ -144,8 +147,12 @@ compile_freeze(VALUE value, bool freeze) {
  * frozen along with the rest of the unit when requested.
  */
 static VALUE
-compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind, bool freeze) {
+compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, VALUE vregions, VALUE vonce_sites, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind, bool freeze) {
     switch (kind) {
+        case kPrismInsnOnce:
+            return compile_freeze(rb_ary_new_from_args(2, rb_ary_entry(vonce_sites, pm_insn_once_site_id(insn)), rb_ary_entry(vregions, pm_insn_once_region_id(insn))), freeze);
+        case kPrismInsnOnceReturn:
+            return rb_ary_entry(vregions, pm_insn_once_region_id(insn));
         case kPrismInsnBranch:
             return rb_ary_entry(vblocks, pm_insn_branch_block_id(insn));
         case kPrismInsnBranchIf: {
@@ -261,6 +268,12 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
  */
 VALUE
 pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freeze) {
+    VALUE vonce_sites = rb_ary_new_capa(pm_unit_nonce_sites(unit));
+    for (uint32_t site_id = 0; site_id < pm_unit_nonce_sites(unit); ++site_id) {
+        VALUE id = UINT2NUM(site_id);
+        rb_ary_push(vonce_sites, compile_freeze(rb_class_new_instance(1, &id, rb_cPrismCompileOnceSite), freeze));
+    }
+
     uint32_t nobjects_unit = pm_unit_nobjects(unit);
     VALUE vobjects_unit = rb_ary_new_capa(nobjects_unit);
     rb_encoding *encoding = rb_enc_find(pm_parser_encoding_name(parser));
@@ -307,6 +320,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 const pm_string_t *string = pm_object_string(object);
                 pm_node_flags_t flags = pm_object_flags(object);
                 vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), (flags >> 2) & 7);
+                rb_obj_freeze(vobject);
                 break;
             }
             case kPrismObjectStandardError:
@@ -382,6 +396,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
             VALUE vkind;
             switch (pm_region_kind(region)) {
+                case kPrismRegionOnce: vkind = ID2SYM(rb_intern_const("once")); break;
                 case kPrismRegionDefault: vkind = ID2SYM(rb_intern_const("default")); break;
                 case kPrismRegionRescue: vkind = ID2SYM(rb_intern_const("rescue")); break;
                 case kPrismRegionEnsure: vkind = ID2SYM(rb_intern_const("ensure")); break;
@@ -538,6 +553,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
         VALUE vgraph = rb_ary_entry(vgraphs, graph_id);
         VALUE vblocks = rb_ivar_get(vgraph, rb_intern_const("@blocks"));
+        VALUE vregions = rb_ivar_get(vgraph, rb_intern_const("@regions"));
 
         for (uint32_t block_id = 0; block_id < pm_graph_nblocks(graph); ++block_id) {
             const PrismBlock *block = pm_graph_block(graph, block_id);
@@ -559,7 +575,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 }
                 compile_freeze(vopnds, freeze);
 
-                VALUE vdata = compile_insn_data(vobjects_unit, vlocals_unit, vgraphs, vblocks, parser, graph, insn, kind, freeze);
+                VALUE vdata = compile_insn_data(vobjects_unit, vlocals_unit, vgraphs, vblocks, vregions, vonce_sites, parser, graph, insn, kind, freeze);
 
                 uint32_t node_id = pm_insn_node_id(insn);
                 VALUE vnode_id = UINT2NUM(node_id);
@@ -587,6 +603,7 @@ Init_prism_api_compile(void) {
     rb_cPrismCompileCallInfo = rb_define_class_under(rb_cPrismCompile, "CallInfo", rb_cObject);
     rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
     rb_cPrismCompileRegion = rb_define_class_under(rb_cPrismCompile, "Region", rb_cObject);
+    rb_cPrismCompileOnceSite = rb_define_class_under(rb_cPrismCompile, "OnceSite", rb_cObject);
     rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
     rb_cPrismCompileSignature = rb_define_class_under(rb_cPrismCompile, "Signature", rb_cObject);
     rb_cPrismCompileGraph = rb_define_class_under(rb_cPrismCompile, "Graph", rb_cObject);

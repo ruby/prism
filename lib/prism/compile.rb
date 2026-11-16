@@ -51,6 +51,14 @@ module Prism
       end
     end
 
+    class OnceSite
+      attr_reader :id
+
+      def initialize(id)
+        @id = id
+      end
+    end
+
     class Region
       attr_reader :id, :kind, :parent
 
@@ -441,6 +449,11 @@ module Prism
         when :new_symbol
           opnds = insn.opnds
           "#{value(opnds[0])} = new_symbol#{values(opnds[1..])}"
+        when :once
+          site, region = insn.data
+          "#{value(insn.opnds[0])} = once @site#{site.id}, r#{region.id}"
+        when :once_return
+          "once_return r#{insn.data.id}#{values(insn.opnds)}"
         when :post_execution
           "post_execution #{graph_ref(insn.data)}"
         when :raise_pattern_deconstruct
@@ -572,7 +585,7 @@ module Prism
 
       class Frame
         attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target
-        attr_accessor :last_match
+        attr_accessor :last_match, :last_line
 
         def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, break_target = nil, &block)
           @graph = graph
@@ -581,6 +594,7 @@ module Prism
           @locals = locals
           @values = Array.new(graph.nvalues)
           @last_match = nil
+          @last_line = nil
           @flip_flops = flip_flops
           @break_target = break_target
           @super_method = super_method
@@ -620,17 +634,68 @@ module Prism
         end
       end
 
-      class ExecutionResult
-        attr_reader :block, :value
+      class OnceState
+        def initialize
+          @mutex = Mutex.new
+          @condition = ConditionVariable.new
+          @owner = nil
+          @completed = false
+          @value = nil
+        end
 
-        def initialize(block, value)
+        def run(region)
+          Thread.handle_interrupt(Exception => :never) do
+            initializing = false
+            begin
+              @mutex.synchronize do
+                loop do
+                  return ExecutionResult.new(nil, @value, region) if @completed
+                  if @owner.nil?
+                    @owner = Thread.current
+                    initializing = true
+                    break
+                  elsif @owner.equal?(Thread.current)
+                    break
+                  else
+                    Thread.handle_interrupt(Exception => :on_blocking) { @condition.wait(@mutex) }
+                  end
+                end
+              end
+
+              result = Thread.handle_interrupt(Exception => :immediate) { yield }
+              if initializing && result.region.equal?(region)
+                @mutex.synchronize do
+                  @value = result.value
+                  @completed = true
+                end
+              end
+              result
+            ensure
+              if initializing
+                @mutex.synchronize do
+                  @owner = nil
+                  @condition.broadcast
+                end
+              end
+            end
+          end
+        end
+      end
+
+      class ExecutionResult
+        attr_reader :block, :value, :region
+
+        def initialize(block, value, region = nil)
           @block = block
           @value = value
+          @region = region
         end
       end
 
       def initialize
         @post_executions = Set.new.compare_by_identity
+        @once_states = ObjectSpace::WeakKeyMap.new
+        @once_mutex = Mutex.new
       end
 
       def run(unit)
@@ -739,6 +804,7 @@ module Prism
         flip_flops = frame.flip_flops
         super_method = frame.super_method
         $~ = frame.last_match
+        $_ = frame.last_line
 
         while true
           unless block.region.equal?(region)
@@ -747,12 +813,14 @@ module Prism
 
             if child
               frame.last_match = $~
+              frame.last_line = $_
               result = nil
 
               begin
                 result = run_region(frame, child, block)
               ensure
                 $~ = frame.last_match
+                $_ = frame.last_line
               end
 
               if (block = result.block)
@@ -1009,11 +1077,32 @@ module Prism
             when :new_range_inc
               values[insn.opnds[0]] = (values[insn.opnds[1]]..values[insn.opnds[2]])
             when :new_regexp
-              values[insn.opnds[0]] = Regexp.new(values.values_at(*insn.opnds[1..]).join, (insn.data >> 2) & 7)
+              values[insn.opnds[0]] = Regexp.new(values.values_at(*insn.opnds[1..]).join, (insn.data >> 2) & 7).freeze
             when :new_string
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join
             when :new_symbol
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join.to_sym
+            when :once
+              site, initializer = insn.data
+              state = @once_mutex.synchronize { @once_states[site] ||= OnceState.new }
+              frame.last_match = $~
+              frame.last_line = $_
+              begin
+                result = state.run(initializer) { run_region(frame, initializer, initializer.entry) }
+              ensure
+                $~ = frame.last_match
+                $_ = frame.last_line
+              end
+              if result.region.equal?(initializer)
+                values[insn.opnds[0]] = result.value
+              elsif result.block
+                block = result.block
+                break
+              else
+                return result
+              end
+            when :once_return
+              return ExecutionResult.new(nil, values[insn.opnds[0]], insn.data)
             when :post_execution
               if @post_executions.add?(insn.data)
                 at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method)) }
@@ -1088,6 +1177,7 @@ module Prism
         end
       ensure
         frame.last_match = $~
+        frame.last_line = $_
       end
 
       def with_break_target(block)

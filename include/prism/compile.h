@@ -95,6 +95,8 @@ typedef enum {
     kPrismInsnNewRegexp,
     kPrismInsnNewString,
     kPrismInsnNewSymbol,
+    kPrismInsnOnce,
+    kPrismInsnOnceReturn,
     kPrismInsnPostExecution,
     kPrismInsnRaisePatternDeconstruct,
     kPrismInsnRaisePatternDeconstructKeys,
@@ -145,6 +147,7 @@ typedef enum {
 
 typedef enum {
     kPrismRegionDefault,
+    kPrismRegionOnce,
     kPrismRegionRescue,
     kPrismRegionEnsure
 } PrismRegionKind;
@@ -169,6 +172,7 @@ typedef enum {
 
 PRISM_EXPORTED_FUNCTION PrismUnit * pm_unit_new(void);
 PRISM_EXPORTED_FUNCTION void pm_unit_free(PrismUnit *unit);
+PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nonce_sites(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nobjects(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION const PrismObject * pm_unit_object(const PrismUnit *unit, uint32_t object_id);
 PRISM_EXPORTED_FUNCTION PrismObjectKind pm_object_kind(const PrismObject *object);
@@ -256,6 +260,8 @@ PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_define_name(const pm_parse
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_singleton_class_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_new_block_graph_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_once_region_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_once_site_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_post_execution_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_lefts(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_rights(const PrismInsn *insn);

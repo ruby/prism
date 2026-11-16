@@ -3396,6 +3396,134 @@ module Prism
       TOPLEVEL_BINDING.eval("$_ = nil")
     end
 
+    def test_once_regexp
+      [
+        'count = 0; values = 3.times.map { /#{count += 1}/o }; [count, values.map { |r| r.source }, values[0].equal?(values[1]), values[0].frozen?]',
+        'count = 0; 2.times { /#{count += 1}/ }; count',
+        'count = 0; 2.times { /#{/#{count += 1}/o.source}/o }; count',
+        'count = 0; 2.times { /#{begin; count += 1; raise "handled"; rescue; "ok"; end}/o }; count',
+        '$_ = "a"; pattern = /#{($_ = "b"; "b")}/o; [$_, pattern.source]',
+        '$_ = "a"; /#{$_}/o.source',
+        '/(a)/ =~ "a"; pattern = /#{(/(b)/ =~ "b"; "b")}/o; [$1, pattern.source]',
+        '/(a)/ =~ "a"; /#{($1 || "none")}/o.source',
+        'count = 0; values = [/#{count += 1}/o, /#{count += 1}/o]; [count, values[0].equal?(values[1])]',
+        'class CompileOnceReceiver; def pattern(value); /#{value}/o; end; end; [CompileOnceReceiver.new.pattern("a").source, CompileOnceReceiver.new.pattern("b").source]',
+        'closures = 2.times.map { proc { |value| /#{value}/o } }; [closures[0].call("a").source, closures[1].call("b").source]',
+        'count = 0; 2.times { /#{if true; count += 1; "a"; else; "b"; end}/o }; count',
+        'count = 0; values = 2.times.map { /#{count += 1} a/imxo }; [count, values[0].options]',
+        'def compile_once_local; /#{captured = 1}/o; captured; end; 2.times.map { compile_once_local }'
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_once_regexp_retry_and_reentry
+      [
+        'count = 0; results = []; 3.times { begin; results << /#{count += 1; raise "failed" if count == 1; "ok"}/o.source; rescue RuntimeError; results << :failed; end }; [count, results]',
+        'count = 0; results = []; 3.times { begin; results << /#{(count += 1) == 1 ? "[" : "ok"}/o.source; rescue RegexpError; results << :failed; end }; [count, results]',
+        'def compile_once_recursive(n); /#{n == 0 ? "inner" : compile_once_recursive(n - 1).source + "outer"}/o; end; [compile_once_recursive(1).source, compile_once_recursive(0).source]',
+        'def compile_once_return; /#{return :left}/o; end; 2.times.map { compile_once_return }',
+        'count = 0; results = 2.times.map { count += 1; /#{next :left}/o }; [count, results]',
+        'count = 0; result = while (count += 1) < 3; /#{break :left}/o; end; [count, result]',
+        'count = 0; result = []; while count < 2; count += 1; /#{next}/o; result << :unreachable; end; [count, result]'
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_once_match_last_line
+      [
+        [1, '$_ = "a"; count = 0; while /#{count += 1; "a"}/o; $_ = "b"; end; count'],
+        [1, '$_ = "a"; if /#{($_ = "b"; "b")}/o; 1; else; 2; end'],
+        [1, '$_ = "a"; if /#{$_}/o; 1; else; 2; end'],
+        ["b", '$_ = "ab"; if /a(#{"b"})/o; $1; end'],
+        [[1, ["a", "a"]], 'count = 0; matches = []; ["a", "b", "a"].each { |line| $_ = line; if /#{count += 1; "a"}/o; matches << $&; end }; [count, matches]']
+      ].each { |expected, source| assert_run(expected, source) }
+    ensure
+      TOPLEVEL_BINDING.eval("$_ = nil")
+    end
+
+    def test_once_threads_share_initialization
+      scope = Module.new
+      entered = Queue.new
+      release = Queue.new
+      calls = Queue.new
+      scope.define_singleton_method(:piece) { calls << true; entered << true; release.pop; "pattern" }
+      graph = compile_unit('/#{piece}/o').graphs[0]
+      threads = []
+      threads << Thread.new { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      entered.pop
+      threads << Thread.new { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 5
+      Thread.pass while threads.last.status == "run" && Process.clock_gettime(Process::CLOCK_MONOTONIC) < deadline
+      assert_equal("sleep", threads.last.status)
+      assert_equal(1, calls.size)
+      2.times { release << true }
+      threads.each { |thread| assert_not_nil(thread.join(5)) }
+      assert_same(threads[0].value, threads[1].value)
+    ensure
+      2.times { release << true } if release
+      threads&.each { |thread| thread.kill; thread.join(5) }
+    end
+
+    def test_once_retries_after_thread_cancellation
+      scope = Module.new
+      entered = Queue.new
+      release = Queue.new
+      scope.define_singleton_method(:piece) { entered << true; release.pop; "pattern" }
+      graph = compile_unit('/#{piece}/o').graphs[0]
+      threads = []
+      threads << Thread.new { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      entered.pop
+      threads << Thread.new { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      threads.first.kill
+      assert_not_nil(threads.first.join(5))
+      release << true
+      assert_not_nil(threads.last.join(5))
+      assert_equal("pattern", threads.last.value.source)
+      assert_same(threads.last.value, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    ensure
+      2.times { release << true } if release
+      threads&.each { |thread| thread.kill; thread.join(5) }
+    end
+
+    def test_once_site_lifetime
+      unit = compile_unit('count = 0; 2.times { /#{count += 1}/o }; count')
+      assert_equal(1, vm.run(unit))
+      GC.start
+      assert_equal(0, vm.run(unit))
+      assert_equal(1, Compile::VM.new.run(unit))
+      assert_equal(1, vm.run(compile_unit('count = 0; 2.times { /#{count += 1}/o }; count')))
+    end
+
+    def test_once_ir
+      unit = Prism.compile('part = "a"; /#{part}/o', freeze: true).value
+      graph = unit.graphs[0]
+      insns = graph.blocks.flat_map(&:insns)
+      once = insns.find { |insn| insn.kind == :once }
+      site, region = once.data
+      assert_equal(0, site.id)
+      assert_predicate(site, :frozen?)
+      assert_predicate(once.data, :frozen?)
+      assert_equal(:once, region.kind)
+      assert_same(graph.regions[0], region.parent)
+      assert_include(region.entry.insns.map(&:kind), :load_lvar)
+      assert_equal(:once_return, region.entry.insns.last.kind)
+      assert_same(region, region.entry.insns.last.data)
+      assert_equal(0, insns.find { |insn| insn.kind == :new_regexp }.data & Prism::RegularExpressionFlags::ONCE)
+      assert_include(unit.disasm, "once @site0, r1")
+      assert_include(unit.disasm, "once_return r1(")
+    end
+
+    def test_once_caches_false_and_nil
+      [false, nil].each do |value|
+        region = Object.new
+        state = Compile::VM::OnceState.new
+        count = 0
+        2.times do
+          result = state.run(region) { count += 1; Compile::VM::ExecutionResult.new(nil, value, region) }
+          assert_equal(value, result.value)
+        end
+        assert_equal(1, count)
+      end
+    end
+
     def test_interpolated_match_last_line
       [
         [1, '$_ = "abc"; a = "b"; if /#{a}/; 1; else; 2; end'],

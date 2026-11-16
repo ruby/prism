@@ -145,6 +145,11 @@ pm_unit_free(PrismUnit *unit) {
 }
 
 uint32_t
+pm_unit_nonce_sites(const PrismUnit *unit) {
+    return unit->nonce_sites;
+}
+
+uint32_t
 pm_unit_nobjects(const PrismUnit *unit) {
     return unit->nobjects;
 }
@@ -580,6 +585,16 @@ pm_insn_define_singleton_class_graph_id(const PrismInsn *insn) {
 uint32_t
 pm_insn_new_block_graph_id(const PrismInsn *insn) {
     return insn->as.new_block.graph_id;
+}
+
+uint32_t
+pm_insn_once_region_id(const PrismInsn *insn) {
+    return insn->as.once.region_id;
+}
+
+uint32_t
+pm_insn_once_site_id(const PrismInsn *insn) {
+    return insn->as.once.site_id;
 }
 
 uint32_t
@@ -1859,6 +1874,21 @@ emit_new_symbol(PrismBuilder *builder, uint32_t node_id, uint32_t nvalue_ids, ui
     return value_id;
 }
 
+static uint32_t
+emit_once(PrismBuilder *builder, uint32_t node_id, uint32_t region_id) {
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnOnce, node_id, 1, &value_id);
+    insn->as.once.region_id = region_id;
+    insn->as.once.site_id = builder->unit->nonce_sites++;
+    return value_id;
+}
+
+static void
+emit_once_return(PrismBuilder *builder, uint32_t node_id, uint32_t region_id, uint32_t value_id) {
+    PrismInsn *insn = emit_insn(builder, kPrismInsnOnceReturn, node_id, 1, &value_id);
+    insn->as.once.region_id = region_id;
+}
+
 static void
 emit_raise_pattern_deconstruct(PrismBuilder *builder, uint32_t node_id, uint32_t root_id, uint32_t value_id) {
     emit_insn(builder, kPrismInsnRaisePatternDeconstruct, node_id, 2, (uint32_t[]) { root_id, value_id });
@@ -3068,6 +3098,44 @@ compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_
 }
 
 /******************************************************************************/
+
+static uint32_t
+compile_regexp_parts(PrismBuilder *builder, const pm_node_t *node, const pm_node_list_t *parts) {
+    uint32_t nvalue_ids = (uint32_t) parts->size;
+    uint32_t *value_ids = pm_arena_alloc(&builder->scratch, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
+        value_ids[idx] = compile_node(builder, parts->nodes[idx]);
+    }
+    return emit_new_regexp(builder, node->node_id, nvalue_ids, value_ids, node->flags & ~PM_REGULAR_EXPRESSION_FLAGS_ONCE);
+}
+
+static uint32_t
+compile_once_regexp(PrismBuilder *builder, const pm_node_t *node, const pm_node_list_t *parts) {
+    uint32_t parent_id = builder->state.region_id;
+    uint32_t continuation_block_id = make_block(builder, 0);
+    uint32_t region_id = make_region(builder, kPrismRegionOnce, parent_id, UINT32_MAX, UINT32_MAX);
+    uint32_t value_id = emit_once(builder, node->node_id, region_id);
+    emit_branch(builder, node->node_id, continuation_block_id, 0, NULL);
+
+    builder->state.region_id = region_id;
+    uint32_t entry_block_id = make_block(builder, 0);
+    PrismBuilder_graph(builder)->regions[region_id].entry_block_id = entry_block_id;
+    builder->state.block_id = entry_block_id;
+    uint32_t regexp_id = compile_regexp_parts(builder, node, parts);
+    emit_once_return(builder, node->node_id, region_id, regexp_id);
+
+    builder->state.region_id = parent_id;
+    builder->state.block_id = continuation_block_id;
+    return value_id;
+}
+
+static uint32_t
+compile_interpolated_regexp(PrismBuilder *builder, const pm_node_t *node, const pm_node_list_t *parts) {
+    if (PM_NODE_FLAG_P(node, PM_REGULAR_EXPRESSION_FLAGS_ONCE)) {
+        return compile_once_regexp(builder, node, parts);
+    }
+    return compile_regexp_parts(builder, node, parts);
+}
 
 static uint32_t
 compile_flip_flop_bound(PrismBuilder *builder, const pm_node_t *node, uint32_t node_id) {
@@ -5419,14 +5487,7 @@ compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
  */
 static uint32_t
 compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interpolated_match_last_line_node_t *node) {
-    uint32_t nvalue_ids = (uint32_t) node->parts.size;
-    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
-
-    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
-    }
-
-    uint32_t regexp_id = emit_new_regexp(builder, node->base.node_id, nvalue_ids, value_ids, node->base.flags);
+    uint32_t regexp_id = compile_interpolated_regexp(builder, PM_NODE_UPCAST(node), &node->parts);
     uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, UINT32_MAX, false, false, 0, false);
 }
@@ -5437,14 +5498,7 @@ compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interp
  */
 static uint32_t
 compile_interpolated_regular_expression_node(PrismBuilder *builder, const pm_interpolated_regular_expression_node_t *node) {
-    uint32_t nvalue_ids = (uint32_t) node->parts.size;
-    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
-
-    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, node->parts.nodes[idx]);
-    }
-
-    return emit_new_regexp(builder, node->base.node_id, nvalue_ids, value_ids, node->base.flags);
+    return compile_interpolated_regexp(builder, PM_NODE_UPCAST(node), &node->parts);
 }
 
 /*
