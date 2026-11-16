@@ -3103,6 +3103,61 @@ module Prism
       ].each { |expected, source| assert_run(expected, source) }
     end
 
+    def test_multi_write_splatted_index_targets
+      assert_run([0, 1, 2], 'a = [0, 0, 0]; a[*[1]], a[*[2]] = 1, 2; a')
+      setup = <<~RUBY
+        target = []
+        def target.[]=(*arguments)
+          self << arguments
+          :setter_return
+        end
+      RUBY
+      [
+        'target[*[1]], target[*[2]] = 7, 8',
+        'target[0, *[1, 2], 3], target[*[], 4] = 7, 8',
+        'target[*[1], *[2]], target[[3, 4]] = 7, 8',
+        'target[*nil], target[*[]] = 7, 8',
+        'target[*[1]], (target[*[2]], target[*[3]]) = 7, [8, 9]'
+      ].each do |assignment|
+        source = setup + "result = (#{assignment}); [result, target]"
+        assert_run(eval(source), source)
+      end
+    end
+
+    def test_multi_write_splatted_index_target_evaluation_order
+      assert_run([[:receiver, :indices, :to_a, :receiver, :indices, :to_a, :rhs, :write, :write], [[1, 7], [1, 8]]], <<~RUBY)
+        events = []
+        target = []
+        target.define_singleton_method(:[]=) { |*args| events << :write; self << args }
+        indices = Object.new
+        indices.define_singleton_method(:to_a) { events << :to_a; [1] }
+        indices.define_singleton_method(:to_ary) { raise "to_ary must not be called" }
+        receiver = -> { events << :receiver; target }
+        index = -> { events << :indices; indices }
+        receiver.call[*index.call], receiver.call[*index.call] = (events << :rhs; [7, 8])
+        [events, target]
+      RUBY
+    end
+
+    def test_splatted_index_targets_in_for_and_rescue
+      assert_run([[1, 2, 7], [1, 2, 8]], <<~RUBY)
+        target = []
+        def target.[]=(*arguments); self << arguments; end
+        for target[*[1, 2]] in [7, 8]
+        end
+        target
+      RUBY
+      assert_run("failure", <<~RUBY)
+        target = []
+        def target.[]=(*arguments); self << arguments; end
+        begin
+          raise "failure"
+        rescue => target[*[1, 2]]
+          target[0][2].message
+        end
+      RUBY
+    end
+
     def test_multi_write_implicit_rest
       [
         [nil, "a, = []; a"],

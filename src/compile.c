@@ -2364,6 +2364,28 @@ compile_node_or_nil(PrismBuilder *builder, const pm_node_t *node, uint32_t node_
     return node ? compile_node(builder, node) : emit_load_nil(builder, node_id);
 }
 
+static void
+compile_arguments_splat(PrismBuilder *builder, uint32_t node_id, PrismArguments *arguments, uint32_t array_id) {
+    if (arguments->splat) {
+        size_t index = arguments->size - 1;
+        arguments->ids[index] = emit_concat_array(builder, node_id, arguments->ids[index], array_id);
+    } else {
+        arguments->ids[arguments->size++] = array_id;
+        arguments->splat = true;
+    }
+}
+
+static void
+compile_arguments_append(PrismBuilder *builder, uint32_t node_id, PrismArguments *arguments, uint32_t nvalue_ids, uint32_t *value_ids) {
+    if (arguments->splat) {
+        uint32_t array_id = emit_new_array(builder, node_id, nvalue_ids, value_ids);
+        compile_arguments_splat(builder, node_id, arguments, array_id);
+    } else {
+        memmove(arguments->ids + arguments->size, value_ids, sizeof(uint32_t) * nvalue_ids);
+        arguments->size += nvalue_ids;
+    }
+}
+
 typedef struct {
     uint32_t *ids;
     uint32_t size;
@@ -2512,15 +2534,31 @@ compile_target_node(PrismBuilder *builder, const pm_node_t *node, uint32_t value
             assert(parents->index + nindex_ids < parents->size);
 
             uint32_t receiver_id = parents->ids[parents->index++];
-            uint32_t *argument_ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * (nindex_ids + 1), PRISM_ALIGNOF(uint32_t));
+            PrismArguments arguments = {
+                .ids = pm_arena_alloc(&builder->scratch, sizeof(uint32_t) * (nindex_ids + 1), PRISM_ALIGNOF(uint32_t)),
+                .block_id = UINT32_MAX
+            };
+            uint32_t keyword_id = UINT32_MAX;
 
-            if (nindex_ids) {
-                memcpy(argument_ids, parents->ids + parents->index, sizeof(uint32_t) * nindex_ids);
-                parents->index += nindex_ids;
+            for (uint32_t idx = 0; idx < nindex_ids; ++idx) {
+                const pm_node_t *argument = target->arguments->arguments.nodes[idx];
+                uint32_t argument_id = parents->ids[parents->index++];
+
+                if (PM_NODE_TYPE_P(argument, PM_SPLAT_NODE)) {
+                    compile_arguments_splat(builder, argument->node_id, &arguments, argument_id);
+                } else if (PM_NODE_TYPE_P(argument, PM_KEYWORD_HASH_NODE)) {
+                    keyword_id = argument_id;
+                } else {
+                    compile_arguments_append(builder, argument->node_id, &arguments, 1, &argument_id);
+                }
             }
 
-            argument_ids[nindex_ids] = value_id;
-            emit_call(builder, node->node_id, PM_CONSTANT_ID_ASET, receiver_id, nindex_ids + 1, argument_ids, UINT32_MAX, false, false, target->base.flags, false);
+            compile_arguments_append(builder, node->node_id, &arguments, 1, &value_id);
+            if (keyword_id != UINT32_MAX) {
+                arguments.ids[arguments.size++] = keyword_id;
+                arguments.keywords = true;
+            }
+            emit_call_arguments(builder, node->node_id, PM_CONSTANT_ID_ASET, receiver_id, &arguments, target->base.flags);
             break;
         }
         case PM_INSTANCE_VARIABLE_TARGET_NODE: {
@@ -3332,28 +3370,6 @@ compile_closure(PrismBuilder *builder, const pm_node_t *node, PrismGraphKind kin
     pop_scope(builder, state);
 
     return emit_new_block(builder, node->node_id, graph_id);
-}
-
-static void
-compile_arguments_splat(PrismBuilder *builder, uint32_t node_id, PrismArguments *arguments, uint32_t array_id) {
-    if (arguments->splat) {
-        size_t index = arguments->size - 1;
-        arguments->ids[index] = emit_concat_array(builder, node_id, arguments->ids[index], array_id);
-    } else {
-        arguments->ids[arguments->size++] = array_id;
-        arguments->splat = true;
-    }
-}
-
-static void
-compile_arguments_append(PrismBuilder *builder, uint32_t node_id, PrismArguments *arguments, uint32_t nvalue_ids, uint32_t *value_ids) {
-    if (arguments->splat) {
-        uint32_t array_id = emit_new_array(builder, node_id, nvalue_ids, value_ids);
-        compile_arguments_splat(builder, node_id, arguments, array_id);
-    } else {
-        memmove(arguments->ids + arguments->size, value_ids, sizeof(uint32_t) * nvalue_ids);
-        arguments->size += nvalue_ids;
-    }
 }
 
 static PrismArguments
