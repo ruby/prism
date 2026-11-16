@@ -3459,6 +3459,45 @@ compile_defined_call_expression(PrismBuilder *builder, const pm_call_node_t *nod
 }
 
 static uint32_t
+compile_defined_constant_path(PrismBuilder *builder, const pm_constant_path_node_t *node) {
+    uint32_t node_id = node->base.node_id;
+    if (!node->parent) {
+        uint32_t predicate_id = emit_defined_const_abs(builder, node_id, node->name);
+        return compile_defined_result(builder, node_id, predicate_id, "constant");
+    }
+
+    uint32_t parent_id = builder->state.region_id;
+    uint32_t undefined_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+    PrismRescueRegion rescue = make_rescue_region(builder, node_id);
+    uint32_t predicate_id = compile_defined_expression(builder, node->parent);
+    uint32_t receiver_block_id = make_block(builder, 0);
+    emit_branchif(builder, node_id, predicate_id, receiver_block_id, 0, NULL, undefined_block_id, 0, NULL);
+
+    builder->state.block_id = receiver_block_id;
+    uint32_t receiver_id = compile_node(builder, node->parent);
+    predicate_id = emit_defined_const_recv_rel(builder, node_id, node->name, receiver_id);
+    uint32_t defined_block_id = make_block(builder, 0);
+    emit_branchif(builder, node_id, predicate_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
+
+    builder->state.block_id = defined_block_id;
+    uint32_t result_id = compile_constexpr_string(builder, "constant", 8);
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.region_id = rescue.handler_region_id;
+    builder->state.block_id = rescue.handler_block_id;
+    emit_branch(builder, node_id, undefined_block_id, 0, NULL);
+
+    builder->state.region_id = parent_id;
+    builder->state.block_id = undefined_block_id;
+    result_id = emit_load_nil(builder, node_id);
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_defined_expression(PrismBuilder *builder, const pm_node_t *value) {
     uint32_t value_id;
 
@@ -3531,8 +3570,7 @@ compile_defined_expression(PrismBuilder *builder, const pm_node_t *value) {
         case PM_CALL_NODE:
             return compile_defined_call_expression(builder, (const pm_call_node_t *) value);
         case PM_CONSTANT_PATH_NODE:
-            fprintf(stderr, "Unimplemented\n");
-            abort();
+            return compile_defined_constant_path(builder, (const pm_constant_path_node_t *) value);
         case PM_LOCAL_VARIABLE_READ_NODE:
         case PM_IT_LOCAL_VARIABLE_READ_NODE:
             value_id = compile_constexpr_string(builder, "local-variable", 14);

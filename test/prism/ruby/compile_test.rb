@@ -542,6 +542,100 @@ module Prism
       assert_equal("method", vm.run_frame(Compile::VM::Frame.new(query, receiver, [scope, Object].freeze)))
     end
 
+    def test_defined_constant_paths
+      [
+        "defined?(::Object)",
+        "defined?(::CompileDefinedPathMissing)",
+        "defined?(Object::Object)",
+        "defined?(String::Object)",
+        "defined?(CompileDefinedPathMissing::Value)",
+        "defined?(nil::Value)",
+        "defined?(1::Value)",
+        "defined?((raise Exception, 'suppressed')::Value)",
+        "defined?([::Object, Object::Object])",
+        "defined?({a: CompileDefinedPathMissing::Value})",
+        "defined?(puts(CompileDefinedPathMissing::Value))",
+        "defined?(Object::Object.new)",
+        "defined?((Object::Object)::Missing)",
+        "defined?((begin; ::Object; end)::Object)"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_defined_constant_path_lookup
+      scope = Module.new
+      parent = Class.new
+      parent.const_set(:Inherited, false)
+      namespace = Class.new(parent)
+      namespace.const_set(:Value, nil)
+      namespace.const_set(:Private, 1)
+      namespace.private_constant(:Private)
+      nested = Module.new
+      nested.const_set(:Value, 2)
+      namespace.const_set(:Nested, nested)
+      namespace.autoload(:Lazy, "/must/not/be/loaded")
+      scope.const_set(:Namespace, namespace)
+      events = []
+      [scope, namespace, parent, nested].each do |owner|
+        [:ancestors, :const_defined?, :const_get, :constants, :const_missing].each do |name|
+          owner.define_singleton_method(name) { |*args| events << [name, args]; raise "reflection method called" }
+        end
+      end
+      ["defined?(Namespace::Value)", "defined?(Namespace::Private)", "defined?(Namespace::Inherited)", "defined?(Namespace::Missing)", "defined?(Namespace::Nested::Value)", "defined?(Namespace::Missing::Value)", "defined?(Namespace::Lazy)", "defined?(Namespace::Lazy::Value)"].each do |source|
+        events.clear
+        expected = scope.module_eval(source)
+        graph = compile_unit(source).graphs[0]
+        actual = vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+        assert_equal(expected, actual, source)
+        assert_empty(events, source)
+      end
+      assert_equal("/must/not/be/loaded", namespace.autoload?(:Lazy))
+    end
+
+    def test_defined_constant_path_evaluation
+      scope = Module.new
+      events = []
+      namespace = Module.new
+      namespace.const_set(:Value, 1)
+      nested = Module.new
+      nested.const_set(:Value, 2)
+      namespace.const_set(:Nested, nested)
+      namespace.define_singleton_method(:next) { events << :next; nested }
+      scope.define_singleton_method(:namespace) { events << :namespace; namespace }
+      scope.define_singleton_method(:broken) { events << :broken; raise Exception, "receiver failed" }
+      ["defined?(namespace()::Value)", "defined?(namespace()::Missing)", "defined?(namespace()::Nested::Value)", "defined?(namespace().next::Value)", "defined?(broken::Value)", "defined?(missing::Value)", "defined?(namespace()::Value.to_s)", "defined?(namespace()::Missing.to_s)"].each do |source|
+        events.clear
+        expected = scope.module_eval(source)
+        native_events = events.dup
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)), source)
+        assert_equal(native_events, events, source)
+      end
+    end
+
+    def test_defined_constant_path_parent_autoload
+      [:native, :interpreted].each do |mode|
+        scope = Module.new
+        Object.const_set(:CompileDefinedPathAutoload, scope)
+        Tempfile.create(["compile_defined_path_autoload", ".rb"]) do |file|
+          file.write("CompileDefinedPathAutoload::Parent = Module.new; CompileDefinedPathAutoload::Parent.const_set(:Value, false)")
+          file.flush
+          scope.autoload(:Parent, file.path)
+          source = "defined?(CompileDefinedPathAutoload::Parent::Value)"
+          result = if mode == :native
+            eval(source)
+          else
+            vm.run(compile_unit(source))
+          end
+          assert_equal("constant", result)
+          assert_nil(scope.autoload?(:Parent))
+        end
+        Object.send(:remove_const, :CompileDefinedPathAutoload)
+      end
+    ensure
+      Object.send(:remove_const, :CompileDefinedPathAutoload) if Object.const_defined?(:CompileDefinedPathAutoload, false)
+    end
+
     def test_defined_calls
       [
         "defined?(puts)",

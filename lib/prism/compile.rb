@@ -1239,29 +1239,34 @@ module Prism
 
       def const_get_nest_rel(nest, name)
         nest[0...-1].each do |scope|
-          return scope.const_get(name, false) if scope.const_defined?(name, false)
+          if Module.instance_method(:const_defined?).bind_call(scope, name, false)
+            return Module.instance_method(:const_get).bind_call(scope, name, false)
+          end
         end
 
-        nest[0].const_get(name)
+        Module.instance_method(:const_get).bind_call(nest[0], name)
+      end
+
+      def constant_owner(recv, name)
+        check_module(recv)
+        owner = Module.instance_method(:ancestors).bind_call(recv).find do |ancestor|
+          Module.instance_method(:const_defined?).bind_call(ancestor, name, false)
+        end
+        owner unless owner == Object && recv != Object
       end
 
       def const_defined_recv_rel?(recv, name)
-        check_module(recv)
-        owner = recv.ancestors.find { |ancestor| ancestor.const_defined?(name, false) }
-        return false if owner.nil? || (owner == Object && recv != Object)
-
-        owner.constants(false).include?(name)
+        owner = constant_owner(recv, name)
+        !!owner && Module.instance_method(:constants).bind_call(owner, false).include?(name)
       end
 
       def const_get_recv_rel(recv, name)
-        check_module(recv)
-        owner = recv.ancestors.find { |ancestor| ancestor.const_defined?(name, false) }
-
-        if owner.nil? || (owner == Object && recv != Object)
-          recv.const_missing(name)
-        else
+        owner = constant_owner(recv, name)
+        if owner
           check_public_const(owner, recv, name)
-          owner.const_get(name, false)
+          Module.instance_method(:const_get).bind_call(owner, name, false)
+        else
+          recv.const_missing(name)
         end
       end
 
@@ -1298,7 +1303,7 @@ module Prism
       end
 
       def check_public_const(parent, recv, name)
-        unless parent.constants(false).include?(name)
+        unless Module.instance_method(:constants).bind_call(parent, false).include?(name)
           raise NameError.new("private constant #{recv}::#{name} referenced", name, receiver: recv)
         end
       end
