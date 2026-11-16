@@ -2024,6 +2024,31 @@ emit_undef_method(PrismBuilder *builder, uint32_t node_id, uint32_t name_id) {
 
 /******************************************************************************/
 
+typedef struct {
+    uint32_t body_block_id;
+    uint32_t handler_region_id;
+    uint32_t handler_block_id;
+} PrismRescueRegion;
+
+/* Create a handler outside its protected region and enter the protected body. */
+static PrismRescueRegion
+make_rescue_region(PrismBuilder *builder, uint32_t node_id) {
+    uint32_t parent_id = builder->state.region_id;
+    uint32_t handler_region_id = make_region(builder, kPrismRegionDefault, parent_id, UINT32_MAX, UINT32_MAX);
+    builder->state.region_id = handler_region_id;
+    uint32_t handler_block_id = make_block(builder, 1);
+    PrismBuilder_graph(builder)->regions[handler_region_id].entry_block_id = handler_block_id;
+
+    uint32_t region_id = make_region(builder, kPrismRegionRescue, parent_id, UINT32_MAX, handler_block_id);
+    builder->state.region_id = region_id;
+    uint32_t body_block_id = make_block(builder, 0);
+    PrismBuilder_graph(builder)->regions[region_id].entry_block_id = body_block_id;
+    emit_branch(builder, node_id, body_block_id, 0, NULL);
+    builder->state.block_id = body_block_id;
+
+    return (PrismRescueRegion) { .body_block_id = body_block_id, .handler_region_id = handler_region_id, .handler_block_id = handler_block_id };
+}
+
 static uint32_t
 resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
     uint32_t local_id = builder->bindings[name_id];
@@ -3908,20 +3933,7 @@ compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
         uint32_t join_block_id = make_block(builder, 1);
         uint32_t else_block_id = node->else_clause ? make_block(builder, 0) : UINT32_MAX;
 
-        uint32_t handler_region_id = make_region(builder, kPrismRegionDefault, parent_id, UINT32_MAX, UINT32_MAX);
-        builder->state.region_id = handler_region_id;
-
-        uint32_t handler_block_id = make_block(builder, 1);
-        PrismBuilder_graph(builder)->regions[handler_region_id].entry_block_id = handler_block_id;
-
-        uint32_t region_id = make_region(builder, kPrismRegionRescue, parent_id, UINT32_MAX, handler_block_id);
-        builder->state.region_id = region_id;
-
-        uint32_t body_block_id = make_block(builder, 0);
-        PrismBuilder_graph(builder)->regions[region_id].entry_block_id = body_block_id;
-        emit_branch(builder, node_id, body_block_id, 0, NULL);
-
-        builder->state.block_id = body_block_id;
+        PrismRescueRegion rescue = make_rescue_region(builder, node_id);
         uint32_t value_id = compile_node_or_nil(builder, PM_NODE_UPCAST(node->statements), node_id);
 
         if (node->else_clause) {
@@ -3933,10 +3945,10 @@ compile_begin_node(PrismBuilder *builder, const pm_begin_node_t *node) {
 
         emit_branch(builder, node_id, join_block_id, 1, &value_id);
 
-        builder->state.region_id = handler_region_id;
-        builder->state.block_id = handler_block_id;
-        builder->state.retry_block_id = body_block_id;
-        uint32_t exception_id = PrismBuilder_graph(builder)->blocks[handler_block_id].params[0];
+        builder->state.region_id = rescue.handler_region_id;
+        builder->state.block_id = rescue.handler_block_id;
+        builder->state.retry_block_id = rescue.body_block_id;
+        uint32_t exception_id = PrismBuilder_graph(builder)->blocks[rescue.handler_block_id].params[0];
 
         for (const pm_rescue_node_t *clause = node->rescue_clause; clause; clause = clause->subsequent) {
             uint32_t matched_block_id = make_block(builder, 0);
@@ -5697,26 +5709,15 @@ compile_rescue_modifier_node(PrismBuilder *builder, const pm_rescue_modifier_nod
     uint32_t retry_block_id = builder->state.retry_block_id;
     uint32_t join_block_id = make_block(builder, 1);
 
-    uint32_t handler_region_id = make_region(builder, kPrismRegionDefault, parent_id, UINT32_MAX, UINT32_MAX);
-    builder->state.region_id = handler_region_id;
-    uint32_t handler_block_id = make_block(builder, 1);
-    PrismBuilder_graph(builder)->regions[handler_region_id].entry_block_id = handler_block_id;
-    uint32_t matched_block_id = make_block(builder, 0);
-    uint32_t unmatched_block_id = make_block(builder, 0);
-
-    uint32_t region_id = make_region(builder, kPrismRegionRescue, parent_id, UINT32_MAX, handler_block_id);
-    builder->state.region_id = region_id;
-    uint32_t body_block_id = make_block(builder, 0);
-    PrismBuilder_graph(builder)->regions[region_id].entry_block_id = body_block_id;
-    emit_branch(builder, node_id, body_block_id, 0, NULL);
-
-    builder->state.block_id = body_block_id;
+    PrismRescueRegion rescue = make_rescue_region(builder, node_id);
     uint32_t value_id = compile_node(builder, node->expression);
     emit_branch(builder, node_id, join_block_id, 1, &value_id);
 
-    builder->state.region_id = handler_region_id;
-    builder->state.block_id = handler_block_id;
-    uint32_t exception_id = PrismBuilder_graph(builder)->blocks[handler_block_id].params[0];
+    builder->state.region_id = rescue.handler_region_id;
+    builder->state.block_id = rescue.handler_block_id;
+    uint32_t matched_block_id = make_block(builder, 0);
+    uint32_t unmatched_block_id = make_block(builder, 0);
+    uint32_t exception_id = PrismBuilder_graph(builder)->blocks[rescue.handler_block_id].params[0];
     uint32_t class_id = emit_load_object(builder, node_id, make_object(builder, kPrismObjectStandardError));
     uint32_t predicate_id = emit_rescue_match(builder, node_id, exception_id, class_id);
     emit_branchif(builder, node_id, predicate_id, matched_block_id, 0, NULL, unmatched_block_id, 0, NULL);
@@ -5725,7 +5726,7 @@ compile_rescue_modifier_node(PrismBuilder *builder, const pm_rescue_modifier_nod
     emit_reraise(builder, node_id);
 
     builder->state.block_id = matched_block_id;
-    builder->state.retry_block_id = body_block_id;
+    builder->state.retry_block_id = rescue.body_block_id;
     emit_trace_rescue(builder, node_id);
     value_id = compile_node(builder, node->rescue_expression);
     emit_branch(builder, node_id, join_block_id, 1, &value_id);
