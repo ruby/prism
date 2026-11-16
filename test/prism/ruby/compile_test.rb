@@ -372,6 +372,30 @@ module Prism
       RUBY
     end
 
+    def test_constant_pool_identifier_encoding
+      source = <<~RUBY.encode(Encoding::ISO_8859_1)
+        # encoding: ISO-8859-1
+        module Étage
+          def self.café(entrée, clé:, supplément: 1)
+            entrée + clé + supplément
+          end
+        end
+        Étage.café(1, clé: 2, supplément: 3)
+      RUBY
+      unit = Prism.compile(source, freeze: true, raise_error: :plain).value
+      scope = Module.new
+      frame = Compile::VM::Frame.new(unit.graphs[0], scope, [scope, Object].freeze)
+      assert_equal(6, vm.run_frame(frame))
+      name = ->(value) { value.encode(Encoding::ISO_8859_1).to_sym }
+      assert(scope.const_defined?(name.call("Étage"), false))
+      assert_include(unit.graphs.flat_map(&:locals).map(&:name), name.call("entrée"))
+      signature = unit.graphs.find { |graph| graph.kind == :def }.signature
+      assert_equal([name.call("clé")], signature.required_keywords.keys)
+      assert_equal([name.call("supplément")], signature.optional_keywords.keys)
+      calls = unit.graphs.flat_map(&:blocks).flat_map(&:insns).select { |insn| insn.kind == :call }
+      assert_include(calls.map { |insn| insn.data.name }, name.call("café"))
+    end
+
     def test_call_info_flags
       [
         ["target", true, true, false],

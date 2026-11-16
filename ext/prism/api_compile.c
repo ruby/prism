@@ -146,6 +146,11 @@ compile_freeze(VALUE value, bool freeze) {
     return value;
 }
 
+static VALUE
+compile_constant(VALUE vconstants, const PrismUnit *unit, pm_constant_id_t constant_id) {
+    return rb_ary_entry(vconstants, pm_unit_constant_index(unit, constant_id));
+}
+
 /* Translate regexp flags at the Ruby consumer boundary. */
 static VALUE
 compile_regexp_options(const pm_parser_t *parser, pm_node_flags_t flags, bool freeze) {
@@ -158,7 +163,7 @@ compile_regexp_options(const pm_parser_t *parser, pm_node_flags_t flags, bool fr
  * frozen along with the rest of the unit when requested.
  */
 static VALUE
-compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, VALUE vregions, VALUE vonce_sites, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind, bool freeze) {
+compile_insn_data(VALUE vconstants, const PrismUnit *unit, VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, VALUE vregions, VALUE vonce_sites, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind, bool freeze) {
     switch (kind) {
         case kPrismInsnEnsureReturn:
             return rb_ary_entry(vregions, pm_insn_ensure_return_region_id(insn));
@@ -179,8 +184,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnYield: {
             VALUE name = Qnil;
             if (pm_insn_kind(insn) == kPrismInsnCall) {
-                const pm_constant_t *constant = pm_insn_call_name(parser, insn);
-                name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
+                name = compile_constant(vconstants, unit, pm_insn_call_name_id(insn));
             }
             VALUE argv[] = {
                 name,
@@ -211,8 +215,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnStoreCVar:
         case kPrismInsnStoreGVar:
         case kPrismInsnStoreIVar: {
-            const pm_constant_t *constant = pm_insn_name(parser, insn);
-            return ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
+            return compile_constant(vconstants, unit, pm_insn_name_id(insn));
         }
         case kPrismInsnDefineClassAbs:
         case kPrismInsnDefineClassAbsSuper:
@@ -225,8 +228,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnDefineModuleRecvRel:
         case kPrismInsnDefineMethod:
         case kPrismInsnDefineSingletonMethod: {
-            const pm_constant_t *constant = pm_insn_define_name(parser, insn);
-            VALUE name = ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant)));
+            VALUE name = compile_constant(vconstants, unit, pm_insn_define_name_id(insn));
             VALUE graph = rb_ary_entry(vgraphs, pm_insn_define_graph_id(insn));
             return compile_freeze(rb_ary_new_from_args(2, name, graph), freeze);
         }
@@ -251,8 +253,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
 
             VALUE parts = rb_ary_new_capa(size);
             for (uint32_t idx = 0; idx < size; ++idx) {
-                const pm_constant_t *constant = PrismConstantPath_constant(parser, constant_path, idx);
-                rb_ary_push(parts, ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))));
+                rb_ary_push(parts, compile_constant(vconstants, unit, PrismConstantPath_constant_id(constant_path, idx)));
             }
 
             return compile_freeze(parts, freeze);
@@ -281,6 +282,13 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
  */
 VALUE
 pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freeze) {
+    rb_encoding *encoding = rb_enc_find(pm_parser_encoding_name(parser));
+    VALUE vconstants = rb_ary_new_capa(pm_unit_nconstants(unit));
+    for (uint32_t index = 0; index < pm_unit_nconstants(unit); ++index) {
+        const pm_constant_t *constant = pm_unit_constant(unit, index);
+        rb_ary_push(vconstants, ID2SYM(rb_intern3((const char *) pm_constant_start(constant), pm_constant_length(constant), encoding)));
+    }
+
     VALUE vonce_sites = rb_ary_new_capa(pm_unit_nonce_sites(unit));
     for (uint32_t site_id = 0; site_id < pm_unit_nonce_sites(unit); ++site_id) {
         VALUE id = UINT2NUM(site_id);
@@ -289,7 +297,6 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
     uint32_t nobjects_unit = pm_unit_nobjects(unit);
     VALUE vobjects_unit = rb_ary_new_capa(nobjects_unit);
-    rb_encoding *encoding = rb_enc_find(pm_parser_encoding_name(parser));
 
     for (uint32_t object_id = 0; object_id < nobjects_unit; ++object_id) {
         const PrismObject *object = pm_unit_object(unit, object_id);
@@ -367,6 +374,11 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 break;
             }
             case kPrismObjectSymbol: {
+                pm_constant_id_t constant_id = pm_object_constant_id(object);
+                if (constant_id) {
+                    vobject = compile_constant(vconstants, unit, constant_id);
+                    break;
+                }
                 const pm_string_t *string = pm_object_string(object);
                 pm_node_flags_t flags = pm_object_flags(object);
                 rb_encoding *symbol_encoding = encoding;
@@ -416,8 +428,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
 
     for (uint32_t local_id = 0; local_id < nlocals_unit; ++local_id) {
         const PrismLocal *local = pm_unit_local(unit, local_id);
-        const pm_constant_t *constant = pm_local_name(parser, local);
-        VALUE vlocal_argv[] = { UINT2NUM(local_id), ID2SYM(rb_intern2((const char *) pm_constant_start(constant), pm_constant_length(constant))) };
+        VALUE vlocal_argv[] = { UINT2NUM(local_id), compile_constant(vconstants, unit, pm_local_name_id(local)) };
         VALUE vlocal = compile_freeze(rb_class_new_instance(2, vlocal_argv, rb_cPrismCompileLocal), freeze);
         rb_ary_push(vlocals_unit, vlocal);
     }
@@ -544,8 +555,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         uint32_t nrequired_keyword_ids = pm_signature_nrequired_keyword_ids(signature);
         VALUE vrequired_keywords = rb_hash_new();
         for (uint32_t keyword_idx = 0; keyword_idx < nrequired_keyword_ids; ++keyword_idx) {
-            const pm_constant_t *name = pm_signature_required_keyword_name(parser, signature, keyword_idx);
-            VALUE key = ID2SYM(rb_intern2((const char *) pm_constant_start(name), pm_constant_length(name)));
+            VALUE key = compile_constant(vconstants, unit, pm_signature_required_keyword_name_id(signature, keyword_idx));
             rb_hash_aset(vrequired_keywords, key, UINT2NUM(pm_signature_required_keyword_id(signature, keyword_idx)));
         }
         compile_freeze(vrequired_keywords, freeze);
@@ -554,8 +564,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
         VALUE voptional_keywords = rb_hash_new();
         VALUE voptional_keyword_specifieds = rb_hash_new();
         for (uint32_t keyword_idx = 0; keyword_idx < noptional_keyword_ids; ++keyword_idx) {
-            const pm_constant_t *name = pm_signature_optional_keyword_name(parser, signature, keyword_idx);
-            VALUE key = ID2SYM(rb_intern2((const char *) pm_constant_start(name), pm_constant_length(name)));
+            VALUE key = compile_constant(vconstants, unit, pm_signature_optional_keyword_name_id(signature, keyword_idx));
             rb_hash_aset(voptional_keywords, key, UINT2NUM(pm_signature_optional_keyword_id(signature, keyword_idx)));
             rb_hash_aset(voptional_keyword_specifieds, key, UINT2NUM(pm_signature_optional_keyword_specified_id(signature, keyword_idx)));
         }
@@ -636,7 +645,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 }
                 compile_freeze(vopnds, freeze);
 
-                VALUE vdata = compile_insn_data(vobjects_unit, vlocals_unit, vgraphs, vblocks, vregions, vonce_sites, parser, graph, insn, kind, freeze);
+                VALUE vdata = compile_insn_data(vconstants, unit, vobjects_unit, vlocals_unit, vgraphs, vblocks, vregions, vonce_sites, parser, graph, insn, kind, freeze);
 
                 uint32_t node_id = pm_insn_node_id(insn);
                 VALUE vnode_id = UINT2NUM(node_id);

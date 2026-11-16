@@ -71,7 +71,7 @@ struct PrismObject {
         struct { const pm_integer_t *value; } integer;
         struct { uint32_t left_id; uint32_t right_id; bool exclude_end; } range;
         struct { const pm_integer_t *numerator; const pm_integer_t *denominator; } rational;
-        struct { pm_node_flags_t flags; const pm_string_t *unescaped; } string;
+        struct { const pm_string_t *unescaped; pm_constant_id_t constant_id; pm_node_flags_t flags; } string;
     } as;
 };
 
@@ -124,9 +124,11 @@ struct PrismLocal {
 };
 
 struct PrismUnit {
+    pm_constant_t *constants;
     PrismGraph *graphs;
     PrismObject *objects;
     PrismLocal *locals;
+    uint32_t nconstants;
     uint32_t ngraphs;
     uint32_t nobjects;
     uint32_t nlocals;

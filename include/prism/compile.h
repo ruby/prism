@@ -179,13 +179,17 @@ typedef enum {
 
 PRISM_EXPORTED_FUNCTION PrismUnit * pm_unit_new(void);
 PRISM_EXPORTED_FUNCTION void pm_unit_free(PrismUnit *unit);
+PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nconstants(const PrismUnit *unit);
+PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_unit_constant(const PrismUnit *unit, uint32_t index);
+/* Map parser and synthetic constant ids to indices in the unit constant table. */
+PRISM_EXPORTED_FUNCTION uint32_t pm_unit_constant_index(const PrismUnit *unit, pm_constant_id_t constant_id);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nonce_sites(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nobjects(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION const PrismObject * pm_unit_object(const PrismUnit *unit, uint32_t object_id);
 PRISM_EXPORTED_FUNCTION PrismObjectKind pm_object_kind(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_nlocals(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION const PrismLocal * pm_unit_local(const PrismUnit *unit, uint32_t local_id);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_local_name(const pm_parser_t *parser, const PrismLocal *local);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_local_name_id(const PrismLocal *local);
 PRISM_EXPORTED_FUNCTION uint32_t pm_unit_ngraphs(const PrismUnit *unit);
 PRISM_EXPORTED_FUNCTION const PrismGraph * pm_unit_graph(const PrismUnit *unit, uint32_t graph_id);
 PRISM_EXPORTED_FUNCTION PrismGraphKind pm_graph_kind(const PrismGraph *graph);
@@ -202,11 +206,11 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_signature_npost_ids(const PrismSignature *si
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_post_id(const PrismSignature *signature, uint32_t post_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_nrequired_keyword_ids(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_required_keyword_id(const PrismSignature *signature, uint32_t keyword_idx);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_signature_required_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_signature_required_keyword_name_id(const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_noptional_keyword_ids(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_id(const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_optional_keyword_specified_id(const PrismSignature *signature, uint32_t keyword_idx);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_signature_optional_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_signature_optional_keyword_name_id(const PrismSignature *signature, uint32_t keyword_idx);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_keyword_rest_id(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION uint32_t pm_signature_block_id(const PrismSignature *signature);
 PRISM_EXPORTED_FUNCTION bool pm_signature_no_keywords(const PrismSignature *signature);
@@ -252,6 +256,7 @@ PRISM_EXPORTED_FUNCTION bool pm_object_range_exclude_end(const PrismObject *obje
 PRISM_EXPORTED_FUNCTION const pm_integer_t * pm_object_rational_numerator(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_integer_t * pm_object_rational_denominator(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION const pm_string_t * pm_object_string(const PrismObject *object);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_object_constant_id(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION pm_node_flags_t pm_object_flags(const PrismObject *object);
 
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_branch_block_id(const PrismInsn *insn);
@@ -264,9 +269,9 @@ PRISM_EXPORTED_FUNCTION bool pm_insn_call_ignore_visibility(const PrismInsn *ins
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_variable_call(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_block(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_call_block_argument(const PrismInsn *insn);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_call_name(const pm_parser_t *parser, const PrismInsn *insn);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_name(const pm_parser_t *parser, const PrismInsn *insn);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_define_name(const pm_parser_t *parser, const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_insn_call_name_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_insn_name_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t pm_insn_define_name_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_singleton_class_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_new_block_graph_id(const PrismInsn *insn);
@@ -286,7 +291,7 @@ PRISM_EXPORTED_FUNCTION pm_node_flags_t pm_insn_regexp_flags(const PrismInsn *in
 PRISM_EXPORTED_FUNCTION int32_t pm_insn_trace_lineno(const PrismInsn *insn);
 
 PRISM_EXPORTED_FUNCTION uint32_t PrismConstantPath_size(const PrismConstantPath *constant_path);
-PRISM_EXPORTED_FUNCTION const pm_constant_t * PrismConstantPath_constant(const pm_parser_t *parser, const PrismConstantPath *constant_path, uint32_t idx);
+PRISM_EXPORTED_FUNCTION pm_constant_id_t PrismConstantPath_constant_id(const PrismConstantPath *constant_path, uint32_t idx);
 
 PRISM_EXPORTED_FUNCTION void pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, PrismUnit *unit);
 

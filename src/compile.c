@@ -41,58 +41,38 @@
 #define PM_CONSTANT_ID_DELETE (pm_constant_id_t) -22
 #define PM_CONSTANT_ID_EMPTY_P (pm_constant_id_t) -23
 
-static const pm_constant_t dup_constant = { .start = (const uint8_t *) "dup", .length = 3 };
-static const pm_constant_t key_p_constant = { .start = (const uint8_t *) "key?", .length = 4 };
-static const pm_constant_t delete_constant = { .start = (const uint8_t *) "delete", .length = 6 };
-static const pm_constant_t empty_p_constant = { .start = (const uint8_t *) "empty?", .length = 6 };
-static const pm_constant_t uminus_constant = { .start = (const uint8_t *) "-@", .length = 2 };
-static const pm_constant_t backtick_constant = { .start = (const uint8_t *) "`", .length = 1 };
-static const pm_constant_t last_line_constant = { .start = (const uint8_t *) "$_", .length = 2 };
-static const pm_constant_t match_constant = { .start = (const uint8_t *) "=~", .length = 2 };
-static const pm_constant_t each_constant = { .start = (const uint8_t *) "each", .length = 4 };
-static const pm_constant_t it_constant = { .start = (const uint8_t *) "it", .length = 2 };
-static const pm_constant_t less_equal_constant = { .start = (const uint8_t *) "<=", .length = 2 };
-static const pm_constant_t greater_equal_constant = { .start = (const uint8_t *) ">=", .length = 2 };
-static const pm_constant_t add_constant = { .start = (const uint8_t *) "+", .length = 1 };
-static const pm_constant_t subtract_constant = { .start = (const uint8_t *) "-", .length = 1 };
-static const pm_constant_t aref_constant = { .start = (const uint8_t *) "[]", .length = 2 };
-static const pm_constant_t aset_constant = { .start = (const uint8_t *) "[]=", .length = 3 };
-static const pm_constant_t length_constant = { .start = (const uint8_t *) "length", .length = 6 };
-static const pm_constant_t equal_constant = { .start = (const uint8_t *) "==", .length = 2 };
-static const pm_constant_t rest_constant = { .start = (const uint8_t *) "*", .length = 1 };
-static const pm_constant_t keyword_rest_constant = { .start = (const uint8_t *) "**", .length = 2 };
-static const pm_constant_t destructured_constant = { .start = (const uint8_t *) "<destructured>", .length = 14 };
-static const pm_constant_t block_constant = { .start = (const uint8_t *) "&", .length = 1 };
-static const pm_constant_t line_number_constant = { .start = (const uint8_t *) "$.", .length = 2 };
+static const pm_constant_t builtin_constants[] = {
+    { .start = (const uint8_t *) "`", .length = 1 },
+    { .start = (const uint8_t *) "$_", .length = 2 },
+    { .start = (const uint8_t *) "=~", .length = 2 },
+    { .start = (const uint8_t *) "each", .length = 4 },
+    { .start = (const uint8_t *) "it", .length = 2 },
+    { .start = (const uint8_t *) "[]=", .length = 3 },
+    { .start = (const uint8_t *) "length", .length = 6 },
+    { .start = (const uint8_t *) "==", .length = 2 },
+    { .start = (const uint8_t *) "$.", .length = 2 },
+    { .start = (const uint8_t *) "*", .length = 1 },
+    { .start = (const uint8_t *) "**", .length = 2 },
+    { .start = (const uint8_t *) "&", .length = 1 },
+    { .start = (const uint8_t *) "<destructured>", .length = 14 },
+    { .start = (const uint8_t *) "[]", .length = 2 },
+    { .start = (const uint8_t *) "-@", .length = 2 },
+    { .start = (const uint8_t *) ">=", .length = 2 },
+    { .start = (const uint8_t *) "+", .length = 1 },
+    { .start = (const uint8_t *) "-", .length = 1 },
+    { .start = (const uint8_t *) "<=", .length = 2 },
+    { .start = (const uint8_t *) "dup", .length = 3 },
+    { .start = (const uint8_t *) "key?", .length = 4 },
+    { .start = (const uint8_t *) "delete", .length = 6 },
+    { .start = (const uint8_t *) "empty?", .length = 6 },
+};
+
+static const uint32_t nbuiltin_constants = sizeof(builtin_constants) / sizeof(builtin_constants[0]);
 
 static const pm_constant_t *
 compile_constant(const pm_parser_t *parser, pm_constant_id_t constant_id) {
-    switch (constant_id) {
-        case PM_CONSTANT_ID_DUP:          return &dup_constant;
-        case PM_CONSTANT_ID_KEY_P:        return &key_p_constant;
-        case PM_CONSTANT_ID_DELETE:       return &delete_constant;
-        case PM_CONSTANT_ID_EMPTY_P:      return &empty_p_constant;
-        case PM_CONSTANT_ID_UMINUS:         return &uminus_constant;
-        case PM_CONSTANT_ID_BACKTICK:       return &backtick_constant;
-        case PM_CONSTANT_ID_LAST_LINE:      return &last_line_constant;
-        case PM_CONSTANT_ID_MATCH:          return &match_constant;
-        case PM_CONSTANT_ID_EACH:           return &each_constant;
-        case PM_CONSTANT_ID_IT:             return &it_constant;
-        case PM_CONSTANT_ID_ASET:           return &aset_constant;
-        case PM_CONSTANT_ID_AREF:           return &aref_constant;
-        case PM_CONSTANT_ID_LESS_EQUAL:     return &less_equal_constant;
-        case PM_CONSTANT_ID_GREATER_EQUAL:  return &greater_equal_constant;
-        case PM_CONSTANT_ID_ADD:            return &add_constant;
-        case PM_CONSTANT_ID_SUBTRACT:       return &subtract_constant;
-        case PM_CONSTANT_ID_LENGTH:         return &length_constant;
-        case PM_CONSTANT_ID_EQUAL:          return &equal_constant;
-        case PM_CONSTANT_ID_LINE_NUMBER:    return &line_number_constant;
-        case PM_CONSTANT_ID_REST:           return &rest_constant;
-        case PM_CONSTANT_ID_KEYWORD_REST:   return &keyword_rest_constant;
-        case PM_CONSTANT_ID_BLOCK:          return &block_constant;
-        case PM_CONSTANT_ID_DESTRUCTURED:   return &destructured_constant;
-        default:                            return pm_parser_constant(parser, constant_id);
-    }
+    uint32_t index = UINT32_MAX - constant_id;
+    return index < nbuiltin_constants ? &builtin_constants[index] : pm_parser_constant(parser, constant_id);
 }
 
 typedef struct {
@@ -146,6 +126,23 @@ pm_unit_free(PrismUnit *unit) {
 }
 
 uint32_t
+pm_unit_nconstants(const PrismUnit *unit) {
+    return unit->nconstants;
+}
+
+const pm_constant_t *
+pm_unit_constant(const PrismUnit *unit, uint32_t index) {
+    assert(index < unit->nconstants);
+    return &unit->constants[index];
+}
+
+uint32_t
+pm_unit_constant_index(const PrismUnit *unit, pm_constant_id_t constant_id) {
+    uint32_t index = UINT32_MAX - constant_id;
+    return index < nbuiltin_constants ? unit->nconstants - nbuiltin_constants + index : (uint32_t) pm_constant_id_index(constant_id);
+}
+
+uint32_t
 pm_unit_nonce_sites(const PrismUnit *unit) {
     return unit->nonce_sites;
 }
@@ -175,9 +172,9 @@ pm_unit_local(const PrismUnit *unit, uint32_t local_id) {
     return unit->locals + local_id;
 }
 
-const pm_constant_t *
-pm_local_name(const pm_parser_t *parser, const PrismLocal *local) {
-    return compile_constant(parser, local->name_id);
+pm_constant_id_t
+pm_local_name_id(const PrismLocal *local) {
+    return local->name_id;
 }
 
 uint32_t
@@ -265,10 +262,10 @@ pm_signature_required_keyword_id(const PrismSignature *signature, uint32_t keywo
     return signature->required_keyword_ids[keyword_idx];
 }
 
-const pm_constant_t *
-pm_signature_required_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx) {
+pm_constant_id_t
+pm_signature_required_keyword_name_id(const PrismSignature *signature, uint32_t keyword_idx) {
     assert(keyword_idx < signature->nrequired_keyword_ids);
-    return compile_constant(parser, signature->required_keyword_names[keyword_idx]);
+    return signature->required_keyword_names[keyword_idx];
 }
 
 uint32_t
@@ -288,10 +285,10 @@ pm_signature_optional_keyword_specified_id(const PrismSignature *signature, uint
     return signature->optional_keyword_specified_ids[keyword_idx];
 }
 
-const pm_constant_t *
-pm_signature_optional_keyword_name(const pm_parser_t *parser, const PrismSignature *signature, uint32_t keyword_idx) {
+pm_constant_id_t
+pm_signature_optional_keyword_name_id(const PrismSignature *signature, uint32_t keyword_idx) {
     assert(keyword_idx < signature->noptional_keyword_ids);
-    return compile_constant(parser, signature->optional_keyword_names[keyword_idx]);
+    return signature->optional_keyword_names[keyword_idx];
 }
 
 uint32_t
@@ -518,6 +515,11 @@ pm_object_string(const PrismObject *object) {
     return object->as.string.unescaped;
 }
 
+pm_constant_id_t
+pm_object_constant_id(const PrismObject *object) {
+    return object->as.string.constant_id;
+}
+
 pm_node_flags_t
 pm_object_flags(const PrismObject *object) {
     return object->as.string.flags;
@@ -573,19 +575,19 @@ pm_insn_call_block_argument(const PrismInsn *insn) {
     return insn->as.call.block_argument;
 }
 
-const pm_constant_t *
-pm_insn_call_name(const pm_parser_t *parser, const PrismInsn *insn) {
-    return compile_constant(parser, insn->as.call.name_id);
+pm_constant_id_t
+pm_insn_call_name_id(const PrismInsn *insn) {
+    return insn->as.call.name_id;
 }
 
-const pm_constant_t *
-pm_insn_name(const pm_parser_t *parser, const PrismInsn *insn) {
-    return compile_constant(parser, insn->as.name.name_id);
+pm_constant_id_t
+pm_insn_name_id(const PrismInsn *insn) {
+    return insn->as.name.name_id;
 }
 
-const pm_constant_t *
-pm_insn_define_name(const pm_parser_t *parser, const PrismInsn *insn) {
-    return compile_constant(parser, insn->as.define.name_id);
+pm_constant_id_t
+pm_insn_define_name_id(const PrismInsn *insn) {
+    return insn->as.define.name_id;
 }
 
 uint32_t
@@ -679,8 +681,8 @@ PrismConstantPath_size(const PrismConstantPath *constant_path) {
     return constant_path->size;
 }
 
-const pm_constant_t *
-PrismConstantPath_constant(const pm_parser_t *parser, const PrismConstantPath *constant_path, uint32_t idx) {
+pm_constant_id_t
+PrismConstantPath_constant_id(const PrismConstantPath *constant_path, uint32_t idx) {
     assert(idx < constant_path->size);
 
     pm_constant_id_t constant_id;
@@ -690,7 +692,7 @@ PrismConstantPath_constant(const pm_parser_t *parser, const PrismConstantPath *c
         constant_id = constant_path->as.constant_ids[idx];
     }
 
-    return compile_constant(parser, constant_id);
+    return constant_id;
 }
 
 /******************************************************************************/
@@ -1198,6 +1200,7 @@ make_object_constant_id(PrismBuilder *builder, pm_constant_id_t constant_id) {
     const pm_constant_t *constant = compile_constant(builder->parser, constant_id);
     *name = (pm_string_t) { .source = pm_constant_start(constant), .length = pm_constant_length(constant) };
 
+    builder->unit->objects[object_id].as.string.constant_id = constant_id;
     builder->unit->objects[object_id].as.string.flags = 0;
     builder->unit->objects[object_id].as.string.unescaped = name;
     return object_id;
@@ -6593,6 +6596,14 @@ pm_compile(const pm_parser_t *parser, const pm_node_t *node, pm_arena_t *arena, 
             .lineno = parser->start_line - 1
         }
     };
+
+    uint32_t nparser_constants = (uint32_t) pm_parser_constants_size(parser);
+    unit->nconstants = nparser_constants + nbuiltin_constants;
+    unit->constants = pm_arena_alloc(arena, unit->nconstants * sizeof(pm_constant_t), PRISM_ALIGNOF(pm_constant_t));
+    for (uint32_t index = 0; index < nparser_constants; ++index) {
+        unit->constants[index] = *pm_parser_constant_at(parser, index);
+    }
+    memcpy(unit->constants + nparser_constants, builtin_constants, sizeof(builtin_constants));
 
     builder.bindings = pm_arena_zalloc(&builder.scratch, sizeof(uint32_t) * ((size_t) parser->constant_pool.size + 1), PRISM_ALIGNOF(uint32_t));
     compile_node(&builder, node);
