@@ -52,8 +52,10 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefinedConstNestRel: return rb_intern_const("defined_const_nest_rel");
         case kPrismInsnDefinedConstRecvRel: return rb_intern_const("defined_const_recv_rel");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
+        case kPrismInsnDefinedImplicitMethod: return rb_intern_const("defined_implicit_method");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
         case kPrismInsnDefinedIVar: return rb_intern_const("defined_ivar");
+        case kPrismInsnDefinedExplicitMethod: return rb_intern_const("defined_explicit_method");
         case kPrismInsnDefinedSuper: return rb_intern_const("defined_super");
         case kPrismInsnEnsureShareable: return rb_intern_const("ensure_shareable");
         case kPrismInsnExpandArray: return rb_intern_const("expand_array");
@@ -176,6 +178,8 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnDefinedConstNestRel:
         case kPrismInsnDefinedConstRecvRel:
         case kPrismInsnDefinedCVar:
+        case kPrismInsnDefinedImplicitMethod:
+        case kPrismInsnDefinedExplicitMethod:
         case kPrismInsnDefinedGVar:
         case kPrismInsnDefinedIVar:
         case kPrismInsnLoadCVar:

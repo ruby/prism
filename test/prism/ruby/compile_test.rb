@@ -540,6 +540,24 @@ module Prism
       assert_equal(1, Compile::VM::MethodDefinition.arity(klass.instance_method(:query)))
     end
 
+    def test_defined_method_instructions
+      receiver = Object.new
+      receiver.define_singleton_method(:work) { raise "method called" }
+      receiver.define_singleton_method(:hidden) { raise "method called" }
+      receiver.singleton_class.send(:private, :hidden)
+      [
+        [:defined_explicit_method, :work, true],
+        [:defined_explicit_method, :hidden, false],
+        [:defined_explicit_method, :missing, false],
+        [:defined_implicit_method, :work, true],
+        [:defined_implicit_method, :hidden, true],
+        [:defined_implicit_method, :missing, false]
+      ].each do |kind, name, expected|
+        insns = [Compile::Insn.new(:load_object, 0, [0], receiver), Compile::Insn.new(kind, 0, [1, 0], name), Compile::Insn.new(:return, 0, [1], nil)]
+        assert_equal(expected, run_instructions(insns, [nil], 2))
+      end
+    end
+
     def test_defined_containers
       [
         "defined?([])",

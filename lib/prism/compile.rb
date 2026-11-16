@@ -327,10 +327,14 @@ module Prism
           "#{value(opnds[0])} = defined_const_recv_rel(#{[*opnds[1..].map { |id| value(id) }, name].join(', ')})"
         when :defined_cvar
           "#{value(insn.opnds[0])} = defined_cvar #{insn.data}"
+        when :defined_implicit_method
+          "#{value(insn.opnds[0])} = defined_implicit_method(#{value(insn.opnds[1])}, #{insn.data})"
         when :defined_gvar
           "#{value(insn.opnds[0])} = defined_gvar #{insn.data}"
         when :defined_ivar
           "#{value(insn.opnds[0])} = defined_ivar #{insn.data}"
+        when :defined_explicit_method
+          "#{value(insn.opnds[0])} = defined_explicit_method(#{value(insn.opnds[1])}, #{insn.data})"
         when :defined_super
           "#{value(insn.opnds[0])} = defined_super"
         when :ensure_shareable
@@ -913,10 +917,14 @@ module Prism
               values[insn.opnds[0]] = const_defined_recv_rel?(values[insn.opnds[1]], insn.data)
             when :defined_cvar
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
+            when :defined_implicit_method
+              values[insn.opnds[0]] = !!defined_implicit_method?(values[insn.opnds[1]], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
             when :defined_ivar
               values[insn.opnds[0]] = Kernel.instance_method(:instance_variable_defined?).bind_call(recv, insn.data)
+            when :defined_explicit_method
+              values[insn.opnds[0]] = !!defined_explicit_method?(values[insn.opnds[1]], insn.data, recv)
             when :defined_super
               values[insn.opnds[0]] = !!(super_method && super_method.binding.eval("defined?(super)"))
             when :ensure_shareable
@@ -1090,6 +1098,43 @@ module Prism
           catch(block) { yield }
         ensure
           block.active = false
+        end
+      end
+
+      def method_lookup_class(receiver)
+        Kernel.instance_method(:singleton_class).bind_call(receiver)
+      rescue TypeError
+        Kernel.instance_method(:class).bind_call(receiver)
+      end
+
+      def defined_implicit_method?(receiver, name)
+        klass = method_lookup_class(receiver)
+        begin
+          query = Module.instance_method(:instance_method).bind_call(klass, :respond_to?)
+        rescue NameError
+          return Kernel.instance_method(:respond_to?).bind_call(receiver, name, true)
+        end
+
+        arity = MethodDefinition.arity(query)
+        if arity == 1
+          query.bind_call(receiver, name)
+        elsif arity > 2
+          raise ArgumentError, "respond_to? must accept 1 or 2 arguments (requires #{arity})"
+        else
+          query.bind_call(receiver, name, true)
+        end
+      end
+
+      def defined_explicit_method?(receiver, name, caller)
+        klass = method_lookup_class(receiver)
+        return true if Module.instance_method(:public_method_defined?).bind_call(klass, name)
+        return false if Module.instance_method(:private_method_defined?).bind_call(klass, name)
+        return protected_call?(receiver, name, caller) if Module.instance_method(:protected_method_defined?).bind_call(klass, name)
+
+        if defined_implicit_method?(receiver, :respond_to_missing?)
+          BasicObject.instance_method(:__send__).bind_call(receiver, :respond_to_missing?, name, false)
+        else
+          false
         end
       end
 
