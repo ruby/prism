@@ -6,6 +6,39 @@ require "open3"
 
 module Prism
   class CompileTest < TestCase
+    def test_literal_string_encodings
+      [
+        ["US-ASCII", '"\xFF"', Encoding::ASCII_8BIT],
+        ["ASCII-8BIT", '"\u00E9"', Encoding::UTF_8],
+        ["UTF-8", '"\xFF"', Encoding::UTF_8],
+        ["ISO-8859-1", '"\xE9"', Encoding::ISO_8859_1],
+        ["US-ASCII", '"plain"', Encoding::US_ASCII]
+      ].each do |encoding, literal, expected_encoding|
+        [false, true].each do |frozen|
+          source = "# encoding: #{encoding}\n# frozen_string_literal: #{frozen}\n#{literal}"
+          value = vm.run(compile_unit(source))
+          assert_equal(eval(source).bytes, value.bytes)
+          assert_equal(expected_encoding, value.encoding)
+          assert_equal(frozen, value.frozen?)
+        end
+      end
+    end
+
+    def test_literal_symbol_encodings
+      [
+        ["US-ASCII", ':"\xFF"', Encoding::ASCII_8BIT],
+        ["ASCII-8BIT", ':"\u00E9"', Encoding::UTF_8],
+        ["ISO-8859-1", ':"\xE9"', Encoding::ISO_8859_1],
+        ["UTF-8", ':plain', Encoding::US_ASCII],
+        ["ISO-8859-1", ':plain', Encoding::US_ASCII]
+      ].each do |encoding, literal, expected_encoding|
+        source = "# encoding: #{encoding}\n#{literal}"
+        value = vm.run(compile_unit(source))
+        assert_same(eval(source), value)
+        assert_equal(expected_encoding, value.encoding)
+      end
+    end
+
     def test_executor
       [
         [3, "1 + 2"],

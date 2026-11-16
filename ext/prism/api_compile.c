@@ -331,13 +331,29 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 break;
             case kPrismObjectString: {
                 const pm_string_t *string = pm_object_string(object);
-                vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), encoding);
-                if (pm_object_flags(object) & PM_STRING_FLAGS_FROZEN) rb_obj_freeze(vobject);
+                pm_node_flags_t flags = pm_object_flags(object);
+                rb_encoding *string_encoding = encoding;
+                if (flags & PM_STRING_FLAGS_FORCED_BINARY_ENCODING) {
+                    string_encoding = rb_ascii8bit_encoding();
+                } else if (flags & PM_STRING_FLAGS_FORCED_UTF8_ENCODING) {
+                    string_encoding = rb_utf8_encoding();
+                }
+                vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), string_encoding);
+                if (flags & PM_STRING_FLAGS_FROZEN) rb_obj_freeze(vobject);
                 break;
             }
             case kPrismObjectSymbol: {
                 const pm_string_t *string = pm_object_string(object);
-                vobject = ID2SYM(rb_intern3((const char *) pm_string_source(string), pm_string_length(string), encoding));
+                pm_node_flags_t flags = pm_object_flags(object);
+                rb_encoding *symbol_encoding = encoding;
+                if (flags & PM_SYMBOL_FLAGS_FORCED_UTF8_ENCODING) {
+                    symbol_encoding = rb_utf8_encoding();
+                } else if (flags & PM_SYMBOL_FLAGS_FORCED_BINARY_ENCODING) {
+                    symbol_encoding = rb_ascii8bit_encoding();
+                } else if (flags & PM_SYMBOL_FLAGS_FORCED_US_ASCII_ENCODING) {
+                    symbol_encoding = rb_usascii_encoding();
+                }
+                vobject = ID2SYM(rb_intern3((const char *) pm_string_source(string), pm_string_length(string), symbol_encoding));
                 break;
             }
             case kPrismObjectEncoding: vobject = rb_enc_from_encoding(rb_enc_find(pm_object_encoding_name(object))); break;
