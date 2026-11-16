@@ -520,6 +520,150 @@ module Prism
       end
     end
 
+    def test_defined_method_signatures_across_vms
+      scope = Module.new
+      first_vm = Compile::VM.new
+      graph = compile_unit("class Item; def respond_to?(name); name == :virtual; end; end; Item.new").graphs[0]
+      receiver = first_vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      query = compile_unit("defined?(virtual)").graphs[0]
+      GC.start
+      assert_equal("method", vm.run_frame(Compile::VM::Frame.new(query, receiver, [scope, Object].freeze)))
+
+      klass = scope.const_get(:Item)
+      klass.class_eval("alias saved_query respond_to?")
+      replacement = compile_unit("class Item; def respond_to?(name, private); false; end; end").graphs[0]
+      capture_warnings { first_vm.run_frame(Compile::VM::Frame.new(replacement, scope, [scope, Object].freeze)) }
+      GC.start
+      assert_nil(vm.run_frame(Compile::VM::Frame.new(query, receiver, [scope, Object].freeze)))
+      assert_equal(1, Compile::VM::MethodDefinition.arity(klass.instance_method(:saved_query)))
+      assert_equal(2, Compile::VM::MethodDefinition.arity(klass.instance_method(:respond_to?)))
+
+      capture_warnings { klass.define_method(:respond_to?) { |name| name == :virtual } }
+      assert_equal("method", vm.run_frame(Compile::VM::Frame.new(query, receiver, [scope, Object].freeze)))
+    end
+
+    def test_defined_calls
+      [
+        "defined?(puts)",
+        "defined?(compile_defined_missing)",
+        "defined?(1.to_s)",
+        "value = Object.new; def value.respond_to?(name); name == :virtual; end; value.instance_eval { defined?(virtual) }",
+        "value = Object.new; def value.respond_to?(a, b, c); end; begin; value.instance_eval { defined?(virtual) }; rescue ArgumentError => error; error.message; end",
+        "begin; raise 'outer'; rescue; previous = $!; result = defined?((raise 'inner').work); [result, $!.equal?(previous)]; end",
+        "defined?(:value.to_s)",
+        "defined?(nil.to_s)",
+        "defined?(nil&.to_s)",
+        "defined?(nil&.compile_defined_missing)",
+        "defined?(self.puts)",
+        "defined?(puts(raise('must not run')))",
+        "defined?(puts(CompileDefinedCallMissing))",
+        "defined?(puts(*nil, **nil, &raise('must not run')))",
+        "defined?(compile_defined_missing { raise('must not run') })",
+        "defined?(CompileDefinedCallMissing.foo { raise('must not run') })",
+        "defined?([1.to_s, puts])",
+        "defined?({a: compile_defined_missing})",
+        "value = Object.new; def value.work; raise 'must not run'; end; defined?(value.work)",
+        "value = Object.new; def value.work=(*); raise 'must not run'; end; defined?(value.work = raise('must not run'))",
+        "value = Object.new; def value.work; end; value.singleton_class.send(:private, :work); defined?(value.work)",
+        "defined?((raise Exception, 'suppressed').work)",
+        "def compile_defined_forward(...); defined?(puts(...)); end; compile_defined_forward(1)",
+        "def compile_defined_forward(*, **, &); defined?(puts(*, **, &)); end; compile_defined_forward(1, a: 2)"
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_defined_call_receivers
+      scope = Module.new
+      events = []
+      leaf = Object.new
+      leaf.define_singleton_method(:finish) { |*| raise "final method called" }
+      middle = Object.new
+      middle.define_singleton_method(:next) { |*| events << :next; leaf }
+      middle.define_singleton_method(:finish) { |*| raise "final method called" }
+      scope.define_singleton_method(:value) { |*| events << :value; middle }
+      scope.define_singleton_method(:argument) { events << :argument; :argument }
+      scope.define_singleton_method(:broken) { events << :broken; raise Exception, "receiver failed" }
+      sources = [
+        "defined?(value.next.finish)",
+        "defined?(value.next.next.finish)",
+        "defined?(value.finish(argument))",
+        "defined?(value.finish(missing_argument))",
+        "defined?(value(argument).next(argument).finish(argument))",
+        "defined?(value.missing(argument))",
+        "defined?(missing_receiver.finish)",
+        "defined?(broken.finish)",
+        "defined?(value { raise('must not run') }.finish)",
+        "defined?(value.missing { raise('must not run') })"
+      ]
+      sources.each do |source|
+        events.clear
+        expected = scope.module_eval(source)
+        native_events = events.dup
+        events.clear
+        graph = compile_unit(source).graphs[0]
+        actual = vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+        assert_equal(expected, actual, source)
+        assert_equal(native_events, events, source)
+      end
+    end
+
+    def test_defined_call_hooks
+      scope = Module.new
+      events = []
+      query_result = false
+      target = Object.new
+      target.define_singleton_method(:known) { raise "final method called" }
+      target.define_singleton_method(:respond_to?) { |*args| events << [:respond_to?, *args]; query_result }
+      target.define_singleton_method(:respond_to_missing?) do |name, include_private|
+        events << [:respond_to_missing?, name, include_private]
+        raise "hook failed" if name == :broken
+        name == :virtual
+      end
+      target.define_singleton_method(:method_missing) { |*args| events << [:method_missing, *args]; :unexpected }
+      scope.const_set(:Target, target)
+      scope.define_singleton_method(:respond_to_missing?) do |name, include_private|
+        events << [:implicit_missing, name, include_private]
+        raise "hook failed" if name == :broken
+        name == :virtual
+      end
+      [false, true].each do |result|
+        query_result = result
+        ["defined?(Target.known)", "defined?(Target.virtual)", "defined?(Target.missing)", "defined?(Target.broken)", "defined?(virtual)", "defined?(missing)", "defined?(broken)", "defined?(broken(nil))"].each do |source|
+          events.clear
+          expected = begin
+            scope.module_eval(source)
+          rescue RuntimeError => error
+            [error.class, error.message]
+          end
+          native_events = events.dup
+          events.clear
+          graph = compile_unit(source).graphs[0]
+          actual = begin
+            vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+          rescue RuntimeError => error
+            [error.class, error.message]
+          end
+          assert_equal(expected, actual, source)
+          assert_equal(native_events, events, source)
+        end
+      end
+    end
+
+    def test_defined_call_visibility
+      source = <<~RUBY_SOURCE
+        class CompileDefinedCallVisibility
+          private def hidden; raise 'called'; end
+          protected def guarded; raise 'called'; end
+          def check(other)
+            [defined?(hidden), defined?(self.hidden), defined?(other.hidden), defined?(guarded), defined?(self.guarded), defined?(other.guarded)]
+          end
+        end
+        value = CompileDefinedCallVisibility.new
+        [value.check(value), defined?(value.guarded)]
+      RUBY_SOURCE
+      capture_warnings { assert_run(eval(source), source) }
+      assert_run(nil, "value = BasicObject.new; defined?(value.missing)")
+    end
+
     def test_method_definition_signatures
       scope = Module.new
       first_vm = Compile::VM.new
