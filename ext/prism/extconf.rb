@@ -42,7 +42,7 @@ if ARGV.delete("--help")
               Equivalent to `--enable-build-ubsan` when set, even if nil or blank.
 
   TEXT
-  exit!(0)
+  exit
 end
 
 # If this gem is being build from a git source, then we need to run
