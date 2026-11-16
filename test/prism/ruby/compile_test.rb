@@ -543,6 +543,59 @@ module Prism
       assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
     end
 
+    def test_static_literal_concatenation_encodings
+      [
+        ["US-ASCII", '["a#{"\xFF"}", "#{"\xFF"}a"]'],
+        ["ASCII-8BIT", '["a#{"\u00E9"}", "#{"\u00E9"}a"]'],
+        ["ISO-8859-1", '["a#{"\u00E9"}", "#{"\u00E9"}a"]'],
+        ["ISO-8859-1", '["a#{"\xE9"}", "#{"\xE9"}a"]'],
+        ["US-ASCII", '[:"a#{"\xFF"}", :"#{"\xFF"}a"]'],
+        ["ASCII-8BIT", '[:"a#{"\u00E9"}", :"#{"\u00E9"}a"]'],
+        ["ISO-8859-1", '[:"a#{"\u00E9"}", :"#{"\xE9"}a"]'],
+        ["US-ASCII", '["a" "\xFF", "\xFF" "a"]'],
+        ["ASCII-8BIT", '["a" "\u00E9", "\u00E9" "a"]'],
+        ["ASCII-8BIT", '["#{"a#{"\u00E9"}"}"]']
+      ].each do |encoding, literal|
+        source = "# encoding: #{encoding}\n# frozen_string_literal: true\n#{literal}"
+        unit = compile_unit(source)
+        expected = eval(source)
+        actual = vm.run(unit)
+        assert_equal(expected, actual)
+        assert_equal(expected.map(&:encoding), actual.map(&:encoding))
+        assert(actual.all?(&:frozen?))
+        instructions = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        assert_include(instructions, :new_array_static)
+        assert_not_include(instructions, :new_string)
+        assert_not_include(instructions, :new_symbol)
+      end
+    end
+
+    def test_static_literal_concatenation_encoding_resolution
+      fragments = ['""', '"a"', '"\u0061"', '"\u00E9"', '"\xFF"', '"\xC3\xA9"']
+      ["US-ASCII", "ASCII-8BIT", "UTF-8", "ISO-8859-1"].each do |encoding|
+        fragments.product(fragments).each do |left, right|
+          source = "# encoding: #{encoding}\n# frozen_string_literal: true\n" + '["#{' + left + '}#{' + right + '}"]'
+          begin
+            expected = eval(source).first
+          rescue Encoding::CompatibilityError
+            assert_raise(Encoding::CompatibilityError, source) { compile_unit(source) }
+            next
+          end
+
+          value = vm.run(compile_unit(source)).first
+          assert_equal([expected.bytes, expected.encoding, expected.valid_encoding?], [value.bytes, value.encoding, value.valid_encoding?], source)
+        end
+      end
+    end
+
+    def test_static_literal_concatenation_incompatible_encodings
+      ['["\xFF#{"\u00E9"}"]', '[:"\xFF#{"\u00E9"}"]'].each do |literal|
+        source = "# encoding: US-ASCII\n# frozen_string_literal: true\n#{literal}"
+        assert_raise(Encoding::CompatibilityError) { eval(source) }
+        assert_raise(Encoding::CompatibilityError) { compile_unit(source) }
+      end
+    end
+
     def test_signature_arity
       ["", "a", "a, b", "a = 1", "*a", "a, *b, c", "a = 1, b", "a:", "a:, b: 1", "a: 1", "a:, **kw", "a: 1, **kw", "**kw", "**nil", "&block", "...", "a, ...", "(a, b)"].each do |parameters|
         source = "def value(#{parameters}); end"

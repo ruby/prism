@@ -437,6 +437,16 @@ pm_object_array_object_id(const PrismObject *object, uint32_t idx) {
     return object->as.array.object_ids[idx];
 }
 
+uint32_t
+pm_object_concat_size(const PrismObject *object) {
+    return object->as.concat.nobject_ids;
+}
+
+uint32_t
+pm_object_concat_object_id(const PrismObject *object, uint32_t idx) {
+    return object->as.concat.object_ids[idx];
+}
+
 const char *
 pm_object_encoding_name(const PrismObject *object) {
     return object->as.encoding.name;
@@ -2128,6 +2138,36 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
     return local_id;
 }
 
+/* Preserve fragment encodings until literal objects are materialized. */
+static uint32_t
+make_object_concat(PrismBuilder *builder, const pm_node_list_t *parts, PrismObjectKind kind) {
+    uint32_t *object_ids = pm_arena_alloc(builder->arena, parts->size * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    for (size_t idx = 0; idx < parts->size; ++idx) {
+        const pm_node_t *part = parts->nodes[idx];
+
+        if (PM_NODE_TYPE_P(part, PM_STRING_NODE)) {
+            uint32_t object_id = make_object(builder, kPrismObjectString);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = part->flags;
+            object->as.string.unescaped = &((const pm_string_node_t *) part)->unescaped;
+            object_ids[idx] = object_id;
+        } else if (PM_NODE_TYPE_P(part, PM_EMBEDDED_STATEMENTS_NODE)) {
+            const pm_embedded_statements_node_t *cast = (const pm_embedded_statements_node_t *) part;
+            object_ids[idx] = make_object_concat(builder, &cast->statements->body, kPrismObjectStringConcat);
+        } else {
+            assert(PM_NODE_TYPE_P(part, PM_INTERPOLATED_STRING_NODE));
+            object_ids[idx] = make_object_concat(builder, &((const pm_interpolated_string_node_t *) part)->parts, kPrismObjectStringConcat);
+        }
+    }
+
+    uint32_t object_id = make_object(builder, kind);
+    PrismObject *object = builder->unit->objects + object_id;
+    object->as.concat.nobject_ids = (uint32_t) parts->size;
+    object->as.concat.object_ids = object_ids;
+    return object_id;
+}
+
 static const pm_string_t *
 static_literal_concat(PrismBuilder *builder, const pm_node_list_t *parts) {
     const pm_string_t **strings = pm_arena_alloc(&builder->scratch, sizeof(pm_string_t *) * parts->size, PRISM_ALIGNOF(pm_string_t *));
@@ -2240,28 +2280,10 @@ literal_value(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
-        case PM_INTERPOLATED_STRING_NODE: {
-            const pm_interpolated_string_node_t *cast = (const pm_interpolated_string_node_t *) node;
-            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
-
-            uint32_t object_id = make_object(builder, kPrismObjectString);
-            PrismObject *object = builder->unit->objects + object_id;
-            object->as.string.flags = PM_STRING_FLAGS_FROZEN;
-            object->as.string.unescaped = string;
-
-            return object_id;
-        }
-        case PM_INTERPOLATED_SYMBOL_NODE: {
-            const pm_interpolated_symbol_node_t *cast = (const pm_interpolated_symbol_node_t *) node;
-            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
-
-            uint32_t object_id = make_object(builder, kPrismObjectSymbol);
-            PrismObject *object = builder->unit->objects + object_id;
-            object->as.string.flags = node->flags;
-            object->as.string.unescaped = string;
-
-            return object_id;
-        }
+        case PM_INTERPOLATED_STRING_NODE:
+            return make_object_concat(builder, &((const pm_interpolated_string_node_t *) node)->parts, kPrismObjectStringConcat);
+        case PM_INTERPOLATED_SYMBOL_NODE:
+            return make_object_concat(builder, &((const pm_interpolated_symbol_node_t *) node)->parts, kPrismObjectSymbolConcat);
         case PM_NIL_NODE:
             return make_object(builder, kPrismObjectNil);
         case PM_RANGE_NODE: {

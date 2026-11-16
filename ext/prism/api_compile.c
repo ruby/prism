@@ -356,6 +356,24 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 vobject = ID2SYM(rb_intern3((const char *) pm_string_source(string), pm_string_length(string), symbol_encoding));
                 break;
             }
+            case kPrismObjectStringConcat:
+            case kPrismObjectSymbolConcat: {
+                uint32_t size = pm_object_concat_size(object);
+                if (size) {
+                    vobject = rb_str_dup(rb_ary_entry(vobjects_unit, pm_object_concat_object_id(object, 0)));
+                    for (uint32_t idx = 1; idx < size; ++idx) {
+                        rb_str_concat(vobject, rb_ary_entry(vobjects_unit, pm_object_concat_object_id(object, idx)));
+                    }
+                } else {
+                    vobject = rb_enc_str_new("", 0, encoding);
+                }
+                if (pm_object_kind(object) == kPrismObjectSymbolConcat) {
+                    vobject = ID2SYM(rb_intern_str(vobject));
+                } else {
+                    rb_obj_freeze(vobject);
+                }
+                break;
+            }
             case kPrismObjectEncoding: vobject = rb_enc_from_encoding(rb_enc_find(pm_object_encoding_name(object))); break;
             case kPrismObjectFalse: vobject = Qfalse; break;
             case kPrismObjectFloat: vobject = DBL2NUM(pm_object_float(object)); break;
