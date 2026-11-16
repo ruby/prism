@@ -16,6 +16,31 @@ task default: %i[compile test]
 
 require_relative "templates/template"
 
+# A stamp is a file that records some contents, such as the values of the
+# environment variables that a build reads, and is rewritten only when they
+# differ from what it holds. Rake only compares file timestamps, so a file that
+# depends on a stamp is out of date exactly when the contents change. The
+# contents are computed when the stamp is checked rather than when this file is
+# loaded, so that they reflect the files generated earlier in the same run.
+class StampTask < Rake::FileTask
+  def self.define(name, &contents)
+    define_task(name) do |task|
+      FileUtils.mkdir_p(File.dirname(task.name))
+      File.write(task.name, task.contents)
+    end.tap { |task| task.contents_block = contents }
+  end
+
+  attr_writer :contents_block
+
+  def contents
+    @contents_block.call
+  end
+
+  def needed?
+    super || File.read(name) != contents
+  end
+end
+
 desc "Generate all ERB template based files"
 task templates: Prism::Template::TEMPLATES
 
@@ -81,7 +106,7 @@ end
 if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   require "rake/extensiontask"
 
-  Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
+  extension = Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
     ext.ext_dir = "ext/prism"
     ext.lib_dir = "lib/prism"
     ext.cross_compile = true
@@ -102,6 +127,19 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
       task(:compile) { warn "Built the #{variant.join(" and ")} variant of the extension in #{ext.tmp_dir}" }
     end
   end
+
+  # The Makefile that extconf.rb writes lists the sources and headers that
+  # existed when it ran, and rake-compiler runs extconf.rb again only when
+  # extconf.rb itself changes. So the Makefile depends on a stamp of that list,
+  # and adding or removing a source or header configures the extension again,
+  # which recompiles every object through the rule that extconf.rb adds.
+  extension_files = "tmp/extension.files"
+
+  StampTask.define(extension_files) do
+    Dir["ext/prism/*.{c,h}", "src/**/*.c", "include/**/*.h"].sort.map { |path| "#{path}\n" }.join
+  end
+
+  file "#{extension.tmp_dir}/#{extension.platform}/#{extension.name}/#{RUBY_VERSION}/Makefile" => extension_files
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
 
@@ -122,25 +160,12 @@ CLOBBER << "lib/prism/prism.#{RbConfig::CONFIG["DLEXT"]}"
 CLOBBER << "java/wasm/src/main/resources/prism.wasm"
 
 # The generated files depend on the environment variables listed in
-# Prism::Template::ENVIRONMENT as well as on their templates. Rake only compares
-# file timestamps, so this stamp records the variables' values and is rewritten
-# whenever they differ from what it holds. Its timestamp then moves only when a
-# value changes, which makes the generated files out of date exactly then.
-class TemplateEnvironmentTask < Rake::FileTask
-  def contents
-    Prism::Template::ENVIRONMENT.map { |name, value| "#{name}=#{value.inspect}\n" }.join
-  end
-
-  def needed?
-    super || File.read(name) != contents
-  end
-end
-
+# Prism::Template::ENVIRONMENT as well as on their templates, so they depend on
+# a stamp of the variables' values.
 template_environment = "tmp/template.env"
 
-TemplateEnvironmentTask.define_task(template_environment) do |t|
-  mkdir_p(File.dirname(t.name))
-  File.write(t.name, t.contents)
+StampTask.define(template_environment) do
+  Prism::Template::ENVIRONMENT.map { |name, value| "#{name}=#{value.inspect}\n" }.join
 end
 
 Prism::Template::TEMPLATES.each do |filepath|
