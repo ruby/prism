@@ -5101,6 +5101,69 @@ module Prism
       end
     end
 
+    def test_case_when_splats
+      [
+        [1, 'case 2; when *[1, 2, 3]; 1; else; 0; end'],
+        [0, 'case 4; when *[1, 2, 3]; 1; else; 0; end'],
+        [1, 'case 2; when 0, *[1, 2], (raise "skipped"); 1; else; 0; end'],
+        [1, 'case 2; when *[], *[0, 1], 2; 1; else; 0; end'],
+        [1, 'case 2; when *[String, Integer]; 1; else; 0; end'],
+        [1, 'case 2; when *[1..3]; 1; else; 0; end'],
+        [1, 'case [1, 2]; when *[[1, 2]]; 1; else; 0; end'],
+        [1, 'case nil; when *[nil]; 1; else; 0; end'],
+        [0, 'case nil; when *nil; 1; else; 0; end'],
+        [1, 'case false; when *false; 1; else; 0; end'],
+        [1, 'case 2; when *2; 1; else; 0; end'],
+        [nil, 'case 2; when *[3]; 1; end'],
+        [0, 'case; when *[]; 1; else; 0; end'],
+        [0, 'case; when *[false, nil]; 1; else; 0; end'],
+        [0, 'case; when *nil; 1; else; 0; end'],
+        [0, 'case; when *false; 1; else; 0; end'],
+        [1, 'case; when *[nil, false, 0]; 1; else; 0; end'],
+        [1, 'case; when *[false], nil, *[true], (raise "skipped"); 1; else; 0; end'],
+        [:array_was_evaluated, 'case "ab"; when *[/a(b)/, (raise "skipped")]; $1; end rescue :array_was_evaluated'],
+        ['b', 'case "ab"; when *[/a(b)/]; $1; end']
+      ].each { |expected, source| assert_run(expected, source) }
+    end
+
+    def test_case_when_splat_evaluation_order
+      assert_run([:predicate, :array, :first, :second, :body], <<~RUBY)
+        events = []
+        first = Object.new
+        first.define_singleton_method(:===) { |value| events << :first; false }
+        second = Object.new
+        second.define_singleton_method(:===) { |value| events << :second; :truthy }
+        third = Object.new
+        third.define_singleton_method(:===) { |value| raise "skipped" }
+        case (events << :predicate; 2)
+        when *(events << :array; [first, second, third]), (raise "skipped")
+          events << :body
+        else
+          events << :else
+        end
+        events
+      RUBY
+      assert_run([:array, :to_a, :body], <<~RUBY)
+        events = []
+        conditions = Object.new
+        conditions.define_singleton_method(:to_a) { events << :to_a; [1, 2] }
+        conditions.define_singleton_method(:to_ary) { raise "to_ary must not be called" }
+        case 2
+        when *(events << :array; conditions)
+          events << :body
+        end
+        events
+      RUBY
+      assert_run([:first, :second, :body], <<~RUBY)
+        events = []
+        case
+        when *(events << :first; [false, nil]), *(events << :second; [true]), (raise "skipped")
+          events << :body
+        end
+        events
+      RUBY
+    end
+
     def test_case_evaluation_order
       assert_run([:predicate, :first, :second, :body], <<~RUBY)
         events = []

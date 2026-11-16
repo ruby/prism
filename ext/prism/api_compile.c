@@ -27,6 +27,7 @@ compile_insn_kind(PrismInsnKind kind) {
     switch (kind) {
         case kPrismInsnAliasGVar: return rb_intern_const("alias_gvar");
         case kPrismInsnAliasMethod: return rb_intern_const("alias_method");
+        case kPrismInsnAnyTruthy: return rb_intern_const("any_truthy");
         case kPrismInsnBranch: return rb_intern_const("branch");
         case kPrismInsnBranchIf: return rb_intern_const("branch_if");
         case kPrismInsnBreak: return rb_intern_const("break");
@@ -84,6 +85,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnMakeShareable: return rb_intern_const("make_shareable");
         case kPrismInsnMakeShareableCopy: return rb_intern_const("make_shareable_copy");
         case kPrismInsnMatch: return rb_intern_const("match");
+        case kPrismInsnMatchArray: return rb_intern_const("match_array");
         case kPrismInsnMergeHash: return rb_intern_const("merge_hash");
         case kPrismInsnNewArray: return rb_intern_const("new_array");
         case kPrismInsnNewBlock: return rb_intern_const("new_block");

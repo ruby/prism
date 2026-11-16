@@ -267,6 +267,9 @@ module Prism
           "alias_gvar #{insn.opnds.map { |id| value(id) }.join(', ')}"
         when :alias_method
           "alias_method #{insn.opnds.map { |id| value(id) }.join(', ')}"
+        when :any_truthy
+          opnds = insn.opnds
+          "#{value(opnds[0])} = any_truthy#{values(opnds[1..])}"
         when :branch
           "branch #{block_ref(insn.data)}#{values(insn.opnds)}"
         when :branch_if
@@ -458,6 +461,9 @@ module Prism
         when :match
           opnds = insn.opnds
           "#{value(opnds[0])} = match#{values(opnds[1..])}"
+        when :match_array
+          opnds = insn.opnds
+          "#{value(opnds[0])} = match_array#{values(opnds[1..])}"
         when :merge_hash
           opnds = insn.opnds
           "#{value(opnds[0])} = merge_hash#{values(opnds[1..])}"
@@ -893,6 +899,8 @@ module Prism
               eval("alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}", TOPLEVEL_BINDING)
             when :alias_method
               Module.instance_method(:alias_method).bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
+            when :any_truthy
+              values[insn.opnds[0]] = values[insn.opnds[1]].any?
             when :branch
               block = insn.data
               block.params.zip(insn.opnds.map { |opnd| values[opnd] }) { |param, value| values[param] = value }
@@ -1116,6 +1124,9 @@ module Prism
               values[insn.opnds[0]] = Ractor.make_shareable(values[insn.opnds[1]], copy: true)
             when :match
               values[insn.opnds[0]] = values[insn.opnds[2]] === values[insn.opnds[1]]
+            when :match_array
+              value = values[insn.opnds[1]]
+              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| pattern === value }
             when :merge_hash
               values[insn.opnds[0]] = values[insn.opnds[1]].merge(values[insn.opnds[2]])
             when :new_array

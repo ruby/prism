@@ -1282,6 +1282,13 @@ emit_alias_method(PrismBuilder *builder, uint32_t node_id, uint32_t new_name_id,
     emit_insn(builder, kPrismInsnAliasMethod, node_id, 2, (uint32_t[]) { new_name_id, old_name_id });
 }
 
+static uint32_t
+emit_any_truthy(PrismBuilder *builder, uint32_t node_id, uint32_t array_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnAnyTruthy, node_id, 2, (uint32_t[]) { value_id, array_id });
+    return value_id;
+}
+
 static void
 emit_branch(PrismBuilder *builder, uint32_t node_id, uint32_t block_id, uint32_t opnds_len, uint32_t *opnd_ids) {
     PrismInsn *insn = emit_insn(builder, kPrismInsnBranch, node_id, opnds_len, opnd_ids);
@@ -1798,6 +1805,13 @@ static uint32_t
 emit_match(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t pattern_id) {
     uint32_t result_id = make_value(builder);
     emit_insn(builder, kPrismInsnMatch, node_id, 3, (uint32_t[]) { result_id, value_id, pattern_id });
+    return result_id;
+}
+
+static uint32_t
+emit_match_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t array_id) {
+    uint32_t result_id = make_value(builder);
+    emit_insn(builder, kPrismInsnMatchArray, node_id, 3, (uint32_t[]) { result_id, value_id, array_id });
     return result_id;
 }
 
@@ -4471,7 +4485,11 @@ compile_case_node(PrismBuilder *builder, const pm_case_node_t *node) {
             const pm_node_t *expression = condition->conditions.nodes[condition_index];
             uint32_t next_block_id = make_block(builder, 0);
             uint32_t condition_id = compile_node(builder, expression);
-            if (node->predicate) {
+            if (PM_NODE_TYPE_P(expression, PM_SPLAT_NODE)) {
+                condition_id = node->predicate
+                    ? emit_match_array(builder, expression->node_id, predicate_id, condition_id)
+                    : emit_any_truthy(builder, expression->node_id, condition_id);
+            } else if (node->predicate) {
                 condition_id = emit_match(builder, expression->node_id, predicate_id, condition_id);
             }
             emit_branchif(builder, expression->node_id, condition_id, body_block_id, 0, NULL, next_block_id, 0, NULL);

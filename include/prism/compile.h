@@ -28,6 +28,7 @@ typedef struct PrismObject PrismObject;
 typedef enum {
     kPrismInsnAliasGVar,
     kPrismInsnAliasMethod,
+    kPrismInsnAnyTruthy,
     kPrismInsnBranch,
     kPrismInsnBranchIf,
     kPrismInsnBreak,
@@ -85,6 +86,7 @@ typedef enum {
     kPrismInsnMakeShareable,
     kPrismInsnMakeShareableCopy,
     kPrismInsnMatch,
+    kPrismInsnMatchArray,
     kPrismInsnMergeHash,
     kPrismInsnNewArray,
     kPrismInsnNewArrayStatic,
