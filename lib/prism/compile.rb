@@ -17,6 +17,43 @@ module Prism
       end
     end
 
+    class RegexpOptions
+      attr_reader :flags
+
+      def initialize(flags, encoding)
+        @flags = flags
+        @options = RegularExpressionOptions.options(flags)
+        @encoding = if flags.anybits?(RegularExpressionFlags::FORCED_BINARY_ENCODING | RegularExpressionFlags::ASCII_8BIT)
+          Encoding::ASCII_8BIT
+        elsif flags.anybits?(RegularExpressionFlags::UTF_8)
+          Encoding::UTF_8
+        elsif flags.anybits?(RegularExpressionFlags::EUC_JP)
+          Encoding::EUC_JP
+        elsif flags.anybits?(RegularExpressionFlags::WINDOWS_31J)
+          Encoding::Windows_31J
+        else
+          encoding
+        end
+      end
+
+      def literal(string)
+        string.force_encoding(@encoding)
+      end
+
+      def build(parts)
+        if @options.anybits?(Regexp::NOENCODING)
+          parts.each do |part|
+            if part.encoding != Encoding::ASCII_8BIT && !part.ascii_only?
+              raise RegexpError, "/.../n has a non escaped non ASCII character in non ASCII-8BIT script"
+            end
+          end
+        end
+        pattern = parts.empty? ? String.new(encoding: @encoding) : parts.join
+        Regexp.new(pattern, @options).freeze
+      end
+
+    end
+
     class Local
       attr_reader :id, :name
 
@@ -444,7 +481,7 @@ module Prism
           "#{value(opnds[0])} = new_range_inc#{values(opnds[1..])}"
         when :new_regexp
           opnds = insn.opnds
-          "#{value(opnds[0])} = new_regexp#{values(opnds[1..])} flags=#{insn.data}"
+          "#{value(opnds[0])} = new_regexp#{values(opnds[1..])} flags=#{insn.data.flags}"
         when :new_string
           opnds = insn.opnds
           "#{value(opnds[0])} = new_string#{values(opnds[1..])}"
@@ -1096,7 +1133,7 @@ module Prism
             when :new_range_inc
               values[insn.opnds[0]] = (values[insn.opnds[1]]..values[insn.opnds[2]])
             when :new_regexp
-              values[insn.opnds[0]] = Regexp.new(values.values_at(*insn.opnds[1..]).join, (insn.data >> 2) & 7).freeze
+              values[insn.opnds[0]] = insn.data.build(values.values_at(*insn.opnds[1..]))
             when :new_string
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join
             when :new_symbol

@@ -17,6 +17,7 @@ static VALUE rb_cPrismCompileCallInfo;
 static VALUE rb_cPrismCompileBlock;
 static VALUE rb_cPrismCompileRegion;
 static VALUE rb_cPrismCompileOnceSite;
+static VALUE rb_cPrismCompileRegexpOptions;
 static VALUE rb_cPrismCompileGraph;
 static VALUE rb_cPrismCompileSignature;
 static VALUE rb_cPrismCompileUnit;
@@ -143,6 +144,13 @@ compile_freeze(VALUE value, bool freeze) {
     return value;
 }
 
+/* Translate regexp flags at the Ruby consumer boundary. */
+static VALUE
+compile_regexp_options(const pm_parser_t *parser, pm_node_flags_t flags, bool freeze) {
+    VALUE argv[] = { UINT2NUM(flags), rb_enc_from_encoding(rb_enc_find(pm_parser_encoding_name(parser))) };
+    return compile_freeze(rb_class_new_instance(2, argv, rb_cPrismCompileRegexpOptions), freeze);
+}
+
 /**
  * Build the data attached to an instruction. Arrays that are created here are
  * frozen along with the rest of the unit when requested.
@@ -256,7 +264,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnNewHashStatic:
             return rb_ary_entry(vobjects_unit, pm_insn_object_id(insn));
         case kPrismInsnNewRegexp:
-            return UINT2NUM(pm_insn_regexp_flags(insn));
+            return compile_regexp_options(parser, pm_insn_regexp_flags(insn), freeze);
         case kPrismInsnTraceLine:
             return INT2NUM(pm_insn_trace_lineno(insn));
         default:
@@ -319,11 +327,25 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 vobject = rb_range_new(rb_ary_entry(vobjects_unit, left_id), rb_ary_entry(vobjects_unit, right_id), exclude_end);
                 break;
             }
-            case kPrismObjectRegexp: {
+            case kPrismObjectRegexp:
+            case kPrismObjectRegexpString: {
                 const pm_string_t *string = pm_object_string(object);
-                pm_node_flags_t flags = pm_object_flags(object);
-                vobject = rb_reg_new((const char *) pm_string_source(string), pm_string_length(string), (flags >> 2) & 7);
+                VALUE options = compile_regexp_options(parser, pm_object_flags(object), freeze);
+                vobject = rb_str_new((const char *) pm_string_source(string), pm_string_length(string));
+                vobject = rb_funcall(options, rb_intern("literal"), 1, vobject);
+                if (pm_object_kind(object) == kPrismObjectRegexp) {
+                    vobject = rb_funcall(options, rb_intern("build"), 1, rb_ary_new_from_args(1, vobject));
+                }
                 rb_obj_freeze(vobject);
+                break;
+            }
+            case kPrismObjectRegexpConcat: {
+                VALUE parts = rb_ary_new_capa(pm_object_concat_size(object));
+                for (uint32_t idx = 0; idx < pm_object_concat_size(object); ++idx) {
+                    rb_ary_push(parts, rb_ary_entry(vobjects_unit, pm_object_concat_object_id(object, idx)));
+                }
+                VALUE options = compile_regexp_options(parser, pm_object_concat_flags(object), freeze);
+                vobject = rb_funcall(options, rb_intern("build"), 1, parts);
                 break;
             }
             case kPrismObjectStandardError:
@@ -640,6 +662,7 @@ Init_prism_api_compile(void) {
     rb_cPrismCompileCallInfo = rb_define_class_under(rb_cPrismCompile, "CallInfo", rb_cObject);
     rb_cPrismCompileInsn = rb_define_class_under(rb_cPrismCompile, "Insn", rb_cObject);
     rb_cPrismCompileRegion = rb_define_class_under(rb_cPrismCompile, "Region", rb_cObject);
+    rb_cPrismCompileRegexpOptions = rb_define_class_under(rb_cPrismCompile, "RegexpOptions", rb_cObject);
     rb_cPrismCompileOnceSite = rb_define_class_under(rb_cPrismCompile, "OnceSite", rb_cObject);
     rb_cPrismCompileBlock = rb_define_class_under(rb_cPrismCompile, "Block", rb_cObject);
     rb_cPrismCompileSignature = rb_define_class_under(rb_cPrismCompile, "Signature", rb_cObject);

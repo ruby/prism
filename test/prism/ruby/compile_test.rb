@@ -3482,6 +3482,78 @@ module Prism
       TOPLEVEL_BINDING.eval("$_ = nil")
     end
 
+    def test_regexp_options
+      ["", "i", "m", "x", "imx", "n", "e", "s", "u", "nix", "eim", "smx", "uimx", "nu", "un"].each do |options|
+        [
+          "/a b/#{options}",
+          "[/a\#{\" b\"}/#{options}][0]",
+          "part = ' b'; /a\#{part}/#{options}",
+          "part = ' b'; /a\#{part}/#{options}o"
+        ].each do |source|
+          expected = eval("/a b/#{options}")
+          actual = vm.run(compile_unit(source))
+          assert_equal([expected.options, expected.encoding, expected.source.bytes, expected.source.encoding], [actual.options, actual.encoding, actual.source.bytes, actual.source.encoding], source)
+          assert_equal(expected.match?("A b\n"), actual.match?("A b\n"), source)
+          assert_predicate(actual, :frozen?)
+        end
+      end
+    end
+
+    def test_regexp_source_encodings
+      [
+        ["US-ASCII", '/\xFF/'],
+        ["US-ASCII", '/\u00E9/'],
+        ["ISO-8859-1", '/\xE9/'],
+        ["ASCII-8BIT", '/\xFF/n'],
+        ["UTF-8", '/\xC3\xA9/u'],
+        ["UTF-8", '/\xA4\xA2/e'],
+        ["UTF-8", '/\x82\xA0/s'],
+        ["US-ASCII", 'part = "a"; /#{part}/'],
+        ["ASCII-8BIT", 'part = "a"; /#{part}/'],
+        ["ISO-8859-1", 'part = "a"; /#{part}/'],
+        ["US-ASCII", 'part = "a"; /\xFF#{part}/n'],
+        ["UTF-8", 'part = "a"; /\xA4\xA2#{part}/e'],
+        ["UTF-8", 'part = "a"; /\x82\xA0#{part}/s'],
+        ["ASCII-8BIT", 'part = "\u00E9"; /#{part}/u'],
+        ["UTF-8", 'part = "\xA4\xA2".force_encoding("EUC-JP"); /#{part}/e'],
+        ["UTF-8", 'part = "\x82\xA0".force_encoding("Windows-31J"); /#{part}/s'],
+        ["ASCII-8BIT", '[/a#{"\u00E9"}/u][0]'],
+        ["US-ASCII", '[/a#{"\xFF"}/n][0]'],
+        ["UTF-8", 'part = "\u00E9"; /#{part}/e'],
+        ["UTF-8", 'part = "\u00E9"; /#{part}/s'],
+        ["UTF-8", 'part = "\xE9".force_encoding("ISO-8859-1"); /#{part}/u']
+      ].each do |encoding, body|
+        source = "# encoding: #{encoding}\n# frozen_string_literal: false\n#{body}"
+        expected = eval(source)
+        actual = vm.run(compile_unit(source))
+        assert_equal([expected.options, expected.encoding, expected.source.bytes, expected.source.encoding], [actual.options, actual.encoding, actual.source.bytes, actual.source.encoding], source)
+        assert_predicate(actual, :frozen?)
+      end
+    end
+
+    def test_regexp_noencoding_rejects_nonbinary_interpolation
+      source = 'part = "\u00E9"; /#{part}/n'
+      assert_raise(RegexpError) { eval(source) }
+      assert_run_raises(RegexpError, source)
+    end
+
+    def test_once_regexp_encoding_options
+      assert_run([1, true, Encoding::EUC_JP, Regexp::FIXEDENCODING], <<~'RUBY')
+        count = 0
+        regexps = 2.times.map { /a#{count += 1}/eo }
+        [count, regexps[0].equal?(regexps[1]), regexps[0].encoding, regexps[0].options]
+      RUBY
+    end
+
+    def test_match_last_line_regexp_options
+      [
+        '$_ = "\xFF".b; if /\xFF/n; true; else; false; end',
+        '$_ = "\xA4\xA2".force_encoding("EUC-JP"); if /\xA4\xA2/e; true; else; false; end',
+        '$_ = "\x82\xA0".force_encoding("Windows-31J"); if /\x82\xA0/s; true; else; false; end',
+        'part = "a"; $_ = "\xA4\xA2a".force_encoding("EUC-JP"); if /\xA4\xA2#{part}/e; true; else; false; end'
+      ].each { |source| assert_run(true, source) }
+    end
+
     def test_once_regexp
       [
         'count = 0; values = 3.times.map { /#{count += 1}/o }; [count, values.map { |r| r.source }, values[0].equal?(values[1]), values[0].frozen?]',
@@ -3592,7 +3664,7 @@ module Prism
       assert_include(region.entry.insns.map(&:kind), :load_lvar)
       assert_equal(:once_return, region.entry.insns.last.kind)
       assert_same(region, region.entry.insns.last.data)
-      assert_equal(0, insns.find { |insn| insn.kind == :new_regexp }.data & Prism::RegularExpressionFlags::ONCE)
+      assert_equal(0, insns.find { |insn| insn.kind == :new_regexp }.data.flags & Prism::RegularExpressionFlags::ONCE)
       assert_include(unit.disasm, "once @site0, r1")
       assert_include(unit.disasm, "once_return r1(")
     end

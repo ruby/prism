@@ -165,6 +165,8 @@ typedef enum {
     kPrismObjectRange,
     kPrismObjectRational,
     kPrismObjectRegexp,
+    kPrismObjectRegexpConcat,
+    kPrismObjectRegexpString,
     kPrismObjectStandardError,
     kPrismObjectString,
     kPrismObjectStringConcat,
@@ -232,6 +234,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_insn_opnd(const PrismGraph *graph, const Pri
 
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_array_size(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_array_object_id(const PrismObject *object, uint32_t idx);
+PRISM_EXPORTED_FUNCTION pm_node_flags_t pm_object_concat_flags(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_concat_size(const PrismObject *object);
 PRISM_EXPORTED_FUNCTION uint32_t pm_object_concat_object_id(const PrismObject *object, uint32_t idx);
 PRISM_EXPORTED_FUNCTION const char * pm_object_encoding_name(const PrismObject *object);

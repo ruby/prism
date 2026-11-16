@@ -437,6 +437,11 @@ pm_object_array_object_id(const PrismObject *object, uint32_t idx) {
     return object->as.array.object_ids[idx];
 }
 
+pm_node_flags_t
+pm_object_concat_flags(const PrismObject *object) {
+    return object->as.concat.flags;
+}
+
 uint32_t
 pm_object_concat_size(const PrismObject *object) {
     return object->as.concat.nobject_ids;
@@ -2140,66 +2145,33 @@ resolve_local(PrismBuilder *builder, pm_constant_id_t name_id, uint32_t depth) {
 
 /* Preserve fragment encodings until literal objects are materialized. */
 static uint32_t
-make_object_concat(PrismBuilder *builder, const pm_node_list_t *parts, PrismObjectKind kind) {
+make_object_concat(PrismBuilder *builder, const pm_node_list_t *parts, PrismObjectKind kind, pm_node_flags_t flags) {
     uint32_t *object_ids = pm_arena_alloc(builder->arena, parts->size * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
 
     for (size_t idx = 0; idx < parts->size; ++idx) {
         const pm_node_t *part = parts->nodes[idx];
 
         if (PM_NODE_TYPE_P(part, PM_STRING_NODE)) {
-            uint32_t object_id = make_object(builder, kPrismObjectString);
+            uint32_t object_id = make_object(builder, kind == kPrismObjectRegexpConcat ? kPrismObjectRegexpString : kPrismObjectString);
             PrismObject *object = builder->unit->objects + object_id;
-            object->as.string.flags = part->flags;
+            object->as.string.flags = kind == kPrismObjectRegexpConcat ? flags : part->flags;
             object->as.string.unescaped = &((const pm_string_node_t *) part)->unescaped;
             object_ids[idx] = object_id;
         } else if (PM_NODE_TYPE_P(part, PM_EMBEDDED_STATEMENTS_NODE)) {
             const pm_embedded_statements_node_t *cast = (const pm_embedded_statements_node_t *) part;
-            object_ids[idx] = make_object_concat(builder, &cast->statements->body, kPrismObjectStringConcat);
+            object_ids[idx] = make_object_concat(builder, &cast->statements->body, kPrismObjectStringConcat, 0);
         } else {
             assert(PM_NODE_TYPE_P(part, PM_INTERPOLATED_STRING_NODE));
-            object_ids[idx] = make_object_concat(builder, &((const pm_interpolated_string_node_t *) part)->parts, kPrismObjectStringConcat);
+            object_ids[idx] = make_object_concat(builder, &((const pm_interpolated_string_node_t *) part)->parts, kPrismObjectStringConcat, 0);
         }
     }
 
     uint32_t object_id = make_object(builder, kind);
     PrismObject *object = builder->unit->objects + object_id;
+    object->as.concat.flags = flags;
     object->as.concat.nobject_ids = (uint32_t) parts->size;
     object->as.concat.object_ids = object_ids;
     return object_id;
-}
-
-static const pm_string_t *
-static_literal_concat(PrismBuilder *builder, const pm_node_list_t *parts) {
-    const pm_string_t **strings = pm_arena_alloc(&builder->scratch, sizeof(pm_string_t *) * parts->size, PRISM_ALIGNOF(pm_string_t *));
-    size_t length = 0;
-
-    for (size_t idx = 0; idx < parts->size; ++idx) {
-        const pm_node_t *part = parts->nodes[idx];
-
-        if (PM_NODE_TYPE_P(part, PM_STRING_NODE)) {
-            strings[idx] = &((const pm_string_node_t *) part)->unescaped;
-        } else if (PM_NODE_TYPE_P(part, PM_EMBEDDED_STATEMENTS_NODE)) {
-            const pm_embedded_statements_node_t *cast = (const pm_embedded_statements_node_t *) part;
-            strings[idx] = static_literal_concat(builder, &cast->statements->body);
-        } else {
-            assert(PM_NODE_TYPE_P(part, PM_INTERPOLATED_STRING_NODE));
-            strings[idx] = static_literal_concat(builder, &((const pm_interpolated_string_node_t *) part)->parts);
-        }
-
-        length += pm_string_length(strings[idx]);
-    }
-
-    pm_string_t *string = pm_arena_alloc(builder->arena, sizeof(pm_string_t) + length, PRISM_ALIGNOF(pm_string_t));
-    uint8_t *cursor = (uint8_t *) (string + 1);
-    *string = (pm_string_t) { .source = cursor, .length = length };
-
-    for (size_t idx = 0; idx < parts->size; ++idx) {
-        size_t size = pm_string_length(strings[idx]);
-        memcpy(cursor, pm_string_source(strings[idx]), size);
-        cursor += size;
-    }
-
-    return string;
 }
 
 static uint32_t
@@ -2269,21 +2241,12 @@ literal_value(PrismBuilder *builder, const pm_node_t *node) {
 
             return object_id;
         }
-        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE: {
-            const pm_interpolated_regular_expression_node_t *cast = (const pm_interpolated_regular_expression_node_t *) node;
-            const pm_string_t *string = static_literal_concat(builder, &cast->parts);
-
-            uint32_t object_id = make_object(builder, kPrismObjectRegexp);
-            PrismObject *object = builder->unit->objects + object_id;
-            object->as.string.flags = node->flags;
-            object->as.string.unescaped = string;
-
-            return object_id;
-        }
+        case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
+            return make_object_concat(builder, &((const pm_interpolated_regular_expression_node_t *) node)->parts, kPrismObjectRegexpConcat, node->flags);
         case PM_INTERPOLATED_STRING_NODE:
-            return make_object_concat(builder, &((const pm_interpolated_string_node_t *) node)->parts, kPrismObjectStringConcat);
+            return make_object_concat(builder, &((const pm_interpolated_string_node_t *) node)->parts, kPrismObjectStringConcat, 0);
         case PM_INTERPOLATED_SYMBOL_NODE:
-            return make_object_concat(builder, &((const pm_interpolated_symbol_node_t *) node)->parts, kPrismObjectSymbolConcat);
+            return make_object_concat(builder, &((const pm_interpolated_symbol_node_t *) node)->parts, kPrismObjectSymbolConcat, 0);
         case PM_NIL_NODE:
             return make_object(builder, kPrismObjectNil);
         case PM_RANGE_NODE: {
@@ -3217,7 +3180,16 @@ compile_regexp_parts(PrismBuilder *builder, const pm_node_t *node, const pm_node
     uint32_t nvalue_ids = (uint32_t) parts->size;
     uint32_t *value_ids = pm_arena_alloc(&builder->scratch, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
     for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, parts->nodes[idx]);
+        const pm_node_t *part = parts->nodes[idx];
+        if (PM_NODE_TYPE_P(part, PM_STRING_NODE)) {
+            uint32_t object_id = make_object(builder, kPrismObjectRegexpString);
+            PrismObject *object = builder->unit->objects + object_id;
+            object->as.string.flags = node->flags;
+            object->as.string.unescaped = &((const pm_string_node_t *) part)->unescaped;
+            value_ids[idx] = emit_load_object(builder, part->node_id, object_id);
+        } else {
+            value_ids[idx] = compile_node(builder, part);
+        }
     }
     return emit_new_regexp(builder, node->node_id, nvalue_ids, value_ids, node->flags & ~PM_REGULAR_EXPRESSION_FLAGS_ONCE);
 }
