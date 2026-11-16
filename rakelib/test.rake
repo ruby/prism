@@ -61,11 +61,12 @@ namespace :test do
   # Hide test:valgrind_internal from rake -T
   Rake::Task["test:valgrind_internal"].clear_comments
 
+  # The tests run under valgrind against the debug variant, which copies the
+  # input into its own allocation so that reads past its end are reported. The
+  # Rakefile chooses the variant when it is loaded, so the variable is set for a
+  # new rake process rather than in this one.
   desc "Run tests under valgrind"
   task :valgrind do
-    # Recompile with PRISM_BUILD_DEBUG=1
-    ENV["PRISM_BUILD_DEBUG"] = "1"
-    Rake::Task["clobber"].invoke
-    Rake::Task["test:valgrind_internal"].invoke
+    sh({ "PRISM_BUILD_DEBUG" => "1" }, "bundle", "exec", "rake", "test:valgrind_internal")
   end
 end

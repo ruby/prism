@@ -234,7 +234,7 @@ jobs:
         ruby-version: jruby
         bundler-cache: true
     - name: Run Java Loader test
-      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
+      run: JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
 
   build-java-truffleruby:
     runs-on: ubuntu-latest
