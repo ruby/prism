@@ -584,6 +584,38 @@ module Prism
         end
       end
 
+      class MethodDefinition
+        SIGNATURES = ObjectSpace::WeakKeyMap.new
+
+        def self.arity(method)
+          signature = SIGNATURES[method]
+          signature ? signature.arity : method.arity
+        end
+
+        def initialize(vm, graph, nest)
+          @vm = vm
+          @graph = graph
+          @nest = nest
+        end
+
+        def define(parent, name)
+          definition = self
+          Module.instance_method(:define_method).bind_call(parent, name) do |*args, **kwargs, &block|
+            super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
+            definition.call(self, args, kwargs, super_method, &block)
+          end
+
+          @method = Module.instance_method(:instance_method).bind_call(parent, name)
+          SIGNATURES[@method] = @graph.signature
+        end
+
+        def call(receiver, args, kwargs, super_method, &block)
+          locals = Locals.new(@graph.locals)
+          flip_flops = Array.new(@graph.nflip_flops, false)
+          @vm.run_frame(Frame.new(@graph, receiver, @nest, locals, flip_flops, super_method, &block), args, kwargs)
+        end
+      end
+
       class ExecutionResult
         attr_reader :block, :value
 
@@ -1086,13 +1118,7 @@ module Prism
       ###
 
       def define_method(parent, name, graph, nest)
-        vm = self
-        Module.instance_method(:define_method).bind_call(parent, name) do |*args, **kwargs, &block|
-          super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
-          locals = Locals.new(graph.locals)
-          flip_flops = Array.new(graph.nflip_flops, false)
-          vm.run_frame(Frame.new(graph, self, nest, locals, flip_flops, super_method, &block), args, kwargs)
-        end
+        MethodDefinition.new(self, graph, nest).define(parent, name)
       end
 
       def new_block(graph, frame)

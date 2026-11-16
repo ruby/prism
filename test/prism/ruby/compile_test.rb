@@ -520,6 +520,26 @@ module Prism
       end
     end
 
+    def test_method_definition_signatures
+      scope = Module.new
+      first_vm = Compile::VM.new
+      source = "class Item; def query(name); name; end; alias saved_query query; end"
+      graph = compile_unit(source).graphs[0]
+      first_vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze))
+      klass = scope.const_get(:Item)
+      GC.start
+      assert_equal(1, Compile::VM::MethodDefinition.arity(klass.instance_method(:query)))
+
+      source = "class Item; def query(name, private); false; end; end"
+      graph = compile_unit(source).graphs[0]
+      capture_warnings { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      GC.start
+      assert_equal(1, Compile::VM::MethodDefinition.arity(klass.instance_method(:saved_query)))
+      assert_equal(2, Compile::VM::MethodDefinition.arity(klass.instance_method(:query)))
+      capture_warnings { klass.define_method(:query) { |name| name } }
+      assert_equal(1, Compile::VM::MethodDefinition.arity(klass.instance_method(:query)))
+    end
+
     def test_defined_containers
       [
         "defined?([])",
