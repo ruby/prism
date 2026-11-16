@@ -105,6 +105,7 @@ end
 
 if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   require "rake/extensiontask"
+  require "shellwords"
 
   extension = Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
     ext.ext_dir = "ext/prism"
@@ -118,8 +119,32 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     # its own directory, and switching between them never reuses objects that
     # were compiled with different flags. An option is on when its environment
     # variable is set or its flag is passed after `--`, as extconf.rb reads it.
+    #
+    # Match mkmf's enable_config: an enable option takes precedence over a
+    # disable option, and both take precedence over the environment default.
+    # Option values do not affect enable_config's presence checks.
+    options = [
+      *Shellwords.split(RbConfig::CONFIG["configure_args"] || ""),
+      *Shellwords.split(ENV["CONFIGURE_ARGS"] || ""),
+      *ext.config_options,
+      *ext.extra_options
+    ].filter_map do |option|
+      argument, value = option.split("=", 2)
+      argument = argument.tr("_", "-")
+
+      unless argument.start_with?("--")
+        next unless value
+        argument = "--#{argument.downcase}"
+      end
+
+      argument
+    end
+
     variant = ["debug", "minimal", "ndebug", "ubsan"].filter_map do |name|
-      name if ENV.key?("PRISM_BUILD_#{name.upcase}") || ext.extra_options.include?("--enable-build-#{name}")
+      name if (
+        options.include?("--enable-build-#{name}") ||
+        (!options.include?("--disable-build-#{name}") && ENV.key?("PRISM_BUILD_#{name.upcase}"))
+      )
     end
 
     unless variant.empty?
