@@ -3,7 +3,9 @@
 use std::ffi::{c_char, CString};
 use std::fmt;
 
-use ruby_prism_sys::{pm_string_query_constant, pm_string_query_keyword, pm_string_query_local, pm_string_query_method_name, pm_string_query_t, PM_STRING_QUERY_FALSE, PM_STRING_QUERY_TRUE};
+use ruby_prism_sys::{pm_string_query_constant, pm_string_query_keyword, pm_string_query_local, pm_string_query_method_name, pm_string_query_t, PM_STRING_QUERY_ERROR_VERSION, PM_STRING_QUERY_FALSE, PM_STRING_QUERY_TRUE};
+
+use crate::Version;
 
 /// The error returned when a string query is given an encoding that prism
 /// does not know or that is not ASCII-compatible.
@@ -21,7 +23,8 @@ impl std::error::Error for InvalidEncodingError {}
 /// Queries whether a string is a valid name of a given kind in Ruby.
 ///
 /// The string is interpreted as UTF-8 unless another encoding is given with
-/// [`StringQuery::encoding`].
+/// [`StringQuery::encoding`], and the answer is for the latest version of Ruby
+/// unless another version is given with [`StringQuery::version`].
 ///
 /// ```
 /// use ruby_prism::StringQuery;
@@ -35,13 +38,14 @@ impl std::error::Error for InvalidEncodingError {}
 pub struct StringQuery<'a> {
     source: &'a [u8],
     encoding: &'a str,
+    version: Version,
 }
 
 impl<'a> StringQuery<'a> {
     /// Creates a query for the given UTF-8 string.
     #[must_use]
     pub const fn new(source: &'a [u8]) -> Self {
-        Self { source, encoding: "UTF-8" }
+        Self { source, encoding: "UTF-8", version: Version::Latest }
     }
 
     /// Sets the name of the encoding that the string is in, such as
@@ -49,6 +53,14 @@ impl<'a> StringQuery<'a> {
     #[must_use]
     pub const fn encoding(mut self, encoding: &'a str) -> Self {
         self.encoding = encoding;
+        self
+    }
+
+    /// Sets the version of Ruby to answer for. Which letters begin a constant
+    /// name depends on the version of Unicode that it uses.
+    #[must_use]
+    pub const fn version(mut self, version: Version) -> Self {
+        self.version = version;
         self
     }
 
@@ -93,13 +105,14 @@ impl<'a> StringQuery<'a> {
         self.query(pm_string_query_keyword)
     }
 
-    fn query(&self, function: unsafe extern "C" fn(*const u8, usize, *const c_char) -> pm_string_query_t) -> Result<bool, InvalidEncodingError> {
+    fn query(&self, function: unsafe extern "C" fn(*const u8, usize, *const c_char, *const c_char) -> pm_string_query_t) -> Result<bool, InvalidEncodingError> {
         // An encoding name with an interior null byte cannot name a known encoding.
         let encoding = CString::new(self.encoding).map_err(|_| InvalidEncodingError)?;
 
-        match unsafe { function(self.source.as_ptr(), self.source.len(), encoding.as_ptr()) } {
+        match unsafe { function(self.source.as_ptr(), self.source.len(), encoding.as_ptr(), self.version.as_ptr()) } {
             PM_STRING_QUERY_TRUE => Ok(true),
             PM_STRING_QUERY_FALSE => Ok(false),
+            PM_STRING_QUERY_ERROR_VERSION => unreachable!("every Version is a version that prism knows"),
             _ => Err(InvalidEncodingError),
         }
     }
