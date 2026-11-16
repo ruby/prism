@@ -1064,6 +1064,23 @@ module Prism
       ].each { |source| assert_run(eval(source), source) }
     end
 
+    def test_defined_result_strings_are_frozen
+      source = <<~RUBY
+        # frozen_string_literal: false
+        local = 1
+        [defined?(nil), defined?(false), defined?(true), defined?(self),
+         defined?(local), defined?(local = 2), defined?(puts), defined?(Object),
+         defined?(1 + 2), defined?([1, 2])]
+      RUBY
+      unit = compile_unit(source)
+      values = vm.run(unit)
+      assert_equal(eval(source), values)
+      values.each { |value| assert_predicate(value, :frozen?) }
+      assert_equal(values, vm.run(unit))
+      assert_run_raises(FrozenError, '(defined?(nil)).replace("changed")')
+      assert_run(nil, 'defined?(missing_defined_result_method)')
+    end
+
     def test_defined_wrappers
       [
         "defined?(())",

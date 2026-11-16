@@ -3500,7 +3500,9 @@ compile_index_logical_write_node(PrismBuilder *builder, const pm_node_t *node, c
 
 static uint32_t
 compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length) {
-    return emit_load_object(builder, UINT32_MAX, make_object_string(builder, value, length));
+    uint32_t object_id = make_object_string(builder, value, length);
+    builder->unit->objects[object_id].as.string.flags = PM_STRING_FLAGS_FROZEN;
+    return emit_load_object(builder, UINT32_MAX, object_id);
 }
 
 static uint32_t
