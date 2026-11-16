@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - `pm_options_stack_budget_set` was added to the C API. It sets the number of bytes of C stack the parser may use before reporting a `stack_exhausted` error, instead of overflowing the stack. `SIZE_MAX` means no budget, which is the default. The nesting depth limit alone assumes a stack of roughly 8MB, so embedders that parse on a smaller stack, such as a thread's or a fiber's, should pass a budget.
+- `Prism::StringQuery` methods accept a `version:` keyword, just like the parse methods. It defaults to the nearest version to the running Ruby. This matters for `constant?`, because Ruby 4.0 recognizes more uppercase letters than Ruby 3.4.
+- `StringQuery::version` was added to the Rust bindings. It picks the Ruby version that a query checks against. The default is the latest version.
 - A new `stack` error level, for errors that should raise `SystemStackError`. Its only error is `stack_exhausted`, reported once per parse when the stack budget is used up. It is separate from `nesting_too_deep`, which stays a syntax error, because the same source may parse with more stack. When errors are formatted, a `stack_exhausted` error takes precedence over the syntax errors around it, as argument and load errors do. The level is `:stack` in Ruby, `"stack"` in JavaScript, `ERROR_STACK` in Java, and `PM_ERROR_LEVEL_STACK` in C and Rust.
 
 ### Changed
@@ -17,6 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `PRISM_BUILD_MINIMAL` now excludes the full set of encodings, as `PRISM_ENCODING_EXCLUDE_FULL` does.
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
 - A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
+- The `pm_string_query_*` functions take a Ruby version as their last argument, written like the strings that `pm_options_version_set` accepts. Pass `NULL` for the latest version. An unknown version returns the new `PM_STRING_QUERY_ERROR_VERSION`.
 - Whether a name is a constant follows the version of Unicode of the Ruby that is targeted: Unicode 15.0.0 for Ruby 3.3 and 3.4, and Unicode 17.0.0 for Ruby 4.0 and 4.1. A name that starts with a letter that became uppercase in Unicode 16.0.0 or 17.0.0, such as the Garay capital letters, is now a local variable name when targeting Ruby 3.3 or 3.4.
 
 ### Fixed
