@@ -99,6 +99,7 @@ typedef struct {
     uint32_t *ids;
     size_t size;
     uint32_t block_id;
+    uint32_t last_id;
     bool splat;
     bool keywords;
     bool block_argument;
@@ -3357,7 +3358,7 @@ compile_arguments_append(PrismBuilder *builder, uint32_t node_id, PrismArguments
 
 static PrismArguments
 compile_arguments(PrismBuilder *builder, const pm_arguments_node_t *arguments, const pm_node_t *block) {
-    PrismArguments result = { .block_id = UINT32_MAX };
+    PrismArguments result = { .block_id = UINT32_MAX, .last_id = UINT32_MAX };
 
     if (arguments) {
         size_t size = arguments->arguments.size;
@@ -3384,7 +3385,8 @@ compile_arguments(PrismBuilder *builder, const pm_arguments_node_t *arguments, c
                 uint32_t nvalue_ids = 0;
 
                 do {
-                    result.ids[result.size + nvalue_ids++] = compile_node(builder, arguments->arguments.nodes[idx++]);
+                    result.last_id = compile_node(builder, arguments->arguments.nodes[idx++]);
+                    result.ids[result.size + nvalue_ids++] = result.last_id;
                 } while (
                     idx < size &&
                     !PM_NODE_TYPE_P(arguments->arguments.nodes[idx], PM_SPLAT_NODE) &&
@@ -3501,7 +3503,7 @@ compile_call_with_receiver(PrismBuilder *builder, const pm_call_node_t *node, ui
     uint32_t value_id = emit_call_arguments(builder, node->base.node_id, node->name, receiver_id, &arguments, node->base.flags);
 
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
-        value_id = arguments.ids[arguments.size - 1];
+        value_id = arguments.last_id;
     }
 
     if (safe_navigation) {

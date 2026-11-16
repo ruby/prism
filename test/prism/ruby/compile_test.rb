@@ -318,6 +318,60 @@ module Prism
       assert_equal(3, vm.run(unit))
     end
 
+    def test_setter_assignment_results
+      setup = <<~RUBY
+        target = []
+        def target.[]=(*arguments, **keywords)
+          self << [arguments, keywords]
+          :setter_return
+        end
+        def target.value=(value)
+          self << value
+          :setter_return
+        end
+      RUBY
+      [
+        'target[*[]] = 7',
+        'target[*[0]] = 7',
+        'target[*[1, 2], 3, 4] = 7',
+        'target[0, *[1, 2], 3] = 7',
+        'target[*[1], *[2], 3] = 7',
+        'target[*nil] = 7',
+        'target[*[0]] = nil',
+        'target[*[0]] = false',
+        'target[*[0]] = [7, 8]',
+        'target[*[0]] = *[7, 8]',
+        'target[*[0]] = 7, 8',
+        'target[*[0]] = {answer: 7}',
+        'target[*[0], {answer: 1}] = 7',
+        'target[0, {answer: 1}] = 7',
+        'target.value = 7',
+        'target&.value = 7',
+        'target.[]=(*[0, 7])'
+      ].each do |assignment|
+        source = setup + "result = (#{assignment}); [result, target]"
+        assert_run(eval(source), source)
+      end
+      assert_run(nil, 'target = nil; target&.value = raise("skipped")')
+    end
+
+    def test_splatted_setter_assignment_evaluation_order
+      assert_run([[:receiver, :indices, :rhs, :setter], true, [:changed]], <<~RUBY)
+        events = []
+        target = Object.new
+        target.define_singleton_method(:[]=) do |*arguments|
+          events << :setter
+          arguments[-1] << :changed
+          :setter_return
+        end
+        receiver = -> { events << :receiver; target }
+        indices = -> { events << :indices; [1, 2] }
+        rhs = []
+        result = (receiver.call[*indices.call] = (events << :rhs; rhs))
+        [events, result.equal?(rhs), result]
+      RUBY
+    end
+
     def test_call_info_flags
       [
         ["target", true, true, false],
