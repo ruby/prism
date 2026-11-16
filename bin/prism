@@ -432,21 +432,38 @@ module Prism
       puts "};"
     end
 
+    # The version of Unicode that each version of Ruby that prism supports
+    # uses, from oldest to newest. The functions in src/encoding.c that take a
+    # version of Ruby answer for its version of Unicode from what this
+    # generates.
+    RUBY_UNICODE_VERSIONS = {
+      "3.3" => "15.0.0",
+      "3.4" => "15.0.0",
+      "4.0" => "17.0.0",
+      "4.1" => "17.0.0"
+    }
+
     # The version of the Unicode Character Database that the unicode tables
     # are generated from. It is the newest version that any version of Ruby
-    # that prism supports uses: Unicode 17.0.0, for Ruby 4.0 and 4.1.
-    UNICODE_VERSION = "17.0.0"
+    # that prism supports uses.
+    UNICODE_VERSION = RUBY_UNICODE_VERSIONS.values.max_by { |version| Gem::Version.new(version) }
 
-    # Read a file of the Unicode Character Database at UNICODE_VERSION. Each
+    # The older versions of Unicode that versions of Ruby that prism supports
+    # use, from oldest to newest. The functions that answer for those versions
+    # of Ruby check lists of the characters whose properties differ from the
+    # tables.
+    UNICODE_OLDER_VERSIONS =(RUBY_UNICODE_VERSIONS.values.uniq - [UNICODE_VERSION]).sort_by { |version| Gem::Version.new(version) }
+
+    # Read a file of the Unicode Character Database at the given version. Each
     # file is downloaded once from unicode.org and kept in tmp/unicode.
-    def unicode_data(path)
-      cache = File.expand_path("../tmp/unicode/#{UNICODE_VERSION}/#{path}", __dir__)
+    def unicode_data(path, version = UNICODE_VERSION)
+      cache = File.expand_path("../tmp/unicode/#{version}/#{path}", __dir__)
 
       unless File.exist?(cache)
         require "fileutils"
         require "net/http"
 
-        uri = URI("https://www.unicode.org/Public/#{UNICODE_VERSION}/ucd/#{path}")
+        uri = URI("https://www.unicode.org/Public/#{version}/ucd/#{path}")
         response = Net::HTTP.get_response(uri)
         raise "could not download #{uri}: #{response.code} #{response.message}" unless response.is_a?(Net::HTTPSuccess)
 
@@ -458,12 +475,13 @@ module Prism
     end
 
     # Return the codepoints that have the given property in the given file of
-    # the Unicode Character Database. Each line of the file gives a codepoint
-    # or a range of codepoints and a property, as in "0041..005A ; Alphabetic".
-    def unicode_property(path, property)
+    # the Unicode Character Database at the given version. Each line of the
+    # file gives a codepoint or a range of codepoints and a property, as in
+    # "0041..005A ; Alphabetic".
+    def unicode_property(path, property, version = UNICODE_VERSION)
       codepoints = []
 
-      unicode_data(path).each_line do |line|
+      unicode_data(path, version).each_line do |line|
         fields = line.sub(/#.*/, "").split(";").map(&:strip)
         next unless fields.length == 2 && fields[1] == property
 
@@ -471,8 +489,16 @@ module Prism
         codepoints.concat((low..(high || low)).to_a)
       end
 
-      raise "no codepoints have #{property} in #{path}" if codepoints.empty?
+      raise "no codepoints have #{property} in #{path} at #{version}" if codepoints.empty?
       codepoints
+    end
+
+    # Return the codepoints that can begin a constant name in the given version
+    # of Unicode: those with the Uppercase property, as in [[:upper:]], and the
+    # titlecase letters (Lt).
+    def unicode_uppercase(version = UNICODE_VERSION)
+      unicode_property("DerivedCoreProperties.txt", "Uppercase", version) |
+        unicode_property("extracted/DerivedGeneralCategory.txt", "Lt", version)
     end
 
     # Generate the multistage lookup tables of unicode codepoint properties
@@ -488,15 +514,28 @@ module Prism
     # * Alphanumeric is Alphabetic or a decimal digit (Nd), as in [[:alnum:]].
     # * Uppercase is the Uppercase property, as in [[:upper:]], or a titlecase
     #   letter (Lt), since either can begin a constant name.
+    #
+    # Older versions of Ruby use an older version of Unicode, in which some
+    # of the uppercase letters of the tables are not uppercase. Another bit
+    # marks those letters, so that the tables answer for every version of
+    # Ruby that prism supports.
     def unicode_lists
+      raise "one bit marks the letters of one older version of Unicode, but there are #{UNICODE_OLDER_VERSIONS.length}" unless UNICODE_OLDER_VERSIONS.length == 1
+
+      older = UNICODE_OLDER_VERSIONS.first
+      older_bit = "PM_UNICODE_#{older.split(".").first}_NOT_UPPERCASE_BIT"
+      latest_uppercase = unicode_uppercase
+      older_uppercase = unicode_uppercase(older)
+      raise "uppercase in Unicode #{older} but not #{UNICODE_VERSION}: #{(older_uppercase - latest_uppercase).inspect}" unless (older_uppercase - latest_uppercase).empty?
+
       values = Array.new(0x110000, 0)
 
       unicode_property("DerivedCoreProperties.txt", "Alphabetic").each { |codepoint| values[codepoint] |= (1 << 0) | (1 << 1) }
       unicode_property("extracted/DerivedGeneralCategory.txt", "Nd").each { |codepoint| values[codepoint] |= (1 << 1) }
-      unicode_property("DerivedCoreProperties.txt", "Uppercase").each { |codepoint| values[codepoint] |= (1 << 2) }
-      unicode_property("extracted/DerivedGeneralCategory.txt", "Lt").each { |codepoint| values[codepoint] |= (1 << 2) }
+      latest_uppercase.each { |codepoint| values[codepoint] |= (1 << 2) }
+      (latest_uppercase - older_uppercase).each { |codepoint| values[codepoint] |= (1 << 3) }
 
-      names = { 0 => "N", 2 => "D", 3 => "A", 7 => "U" }
+      names = { 0 => "N", 2 => "D", 3 => "A", 7 => "U", 15 => "V" }
       unknown = values.uniq - names.keys
       raise "unnamed property values: #{unknown.inspect}" if unknown.any?
 
@@ -522,7 +561,26 @@ module Prism
       end
       puts "};"
 
+      tables_ruby = RUBY_UNICODE_VERSIONS.find { |_, version| version == UNICODE_VERSION }.first
+      tables_update = "PM_UNICODE_TABLES_#{UNICODE_VERSION.split(".").first}_UPDATE"
+      versions = RUBY_UNICODE_VERSIONS.group_by(&:last).map { |version, rubies| " * * Ruby #{rubies.map(&:first).join(" and ")} use Unicode #{version}." }
+
       puts <<~C
+
+        /**
+         * The version of Ruby that updated its version of Unicode to #{UNICODE_VERSION}.
+         *
+        #{versions.join("\n")}
+         */
+        #define #{tables_update} PM_OPTIONS_VERSION_CRUBY_#{tables_ruby.tr(".", "_")}
+
+        /**
+         * The unicode tables use the fourth bit of each property byte to mark the
+         * letters that are uppercase or titlecase in the tables but not in Unicode
+         * #{older}, which the versions of Ruby before #{tables_update}
+         * use.
+         */
+        #define #{older_bit} (1 << 3)
 
         /* No properties. */
         #define N 0
@@ -535,6 +593,9 @@ module Prism
 
         /* An uppercase or titlecase letter: alphabetic, alphanumeric, and uppercase. */
         #define U (PRISM_ENCODING_ALPHABETIC_BIT | PRISM_ENCODING_ALPHANUMERIC_BIT | PRISM_ENCODING_UPPERCASE_BIT)
+
+        /* An uppercase or titlecase letter that is not one in Unicode #{older}. */
+        #define V (PRISM_ENCODING_ALPHABETIC_BIT | PRISM_ENCODING_ALPHANUMERIC_BIT | PRISM_ENCODING_UPPERCASE_BIT | #{older_bit})
       C
 
       puts "\nstatic const uint8_t pm_unicode_leaf[#{leaf_blocks.length}][8] = {"
@@ -543,7 +604,7 @@ module Prism
       end
       puts "};"
 
-      puts "\n#undef N\n#undef D\n#undef A\n#undef U"
+      puts "\n#undef N\n#undef D\n#undef A\n#undef U\n#undef V"
     end
 
     # Deduplicate the given blocks. The block made entirely of the given empty
