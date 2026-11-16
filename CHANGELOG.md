@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - In CESU-8, a surrogate is a valid character only as half of a surrogate pair.
 - A `\M-`, `\C-`, or `\c` escape may wrap an escape of any ASCII character, such as `"\M-\<0x01>"`, as CRuby allows.
 
+### Fixed
+
+- The `ruby-prism` and `ruby-prism-sys` crates ship `LICENSE.md` again. It had been missing from the published crates since 2.0.0.
+
 ## [2.1.0] - 2026-10-28
 
 ### Added
