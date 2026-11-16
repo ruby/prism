@@ -25,6 +25,9 @@ endif
 ifneq ($(origin PRISM_BUILD_NDEBUG),undefined)
 CPPFLAGS += -DNDEBUG=1
 endif
+ifneq ($(origin PRISM_BUILD_UBSAN),undefined)
+CFLAGS += -fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer
+endif
 
 CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(CFLAGS)
 JAVA_WASM_CFLAGS := -g0 -O2 -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fno-sanitize=all -fno-stack-protector -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(JAVA_WASM_CFLAGS)

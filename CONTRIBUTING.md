@@ -55,4 +55,5 @@ bundle exec rake bear
 Some useful rake tasks:
 
 - `test:valgrind` runs the test suite under valgrind to look for illegal memory access or memory leaks
+- `test:ubsan` runs the test suite against a build with the undefined behavior sanitizer, which aborts on the first undefined behavior it finds
 - `test:gdb` and `test:lldb` run the test suite under those debuggers
