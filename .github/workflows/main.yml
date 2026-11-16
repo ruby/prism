@@ -311,6 +311,18 @@ jobs:
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
 
+  ubsan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ruby
+        bundler-cache: true
+    - name: Run Ruby tests with the undefined behavior sanitizer
+      run: bundle exec rake test:ubsan
+
   gcc-analyzer:
     runs-on: ubuntu-latest
     steps:

@@ -20,6 +20,10 @@ if ARGV.delete("--help")
               Enable build without assertions.
               You may also set the PRISM_BUILD_NDEBUG environment variable.
 
+          --enable-build-ubsan
+              Enable build with the undefined behavior sanitizer.
+              You may also set the PRISM_BUILD_UBSAN environment variable.
+
           --help
               Display this message.
 
@@ -33,6 +37,9 @@ if ARGV.delete("--help")
 
           PRISM_BUILD_NDEBUG
               Equivalent to `--enable-build-ndebug` when set, even if nil or blank.
+
+          PRISM_BUILD_UBSAN
+              Equivalent to `--enable-build-ubsan` when set, even if nil or blank.
 
   TEXT
   exit!(0)
@@ -119,6 +126,18 @@ end
 # The sources of libprism do not include ruby.h, so NDEBUG still applies to them.
 if enable_config("build-ndebug", ENV["PRISM_BUILD_NDEBUG"] || false)
   $defs << "-DNDEBUG=1"
+end
+
+# If `--enable-build-ubsan` is passed to this script or the `PRISM_BUILD_UBSAN`
+# environment variable is defined, we'll build with the undefined behavior
+# sanitizer. Any undefined behavior it detects, such as a misaligned access or a
+# signed overflow, aborts the process with a report of where it happened. The
+# sanitizer runtime is linked into the extension itself, so the Ruby that loads
+# it does not need to be built with the sanitizer.
+if enable_config("build-ubsan", ENV["PRISM_BUILD_UBSAN"] || false)
+  flags = "-fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer"
+  append_cflags(flags)
+  append_ldflags(flags)
 end
 
 # By default, all symbols are hidden in the shared library.

@@ -69,4 +69,12 @@ namespace :test do
   task :valgrind do
     sh({ "PRISM_BUILD_DEBUG" => "1" }, "bundle", "exec", "rake", "test:valgrind_internal")
   end
+
+  # The tests run against the variant built with the undefined behavior
+  # sanitizer, which aborts on the first undefined behavior it detects. As with
+  # test:valgrind, the variable is set for a new rake process.
+  desc "Run tests with the undefined behavior sanitizer"
+  task :ubsan do
+    sh({ "PRISM_BUILD_UBSAN" => "1" }, "bundle", "exec", "rake", "compile", "test")
+  end
 end
