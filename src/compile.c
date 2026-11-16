@@ -2604,7 +2604,10 @@ compile_begin_body(PrismBuilder *builder, const pm_begin_node_t *node) {
             emit_trace_rescue(builder, clause->base.node_id);
 
             if (clause->reference) {
-                compile_target_node(builder, clause->reference, exception_id, NULL);
+                PrismTargetParents parents = { 0 };
+                compile_target_node_parents(builder, clause->reference, &parents);
+                compile_target_node(builder, clause->reference, exception_id, &parents);
+                assert(parents.index == parents.size);
             }
 
             uint32_t result_id = compile_node_or_nil(builder, PM_NODE_UPCAST(clause->statements), clause->base.node_id);

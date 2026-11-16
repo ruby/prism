@@ -6251,6 +6251,66 @@ module Prism
       ].each { |expected, source| assert_run(expected, source) }
     end
 
+    def test_begin_rescue_reference_targets
+      assert_run(nil, "begin; rescue => target.error; end")
+      assert_run(1, "begin; 1; rescue => target[missing_index]; end")
+      assert_run("failure", <<~RUBY)
+        target = []
+        def target.error=(error); self << error; end
+        begin
+          raise "failure"
+        rescue => target.error
+          target[0].message
+        end
+      RUBY
+      assert_run("failure", 'target = {}; begin; raise "failure"; rescue => target[:error]; target[:error].message; end')
+      assert_run("failure", 'namespace = Module.new; begin; raise "failure"; rescue => namespace::Error; namespace::Error.message; end')
+      assert_run(:rescued, 'target = nil; begin; raise; rescue => target&.error; :rescued; end')
+    end
+
+    def test_begin_rescue_reference_evaluation_order
+      assert_run([[:body, :match, :receiver, :rescue], "failure"], <<~RUBY)
+        events = []
+        target = []
+        def target.error=(error); self << error; end
+        receiver = -> { events << :receiver; target }
+        matcher = Module.new
+        matcher.define_singleton_method(:===) { |error| events << :match; true }
+        begin
+          events << :body
+          raise "failure"
+        rescue matcher => receiver.call.error
+          events << :rescue
+        end
+        [events, target[0].message]
+      RUBY
+      assert_run([[:receiver, :index, :rescue], "failure"], <<~RUBY)
+        events = []
+        target = {}
+        receiver = -> { events << :receiver; target }
+        index = -> { events << :index; :error }
+        begin
+          raise "failure"
+        rescue => receiver.call[index.call]
+          events << :rescue
+        end
+        [events, target[:error].message]
+      RUBY
+      assert_run(:outer, <<~RUBY)
+        target = Object.new
+        def target.error=(error); raise TypeError; end
+        begin
+          begin
+            raise "failure"
+          rescue => target.error
+            :inner
+          end
+        rescue TypeError
+          :outer
+        end
+      RUBY
+    end
+
     def test_begin_rescue_else
       [
         [3, "begin; 1; rescue; 2; else; 3; end"],
