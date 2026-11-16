@@ -101,10 +101,10 @@ If you want to build prism as a shared library and link against it, you should c
 
 #### Flags
 
-`make` respects the `MAKEFLAGS` environment variable. As such, to speed up the build you can run:
+`make` respects the `MAKEFLAGS` environment variable. `rake` sets it to run one job per processor when it is not already set, so to choose a different number of jobs you can run:
 
 ```
-MAKEFLAGS="-j10" bundle exec rake compile
+MAKEFLAGS="-j4" bundle exec rake compile
 ```
 
 ## Build variants
