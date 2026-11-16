@@ -19,7 +19,7 @@ categories = [
     "parsing",
 ]
 build = "build/main.rs"
-include = ["src/", "build/", "Cargo.toml", "Cargo.lock", "README.md", "vendor"]
+include = ["src/", "build/", "Cargo.toml", "Cargo.lock", "LICENSE.md", "README.md", "vendor"]
 
 [build-dependencies]
 bindgen = { version = "0.73", optional = true }

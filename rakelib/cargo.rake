@@ -41,8 +41,12 @@ namespace :cargo do
     config_yaml = YAML.load_file(File.expand_path("../config.yml", __dir__))
     File.write(prism_vendor_dir.join("config.json"), JSON.dump(config_yaml))
 
-    # Align the Cargo.toml version with the gemspec version
     CRATES.each do |crate|
+      # Ship the license text in each crate. `license-file` can't be used
+      # alongside the `license` SPDX identifier, so copy it in instead.
+      cp("LICENSE.md", "rust/#{crate}/LICENSE.md")
+
+      # Align the Cargo.toml version with the gemspec version
       cargo_toml_path = Pathname.new("rust/#{crate}/Cargo.toml")
       old_cargo_toml = cargo_toml_path.read
       new_cargo_toml = old_cargo_toml
