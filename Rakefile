@@ -19,9 +19,13 @@ require_relative "templates/template"
 desc "Generate all ERB template based files"
 task templates: Prism::Template::TEMPLATES
 
+# The make that builds libprism runs one job per processor unless MAKEFLAGS is
+# already set. The variable is set in this process's environment, so the make
+# that rake-compiler runs for the C extension uses the same number of jobs.
 make = RUBY_PLATFORM.match?(/openbsd|freebsd/) ? "gmake" : "make"
 task(make: :templates) {
-  ENV["MAKEFLAGS"] ||= "-j"
+  require "etc"
+  ENV["MAKEFLAGS"] ||= "-j#{Etc.nprocessors}"
   sh(make)
 }
 
