@@ -345,6 +345,8 @@ module Prism
           "#{value(insn.opnds[0])} = defined_explicit_method(#{value(insn.opnds[1])}, #{insn.data})"
         when :defined_super
           "#{value(insn.opnds[0])} = defined_super"
+        when :ensure_return
+          "ensure_return r#{insn.data.id}"
         when :ensure_shareable
           opnds = insn.opnds
           "#{value(opnds[0])} = ensure_shareable#{values(opnds[1..])}, #{literal(insn.data)}"
@@ -784,7 +786,11 @@ module Prism
       private
 
       def run_region(frame, region, block)
-        run_blocks(frame, region, block)
+        if region.kind == :ensure
+          run_ensure_region(frame, region, block)
+        else
+          run_blocks(frame, region, block)
+        end
       rescue Exception => exception
         if region.kind == :rescue
           handler = region.handler
@@ -793,6 +799,17 @@ module Prism
         else
           raise
         end
+      end
+
+      def run_ensure_region(frame, region, block)
+        begin
+          result = run_blocks(frame, region, block)
+        ensure
+          handler = region.handler
+          cleanup = run_region(frame, handler.region, handler)
+          return cleanup unless cleanup.region.equal?(region)
+        end
+        result
       end
 
       def run_blocks(frame, region, block)
@@ -995,6 +1012,8 @@ module Prism
               values[insn.opnds[0]] = !!defined_explicit_method?(values[insn.opnds[1]], insn.data, recv)
             when :defined_super
               values[insn.opnds[0]] = !!(super_method && super_method.binding.eval("defined?(super)"))
+            when :ensure_return
+              return ExecutionResult.new(nil, nil, insn.data)
             when :ensure_shareable
               value = values[insn.opnds[1]]
               unless Ractor.shareable?(value)

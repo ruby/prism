@@ -6198,6 +6198,54 @@ module Prism
       assert_equal("failure", vm.run(unit))
     end
 
+    def test_ensure
+      [
+        [1, "begin; 1; ensure; 2; end"],
+        [nil, "begin; ensure; end"],
+        [false, "begin; false; ensure; end"],
+        [[1, [:body, :ensure]], "events = []; value = begin; events << :body; 1; ensure; events << :ensure; end; [value, events]"],
+        [[2, [:rescue, :ensure]], "events = []; value = begin; raise 'failure'; rescue; events << :rescue; 2; ensure; events << :ensure; end; [value, events]"],
+        [[3, [:else, :ensure]], "events = []; value = begin; 1; rescue; 2; else; events << :else; 3; ensure; events << :ensure; end; [value, events]"],
+        [[2, 1], "attempts = 0; cleanups = 0; begin; attempts += 1; raise if attempts == 1; rescue; retry; ensure; cleanups += 1; end; [attempts, cleanups]"],
+        [[:inner, :outer], "events = []; begin; begin; raise; ensure; events << :inner; end; rescue; ensure; events << :outer; end; events"],
+        [[1, [:cleanup]], "events = []; value = -> { begin; return 1; ensure; events << :cleanup; end }.call; [value, events]"],
+        [[1, [:cleanup]], "object = Object.new; def object.work(events); begin; return 1; ensure; events << :cleanup; end; end; events = []; [object.work(events), events]"],
+        [[2, 2, 1], "attempts = 0; inner = 0; outer = 0; begin; begin; attempts += 1; raise if attempts == 1; ensure; inner += 1; end; rescue; retry; ensure; outer += 1; end; [attempts, inner, outer]"],
+        [[:cleanup, 9], "events = []; value = catch(:done) { begin; throw :done, 9; ensure; events << :cleanup; end }; events << value"],
+        [2, "i = 0; while i < 2; begin; break 7; ensure; i += 1; next; end; end; i"],
+        [2, "-> { begin; return 1; ensure; return 2; end }.call"],
+        [2, "-> { begin; raise; ensure; return 2; end }.call"],
+        [[7, [1]], "events = []; value = while true; begin; break 7; ensure; events << 1; end; end; [value, events]"],
+        [[7, [1]], "events = []; value = [1].each { begin; break 7; ensure; events << 1; end }; [value, events]"],
+        [[1, 2], "events = []; i = 0; while i < 2; begin; i += 1; next; ensure; events << i; end; end; events"],
+        [2, "i = 0; begin; while i < 2; i += 1; end; ensure; i += 0; end; i"],
+        [2, "i = 0; while i < 2; begin; i += 1; redo if i == 1; ensure; end; end; i"],
+        [9, "while true; begin; raise; ensure; break 9; end; end"],
+        [["body", "body"], "seen = nil; begin; begin; raise 'body'; ensure; seen = $!.message; end; rescue => e; [seen, e.message]; end"],
+        [["cleanup", "body"], "begin; begin; raise 'body'; ensure; raise 'cleanup'; end; rescue => e; [e.message, e.cause.message]; end"],
+        [:caught, "begin; begin; 1; rescue; :wrong; ensure; raise; end; rescue; :caught; end"],
+        [["a", "a"], "result = nil; /a/ =~ 'a'; begin; 1; ensure; result = $&; end; [result, $&]"],
+        [1, 'count = 0; 2.times { begin; /#{count += 1}/o; ensure; end }; count'],
+        [1, 'count = 0; 2.times { /#{begin; count += 1; ensure; end}/o }; count']
+      ].each { |expected, source| assert_run(expected, source) }
+      assert_run_raises(RuntimeError, "begin; raise 'body'; ensure; 1; end", "body")
+    end
+
+    def test_ensure_regions
+      unit = Prism.compile("begin; 1; ensure; 2; end", freeze: true).value
+      graph = unit.graphs[0]
+      region = graph.regions.find { |candidate| candidate.kind == :ensure }
+      assert_same(graph.regions[0], region.parent)
+      assert_same(region, region.entry.region)
+      assert_same(region.parent, region.handler.region.parent)
+      assert_equal([], region.handler.params)
+      terminator = region.handler.insns.last
+      assert_equal(:ensure_return, terminator.kind)
+      assert_same(region, terminator.data)
+      assert_include(unit.disasm, "ensure_return r#{region.id}")
+      assert_equal(1, vm.run(unit))
+    end
+
     def test_rescue_modifier
       [
         [1, "1 rescue 2"],

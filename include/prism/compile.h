@@ -60,6 +60,7 @@ typedef enum {
     kPrismInsnDefinedImplicitMethod,
     kPrismInsnDefinedIVar,
     kPrismInsnDefinedSuper,
+    kPrismInsnEnsureReturn,
     kPrismInsnEnsureShareable,
     kPrismInsnExpandArray,
     kPrismInsnExtractLastMatchGroup,
@@ -260,6 +261,7 @@ PRISM_EXPORTED_FUNCTION const pm_constant_t * pm_insn_define_name(const pm_parse
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_define_singleton_class_graph_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_new_block_graph_id(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_ensure_return_region_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_once_region_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_once_site_id(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_post_execution_graph_id(const PrismInsn *insn);

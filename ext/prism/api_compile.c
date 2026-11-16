@@ -58,6 +58,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefinedIVar: return rb_intern_const("defined_ivar");
         case kPrismInsnDefinedExplicitMethod: return rb_intern_const("defined_explicit_method");
         case kPrismInsnDefinedSuper: return rb_intern_const("defined_super");
+        case kPrismInsnEnsureReturn: return rb_intern_const("ensure_return");
         case kPrismInsnEnsureShareable: return rb_intern_const("ensure_shareable");
         case kPrismInsnExpandArray: return rb_intern_const("expand_array");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
@@ -149,6 +150,8 @@ compile_freeze(VALUE value, bool freeze) {
 static VALUE
 compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE vblocks, VALUE vregions, VALUE vonce_sites, const pm_parser_t *parser, const PrismGraph *graph, const PrismInsn *insn, PrismInsnKind kind, bool freeze) {
     switch (kind) {
+        case kPrismInsnEnsureReturn:
+            return rb_ary_entry(vregions, pm_insn_ensure_return_region_id(insn));
         case kPrismInsnOnce:
             return compile_freeze(rb_ary_new_from_args(2, rb_ary_entry(vonce_sites, pm_insn_once_site_id(insn)), rb_ary_entry(vregions, pm_insn_once_region_id(insn))), freeze);
         case kPrismInsnOnceReturn:
