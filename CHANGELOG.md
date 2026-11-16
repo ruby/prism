@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - The `pm_string_query_*` functions take a Ruby version as their last argument, written like the strings that `pm_options_version_set` accepts. Pass `NULL` for the latest version. An unknown version returns the new `PM_STRING_QUERY_ERROR_VERSION`.
 - Whether a name is a constant follows the version of Unicode of the Ruby that is targeted: Unicode 15.0.0 for Ruby 3.3 and 3.4, and Unicode 17.0.0 for Ruby 4.0 and 4.1. A name that starts with a letter that became uppercase in Unicode 16.0.0 or 17.0.0, such as the Garay capital letters, is now a local variable name when targeting Ruby 3.3 or 3.4.
 - A `?` followed by two identifier characters is a ternary operator, even when the first one is not ASCII. For example, `a ?☃b : c` used to read `?☃` as a character literal.
+- A multiple assignment can write to an attribute whose name starts with a character that is not ASCII, as in `foo.☃, bar = 1, 2`.
 
 ### Fixed
 

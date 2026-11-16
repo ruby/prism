@@ -1,0 +1,149 @@
+@ ProgramNode (location: (1,0)-(5,27))
+├── flags: ∅
+├── locals: [:bar, :a, :b]
+└── statements:
+    @ StatementsNode (location: (1,0)-(5,27))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ MultiWriteNode (location: (1,0)-(1,19))
+        │   ├── flags: newline
+        │   ├── lefts: (length: 2)
+        │   │   ├── @ CallTargetNode (location: (1,0)-(1,7))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── receiver:
+        │   │   │   │   @ CallNode (location: (1,0)-(1,3))
+        │   │   │   │   ├── flags: variable_call, ignore_visibility
+        │   │   │   │   ├── receiver: ∅
+        │   │   │   │   ├── call_operator_loc: ∅
+        │   │   │   │   ├── name: :foo
+        │   │   │   │   ├── message_loc: (1,0)-(1,3) = "foo"
+        │   │   │   │   ├── opening_loc: ∅
+        │   │   │   │   ├── arguments: ∅
+        │   │   │   │   ├── closing_loc: ∅
+        │   │   │   │   ├── equal_loc: ∅
+        │   │   │   │   └── block: ∅
+        │   │   │   ├── call_operator_loc: (1,3)-(1,4) = "."
+        │   │   │   ├── name: :☃=
+        │   │   │   └── message_loc: (1,4)-(1,7) = "☃"
+        │   │   └── @ LocalVariableTargetNode (location: (1,9)-(1,12))
+        │   │       ├── flags: ∅
+        │   │       ├── name: :bar
+        │   │       └── depth: 0
+        │   ├── rest: ∅
+        │   ├── rights: (length: 0)
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── operator_loc: (1,13)-(1,14) = "="
+        │   └── value:
+        │       @ ArrayNode (location: (1,15)-(1,19))
+        │       ├── flags: static_literal
+        │       ├── elements: (length: 2)
+        │       │   ├── @ IntegerNode (location: (1,15)-(1,16))
+        │       │   │   ├── flags: static_literal, decimal
+        │       │   │   └── value: 1
+        │       │   └── @ IntegerNode (location: (1,18)-(1,19))
+        │       │       ├── flags: static_literal, decimal
+        │       │       └── value: 2
+        │       ├── opening_loc: ∅
+        │       └── closing_loc: ∅
+        ├── @ MultiWriteNode (location: (3,0)-(3,18))
+        │   ├── flags: newline
+        │   ├── lefts: (length: 2)
+        │   │   ├── @ CallTargetNode (location: (3,0)-(3,6))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── receiver:
+        │   │   │   │   @ CallNode (location: (3,0)-(3,3))
+        │   │   │   │   ├── flags: variable_call, ignore_visibility
+        │   │   │   │   ├── receiver: ∅
+        │   │   │   │   ├── call_operator_loc: ∅
+        │   │   │   │   ├── name: :foo
+        │   │   │   │   ├── message_loc: (3,0)-(3,3) = "foo"
+        │   │   │   │   ├── opening_loc: ∅
+        │   │   │   │   ├── arguments: ∅
+        │   │   │   │   ├── closing_loc: ∅
+        │   │   │   │   ├── equal_loc: ∅
+        │   │   │   │   └── block: ∅
+        │   │   │   ├── call_operator_loc: (3,3)-(3,4) = "."
+        │   │   │   ├── name: :α=
+        │   │   │   └── message_loc: (3,4)-(3,6) = "α"
+        │   │   └── @ LocalVariableTargetNode (location: (3,8)-(3,11))
+        │   │       ├── flags: ∅
+        │   │       ├── name: :bar
+        │   │       └── depth: 0
+        │   ├── rest: ∅
+        │   ├── rights: (length: 0)
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── operator_loc: (3,12)-(3,13) = "="
+        │   └── value:
+        │       @ ArrayNode (location: (3,14)-(3,18))
+        │       ├── flags: static_literal
+        │       ├── elements: (length: 2)
+        │       │   ├── @ IntegerNode (location: (3,14)-(3,15))
+        │       │   │   ├── flags: static_literal, decimal
+        │       │   │   └── value: 1
+        │       │   └── @ IntegerNode (location: (3,17)-(3,18))
+        │       │       ├── flags: static_literal, decimal
+        │       │       └── value: 2
+        │       ├── opening_loc: ∅
+        │       └── closing_loc: ∅
+        └── @ MultiWriteNode (location: (5,0)-(5,27))
+            ├── flags: newline
+            ├── lefts: (length: 2)
+            │   ├── @ LocalVariableTargetNode (location: (5,0)-(5,1))
+            │   │   ├── flags: ∅
+            │   │   ├── name: :a
+            │   │   └── depth: 0
+            │   └── @ MultiTargetNode (location: (5,3)-(5,15))
+            │       ├── flags: ∅
+            │       ├── lefts: (length: 2)
+            │       │   ├── @ CallTargetNode (location: (5,4)-(5,11))
+            │       │   │   ├── flags: ∅
+            │       │   │   ├── receiver:
+            │       │   │   │   @ CallNode (location: (5,4)-(5,7))
+            │       │   │   │   ├── flags: variable_call, ignore_visibility
+            │       │   │   │   ├── receiver: ∅
+            │       │   │   │   ├── call_operator_loc: ∅
+            │       │   │   │   ├── name: :foo
+            │       │   │   │   ├── message_loc: (5,4)-(5,7) = "foo"
+            │       │   │   │   ├── opening_loc: ∅
+            │       │   │   │   ├── arguments: ∅
+            │       │   │   │   ├── closing_loc: ∅
+            │       │   │   │   ├── equal_loc: ∅
+            │       │   │   │   └── block: ∅
+            │       │   │   ├── call_operator_loc: (5,7)-(5,8) = "."
+            │       │   │   ├── name: :☃=
+            │       │   │   └── message_loc: (5,8)-(5,11) = "☃"
+            │       │   └── @ LocalVariableTargetNode (location: (5,13)-(5,14))
+            │       │       ├── flags: ∅
+            │       │       ├── name: :b
+            │       │       └── depth: 0
+            │       ├── rest: ∅
+            │       ├── rights: (length: 0)
+            │       ├── lparen_loc: (5,3)-(5,4) = "("
+            │       └── rparen_loc: (5,14)-(5,15) = ")"
+            ├── rest: ∅
+            ├── rights: (length: 0)
+            ├── lparen_loc: ∅
+            ├── rparen_loc: ∅
+            ├── operator_loc: (5,16)-(5,17) = "="
+            └── value:
+                @ ArrayNode (location: (5,18)-(5,27))
+                ├── flags: ∅
+                ├── elements: (length: 2)
+                │   ├── @ IntegerNode (location: (5,18)-(5,19))
+                │   │   ├── flags: static_literal, decimal
+                │   │   └── value: 1
+                │   └── @ ArrayNode (location: (5,21)-(5,27))
+                │       ├── flags: static_literal
+                │       ├── elements: (length: 2)
+                │       │   ├── @ IntegerNode (location: (5,22)-(5,23))
+                │       │   │   ├── flags: static_literal, decimal
+                │       │   │   └── value: 2
+                │       │   └── @ IntegerNode (location: (5,25)-(5,26))
+                │       │       ├── flags: static_literal, decimal
+                │       │       └── value: 3
+                │       ├── opening_loc: (5,21)-(5,22) = "["
+                │       └── closing_loc: (5,26)-(5,27) = "]"
+                ├── opening_loc: ∅
+                └── closing_loc: ∅
