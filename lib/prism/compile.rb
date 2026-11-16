@@ -743,6 +743,15 @@ module Prism
         @once_mutex = Mutex.new
       end
 
+      def compile(source, filepath = "(eval)")
+        result = Prism.compile(source, filepath: filepath, raise_error: true)
+        result.warnings.each do |warning|
+          next if warning.level == :verbose && !$VERBOSE
+          warn "#{filepath}:#{warning.location.start_line}: warning: #{warning.message}"
+        end
+        result.value
+      end
+
       def run(unit)
         run_frame(Frame.new(unit.graphs[0], TOPLEVEL_BINDING.receiver, [Object].freeze))
       end

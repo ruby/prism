@@ -52,12 +52,13 @@ module Prism
 
     def compile(argv)
       source, filepath = read_source(argv)
-      puts Prism.compile(source, filepath: filepath, raise_error: true).value.disasm
+      puts Prism::Compile::VM.new.compile(source, filepath).disasm
     end
 
     def interpret(argv)
       source, filepath = read_source(argv)
-      Prism::Compile::VM.new.run(Prism.compile(source, filepath: filepath, raise_error: true).value)
+      vm = Prism::Compile::VM.new
+      vm.run(vm.compile(source, filepath))
     end
 
     ############################################################################

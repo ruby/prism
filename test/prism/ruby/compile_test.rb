@@ -1111,6 +1111,48 @@ module Prism
       assert_equal(compile_unit("1 + 2").disasm, stdout)
     end
 
+    def test_vm_compilation_warnings_across_files
+      machine = Compile::VM.new
+      output = capture_warnings do
+        first = machine.compile("{a: 1, a: 2}", "first.rb")
+        second = machine.compile("\n{b: 3, b: 4}", "second.rb")
+        assert_equal({a: 2}, machine.run(first))
+        assert_equal({b: 4}, machine.run(second))
+      end
+      assert_equal(<<~TEXT, output)
+        first.rb:1: warning: key :a is duplicated and overwritten on line 1
+        second.rb:2: warning: key :b is duplicated and overwritten on line 2
+      TEXT
+    end
+
+    def test_compile_and_interpret_cli_warnings
+      cli = File.expand_path("../../../bin/prism", __dir__)
+      ["compile", "interpret"].each do |command|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, command, "-e", "\n{a: 1, a: 2}")
+        assert_predicate(status, :success?, stderr)
+        assert_equal("-e:2: warning: key :a is duplicated and overwritten on line 2\n", stderr)
+        assert_empty(stdout) if command == "interpret"
+      end
+    end
+
+    def test_interpret_cli_warning_levels
+      cli = File.expand_path("../../../bin/prism", __dir__)
+      source = "unused = 1; puts :done"
+      [[], ["-w"], ["-W0"]].each do |flags|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, *flags, cli, "interpret", "-e", source)
+        assert_predicate(status, :success?, stderr)
+        assert_equal("done\n", stdout)
+        if flags == ["-w"]
+          assert_include(stderr, "-e:1: warning: assigned but unused variable - unused\n")
+        else
+          assert_empty(stderr)
+        end
+      end
+      _, stderr, status = Open3.capture3(RbConfig.ruby, "-W0", cli, "interpret", "-e", "{a: 1, a: 2}")
+      assert_predicate(status, :success?, stderr)
+      assert_empty(stderr)
+    end
+
     def test_coerce_array_to_ary_instruction
       insns = [Compile::Insn.new(:coerce_array_to_ary, 0, [1, 0], nil), Compile::Insn.new(:return, 0, [1], nil)]
       array = [1, 2]
