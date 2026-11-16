@@ -510,6 +510,73 @@ module Prism
       assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
     end
 
+    def test_defined_runtime_variables
+      [
+        "o = Object.new; o.instance_eval { defined?(@missing) }",
+        "o = Object.new; o.instance_eval { @value = nil; defined?(@value) }",
+        "o = Object.new; def o.instance_variable_defined?(*); raise 'must not run'; end; o.instance_eval { @value = false; defined?(@value) }",
+        "defined?($compile_defined_state_missing)",
+        "$compile_defined_state_value = nil; defined?($compile_defined_state_value)",
+        "$compile_defined_state_value = false; defined?($compile_defined_state_value)",
+        "class CompileDefinedStateCvar; defined?(@@missing); end",
+        "class CompileDefinedStateCvar; @@value = nil; defined?(@@value); end",
+        "class CompileDefinedStateCvar; @@value = false; proc { defined?(@@value) }.call; end",
+        "defined?(@@compile_defined_state_missing)",
+        "defined?(CompileDefinedStateMissing)",
+        "class CompileDefinedStateConst; Value = nil; defined?(Value); end",
+        "class CompileDefinedStateConst; private_constant :Value; defined?(Value); end"
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_defined_bare_constant_lookup
+      scope = Module.new
+      scope.const_set(:Value, false)
+      scope.autoload(:LazyValue, "/must/not/be/loaded")
+      scope.define_singleton_method(:const_defined?) { |*| raise "const_defined? called" }
+      scope.define_singleton_method(:const_missing) { |*| raise "const_missing called" }
+      ["Value", "LazyValue", "MissingValue"].each do |name|
+        source = "defined?(#{name})"
+        graph = compile_unit(source).graphs[0]
+        assert_equal(scope.module_eval(source), vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      end
+      assert_equal("/must/not/be/loaded", scope.autoload?(:LazyValue))
+    end
+
+    def test_defined_yield
+      [
+        "defined?(yield)",
+        "def compile_defined_yield; defined?(yield raise('must not run')); end; compile_defined_yield",
+        "def compile_defined_yield; defined?(yield raise('must not run')); end; compile_defined_yield { raise('block must not run') }",
+        "def compile_defined_yield; proc { defined?(yield) }.call; end; compile_defined_yield { 1 }"
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_defined_super
+      [
+        "defined?(super)",
+        "defined?(super())",
+        "defined?(super {})",
+        "class CompileDefinedSuperBase; end; class CompileDefinedSuperChild < CompileDefinedSuperBase; def value; defined?(super); end; end; CompileDefinedSuperChild.new.value",
+        "class CompileDefinedSuperBase; def value; raise 'must not run'; end; end; class CompileDefinedSuperChild < CompileDefinedSuperBase; def value; defined?(super); end; end; CompileDefinedSuperChild.new.value",
+        "class CompileDefinedSuperChild; def value; defined?(super(raise('must not run'), &raise('must not run'))); end; end; CompileDefinedSuperChild.new.value",
+        "class CompileDefinedSuperChild; def value; proc { defined?(super()) }.call; end; end; CompileDefinedSuperChild.new.value",
+        "class CompileDefinedSuperChild; alias other value; end; CompileDefinedSuperChild.new.other",
+        "class CompileDefinedSuperBase; def self.value; end; end; class CompileDefinedSuperChild; def self.value; defined?(super); end; end; CompileDefinedSuperChild.value"
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_defined_regexp_references
+      [
+        "/a/ =~ ''; [defined?($&), defined?($`), defined?($'), defined?($+), defined?($1), defined?($2)]",
+        "/(a)?(b)/ =~ 'b'; [defined?($&), defined?($`), defined?($'), defined?($+), defined?($1), defined?($2), defined?($3)]",
+        "/()/ =~ ''; [defined?($&), defined?($1), defined?($+)]",
+        "/(a)/ =~ 'a'; /b/ =~ 'a'; [defined?($&), defined?($1), defined?($+)]"
+      ].each do |source|
+        expected = eval(source, TOPLEVEL_BINDING)
+        assert_run(expected, source)
+      end
+    end
+
     def test_defined_locals
       [
         "value = nil; defined?(value)",

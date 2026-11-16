@@ -56,6 +56,8 @@ typedef enum {
     kPrismInsnDefinedConstRecvRel,
     kPrismInsnDefinedCVar,
     kPrismInsnDefinedGVar,
+    kPrismInsnDefinedIVar,
+    kPrismInsnDefinedSuper,
     kPrismInsnEnsureShareable,
     kPrismInsnExpandArray,
     kPrismInsnExtractLastMatchGroup,

@@ -53,6 +53,8 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnDefinedConstRecvRel: return rb_intern_const("defined_const_recv_rel");
         case kPrismInsnDefinedCVar: return rb_intern_const("defined_cvar");
         case kPrismInsnDefinedGVar: return rb_intern_const("defined_gvar");
+        case kPrismInsnDefinedIVar: return rb_intern_const("defined_ivar");
+        case kPrismInsnDefinedSuper: return rb_intern_const("defined_super");
         case kPrismInsnEnsureShareable: return rb_intern_const("ensure_shareable");
         case kPrismInsnExpandArray: return rb_intern_const("expand_array");
         case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
@@ -175,6 +177,7 @@ compile_insn_data(VALUE vobjects_unit, VALUE vlocals_unit, VALUE vgraphs, VALUE 
         case kPrismInsnDefinedConstRecvRel:
         case kPrismInsnDefinedCVar:
         case kPrismInsnDefinedGVar:
+        case kPrismInsnDefinedIVar:
         case kPrismInsnLoadCVar:
         case kPrismInsnLoadGVar:
         case kPrismInsnLoadIVar:

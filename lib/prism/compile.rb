@@ -320,6 +320,10 @@ module Prism
           "#{value(insn.opnds[0])} = defined_cvar #{insn.data}"
         when :defined_gvar
           "#{value(insn.opnds[0])} = defined_gvar #{insn.data}"
+        when :defined_ivar
+          "#{value(insn.opnds[0])} = defined_ivar #{insn.data}"
+        when :defined_super
+          "#{value(insn.opnds[0])} = defined_super"
         when :ensure_shareable
           opnds = insn.opnds
           "#{value(opnds[0])} = ensure_shareable#{values(opnds[1..])}, #{literal(insn.data)}"
@@ -863,13 +867,17 @@ module Prism
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
-              values[insn.opnds[0]] = nest[0...-1].any? { |scope| scope.const_defined?(insn.data, false) } || nest[0].const_defined?(insn.data)
+              values[insn.opnds[0]] = nest[0...-1].any? { |scope| Module.instance_method(:const_defined?).bind_call(scope, insn.data, false) } || Module.instance_method(:const_defined?).bind_call(nest[0], insn.data)
             when :defined_const_recv_rel
               values[insn.opnds[0]] = const_defined_recv_rel?(values[insn.opnds[1]], insn.data)
             when :defined_cvar
               values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
+            when :defined_ivar
+              values[insn.opnds[0]] = Kernel.instance_method(:instance_variable_defined?).bind_call(recv, insn.data)
+            when :defined_super
+              values[insn.opnds[0]] = !!(super_method && super_method.binding.eval("defined?(super)"))
             when :ensure_shareable
               value = values[insn.opnds[1]]
               unless Ractor.shareable?(value)

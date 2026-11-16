@@ -1519,6 +1519,21 @@ emit_defined_gvar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name
 }
 
 static uint32_t
+emit_defined_ivar(PrismBuilder *builder, uint32_t node_id, pm_constant_id_t name_id) {
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnDefinedIVar, node_id, 1, &value_id);
+    insn->as.name.name_id = name_id;
+    return value_id;
+}
+
+static uint32_t
+emit_defined_super(PrismBuilder *builder, uint32_t node_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnDefinedSuper, node_id, 1, &value_id);
+    return value_id;
+}
+
+static uint32_t
 emit_ensure_shareable(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t name_id) {
     uint32_t result_id = make_value(builder);
     PrismInsn *insn = emit_insn(builder, kPrismInsnEnsureShareable, node_id, 2, (uint32_t[]) { result_id, value_id });
@@ -3260,19 +3275,68 @@ compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length
 }
 
 static uint32_t
+compile_defined_result(PrismBuilder *builder, uint32_t node_id, uint32_t predicate_id, const char *description) {
+    uint32_t defined_block_id = make_block(builder, 0);
+    uint32_t undefined_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+    emit_branchif(builder, node_id, predicate_id, defined_block_id, 0, NULL, undefined_block_id, 0, NULL);
+
+    builder->state.block_id = defined_block_id;
+    uint32_t result_id = compile_constexpr_string(builder, description, strlen(description));
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = undefined_block_id;
+    result_id = emit_load_nil(builder, node_id);
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
+static uint32_t
 compile_defined_expression(PrismBuilder *builder, const pm_node_t *value) {
     uint32_t value_id;
 
     switch (PM_NODE_TYPE(value)) {
-        case PM_INSTANCE_VARIABLE_READ_NODE:
-        case PM_GLOBAL_VARIABLE_READ_NODE:
-        case PM_CLASS_VARIABLE_READ_NODE:
-        case PM_CONSTANT_READ_NODE:
-        case PM_YIELD_NODE:
-        case PM_SUPER_NODE:
-        case PM_FORWARDING_SUPER_NODE:
+        case PM_INSTANCE_VARIABLE_READ_NODE: {
+            uint32_t predicate_id = emit_defined_ivar(builder, value->node_id, ((const pm_instance_variable_read_node_t *) value)->name);
+            return compile_defined_result(builder, value->node_id, predicate_id, "instance-variable");
+        }
+        case PM_GLOBAL_VARIABLE_READ_NODE: {
+            uint32_t predicate_id = emit_defined_gvar(builder, value->node_id, ((const pm_global_variable_read_node_t *) value)->name);
+            return compile_defined_result(builder, value->node_id, predicate_id, "global-variable");
+        }
+        case PM_CLASS_VARIABLE_READ_NODE: {
+            uint32_t predicate_id = emit_defined_cvar(builder, value->node_id, ((const pm_class_variable_read_node_t *) value)->name);
+            return compile_defined_result(builder, value->node_id, predicate_id, "class variable");
+        }
+        case PM_CONSTANT_READ_NODE: {
+            uint32_t predicate_id = emit_defined_const_nest_rel(builder, value->node_id, ((const pm_constant_read_node_t *) value)->name);
+            return compile_defined_result(builder, value->node_id, predicate_id, "constant");
+        }
+        case PM_YIELD_NODE: {
+            uint32_t predicate_id = emit_load_block(builder, value->node_id);
+            return compile_defined_result(builder, value->node_id, predicate_id, "yield");
+        }
+        case PM_SUPER_NODE: {
+            const pm_super_node_t *cast = (const pm_super_node_t *) value;
+            if (cast->block && !PM_NODE_TYPE_P(cast->block, PM_BLOCK_ARGUMENT_NODE)) {
+                return compile_constexpr_string(builder, "expression", 10);
+            }
+            uint32_t predicate_id = emit_defined_super(builder, value->node_id);
+            return compile_defined_result(builder, value->node_id, predicate_id, "super");
+        }
+        case PM_FORWARDING_SUPER_NODE: {
+            const pm_forwarding_super_node_t *cast = (const pm_forwarding_super_node_t *) value;
+            if (cast->block) return compile_constexpr_string(builder, "expression", 10);
+            uint32_t predicate_id = emit_defined_super(builder, value->node_id);
+            return compile_defined_result(builder, value->node_id, predicate_id, "super");
+        }
         case PM_BACK_REFERENCE_READ_NODE:
-        case PM_NUMBERED_REFERENCE_READ_NODE:
+        case PM_NUMBERED_REFERENCE_READ_NODE: {
+            uint32_t predicate_id = compile_node(builder, value);
+            return compile_defined_result(builder, value->node_id, predicate_id, "global-variable");
+        }
         case PM_CONSTANT_PATH_NODE:
         case PM_ARRAY_NODE:
         case PM_HASH_NODE:
