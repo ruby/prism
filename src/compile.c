@@ -3300,6 +3300,34 @@ compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length
 }
 
 static uint32_t
+compile_call_with_receiver(PrismBuilder *builder, const pm_call_node_t *node, uint32_t receiver_id) {
+    bool safe_navigation = PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION);
+    uint32_t join_block_id = UINT32_MAX;
+    if (safe_navigation) {
+        uint32_t call_block_id = make_block(builder, 0);
+        join_block_id = make_block(builder, 1);
+        uint32_t predicate_id = emit_nil_p(builder, node->base.node_id, receiver_id);
+        emit_branchif(builder, node->base.node_id, predicate_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
+        builder->state.block_id = call_block_id;
+    }
+
+    PrismArguments arguments = compile_arguments(builder, node->arguments, node->block);
+    uint32_t value_id = emit_call_arguments(builder, node->base.node_id, node->name, receiver_id, &arguments, node->base.flags);
+
+    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
+        value_id = arguments.ids[arguments.size - 1];
+    }
+
+    if (safe_navigation) {
+        emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+        builder->state.block_id = join_block_id;
+        return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    }
+
+    return value_id;
+}
+
+static uint32_t
 compile_defined_result(PrismBuilder *builder, uint32_t node_id, uint32_t predicate_id, const char *description) {
     uint32_t defined_block_id = make_block(builder, 0);
     uint32_t undefined_block_id = make_block(builder, 0);
@@ -4066,30 +4094,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         receiver_id = emit_load_self(builder, node->base.node_id);
     }
 
-    bool safe_navigation = PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION);
-    uint32_t join_block_id = UINT32_MAX;
-    if (safe_navigation) {
-        uint32_t call_block_id = make_block(builder, 0);
-        join_block_id = make_block(builder, 1);
-        uint32_t predicate_id = emit_nil_p(builder, node->base.node_id, receiver_id);
-        emit_branchif(builder, node->base.node_id, predicate_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
-        builder->state.block_id = call_block_id;
-    }
-
-    PrismArguments arguments = compile_arguments(builder, node->arguments, node->block);
-    uint32_t value_id = emit_call_arguments(builder, node->base.node_id, node->name, receiver_id, &arguments, node->base.flags);
-
-    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
-        value_id = arguments.ids[arguments.size - 1];
-    }
-
-    if (safe_navigation) {
-        emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
-        builder->state.block_id = join_block_id;
-        return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
-    }
-
-    return value_id;
+    return compile_call_with_receiver(builder, node, receiver_id);
 }
 
 /*
