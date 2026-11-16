@@ -3293,6 +3293,32 @@ compile_defined_result(PrismBuilder *builder, uint32_t node_id, uint32_t predica
     return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
 }
 
+static uint32_t compile_defined_expression(PrismBuilder *builder, const pm_node_t *value);
+
+static uint32_t
+compile_defined_elements(PrismBuilder *builder, uint32_t node_id, const pm_node_list_t *elements) {
+    if (!elements->size) return compile_constexpr_string(builder, "expression", 10);
+
+    uint32_t undefined_block_id = make_block(builder, 0);
+    uint32_t join_block_id = make_block(builder, 1);
+    for (size_t idx = 0; idx < elements->size; ++idx) {
+        uint32_t predicate_id = compile_defined_expression(builder, elements->nodes[idx]);
+        uint32_t next_block_id = make_block(builder, 0);
+        emit_branchif(builder, node_id, predicate_id, next_block_id, 0, NULL, undefined_block_id, 0, NULL);
+        builder->state.block_id = next_block_id;
+    }
+
+    uint32_t result_id = compile_constexpr_string(builder, "expression", 10);
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = undefined_block_id;
+    result_id = emit_load_nil(builder, node_id);
+    emit_branch(builder, node_id, join_block_id, 1, &result_id);
+
+    builder->state.block_id = join_block_id;
+    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+}
+
 static uint32_t
 compile_defined_expression(PrismBuilder *builder, const pm_node_t *value) {
     uint32_t value_id;
@@ -3337,17 +3363,34 @@ compile_defined_expression(PrismBuilder *builder, const pm_node_t *value) {
             uint32_t predicate_id = compile_node(builder, value);
             return compile_defined_result(builder, value->node_id, predicate_id, "global-variable");
         }
-        case PM_CONSTANT_PATH_NODE:
         case PM_ARRAY_NODE:
+            return compile_defined_elements(builder, value->node_id, &((const pm_array_node_t *) value)->elements);
         case PM_HASH_NODE:
+            return compile_defined_elements(builder, value->node_id, &((const pm_hash_node_t *) value)->elements);
         case PM_KEYWORD_HASH_NODE:
-        case PM_ASSOC_NODE:
-        case PM_ASSOC_SPLAT_NODE:
-        case PM_CALL_NODE:
+            return compile_defined_elements(builder, value->node_id, &((const pm_keyword_hash_node_t *) value)->elements);
         case PM_ARGUMENTS_NODE:
+            return compile_defined_elements(builder, value->node_id, &((const pm_arguments_node_t *) value)->arguments);
+        case PM_ASSOC_NODE: {
+            const pm_assoc_node_t *cast = (const pm_assoc_node_t *) value;
+            pm_node_list_t elements = { .nodes = (pm_node_t *[]) { cast->key, cast->value }, .size = 2 };
+            return compile_defined_elements(builder, value->node_id, &elements);
+        }
+        case PM_ASSOC_SPLAT_NODE: {
+            const pm_assoc_splat_node_t *cast = (const pm_assoc_splat_node_t *) value;
+            return cast->value ? compile_defined_expression(builder, cast->value) : compile_constexpr_string(builder, "expression", 10);
+        }
+        case PM_SPLAT_NODE: {
+            const pm_splat_node_t *cast = (const pm_splat_node_t *) value;
+            if (!cast->expression) return compile_constexpr_string(builder, "expression", 10);
+            uint32_t predicate_id = compile_defined_expression(builder, cast->expression);
+            return compile_defined_result(builder, value->node_id, predicate_id, "expression");
+        }
         case PM_BLOCK_ARGUMENT_NODE:
         case PM_FORWARDING_ARGUMENTS_NODE:
-        case PM_SPLAT_NODE:
+            return compile_constexpr_string(builder, "expression", 10);
+        case PM_CONSTANT_PATH_NODE:
+        case PM_CALL_NODE:
             fprintf(stderr, "Unimplemented\n");
             abort();
         case PM_LOCAL_VARIABLE_READ_NODE:

@@ -510,6 +510,55 @@ module Prism
       assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
     end
 
+    def test_defined_containers
+      [
+        "defined?([])",
+        "defined?({})",
+        "defined?([nil, false, true])",
+        "defined?(%w[a b])",
+        "defined?(%i[a b])",
+        "defined?([CompileDefinedContainerMissing])",
+        "defined?([@compile_defined_container_missing, 1])",
+        "defined?([1, $compile_defined_container_missing])",
+        "defined?([[nil], {a: [false, true]}])",
+        "defined?([{a: [CompileDefinedContainerMissing]}])",
+        "defined?({nil => false, true => nil})",
+        "defined?({a: CompileDefinedContainerMissing})",
+        "defined?({CompileDefinedContainerMissing => 1})",
+        "a = nil; defined?({a:})",
+        "defined?([value = 1]); value",
+        "defined?({a: value = 1}); value",
+        "defined?([*(nil)])",
+        "defined?([*CompileDefinedContainerMissing])",
+        "defined?({**nil})",
+        "defined?({**CompileDefinedContainerMissing})",
+        "defined?([*(begin; nil; end)])",
+        "defined?([{a: [*nil]}, **{}])",
+        "defined?([(raise('must not run') rescue nil)])",
+        "defined?([value = raise('must not run')])",
+        "def compile_defined_splat(*); defined?([*]); end; compile_defined_splat(1, 2)",
+        "def compile_defined_keywords(**); defined?({**}); end; compile_defined_keywords(a: 1)"
+      ].each { |source| capture_warnings { assert_run(eval(source), source) } }
+    end
+
+    def test_defined_containers_skip_conversions
+      [
+        "o = Object.new; def o.to_a; raise 'to_a called'; end; defined?([*o])",
+        "o = Object.new; def o.to_hash; raise 'to_hash called'; end; defined?({**o})",
+        "o = Object.new; def o.hash; raise 'hash called'; end; defined?({o => 1})",
+        "o = Object.new; def o.to_a; raise 'to_a called'; end; defined?([{a: [*o]}])"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_defined_containers_do_not_construct_values
+      ["defined?([nil, true])", "defined?({a: nil})", "a = nil; defined?({a:, **a})"].each do |source|
+        kinds = compile_unit(source).graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        [:new_array, :new_array_static, :new_hash, :new_hash_static, :coerce_array_to_a, :coerce_hash].each do |kind|
+          assert_not_include(kinds, kind, source)
+        end
+      end
+    end
+
     def test_defined_runtime_variables
       [
         "o = Object.new; o.instance_eval { defined?(@missing) }",
