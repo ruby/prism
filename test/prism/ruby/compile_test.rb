@@ -510,6 +510,50 @@ module Prism
       assert_include(compile_unit('["#{"a"}"]').graphs[0].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
     end
 
+    def test_defined_locals
+      [
+        "value = nil; defined?(value)",
+        "if false; value = 1; end; defined?(value)",
+        "value = 1; proc { defined?(value) }.call",
+        "[1].map { defined?(it) }",
+        "[1].map { defined?(_1) }",
+        "->(value) { defined?(value) }.call(1)",
+        "defined?(value = raise('must not run'))"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_defined_wrappers
+      [
+        "defined?(())",
+        "defined?((nil))",
+        "defined?(((true)))",
+        "value = 1; defined?((value))",
+        "value = 1; defined?((value;))",
+        "defined?((raise('first'); raise('second')))",
+        "defined?(begin; end)",
+        "defined?(begin; nil; end)",
+        "value = 1; defined?(begin; value; end)",
+        "defined?(begin; raise('first'); raise('second'); end)",
+        "defined?(begin; raise('body'); rescue; raise('rescue'); end)",
+        "defined?(begin; raise('body'); ensure; raise('ensure'); end)",
+        "defined?(begin; raise('body'); rescue; raise('rescue'); else; raise('else'); end)",
+        "defined?((begin; (false); end))"
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
+    def test_defined_shareable_constant
+      [:literal, :experimental_copy, :experimental_everything].each do |mode|
+        ["Value = raise('must not run')", "Value ||= raise('must not run')", "Value += raise('must not run')"].each do |write|
+          source = "# shareable_constant_value: #{mode}\ndefined?(#{write})"
+          scope = Module.new
+          graph = compile_unit(source).graphs[0]
+          assert_equal("assignment", scope.module_eval(source))
+          assert_equal("assignment", vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+          assert_equal(false, scope.const_defined?(:Value, false))
+        end
+      end
+    end
+
     def test_disasm_literals
       output = compile_unit('"a\\nb"').disasm
       assert_include(output, 'load_object("a\nb")')
