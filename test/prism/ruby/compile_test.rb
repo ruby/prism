@@ -6175,6 +6175,12 @@ module Prism
       assert_equal([:@@a, :@@b, :@@c, :@@d], CompileTestCVarOr.class_variables(false).sort)
     end
 
+    def test_cvar_read_effect_context
+      assert_run(7, "class CompileTestCVarReadEffect; @@a = 1; @@a; 7; end")
+      assert_run_raises(NameError, "class CompileTestCVarReadEffect; @@missing; 7; end", "uninitialized class variable @@missing in CompileTestCVarReadEffect")
+      assert_run_raises(RuntimeError, "@@compile_test_top; 7", "class variable access from toplevel")
+    end
+
     def test_cvar_and_write_and_operator_write
       assert_run(3, "class CompileTestCVarAnd; @@a = 1; @@a &&= 3; @@a; end")
       assert_run(false, "class CompileTestCVarAnd; @@b = false; @@b &&= 3; @@b; end")
