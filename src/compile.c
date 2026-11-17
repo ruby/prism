@@ -4337,11 +4337,11 @@ compile_begin_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  *     ^^^^
  */
 static uint32_t
-compile_block_argument_node(PrismBuilder *builder, const pm_block_argument_node_t *node) {
+compile_block_argument_node(PrismBuilder *builder, PrismBuilderContext context, const pm_block_argument_node_t *node) {
     if (node->expression) {
-        return compile_node(builder, kPrismBuilderValue, node->expression);
+        return compile_node(builder, context, node->expression);
     } else {
-        return emit_load_lvar(builder, node->base.node_id, builder->state.block_local_id);
+        return context == kPrismBuilderValue ? emit_load_lvar(builder, node->base.node_id, builder->state.block_local_id) : UINT32_MAX;
     }
 }
 
@@ -6342,7 +6342,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_BEGIN_NODE:
             return compile_begin_node(builder, context, (const pm_begin_node_t *) node);
         case PM_BLOCK_ARGUMENT_NODE:
-            return compile_block_argument_node(builder, (const pm_block_argument_node_t *) node);
+            return compile_block_argument_node(builder, context, (const pm_block_argument_node_t *) node);
         case PM_BLOCK_NODE:
             return compile_block_node(builder, (const pm_block_node_t *) node);
         case PM_BREAK_NODE:
