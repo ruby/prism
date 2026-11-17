@@ -416,6 +416,14 @@ module Prism
       assert_run([1, 2], '[1, 2]')
     end
 
+    def test_float_effect_context
+      unit = compile_unit("1.5; 7")
+      assert_equal(7, vm.run(unit))
+      objects = unit.graphs[0].blocks.flat_map(&:insns).select { |insn| insn.kind == :load_object }.map(&:data)
+      assert_not_include(objects, 1.5)
+      assert_run(1.5, "1.5")
+    end
+
     def test_false_effect_context
       unit = compile_unit("false; 7")
       assert_equal(7, vm.run(unit))

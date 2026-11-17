@@ -5189,7 +5189,9 @@ compile_flip_flop_node(PrismBuilder *builder, PrismBuilderContext context, const
  * ^^^
  */
 static uint32_t
-compile_float_node(PrismBuilder *builder, const pm_float_node_t *node) {
+compile_float_node(PrismBuilder *builder, PrismBuilderContext context, const pm_float_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
@@ -6452,7 +6454,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_FLIP_FLOP_NODE:
             return compile_flip_flop_node(builder, context, (const pm_flip_flop_node_t *) node);
         case PM_FLOAT_NODE:
-            return compile_float_node(builder, (const pm_float_node_t *) node);
+            return compile_float_node(builder, context, (const pm_float_node_t *) node);
         case PM_FOR_NODE:
             return compile_for_node(builder, (const pm_for_node_t *) node);
         case PM_GLOBAL_VARIABLE_READ_NODE:
