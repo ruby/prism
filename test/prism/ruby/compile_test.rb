@@ -6184,6 +6184,17 @@ module Prism
       assert_run_raises(NameError, "class CompileTestCVarAnd; @@missing += 1; end", "uninitialized class variable @@missing in CompileTestCVarAnd")
     end
 
+    def test_cvar_and_write_effect_context
+      source = "class CompileTestCVarAndEffect; @@a = true; @@a &&= [1, 2]; @@a; end"
+      unit = compile_unit(source)
+      assert_equal([1, 2], vm.run(unit))
+      assert(unit.graphs[1].blocks.all? { |block| block.params.empty? })
+      assert_run(false, "class CompileTestCVarAndEffect; @@b = false; @@b &&= raise('rhs ran'); @@b; end")
+      assert_run(nil, "class CompileTestCVarAndEffect; @@c = nil; @@c &&= raise('rhs ran'); @@c; end")
+      assert_run([1, 2], "class CompileTestCVarAndEffect; @@d = true; @@d &&= [1, 2]; end")
+      assert_run_raises(NameError, "class CompileTestCVarAndEffect; @@missing &&= 1; 7; end", "uninitialized class variable @@missing in CompileTestCVarAndEffect")
+    end
+
     def test_cvar_or_write_inherits
       Object.const_set(:CompileTestCVarParent, Class.new { class_variable_set(:@@a, 1) })
       Object.const_set(:CompileTestCVarModule, Module.new { class_variable_set(:@@m, 2) })

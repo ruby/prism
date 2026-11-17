@@ -4633,20 +4633,21 @@ compile_class_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  * ^^^^^^^^^^^^^
  */
 static uint32_t
-compile_class_variable_and_write_node(PrismBuilder *builder, const pm_class_variable_and_write_node_t *node) {
+compile_class_variable_and_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_class_variable_and_write_node_t *node) {
+    uint32_t nparams = context == kPrismBuilderValue;
     uint32_t set_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
+    uint32_t join_block_id = make_block(builder, nparams);
 
     uint32_t predicate_id = emit_load_cvar(builder, node->base.node_id, node->name);
-    emit_branchif(builder, node->base.node_id, predicate_id, set_block_id, 0, NULL, join_block_id, 1, &predicate_id);
+    emit_branchif(builder, node->base.node_id, predicate_id, set_block_id, 0, NULL, join_block_id, nparams, &predicate_id);
 
     builder->state.block_id = set_block_id;
     uint32_t value_id = compile_node(builder, kPrismBuilderValue, node->value);
     emit_store_cvar(builder, node->base.node_id, node->name, value_id);
-    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+    emit_branch(builder, node->base.node_id, join_block_id, nparams, &value_id);
 
     builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
 /*
@@ -6392,7 +6393,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE:
             return compile_class_variable_operator_write_node(builder, (const pm_class_variable_operator_write_node_t *) node);
         case PM_CLASS_VARIABLE_AND_WRITE_NODE:
-            return compile_class_variable_and_write_node(builder, (const pm_class_variable_and_write_node_t *) node);
+            return compile_class_variable_and_write_node(builder, context, (const pm_class_variable_and_write_node_t *) node);
         case PM_CLASS_VARIABLE_OR_WRITE_NODE:
             return compile_class_variable_or_write_node(builder, (const pm_class_variable_or_write_node_t *) node);
         case PM_CONSTANT_READ_NODE:
