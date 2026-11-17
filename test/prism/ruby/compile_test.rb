@@ -5447,6 +5447,23 @@ module Prism
       end
     end
 
+    def test_case_effect_context
+      [
+        "case 1; when 1; [1, 2]; end; 7",
+        "case 2; when 1; [1, 2]; when 2; [3, 4]; end; 7",
+        "case 3; when 1; [1, 2]; else; [3, 4]; end; 7",
+        "case 3; when 1; [1, 2]; end; 7",
+        "case 1; when 1; else; end; 7",
+        "case; when false; [1, 2]; when true; [3, 4]; end; 7"
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        graph = unit.graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+        assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :new_array_static, source)
+      end
+    end
+
     def test_case_when_splats
       [
         [1, 'case 2; when *[1, 2, 3]; 1; else; 0; end'],
