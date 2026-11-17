@@ -489,6 +489,23 @@ module Prism
       assert_run_raises(LocalJumpError, "class CompileTestYieldMissingBlock; def value; yield [1, 2]; 7; end; end; CompileTestYieldMissingBlock.new.value")
     end
 
+    def test_literal_predicates
+      [["true", 1], ["false", 2], ["nil", 2], ["true && false || nil", 2]].each do |predicate, expected|
+        source = "if #{predicate}; 1; else; 2; end"
+        unit = compile_unit(source)
+        assert_equal(expected, vm.run(unit), source)
+        instructions = unit.graphs[0].blocks.flat_map(&:insns)
+        [:branchif, :load_true, :load_false, :load_nil].each do |kind|
+          assert_not_include(instructions.map(&:kind), kind, source)
+        end
+        assert_not_include(instructions.select { |insn| insn.kind == :load_object }.map(&:data), nil, source)
+      end
+      assert_run(7, "while true; break 7; end")
+      assert_run(7, "until false; break 7; end")
+      assert_run(2, "unless nil; 2; else; 1; end")
+      assert_run(2, "case 1; in 1 if true; 2; else; 3; end")
+    end
+
     def test_logical_predicate_short_circuit
       [[false, true, false], [nil, true, true], [true, false, true], [true, true, false], [0, "truthy", false]].each do |left, right, last|
         source = <<~RUBY

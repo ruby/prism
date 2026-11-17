@@ -2417,6 +2417,11 @@ compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_bl
             compile_predicate(builder, cast->right, then_block_id, else_block_id);
             break;
         }
+        case PM_FALSE_NODE:
+        case PM_NIL_NODE:
+            compile_node_trace(builder, node);
+            emit_branch(builder, node->node_id, else_block_id, 0, NULL);
+            break;
         case PM_OR_NODE: {
             compile_node_trace(builder, node);
             const pm_or_node_t *cast = (const pm_or_node_t *) node;
@@ -2428,6 +2433,10 @@ compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_bl
             compile_predicate(builder, cast->right, then_block_id, else_block_id);
             break;
         }
+        case PM_TRUE_NODE:
+            compile_node_trace(builder, node);
+            emit_branch(builder, node->node_id, then_block_id, 0, NULL);
+            break;
         default: {
             uint32_t value_id = compile_node(builder, kPrismBuilderValue, node);
             emit_branchif(builder, node->node_id, value_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
