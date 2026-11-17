@@ -23,20 +23,41 @@ rescue OptionParser::ParseError => error
   abort "#{error.message}\n#{options}"
 end
 
+input = nil
 source, filepath =
   if expressions.any?
     [expressions.join("\n"), "-e"]
   else
     path = ARGV.shift
-    path.nil? || path == "-" ? [$stdin.read, "-"] : [File.read(path), path]
+    if path.nil? || path == "-"
+      [$stdin.read, "-"]
+    else
+      input = File.open(path)
+      [input.read, path]
+    end
   end
 
 $PROGRAM_NAME = filepath
 vm = Prism::Compile::VM.new
-unit = vm.compile(source, filepath)
+result = vm.compile(source, filepath, main_script: true, command_line: expressions.any? ? "e" : "")
+unit = result.value
 
 if dump
+  input&.close
   puts Prism::Compile::Disassembler.new(unit).disasm
 else
+  if result.data_loc && expressions.empty?
+    offset = source.b.index("\n", result.data_loc.start_offset)
+    offset = offset ? offset + 1 : source.bytesize
+    unless input
+      require "stringio"
+      input = StringIO.new(source, "r")
+    end
+    input.seek(offset)
+    Object.const_set(:DATA, input)
+  else
+    input&.close
+  end
+
   vm.run(unit)
 end

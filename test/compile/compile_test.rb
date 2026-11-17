@@ -1786,13 +1786,51 @@ module Prism
       end
     end
 
+    def test_cli_main_script
+      cli = File.expand_path("cli.rb", __dir__)
+      source = "#!/bin/sh\nnot ruby code\n#!/usr/bin/env ruby\nputs :main\n"
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, stdin_data: source)
+      assert_predicate(status, :success?, stderr)
+      assert_equal("main\n", stdout)
+      assert_empty(stderr)
+    end
+
+    def test_cli_data
+      cli = File.expand_path("cli.rb", __dir__)
+      ["\n", "\r\n"].each do |newline|
+        Tempfile.create(["compile_cli_data", ".rb"]) do |file|
+          source = ["# é", "puts DATA.class; puts DATA.path; print DATA.read", "__END__", "payload", ""].join(newline)
+          file.write(source)
+          file.flush
+          stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, file.path)
+          assert_predicate(status, :success?, stderr)
+          assert_equal("File\n#{file.path}\npayload#{newline}", stdout)
+          assert_empty(stderr)
+        end
+      end
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, stdin_data: "print DATA.read\n__END__\npayload\n")
+      assert_predicate(status, :success?, stderr)
+      assert_equal("payload\n", stdout)
+      assert_empty(stderr)
+
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, "-e", "p defined?(DATA)\n__END__\npayload\n")
+      assert_predicate(status, :success?, stderr)
+      assert_equal("nil\n", stdout)
+      assert_empty(stderr)
+
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, stdin_data: "p DATA.eof?\n__END__")
+      assert_predicate(status, :success?, stderr)
+      assert_equal("true\n", stdout)
+      assert_empty(stderr)
+    end
+
     def test_vm_compilation_warnings_across_files
       machine = Compile::VM.new
       output = capture_warnings do
         first = machine.compile("{a: 1, a: 2}", "first.rb")
         second = machine.compile("\n{b: 3, b: 4}", "second.rb")
-        assert_equal({a: 2}, machine.run(first))
-        assert_equal({b: 4}, machine.run(second))
+        assert_equal({a: 2}, machine.run(first.value))
+        assert_equal({b: 4}, machine.run(second.value))
       end
       assert_equal(<<~TEXT, output)
         first.rb:1: warning: key :a is duplicated and overwritten on line 1
@@ -1812,7 +1850,7 @@ module Prism
 
     def test_interpret_cli_warning_levels
       cli = File.expand_path("cli.rb", __dir__)
-      source = "unused = 1; puts :done"
+      source = "def warning_example; unused = 1; end; puts :done"
       [[], ["-w"], ["-W0"]].each do |flags|
         stdout, stderr, status = Open3.capture3(RbConfig.ruby, *flags, cli, "-e", source)
         assert_predicate(status, :success?, stderr)

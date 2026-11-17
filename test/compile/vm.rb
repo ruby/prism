@@ -186,13 +186,13 @@ module Prism
         @once_mutex = Mutex.new
       end
 
-      def compile(source, filepath = "(eval)")
-        result = Prism.compile(source, filepath: filepath, raise_error: true)
+      def compile(source, filepath = "(eval)", options = {})
+        result = Prism.compile(source, filepath: filepath, raise_error: true, **options)
         result.warnings.each do |warning|
           next if warning.level == :verbose && !$VERBOSE
           warn "#{filepath}:#{warning.location.start_line}: warning: #{warning.message}"
         end
-        result.value
+        result
       end
 
       def run(unit)
