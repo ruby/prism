@@ -4967,10 +4967,10 @@ compile_constant_read_node(PrismBuilder *builder, PrismBuilderContext context, c
  * ^^^^^^^
  */
 static uint32_t
-compile_constant_write_node(PrismBuilder *builder, const pm_constant_write_node_t *node, pm_node_flags_t shareability) {
+compile_constant_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_constant_write_node_t *node, pm_node_flags_t shareability) {
     uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
-    return value_id;
+    return context == kPrismBuilderValue ? value_id : UINT32_MAX;
 }
 
 /*
@@ -6133,7 +6133,7 @@ compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_consta
         case PM_CONSTANT_PATH_WRITE_NODE:
             return compile_constant_path_write_node(builder, kPrismBuilderValue, (const pm_constant_path_write_node_t *) node->write, shareability);
         case PM_CONSTANT_WRITE_NODE:
-            return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node->write, shareability);
+            return compile_constant_write_node(builder, kPrismBuilderValue, (const pm_constant_write_node_t *) node->write, shareability);
         default:
             return compile_node(builder, kPrismBuilderValue, node->write);
     }
@@ -6410,7 +6410,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_READ_NODE:
             return compile_constant_read_node(builder, context, (const pm_constant_read_node_t *) node);
         case PM_CONSTANT_WRITE_NODE:
-            return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node, 0);
+            return compile_constant_write_node(builder, context, (const pm_constant_write_node_t *) node, 0);
         case PM_CONSTANT_AND_WRITE_NODE:
             return compile_constant_and_write_node(builder, context, (const pm_constant_and_write_node_t *) node, 0);
         case PM_CONSTANT_OR_WRITE_NODE:
