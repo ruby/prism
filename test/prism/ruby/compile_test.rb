@@ -4519,6 +4519,18 @@ module Prism
       ].each { |expected, source| assert_run(expected, source) }
     end
 
+    def test_call_or_write_effect_context
+      assert_run([1, 2], "o = Struct.new(:value).new(nil); o.value ||= [1, 2]; o.value")
+      assert_run([1, 2], "o = Struct.new(:value).new(false); o&.value ||= [1, 2]; o.value")
+      assert_run(1, "o = Struct.new(:value).new(1); o.value ||= raise('rhs ran'); o.value")
+      assert_run(7, "nil&.value ||= raise('rhs ran'); 7")
+
+      ["receiver.value ||= rhs; 7", "receiver&.value ||= rhs; 7"].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+      end
+    end
+
     def test_call_or_write_evaluation
       scope = Module.new
       events = []
@@ -4545,17 +4557,24 @@ module Prism
       scope.const_set(:Rhs, rhs)
       graph = compile_unit("(Events << :receiver; Receiver).value ||= (Events << :rhs; Rhs.call)").graphs[0]
       frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      discarded = compile_unit("(Events << :receiver; Receiver).value ||= (Events << :rhs; Rhs.call); nil").graphs[0]
       expected = [:receiver, :getter, :rhs, [:setter, result]]
       [nil, false].each do |value|
         events.clear
         current = value
         assert_same(result, vm.run_frame(frame.call))
         assert_equal(expected, events)
+        events.clear
+        assert_nil(vm.run_frame(Compile::VM::Frame.new(discarded, scope, [scope, Object].freeze)))
+        assert_equal(expected, events)
       end
       [true, 0, Object.new].each do |value|
         events.clear
         current = value
         assert_same(value, vm.run_frame(frame.call))
+        assert_equal([:receiver, :getter], events)
+        events.clear
+        assert_nil(vm.run_frame(Compile::VM::Frame.new(discarded, scope, [scope, Object].freeze)))
         assert_equal([:receiver, :getter], events)
       end
       current = nil

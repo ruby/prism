@@ -4448,8 +4448,8 @@ compile_call_operator_write_node(PrismBuilder *builder, PrismBuilderContext cont
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_call_or_write_node(PrismBuilder *builder, const pm_call_or_write_node_t *node) {
-    return compile_call_logical_write_node(builder, kPrismBuilderValue, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
+compile_call_or_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_call_or_write_node_t *node) {
+    return compile_call_logical_write_node(builder, context, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
 /*
@@ -6367,7 +6367,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CALL_OPERATOR_WRITE_NODE:
             return compile_call_operator_write_node(builder, context, (const pm_call_operator_write_node_t *) node);
         case PM_CALL_OR_WRITE_NODE:
-            return compile_call_or_write_node(builder, (const pm_call_or_write_node_t *) node);
+            return compile_call_or_write_node(builder, context, (const pm_call_or_write_node_t *) node);
         case PM_CASE_MATCH_NODE:
             return compile_case_match_node(builder, (const pm_case_match_node_t *) node);
         case PM_CASE_NODE:
