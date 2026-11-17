@@ -506,6 +506,28 @@ module Prism
       assert_run(2, "case 1; in 1 if true; 2; else; 3; end")
     end
 
+    def test_wrapped_predicates
+      [["((true && false) || true)", 1], ["(true; false || nil)", 2], ["()", 2]].each do |predicate, expected|
+        source = "if #{predicate}; 1; else; 2; end"
+        unit = compile_unit(source)
+        assert_equal(expected, vm.run(unit), source)
+        kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        [:branchif, :load_true, :load_false, :load_nil].each { |kind| assert_not_include(kinds, kind, source) }
+      end
+      source = <<~RUBY
+        events = []
+        if (events << :first; false || (events << :second; true && (events << :third; false)))
+          events << :then
+        else
+          events << :else
+        end
+        events
+      RUBY
+      unit = compile_unit(source)
+      assert_equal([:first, :second, :third, :else], vm.run(unit))
+      assert(unit.graphs[0].blocks.all? { |block| block.params.empty? })
+    end
+
     def test_logical_predicate_short_circuit
       [[false, true, false], [nil, true, true], [true, false, true], [true, true, false], [0, "truthy", false]].each do |left, right, last|
         source = <<~RUBY

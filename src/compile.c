@@ -3,6 +3,7 @@
 #include "prism/compiler/align.h"
 #include "prism/internal/allocator.h"
 #include "prism/internal/arena.h"
+#include "prism/internal/assert.h"
 #include "prism/internal/compile.h"
 #include "prism/internal/constant_pool.h"
 #include "prism/internal/integer.h"
@@ -2431,6 +2432,27 @@ compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_bl
 
             builder->state.block_id = right_block_id;
             compile_predicate(builder, cast->right, then_block_id, else_block_id);
+            break;
+        }
+        case PM_PARENTHESES_NODE: {
+            compile_node_trace(builder, node);
+            const pm_parentheses_node_t *cast = (const pm_parentheses_node_t *) node;
+            if (cast->body) {
+                compile_predicate(builder, cast->body, then_block_id, else_block_id);
+            } else {
+                emit_branch(builder, node->node_id, else_block_id, 0, NULL);
+            }
+            break;
+        }
+        case PM_STATEMENTS_NODE: {
+            compile_node_trace(builder, node);
+            const pm_statements_node_t *cast = (const pm_statements_node_t *) node;
+            PRISM_ASSERT(cast->body.size > 0);
+
+            for (size_t idx = 0; idx + 1 < cast->body.size; ++idx) {
+                compile_node(builder, kPrismBuilderEffect, cast->body.nodes[idx]);
+            }
+            compile_predicate(builder, cast->body.nodes[cast->body.size - 1], then_block_id, else_block_id);
             break;
         }
         case PM_TRUE_NODE:
