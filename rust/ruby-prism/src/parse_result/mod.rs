@@ -10,7 +10,7 @@ use ruby_prism_sys::{
     pm_parser_frozen_string_literal, pm_parser_line_offsets, pm_parser_magic_comments_first, pm_parser_magic_comments_size, pm_parser_start, pm_parser_start_line, pm_parser_t, pm_parser_warnings_first, pm_parser_warnings_size,
 };
 
-pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments};
+pub use self::comments::{Comment, CommentType, Comments, MagicComment, MagicComments, NodeComments};
 pub use self::diagnostics::{Diagnostic, Diagnostics};
 
 use crate::Node;

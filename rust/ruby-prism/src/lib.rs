@@ -26,7 +26,7 @@ use std::ptr::NonNull;
 pub use self::bindings::*;
 pub use self::node::{ConstantId, ConstantList, ConstantListIter, Integer, NodeList, NodeListIter};
 pub use self::node_ext::{ConstantPathError, FullName};
-pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, ParseResult};
+pub use self::parse_result::{Comment, CommentType, Comments, Diagnostic, Diagnostics, Location, MagicComment, MagicComments, NodeComments, ParseResult};
 pub use self::string_query::{InvalidEncodingError, StringQuery};
 
 use ruby_prism_sys::{
