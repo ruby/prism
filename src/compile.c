@@ -2379,7 +2379,13 @@ typedef enum {
 #define PM_ASSERT_EFFECT_CONTEXT(context_) assert((context_) == kPrismBuilderEffect)
 #endif
 
+typedef struct {
+    uint32_t block_id;
+    bool terminal;
+} PrismPatternFailure;
+
 static uint32_t compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node);
+static void compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 
 static void
 compile_node_trace(PrismBuilder *builder, const pm_node_t *node) {
@@ -2423,6 +2429,13 @@ compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_bl
             compile_node_trace(builder, node);
             emit_branch(builder, node->node_id, else_block_id, 0, NULL);
             break;
+        case PM_MATCH_PREDICATE_NODE: {
+            compile_node_trace(builder, node);
+            const pm_match_predicate_node_t *cast = (const pm_match_predicate_node_t *) node;
+            uint32_t value_id = compile_node(builder, kPrismBuilderValue, cast->value);
+            compile_pattern_match(builder, cast->pattern, value_id, value_id, then_block_id, (PrismPatternFailure) { .block_id = else_block_id });
+            break;
+        }
         case PM_OR_NODE: {
             compile_node_trace(builder, node);
             const pm_or_node_t *cast = (const pm_or_node_t *) node;
@@ -2951,11 +2964,6 @@ compile_loop_node(PrismBuilder *builder, PrismBuilderContext context, const pm_n
     return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
-typedef struct {
-    uint32_t block_id;
-    bool terminal;
-} PrismPatternFailure;
-
 static uint32_t
 compile_pattern_deconstruct(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, uint32_t root_id, PrismPatternFailure failure) {
     uint32_t array_id = emit_deconstruct_array(builder, node_id, value_id);
@@ -3002,7 +3010,6 @@ compile_pattern_length(PrismBuilder *builder, uint32_t node_id, uint32_t array_i
     return minimum_id;
 }
 
-static void compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 static void compile_array_pattern_node(PrismBuilder *builder, const pm_array_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 static void compile_find_pattern_node(PrismBuilder *builder, const pm_find_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);
 static void compile_hash_pattern_node(PrismBuilder *builder, const pm_hash_pattern_node_t *node, uint32_t value_id, uint32_t root_id, uint32_t matched_block_id, PrismPatternFailure failure);

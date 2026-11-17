@@ -528,6 +528,23 @@ module Prism
       assert(unit.graphs[0].blocks.all? { |block| block.params.empty? })
     end
 
+    def test_match_predicates_branch_directly
+      [["1 in 1", 1], ["1 in 2", 2], ["[1, 2] in [a, b]", 1], ["{a: 1} in {a:}", 1]].each do |predicate, expected|
+        source = "if (#{predicate}); 1; else; 2; end"
+        unit = compile_unit(source)
+        assert_equal(expected, vm.run(unit), source)
+        kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        assert_not_include(kinds, :load_true, source)
+        assert_not_include(kinds, :load_false, source)
+      end
+      unit = compile_unit("if (1 in 2); 1; else; 2; end")
+      assert_equal(1, unit.graphs[0].blocks.sum { |block| block.params.size })
+      assert_run(2, "if ([1, 2] in [1, captured]); captured; else; 0; end")
+      assert_run(2, "unless (1 in 2); 2; else; 3; end")
+      assert_run(2, "if (1 in 2) || (2 in Integer); 2; else; 3; end")
+      assert_run_raises(TypeError, "value = Object.new; def value.deconstruct; nil; end; if (value in []); 1; else; 2; end")
+    end
+
     def test_logical_predicate_short_circuit
       [[false, true, false], [nil, true, true], [true, false, true], [true, true, false], [0, "truthy", false]].each do |left, right, last|
         source = <<~RUBY
