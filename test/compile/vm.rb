@@ -9,41 +9,58 @@ module Prism
       module StdLib
         @methods = {}
 
-        def self.[](method_name)
-          @methods.fetch(method_name)
-        end
+        class << self
+          def [](method_name)
+            @methods.fetch(method_name)
+          end
 
-        %i[+ to_a].each do |method_name|
-          @methods[:"Array_#{method_name}"] = Array.instance_method(method_name)
-        end
+          def lambda_method?(method)
+            method == self[:Kernel_lambda] || method == self[:Kernel_singleton_lambda]
+          end
 
-        %i[equal? __send__ instance_exec].each do |method_name|
-          @methods[:"BasicObject_#{method_name}"] = BasicObject.instance_method(method_name)
-        end
+          def visibility_for(method)
+            case method
+            when self[:Module_public] then :public
+            when self[:Module_protected] then :protected
+            when self[:Module_private] then :private
+            when self[:Module_module_function] then :module_function
+            when self[:main_singleton_public] then :public
+            when self[:main_singleton_private] then :private
+            end
+          end
 
-        %i[class instance_variable_defined? method protected_methods public_send respond_to? singleton_class sprintf to_s].each do |method_name|
-          @methods[:"Kernel_#{method_name}"] = Kernel.instance_method(method_name)
-        end
+          def visibility_method_for(kind)
+            case kind
+            when :public then self[:Module_public]
+            when :protected then self[:Module_protected]
+            when :private then self[:Module_private]
+            when :module_function then self[:Module_module_function]
+            else raise
+            end
+          end
 
-        %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method].each do |method_name|
-          @methods[:"Module_#{method_name}"] = Module.instance_method(method_name)
-        end
-      end
+          private
 
-      visibility_methods = {}
-      [:public, :protected, :private, :module_function].each do |visibility|
-        definitions = [Module.instance_method(visibility)]
-          definitions << TOPLEVEL_BINDING.receiver.method(visibility).unbind if visibility == :public || visibility == :private
-          definitions.each do |method|
-            visibility_methods[method] = visibility if method.source_location.nil?
+          def instance_methods(owner, owner_name, method_names)
+            method_names.each do |method_name|
+              @methods[:"#{owner_name}_#{method_name}"] = owner.instance_method(method_name)
+            end
+          end
+
+          def singleton_methods(owner, owner_name, method_names)
+            method_names.each do |method_name|
+              @methods[:"#{owner_name}_singleton_#{method_name}"] = owner.method(method_name).unbind
+            end
           end
         end
 
-      VISIBILITY_METHODS = visibility_methods.freeze
-      private_constant :VISIBILITY_METHODS
-
-      LAMBDA_METHODS = [Kernel.instance_method(:lambda), Kernel.method(:lambda).unbind].select { |method| method.source_location.nil? }.freeze
-      private_constant :LAMBDA_METHODS
+        instance_methods(Array, "Array", %i[+ to_a])
+        instance_methods(BasicObject, "BasicObject", %i[equal? __send__ instance_exec])
+        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? lambda method protected_methods public_send respond_to? singleton_class sprintf to_s])
+        singleton_methods(Kernel, "Kernel", %i[lambda])
+        singleton_methods(TOPLEVEL_BINDING.receiver, "main", %i[private public])
+        instance_methods(Module, "Module", %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method])
+      end
 
       class Visibility
         attr_accessor :value
@@ -549,7 +566,7 @@ module Prism
               define_method(nest[0], name, method_graph, nest)
 
               if frame.visibility.value == :module_function
-                VISIBILITY_METHODS.key(:module_function).bind_call(nest[0], name)
+                StdLib.visibility_method_for(:module_function).bind_call(nest[0], name)
                 next
               end
 
@@ -561,7 +578,7 @@ module Prism
                   frame.visibility.value
                 end
 
-              VISIBILITY_METHODS.key(visibility).bind_call(nest[0], name) unless visibility == :public
+              StdLib.visibility_method_for(visibility).bind_call(nest[0], name) if visibility != :public
             when :define_module_abs
               name, module_graph = insn.data
               mod = define_module(Object, name, true)
@@ -833,15 +850,13 @@ module Prism
       end
 
       def builtin_lambda?(receiver, name)
-        method = StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name)
-        LAMBDA_METHODS.include?(method)
+        StdLib.lambda_method?(StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name))
       rescue NameError
         false
       end
 
       def default_visibility(receiver, name)
-        method = StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name)
-        VISIBILITY_METHODS[method]
+        StdLib.visibility_for(StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name))
       rescue NameError
         nil
       end
