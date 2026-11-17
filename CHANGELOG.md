@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - In a regular expression, a quantifier at the start of a group with options has nothing to repeat, as in `/(?i:*)/`.
 - In a regular expression, a quantifier at the start of an empty alternative has nothing to repeat, as in `/|*/` or `/a||+/`.
 - In extended mode, the whitespace of a regular expression is skipped the way Onigmo skips it, outside of character classes. A quantifier after it can have nothing to repeat, as in `/( *)/x` or `/(?x: *)/`.
+- In a regular expression, a `)` with no group to close is reported as an unmatched close parenthesis wherever it is, as in `/a)/` or `/(a))/`.
 - In a regular expression, a `\u{...}` code point of more than six digits is no longer an error when it is in a comment, as in `/a(?#\u{1234567})b/`, and is otherwise reported only as an invalid Unicode range.
 - A regular expression or symbol whose interpolations are all strings with values known while parsing, such as `/a#{"b" "c"}/` or `:"a#{"b#{"c"}"}"`, is a static literal whether or not string literals are frozen.
 - The part of a string, symbol, or regular expression that follows an interpolation is in the source encoding, rather than the encoding that a literal inside the interpolation forced. For example, the `b` in `/a#{"\u3042"}b/` in an EUC-JP file is not `forced_utf8_encoding`, and a non-ASCII character there is read in EUC-JP.
