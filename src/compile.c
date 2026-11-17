@@ -5061,8 +5061,8 @@ compile_embedded_variable_node(PrismBuilder *builder, PrismBuilderContext contex
  * ^^^^^
  */
 static uint32_t
-compile_false_node(PrismBuilder *builder, const pm_false_node_t *node) {
-    return emit_load_false(builder, node->base.node_id);
+compile_false_node(PrismBuilder *builder, PrismBuilderContext context, const pm_false_node_t *node) {
+    return context == kPrismBuilderValue ? emit_load_false(builder, node->base.node_id) : UINT32_MAX;
 }
 
 /*
@@ -6446,7 +6446,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_EMBEDDED_VARIABLE_NODE:
             return compile_embedded_variable_node(builder, context, (const pm_embedded_variable_node_t *) node);
         case PM_FALSE_NODE:
-            return compile_false_node(builder, (const pm_false_node_t *) node);
+            return compile_false_node(builder, context, (const pm_false_node_t *) node);
         case PM_FLIP_FLOP_NODE:
             return compile_flip_flop_node(builder, (const pm_flip_flop_node_t *) node);
         case PM_FLOAT_NODE:

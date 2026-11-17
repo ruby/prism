@@ -416,6 +416,14 @@ module Prism
       assert_run([1, 2], '[1, 2]')
     end
 
+    def test_false_effect_context
+      unit = compile_unit("false; 7")
+      assert_equal(7, vm.run(unit))
+      assert_not_include(unit.graphs[0].blocks.flat_map(&:insns).map(&:kind), :load_false)
+      assert_run(false, "false")
+      assert_run(false, "false && raise('rhs ran')")
+    end
+
     def test_begin_compilation_context
       [
         'begin; [1, 2]; end; 7',
