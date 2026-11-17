@@ -153,6 +153,19 @@ module Prism
       end
     end
 
+    def test_empty_shebang_in_main_script
+      ["#!", "#!\n", "#!\n# encoding: US-ASCII\n__ENCODING__"].each do |source|
+        result = Prism.parse(source, main_script: true)
+        assert_predicate result, :success?, source
+      end
+
+      result = Prism.parse("#!\n# encoding: US-ASCII\n__ENCODING__", main_script: true)
+      assert_equal Encoding::US_ASCII, result.encoding
+
+      result = Prism.parse("#!", main_script: true, command_line: "x")
+      assert_equal [:script_not_found], result.errors.map(&:type)
+    end
+
     def test_shebang_is_not_an_encoding_comment
       ["#!coding:bogus", "#!ruby coding:bogus"].each do |shebang|
         ["", "\n"].each do |newline|
