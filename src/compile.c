@@ -3529,31 +3529,32 @@ compile_constexpr_string(PrismBuilder *builder, const char *value, size_t length
 }
 
 static uint32_t
-compile_call_with_receiver(PrismBuilder *builder, const pm_call_node_t *node, uint32_t receiver_id) {
+compile_call_with_receiver(PrismBuilder *builder, PrismBuilderContext context, const pm_call_node_t *node, uint32_t receiver_id) {
+    uint32_t nparams = context == kPrismBuilderValue;
     bool safe_navigation = PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION);
     uint32_t join_block_id = UINT32_MAX;
     if (safe_navigation) {
         uint32_t call_block_id = make_block(builder, 0);
-        join_block_id = make_block(builder, 1);
+        join_block_id = make_block(builder, nparams);
         uint32_t predicate_id = emit_nil_p(builder, node->base.node_id, receiver_id);
-        emit_branchif(builder, node->base.node_id, predicate_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
+        emit_branchif(builder, node->base.node_id, predicate_id, join_block_id, nparams, &receiver_id, call_block_id, 0, NULL);
         builder->state.block_id = call_block_id;
     }
 
     PrismArguments arguments = compile_arguments(builder, node->arguments, node->block);
     uint32_t value_id = emit_call_arguments(builder, node->base.node_id, node->name, receiver_id, &arguments, node->base.flags);
 
-    if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
+    if (nparams && PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_ATTRIBUTE_WRITE)) {
         value_id = arguments.last_id;
     }
 
     if (safe_navigation) {
-        emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+        emit_branch(builder, node->base.node_id, join_block_id, nparams, &value_id);
         builder->state.block_id = join_block_id;
-        return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+        return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
     }
 
-    return value_id;
+    return nparams ? value_id : UINT32_MAX;
 }
 
 static uint32_t
@@ -3618,7 +3619,7 @@ compile_defined_call(PrismBuilder *builder, const pm_call_node_t *node, uint32_t
         const pm_call_node_t *receiver = PM_NODE_TYPE_P(node->receiver, PM_CALL_NODE) ? (const pm_call_node_t *) node->receiver : NULL;
         if (receiver && !(receiver->block && PM_NODE_TYPE_P(receiver->block, PM_BLOCK_NODE))) {
             uint32_t parent_id = compile_defined_call(builder, receiver, undefined_block_id);
-            receiver_id = compile_call_with_receiver(builder, receiver, parent_id);
+            receiver_id = compile_call_with_receiver(builder, kPrismBuilderValue, receiver, parent_id);
         } else {
             uint32_t predicate_id = compile_defined_expression(builder, node->receiver);
             uint32_t next_block_id = make_block(builder, 0);
@@ -4399,7 +4400,7 @@ compile_call_and_write_node(PrismBuilder *builder, PrismBuilderContext context, 
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
+compile_call_node(PrismBuilder *builder, PrismBuilderContext context, const pm_call_node_t *node) {
     uint32_t receiver_id;
     if (node->receiver) {
         receiver_id = compile_node(builder, kPrismBuilderValue, node->receiver);
@@ -4407,7 +4408,7 @@ compile_call_node(PrismBuilder *builder, const pm_call_node_t *node) {
         receiver_id = emit_load_self(builder, node->base.node_id);
     }
 
-    return compile_call_with_receiver(builder, node, receiver_id);
+    return compile_call_with_receiver(builder, context, node, receiver_id);
 }
 
 /*
@@ -6361,7 +6362,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CALL_AND_WRITE_NODE:
             return compile_call_and_write_node(builder, context, (const pm_call_and_write_node_t *) node);
         case PM_CALL_NODE:
-            return compile_call_node(builder, (const pm_call_node_t *) node);
+            return compile_call_node(builder, context, (const pm_call_node_t *) node);
         case PM_CALL_OPERATOR_WRITE_NODE:
             return compile_call_operator_write_node(builder, (const pm_call_operator_write_node_t *) node);
         case PM_CALL_OR_WRITE_NODE:

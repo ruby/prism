@@ -4655,6 +4655,17 @@ module Prism
       assert_run(4, "class CompileTestSafeNilPredicate; def nil?; true; end; def value; 4; end; end; CompileTestSafeNilPredicate.new&.value")
     end
 
+    def test_call_effect_context
+      assert_run([:receiver, :argument, :block], "events = []; (events << :receiver)&.fetch((events << :argument; 99)) { events << :block; break }; events")
+      assert_run([1, 2], "o = Struct.new(:value).new; o&.value = [1, 2]; o.value")
+      assert_run([], "events = []; nil&.missing(events << :argument) { events << :block }; events")
+
+      ["receiver.call; 7", "receiver&.call; 7", "receiver&.value = 1; 7"].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+      end
+    end
+
     def test_safe_navigation_evaluation_order
       assert_run([], "a = []; nil&.missing(a << 1); a")
       assert_run([], "a = []; nil&.missing(a << 1)&.another(a << 2); a")
