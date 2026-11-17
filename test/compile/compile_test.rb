@@ -7955,6 +7955,20 @@ module Prism
       ].each { |source| assert_run(eval(source), source) }
     end
 
+    def test_native_callback_backreferences
+      [
+        %q{[:on_parse_error].grep(/\Aon_/) { [$~, $', $&] }},
+        %q{[:on_parse_error, :on_token].grep(/\Aon_/) { $'.to_sym }},
+        %q{["a1", "a2"].grep(/a(\d)/) { before = $1; inner = ["b3"].grep(/b(\d)/) { $1 }; [before, inner, $1] }},
+        %q{["a1"].grep(/a(\d)/, &->(value) { [value, $1, defined?($1)] })},
+        %q{["a1"].grep(/a(\d)/) { |*args| [$1, args] }},
+        %q{result = []; "a1a2".scan(/a(\d)/) { result << [$&, $1] }; result},
+        %q{["a1"].grep(/a(\d)/) { /(b)/ =~ "b" }; [$&, $1]},
+        %q{object = Object.new; def object.callback; proc { [$&, $'] }; end; [:on_parse_error].grep(/\Aon_/, &object.callback)},
+        %q{/(a)/ =~ "a"; ["b1"].grep(/b(\d)/) { Thread.new { [$&, $1] }.value }}
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
     def test_begin_rescue_backreferences
       [
         "begin; /(a)/ =~ 'a'; rescue; end; $1",

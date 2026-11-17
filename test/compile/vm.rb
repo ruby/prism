@@ -135,7 +135,7 @@ module Prism
 
       class Frame
         attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility, :lambda, :match_state
-        attr_accessor :last_line, :return_fiber
+        attr_accessor :last_line, :return_fiber, :native_binding
 
         def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, lambda = graph.kind == :lambda, match_state = MatchState.new, &block)
           @graph = graph
@@ -145,6 +145,7 @@ module Prism
           @values = Array.new(graph.nvalues)
           @match_state = match_state
           @last_line = nil
+          @native_binding = nil
           @flip_flops = flip_flops
           @lambda = lambda
           @return_target = lambda || %i[def program].include?(graph.kind) ? self : return_target
@@ -271,6 +272,7 @@ module Prism
       def initialize
         @post_executions = Set.new.compare_by_identity
         @once_states = ObjectSpace::WeakKeyMap.new
+        @frames = ObjectSpace::WeakKeyMap.new
         @once_mutex = Mutex.new
       end
 
@@ -288,6 +290,8 @@ module Prism
       end
 
       def run_frame(frame, args = [], kwargs = {}, passed_block = frame.block)
+        frames = @frames[Fiber.current] ||= []
+        frames << frame
         graph = frame.graph
         values = frame.values
         block = graph.blocks[0]
@@ -373,6 +377,8 @@ module Prism
         else
           run_region(frame, graph.regions[0], block).value
         end
+      ensure
+        frames.pop
       end
 
       private
@@ -411,6 +417,8 @@ module Prism
         values = frame.values
         flip_flops = frame.flip_flops
         super_method = frame.super_method
+        previous_binding = frame.native_binding
+        frame.native_binding = binding
         $~ = frame.last_match
         $_ = frame.last_line
 
@@ -852,6 +860,7 @@ module Prism
       ensure
         frame.last_match = $~
         frame.last_line = $_
+        frame.native_binding = previous_binding
       end
 
       def concatenate_strings(parts)
@@ -966,6 +975,10 @@ module Prism
         target = nil
         invoke =
           proc do |receiver, args, kwargs, passed_block|
+            if (active_frame = @frames[Fiber.current]&.reverse_each&.find { |active| active.native_binding && active.match_state.equal?(frame.match_state) })
+              frame.last_match = StdLib[:Binding_eval].bind_call(active_frame.native_binding, "$~")
+            end
+
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
             vm.run_frame(Frame.new(graph, receiver, nest, block_locals, flip_flops, super_method, visibility, target, return_target, lambda, frame.match_state, &block), args, kwargs, passed_block)
           end
