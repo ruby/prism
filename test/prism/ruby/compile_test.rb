@@ -5305,6 +5305,28 @@ module Prism
       ].each { |expected, source| assert_run(expected, source) }
     end
 
+    def test_case_match_effect_context
+      [
+        "case 1; in 1; [1, 2]; end; 7",
+        "case 1; in 2; [1, 2]; in 1; [3, 4]; end; 7",
+        "case 3; in 1; [1, 2]; else; [3, 4]; end; 7",
+        "case 1; in 1 if true; [1, 2]; else; [3, 4]; end; 7",
+        "case 1; in 1; else; end; 7"
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        graph = unit.graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+        assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :new_array_static, source)
+      end
+
+      assert_run(1, "case 1; in Integer => a; [2, 3]; end; a")
+      assert_run([:value, :guard, :body], "events = []; case (events << :value; 1); in 2; events << :skipped; in 1 if (events << :guard; true); events << :body; else; events << :else; end; events")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 2; end; 7")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 2; in 3; end; 7")
+      assert_run_raises(NoMatchingPatternError, "case 1; in 1 if false; end; 7")
+    end
+
     def test_case_match_guards
       [
         [2, "case 1; in 1 if true; 2; else; 3; end"],

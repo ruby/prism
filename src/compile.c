@@ -4457,9 +4457,10 @@ compile_call_or_write_node(PrismBuilder *builder, PrismBuilderContext context, c
  * ^^^^^^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node) {
+compile_case_match_node(PrismBuilder *builder, PrismBuilderContext context, const pm_case_match_node_t *node) {
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->predicate, node->base.node_id);
-    uint32_t join_block_id = make_block(builder, 1);
+    uint32_t nparams = context == kPrismBuilderValue;
+    uint32_t join_block_id = make_block(builder, nparams);
     bool single = node->conditions.size == 1 && !node->else_clause;
 
     for (size_t idx = 0; idx < node->conditions.size; ++idx) {
@@ -4512,21 +4513,21 @@ compile_case_match_node(PrismBuilder *builder, const pm_case_match_node_t *node)
         }
 
         builder->state.block_id = body_block_id;
-        uint32_t result_id = compile_node_or_nil(builder, kPrismBuilderValue, PM_NODE_UPCAST(condition->statements), condition->base.node_id);
-        emit_branch(builder, condition->base.node_id, join_block_id, 1, &result_id);
+        uint32_t result_id = compile_node_or_nil(builder, context, PM_NODE_UPCAST(condition->statements), condition->base.node_id);
+        emit_branch(builder, condition->base.node_id, join_block_id, nparams, &result_id);
 
         if (!single) builder->state.block_id = next_block_id;
     }
 
     if (node->else_clause) {
-        uint32_t result_id = compile_node(builder, kPrismBuilderValue, PM_NODE_UPCAST(node->else_clause));
-        emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+        uint32_t result_id = compile_node(builder, context, PM_NODE_UPCAST(node->else_clause));
+        emit_branch(builder, node->base.node_id, join_block_id, nparams, &result_id);
     } else if (!single) {
         emit_raise_pattern_nomatch(builder, node->base.node_id, value_id);
     }
 
     builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
 /*
@@ -6369,7 +6370,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CALL_OR_WRITE_NODE:
             return compile_call_or_write_node(builder, context, (const pm_call_or_write_node_t *) node);
         case PM_CASE_MATCH_NODE:
-            return compile_case_match_node(builder, (const pm_case_match_node_t *) node);
+            return compile_case_match_node(builder, context, (const pm_case_match_node_t *) node);
         case PM_CASE_NODE:
             return compile_case_node(builder, (const pm_case_node_t *) node);
         case PM_CLASS_NODE:
