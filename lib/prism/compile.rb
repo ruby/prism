@@ -533,6 +533,8 @@ module Prism
           "#{value(opnds[0])} = rescue_match_array#{values(opnds[1..])}"
         when :return
           "return"
+        when :return_nonlocal
+          "return_nonlocal #{value(insn.opnds[0])}"
         when :return_value
           "return_value #{value(insn.opnds[0])}"
         when :store_const_abs
@@ -631,10 +633,10 @@ module Prism
       end
 
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target
-        attr_accessor :last_match, :last_line
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target
+        attr_accessor :last_match, :last_line, :return_fiber
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, break_target = nil, &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, break_target = nil, return_target = nil, &block)
           @graph = graph
           @recv = recv
           @nest = nest
@@ -643,6 +645,8 @@ module Prism
           @last_match = nil
           @last_line = nil
           @flip_flops = flip_flops
+          @return_target = %i[def lambda program].include?(graph.kind) ? self : return_target
+          @return_fiber = nil
           @break_target = break_target
           @super_method = super_method
           @block = block
@@ -834,7 +838,16 @@ module Prism
           values[signature.rest] = middle.drop(signature.optionals.length) if signature.rest
         end
 
-        run_region(frame, graph.regions[0], block).value
+        if frame.return_target.equal?(frame)
+          frame.return_fiber = Fiber.current
+          begin
+            catch(frame) { run_region(frame, graph.regions[0], block).value }
+          ensure
+            frame.return_fiber = nil
+          end
+        else
+          run_region(frame, graph.regions[0], block).value
+        end
       end
 
       private
@@ -1218,6 +1231,15 @@ module Prism
               values[insn.opnds[0]] = values[insn.opnds[2]].any? { |klass| rescue_match(exception, klass) }
             when :return
               return ExecutionResult.new(nil, nil)
+            when :return_nonlocal
+              target = frame.return_target
+              unless target && target.return_fiber.equal?(Fiber.current)
+                error = LocalJumpError.new("unexpected return")
+                error.instance_variable_set(:@exit_value, values[insn.opnds[0]])
+                error.instance_variable_set(:@reason, :return)
+                raise error
+              end
+              throw target, values[insn.opnds[0]]
             when :return_value
               return ExecutionResult.new(nil, values[insn.opnds[0]])
             when :store_const_abs
@@ -1343,6 +1365,7 @@ module Prism
         super_method = frame.super_method
         nest = frame.nest
         block = frame.block
+        return_target = frame.return_target
 
         target = nil
         callable = BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
@@ -1354,7 +1377,7 @@ module Prism
           else
             Proc.new do |*args, **kwargs, &passed_block|
               block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, target, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, target, return_target, &block), args, kwargs, passed_block)
             end
           end
         end

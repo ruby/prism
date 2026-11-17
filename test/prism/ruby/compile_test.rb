@@ -74,6 +74,99 @@ module Prism
       end
     end
 
+    def test_nonlocal_return
+      assert_run(7, "class CompileTestNonlocalReturn; def value; [1].each { return 7 }; 9; end; end; CompileTestNonlocalReturn.new.value")
+      assert_run(7, "-> { [1].each { return 7 }; 9 }.call")
+      assert_run(7, "class CompileTestNestedReturn; def value; [1].each { [2].each { return 7 } }; 9; end; end; CompileTestNestedReturn.new.value")
+      assert_run([1, 2, 3], "class CompileTestReturnSplat; def value; [1].each { return 1, *[2, 3] }; end; end; CompileTestReturnSplat.new.value")
+      assert_run(nil, "class CompileTestReturnNil; def value; [1].each { return }; 9; end; end; CompileTestReturnNil.new.value")
+      assert_run(7, "class CompileTestForReturn; def value; for i in [1]; return 7; end; 9; end; end; CompileTestForReturn.new.value")
+      assert_run(1, <<~RUBY)
+        class CompileTestRecursiveReturn
+          def value(depth, &callback)
+            if depth == 0
+              callback.call
+            else
+              value(depth - 1) { return depth }
+              9
+            end
+          end
+        end
+        CompileTestRecursiveReturn.new.value(1)
+      RUBY
+      unit = compile_unit("def value; [1].each { return 7 }; end")
+      assert_include(unit.disasm, "return_nonlocal")
+      block = unit.graphs.find { |graph| graph.kind == :block }
+      assert_include(block.blocks.flat_map(&:insns).map(&:kind), :return_nonlocal)
+    end
+
+    def test_nonlocal_return_unwinding
+      assert_run([7, [:block, :method]], <<~RUBY)
+        class CompileTestReturnEnsure
+          def value(events)
+            begin
+              [1].each do
+                begin
+                  return 7
+                ensure
+                  events << :block
+                end
+              end
+            rescue Exception
+              events << :rescue
+            ensure
+              events << :method
+            end
+            9
+          end
+        end
+        events = []
+        [CompileTestReturnEnsure.new.value(events), events]
+      RUBY
+      assert_run(8, "class CompileTestOverrideReturn; def value; begin; [1].each { return 7 }; ensure; return 8; end; end; end; CompileTestOverrideReturn.new.value")
+      assert_run(8, "class CompileTestBlockOverrideReturn; def value; [1].each { begin; return 7; ensure; return 8; end }; end; end; CompileTestBlockOverrideReturn.new.value")
+      assert_run_raises(RuntimeError, "class CompileTestReturnEnsureRaises; def value; begin; [1].each { return 7 }; ensure; raise 'cleanup'; end; end; end; CompileTestReturnEnsureRaises.new.value", "cleanup")
+    end
+
+    def test_nonlocal_return_inactive_target
+      assert_run([7, :return], <<~RUBY)
+        class CompileTestEscapedReturn
+          def make
+            proc { return 7 }
+          end
+        end
+        callback = CompileTestEscapedReturn.new.make
+        begin
+          callback.call
+        rescue LocalJumpError => error
+          [error.exit_value, error.reason]
+        end
+      RUBY
+      assert_run_raises(LocalJumpError, "callback = -> { proc { return 7 } }.call; callback.call", "unexpected return")
+      assert_run([7, :return], <<~RUBY)
+        class CompileTestFiberReturn
+          def value
+            callback = proc { return 7 }
+            Fiber.new do
+              begin
+                callback.call
+              rescue LocalJumpError => error
+                [error.exit_value, error.reason]
+              end
+            end.resume
+          end
+        end
+        CompileTestFiberReturn.new.value
+      RUBY
+    end
+
+    def test_break_effect_context
+      assert_run([1, 2], "while true; break [1, 2]; 99; end")
+      assert_run([1, 2], "[1].each { break [1, 2]; 99 }")
+      assert_run([1, 2], "-> { break [1, 2]; 99 }.call")
+      assert_run([[2], [2]], "events = []; result = [1].each { break(events << 2); 99 }; [result, events]")
+    end
+
     def test_break_loops
       [
         "while true; break; end",
@@ -81,7 +174,6 @@ module Prism
         "while true; break nil; end",
         "while true; break false; end",
         "while true; break 3; end",
-        "while true; break [1, 2]; 99; end",
         "while true; break 1, 2; end",
         "while true; break *[1, 2]; end",
         "while true; break 1, *[2, 3], 4; end",
@@ -101,9 +193,6 @@ module Prism
       [
         "[1, 2].each { break }",
         "[1, 2].each { break 3 }",
-        "[1].each { break [1, 2]; 99 }",
-        "-> { break [1, 2]; 99 }.call",
-        "events = []; result = [1].each { break(events << 2); 99 }; [result, events]",
         "[1, 2].map { break 1, 2 }",
         "[1, 2].map { break 1, *[2, 3] }",
         "events = []; result = [1, 2].each { |i| events << i; break i if i == 2 }; [result, events]",
@@ -547,9 +636,9 @@ module Prism
 
     def test_logical_predicate_short_circuit
       [[false, true, false], [nil, true, true], [true, false, true], [true, true, false], [0, "truthy", false]].each do |left, right, last|
-        source = <<~RUBY
+        source = format(<<~RUBY, left.inspect, right.inspect, last.inspect)
           events = []
-          if (events << :left; #{left.inspect}) && (events << :right; #{right.inspect}) || (events << :last; #{last.inspect})
+          if (events << :left; %s) && (events << :right; %s) || (events << :last; %s)
             events << :then
           else
             events << :else
