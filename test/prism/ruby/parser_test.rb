@@ -72,6 +72,9 @@ module Prism
 
       # https://bugs.ruby-lang.org/issues/21168#note-5
       "command_method_call_2.txt",
+
+      # ? followed by a character that is not ASCII and not alphanumeric
+      "ternary_operator_non_ascii.txt",
     ]
 
     # These files contain code that is being parsed incorrectly by the parser
@@ -234,7 +237,11 @@ module Prism
         s(:block,
           s(:lambda),
             s(:args,
-              s(:blocknilarg)), nil))
+              s(:blocknilarg)), nil),
+        s(:def, :foo,
+          s(:args,
+            s(:blocknilarg)),
+          s(:send, nil, :bar)))
       end
     end
 

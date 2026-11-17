@@ -33,7 +33,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.7.0"
+        ruby-version: "2.7"
         bundler-cache: true
     - name: Generate templates
       run: bundle exec rake templates
@@ -58,7 +58,7 @@ jobs:
     - name: Validate RBS
       run: bundle exec rake typecheck:rbs
     - name: Check field kinds
-      run: rm lib/prism/node.rb && CHECK_FIELD_KIND=true bundle exec rake
+      run: CHECK_FIELD_KIND=true bundle exec rake
 
   build:
     strategy:
@@ -138,7 +138,9 @@ jobs:
         ruby-version: ruby
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_no_debug test
+      run: bundle exec rake
+      env:
+        PRISM_BUILD_NDEBUG: "1"
 
   build-debug:
     strategy:
@@ -172,7 +174,7 @@ jobs:
         ruby-version: ruby
         bundler-cache: true
     - name: Run Ruby tests
-      run: bundle exec rake compile_minimal test
+      run: bundle exec rake
       env:
         PRISM_BUILD_MINIMAL: "1"
 
@@ -232,7 +234,7 @@ jobs:
         ruby-version: jruby
         bundler-cache: true
     - name: Run Java Loader test
-      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
+      run: JRUBY_OPTS="-J-ea" bundle exec rake test:java_loader
 
   build-java-truffleruby:
     runs-on: ubuntu-latest
@@ -286,7 +288,7 @@ jobs:
     - name: Serialized size stats with all fields
       run: bundle exec rake serialized_size:topgems
     - name: Recompile with only semantic fields
-      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake clobber compile
+      run: PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1 bundle exec rake compile
     - name: Serialized size stats with only semantic fields
       run: bundle exec rake serialized_size:topgems
 
@@ -308,6 +310,18 @@ jobs:
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
+
+  ubsan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ruby
+        bundler-cache: true
+    - name: Run Ruby tests with the undefined behavior sanitizer
+      run: bundle exec rake test:ubsan
 
   gcc-analyzer:
     runs-on: ubuntu-latest

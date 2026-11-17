@@ -22,6 +22,44 @@ module Prism
       end
     end
 
+    def test_mixed_encoding_locations
+      ["ASCII-8BIT", "US-ASCII", "EUC-JP"].each do |encoding|
+        next if ENV["PRISM_BUILD_MINIMAL"] && encoding == "EUC-JP"
+
+        bytes = encoding == "EUC-JP" ? "\xA1\xA1" : "\xA1"
+        source = "\"\\u{df}abc#{bytes}\"".b
+        error = Prism.parse(source, encoding: encoding).errors.find { |diagnostic| diagnostic.type == :mixed_encoding }
+
+        assert_not_nil error
+        assert_equal 10, error.location.start_offset
+        assert_equal bytes.bytesize, error.location.length
+        assert_equal bytes.b, error.location.slice.b
+      end
+    end
+
+    def test_mixed_encoding_location_for_invalid_multibyte_character
+      return if ENV["PRISM_BUILD_MINIMAL"]
+
+      source = "\"\\u{df\xD3&".b
+      error = Prism.parse(source, encoding: "EUC-JP").errors.find { |diagnostic| diagnostic.type == :mixed_encoding }
+
+      assert_not_nil error
+      assert_equal 6, error.location.start_offset
+      assert_equal 1, error.location.length
+      assert_equal "\xD3".b, error.location.slice.b
+    end
+
+    def test_extra_unicode_codepoint_locations
+      ["a", "00", "a b", "a "].each do |extra|
+        result = Prism.parse("?\\u{0 #{extra}}")
+        error = result.errors.find { |diagnostic| diagnostic.type == :escape_invalid_unicode_literal }
+
+        assert_not_nil error
+        assert_equal 6, error.location.start_offset
+        assert_equal extra, error.location.slice
+      end
+    end
+
     def test_newline_preceding_eof
       err = Prism.parse("foo(").errors.first
       assert_equal 1, err.location.start_line
@@ -31,6 +69,28 @@ module Prism
 
       err = Prism.parse("foo(\n\n\n\n\n").errors.first
       assert_equal 5, err.location.start_line
+    end
+
+    def test_embdoc_beginning_control_characters
+      ["\0", "\C-d", "\C-z"].each do |character|
+        ["\n", "\r\n"].each do |newline|
+          comment = "=begin#{character}#{newline}ignored#{newline}=end#{newline}"
+          result = Prism.parse("#{comment}1#{newline}")
+
+          assert_predicate result, :success?
+          assert_equal 1, result.statement.value
+          assert_equal 1, result.comments.length
+          assert_kind_of EmbDocComment, result.comments.first
+          assert_equal comment, result.comments.first.location.slice
+        end
+      end
+    end
+
+    def test_unterminated_embdoc_after_control_character
+      ["\C-d", "\C-z"].each do |character|
+        result = Prism.parse("=begin#{character}")
+        assert_equal [:embdoc_term], result.errors.map(&:type)
+      end
     end
 
     def test_embdoc_ending

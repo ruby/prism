@@ -32,6 +32,8 @@ loaded per process (i.e., at most one version of the prism *gem* loaded in a pro
 
 `rake` calls `make` and then uses `Rake::ExtensionTask` to compile the C extension (see above).
 
+Changes to the extension's configuration options, passed after `--` or through `CONFIGURE_ARGS`, rerun `extconf.rb` and rebuild the extension. For example, `bundle exec rake compile -- --with-cflags=-O0` changes its compiler flags without requiring `rake clobber`.
+
 ### Building the prism gem by `gem install/bundle install`
 
 The gem contains the pre-generated templates.
@@ -101,11 +103,28 @@ If you want to build prism as a shared library and link against it, you should c
 
 #### Flags
 
-`make` respects the `MAKEFLAGS` environment variable. As such, to speed up the build you can run:
+`make` respects the `MAKEFLAGS` environment variable. `rake` sets it to run one job per processor when it is not already set, so to choose a different number of jobs you can run:
 
 ```
-MAKEFLAGS="-j10" bundle exec rake compile
+MAKEFLAGS="-j4" bundle exec rake compile
 ```
+
+## Build variants
+
+A build variant is chosen by an environment variable, which both the C extension (through `ext/prism/extconf.rb`) and `libprism` (through the `Makefile`) read. A variant is on when its variable is set, even to an empty value:
+
+* `PRISM_BUILD_DEBUG` - Defines the `PRISM_BUILD_DEBUG` build option below.
+* `PRISM_BUILD_MINIMAL` - Defines the `PRISM_BUILD_MINIMAL` build option below.
+* `PRISM_BUILD_NDEBUG` - Defines `NDEBUG`, which compiles out the assertions.
+* `PRISM_BUILD_UBSAN` - Compiles with the undefined behavior sanitizer, which aborts on the first undefined behavior it detects. `rake test:ubsan` runs the tests against this variant.
+
+For example, this builds the minimal variant and runs the tests against it:
+
+```
+PRISM_BUILD_MINIMAL=1 bundle exec rake
+```
+
+Each combination of variants builds the C extension in its own directory under `tmp/`, and `libprism` is rebuilt in `build/` whenever its flags change, so switching between variants never needs `rake clobber`. The `minimal` and `all-no-debug` targets of the `Makefile` remain as shorthands for building `libprism` alone; `all-no-debug` also compiles with `-O3`.
 
 ## Build options
 

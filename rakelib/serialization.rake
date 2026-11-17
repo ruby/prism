@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
+# The expected newlines are generated with the default (full) serialization
+# mode, since newlines.rb needs location fields, and the Java loader is tested
+# with only the semantic fields serialized, as the Java bindings use it. The
+# templates read the serialization mode when they are loaded, so each half runs
+# in a new rake process with the mode set for it.
 task "test:java_loader" do
-  # Recompile with PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS=1
-  # Due to some JRuby bug this does not get propagated to the compile task, so require the caller to set the env var
-  # ENV["PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS"] = "1"
-  raise "this task requires $SERIALIZE_ONLY_SEMANTICS_FIELDS to be set" unless ENV["PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS"]
-
-  # Generate the expected newlines with the default (full) serialization mode
-  # in a subprocess, since newlines.rb needs location fields.
-  sh({ "PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS" => nil }, "bundle", "exec", "rake", "clobber", "test:java_loader:newline_fixtures")
-
-  Rake::Task["clobber"].invoke
-  Rake::Task["test:java_loader:internal"].invoke
+  sh({ "PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS" => nil }, "bundle", "exec", "rake", "test:java_loader:newline_fixtures")
+  sh({ "PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS" => "1" }, "bundle", "exec", "rake", "test:java_loader:internal")
 end
 
 # Generates the fixtures for the MarkNewlinesVisitor check of test:java_loader:
@@ -53,6 +49,8 @@ task "test:java_loader:newline_fixtures" => :compile do
 end
 
 task "test:java_loader:internal" => :compile do
+  raise "this task requires PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS to be set" unless ENV["PRISM_SERIALIZE_ONLY_SEMANTICS_FIELDS"]
+
   fixtures = File.expand_path("../test/prism/fixtures", __dir__)
 
   $:.unshift(File.expand_path("../lib", __dir__))

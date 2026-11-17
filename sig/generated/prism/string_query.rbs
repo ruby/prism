@@ -4,13 +4,13 @@ module Prism
   # Query methods that allow categorizing strings based on their context for
   # where they could be valid in a Ruby syntax tree.
   class StringQuery
-    def self.local?: (String string) -> bool
+    def self.local?: (String string, ?version: String?) -> bool
 
-    def self.constant?: (String string) -> bool
+    def self.constant?: (String string, ?version: String?) -> bool
 
-    def self.method_name?: (String string) -> bool
+    def self.method_name?: (String string, ?version: String?) -> bool
 
-    def self.keyword?: (String string) -> bool
+    def self.keyword?: (String string, ?version: String?) -> bool
 
     # The string that this query is wrapping.
     attr_reader string: String
@@ -22,22 +22,22 @@ module Prism
 
     # Whether or not this string is a valid local variable name.
     #
-    # : () -> bool
-    def local?: () -> bool
+    # : (?version: String?) -> bool
+    def local?: (?version: String?) -> bool
 
     # Whether or not this string is a valid constant name.
     #
-    # : () -> bool
-    def constant?: () -> bool
+    # : (?version: String?) -> bool
+    def constant?: (?version: String?) -> bool
 
     # Whether or not this string is a valid method name.
     #
-    # : () -> bool
-    def method_name?: () -> bool
+    # : (?version: String?) -> bool
+    def method_name?: (?version: String?) -> bool
 
     # Whether or not this string is a valid keyword.
     #
-    # : () -> bool
-    def keyword?: () -> bool
+    # : (?version: String?) -> bool
+    def keyword?: (?version: String?) -> bool
   end
 end

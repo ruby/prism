@@ -31,6 +31,8 @@ module Prism
     if RUBY_ENGINE == "truffleruby"
       except.push(
         "emoji_method_calls.txt",
+        "multi_write_non_ascii.txt",
+        "ternary_operator_non_ascii.txt",
       )
     end
 

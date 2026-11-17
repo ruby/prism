@@ -11,6 +11,24 @@ FUZZ_OUTPUT_DIR = $(CURDIR)/test/fuzz/output
 SOEXT ?= $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
 CPPFLAGS := -Iinclude $(CPPFLAGS)
+
+# The build variants. Each is on when its variable is set, even to an empty
+# value, in the environment or on the command line. ext/prism/extconf.rb reads
+# the same variables the same way, so one variable selects the same variant of
+# libprism and of the C extension.
+ifneq ($(origin PRISM_BUILD_DEBUG),undefined)
+CPPFLAGS += -DPRISM_BUILD_DEBUG
+endif
+ifneq ($(origin PRISM_BUILD_MINIMAL),undefined)
+CPPFLAGS += -DPRISM_BUILD_MINIMAL
+endif
+ifneq ($(origin PRISM_BUILD_NDEBUG),undefined)
+CPPFLAGS += -DNDEBUG=1
+endif
+ifneq ($(origin PRISM_BUILD_UBSAN),undefined)
+CFLAGS += -fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer
+endif
+
 CFLAGS := -g -O2 -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(CFLAGS)
 JAVA_WASM_CFLAGS := -g0 -O2 -Oz -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wconversion -Wno-missing-braces -fno-sanitize=all -fno-stack-protector -fPIC -fvisibility=hidden -Wimplicit-fallthrough $(JAVA_WASM_CFLAGS)
 CC ?= cc
@@ -40,6 +58,26 @@ SOURCES := $(wildcard src/*.c src/*/*.c)
 SHARED_OBJECTS := $(subst src/,build/shared/,$(SOURCES:.c=.o))
 STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 
+# The objects depend on the flags they are compiled with as well as on their
+# sources. Make only compares timestamps, so build/.flags records the flags and
+# is rewritten whenever they differ from what it holds. Its timestamp then moves
+# only when the flags change, which makes the objects out of date exactly then.
+# Target-specific flags, such as those of `minimal`, reach it as a prerequisite.
+# In the same way, build/.sources records the list of sources, so that the
+# libraries are linked again when a source is removed.
+#
+# Separate stamps track shared-library linker flags and the archive command,
+# so changing those settings rebuilds only the affected library, not its objects.
+# Each Wasm target also tracks its own flags and the shared source list.
+#
+# Some makes compare timestamps to the second, such as the GNU Make 3.81 that
+# ships with macOS. A stamp written in the same second as the last objects of
+# the previous build would not be newer than them, so a changed stamp is written
+# a second after it is found to differ.
+BUILD_FLAGS = $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS)
+WASM_BUILD_FLAGS = $(WASI_SDK_PATH) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(WASM_EXPORTS)
+JAVA_WASM_BUILD_FLAGS = $(WASI_SDK_PATH) $(DEBUG_FLAGS) $(CPPFLAGS) $(JAVA_WASM_CFLAGS)
+
 all: shared static
 
 shared: build/libprism.$(SOEXT)
@@ -48,15 +86,42 @@ wasm: javascript/src/prism.wasm
 java-wasm: java/wasm/src/main/wasm/prism.wasm
 playground: doc/playground
 
-build/libprism.$(SOEXT): $(SHARED_OBJECTS)
-	$(ECHO) "linking $@ with $(CC)"
-	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
+build/.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(BUILD_FLAGS)' > $@; }
 
-build/libprism.a: $(STATIC_OBJECTS)
+build/.sources: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(SOURCES)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(SOURCES)' > $@; }
+
+build/.ldflags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(SHARED_LDFLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(SHARED_LDFLAGS)' > $@; }
+
+build/.arflags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(AR) $(ARFLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(AR) $(ARFLAGS)' > $@; }
+
+build/.wasm.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(WASM_BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(WASM_BUILD_FLAGS)' > $@; }
+
+build/.java-wasm.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(JAVA_WASM_BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(JAVA_WASM_BUILD_FLAGS)' > $@; }
+
+build/libprism.$(SOEXT): $(SHARED_OBJECTS) build/.flags build/.sources build/.ldflags
+	$(ECHO) "linking $@ with $(CC)"
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) $(OPTFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
+
+# `ar -r` only adds and replaces members, so the archive is created afresh to
+# hold exactly the current objects.
+build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources build/.arflags
 	$(ECHO) "building $@ with $(AR)"
+	$(Q) $(RMALL) $@
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
 
-javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
+javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS) build/.sources build/.wasm.flags
 	$(ECHO) "building $@"
 	$(Q) $(WASI_SDK_PATH)/bin/clang --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot/ \
 		$(DEBUG_FLAGS) \
@@ -74,7 +139,7 @@ doc/playground: javascript/src/prism.wasm
 	$(Q) $(MAKEDIRS) $@
 	$(Q) cp javascript/src/*.js javascript/src/prism.wasm javascript/package.json $@
 
-java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
+java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS) build/.sources build/.java-wasm.flags
 	$(ECHO) "building $@"
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) $(WASI_SDK_PATH)/bin/clang \
@@ -84,15 +149,15 @@ java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
 		-Wl,--export-all -Wl,--no-entry -mexec-model=reactor -lc++ -lc++abi \
 		-o $@ $(SOURCES)
 
-build/shared/%.o: src/%.c Makefile $(HEADERS)
+build/shared/%.o: src/%.c Makefile $(HEADERS) build/.flags
 	$(ECHO) "compiling $@"
 	$(Q) $(MAKEDIRS) $(@D)
-	$(Q) $(CC) $(DEBUG_FLAGS) -DPRISM_EXPORT_SYMBOLS $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(Q) $(CC) $(DEBUG_FLAGS) -DPRISM_EXPORT_SYMBOLS $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
-build/static/%.o: src/%.c Makefile $(HEADERS)
+build/static/%.o: src/%.c Makefile $(HEADERS) build/.flags
 	$(ECHO) "compiling $@"
 	$(Q) $(MAKEDIRS) $(@D)
-	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
 build/fuzz.%: $(SOURCES) test/fuzz/%.c test/fuzz/fuzz.c
 	$(ECHO) "building $* fuzzer"
