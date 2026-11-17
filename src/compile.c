@@ -2787,23 +2787,24 @@ compile_local_variable_logical_write_node(PrismBuilder *builder, const pm_node_t
 }
 
 static uint32_t
-compile_logical_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *left, const pm_node_t *right) {
+compile_logical_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node, const pm_node_t *left, const pm_node_t *right) {
     uint32_t right_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
+    uint32_t nparams = context == kPrismBuilderValue;
+    uint32_t join_block_id = make_block(builder, nparams);
 
     uint32_t left_value_id = compile_node(builder, kPrismBuilderValue, left);
     if (PM_NODE_TYPE(node) == PM_AND_NODE) {
-        emit_branchif(builder, node->node_id, left_value_id, right_block_id, 0, NULL, join_block_id, 1, &left_value_id);
+        emit_branchif(builder, node->node_id, left_value_id, right_block_id, 0, NULL, join_block_id, nparams, &left_value_id);
     } else {
-        emit_branchif(builder, node->node_id, left_value_id, join_block_id, 1, &left_value_id, right_block_id, 0, NULL);
+        emit_branchif(builder, node->node_id, left_value_id, join_block_id, nparams, &left_value_id, right_block_id, 0, NULL);
     }
 
     builder->state.block_id = right_block_id;
-    uint32_t right_value_id = compile_node(builder, kPrismBuilderValue, right);
-    emit_branch(builder, node->node_id, join_block_id, 1, &right_value_id);
+    uint32_t right_value_id = compile_node(builder, context, right);
+    emit_branch(builder, node->node_id, join_block_id, nparams, &right_value_id);
 
     builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
 static uint32_t
@@ -4143,8 +4144,8 @@ compile_alias_method_node(PrismBuilder *builder, PrismBuilderContext context, co
  * ^^^^^^^
  */
 static uint32_t
-compile_and_node(PrismBuilder *builder, const pm_and_node_t *node) {
-    return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
+compile_and_node(PrismBuilder *builder, PrismBuilderContext context, const pm_and_node_t *node) {
+    return compile_logical_node(builder, context, PM_NODE_UPCAST(node), node->left, node->right);
 }
 
 /*
@@ -5884,7 +5885,7 @@ compile_numbered_reference_read_node(PrismBuilder *builder, const pm_numbered_re
  */
 static uint32_t
 compile_or_node(PrismBuilder *builder, const pm_or_node_t *node) {
-    return compile_logical_node(builder, PM_NODE_UPCAST(node), node->left, node->right);
+    return compile_logical_node(builder, kPrismBuilderValue, PM_NODE_UPCAST(node), node->left, node->right);
 }
 
 /*
@@ -6314,7 +6315,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_ALIAS_METHOD_NODE:
             return compile_alias_method_node(builder, context, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
-            return compile_and_node(builder, (const pm_and_node_t *) node);
+            return compile_and_node(builder, context, (const pm_and_node_t *) node);
         case PM_ARRAY_NODE:
             return compile_array_node(builder, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
