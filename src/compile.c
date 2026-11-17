@@ -2703,32 +2703,33 @@ compile_begin_body(PrismBuilder *builder, PrismBuilderContext context, const pm_
 
 
 static uint32_t
-compile_call_logical_write_node(PrismBuilder *builder, const pm_node_t *node, const pm_node_t *receiver, pm_constant_id_t read_name, pm_constant_id_t write_name, const pm_node_t *value) {
+compile_call_logical_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node, const pm_node_t *receiver, pm_constant_id_t read_name, pm_constant_id_t write_name, const pm_node_t *value) {
     uint32_t receiver_id = receiver ? compile_node(builder, kPrismBuilderValue, receiver) : emit_load_self(builder, node->node_id);
     uint32_t write_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
+    uint32_t nparams = context == kPrismBuilderValue;
+    uint32_t join_block_id = make_block(builder, nparams);
 
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
         uint32_t read_block_id = make_block(builder, 0);
         uint32_t nil_id = emit_nil_p(builder, node->node_id, receiver_id);
-        emit_branchif(builder, node->node_id, nil_id, join_block_id, 1, &receiver_id, read_block_id, 0, NULL);
+        emit_branchif(builder, node->node_id, nil_id, join_block_id, nparams, &receiver_id, read_block_id, 0, NULL);
         builder->state.block_id = read_block_id;
     }
 
     uint32_t current_id = emit_call(builder, node->node_id, read_name, receiver_id, 0, NULL, UINT32_MAX, false, false, node->flags & PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
     if (PM_NODE_TYPE_P(node, PM_CALL_AND_WRITE_NODE)) {
-        emit_branchif(builder, node->node_id, current_id, write_block_id, 0, NULL, join_block_id, 1, &current_id);
+        emit_branchif(builder, node->node_id, current_id, write_block_id, 0, NULL, join_block_id, nparams, &current_id);
     } else {
-        emit_branchif(builder, node->node_id, current_id, join_block_id, 1, &current_id, write_block_id, 0, NULL);
+        emit_branchif(builder, node->node_id, current_id, join_block_id, nparams, &current_id, write_block_id, 0, NULL);
     }
 
     builder->state.block_id = write_block_id;
     uint32_t value_id = compile_node(builder, kPrismBuilderValue, value);
     emit_call(builder, node->node_id, write_name, receiver_id, 1, &value_id, UINT32_MAX, false, false, node->flags & PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
-    emit_branch(builder, node->node_id, join_block_id, 1, &value_id);
+    emit_branch(builder, node->node_id, join_block_id, nparams, &value_id);
 
     builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
 static uint32_t
@@ -4389,8 +4390,8 @@ compile_break_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_call_and_write_node(PrismBuilder *builder, const pm_call_and_write_node_t *node) {
-    return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
+compile_call_and_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_call_and_write_node_t *node) {
+    return compile_call_logical_write_node(builder, context, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
 /*
@@ -4446,7 +4447,7 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
  */
 static uint32_t
 compile_call_or_write_node(PrismBuilder *builder, const pm_call_or_write_node_t *node) {
-    return compile_call_logical_write_node(builder, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
+    return compile_call_logical_write_node(builder, kPrismBuilderValue, PM_NODE_UPCAST(node), node->receiver, node->read_name, node->write_name, node->value);
 }
 
 /*
@@ -6358,7 +6359,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_BREAK_NODE:
             return compile_break_node(builder, context, (const pm_break_node_t *) node);
         case PM_CALL_AND_WRITE_NODE:
-            return compile_call_and_write_node(builder, (const pm_call_and_write_node_t *) node);
+            return compile_call_and_write_node(builder, context, (const pm_call_and_write_node_t *) node);
         case PM_CALL_NODE:
             return compile_call_node(builder, (const pm_call_node_t *) node);
         case PM_CALL_OPERATOR_WRITE_NODE:
