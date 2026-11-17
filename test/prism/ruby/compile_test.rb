@@ -5754,6 +5754,29 @@ module Prism
       assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
     end
 
+    def test_constant_path_and_write_effect_context
+      ["self::Value", "::CompileTestPathAndEffect"].each do |target|
+        scope = Module.new
+        owner, name = target.start_with?("::") ? [Object, :CompileTestPathAndEffect] : [scope, :Value]
+        owner.const_set(name, true)
+        graph = compile_unit("#{target} &&= [1, 2]; #{target}").graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? })
+        ignore_warnings do
+          assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        end
+        [nil, false].each do |value|
+          ignore_warnings { owner.const_set(name, value) }
+          graph = compile_unit("#{target} &&= raise('rhs ran'); #{target}").graphs[0]
+          assert_equal(value, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        end
+        owner.send(:remove_const, name)
+        graph = compile_unit("#{target} &&= 1; 7").graphs[0]
+        assert_raise(NameError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      ensure
+        owner.send(:remove_const, name) if owner&.const_defined?(name, false)
+      end
+    end
+
     def test_constant_logical_write
       ["A", "self::A", "::CompileTestConstantAssignment"].each do |target|
         ["&&=", "||="].each do |operator|
