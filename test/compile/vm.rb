@@ -58,7 +58,7 @@ module Prism
         instance_methods(BasicObject, "BasicObject", %i[equal? __send__ instance_exec])
         instance_methods(Class, "Class", %i[superclass])
         instance_methods(Hash, "Hash", %i[merge])
-        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method protected_methods public_send respond_to? singleton_class sprintf to_s])
+        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method public_send respond_to? singleton_class sprintf to_s])
         singleton_methods(Kernel, "Kernel", %i[lambda])
         singleton_methods(TOPLEVEL_BINDING.receiver, "main", %i[private public])
         instance_methods(Module, "Module", %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get const_set const_source_location constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method])
@@ -901,7 +901,7 @@ module Prism
       end
 
       def protected_call?(receiver, name, caller)
-        return false unless StdLib[:Kernel_protected_methods].bind_call(receiver).include?(name)
+        return false unless StdLib[:Module_protected_method_defined?].bind_call(method_lookup_class(receiver), name)
 
         owner = StdLib[:Kernel_method].bind_call(receiver, name).owner
         StdLib[:"Module_==="].bind_call(owner, caller)
