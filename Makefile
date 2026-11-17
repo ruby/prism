@@ -66,6 +66,9 @@ STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 # In the same way, build/.sources records the list of sources, so that the
 # libraries are linked again when a source is removed.
 #
+# Separate stamps track shared-library linker flags and the archive command,
+# so changing those settings rebuilds only the affected library, not its objects.
+#
 # Some makes compare timestamps to the second, such as the GNU Make 3.81 that
 # ships with macOS. A stamp written in the same second as the last objects of
 # the previous build would not be newer than them, so a changed stamp is written
@@ -88,13 +91,21 @@ build/.sources: FORCE
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) printf '%s\n' '$(SOURCES)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(SOURCES)' > $@; }
 
-build/libprism.$(SOEXT): $(SHARED_OBJECTS) build/.flags build/.sources
+build/.ldflags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(SHARED_LDFLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(SHARED_LDFLAGS)' > $@; }
+
+build/.arflags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(AR) $(ARFLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(AR) $(ARFLAGS)' > $@; }
+
+build/libprism.$(SOEXT): $(SHARED_OBJECTS) build/.flags build/.sources build/.ldflags
 	$(ECHO) "linking $@ with $(CC)"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) $(OPTFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
 
 # `ar -r` only adds and replaces members, so the archive is created afresh to
 # hold exactly the current objects.
-build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources
+build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources build/.arflags
 	$(ECHO) "building $@ with $(AR)"
 	$(Q) $(RMALL) $@
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
