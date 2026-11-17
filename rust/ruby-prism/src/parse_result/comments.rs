@@ -54,14 +54,9 @@ impl<'pr> Comment<'pr> {
     }
 }
 
-enum CommentsSource {
-    Slice(Vec<*const pm_comment_t>),
-    Node { node: *const pm_node_t, count: u32 },
-}
-
-/// An iterator over comments collected from the parse result or attached to a node.
+/// An iterator over comments collected from the parse result.
 pub struct Comments<'pr> {
-    source: CommentsSource,
+    ptrs: Vec<*const pm_comment_t>,
     index: usize,
     parser: *const pm_parser_t,
     marker: PhantomData<&'pr pm_comment_t>,
@@ -69,28 +64,7 @@ pub struct Comments<'pr> {
 
 impl Comments<'_> {
     pub(crate) const fn new(ptrs: Vec<*const pm_comment_t>, parser: *const pm_parser_t) -> Self {
-        Comments {
-            source: CommentsSource::Slice(ptrs),
-            index: 0,
-            parser,
-            marker: PhantomData,
-        }
-    }
-
-    pub(crate) const fn for_node(parser: *const pm_parser_t, node: *const pm_node_t, count: u32) -> Self {
-        Comments {
-            source: CommentsSource::Node { node, count },
-            index: 0,
-            parser,
-            marker: PhantomData,
-        }
-    }
-
-    const fn remaining(&self) -> usize {
-        match &self.source {
-            CommentsSource::Slice(ptrs) => ptrs.len().saturating_sub(self.index),
-            CommentsSource::Node { count, .. } => (*count as usize).saturating_sub(self.index),
-        }
+        Comments { ptrs, index: 0, parser, marker: PhantomData }
     }
 }
 
@@ -98,28 +72,54 @@ impl<'pr> Iterator for Comments<'pr> {
     type Item = Comment<'pr>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let comment = match &self.source {
-            CommentsSource::Slice(ptrs) => *ptrs.get(self.index)?,
-            CommentsSource::Node { node, count } => {
-                if self.index >= *count as usize {
-                    return None;
-                }
+        if self.index < self.ptrs.len() {
+            let comment = self.ptrs[self.index];
+            self.index += 1;
+            Some(Comment { raw: comment, parser: self.parser, marker: PhantomData })
+        } else {
+            None
+        }
+    }
+}
 
-                unsafe { pm_node_comment(self.parser, *node, u32::try_from(self.index).ok()?) }
-            },
-        };
+/// An iterator over the comments attached to a node.
+///
+/// Comments are only attached when the source is parsed with the
+/// [`attach_comments`](crate::Options::attach_comments) option.
+pub struct NodeComments<'pr> {
+    parser: *const pm_parser_t,
+    node: *const pm_node_t,
+    index: u32,
+    count: u32,
+    marker: PhantomData<&'pr pm_comment_t>,
+}
 
-        self.index += 1;
-        Some(Comment { raw: comment, parser: self.parser, marker: PhantomData })
+impl NodeComments<'_> {
+    pub(crate) const fn new(parser: *const pm_parser_t, node: *const pm_node_t, count: u32) -> Self {
+        NodeComments { parser, node, index: 0, count, marker: PhantomData }
+    }
+}
+
+impl<'pr> Iterator for NodeComments<'pr> {
+    type Item = Comment<'pr>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.count {
+            let comment = unsafe { pm_node_comment(self.parser, self.node, self.index) };
+            self.index += 1;
+            Some(Comment { raw: comment, parser: self.parser, marker: PhantomData })
+        } else {
+            None
+        }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let remaining = self.remaining();
+        let remaining = (self.count - self.index) as usize;
         (remaining, Some(remaining))
     }
 }
 
-impl ExactSizeIterator for Comments<'_> {}
+impl ExactSizeIterator for NodeComments<'_> {}
 
 /// A magic comment that was found during parsing.
 #[derive(Debug)]

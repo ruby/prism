@@ -542,7 +542,7 @@ use std::marker::PhantomData;
 
 #[allow(clippy::wildcard_imports)]
 use ruby_prism_sys::*;
-use crate::{{Comments, ConstantId, ConstantList, Integer, Location, NodeList}};
+use crate::{{ConstantId, ConstantList, Integer, Location, NodeComments, NodeList}};
 "
     )?;
 
@@ -621,14 +621,14 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    /// [`attach_comments`](crate::Options::attach_comments) option.")?;
     writeln!(file, "    #[allow(clippy::match_same_arms)]")?;
     writeln!(file, "    #[must_use]")?;
-    writeln!(file, "    pub fn comments(&self) -> Comments<'pr> {{")?;
+    writeln!(file, "    pub fn comments(&self) -> NodeComments<'pr> {{")?;
     writeln!(file, "        let (parser, node) = match *self {{")?;
     for node in &config.nodes {
         writeln!(file, "            Self::{} {{ parser, pointer, .. }} => (parser, pointer.cast::<pm_node_t>()),", node.name)?;
     }
     writeln!(file, "        }};")?;
     writeln!(file, "        let count = unsafe {{ pm_node_comments_size(parser, node) }};")?;
-    writeln!(file, "        Comments::for_node(parser, node, count)")?;
+    writeln!(file, "        NodeComments::new(parser, node, count)")?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
 
