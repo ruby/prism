@@ -1738,9 +1738,52 @@ module Prism
     end
 
     def test_compile_cli_disasm
-      stdout, stderr, status = Open3.capture3(RbConfig.ruby, File.expand_path("cli.rb", __dir__), "compile", "-e", "1 + 2")
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, File.expand_path("cli.rb", __dir__), "--dump=ir", "-e", "1 + 2")
       assert_predicate(status, :success?, stderr)
       assert_equal(disasm(compile_unit("1 + 2")), stdout)
+    end
+
+    def test_interpret_cli_inputs
+      cli = File.expand_path("cli.rb", __dir__)
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, "-e", "value = 1", "-e", 'puts value + 2; puts ARGV', "argument")
+      assert_predicate(status, :success?, stderr)
+      assert_equal("3\nargument\n", stdout)
+      assert_empty(stderr)
+
+      [[], ["-"]].each do |arguments|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, *arguments, stdin_data: 'puts __FILE__; puts $0; puts 1 + 2')
+        assert_predicate(status, :success?, stderr)
+        assert_equal("-\n-\n3\n", stdout)
+        assert_empty(stderr)
+      end
+
+      Tempfile.create(["compile_cli", ".rb"]) do |file|
+        file.write('puts __FILE__; puts $0; puts ARGV')
+        file.flush
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, file.path, "--dump=ir")
+        assert_predicate(status, :success?, stderr)
+        assert_equal("#{file.path}\n#{file.path}\n--dump=ir\n", stdout)
+        assert_empty(stderr)
+      end
+    end
+
+    def test_dump_cli_stdin
+      cli = File.expand_path("cli.rb", __dir__)
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, "--dump=ir", stdin_data: "puts 1 + 2")
+      assert_predicate(status, :success?, stderr)
+      expected = Prism.compile("puts 1 + 2", filepath: "-", raise_error: :plain).value
+      assert_equal(disasm(expected), stdout)
+      assert_empty(stderr)
+    end
+
+    def test_cli_invalid_options
+      cli = File.expand_path("cli.rb", __dir__)
+      [["-e"], ["--dump=unknown"], ["--unknown"]].each do |arguments|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, *arguments)
+        assert_equal(false, status.success?)
+        assert_empty(stdout)
+        assert_include(stderr, "Usage:")
+      end
     end
 
     def test_vm_compilation_warnings_across_files
@@ -1759,11 +1802,11 @@ module Prism
 
     def test_compile_and_interpret_cli_warnings
       cli = File.expand_path("cli.rb", __dir__)
-      ["compile", "interpret"].each do |command|
-        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, command, "-e", "\n{a: 1, a: 2}")
+      [["--dump=ir"], []].each do |options|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, *options, "-e", "\n{a: 1, a: 2}")
         assert_predicate(status, :success?, stderr)
         assert_equal("-e:2: warning: key :a is duplicated and overwritten on line 2\n", stderr)
-        assert_empty(stdout) if command == "interpret"
+        assert_empty(stdout) if options.empty?
       end
     end
 
@@ -1771,7 +1814,7 @@ module Prism
       cli = File.expand_path("cli.rb", __dir__)
       source = "unused = 1; puts :done"
       [[], ["-w"], ["-W0"]].each do |flags|
-        stdout, stderr, status = Open3.capture3(RbConfig.ruby, *flags, cli, "interpret", "-e", source)
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, *flags, cli, "-e", source)
         assert_predicate(status, :success?, stderr)
         assert_equal("done\n", stdout)
         if flags == ["-w"]
@@ -1780,7 +1823,7 @@ module Prism
           assert_empty(stderr)
         end
       end
-      _, stderr, status = Open3.capture3(RbConfig.ruby, "-W0", cli, "interpret", "-e", "{a: 1, a: 2}")
+      _, stderr, status = Open3.capture3(RbConfig.ruby, "-W0", cli, "-e", "{a: 1, a: 2}")
       assert_predicate(status, :success?, stderr)
       assert_empty(stderr)
     end
