@@ -1,8 +1,8 @@
 # Encoding
 
-When parsing a Ruby file, there are times when the parser must parse identifiers. Identifiers are names of variables, methods, classes, etc. To determine the start of an identifier, the parser must be able to tell if the subsequent bytes form an alphabetic character. To determine the rest of the identifier, the parser must look forward through all alphanumeric characters.
+When parsing a Ruby file, there are times when the parser must parse identifiers. Identifiers are names of variables, methods, classes, etc. An identifier starts with an ASCII letter, an underscore, or any character that is not ASCII. The rest of it is ASCII letters, digits, and underscores, and any characters that are not ASCII. An identifier is a constant name if its first character is uppercase.
 
-Determining if a set of bytes comprise an alphabetic or alphanumeric character is encoding-dependent. By default, the parser assumes that all source files are encoded UTF-8. If the file is not encoded in UTF-8, it must be encoded using an encoding that is "ASCII compatible" (i.e., all of the codepoints below 128 match the corresponding codepoints in ASCII and the minimum number of bytes required to represent a codepoint is 1 byte).
+Which bytes form a character, and which characters begin a constant name, depends on the encoding. By default, the parser assumes that all source files are encoded UTF-8. If the file is not encoded in UTF-8, it must be encoded using an encoding that is "ASCII compatible" (i.e., all of the codepoints below 128 match the corresponding codepoints in ASCII and the minimum number of bytes required to represent a codepoint is 1 byte).
 
 If the file is not encoded in UTF-8, the user must specify the encoding in a "magic" comment at the top of the file. The comment looks like:
 
@@ -103,7 +103,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `Windows-31J`
 * `Windows-874`
 
-For each of these encodings, prism provides functions for checking if the subsequent bytes can be interpreted as a character, and then if that character is alphabetic, alphanumeric, or uppercase.
+For each of these encodings, prism provides functions for checking if the subsequent bytes can be interpreted as a character, and then if that character begins a constant name. In the encodings whose characters are Unicode code points, such as UTF-8 and CESU-8, that depends on the version of Unicode that the targeted version of Ruby uses.
 
 ## Getting notified when the encoding changes
 
