@@ -412,6 +412,32 @@ module Prism
       assert_run([1, 2], '[1, 2]')
     end
 
+    def test_begin_compilation_context
+      [
+        'begin; [1, 2]; end; 7',
+        'begin; [1, 2]; rescue; end; 7',
+        'begin; raise; rescue; [1, 2]; end; 7',
+        'begin; raise; rescue; [1, 2]; ensure; [3, 4]; end; 7',
+        'begin; [1, 2]; ensure; [3, 4]; end; 7',
+        'begin; 1; rescue; 2; else; [1, 2]; end; 7',
+        'begin; ensure; end; 7',
+        'begin; rescue; else; ensure; end; 7'
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        assert_not_include(kinds, :new_array_static, source)
+        assert_not_include(kinds, :new_array, source)
+      end
+
+      assert_run([1, 2], 'begin; [1, 2]; rescue; end')
+      assert_run([1, 2], 'begin; [1, 2]; ensure; [3, 4]; end')
+      assert_run([1, 2], 'begin; 1; rescue; 2; else; [1, 2]; end')
+      assert_run([1, 2], 'begin; raise; rescue; [1, 2]; ensure; [3, 4]; end')
+      assert_run([1, 2], 'events = []; begin; events << 1; ensure; events << 2; end; events')
+      assert_run([1, 2, 3], 'events = []; begin; events << 1; raise; rescue; events << 2; ensure; events << 3; end; events')
+    end
+
     def test_discarded_array_preserves_effects_and_splat_coercion
       source = <<~'RUBY'
         events = []
