@@ -5739,6 +5739,21 @@ module Prism
       assert_raise(NameError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
     end
 
+    def test_constant_or_write_effect_context
+      scope = Module.new
+      graph = compile_unit("Value ||= [1, 2]; Value").graphs[0]
+      assert(graph.blocks.all? { |block| block.params.empty? })
+      assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      [nil, false].each do |value|
+        ignore_warnings do
+          scope.const_set(:Value, value)
+          assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        end
+      end
+      graph = compile_unit("Value ||= raise('rhs ran'); Value").graphs[0]
+      assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+    end
+
     def test_constant_logical_write
       ["A", "self::A", "::CompileTestConstantAssignment"].each do |target|
         ["&&=", "||="].each do |operator|
