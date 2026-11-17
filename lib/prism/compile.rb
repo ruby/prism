@@ -41,14 +41,24 @@ module Prism
       end
 
       def build(parts)
-        if @options.anybits?(Regexp::NOENCODING)
-          parts.each do |part|
-            if part.encoding != Encoding::ASCII_8BIT && !part.ascii_only?
-              raise RegexpError, "/.../n has a non escaped non ASCII character in non ASCII-8BIT script"
+        fixed_encoding = nil
+        parts.each do |part|
+          if @options.anybits?(Regexp::NOENCODING) && part.encoding != Encoding::ASCII_8BIT && !part.ascii_only?
+            raise RegexpError, "/.../n has a non escaped non ASCII character in non ASCII-8BIT script"
+          end
+          raise ArgumentError, "invalid multibyte character" unless part.valid_encoding?
+          unless part.ascii_only?
+            if fixed_encoding && fixed_encoding != part.encoding
+              raise RegexpError, "encoding mismatch in dynamic regexp: #{fixed_encoding} and #{part.encoding}"
             end
+            fixed_encoding = part.encoding
           end
         end
         pattern = parts.empty? ? String.new(encoding: @encoding) : parts.join
+        pattern.force_encoding(fixed_encoding) if fixed_encoding
+        if pattern.ascii_only? && @flags.anybits?(RegularExpressionFlags::EUC_JP | RegularExpressionFlags::WINDOWS_31J | RegularExpressionFlags::UTF_8)
+          pattern.force_encoding(@encoding)
+        end
         Regexp.new(pattern, @options).freeze
       end
 
@@ -1170,9 +1180,9 @@ module Prism
             when :new_regexp
               values[insn.opnds[0]] = insn.data.build(values.values_at(*insn.opnds[1..]))
             when :new_string
-              values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join
+              values[insn.opnds[0]] = concatenate_strings(values.values_at(*insn.opnds[1..]))
             when :new_symbol
-              values[insn.opnds[0]] = values.values_at(*insn.opnds[1..]).join.to_sym
+              values[insn.opnds[0]] = concatenate_strings(values.values_at(*insn.opnds[1..])).to_sym
             when :once
               site, initializer = insn.data
               state = @once_mutex.synchronize { @once_states[site] ||= OnceState.new }
@@ -1280,6 +1290,17 @@ module Prism
       ensure
         frame.last_match = $~
         frame.last_line = $_
+      end
+
+      def concatenate_strings(parts)
+        result = String.new(encoding: parts.empty? ? Encoding::ASCII_8BIT : parts[0].encoding)
+        parts.each do |part|
+          result << part
+          if result.encoding == Encoding::US_ASCII && part.encoding != Encoding::US_ASCII
+            result.force_encoding(part.encoding)
+          end
+        end
+        result
       end
 
       def with_break_target(block)

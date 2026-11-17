@@ -24,6 +24,18 @@ module Prism
       end
     end
 
+    def test_interpolated_string_encodings
+      encodings = ["UTF-8", "US-ASCII", "ASCII-8BIT", "ISO-8859-1", "EUC-JP", "Windows-31J"]
+      parts = ['""', '"a"', '"".b', '"a".b', '"\xFF".b', '"\u00E9"', '"\xE9".force_encoding("ISO-8859-1")']
+      literals = ['"#{part}"', '"a#{part}"', '"#{part}a"', '"#{part}#{part}"']
+      encodings.product(parts, literals).each do |encoding, part, literal|
+        source = "# encoding: #{encoding}\n# frozen_string_literal: false\npart = #{part}; #{literal}".force_encoding(Encoding.find(encoding))
+        expected = eval(source)
+        actual = vm.run(compile_unit(source))
+        assert_equal([expected.bytes, expected.encoding, expected.valid_encoding?], [actual.bytes, actual.encoding, actual.valid_encoding?], source)
+      end
+    end
+
     def test_literal_symbol_encodings
       [
         ["US-ASCII", ':"\xFF"', Encoding::ASCII_8BIT],
@@ -4267,6 +4279,28 @@ module Prism
         actual = vm.run(compile_unit(source))
         assert_equal([expected.options, expected.encoding, expected.source.bytes, expected.source.encoding], [actual.options, actual.encoding, actual.source.bytes, actual.source.encoding], source)
         assert_predicate(actual, :frozen?)
+      end
+    end
+
+    def test_dynamic_regexp_encodings
+      encodings = ["UTF-8", "US-ASCII", "ASCII-8BIT", "ISO-8859-1", "EUC-JP", "Windows-31J"]
+      parts = ['""', '"a"', '"".b', '"a".b', '"\xFF".b', '"\u00E9"', '"\xE9".force_encoding("ISO-8859-1")',
+        '"a".encode("UTF-16LE")', '"".encode("UTF-16LE")', '"\xFF".force_encoding("UTF-8")']
+      literals = ['/#{part}/', '/a#{part}/', '/#{part}a/', '/#{part}/n', '/#{part}/u', '/#{part}/e', '/#{part}/s', '/#{part}/uo']
+      encodings.product(parts, literals).each do |encoding, part, literal|
+        source = "# encoding: #{encoding}\n# frozen_string_literal: false\npart = #{part}; #{literal}".force_encoding(Encoding.find(encoding))
+        expected = begin
+          eval(source)
+        rescue RegexpError, ArgumentError, Encoding::CompatibilityError => error
+          error
+        end
+        if expected.is_a?(Exception)
+          assert_raise(expected.class, source) { vm.run(compile_unit(source)) }
+        else
+          actual = vm.run(compile_unit(source))
+          assert_equal([expected.source.bytes, expected.encoding, expected.options, expected.source.encoding],
+            [actual.source.bytes, actual.encoding, actual.options, actual.source.encoding], source)
+        end
       end
     end
 

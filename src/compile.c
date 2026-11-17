@@ -3372,6 +3372,23 @@ compile_program_node_statements(PrismBuilder *builder, PrismBuilderContext conte
 
 /******************************************************************************/
 
+static uint32_t *
+compile_string_parts(PrismBuilder *builder, uint32_t node_id, const pm_node_list_t *parts, uint32_t *nvalue_ids) {
+    bool sole_interpolation = parts->size == 1 && !PM_NODE_TYPE_P(parts->nodes[0], PM_STRING_NODE);
+    *nvalue_ids = (uint32_t) parts->size + sole_interpolation;
+    uint32_t *value_ids = pm_arena_alloc(&builder->scratch, *nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
+
+    if (sole_interpolation) {
+        uint32_t object_id = make_object_string(builder, "", 0);
+        builder->unit->objects[object_id].as.string.flags = PM_STRING_FLAGS_FROZEN;
+        value_ids[0] = emit_load_object(builder, node_id, object_id);
+    }
+    for (uint32_t idx = 0; idx < parts->size; ++idx) {
+        value_ids[idx + sole_interpolation] = compile_node(builder, kPrismBuilderValue, parts->nodes[idx]);
+    }
+    return value_ids;
+}
+
 static uint32_t
 compile_regexp_parts(PrismBuilder *builder, const pm_node_t *node, const pm_node_list_t *parts) {
     uint32_t nvalue_ids = (uint32_t) parts->size;
@@ -5800,12 +5817,8 @@ static uint32_t
 compile_interpolated_string_node(PrismBuilder *builder, PrismBuilderContext context, const pm_interpolated_string_node_t *node) {
     if (context == kPrismBuilderEffect && PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL)) return UINT32_MAX;
 
-    uint32_t nvalue_ids = (uint32_t) node->parts.size;
-    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
-
-    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, kPrismBuilderValue, node->parts.nodes[idx]);
-    }
+    uint32_t nvalue_ids;
+    uint32_t *value_ids = compile_string_parts(builder, node->base.node_id, &node->parts, &nvalue_ids);
 
     uint32_t value_id = emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
     return context == kPrismBuilderValue ? value_id : UINT32_MAX;
@@ -5819,12 +5832,8 @@ static uint32_t
 compile_interpolated_symbol_node(PrismBuilder *builder, PrismBuilderContext context, const pm_interpolated_symbol_node_t *node) {
     if (context == kPrismBuilderEffect && PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL)) return UINT32_MAX;
 
-    uint32_t nvalue_ids = (uint32_t) node->parts.size;
-    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
-
-    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, kPrismBuilderValue, node->parts.nodes[idx]);
-    }
+    uint32_t nvalue_ids;
+    uint32_t *value_ids = compile_string_parts(builder, node->base.node_id, &node->parts, &nvalue_ids);
 
     if (context == kPrismBuilderEffect) {
         emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
@@ -5841,12 +5850,8 @@ compile_interpolated_symbol_node(PrismBuilder *builder, PrismBuilderContext cont
 static uint32_t
 compile_interpolated_x_string_node(PrismBuilder *builder, PrismBuilderContext context, const pm_interpolated_x_string_node_t *node) {
     uint32_t receiver_id = emit_load_self(builder, node->base.node_id);
-    uint32_t nvalue_ids = (uint32_t) node->parts.size;
-    uint32_t *value_ids = pm_arena_alloc(builder->arena, nvalue_ids * sizeof(uint32_t), PRISM_ALIGNOF(uint32_t));
-
-    for (uint32_t idx = 0; idx < nvalue_ids; ++idx) {
-        value_ids[idx] = compile_node(builder, kPrismBuilderValue, node->parts.nodes[idx]);
-    }
+    uint32_t nvalue_ids;
+    uint32_t *value_ids = compile_string_parts(builder, node->base.node_id, &node->parts, &nvalue_ids);
 
     uint32_t string_id = emit_new_string(builder, node->base.node_id, nvalue_ids, value_ids);
     uint32_t value_id = emit_call(builder, node->base.node_id, PM_CONSTANT_ID_BACKTICK, receiver_id, 1, &string_id, UINT32_MAX, false, false, PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
