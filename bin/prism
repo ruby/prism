@@ -547,31 +547,43 @@ module Prism
     # table with its next five bits. Identical middle and leaf blocks are
     # shared, which is what keeps the tables small.
     #
-    # The tables mark the codepoints that are uppercase in the Unicode
-    # Character Database at UNICODE_VERSION: those with the Uppercase property,
-    # as in [[:upper:]], and the titlecase letters (Lt), since either can begin
-    # a constant name. Every other character that is not ASCII is an identifier
-    # character, so the tables need no other properties.
+    # The tables mark two kinds of codepoints in the Unicode Character Database
+    # at UNICODE_VERSION:
     #
-    # Older versions of Ruby use an older version of Unicode, in which some
-    # of the uppercase letters of the tables are not uppercase. Another bit
-    # marks those letters, so that the tables answer for every version of
-    # Ruby that prism supports.
+    # * The uppercase ones: those with the Uppercase property, as in
+    #   [[:upper:]], and the titlecase letters (Lt), since either can begin a
+    #   constant name.
+    # * The decimal digits (Nd), which can be the digits of a bound of an
+    #   interval in a regular expression.
+    #
+    # Older versions of Ruby use an older version of Unicode, which lacks some
+    # of the uppercase letters and digits of the tables. Two more bits mark
+    # those, so that the tables answer for every version of Ruby that prism
+    # supports.
     def unicode_lists
       raise "one bit marks the letters of one older version of Unicode, but there are #{UNICODE_OLDER_VERSIONS.length}" unless UNICODE_OLDER_VERSIONS.length == 1
 
       older = UNICODE_OLDER_VERSIONS.first
-      older_bit = "PM_UNICODE_#{older.split(".").first}_NOT_UPPERCASE_BIT"
+      older_major = older.split(".").first
+      older_uppercase_bit = "PM_UNICODE_#{older_major}_NOT_UPPERCASE_BIT"
+      older_digit_bit = "PM_UNICODE_#{older_major}_NOT_DIGIT_BIT"
+
       latest_uppercase = unicode_uppercase
       older_uppercase = unicode_uppercase(older)
       raise "uppercase in Unicode #{older} but not #{UNICODE_VERSION}: #{(older_uppercase - latest_uppercase).inspect}" unless (older_uppercase - latest_uppercase).empty?
+
+      latest_digits = unicode_property("extracted/DerivedGeneralCategory.txt", "Nd")
+      older_digits = unicode_property("extracted/DerivedGeneralCategory.txt", "Nd", older)
+      raise "digits in Unicode #{older} but not #{UNICODE_VERSION}: #{(older_digits - latest_digits).inspect}" unless (older_digits - latest_digits).empty?
 
       values = Array.new(0x110000, 0)
 
       latest_uppercase.each { |codepoint| values[codepoint] |= (1 << 2) }
       (latest_uppercase - older_uppercase).each { |codepoint| values[codepoint] |= (1 << 3) }
+      latest_digits.each { |codepoint| values[codepoint] |= (1 << 4) }
+      (latest_digits - older_digits).each { |codepoint| values[codepoint] |= (1 << 5) }
 
-      names = { 0 => "N", 4 => "U", 12 => "V" }
+      names = { 0 => "N", 4 => "U", 12 => "V", 16 => "D", 48 => "E" }
       unknown = values.uniq - names.keys
       raise "unnamed property values: #{unknown.inspect}" if unknown.any?
 
@@ -616,16 +628,34 @@ module Prism
          * #{older}, which the versions of Ruby before #{tables_update}
          * use.
          */
-        #define #{older_bit} (1 << 3)
+        #define #{older_uppercase_bit} (1 << 3)
 
-        /* Not uppercase. */
+        /**
+         * The unicode tables use the fifth bit of each property byte to mark the
+         * decimal digits (Nd).
+         */
+        #define PM_UNICODE_DIGIT_BIT (1 << 4)
+
+        /**
+         * The unicode tables use the sixth bit of each property byte to mark the
+         * decimal digits in the tables that are not ones in Unicode #{older}.
+         */
+        #define #{older_digit_bit} (1 << 5)
+
+        /* Neither uppercase nor a digit. */
         #define N 0
 
         /* An uppercase or titlecase letter. */
         #define U (PRISM_ENCODING_UPPERCASE_BIT)
 
         /* An uppercase or titlecase letter that is not one in Unicode #{older}. */
-        #define V (PRISM_ENCODING_UPPERCASE_BIT | #{older_bit})
+        #define V (PRISM_ENCODING_UPPERCASE_BIT | #{older_uppercase_bit})
+
+        /* A decimal digit. */
+        #define D (PM_UNICODE_DIGIT_BIT)
+
+        /* A decimal digit that is not one in Unicode #{older}. */
+        #define E (PM_UNICODE_DIGIT_BIT | #{older_digit_bit})
       C
 
       puts "\nstatic const uint8_t pm_unicode_leaf[#{leaf_blocks.length}][8] = {"
@@ -634,7 +664,7 @@ module Prism
       end
       puts "};"
 
-      puts "\n#undef N\n#undef U\n#undef V"
+      puts "\n#undef N\n#undef U\n#undef V\n#undef D\n#undef E"
     end
 
     # Deduplicate the given blocks. The block made entirely of the given empty
