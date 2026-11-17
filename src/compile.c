@@ -2014,6 +2014,11 @@ emit_return(PrismBuilder *builder, uint32_t node_id) {
 }
 
 static void
+emit_return_nonlocal(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    emit_insn(builder, kPrismInsnReturnNonlocal, node_id, 1, &value_id);
+}
+
+static void
 emit_return_value(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
     emit_insn(builder, kPrismInsnReturnValue, node_id, 1, &value_id);
 }
@@ -6286,7 +6291,11 @@ compile_return_node(PrismBuilder *builder, PrismBuilderContext context, const pm
         emit_trace_b_return(builder, node->base.node_id, value_id);
     }
 
-    emit_return_value(builder, node->base.node_id, value_id);
+    if (PrismBuilder_graph(builder)->kind == kPrismGraphBlock) {
+        emit_return_nonlocal(builder, node->base.node_id, value_id);
+    } else {
+        emit_return_value(builder, node->base.node_id, value_id);
+    }
 
     builder->state.block_id = make_block(builder, 0);
     return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
