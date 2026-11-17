@@ -68,12 +68,15 @@ STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
 #
 # Separate stamps track shared-library linker flags and the archive command,
 # so changing those settings rebuilds only the affected library, not its objects.
+# Each Wasm target also tracks its own flags and the shared source list.
 #
 # Some makes compare timestamps to the second, such as the GNU Make 3.81 that
 # ships with macOS. A stamp written in the same second as the last objects of
 # the previous build would not be newer than them, so a changed stamp is written
 # a second after it is found to differ.
 BUILD_FLAGS = $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS)
+WASM_BUILD_FLAGS = $(WASI_SDK_PATH) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(WASM_EXPORTS)
+JAVA_WASM_BUILD_FLAGS = $(WASI_SDK_PATH) $(DEBUG_FLAGS) $(CPPFLAGS) $(JAVA_WASM_CFLAGS)
 
 all: shared static
 
@@ -99,6 +102,14 @@ build/.arflags: FORCE
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) printf '%s\n' '$(AR) $(ARFLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(AR) $(ARFLAGS)' > $@; }
 
+build/.wasm.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(WASM_BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(WASM_BUILD_FLAGS)' > $@; }
+
+build/.java-wasm.flags: FORCE
+	$(Q) $(MAKEDIRS) $(@D)
+	$(Q) printf '%s\n' '$(JAVA_WASM_BUILD_FLAGS)' | cmp -s - $@ || { sleep 1; printf '%s\n' '$(JAVA_WASM_BUILD_FLAGS)' > $@; }
+
 build/libprism.$(SOEXT): $(SHARED_OBJECTS) build/.flags build/.sources build/.ldflags
 	$(ECHO) "linking $@ with $(CC)"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) $(OPTFLAGS) -shared $(SHARED_LDFLAGS) -o $@ $(SHARED_OBJECTS)
@@ -110,7 +121,7 @@ build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources build/.arflags
 	$(Q) $(RMALL) $@
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
 
-javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS)
+javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS) build/.sources build/.wasm.flags
 	$(ECHO) "building $@"
 	$(Q) $(WASI_SDK_PATH)/bin/clang --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot/ \
 		$(DEBUG_FLAGS) \
@@ -128,7 +139,7 @@ doc/playground: javascript/src/prism.wasm
 	$(Q) $(MAKEDIRS) $@
 	$(Q) cp javascript/src/*.js javascript/src/prism.wasm javascript/package.json $@
 
-java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS)
+java/wasm/src/main/wasm/prism.wasm: Makefile $(SOURCES) $(HEADERS) build/.sources build/.java-wasm.flags
 	$(ECHO) "building $@"
 	$(Q) $(MAKEDIRS) $(@D)
 	$(Q) $(WASI_SDK_PATH)/bin/clang \
