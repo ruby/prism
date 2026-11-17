@@ -261,7 +261,7 @@
         │   │   ├── equal_loc: ∅
         │   │   └── block: ∅
         │   └── targets: (length: 1)
-        │       └── @ LocalVariableTargetNode (location: (32,0)-(33,4))
+        │       └── @ LocalVariableTargetNode (location: (32,4)-(33,1))
         │           ├── flags: ∅
         │           ├── name: :ab
         │           └── depth: 0
