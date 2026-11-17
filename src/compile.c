@@ -2380,6 +2380,18 @@ typedef enum {
 
 static uint32_t compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node);
 
+static void
+compile_node_trace(PrismBuilder *builder, const pm_node_t *node) {
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
+        int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
+
+        if (builder->state.lineno != lineno) {
+            emit_trace_line(builder, node->node_id, lineno);
+            builder->state.lineno = lineno;
+        }
+    }
+}
+
 static uint32_t
 compile_node_or_nil(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node, uint32_t node_id) {
     if (node) {
@@ -2393,8 +2405,35 @@ compile_node_or_nil(PrismBuilder *builder, PrismBuilderContext context, const pm
 
 static void
 compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_block_id, uint32_t else_block_id) {
-    uint32_t value_id = compile_node(builder, kPrismBuilderValue, node);
-    emit_branchif(builder, node->node_id, value_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+    switch (PM_NODE_TYPE(node)) {
+        case PM_AND_NODE: {
+            compile_node_trace(builder, node);
+            const pm_and_node_t *cast = (const pm_and_node_t *) node;
+
+            uint32_t right_block_id = make_block(builder, 0);
+            compile_predicate(builder, cast->left, right_block_id, else_block_id);
+
+            builder->state.block_id = right_block_id;
+            compile_predicate(builder, cast->right, then_block_id, else_block_id);
+            break;
+        }
+        case PM_OR_NODE: {
+            compile_node_trace(builder, node);
+            const pm_or_node_t *cast = (const pm_or_node_t *) node;
+
+            uint32_t right_block_id = make_block(builder, 0);
+            compile_predicate(builder, cast->left, then_block_id, right_block_id);
+
+            builder->state.block_id = right_block_id;
+            compile_predicate(builder, cast->right, then_block_id, else_block_id);
+            break;
+        }
+        default: {
+            uint32_t value_id = compile_node(builder, kPrismBuilderValue, node);
+            emit_branchif(builder, node->node_id, value_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+            break;
+        }
+    }
 }
 
 static void
@@ -6492,13 +6531,7 @@ compile_yield_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
 
 static uint32_t
 compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node) {
-    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
-        int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
-        if (builder->state.lineno != lineno) {
-            emit_trace_line(builder, node->node_id, lineno);
-            builder->state.lineno = lineno;
-        }
-    }
+    compile_node_trace(builder, node);
 
     switch (PM_NODE_TYPE(node)) {
         case PM_ALIAS_GLOBAL_VARIABLE_NODE:

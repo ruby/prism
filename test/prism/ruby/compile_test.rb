@@ -489,6 +489,31 @@ module Prism
       assert_run_raises(LocalJumpError, "class CompileTestYieldMissingBlock; def value; yield [1, 2]; 7; end; end; CompileTestYieldMissingBlock.new.value")
     end
 
+    def test_logical_predicate_short_circuit
+      [[false, true, false], [nil, true, true], [true, false, true], [true, true, false], [0, "truthy", false]].each do |left, right, last|
+        source = <<~RUBY
+          events = []
+          if (events << :left; #{left.inspect}) && (events << :right; #{right.inspect}) || (events << :last; #{last.inspect})
+            events << :then
+          else
+            events << :else
+          end
+          events
+        RUBY
+        expected = [:left]
+        expected << :right if left
+        expected << :last unless left && right
+        expected << ((left && right || last) ? :then : :else)
+        unit = compile_unit(source)
+        assert_equal(expected, vm.run(unit), source)
+        assert(unit.graphs[0].blocks.all? { |block| block.params.empty? }, source)
+      end
+      assert_run(2, "i = 0; while i < 3 && i != 2; i += 1; end; i")
+      assert_run(2, "i = 0; until i == 2 || i > 3; i += 1; end; i")
+      assert_run(2, "case 1; in 1 if true && false || true; 2; else; 3; end")
+      assert_run(false, "object = Object.new; object.define_singleton_method(:!) { false }; if !object; true; else; false; end")
+    end
+
     def test_control_flow_effect_context
       [
         "if true; [1, 2]; else; [3, 4]; end; 7",
