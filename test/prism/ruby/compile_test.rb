@@ -7132,6 +7132,75 @@ module Prism
       end
     end
 
+    def test_bare_method_visibility
+      assert_run([true, true, true, true], <<~RUBY)
+        class CompileTestDefaultVisibility
+          private
+          def hidden; 1; end
+          protected
+          def guarded; 2; end
+          public
+          def exposed; 3; end
+          def initialize; end
+        end
+        [CompileTestDefaultVisibility.private_method_defined?(:hidden),
+          CompileTestDefaultVisibility.protected_method_defined?(:guarded),
+          CompileTestDefaultVisibility.public_method_defined?(:exposed),
+          CompileTestDefaultVisibility.private_method_defined?(:initialize)]
+      RUBY
+      assert_run_raises(NoMethodError, "class CompileTestPrivateDefaultCall; private; def hidden; 1; end; end; CompileTestPrivateDefaultCall.new.hidden")
+      assert_run([true, true], "class CompileTestNamedVisibility; def one; end; private :one; def two; end; end; [CompileTestNamedVisibility.private_method_defined?(:one), CompileTestNamedVisibility.public_method_defined?(:two)]")
+      assert_run([true, true], "class CompileTestPrivateSingletonDefault; private; def self.exposed; end; def hidden; end; end; [CompileTestPrivateSingletonDefault.singleton_class.public_method_defined?(:exposed), CompileTestPrivateSingletonDefault.private_method_defined?(:hidden)]")
+    end
+
+    def test_special_method_default_visibility
+      names = [:initialize, :initialize_copy, :initialize_dup, :initialize_clone, :respond_to_missing?]
+      definitions = names.map { |name| "def #{name}(*); end" }.join("; ")
+      [:public, :protected, :private].each do |visibility|
+        source = "class CompileTestSpecial#{visibility.capitalize}; #{visibility}; #{definitions}; self; end"
+        owner = vm.run(compile_unit(source))
+        names.each { |name| assert(owner.private_method_defined?(name, false), "#{visibility}: #{name}") }
+
+        source = "object = Object.new; class << object; #{visibility}; #{definitions}; self; end"
+        owner = vm.run(compile_unit(source))
+        names.each { |name| assert(owner.send("#{visibility}_method_defined?", name, false), "singleton #{visibility}: #{name}") }
+      end
+    end
+
+    def test_bare_visibility_lexical_scope
+      assert_run([true, true, true], <<~RUBY)
+        class CompileTestVisibilityScopes
+          [1].each { private }
+          def hidden; end
+          class Inner
+            def exposed; end
+          end
+        end
+        class CompileTestVisibilityScopes
+          def reopened; end
+        end
+        [CompileTestVisibilityScopes.private_method_defined?(:hidden),
+          CompileTestVisibilityScopes::Inner.public_method_defined?(:exposed),
+          CompileTestVisibilityScopes.public_method_defined?(:reopened)]
+      RUBY
+      assert_run(true, "module CompileTestPrivateModuleDefault; private; def hidden; end; end; CompileTestPrivateModuleDefault.private_method_defined?(:hidden)")
+      assert_run(true, "object = Object.new; class << object; private; def hidden; end; end; object.singleton_class.private_method_defined?(:hidden)")
+    end
+
+    def test_bare_private_override
+      assert_run([[:override], true], <<~RUBY)
+        class CompileTestPrivateDefaultOverride
+          Events = []
+          def self.private
+            Events << :override
+          end
+          private
+          def exposed; end
+        end
+        [CompileTestPrivateDefaultOverride::Events, CompileTestPrivateDefaultOverride.public_method_defined?(:exposed)]
+      RUBY
+    end
+
     def test_define_method_ignores_method_overrides
       Object.const_set(:CompileTestDefOverride, Class.new {
         def self.define_method(*) = raise("define_method called")

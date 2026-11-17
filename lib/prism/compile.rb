@@ -600,6 +600,26 @@ module Prism
     end
 
     class VM
+      visibility_methods = {}
+      [:public, :protected, :private].each do |visibility|
+        definitions = [Module.instance_method(visibility)]
+          definitions << TOPLEVEL_BINDING.receiver.method(visibility).unbind unless visibility == :protected
+          definitions.each do |method|
+            visibility_methods[method] = visibility if method.source_location.nil?
+          end
+        end
+
+      VISIBILITY_METHODS = visibility_methods.freeze
+      private_constant :VISIBILITY_METHODS
+
+      class Visibility
+        attr_accessor :value
+
+        def initialize(value = :public)
+          @value = value
+        end
+      end
+
       class Locals
         attr_reader :parent
 
@@ -643,10 +663,10 @@ module Prism
       end
 
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility
         attr_accessor :last_match, :last_line, :return_fiber
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, break_target = nil, return_target = nil, &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, &block)
           @graph = graph
           @recv = recv
           @nest = nest
@@ -659,6 +679,7 @@ module Prism
           @return_fiber = nil
           @break_target = break_target
           @super_method = super_method
+          @visibility = visibility
           @block = block
         end
       end
@@ -890,7 +911,6 @@ module Prism
       end
 
       def run_blocks(frame, region, block)
-        graph = frame.graph
         recv = frame.recv
         nest = frame.nest
         locals = frame.locals
@@ -965,13 +985,21 @@ module Prism
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
               receiver = values[insn.opnds[1]]
-              values[insn.opnds[0]] = with_break_target(passed_block) do
-                if call.ignore_visibility || protected_call?(receiver, call.name, recv)
-                  BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
-                else
-                  Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
-                end
+
+              if call.ignore_visibility && arguments.empty? && (Module === receiver || BasicObject.instance_method(:equal?).bind_call(receiver, TOPLEVEL_BINDING.receiver)) && (visibility = default_visibility(receiver, call.name))
+                frame.visibility.value = visibility
+                values[insn.opnds[0]] = nil
+                next
               end
+
+              values[insn.opnds[0]] =
+                with_break_target(passed_block) do
+                  if call.ignore_visibility || protected_call?(receiver, call.name, recv)
+                    BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                  else
+                    Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                  end
+                end
             when :call_super
               raise NoMethodError, "super called outside of method" unless super_method
               call = insn.data
@@ -1051,7 +1079,16 @@ module Prism
             when :define_method
               name, method_graph = insn.data
               define_method(nest[0], name, method_graph, nest)
-              Module.instance_method(:private).bind_call(nest[0], name) if graph.kind == :program
+
+              visibility =
+                case name
+                when :initialize, :initialize_copy, :initialize_dup, :initialize_clone, :respond_to_missing?
+                  Module.instance_method(:singleton_class?).bind_call(nest[0]) ? frame.visibility.value : :private
+                else
+                  frame.visibility.value
+                end
+
+              VISIBILITY_METHODS.key(visibility).bind_call(nest[0], name) unless visibility == :public
             when :define_module_abs
               name, module_graph = insn.data
               mod = define_module(Object, name, true)
@@ -1206,7 +1243,8 @@ module Prism
               return ExecutionResult.new(nil, values[insn.opnds[0]], insn.data)
             when :post_execution
               if @post_executions.add?(insn.data)
-                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method)) }
+                visibility = frame.visibility
+                at_exit { run_frame(Frame.new(insn.data, recv, nest, locals, flip_flops, super_method, visibility)) }
               end
             when :raise_pattern_deconstruct
               raise_pattern_error(values[insn.opnds[0]], "%p does not respond to #deconstruct", values[insn.opnds[1]])
@@ -1314,6 +1352,13 @@ module Prism
         end
       end
 
+      def default_visibility(receiver, name)
+        method = Module.instance_method(:instance_method).bind_call(method_lookup_class(receiver), name)
+        VISIBILITY_METHODS[method]
+      rescue NameError
+        nil
+      end
+
       def method_lookup_class(receiver)
         Kernel.instance_method(:singleton_class).bind_call(receiver)
       rescue TypeError
@@ -1387,18 +1432,19 @@ module Prism
         nest = frame.nest
         block = frame.block
         return_target = frame.return_target
+        visibility = frame.visibility
 
         target = nil
         callable = BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
           if graph.kind == :lambda
             ->(*args, **kwargs, &passed_block) do
               block_locals = Locals.new(graph.locals, locals)
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, &block), args, kwargs, passed_block)
             end
           else
             Proc.new do |*args, **kwargs, &passed_block|
               block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, target, return_target, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, &block), args, kwargs, passed_block)
             end
           end
         end
