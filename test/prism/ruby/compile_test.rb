@@ -396,6 +396,39 @@ module Prism
       assert_include(calls.map { |insn| insn.data.name }, name.call("café"))
     end
 
+    def test_statement_effect_context
+      [
+        '[1, 2]; 7',
+        '-> { [1, 2]; 7 }.call',
+        'BEGIN { [1, 2] }; 7',
+        'true && [1, 2]; 7'
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        kinds = unit.graphs.flat_map(&:blocks).flat_map(&:insns).map(&:kind)
+        assert_not_include(kinds, :new_array, source)
+        assert_not_include(kinds, :new_array_static, source)
+      end
+      assert_run([1, 2], '[1, 2]')
+    end
+
+    def test_discarded_array_preserves_effects_and_splat_coercion
+      source = <<~'RUBY'
+        events = []
+        value = Object.new
+        value.define_singleton_method(:to_a) { events << :coerce; [1] }
+        [events << :first, *value, events << :last]
+        events
+      RUBY
+      unit = compile_unit(source)
+      assert_equal([:first, :coerce, :last], vm.run(unit))
+      kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+      assert_equal(1, kinds.count(:new_array))
+      assert_not_include(kinds, :new_array_static)
+      assert_not_include(kinds, :concat_array)
+      assert_include(kinds, :coerce_array_to_a)
+    end
+
     def test_call_info_flags
       [
         ["target", true, true, false],

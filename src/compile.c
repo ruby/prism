@@ -2369,7 +2369,13 @@ static uint32_t compile_node(PrismBuilder *builder, PrismBuilderContext context,
 
 static uint32_t
 compile_node_or_nil(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node, uint32_t node_id) {
-    return node ? compile_node(builder, context, node) : emit_load_nil(builder, node_id);
+    if (node) {
+        return compile_node(builder, context, node);
+    } else if (context == kPrismBuilderValue) {
+        return emit_load_nil(builder, node_id);
+    } else {
+        return UINT32_MAX;
+    }
 }
 
 static void
@@ -3205,7 +3211,7 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
 }
 
 static uint32_t
-compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_t *statements, uint32_t node_id) {
+compile_program_node_statements(PrismBuilder *builder, PrismBuilderContext context, const pm_statements_node_t *statements, uint32_t node_id) {
     PrismBuilderState pre_state = builder->state;
     uint32_t body_block_id = make_block(builder, 0);
     builder->state.block_id = body_block_id;
@@ -3219,16 +3225,16 @@ compile_program_node_statements(PrismBuilder *builder, const pm_statements_node_
                 const pm_pre_execution_node_t *cast = (const pm_pre_execution_node_t *) statement;
                 PrismBuilderState body_state = builder->state;
                 builder->state = pre_state;
-                compile_program_node_statements(builder, cast->statements, statement->node_id);
+                compile_program_node_statements(builder, kPrismBuilderEffect, cast->statements, statement->node_id);
                 pre_state = builder->state;
                 builder->state = body_state;
                 statement = NULL;
             }
 
-            value_id = compile_node_or_nil(builder, kPrismBuilderValue, statement, node_id);
+            value_id = compile_node_or_nil(builder, idx + 1 < statements->body.size ? kPrismBuilderEffect : context, statement, node_id);
         }
     } else {
-        value_id = emit_load_nil(builder, node_id);
+        value_id = compile_node_or_nil(builder, context, NULL, node_id);
     }
 
     PrismBuilderState body_state = builder->state;
@@ -4153,8 +4159,17 @@ compile_and_node(PrismBuilder *builder, PrismBuilderContext context, const pm_an
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_array_node(PrismBuilder *builder, const pm_array_node_t *node) {
+compile_array_node(PrismBuilder *builder, PrismBuilderContext context, const pm_array_node_t *node) {
     size_t nelements = node->elements.size;
+
+    if (context == kPrismBuilderEffect) {
+        if (!PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL)) {
+            for (size_t idx = 0; idx < nelements; ++idx) {
+                compile_node(builder, context, node->elements.nodes[idx]);
+            }
+        }
+        return UINT32_MAX;
+    }
 
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_STATIC_LITERAL) && nelements) {
         uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
@@ -5918,7 +5933,7 @@ static uint32_t
 compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphProgram, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
-    uint32_t value_id = compile_program_node_statements(builder, node->statements, node->base.node_id);
+    uint32_t value_id = compile_program_node_statements(builder, kPrismBuilderValue, node->statements, node->base.node_id);
 
     emit_return(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
@@ -6160,10 +6175,10 @@ compile_splat_node(PrismBuilder *builder, const pm_splat_node_t *node) {
 }
 
 static uint32_t
-compile_statements_node(PrismBuilder *builder, const pm_statements_node_t *node) {
+compile_statements_node(PrismBuilder *builder, PrismBuilderContext context, const pm_statements_node_t *node) {
     uint32_t value_id;
     for (size_t idx = 0; idx < node->body.size; ++idx) {
-        value_id = compile_node(builder, kPrismBuilderValue, node->body.nodes[idx]);
+        value_id = compile_node(builder, idx + 1 < node->body.size ? kPrismBuilderEffect : context, node->body.nodes[idx]);
     }
 
     return value_id;
@@ -6317,7 +6332,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_AND_NODE:
             return compile_and_node(builder, context, (const pm_and_node_t *) node);
         case PM_ARRAY_NODE:
-            return compile_array_node(builder, (const pm_array_node_t *) node);
+            return compile_array_node(builder, context, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
             return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
         case PM_BEGIN_NODE:
@@ -6509,7 +6524,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_SPLAT_NODE:
             return compile_splat_node(builder, (const pm_splat_node_t *) node);
         case PM_STATEMENTS_NODE:
-            return compile_statements_node(builder, (const pm_statements_node_t *) node);
+            return compile_statements_node(builder, context, (const pm_statements_node_t *) node);
         case PM_STRING_NODE:
             return compile_string_node(builder, (const pm_string_node_t *) node);
         case PM_SUPER_NODE:
