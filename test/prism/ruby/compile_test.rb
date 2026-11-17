@@ -6149,6 +6149,8 @@ module Prism
       assert_run(1, "class CompileTestCVar; @@a = 1; @@a; end")
       assert_equal(1, CompileTestCVar.class_variable_get(:@@a))
       assert_equal(false, Object.class_variable_defined?(:@@a))
+      assert_run([1, 2], "class CompileTestCVar; @@b = [1, 2]; @@b; end")
+      assert_run([3, 4], "class CompileTestCVar; @@b = [3, 4]; end")
 
       assert_run_raises(NameError, "class CompileTestCVarMissing; @@a; end", "uninitialized class variable @@a in CompileTestCVarMissing")
     end
