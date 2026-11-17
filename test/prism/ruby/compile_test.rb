@@ -416,6 +416,79 @@ module Prism
       assert_run([1, 2], '[1, 2]')
     end
 
+    def test_discarded_variable_reads
+      ["value = 1; value; 7", "-> { it; 7 }.call(1)", "proc { _1; 7 }.call(1)"].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        assert_not_include(unit.graphs.flat_map(&:blocks).flat_map(&:insns).map(&:kind), :load_lvar, source)
+      end
+      unit = compile_unit(%q{/(a)/ =~ "a"; $1; 7})
+      assert_equal(7, vm.run(unit))
+      kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+      assert_not_include(kinds, :load_last_match)
+      assert_not_include(kinds, :load_last_match_group)
+    end
+
+    def test_assignment_effect_context
+      ["value", "@value", "$compile_test_effect_value", "box[0]"].each do |target|
+        [
+          ["=", "nil", "[1, 2]", [1, 2]],
+          ["&&=", "true", "[1, 2]", [1, 2]],
+          ["&&=", "false", "raise('rhs ran')", false],
+          ["||=", "nil", "[1, 2]", [1, 2]],
+          ["||=", "false", "[1, 2]", [1, 2]],
+          ["||=", "1", "raise('rhs ran')", 1],
+          ["+=", "[1]", "[2]", [1, 2]]
+        ].each do |operator, initial, rhs, expected|
+          source = "box = []; #{target} = #{initial}; #{target} #{operator} #{rhs}; #{target}"
+          unit = compile_unit(source)
+          assert_equal(expected, vm.run(unit), source)
+          assert(unit.graphs[0].blocks.all? { |block| block.params.empty? }, source)
+        end
+      end
+      assert_run([1, 2], "a, b = [1, 2]; [a, b]")
+    ensure
+      $compile_test_effect_value = nil
+    end
+
+    def test_undef_effect_context
+      unit = compile_unit("class CompileTestUndefEffect; def value; 1; end; undef value; end; 7")
+      assert_equal(7, vm.run(unit))
+      assert_not_include(unit.graphs[1].blocks.flat_map(&:insns).map(&:kind), :load_nil)
+      assert_equal(false, CompileTestUndefEffect.method_defined?(:value))
+    end
+
+    def test_discarded_super_and_yield_calls
+      assert_run([:done, [[1, 2]]], <<~RUBY)
+        class CompileTestYieldEffect
+          def value
+            yield [1, 2]
+            :done
+          end
+        end
+        events = []
+        result = CompileTestYieldEffect.new.value { |value| events << value }
+        [result, events]
+      RUBY
+      assert_run([:done, [[1, 2]]], <<~RUBY)
+        class CompileTestSuperEffectBase
+          def value(value)
+            yield value
+          end
+        end
+        class CompileTestSuperEffect < CompileTestSuperEffectBase
+          def value
+            super([1, 2])
+            :done
+          end
+        end
+        events = []
+        result = CompileTestSuperEffect.new.value { |value| events << value }
+        [result, events]
+      RUBY
+      assert_run_raises(LocalJumpError, "class CompileTestYieldMissingBlock; def value; yield [1, 2]; 7; end; end; CompileTestYieldMissingBlock.new.value")
+    end
+
     def test_literal_effect_context
       ["123", "2r", "3i", "nil", "true", '"text"', ":name", "__ENCODING__", "__FILE__", "__LINE__", "self"].each do |literal|
         source = "#{literal}; 7"
