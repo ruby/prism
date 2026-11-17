@@ -7800,6 +7800,23 @@ module Prism
       assert_run_raises(RuntimeError, "begin; raise 'first'; rescue; raise 'second'; end", "second")
     end
 
+    def test_block_backreferences
+      [
+        %q{match = proc { "mis-matched" =~ /s(-)m(.)/ }; check = proc { [$&, $`, $', $+, $1, $2, defined?($&), defined?($1)] }; match.call; check.call},
+        %q{match = proc { /s(-)m(.)/ =~ "mis-matched" }; check = proc { [$&, $`, $', $+, $1, $2, defined?($&), defined?($1)] }; match.call; check.call},
+        %q{/(a)/ =~ "a"; read = proc { $1 }; read.call},
+        %q{/(a)/ =~ "a"; proc { /(b)/ =~ "b" }.call; $1},
+        %q{/(a)/ =~ "a"; -> { /(b)/ =~ "b" }.call; $1},
+        %q{/(a)/ =~ "a"; change = proc { /(b)/ =~ "b" }; object = Object.new; object.define_singleton_method(:to_s) { change.call; "text" }; ["#{object}", $1]},
+        %q{/(a)/ =~ "a"; proc { /(b)/ =~ "x" }.call; [$1, defined?($1)]},
+        %q{/(a)/ =~ "a"; begin; proc { /(b)/ =~ "b"; raise "failed" }.call; rescue; $1; end},
+        %q{/(a)/ =~ "a"; set = proc { |text| /(.)/ =~ text }; get = proc { $1 }; other = Thread.new { before = get.call; set.call("b"); [before, get.call] }.value; [other, get.call]},
+        %q{/(a)/ =~ "a"; set = proc { |text| /(.)/ =~ text }; get = proc { $1 }; other = Fiber.new { before = get.call; set.call("b"); [before, get.call] }.resume; [other, get.call]},
+        %q{object = Object.new; def object.match; /(b)/ =~ "b"; $1; end; /(a)/ =~ "a"; [object.match, $1]},
+        %q{object = Object.new; def object.invoke; /(b)/ =~ "b"; result = yield; [result, $1]; end; /(a)/ =~ "a"; [object.invoke { /(c)/ =~ "c"; $1 }, $1]}
+      ].each { |source| assert_run(eval(source), source) }
+    end
+
     def test_begin_rescue_backreferences
       [
         "begin; /(a)/ =~ 'a'; rescue; end; $1",

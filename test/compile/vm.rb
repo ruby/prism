@@ -74,17 +74,31 @@ module Prism
         end
       end
 
-      class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility, :lambda
-        attr_accessor :last_match, :last_line, :return_fiber
+      class MatchState
+        def initialize
+          @matches = ObjectSpace::WeakKeyMap.new
+        end
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, lambda = graph.kind == :lambda, &block)
+        def value
+          @matches[Fiber.current]
+        end
+
+        def value=(value)
+          @matches[Fiber.current] = value
+        end
+      end
+
+      class Frame
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility, :lambda, :match_state
+        attr_accessor :last_line, :return_fiber
+
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, lambda = graph.kind == :lambda, match_state = MatchState.new, &block)
           @graph = graph
           @recv = recv
           @nest = nest
           @locals = locals
           @values = Array.new(graph.nvalues)
-          @last_match = nil
+          @match_state = match_state
           @last_line = nil
           @flip_flops = flip_flops
           @lambda = lambda
@@ -94,6 +108,14 @@ module Prism
           @super_method = super_method
           @visibility = visibility
           @block = block
+        end
+
+        def last_match
+          match_state.value
+        end
+
+        def last_match=(value)
+          match_state.value = value
         end
       end
 
@@ -361,6 +383,7 @@ module Prism
           end
 
           block.insns.each do |insn|
+            previous_match = frame.last_match = $~
             case insn.kind
             when :alias_gvar
               eval("alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}", TOPLEVEL_BINDING)
@@ -747,6 +770,13 @@ module Prism
             else
               raise "Unknown instruction kind: #{insn.kind}"
             end
+          ensure
+            # Native calls update this Ruby scope; interpreted callbacks update the shared state.
+            if frame.last_match.equal?(previous_match)
+              frame.last_match = $~
+            else
+              $~ = frame.last_match
+            end
           end
         end
       ensure
@@ -870,12 +900,12 @@ module Prism
           if lambda
             ->(*args, **kwargs, &passed_block) do
               block_locals = Locals.new(graph.locals, locals)
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, frame.match_state, &block), args, kwargs, passed_block)
             end
           else
             Proc.new do |*args, **kwargs, &passed_block|
               block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, false, frame.match_state, &block), args, kwargs, passed_block)
             end
           end
         end
