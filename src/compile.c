@@ -5017,7 +5017,9 @@ compile_def_node(PrismBuilder *builder, PrismBuilderContext context, const pm_de
  * ^^^^^^^^^^^
  */
 static uint32_t
-compile_defined_node(PrismBuilder *builder, const pm_defined_node_t *node) {
+compile_defined_node(PrismBuilder *builder, PrismBuilderContext context, const pm_defined_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     return compile_defined_expression(builder, node->value);
 }
 
@@ -6432,7 +6434,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_DEF_NODE:
             return compile_def_node(builder, context, (const pm_def_node_t *) node);
         case PM_DEFINED_NODE:
-            return compile_defined_node(builder, (const pm_defined_node_t *) node);
+            return compile_defined_node(builder, context, (const pm_defined_node_t *) node);
         case PM_ELSE_NODE:
             return compile_else_node(builder, context, (const pm_else_node_t *) node);
         case PM_EMBEDDED_STATEMENTS_NODE:

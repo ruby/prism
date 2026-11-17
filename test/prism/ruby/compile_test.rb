@@ -747,6 +747,32 @@ module Prism
       end
     end
 
+    def test_defined_effect_context
+      scope = Module.new
+      events = []
+      receiver = Object.new
+      receiver.define_singleton_method(:foo) { :called }
+      scope.define_singleton_method(:side_effect) { events << :receiver; receiver }
+
+      [
+        "defined?(side_effect.foo); nil",
+        "[defined?(side_effect.foo)]; nil",
+        "begin; defined?(side_effect.foo); rescue; end; nil",
+        "begin; raise; rescue; defined?(side_effect.foo); end; nil",
+        "begin; ensure; defined?(side_effect.foo); end; nil"
+      ].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert_nil(vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        assert_empty(events, source)
+      end
+
+      graph = compile_unit("defined?(side_effect.foo); nil").graphs[0]
+      assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :call)
+      graph = compile_unit("defined?(side_effect.foo)").graphs[0]
+      assert_equal("method", vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal([:receiver], events)
+    end
+
     def test_defined_method_signatures_across_vms
       scope = Module.new
       first_vm = Compile::VM.new
