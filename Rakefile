@@ -157,13 +157,21 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
 
   # The Makefile that extconf.rb writes lists the sources and headers that
   # existed when it ran, and rake-compiler runs extconf.rb again only when
-  # extconf.rb itself changes. So the Makefile depends on a stamp of that list,
+  # extconf.rb itself changes. So each Makefile depends on a stamp of that list,
   # and adding or removing a source or header configures the extension again,
   # which recompiles every object through the rule that extconf.rb adds.
   extension_files = "tmp/extension.files"
 
   StampTask.define(extension_files) do
     Dir["ext/prism/*.{c,h}", "src/**/*.c", "include/**/*.h"].sort.map { |path| "#{path}\n" }.join
+  end
+
+  # rake-compiler defines a Makefile task for every configured platform and
+  # Ruby version, including cross-compilation targets.
+  Rake::Task.tasks.each do |task|
+    if File.fnmatch?("#{extension.tmp_dir}/*/#{extension.name}/*/Makefile", task.name, File::FNM_PATHNAME)
+      task.enhance([extension_files])
+    end
   end
 
   extension_directory = "#{extension.tmp_dir}/#{extension.platform}/#{extension.name}/#{RUBY_VERSION}"
@@ -181,7 +189,7 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     }.inspect + "\n"
   end
 
-  file "#{extension_directory}/Makefile" => [extension_files, extension_configuration]
+  file "#{extension_directory}/Makefile" => extension_configuration
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
 
