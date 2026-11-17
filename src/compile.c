@@ -4936,15 +4936,17 @@ compile_constant_path_or_write_node(PrismBuilder *builder, PrismBuilderContext c
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_path_write_node(PrismBuilder *builder, const pm_constant_path_write_node_t *node, pm_node_flags_t shareability) {
+compile_constant_path_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_constant_path_write_node_t *node, pm_node_flags_t shareability) {
     if (node->target->parent) {
         uint32_t receiver_id = compile_node(builder, kPrismBuilderValue, node->target->parent);
         uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
 
-        return emit_store_const_recv_rel(builder, node->base.node_id, receiver_id, node->target->name, value_id);
+        emit_store_const_recv_rel(builder, node->base.node_id, receiver_id, node->target->name, value_id);
+        return context == kPrismBuilderValue ? value_id : UINT32_MAX;
     } else {
         uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->target->name, node->target);
-        return emit_store_const_abs(builder, node->base.node_id, node->target->name, value_id);
+        emit_store_const_abs(builder, node->base.node_id, node->target->name, value_id);
+        return context == kPrismBuilderValue ? value_id : UINT32_MAX;
     }
 }
 
@@ -6128,7 +6130,7 @@ compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_consta
         case PM_CONSTANT_PATH_OR_WRITE_NODE:
             return compile_constant_path_or_write_node(builder, kPrismBuilderValue, (const pm_constant_path_or_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_WRITE_NODE:
-            return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node->write, shareability);
+            return compile_constant_path_write_node(builder, kPrismBuilderValue, (const pm_constant_path_write_node_t *) node->write, shareability);
         case PM_CONSTANT_WRITE_NODE:
             return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node->write, shareability);
         default:
@@ -6417,7 +6419,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_PATH_NODE:
             return compile_constant_path_node(builder, context, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
-            return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node, 0);
+            return compile_constant_path_write_node(builder, context, (const pm_constant_path_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_AND_WRITE_NODE:
             return compile_constant_path_and_write_node(builder, context, (const pm_constant_path_and_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_OR_WRITE_NODE:
