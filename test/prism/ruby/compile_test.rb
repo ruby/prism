@@ -24,6 +24,39 @@ module Prism
       end
     end
 
+    def test_frozen_literal_identity
+      source = "# frozen_string_literal: true\n[\"value\", \"value\"]"
+      values = vm.run(compile_unit(source))
+      assert_same(values[0], values[1])
+      assert_predicate(values[0], :frozen?)
+
+      first = vm.run(compile_unit("# frozen_string_literal: true\n\"value\""))
+      second = vm.run(compile_unit("# frozen_string_literal: true\n\"value\""))
+      assert_same(first, second)
+      assert_same(values[0], first)
+
+      values = vm.run(compile_unit("# frozen_string_literal: true\n[\"va\" \"lue\", \"value\"]"))
+      assert_same(values[0], values[1])
+      assert_same(first, values[0])
+
+      values = vm.run(compile_unit("# frozen_string_literal: false\n[\"value\", \"value\"]"))
+      assert_not_same(values[0], values[1])
+      assert_equal(false, values[0].frozen?)
+    end
+
+    def test_frozen_literal_identity_preserves_encoding
+      values = ["UTF-8", "US-ASCII", "ASCII-8BIT"].map do |encoding|
+        source = "# encoding: #{encoding}\n# frozen_string_literal: true\n\"value\""
+        value = vm.run(compile_unit(source))
+        assert_equal(Encoding.find(encoding), value.encoding)
+        assert_same(value, vm.run(compile_unit(source)))
+        value
+      end
+      assert_not_same(values[0], values[1])
+      assert_not_same(values[0], values[2])
+      assert_not_same(values[1], values[2])
+    end
+
     def test_interpolated_string_encodings
       encodings = ["UTF-8", "US-ASCII", "ASCII-8BIT", "ISO-8859-1", "EUC-JP", "Windows-31J"]
       parts = ['""', '"a"', '"".b', '"a".b', '"\xFF".b', '"\u00E9"', '"\xE9".force_encoding("ISO-8859-1")']

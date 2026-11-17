@@ -372,7 +372,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                     string_encoding = rb_utf8_encoding();
                 }
                 vobject = rb_enc_str_new((const char *) pm_string_source(string), pm_string_length(string), string_encoding);
-                if (flags & PM_STRING_FLAGS_FROZEN) rb_obj_freeze(vobject);
+                if (flags & PM_STRING_FLAGS_FROZEN) vobject = rb_str_to_interned_str(vobject);
                 break;
             }
             case kPrismObjectSymbol: {
@@ -408,7 +408,7 @@ pm_compile_unit_new(const pm_parser_t *parser, const PrismUnit *unit, bool freez
                 if (pm_object_kind(object) == kPrismObjectSymbolConcat) {
                     vobject = ID2SYM(rb_intern_str(vobject));
                 } else {
-                    rb_obj_freeze(vobject);
+                    vobject = rb_str_to_interned_str(vobject);
                 }
                 break;
             }
