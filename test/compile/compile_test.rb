@@ -7955,6 +7955,22 @@ module Prism
       ].each { |source| assert_run(eval(source), source) }
     end
 
+    def test_sibling_callbacks_preserve_backreferences
+      [
+        %q{"mis-matched" =~ /s(-)m(.)/},
+        %q{/s(-)m(.)/ =~ "mis-matched"}
+      ].each do |match|
+        source = <<~RUBY
+          match = proc { #{match} }
+          check = proc { [$&, $`, $', $+, $1, $2, defined?($&), defined?($`), defined?($'), defined?($+), defined?($1), defined?($2)] }
+          [match, check].map(&:call).last
+        RUBY
+        assert_run(eval(source), source)
+      end
+      source = %q{/(a)/ =~ "a"; match = proc { /(b)/ =~ "x" }; check = proc { [$&, $1, defined?($&), defined?($1)] }; [match, check].map(&:call).last}
+      assert_run(eval(source), source)
+    end
+
     def test_native_callback_backreferences
       [
         %q{[:on_parse_error].grep(/\Aon_/) { [$~, $', $&] }},

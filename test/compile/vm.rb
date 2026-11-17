@@ -135,7 +135,7 @@ module Prism
 
       class Frame
         attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility, :lambda, :match_state
-        attr_accessor :last_line, :return_fiber, :native_binding
+        attr_accessor :last_line, :return_fiber, :native_binding, :native_match
 
         def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, lambda = graph.kind == :lambda, match_state = MatchState.new, &block)
           @graph = graph
@@ -146,6 +146,7 @@ module Prism
           @match_state = match_state
           @last_line = nil
           @native_binding = nil
+          @native_match = nil
           @flip_flops = flip_flops
           @lambda = lambda
           @return_target = lambda || %i[def program].include?(graph.kind) ? self : return_target
@@ -418,6 +419,7 @@ module Prism
         flip_flops = frame.flip_flops
         super_method = frame.super_method
         previous_binding = frame.native_binding
+        previous_native_match = frame.native_match
         frame.native_binding = binding
         $~ = frame.last_match
         $_ = frame.last_line
@@ -450,7 +452,7 @@ module Prism
           end
 
           block.insns.each do |insn|
-            previous_match = frame.last_match = $~
+            previous_match = frame.native_match = frame.last_match = $~
             case insn.kind
             when :alias_gvar
               StdLib[:Binding_eval].bind_call(TOPLEVEL_BINDING, "alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}")
@@ -861,6 +863,7 @@ module Prism
         frame.last_match = $~
         frame.last_line = $_
         frame.native_binding = previous_binding
+        frame.native_match = previous_native_match
       end
 
       def concatenate_strings(parts)
@@ -976,7 +979,10 @@ module Prism
         invoke =
           proc do |receiver, args, kwargs, passed_block|
             if (active_frame = @frames[Fiber.current]&.reverse_each&.find { |active| active.native_binding && active.match_state.equal?(frame.match_state) })
-              frame.last_match = StdLib[:Binding_eval].bind_call(active_frame.native_binding, "$~")
+              native_match = StdLib[:Binding_eval].bind_call(active_frame.native_binding, "$~")
+              unless native_match.equal?(active_frame.native_match)
+                frame.last_match = active_frame.native_match = native_match
+              end
             end
 
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
