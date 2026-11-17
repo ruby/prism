@@ -527,6 +527,60 @@ module Prism
       assert_run_raises(SyntaxError, "raise SyntaxError rescue 1; 7")
     end
 
+    def test_discarded_construction
+      ["{}", "{a: 1}", "1..2", "(1..)", "(..2)", "/abc/", "# frozen_string_literal: true\n" + '"a#{"b"}"', ':"a#{"b"}"', "-> { raise 'body ran' }"].each do |expression|
+        source = "#{expression}; 7"
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        assert_equal(1, unit.graphs.size, source)
+        kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+        [:new_hash, :new_hash_static, :new_range_inc, :new_range_exc, :new_string, :new_symbol, :new_block].each do |kind|
+          assert_not_include(kinds, kind, source)
+        end
+      end
+      assert_run([:key, :value, :splat], <<~RUBY)
+        events = []
+        key = Object.new
+        key.define_singleton_method(:hash) { raise 'hash ran' }
+        splat = Object.new
+        splat.define_singleton_method(:to_hash) { raise 'to_hash ran' }
+        {(events << :key; key) => (events << :value; 1), **(events << :splat; splat)}
+        events
+      RUBY
+      assert_run([:left, :right], <<~RUBY)
+        events = []
+        left = Object.new
+        left.define_singleton_method(:<=>) { |other| raise 'comparison ran' }
+        (events << :left; left)..(events << :right; Object.new)
+        events
+      RUBY
+    end
+
+    def test_discarded_dynamic_interpolation
+      ['"a#{value}b"', ':"a#{value}b"', '/a#{value}b/'].each do |expression|
+        assert_run([:to_s], <<~RUBY)
+          events = []
+          value = Object.new
+          value.define_singleton_method(:to_s) { events << :to_s; 'x' }
+          #{expression}
+          events
+        RUBY
+      end
+      assert_run_raises(RegexpError, 'value = "["; /#{value}/; 7')
+      assert_run(1, 'count = 0; 2.times { /#{count += 1}/o; nil }; count')
+      assert_run_raises(Encoding::CompatibilityError, 'a = "é"; b = "\xFF".b; "#{a}#{b}"; 7')
+      assert_run_raises(Encoding::CompatibilityError, 'a = "é"; b = "\xFF".b; :"#{a}#{b}"; 7')
+    end
+
+    def test_discarded_command_strings
+      scope = Module.new
+      commands = []
+      scope.define_singleton_method(:`) { |command| commands << command; :ignored }
+      graph = compile_unit('`first`; value = "second"; `#{value}`; 7').graphs[0]
+      assert_equal(7, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      assert_equal(["first", "second"], commands)
+    end
+
     def test_literal_effect_context
       ["123", "2r", "3i", "nil", "true", '"text"', ":name", "__ENCODING__", "__FILE__", "__LINE__", "self"].each do |literal|
         source = "#{literal}; 7"
