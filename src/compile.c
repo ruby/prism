@@ -5139,7 +5139,9 @@ compile_find_pattern_node(PrismBuilder *builder, const pm_find_pattern_node_t *n
  *    ^^^^^^^^^^
  */
 static uint32_t
-compile_flip_flop_node(PrismBuilder *builder, const pm_flip_flop_node_t *node) {
+compile_flip_flop_node(PrismBuilder *builder, PrismBuilderContext context, const pm_flip_flop_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     uint32_t index = make_flip_flop(builder);
     uint32_t left_block_id = make_block(builder, 0);
     uint32_t right_block_id = make_block(builder, 0);
@@ -6448,7 +6450,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_FALSE_NODE:
             return compile_false_node(builder, context, (const pm_false_node_t *) node);
         case PM_FLIP_FLOP_NODE:
-            return compile_flip_flop_node(builder, (const pm_flip_flop_node_t *) node);
+            return compile_flip_flop_node(builder, context, (const pm_flip_flop_node_t *) node);
         case PM_FLOAT_NODE:
             return compile_float_node(builder, (const pm_float_node_t *) node);
         case PM_FOR_NODE:
