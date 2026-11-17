@@ -116,6 +116,7 @@ typedef enum {
     kPrismInsnRescueMatch,
     kPrismInsnRescueMatchArray,
     kPrismInsnReturn,
+    kPrismInsnReturnValue,
     kPrismInsnStoreConstAbs,
     kPrismInsnStoreConstNestRel,
     kPrismInsnStoreConstRecvRel,

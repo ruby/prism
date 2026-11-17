@@ -115,6 +115,7 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnRescueMatch: return rb_intern_const("rescue_match");
         case kPrismInsnRescueMatchArray: return rb_intern_const("rescue_match_array");
         case kPrismInsnReturn: return rb_intern_const("return");
+        case kPrismInsnReturnValue: return rb_intern_const("return_value");
         case kPrismInsnStoreConstAbs: return rb_intern_const("store_const_abs");
         case kPrismInsnStoreConstNestRel: return rb_intern_const("store_const_nest_rel");
         case kPrismInsnStoreConstRecvRel: return rb_intern_const("store_const_recv_rel");

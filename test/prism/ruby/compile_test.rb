@@ -317,7 +317,7 @@ module Prism
             %1 = load_lvar v0
             %2 = load_object(2)
             %3 = call %1.+(%2)
-            return %3
+            return_value %3
       TEXT
       assert_equal(3, vm.run(unit))
     end
@@ -1018,7 +1018,7 @@ module Prism
         [:defined_implicit_method, :hidden, true],
         [:defined_implicit_method, :missing, false]
       ].each do |kind, name, expected|
-        insns = [Compile::Insn.new(:load_object, 0, [0], receiver), Compile::Insn.new(kind, 0, [1, 0], name), Compile::Insn.new(:return, 0, [1], nil)]
+        insns = [Compile::Insn.new(:load_object, 0, [0], receiver), Compile::Insn.new(kind, 0, [1, 0], name), Compile::Insn.new(:return_value, 0, [1], nil)]
         assert_equal(expected, run_instructions(insns, [nil], 2))
       end
     end
@@ -1269,7 +1269,7 @@ module Prism
     end
 
     def test_coerce_array_to_ary_instruction
-      insns = [Compile::Insn.new(:coerce_array_to_ary, 0, [1, 0], nil), Compile::Insn.new(:return, 0, [1], nil)]
+      insns = [Compile::Insn.new(:coerce_array_to_ary, 0, [1, 0], nil), Compile::Insn.new(:return_value, 0, [1], nil)]
       array = [1, 2]
       assert_same(array, run_instructions(insns, [array], 2))
       assert_equal([nil], run_instructions(insns, [nil], 2))
@@ -1969,7 +1969,7 @@ module Prism
       assert_include(unit.disasm, "(lambda, parent=g0, scope=g1)")
       assert_include(graph.blocks[0].insns.map(&:kind), :trace_b_call)
       body = graph.blocks[0].insns.last.data
-      assert_equal([:trace_b_return, :return], body.insns.last(2).map(&:kind))
+      assert_equal([:trace_b_return, :return_value], body.insns.last(2).map(&:kind))
       unit = compile_unit("->(x) { if x..false; true; else; false; end }")
       assert_equal([1, 0], unit.graphs.map(&:nflip_flops))
     end
@@ -2983,7 +2983,7 @@ module Prism
       assert_empty(child.blocks[0].params)
       assert_equal(:trace_b_call, child.blocks[0].insns.first.kind)
       body = child.blocks[0].insns.last.data
-      assert_equal([:trace_b_return, :return], body.insns.last(2).map(&:kind))
+      assert_equal([:trace_b_return, :return_value], body.insns.last(2).map(&:kind))
     end
 
     def test_for
@@ -3024,7 +3024,7 @@ module Prism
         traces = graph.blocks.flat_map(&:insns).select { |insn| insn.kind == :trace_b_return }
         assert_equal(1, traces.length)
         tail = graph.blocks.find { |block| block.insns.include?(traces[0]) }.insns
-        assert_equal([:trace_b_return, :return], tail.last(2).map(&:kind))
+        assert_equal([:trace_b_return, :return_value], tail.last(2).map(&:kind))
         assert_equal(tail.last.opnds, traces[0].opnds)
       end
     end
@@ -5885,7 +5885,7 @@ module Prism
     def test_define_module_ir
       unit = compile_unit("module CompileTestModuleIR; 1; end")
       assert_equal(:module, unit.graphs[1].kind)
-      assert_equal([:trace_class, :trace_line, :load_object, :trace_end, :return], unit.graphs[1].blocks[0].insns.map(&:kind))
+      assert_equal([:trace_class, :trace_line, :load_object, :trace_end, :return_value], unit.graphs[1].blocks[0].insns.map(&:kind))
     end
 
     def test_define_class
@@ -5898,6 +5898,22 @@ module Prism
       assert_run(String, "class CompileTestSuper < String; end; CompileTestSuper.superclass")
       assert_run(String, "class ::CompileTestAbsSuper < String; end; CompileTestAbsSuper.superclass")
       assert_run(String, "class CompileTestOuter::RecvSuper < String; end; CompileTestOuter::RecvSuper.superclass")
+    end
+
+    def test_define_class_effect_context
+      source = "class CompileTestClassEffect; VALUE = 3; [1, 2]; end; CompileTestClassEffect::VALUE"
+      unit = compile_unit(source)
+      assert_equal(3, vm.run(unit))
+      assert_not_include(unit.graphs[1].blocks.flat_map(&:insns).map(&:kind), :new_array_static)
+      instructions = unit.graphs[1].blocks.flat_map(&:insns)
+      assert_not_include(instructions.map(&:kind), :load_nil)
+      assert_equal(:return, instructions.last.kind)
+      assert_empty(instructions.last.opnds)
+      assert_match(/\breturn$/, unit.disasm)
+      assert_run([1, 2], "class CompileTestClassValue; [1, 2]; end")
+      assert_run(3, "class CompileTestClassBodyEffect; @value = 3; def self.value; @value; end; self.value; end; CompileTestClassBodyEffect.value")
+      assert_run(7, "class CompileTestClassEmptyEffect; end; 7")
+      assert_run_raises(RuntimeError, "class CompileTestClassRaisesEffect; raise 'body'; end; 7", "body")
     end
 
     def test_define_class_reopen

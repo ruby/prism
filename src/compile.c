@@ -2008,8 +2008,13 @@ emit_rescue_match_array(PrismBuilder *builder, uint32_t node_id, uint32_t except
 }
 
 static void
-emit_return(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
-    emit_insn(builder, kPrismInsnReturn, node_id, 1, &value_id);
+emit_return(PrismBuilder *builder, uint32_t node_id) {
+    emit_insn(builder, kPrismInsnReturn, node_id, 0, NULL);
+}
+
+static void
+emit_return_value(PrismBuilder *builder, uint32_t node_id, uint32_t value_id) {
+    emit_insn(builder, kPrismInsnReturnValue, node_id, 1, &value_id);
 }
 
 static uint32_t
@@ -3323,7 +3328,7 @@ compile_block_body(PrismBuilder *builder, uint32_t node_id, const pm_node_t *bod
 
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, body, node_id);
     emit_trace_b_return(builder, node_id, value_id);
-    emit_return(builder, node_id, value_id);
+    emit_return_value(builder, node_id, value_id);
 }
 
 static uint32_t
@@ -4376,7 +4381,7 @@ compile_break_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
         emit_trace_b_return(builder, node->base.node_id, value_id);
 
         if (PrismBuilder_graph(builder)->kind == kPrismGraphLambda) {
-            emit_return(builder, node->base.node_id, value_id);
+            emit_return_value(builder, node->base.node_id, value_id);
         } else {
             emit_break(builder, node->base.node_id, value_id);
         }
@@ -4577,15 +4582,19 @@ compile_case_node(PrismBuilder *builder, PrismBuilderContext context, const pm_c
  * ^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
+compile_class_node(PrismBuilder *builder, PrismBuilderContext context, const pm_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphClass, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
 
     emit_trace_class(builder, node->base.node_id);
-    uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
+    uint32_t value_id = compile_node_or_nil(builder, context, node->body, node->base.node_id);
 
     emit_trace_end(builder, node->base.node_id);
-    emit_return(builder, node->base.node_id, value_id);
+    if (context == kPrismBuilderValue) {
+        emit_return_value(builder, node->base.node_id, value_id);
+    } else {
+        emit_return(builder, node->base.node_id);
+    }
     pop_scope(builder, state);
 
     uint32_t result_id;
@@ -4616,7 +4625,7 @@ compile_class_node(PrismBuilder *builder, const pm_class_node_t *node) {
         }
     }
 
-    return result_id;
+    return context == kPrismBuilderValue ? result_id : UINT32_MAX;
 }
 
 /*
@@ -4974,7 +4983,7 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
 
     emit_trace_return(builder, node->base.node_id, value_id);
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
 
     pop_scope(builder, state);
 
@@ -5845,7 +5854,7 @@ compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
     emit_trace_class(builder, node->base.node_id);
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
     emit_trace_end(builder, node->base.node_id);
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
 
     if (PM_NODE_TYPE_P(node->constant_path, PM_CONSTANT_READ_NODE)) {
@@ -5886,7 +5895,7 @@ compile_next_node(PrismBuilder *builder, const pm_next_node_t *node) {
         emit_branch(builder, node->base.node_id, builder->state.next_block_id, 0, NULL);
     } else {
         emit_trace_b_return(builder, node->base.node_id, value_id);
-        emit_return(builder, node->base.node_id, value_id);
+        emit_return_value(builder, node->base.node_id, value_id);
     }
 
     builder->state.block_id = make_block(builder, 0);
@@ -5940,7 +5949,7 @@ compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_
     uint32_t graph_id = make_graph(builder, kPrismGraphPostExecution, builder->state.graph_id, 0);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, NULL);
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, PM_NODE_UPCAST(node->statements), node->base.node_id);
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
 
     PrismInsn *insn = emit_insn(builder, kPrismInsnPostExecution, node->base.node_id, 0, NULL);
@@ -5954,7 +5963,7 @@ compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
     uint32_t value_id = compile_program_node_statements(builder, kPrismBuilderValue, node->statements, node->base.node_id);
 
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
     return UINT32_MAX;
 }
@@ -6074,7 +6083,7 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
         emit_trace_b_return(builder, node->base.node_id, value_id);
     }
 
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
 
     builder->state.block_id = make_block(builder, 0);
     return emit_load_nil(builder, node->base.node_id);
@@ -6128,7 +6137,7 @@ compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_nod
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
 
-    emit_return(builder, node->base.node_id, value_id);
+    emit_return_value(builder, node->base.node_id, value_id);
     pop_scope(builder, state);
 
     uint32_t receiver_id = compile_node(builder, kPrismBuilderValue, node->expression);
@@ -6375,7 +6384,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CASE_NODE:
             return compile_case_node(builder, context, (const pm_case_node_t *) node);
         case PM_CLASS_NODE:
-            return compile_class_node(builder, (const pm_class_node_t *) node);
+            return compile_class_node(builder, context, (const pm_class_node_t *) node);
         case PM_CLASS_VARIABLE_READ_NODE:
             return compile_class_variable_read_node(builder, (const pm_class_variable_read_node_t *) node);
         case PM_CLASS_VARIABLE_WRITE_NODE:

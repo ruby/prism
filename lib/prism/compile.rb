@@ -532,7 +532,9 @@ module Prism
           opnds = insn.opnds
           "#{value(opnds[0])} = rescue_match_array#{values(opnds[1..])}"
         when :return
-          "return #{insn.opnds.map { |id| value(id) }.join(', ')}"
+          "return"
+        when :return_value
+          "return_value #{value(insn.opnds[0])}"
         when :store_const_abs
           name = "::#{insn.data}"
           "store_const_abs(#{name}, #{value(insn.opnds[0])})"
@@ -1215,6 +1217,8 @@ module Prism
               exception = values[insn.opnds[1]]
               values[insn.opnds[0]] = values[insn.opnds[2]].any? { |klass| rescue_match(exception, klass) }
             when :return
+              return ExecutionResult.new(nil, nil)
+            when :return_value
               return ExecutionResult.new(nil, values[insn.opnds[0]])
             when :store_const_abs
               Object.const_set(insn.data, values[insn.opnds[0]])
