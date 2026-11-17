@@ -2448,6 +2448,47 @@ module Prism
       assert_run_raises(NoMethodError, "super", "super called outside of method")
     end
 
+    def test_define_method_super
+      assert_run([:parent, :other, [3, 4], "super", :singleton], <<~RUBY)
+        class CompileDefineMethodSuperParent
+          def value; :parent; end
+          def other; :other; end
+          def arguments(x:, &block); [x, block.call]; end
+          def query; raise "super must not run"; end
+          def self.value; :singleton; end
+        end
+        class CompileDefineMethodSuperChild < CompileDefineMethodSuperParent
+          define_method(:value) { super() }
+          define_method(:other, proc { super() })
+          define_method(:arguments) { |value| super(x: value) }
+          define_method(:query, &proc { defined?(super) })
+          define_singleton_method(:value) { super() }
+        end
+        object = CompileDefineMethodSuperChild.new
+        [object.value, object.other, object.arguments(3) { 4 }, object.query, CompileDefineMethodSuperChild.value]
+      RUBY
+      assert_run(:parent, <<~RUBY)
+        class CompileDefineMethodCapturedParent
+          def value; :parent; end
+          def install; raise "wrong super context"; end
+        end
+        class CompileDefineMethodCapturedChild < CompileDefineMethodCapturedParent
+          def install
+            self.class.define_method(:value) { super() }
+          end
+        end
+        object = CompileDefineMethodCapturedChild.new
+        object.install
+        object.value
+      RUBY
+      assert_run(false, <<~RUBY)
+        klass = Class.new
+        def klass.define_method(name, &block); block.lambda?; end
+        klass.define_method(:value) { super() }
+      RUBY
+      assert_run_raises(NoMethodError, "class CompileDefineMethodMissingSuper; define_method(:value) { super() }; end; CompileDefineMethodMissingSuper.new.value")
+    end
+
     def test_super_parameter_local_layout
       vm.run(compile_unit(<<~RUBY))
         class CompileTestSuperLayoutBase

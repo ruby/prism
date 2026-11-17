@@ -60,7 +60,8 @@ module Prism
         instance_methods(Class, "Class", %i[superclass])
         instance_methods(Hash, "Hash", %i[merge])
         singleton_methods(Hash, "Hash", %i[ruby2_keywords_hash?])
-        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method public_send respond_to? singleton_class sprintf to_s])
+        instance_methods(Kernel, "Kernel", %i[class define_singleton_method instance_variable_defined? instance_variable_get instance_variable_set lambda method public_send respond_to? singleton_class sprintf to_s])
+        instance_methods(Proc, "Proc", %i[parameters ruby2_keywords])
         singleton_methods(Kernel, "Kernel", %i[lambda])
         singleton_methods(TOPLEVEL_BINDING.receiver, "main", %i[private public])
         instance_methods(Module, "Module", %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get const_set const_source_location constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method])
@@ -274,6 +275,7 @@ module Prism
         @post_executions = Set.new.compare_by_identity
         @once_states = ObjectSpace::WeakKeyMap.new
         @frames = ObjectSpace::WeakKeyMap.new
+        @blocks = ObjectSpace::WeakKeyMap.new
         @once_mutex = Mutex.new
       end
 
@@ -504,6 +506,15 @@ module Prism
               if !call.block_argument && Block === passed_block && arguments.empty? && keywords.empty? && builtin_lambda?(receiver, call.name) && (call.ignore_visibility || StdLib[:Module_public_method_defined?].bind_call(method_lookup_class(receiver), call.name))
                 values[insn.opnds[0]] = new_block(passed_block.graph, passed_block.frame, true)
                 next
+              end
+
+              if keywords.empty? && (arguments.length == 1 || arguments.length == 2) && builtin_method_definition?(receiver, call.name)
+                if arguments.length == 2
+                  arguments[1] = new_method_block(arguments[1])
+                elsif passed_block
+                  callable = Block === passed_block ? passed_block.to_proc : passed_block
+                  passed_block = new_method_block(callable)
+                end
               end
 
               values[insn.opnds[0]] =
@@ -888,6 +899,15 @@ module Prism
         end
       end
 
+      def builtin_method_definition?(receiver, name)
+        return false unless name == :define_method || name == :define_singleton_method
+
+        method = StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name)
+        method == StdLib[:Module_define_method] || method == StdLib[:Kernel_define_singleton_method]
+      rescue NameError
+        false
+      end
+
       def builtin_lambda?(receiver, name)
         StdLib.lambda_method?(StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name))
       rescue NameError
@@ -970,7 +990,7 @@ module Prism
         MethodDefinition.new(self, graph, nest).define(parent, name)
       end
 
-      def new_block(graph, frame, lambda = graph.kind == :lambda)
+      def new_block(graph, frame, lambda = graph.kind == :lambda, method = false)
         vm = self
         locals = frame.locals
         flip_flops = frame.flip_flops
@@ -982,7 +1002,7 @@ module Prism
 
         target = nil
         invoke =
-          proc do |receiver, args, kwargs, passed_block|
+          proc do |receiver, args, kwargs, passed_block, current_super = super_method|
             if (active_frame = @frames[Fiber.current]&.reverse_each&.find { |active| active.native_binding && active.match_state.equal?(frame.match_state) })
               native_match = StdLib[:Binding_eval].bind_call(active_frame.native_binding, "$~")
               unless native_match.equal?(active_frame.native_match)
@@ -991,14 +1011,21 @@ module Prism
             end
 
             block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-            vm.run_frame(Frame.new(graph, receiver, nest, block_locals, flip_flops, super_method, visibility, target, return_target, lambda, frame.match_state, &block), args, kwargs, passed_block)
+            vm.run_frame(Frame.new(graph, receiver, nest, block_locals, flip_flops, current_super, visibility, target, return_target, lambda, frame.match_state, &(method ? passed_block : block)), args, kwargs, passed_block)
           end
 
         callable =
           StdLib[:BasicObject_instance_exec].bind_call(frame.recv) do
-            if graph.signature.ruby2_keywords_eligible?
+            if method || graph.signature.ruby2_keywords_eligible?
               # Keep keyword flags independent of blocks compiled from other graphs.
-              source = lambda ? "->(*args, &passed_block) { invoke.call(self, args, {}, passed_block) }" : "Proc.new { |*args, &passed_block| invoke.call(self, args, {}, passed_block) }"
+              parameters = graph.signature.ruby2_keywords_eligible? ? "*args, &passed_block" : "*args, **kwargs, &passed_block"
+              keywords = graph.signature.ruby2_keywords_eligible? ? "{}" : "kwargs"
+              source = <<~RUBY
+                #{lambda ? "->(#{parameters}) do" : "Proc.new do |#{parameters}|"}
+                  current_super = #{method ? "->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }" : "super_method"}
+                  invoke.call(self, args, #{keywords}, passed_block, current_super)
+                end
+              RUBY
               StdLib[:Binding_eval].bind_call(binding, source)
             elsif lambda
               ->(*args, **kwargs, &passed_block) { invoke.call(self, args, kwargs, passed_block) }
@@ -1007,7 +1034,18 @@ module Prism
             end
           end
 
+        @blocks[callable] = [graph, frame]
         lambda ? callable : (target = Block.new(callable, graph, frame))
+      end
+
+      def new_method_block(callable)
+        return callable unless (definition = @blocks[callable])
+
+        result = new_block(*definition, true, true)
+        if definition[0].signature.ruby2_keywords_eligible? && StdLib[:Proc_parameters].bind_call(callable).include?([:keyrest, :**])
+          StdLib[:Proc_ruby2_keywords].bind_call(result)
+        end
+        result
       end
 
       ###
