@@ -2365,6 +2365,12 @@ typedef enum {
     kPrismBuilderEffect
 } PrismBuilderContext;
 
+#ifdef NDEBUG
+#define PM_ASSERT_VALUE_CONTEXT(context_) ((void) (context_))
+#else
+#define PM_ASSERT_VALUE_CONTEXT(context_) assert((context_) == kPrismBuilderValue)
+#endif
+
 static uint32_t compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node);
 
 static uint32_t
@@ -4338,15 +4344,19 @@ compile_begin_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  */
 static uint32_t
 compile_block_argument_node(PrismBuilder *builder, PrismBuilderContext context, const pm_block_argument_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     if (node->expression) {
-        return compile_node(builder, context, node->expression);
+        return compile_node(builder, kPrismBuilderValue, node->expression);
     } else {
-        return context == kPrismBuilderValue ? emit_load_lvar(builder, node->base.node_id, builder->state.block_local_id) : UINT32_MAX;
+        return emit_load_lvar(builder, node->base.node_id, builder->state.block_local_id);
     }
 }
 
 static uint32_t
-compile_block_node(PrismBuilder *builder, const pm_block_node_t *node) {
+compile_block_node(PrismBuilder *builder, PrismBuilderContext context, const pm_block_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     return compile_closure(builder, PM_NODE_UPCAST(node), kPrismGraphBlock, node->parameters, node->body, &node->locals);
 }
 
@@ -6344,7 +6354,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_BLOCK_ARGUMENT_NODE:
             return compile_block_argument_node(builder, context, (const pm_block_argument_node_t *) node);
         case PM_BLOCK_NODE:
-            return compile_block_node(builder, (const pm_block_node_t *) node);
+            return compile_block_node(builder, context, (const pm_block_node_t *) node);
         case PM_BREAK_NODE:
             return compile_break_node(builder, (const pm_break_node_t *) node);
         case PM_CALL_AND_WRITE_NODE:
