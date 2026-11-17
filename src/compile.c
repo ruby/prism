@@ -5252,7 +5252,7 @@ compile_for_node(PrismBuilder *builder, PrismBuilderContext context, const pm_fo
  * ^^^^^^^^
  */
 static uint32_t
-compile_forwarding_super_node(PrismBuilder *builder, const pm_forwarding_super_node_t *node) {
+compile_forwarding_super_node(PrismBuilder *builder, PrismBuilderContext context, const pm_forwarding_super_node_t *node) {
     PrismArguments arguments = { .block_id = UINT32_MAX };
     const PrismGraph *method = builder->unit->graphs + PrismBuilder_graph(builder)->scope_id;
 
@@ -5321,7 +5321,8 @@ compile_forwarding_super_node(PrismBuilder *builder, const pm_forwarding_super_n
         arguments.block_id = emit_load_block(builder, node->base.node_id);
     }
 
-    return emit_call_super(builder, node->base.node_id, &arguments);
+    uint32_t value_id = emit_call_super(builder, node->base.node_id, &arguments);
+    return context == kPrismBuilderValue ? value_id : UINT32_MAX;
 }
 
 /*
@@ -6465,7 +6466,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_GLOBAL_VARIABLE_OPERATOR_WRITE_NODE:
             return compile_global_variable_operator_write_node(builder, (const pm_global_variable_operator_write_node_t *) node);
         case PM_FORWARDING_SUPER_NODE:
-            return compile_forwarding_super_node(builder, (const pm_forwarding_super_node_t *) node);
+            return compile_forwarding_super_node(builder, context, (const pm_forwarding_super_node_t *) node);
         case PM_GLOBAL_VARIABLE_AND_WRITE_NODE:
             return compile_global_variable_and_write_node(builder, (const pm_global_variable_and_write_node_t *) node);
         case PM_GLOBAL_VARIABLE_OR_WRITE_NODE:
