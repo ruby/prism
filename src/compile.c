@@ -2372,8 +2372,10 @@ typedef enum {
 
 #ifdef NDEBUG
 #define PM_ASSERT_VALUE_CONTEXT(context_) ((void) (context_))
+#define PM_ASSERT_EFFECT_CONTEXT(context_) ((void) (context_))
 #else
 #define PM_ASSERT_VALUE_CONTEXT(context_) assert((context_) == kPrismBuilderValue)
+#define PM_ASSERT_EFFECT_CONTEXT(context_) assert((context_) == kPrismBuilderEffect)
 #endif
 
 static uint32_t compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node);
@@ -5936,27 +5938,34 @@ compile_match_write_node(PrismBuilder *builder, PrismBuilderContext context, con
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_module_node(PrismBuilder *builder, const pm_module_node_t *node) {
+compile_module_node(PrismBuilder *builder, PrismBuilderContext context, const pm_module_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphModule, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
 
     emit_trace_class(builder, node->base.node_id);
-    uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
+    uint32_t value_id = compile_node_or_nil(builder, context, node->body, node->base.node_id);
     emit_trace_end(builder, node->base.node_id);
-    emit_return_value(builder, node->base.node_id, value_id);
+    if (context == kPrismBuilderValue) {
+        emit_return_value(builder, node->base.node_id, value_id);
+    } else {
+        emit_return(builder, node->base.node_id);
+    }
     pop_scope(builder, state);
 
+    uint32_t result_id;
     if (PM_NODE_TYPE_P(node->constant_path, PM_CONSTANT_READ_NODE)) {
-        return emit_define_module_nest_rel(builder, node->base.node_id, node->name, graph_id);
+        result_id = emit_define_module_nest_rel(builder, node->base.node_id, node->name, graph_id);
+    } else {
+        const pm_constant_path_node_t *constant_path = (const pm_constant_path_node_t *) node->constant_path;
+        if (constant_path->parent) {
+            uint32_t receiver_id = compile_node(builder, kPrismBuilderValue, constant_path->parent);
+            result_id = emit_define_module_recv_rel(builder, node->base.node_id, node->name, receiver_id, graph_id);
+        } else {
+            result_id = emit_define_module_abs(builder, node->base.node_id, node->name, graph_id);
+        }
     }
 
-    const pm_constant_path_node_t *constant_path = (const pm_constant_path_node_t *) node->constant_path;
-    if (constant_path->parent) {
-        uint32_t receiver_id = compile_node(builder, kPrismBuilderValue, constant_path->parent);
-        return emit_define_module_recv_rel(builder, node->base.node_id, node->name, receiver_id, graph_id);
-    }
-
-    return emit_define_module_abs(builder, node->base.node_id, node->name, graph_id);
+    return context == kPrismBuilderValue ? result_id : UINT32_MAX;
 }
 
 /*
@@ -6038,7 +6047,7 @@ compile_parentheses_node(PrismBuilder *builder, PrismBuilderContext context, con
  * ^^^^^^
  */
 static uint32_t
-compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_t *node) {
+compile_post_execution_node(PrismBuilder *builder, PrismBuilderContext context, const pm_post_execution_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphPostExecution, builder->state.graph_id, 0);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, NULL);
     uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, PM_NODE_UPCAST(node->statements), node->base.node_id);
@@ -6047,11 +6056,13 @@ compile_post_execution_node(PrismBuilder *builder, const pm_post_execution_node_
 
     PrismInsn *insn = emit_insn(builder, kPrismInsnPostExecution, node->base.node_id, 0, NULL);
     insn->as.post_execution.graph_id = graph_id;
-    return emit_load_nil(builder, node->base.node_id);
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
 static uint32_t
-compile_program_node(PrismBuilder *builder, const pm_program_node_t *node) {
+compile_program_node(PrismBuilder *builder, PrismBuilderContext context, const pm_program_node_t *node) {
+    PM_ASSERT_EFFECT_CONTEXT(context);
+
     uint32_t graph_id = make_graph(builder, kPrismGraphProgram, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
     uint32_t value_id = compile_program_node_statements(builder, kPrismBuilderValue, node->statements, node->base.node_id);
@@ -6211,27 +6222,27 @@ compile_self_node(PrismBuilder *builder, PrismBuilderContext context, const pm_s
  * shared depending on the current lexical context.
  */
 static uint32_t
-compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_constant_node_t *node) {
+compile_shareable_constant_node(PrismBuilder *builder, PrismBuilderContext context, const pm_shareable_constant_node_t *node) {
     pm_node_flags_t shareability = node->base.flags & (PM_SHAREABLE_CONSTANT_NODE_FLAGS_LITERAL | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_COPY | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_EVERYTHING);
     switch (PM_NODE_TYPE(node->write)) {
         case PM_CONSTANT_AND_WRITE_NODE:
-            return compile_constant_and_write_node(builder, kPrismBuilderValue, (const pm_constant_and_write_node_t *) node->write, shareability);
+            return compile_constant_and_write_node(builder, context, (const pm_constant_and_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
-            return compile_constant_operator_write_node(builder, kPrismBuilderValue, (const pm_constant_operator_write_node_t *) node->write, shareability);
+            return compile_constant_operator_write_node(builder, context, (const pm_constant_operator_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OR_WRITE_NODE:
-            return compile_constant_or_write_node(builder, kPrismBuilderValue, (const pm_constant_or_write_node_t *) node->write, shareability);
+            return compile_constant_or_write_node(builder, context, (const pm_constant_or_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_AND_WRITE_NODE:
-            return compile_constant_path_and_write_node(builder, kPrismBuilderValue, (const pm_constant_path_and_write_node_t *) node->write, shareability);
+            return compile_constant_path_and_write_node(builder, context, (const pm_constant_path_and_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
-            return compile_constant_path_operator_write_node(builder, kPrismBuilderValue, (const pm_constant_path_operator_write_node_t *) node->write, shareability);
+            return compile_constant_path_operator_write_node(builder, context, (const pm_constant_path_operator_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_OR_WRITE_NODE:
-            return compile_constant_path_or_write_node(builder, kPrismBuilderValue, (const pm_constant_path_or_write_node_t *) node->write, shareability);
+            return compile_constant_path_or_write_node(builder, context, (const pm_constant_path_or_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_WRITE_NODE:
-            return compile_constant_path_write_node(builder, kPrismBuilderValue, (const pm_constant_path_write_node_t *) node->write, shareability);
+            return compile_constant_path_write_node(builder, context, (const pm_constant_path_write_node_t *) node->write, shareability);
         case PM_CONSTANT_WRITE_NODE:
-            return compile_constant_write_node(builder, kPrismBuilderValue, (const pm_constant_write_node_t *) node->write, shareability);
+            return compile_constant_write_node(builder, context, (const pm_constant_write_node_t *) node->write, shareability);
         default:
-            return compile_node(builder, kPrismBuilderValue, node->write);
+            return compile_node(builder, context, node->write);
     }
 }
 
@@ -6240,16 +6251,21 @@ compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_consta
  * ^^^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_node_t *node) {
+compile_singleton_class_node(PrismBuilder *builder, PrismBuilderContext context, const pm_singleton_class_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphSingletonClass, UINT32_MAX, (uint32_t) node->locals.size);
     PrismBuilderState state = push_scope(builder, graph_id, NULL, NULL, &node->locals);
-    uint32_t value_id = compile_node_or_nil(builder, kPrismBuilderValue, node->body, node->base.node_id);
+    uint32_t value_id = compile_node_or_nil(builder, context, node->body, node->base.node_id);
 
-    emit_return_value(builder, node->base.node_id, value_id);
+    if (context == kPrismBuilderValue) {
+        emit_return_value(builder, node->base.node_id, value_id);
+    } else {
+        emit_return(builder, node->base.node_id);
+    }
     pop_scope(builder, state);
 
     uint32_t receiver_id = compile_node(builder, kPrismBuilderValue, node->expression);
-    return emit_define_singleton_class(builder, node->base.node_id, receiver_id, graph_id);
+    uint32_t result_id = emit_define_singleton_class(builder, node->base.node_id, receiver_id, graph_id);
+    return context == kPrismBuilderValue ? result_id : UINT32_MAX;
 }
 
 /*
@@ -6629,7 +6645,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_MATCH_WRITE_NODE:
             return compile_match_write_node(builder, context, (const pm_match_write_node_t *) node);
         case PM_MODULE_NODE:
-            return compile_module_node(builder, (const pm_module_node_t *) node);
+            return compile_module_node(builder, context, (const pm_module_node_t *) node);
         case PM_MULTI_WRITE_NODE:
             return compile_multi_write_node(builder, context, (const pm_multi_write_node_t *) node);
         case PM_NEXT_NODE:
@@ -6643,9 +6659,9 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_PARENTHESES_NODE:
             return compile_parentheses_node(builder, context, (const pm_parentheses_node_t *) node);
         case PM_POST_EXECUTION_NODE:
-            return compile_post_execution_node(builder, (const pm_post_execution_node_t *) node);
+            return compile_post_execution_node(builder, context, (const pm_post_execution_node_t *) node);
         case PM_PROGRAM_NODE:
-            return compile_program_node(builder, (const pm_program_node_t *) node);
+            return compile_program_node(builder, context, (const pm_program_node_t *) node);
         case PM_RANGE_NODE:
             return compile_range_node(builder, context, (const pm_range_node_t *) node);
         case PM_RATIONAL_NODE:
@@ -6663,9 +6679,9 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_SELF_NODE:
             return compile_self_node(builder, context, (const pm_self_node_t *) node);
         case PM_SHAREABLE_CONSTANT_NODE:
-            return compile_shareable_constant_node(builder, (const pm_shareable_constant_node_t *) node);
+            return compile_shareable_constant_node(builder, context, (const pm_shareable_constant_node_t *) node);
         case PM_SINGLETON_CLASS_NODE:
-            return compile_singleton_class_node(builder, (const pm_singleton_class_node_t *) node);
+            return compile_singleton_class_node(builder, context, (const pm_singleton_class_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
             return compile_source_encoding_node(builder, context, (const pm_source_encoding_node_t *) node);
         case PM_SOURCE_FILE_NODE:

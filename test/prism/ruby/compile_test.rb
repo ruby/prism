@@ -581,6 +581,47 @@ module Prism
       assert_equal(["first", "second"], commands)
     end
 
+    def test_scope_effect_context
+      [
+        "module CompileTestModuleEffect; def self.value; [1, 2]; end; [3, 4]; end; CompileTestModuleEffect.value",
+        "module ::CompileTestAbsoluteModuleEffect; def self.value; [1, 2]; end; [3, 4]; end; CompileTestAbsoluteModuleEffect.value",
+        "o = Object.new; class << o; def value; [1, 2]; end; [3, 4]; end; o.value"
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal([1, 2], vm.run(unit), source)
+        instructions = unit.graphs[1].blocks.flat_map(&:insns)
+        assert_equal(:return, instructions.last.kind, source)
+        assert_not_include(instructions.map(&:kind), :new_array_static, source)
+        assert_not_include(instructions.map(&:kind), :load_nil, source)
+      end
+      assert_run([1, 2], "module CompileTestModuleValueContext; [1, 2]; end")
+      assert_run([1, 2], "class << Object.new; [1, 2]; end")
+      assert_run_raises(TypeError, "class << 1; end; 7")
+    end
+
+    def test_shareable_constant_effect_context
+      ["Value", "self::Value"].each do |target|
+        [["=", "", "[1, 2]"], ["&&=", "#{target} = true;", "[1, 2]"],
+          ["||=", "", "[1, 2]"], ["+=", "#{target} = [1];", "[2]"]].each do |operator, seed, rhs|
+          source = "# shareable_constant_value: literal\n#{seed} #{target} #{operator} #{rhs}; #{target}"
+          unit = compile_unit(source)
+          scope = Module.new
+          ignore_warnings do
+            assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(unit.graphs[0], scope, [scope, Object].freeze)), source)
+          end
+          assert(unit.graphs[0].blocks.all? { |block| block.params.empty? }, source)
+        end
+      end
+    end
+
+    def test_post_execution_effect_context
+      unit = compile_unit("END { puts 1 }; 7")
+      instructions = unit.graphs[0].blocks.flat_map(&:insns)
+      assert_include(instructions.map(&:kind), :post_execution)
+      assert_not_include(instructions.map(&:kind), :load_nil)
+      assert_post_execution("1\n", "END { puts 1 }; 7")
+    end
+
     def test_literal_effect_context
       ["123", "2r", "3i", "nil", "true", '"text"', ":name", "__ENCODING__", "__FILE__", "__LINE__", "self"].each do |literal|
         source = "#{literal}; 7"
