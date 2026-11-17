@@ -415,8 +415,7 @@ module Prism
       false
     end
 
-    # Generate the list of values that will be used in a lookup table for a
-    # given encoding.
+    # Generate the list of values that will be used in the ASCII table.
     def lookup_table_values(encoding)
       (0...256).each_slice(16).map.with_index do |slice, row_index|
         slice.map do |codepoint|
@@ -453,6 +452,9 @@ module Prism
       (0x80...0x100).each do |byte|
         next unless constant_start?(byte.chr(encoding))
         bitmap[(byte - 0x80) >> 3] |= 1 << (byte & 7)
+      rescue RangeError
+        warn("Encoding `#{encoding.name}' is not a single-byte encoding. The forms of the multibyte encodings are written by hand in src/encoding.c.")
+        exit(1)
       end
 
       if bitmap.all?(0)
