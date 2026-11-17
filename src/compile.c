@@ -4978,7 +4978,7 @@ compile_constant_write_node(PrismBuilder *builder, PrismBuilderContext context, 
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
+compile_def_node(PrismBuilder *builder, PrismBuilderContext context, const pm_def_node_t *node) {
     uint32_t graph_id = make_graph(builder, kPrismGraphDef, UINT32_MAX, (uint32_t) node->locals.size + parameters_locals(node->parameters));
 
     PrismSignature signature;
@@ -5005,6 +5005,8 @@ compile_def_node(PrismBuilder *builder, const pm_def_node_t *node) {
     } else {
         emit_define_method(builder, node->base.node_id, node->name, graph_id);
     }
+
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
 
     uint32_t object_id = make_object_constant_id(builder, node->name);
     return emit_load_object(builder, node->base.node_id, object_id);
@@ -6428,7 +6430,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_PATH_OPERATOR_WRITE_NODE:
             return compile_constant_path_operator_write_node(builder, context, (const pm_constant_path_operator_write_node_t *) node, 0);
         case PM_DEF_NODE:
-            return compile_def_node(builder, (const pm_def_node_t *) node);
+            return compile_def_node(builder, context, (const pm_def_node_t *) node);
         case PM_DEFINED_NODE:
             return compile_defined_node(builder, (const pm_defined_node_t *) node);
         case PM_ELSE_NODE:

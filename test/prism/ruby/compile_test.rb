@@ -985,6 +985,19 @@ module Prism
       assert_run(nil, "value = BasicObject.new; defined?(value.missing)")
     end
 
+    def test_method_definition_effect_context
+      ["def example; [1, 2]; end; 7", "def self.example; [1, 2]; end; 7"].each do |source|
+        unit = compile_unit(source)
+        objects = unit.graphs[0].blocks.flat_map(&:insns).select { |insn| insn.kind == :load_object }.map(&:data)
+        assert_not_include(objects, :example, source)
+      end
+      assert_run([1, 2], "class CompileTestDefEffect; def value; [1, 2]; end; end; CompileTestDefEffect.new.value")
+      assert_run([1, 2], "class CompileTestSingletonDefEffect; def self.value; [1, 2]; end; end; CompileTestSingletonDefEffect.value")
+      assert_run(:value, "class CompileTestDefValue; def value; end; end")
+      assert_run(:value, "class CompileTestSingletonDefValue; def self.value; end; end")
+      assert_run([:receiver], "events = []; receiver = Object.new; def (receiver.tap { events << :receiver }).value; 1; end; events")
+    end
+
     def test_method_definition_signatures
       scope = Module.new
       first_vm = Compile::VM.new
