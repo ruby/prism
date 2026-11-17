@@ -5201,7 +5201,7 @@ compile_float_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  * ^^^^^^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
+compile_for_node(PrismBuilder *builder, PrismBuilderContext context, const pm_for_node_t *node) {
     uint32_t collection_id = compile_node(builder, kPrismBuilderValue, node->collection);
     uint32_t graph_id = make_graph(builder, kPrismGraphBlock, builder->state.graph_id, 0);
     bool multi_target = PM_NODE_TYPE_P(node->index, PM_MULTI_TARGET_NODE) || PM_NODE_TYPE_P(node->index, PM_SPLAT_NODE);
@@ -5243,7 +5243,8 @@ compile_for_node(PrismBuilder *builder, const pm_for_node_t *node) {
     pop_scope(builder, state);
 
     uint32_t block_id = emit_new_block(builder, node->base.node_id, graph_id);
-    return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id, false, false, 0, false);
+    uint32_t value_id = emit_call(builder, node->base.node_id, PM_CONSTANT_ID_EACH, collection_id, 0, NULL, block_id, false, false, 0, false);
+    return context == kPrismBuilderValue ? value_id : UINT32_MAX;
 }
 
 /*
@@ -6456,7 +6457,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_FLOAT_NODE:
             return compile_float_node(builder, context, (const pm_float_node_t *) node);
         case PM_FOR_NODE:
-            return compile_for_node(builder, (const pm_for_node_t *) node);
+            return compile_for_node(builder, context, (const pm_for_node_t *) node);
         case PM_GLOBAL_VARIABLE_READ_NODE:
             return compile_global_variable_read_node(builder, (const pm_global_variable_read_node_t *) node);
         case PM_GLOBAL_VARIABLE_WRITE_NODE:

@@ -3064,6 +3064,23 @@ module Prism
       assert_post_execution("2\n", "for i in [1, 2]; END { puts i }; end")
     end
 
+    def test_for_effect_context_preserves_block_result
+      assert_run([1, 2], <<~RUBY)
+        class CompileTestForBodyResult
+          attr_reader :result
+          def each
+            @result = yield 1
+            :ignored
+          end
+        end
+        collection = CompileTestForBodyResult.new
+        for i in collection
+          [i, 2]
+        end
+        collection.result
+      RUBY
+    end
+
     def test_for_block_traces
       {
         "for i in [1]; i + 1; end" => :store_lvar,
