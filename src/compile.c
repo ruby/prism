@@ -4131,11 +4131,11 @@ compile_alias_global_variable_node(PrismBuilder *builder, PrismBuilderContext co
  * ^^^^^^^^^^^^^
  */
 static uint32_t
-compile_alias_method_node(PrismBuilder *builder, const pm_alias_method_node_t *node) {
+compile_alias_method_node(PrismBuilder *builder, PrismBuilderContext context, const pm_alias_method_node_t *node) {
     uint32_t new_name_id = compile_node(builder, kPrismBuilderValue, node->new_name);
     uint32_t old_name_id = compile_node(builder, kPrismBuilderValue, node->old_name);
     emit_alias_method(builder, node->base.node_id, new_name_id, old_name_id);
-    return emit_load_nil(builder, node->base.node_id);
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
 /*
@@ -6312,7 +6312,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_ALIAS_GLOBAL_VARIABLE_NODE:
             return compile_alias_global_variable_node(builder, context, (const pm_alias_global_variable_node_t *) node);
         case PM_ALIAS_METHOD_NODE:
-            return compile_alias_method_node(builder, (const pm_alias_method_node_t *) node);
+            return compile_alias_method_node(builder, context, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
             return compile_and_node(builder, (const pm_and_node_t *) node);
         case PM_ARRAY_NODE:
