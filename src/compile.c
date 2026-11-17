@@ -109,6 +109,7 @@ typedef struct {
     pm_arena_t scratch;
     PrismUnit *unit;
     PrismBuilderState state;
+    PrismBuilderState *pre_execution;
     uint32_t *bindings;
 } PrismBuilder;
 
@@ -2394,7 +2395,7 @@ static void compile_pattern_match(PrismBuilder *builder, const pm_node_t *node, 
 
 static void
 compile_node_trace(PrismBuilder *builder, const pm_node_t *node) {
-    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
+    if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE) && !PM_NODE_TYPE_P(node, PM_PRE_EXECUTION_NODE)) {
         int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
 
         if (builder->state.lineno != lineno) {
@@ -3339,25 +3340,15 @@ compile_parameters(PrismBuilder *builder, const pm_parameters_node_t *parameters
 static uint32_t
 compile_program_node_statements(PrismBuilder *builder, PrismBuilderContext context, const pm_statements_node_t *statements, uint32_t node_id) {
     PrismBuilderState pre_state = builder->state;
+    PrismBuilderState *previous_pre_execution = builder->pre_execution;
+    builder->pre_execution = &pre_state;
     uint32_t body_block_id = make_block(builder, 0);
     builder->state.block_id = body_block_id;
     uint32_t value_id;
 
     if (statements && statements->body.size) {
         for (size_t idx = 0; idx < statements->body.size; ++idx) {
-            const pm_node_t *statement = statements->body.nodes[idx];
-
-            if (PM_NODE_TYPE_P(statement, PM_PRE_EXECUTION_NODE)) {
-                const pm_pre_execution_node_t *cast = (const pm_pre_execution_node_t *) statement;
-                PrismBuilderState body_state = builder->state;
-                builder->state = pre_state;
-                compile_program_node_statements(builder, kPrismBuilderEffect, cast->statements, statement->node_id);
-                pre_state = builder->state;
-                builder->state = body_state;
-                statement = NULL;
-            }
-
-            value_id = compile_node_or_nil(builder, idx + 1 < statements->body.size ? kPrismBuilderEffect : context, statement, node_id);
+            value_id = compile_node(builder, idx + 1 < statements->body.size ? kPrismBuilderEffect : context, statements->body.nodes[idx]);
         }
     } else {
         value_id = compile_node_or_nil(builder, context, NULL, node_id);
@@ -3367,6 +3358,7 @@ compile_program_node_statements(PrismBuilder *builder, PrismBuilderContext conte
     builder->state = pre_state;
     emit_branch(builder, node_id, body_block_id, 0, NULL);
     builder->state = body_state;
+    builder->pre_execution = previous_pre_execution;
     return value_id;
 }
 
@@ -6155,6 +6147,20 @@ compile_post_execution_node(PrismBuilder *builder, PrismBuilderContext context, 
     return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
+/*
+ * BEGIN { foo }
+ * ^^^^^^^^^^^^^
+ */
+static uint32_t
+compile_pre_execution_node(PrismBuilder *builder, PrismBuilderContext context, const pm_pre_execution_node_t *node) {
+    PrismBuilderState body_state = builder->state;
+    builder->state = *builder->pre_execution;
+    compile_program_node_statements(builder, kPrismBuilderEffect, node->statements, node->base.node_id);
+    *builder->pre_execution = builder->state;
+    builder->state = body_state;
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
+}
+
 static uint32_t
 compile_program_node(PrismBuilder *builder, PrismBuilderContext context, const pm_program_node_t *node) {
     PM_ASSERT_EFFECT_CONTEXT(context);
@@ -6754,6 +6760,8 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
             return compile_parentheses_node(builder, context, (const pm_parentheses_node_t *) node);
         case PM_POST_EXECUTION_NODE:
             return compile_post_execution_node(builder, context, (const pm_post_execution_node_t *) node);
+        case PM_PRE_EXECUTION_NODE:
+            return compile_pre_execution_node(builder, context, (const pm_pre_execution_node_t *) node);
         case PM_PROGRAM_NODE:
             return compile_program_node(builder, context, (const pm_program_node_t *) node);
         case PM_RANGE_NODE:
@@ -6844,7 +6852,6 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_PARAMETERS_NODE:
         case PM_PINNED_EXPRESSION_NODE:
         case PM_PINNED_VARIABLE_NODE:
-        case PM_PRE_EXECUTION_NODE:
         case PM_REQUIRED_KEYWORD_PARAMETER_NODE:
         case PM_REQUIRED_PARAMETER_NODE:
         case PM_RESCUE_NODE:

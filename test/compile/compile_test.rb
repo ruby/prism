@@ -1786,6 +1786,34 @@ module Prism
       end
     end
 
+    def test_cli_ast_options
+      cli = File.expand_path("cli.rb", __dir__)
+      [
+        [["-n", "-e", "puts $_.upcase"], "one\ntwo\n", "ONE\nTWO\n"],
+        [["-p", "-e", "$_.upcase!"], "one\ntwo\n", "ONE\nTWO\n"],
+        [["-na", "-e", "puts $F.last"], "one two\nthree four\n", "two\nfour\n"],
+        [["-pl", "-e", "$_ = $_.size.to_s"], "one\ntwo\n", "3\n3\n"],
+        [["-a", "-e", "puts :once"], "one two\n", "once\n"],
+        [["-n", "-e", "next if $_.start_with?('skip'); print $_; break"], "skip\nkeep\nlater\n", "keep\n"],
+        [["-n", "-e", "BEGIN { puts :start }; print $_; END { puts :done }"], "one\ntwo\n", "start\none\ntwo\ndone\n"],
+        [["-n", "-e", "BEGIN { puts :start }; print $_"], "", "start\n"],
+        [["-n", "-e", "BEGIN { puts :outer; BEGIN { puts :inner } }; print $_"], "", "inner\nouter\n"],
+        [["-n", "-e", "BEGIN { if true; puts :start; end }; print $_"], "one\n", "start\none\n"],
+        [["-n"], "print $_\n__END__\none\ntwo\n", "one\ntwo\n"],
+        [["-x"], "not Ruby code\n#!/usr/bin/env ruby\nputs :main\n", "main\n"]
+      ].each do |arguments, input, expected|
+        stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, *arguments, stdin_data: input)
+        assert_predicate(status, :success?, stderr)
+        assert_equal(expected, stdout, arguments.inspect)
+        assert_empty(stderr)
+      end
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, "--dump=ir", "-p", "-e", "$_.upcase!")
+      assert_predicate(status, :success?, stderr)
+      assert_include(stdout, ".gets(")
+      assert_include(stdout, ".print(")
+      assert_empty(stderr)
+    end
+
     def test_cli_main_script
       cli = File.expand_path("cli.rb", __dir__)
       source = "#!/bin/sh\nnot ruby code\n#!/usr/bin/env ruby\nputs :main\n"
