@@ -2392,6 +2392,12 @@ compile_node_or_nil(PrismBuilder *builder, PrismBuilderContext context, const pm
 }
 
 static void
+compile_predicate(PrismBuilder *builder, const pm_node_t *node, uint32_t then_block_id, uint32_t else_block_id) {
+    uint32_t value_id = compile_node(builder, kPrismBuilderValue, node);
+    emit_branchif(builder, node->node_id, value_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+}
+
+static void
 compile_arguments_splat(PrismBuilder *builder, uint32_t node_id, PrismArguments *arguments, uint32_t array_id) {
     if (arguments->splat) {
         size_t index = arguments->size - 1;
@@ -2746,11 +2752,10 @@ compile_conditional_node(PrismBuilder *builder, PrismBuilderContext context, con
     uint32_t else_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, nparams);
 
-    uint32_t predicate_id = compile_node(builder, kPrismBuilderValue, predicate);
     if (PM_NODE_TYPE_P(node, PM_IF_NODE)) {
-        emit_branchif(builder, node->node_id, predicate_id, then_block_id, 0, NULL, else_block_id, 0, NULL);
+        compile_predicate(builder, predicate, then_block_id, else_block_id);
     } else {
-        emit_branchif(builder, node->node_id, predicate_id, else_block_id, 0, NULL, then_block_id, 0, NULL);
+        compile_predicate(builder, predicate, else_block_id, then_block_id);
     }
 
     builder->state.block_id = then_block_id;
@@ -2841,6 +2846,7 @@ compile_loop_node(PrismBuilder *builder, PrismBuilderContext context, const pm_n
     uint32_t predicate_block_id = make_block(builder, 0);
     uint32_t loop_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, nparams);
+    uint32_t exit_block_id = nparams ? make_block(builder, 0) : join_block_id;
 
     builder->state.break_block_id = join_block_id;
     builder->state.next_block_id = predicate_block_id;
@@ -2849,12 +2855,16 @@ compile_loop_node(PrismBuilder *builder, PrismBuilderContext context, const pm_n
     emit_branch(builder, node->node_id, PM_NODE_FLAG_P(node, PM_LOOP_FLAGS_BEGIN_MODIFIER) ? loop_block_id : predicate_block_id, 0, NULL);
 
     builder->state.block_id = predicate_block_id;
-    uint32_t predicate_id = compile_node(builder, kPrismBuilderValue, predicate);
-    uint32_t nil_id = nparams ? emit_load_nil(builder, node->node_id) : UINT32_MAX;
     if (PM_NODE_TYPE_P(node, PM_WHILE_NODE)) {
-        emit_branchif(builder, node->node_id, predicate_id, loop_block_id, 0, NULL, join_block_id, nparams, &nil_id);
+        compile_predicate(builder, predicate, loop_block_id, exit_block_id);
     } else {
-        emit_branchif(builder, node->node_id, predicate_id, join_block_id, nparams, &nil_id, loop_block_id, 0, NULL);
+        compile_predicate(builder, predicate, exit_block_id, loop_block_id);
+    }
+
+    if (nparams) {
+        builder->state.block_id = exit_block_id;
+        uint32_t nil_id = emit_load_nil(builder, node->node_id);
+        emit_branch(builder, node->node_id, join_block_id, 1, &nil_id);
     }
 
     builder->state.block_id = loop_block_id;
@@ -4525,13 +4535,12 @@ compile_case_match_node(PrismBuilder *builder, PrismBuilderContext context, cons
 
         if (predicate) {
             builder->state.block_id = matched_block_id;
-            uint32_t guard_id = compile_node(builder, kPrismBuilderValue, predicate);
             uint32_t failed_block_id = single ? make_block(builder, 0) : next_block_id;
 
             if (guard_if) {
-                emit_branchif(builder, predicate->node_id, guard_id, body_block_id, 0, NULL, failed_block_id, 0, NULL);
+                compile_predicate(builder, predicate, body_block_id, failed_block_id);
             } else {
-                emit_branchif(builder, predicate->node_id, guard_id, failed_block_id, 0, NULL, body_block_id, 0, NULL);
+                compile_predicate(builder, predicate, failed_block_id, body_block_id);
             }
 
             if (single) {
