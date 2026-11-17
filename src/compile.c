@@ -4823,7 +4823,7 @@ compile_constant_path_and_write_node(PrismBuilder *builder, PrismBuilderContext 
  * ^^^^^^^^
  */
 static uint32_t
-compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t *node) {
+compile_constant_path_node(PrismBuilder *builder, PrismBuilderContext context, const pm_constant_path_node_t *node) {
     const pm_node_t *current = PM_NODE_UPCAST(node);
     uint32_t depth = 0;
 
@@ -4855,7 +4855,7 @@ compile_constant_path_node(PrismBuilder *builder, const pm_constant_path_node_t 
         value_id = emit_load_const_recv_rel(builder, node->base.node_id, receiver_id, constant_path);
     }
 
-    return value_id;
+    return context == kPrismBuilderValue ? value_id : UINT32_MAX;
 }
 
 /*
@@ -6412,7 +6412,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
             return compile_constant_operator_write_node(builder, context, (const pm_constant_operator_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_NODE:
-            return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
+            return compile_constant_path_node(builder, context, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
             return compile_constant_path_write_node(builder, (const pm_constant_path_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_AND_WRITE_NODE:

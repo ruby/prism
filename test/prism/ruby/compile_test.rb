@@ -5718,6 +5718,19 @@ module Prism
       assert_raise(TypeError) { vm.run(compile_unit("1.itself::Foo")) }
     end
 
+    def test_constant_path_effect_context
+      assert_run(7, "::String; Float::INFINITY; 7")
+      assert_run_raises(NameError, "String::CompileTestMissing; 7")
+      assert_run_raises(TypeError, "1.itself::Value; 7")
+      assert_run([:receiver, :Missing], <<~RUBY)
+        events = []
+        receiver = Module.new
+        receiver.define_singleton_method(:const_missing) { |name| events << name; 1 }
+        (events << :receiver; receiver)::Missing
+        events
+      RUBY
+    end
+
     def test_const_set_recv_rel
       assert_run_raises(TypeError, "1.itself::CompileTestNotModule = 1")
     end
