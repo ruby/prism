@@ -416,6 +416,23 @@ module Prism
       assert_run([1, 2], '[1, 2]')
     end
 
+    def test_literal_effect_context
+      ["123", "2r", "3i", "nil", "true", '"text"', ":name", "__ENCODING__", "__FILE__", "__LINE__", "self"].each do |literal|
+        source = "#{literal}; 7"
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        instructions = unit.graphs[0].blocks.flat_map(&:insns)
+        assert_equal([7], instructions.select { |insn| insn.kind == :load_object }.map(&:data), source)
+        [:load_nil, :load_true, :load_self].each { |kind| assert_not_include(instructions.map(&:kind), kind, source) }
+      end
+
+      [[123, "123"], [Rational(2), "2r"], [Complex(0, 3), "3i"], [nil, "nil"], [true, "true"],
+        ["text", '"text"'], [:name, ":name"], [Encoding::UTF_8, "__ENCODING__"], [1, "__LINE__"],
+        [TOPLEVEL_BINDING.receiver, "self"]].each do |expected, source|
+        assert_run(expected, source)
+      end
+    end
+
     def test_float_effect_context
       unit = compile_unit("1.5; 7")
       assert_equal(7, vm.run(unit))

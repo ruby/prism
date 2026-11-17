@@ -5518,7 +5518,9 @@ compile_if_node(PrismBuilder *builder, const pm_if_node_t *node) {
  * ^^
  */
 static uint32_t
-compile_imaginary_node(PrismBuilder *builder, const pm_imaginary_node_t *node) {
+compile_imaginary_node(PrismBuilder *builder, PrismBuilderContext context, const pm_imaginary_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
@@ -5639,7 +5641,9 @@ compile_instance_variable_write_node(PrismBuilder *builder, const pm_instance_va
  * ^
  */
 static uint32_t
-compile_integer_node(PrismBuilder *builder, const pm_integer_node_t *node) {
+compile_integer_node(PrismBuilder *builder, PrismBuilderContext context, const pm_integer_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
@@ -5933,7 +5937,9 @@ compile_next_node(PrismBuilder *builder, const pm_next_node_t *node) {
  * ^^^
  */
 static uint32_t
-compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
+compile_nil_node(PrismBuilder *builder, PrismBuilderContext context, const pm_nil_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectNil);
     return emit_load_object(builder, node->base.node_id, object_id);
 }
@@ -6014,7 +6020,9 @@ compile_range_node(PrismBuilder *builder, const pm_range_node_t *node) {
  * ^^
  */
 static uint32_t
-compile_rational_node(PrismBuilder *builder, const pm_rational_node_t *node) {
+compile_rational_node(PrismBuilder *builder, PrismBuilderContext context, const pm_rational_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = static_literal(builder, PM_NODE_UPCAST(node));
     return emit_load_object(builder, node->base.node_id, object_id);
 }
@@ -6120,7 +6128,9 @@ compile_return_node(PrismBuilder *builder, const pm_return_node_t *node) {
  * ^^^^
  */
 static uint32_t
-compile_self_node(PrismBuilder *builder, const pm_self_node_t *node) {
+compile_self_node(PrismBuilder *builder, PrismBuilderContext context, const pm_self_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     return emit_load_self(builder, node->base.node_id);
 }
 
@@ -6175,7 +6185,9 @@ compile_singleton_class_node(PrismBuilder *builder, const pm_singleton_class_nod
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_node_t *node) {
+compile_source_encoding_node(PrismBuilder *builder, PrismBuilderContext context, const pm_source_encoding_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectEncoding);
     PrismObject *object = builder->unit->objects + object_id;
 
@@ -6189,7 +6201,9 @@ compile_source_encoding_node(PrismBuilder *builder, const pm_source_encoding_nod
  * ^^^^^^^^
  */
 static uint32_t
-compile_source_file_node(PrismBuilder *builder, const pm_source_file_node_t *node) {
+compile_source_file_node(PrismBuilder *builder, PrismBuilderContext context, const pm_source_file_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectString);
     PrismObject *object = builder->unit->objects + object_id;
     object->as.string.flags = node->base.flags;
@@ -6202,7 +6216,9 @@ compile_source_file_node(PrismBuilder *builder, const pm_source_file_node_t *nod
  * ^^^^^^^^
  */
 static uint32_t
-compile_source_line_node(PrismBuilder *builder, const pm_source_line_node_t *node) {
+compile_source_line_node(PrismBuilder *builder, PrismBuilderContext context, const pm_source_line_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectInteger);
     PrismObject *object = builder->unit->objects + object_id;
 
@@ -6243,7 +6259,9 @@ compile_statements_node(PrismBuilder *builder, PrismBuilderContext context, cons
  * ^^^^^
  */
 static uint32_t
-compile_string_node(PrismBuilder *builder, const pm_string_node_t *node) {
+compile_string_node(PrismBuilder *builder, PrismBuilderContext context, const pm_string_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectString);
     PrismObject *object = builder->unit->objects + object_id;
 
@@ -6274,7 +6292,9 @@ compile_super_node(PrismBuilder *builder, const pm_super_node_t *node) {
  * ^^^^
  */
 static uint32_t
-compile_symbol_node(PrismBuilder *builder, const pm_symbol_node_t *node) {
+compile_symbol_node(PrismBuilder *builder, PrismBuilderContext context, const pm_symbol_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     uint32_t object_id = make_object(builder, kPrismObjectSymbol);
     PrismObject *object = builder->unit->objects + object_id;
 
@@ -6289,7 +6309,9 @@ compile_symbol_node(PrismBuilder *builder, const pm_symbol_node_t *node) {
  * ^^^^
  */
 static uint32_t
-compile_true_node(PrismBuilder *builder, const pm_true_node_t *node) {
+compile_true_node(PrismBuilder *builder, PrismBuilderContext context, const pm_true_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     return emit_load_true(builder, node->base.node_id);
 }
 
@@ -6476,7 +6498,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_IF_NODE:
             return compile_if_node(builder, (const pm_if_node_t *) node);
         case PM_IMAGINARY_NODE:
-            return compile_imaginary_node(builder, (const pm_imaginary_node_t *) node);
+            return compile_imaginary_node(builder, context, (const pm_imaginary_node_t *) node);
         case PM_IMPLICIT_NODE:
             return compile_implicit_node(builder, (const pm_implicit_node_t *) node);
         case PM_INSTANCE_VARIABLE_READ_NODE:
@@ -6496,7 +6518,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_INSTANCE_VARIABLE_OR_WRITE_NODE:
             return compile_instance_variable_or_write_node(builder, (const pm_instance_variable_or_write_node_t *) node);
         case PM_INTEGER_NODE:
-            return compile_integer_node(builder, (const pm_integer_node_t *) node);
+            return compile_integer_node(builder, context, (const pm_integer_node_t *) node);
         case PM_INTERPOLATED_MATCH_LAST_LINE_NODE:
             return compile_interpolated_match_last_line_node(builder, (const pm_interpolated_match_last_line_node_t *) node);
         case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
@@ -6538,7 +6560,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_NEXT_NODE:
             return compile_next_node(builder, (const pm_next_node_t *) node);
         case PM_NIL_NODE:
-            return compile_nil_node(builder, (const pm_nil_node_t *) node);
+            return compile_nil_node(builder, context, (const pm_nil_node_t *) node);
         case PM_NUMBERED_REFERENCE_READ_NODE:
             return compile_numbered_reference_read_node(builder, (const pm_numbered_reference_read_node_t *) node);
         case PM_OR_NODE:
@@ -6552,7 +6574,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_RANGE_NODE:
             return compile_range_node(builder, (const pm_range_node_t *) node);
         case PM_RATIONAL_NODE:
-            return compile_rational_node(builder, (const pm_rational_node_t *) node);
+            return compile_rational_node(builder, context, (const pm_rational_node_t *) node);
         case PM_REDO_NODE:
             return compile_redo_node(builder, (const pm_redo_node_t *) node);
         case PM_REGULAR_EXPRESSION_NODE:
@@ -6564,29 +6586,29 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_RETURN_NODE:
             return compile_return_node(builder, (const pm_return_node_t *) node);
         case PM_SELF_NODE:
-            return compile_self_node(builder, (const pm_self_node_t *) node);
+            return compile_self_node(builder, context, (const pm_self_node_t *) node);
         case PM_SHAREABLE_CONSTANT_NODE:
             return compile_shareable_constant_node(builder, (const pm_shareable_constant_node_t *) node);
         case PM_SINGLETON_CLASS_NODE:
             return compile_singleton_class_node(builder, (const pm_singleton_class_node_t *) node);
         case PM_SOURCE_ENCODING_NODE:
-            return compile_source_encoding_node(builder, (const pm_source_encoding_node_t *) node);
+            return compile_source_encoding_node(builder, context, (const pm_source_encoding_node_t *) node);
         case PM_SOURCE_FILE_NODE:
-            return compile_source_file_node(builder, (const pm_source_file_node_t *) node);
+            return compile_source_file_node(builder, context, (const pm_source_file_node_t *) node);
         case PM_SOURCE_LINE_NODE:
-            return compile_source_line_node(builder, (const pm_source_line_node_t *) node);
+            return compile_source_line_node(builder, context, (const pm_source_line_node_t *) node);
         case PM_SPLAT_NODE:
             return compile_splat_node(builder, (const pm_splat_node_t *) node);
         case PM_STATEMENTS_NODE:
             return compile_statements_node(builder, context, (const pm_statements_node_t *) node);
         case PM_STRING_NODE:
-            return compile_string_node(builder, (const pm_string_node_t *) node);
+            return compile_string_node(builder, context, (const pm_string_node_t *) node);
         case PM_SUPER_NODE:
             return compile_super_node(builder, (const pm_super_node_t *) node);
         case PM_SYMBOL_NODE:
-            return compile_symbol_node(builder, (const pm_symbol_node_t *) node);
+            return compile_symbol_node(builder, context, (const pm_symbol_node_t *) node);
         case PM_TRUE_NODE:
-            return compile_true_node(builder, (const pm_true_node_t *) node);
+            return compile_true_node(builder, context, (const pm_true_node_t *) node);
         case PM_UNDEF_NODE:
             return compile_undef_node(builder, (const pm_undef_node_t *) node);
         case PM_UNLESS_NODE:
