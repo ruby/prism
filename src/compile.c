@@ -5037,7 +5037,9 @@ compile_else_node(PrismBuilder *builder, PrismBuilderContext context, const pm_e
  *      ^^^^^^
  */
 static uint32_t
-compile_embedded_statements_node(PrismBuilder *builder, const pm_embedded_statements_node_t *node) {
+compile_embedded_statements_node(PrismBuilder *builder, PrismBuilderContext context, const pm_embedded_statements_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     uint32_t string_id = compile_node_or_nil(builder, kPrismBuilderValue, PM_NODE_UPCAST(node->statements), node->base.node_id);
     return emit_coerce_string(builder, node->base.node_id, string_id);
 }
@@ -6438,7 +6440,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_ELSE_NODE:
             return compile_else_node(builder, context, (const pm_else_node_t *) node);
         case PM_EMBEDDED_STATEMENTS_NODE:
-            return compile_embedded_statements_node(builder, (const pm_embedded_statements_node_t *) node);
+            return compile_embedded_statements_node(builder, context, (const pm_embedded_statements_node_t *) node);
         case PM_EMBEDDED_VARIABLE_NODE:
             return compile_embedded_variable_node(builder, (const pm_embedded_variable_node_t *) node);
         case PM_FALSE_NODE:
