@@ -6,6 +6,30 @@ require "set"
 module Prism
   module Compile
     class VM
+      module StdLib
+        @methods = {}
+
+        def self.[](method_name)
+          @methods.fetch(method_name)
+        end
+
+        %i[+ to_a].each do |method_name|
+          @methods[:"Array_#{method_name}"] = Array.instance_method(method_name)
+        end
+
+        %i[equal? __send__ instance_exec].each do |method_name|
+          @methods[:"BasicObject_#{method_name}"] = BasicObject.instance_method(method_name)
+        end
+
+        %i[class instance_variable_defined? method protected_methods public_send respond_to? singleton_class sprintf to_s].each do |method_name|
+          @methods[:"Kernel_#{method_name}"] = Kernel.instance_method(method_name)
+        end
+
+        %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method].each do |method_name|
+          @methods[:"Module_#{method_name}"] = Module.instance_method(method_name)
+        end
+      end
+
       visibility_methods = {}
       [:public, :protected, :private, :module_function].each do |visibility|
         definitions = [Module.instance_method(visibility)]
@@ -135,12 +159,12 @@ module Prism
 
         def define(parent, name)
           definition = self
-          Module.instance_method(:define_method).bind_call(parent, name) do |*args, **kwargs, &block|
+          StdLib[:Module_define_method].bind_call(parent, name) do |*args, **kwargs, &block|
             super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
             definition.call(self, args, kwargs, super_method, &block)
           end
 
-          @method = Module.instance_method(:instance_method).bind_call(parent, name)
+          @method = StdLib[:Module_instance_method].bind_call(parent, name)
           SIGNATURES[@method] = @graph.signature
         end
 
@@ -388,7 +412,7 @@ module Prism
             when :alias_gvar
               eval("alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}", TOPLEVEL_BINDING)
             when :alias_method
-              Module.instance_method(:alias_method).bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
+              StdLib[:Module_alias_method].bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
             when :any_truthy
               values[insn.opnds[0]] = values[insn.opnds[1]].any?
             when :branch
@@ -423,13 +447,13 @@ module Prism
               arguments.concat(arguments.pop) if call.splat
               receiver = values[insn.opnds[1]]
 
-              if call.ignore_visibility && arguments.empty? && (Module === receiver || BasicObject.instance_method(:equal?).bind_call(receiver, TOPLEVEL_BINDING.receiver)) && (visibility = default_visibility(receiver, call.name))
+              if call.ignore_visibility && arguments.empty? && (Module === receiver || StdLib[:BasicObject_equal?].bind_call(receiver, TOPLEVEL_BINDING.receiver)) && (visibility = default_visibility(receiver, call.name))
                 frame.visibility.value = visibility
                 values[insn.opnds[0]] = nil
                 next
               end
 
-              if !call.block_argument && Block === passed_block && arguments.empty? && keywords.empty? && builtin_lambda?(receiver, call.name) && (call.ignore_visibility || Module.instance_method(:public_method_defined?).bind_call(method_lookup_class(receiver), call.name))
+              if !call.block_argument && Block === passed_block && arguments.empty? && keywords.empty? && builtin_lambda?(receiver, call.name) && (call.ignore_visibility || StdLib[:Module_public_method_defined?].bind_call(method_lookup_class(receiver), call.name))
                 values[insn.opnds[0]] = new_block(passed_block.graph, passed_block.frame, true)
                 next
               end
@@ -437,9 +461,9 @@ module Prism
               values[insn.opnds[0]] =
                 with_break_target(passed_block) do
                   if call.ignore_visibility || protected_call?(receiver, call.name, recv)
-                    BasicObject.instance_method(:__send__).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                    StdLib[:BasicObject___send__].bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
                   else
-                    Kernel.instance_method(:public_send).bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
+                    StdLib[:Kernel_public_send].bind_call(receiver, call.name, *arguments, **keywords, &passed_block)
                   end
                 end
             when :call_super
@@ -449,9 +473,11 @@ module Prism
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
               passed_block = values[insn.opnds[-1]]
-              values[insn.opnds[0]] = with_break_target(passed_block) do
-                BasicObject.instance_method(:instance_exec).bind_call(recv, arguments, keywords, passed_block, &super_method)
-              end
+
+              values[insn.opnds[0]] =
+                with_break_target(passed_block) do
+                  StdLib[:BasicObject_instance_exec].bind_call(recv, arguments, keywords, passed_block, &super_method)
+                end
             when :coerce_array_to_a
               values[insn.opnds[0]] = [*values[insn.opnds[1]]]
             when :coerce_array_to_ary
@@ -463,9 +489,9 @@ module Prism
             when :coerce_string
               value = values[insn.opnds[1]]
               string = value.__send__(:to_s)
-              values[insn.opnds[0]] = String === string ? string : Kernel.instance_method(:to_s).bind_call(value)
+              values[insn.opnds[0]] = String === string ? string : StdLib[:Kernel_to_s].bind_call(value)
             when :concat_array
-              values[insn.opnds[0]] = Array.instance_method(:+).bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
+              values[insn.opnds[0]] = StdLib[:"Array_+"].bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
             when :deconstruct_array
               value = values[insn.opnds[1]]
               if value.respond_to?(:deconstruct)
@@ -530,7 +556,7 @@ module Prism
               visibility =
                 case name
                 when :initialize, :initialize_copy, :initialize_dup, :initialize_clone, :respond_to_missing?
-                  Module.instance_method(:singleton_class?).bind_call(nest[0]) ? frame.visibility.value : :private
+                  StdLib[:Module_singleton_class?].bind_call(nest[0]) ? frame.visibility.value : :private
                 else
                   frame.visibility.value
                 end
@@ -551,26 +577,26 @@ module Prism
               mod = define_module(parent, name, true)
               values[insn.opnds[0]] = run_frame(Frame.new(module_graph, mod, [mod, *nest].freeze))
             when :define_singleton_class
-              klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[1]])
+              klass = StdLib[:Kernel_singleton_class].bind_call(values[insn.opnds[1]])
               values[insn.opnds[0]] = run_frame(Frame.new(insn.data, klass, [klass, *nest].freeze))
             when :define_singleton_method
               name, method_graph = insn.data
-              klass = Kernel.instance_method(:singleton_class).bind_call(values[insn.opnds[0]])
+              klass = StdLib[:Kernel_singleton_class].bind_call(values[insn.opnds[0]])
               define_method(klass, name, method_graph, nest)
             when :defined_const_abs
               values[insn.opnds[0]] = const_defined_recv_rel?(Object, insn.data)
             when :defined_const_nest_rel
-              values[insn.opnds[0]] = nest[0...-1].any? { |scope| Module.instance_method(:const_defined?).bind_call(scope, insn.data, false) } || Module.instance_method(:const_defined?).bind_call(nest[0], insn.data)
+              values[insn.opnds[0]] = nest[0...-1].any? { |scope| StdLib[:Module_const_defined?].bind_call(scope, insn.data, false) } || StdLib[:Module_const_defined?].bind_call(nest[0], insn.data)
             when :defined_const_recv_rel
               values[insn.opnds[0]] = const_defined_recv_rel?(values[insn.opnds[1]], insn.data)
             when :defined_cvar
-              values[insn.opnds[0]] = Module.instance_method(:class_variable_defined?).bind_call(cvar_parent(nest) || nest[-1], insn.data)
+              values[insn.opnds[0]] = StdLib[:Module_class_variable_defined?].bind_call(cvar_parent(nest) || nest[-1], insn.data)
             when :defined_implicit_method
               values[insn.opnds[0]] = !!defined_implicit_method?(values[insn.opnds[1]], insn.data)
             when :defined_gvar
               values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
             when :defined_ivar
-              values[insn.opnds[0]] = Kernel.instance_method(:instance_variable_defined?).bind_call(recv, insn.data)
+              values[insn.opnds[0]] = StdLib[:Kernel_instance_variable_defined?].bind_call(recv, insn.data)
             when :defined_explicit_method
               values[insn.opnds[0]] = !!defined_explicit_method?(values[insn.opnds[1]], insn.data, recv)
             when :defined_super
@@ -585,7 +611,7 @@ module Prism
               values[insn.opnds[0]] = value
             when :expand_array
               lefts, rights, rest = insn.data
-              array = Array.instance_method(:to_a).bind_call(values[insn.opnds[0]])
+              array = StdLib[:Array_to_a].bind_call(values[insn.opnds[0]])
 
               leading = array.take(lefts)
               leading.fill(nil, leading.length...lefts)
@@ -613,7 +639,7 @@ module Prism
             when :load_cvar
               parent = cvar_parent(nest)
               check_cvar_parent(parent)
-              values[insn.opnds[0]] = Module.instance_method(:class_variable_get).bind_call(parent, insn.data)
+              values[insn.opnds[0]] = StdLib[:Module_class_variable_get].bind_call(parent, insn.data)
             when :load_flip_flop
               values[insn.opnds[0]] = flip_flops[insn.data]
             when :load_gvar
@@ -641,10 +667,10 @@ module Prism
             when :make_shareable_copy
               values[insn.opnds[0]] = Ractor.make_shareable(values[insn.opnds[1]], copy: true)
             when :match
-              values[insn.opnds[0]] = BasicObject.instance_method(:__send__).bind_call(values[insn.opnds[2]], :===, values[insn.opnds[1]])
+              values[insn.opnds[0]] = StdLib[:BasicObject___send__].bind_call(values[insn.opnds[2]], :===, values[insn.opnds[1]])
             when :match_array
               value = values[insn.opnds[1]]
-              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| BasicObject.instance_method(:__send__).bind_call(pattern, :===, value) }
+              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| StdLib[:BasicObject___send__].bind_call(pattern, :===, value) }
             when :merge_hash
               values[insn.opnds[0]] = values[insn.opnds[1]].merge(values[insn.opnds[2]])
             when :new_array
@@ -705,7 +731,7 @@ module Prism
               raise NoMatchingPatternError, "#{values[insn.opnds[0]].inspect}: guard clause does not return true"
             when :raise_pattern_key
               root, matchee, key = values.values_at(*insn.opnds)
-              message = Kernel.instance_method(:sprintf).bind_call(self, "%p: key not found: %p", root, key)
+              message = StdLib[:Kernel_sprintf].bind_call(self, "%p: key not found: %p", root, key)
               raise NoMatchingPatternKeyError.new(message, matchee: matchee, key: key)
             when :raise_pattern_length
               raise_pattern_error(values[insn.opnds[0]], "%p length mismatch (given %p, expected %p)", *values.values_at(*insn.opnds[1..]))
@@ -747,7 +773,7 @@ module Prism
             when :store_cvar
               parent = cvar_parent(nest)
               check_cvar_parent(parent)
-              Module.instance_method(:class_variable_set).bind_call(parent, insn.data, values[insn.opnds[0]])
+              StdLib[:Module_class_variable_set].bind_call(parent, insn.data, values[insn.opnds[0]])
             when :store_ivar
               recv.instance_variable_set(insn.data, values[insn.opnds[0]])
             when :store_flip_flop
@@ -759,7 +785,7 @@ module Prism
             when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_rescue, :trace_return
               # ignore
             when :undef_method
-              Module.instance_method(:undef_method).bind_call(nest[0], values[insn.opnds[0]])
+              StdLib[:Module_undef_method].bind_call(nest[0], values[insn.opnds[0]])
             when :yield
               raise LocalJumpError, "no block given (yield)" unless frame.block
               call = insn.data
@@ -807,31 +833,31 @@ module Prism
       end
 
       def builtin_lambda?(receiver, name)
-        method = Module.instance_method(:instance_method).bind_call(method_lookup_class(receiver), name)
+        method = StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name)
         LAMBDA_METHODS.include?(method)
       rescue NameError
         false
       end
 
       def default_visibility(receiver, name)
-        method = Module.instance_method(:instance_method).bind_call(method_lookup_class(receiver), name)
+        method = StdLib[:Module_instance_method].bind_call(method_lookup_class(receiver), name)
         VISIBILITY_METHODS[method]
       rescue NameError
         nil
       end
 
       def method_lookup_class(receiver)
-        Kernel.instance_method(:singleton_class).bind_call(receiver)
+        StdLib[:Kernel_singleton_class].bind_call(receiver)
       rescue TypeError
-        Kernel.instance_method(:class).bind_call(receiver)
+        StdLib[:Kernel_class].bind_call(receiver)
       end
 
       def defined_implicit_method?(receiver, name)
         klass = method_lookup_class(receiver)
         begin
-          query = Module.instance_method(:instance_method).bind_call(klass, :respond_to?)
+          query = StdLib[:Module_instance_method].bind_call(klass, :respond_to?)
         rescue NameError
-          return Kernel.instance_method(:respond_to?).bind_call(receiver, name, true)
+          return StdLib[:Kernel_respond_to?].bind_call(receiver, name, true)
         end
 
         arity = MethodDefinition.arity(query)
@@ -846,37 +872,37 @@ module Prism
 
       def defined_explicit_method?(receiver, name, caller)
         klass = method_lookup_class(receiver)
-        return true if Module.instance_method(:public_method_defined?).bind_call(klass, name)
-        return false if Module.instance_method(:private_method_defined?).bind_call(klass, name)
-        return protected_call?(receiver, name, caller) if Module.instance_method(:protected_method_defined?).bind_call(klass, name)
+        return true if StdLib[:Module_public_method_defined?].bind_call(klass, name)
+        return false if StdLib[:Module_private_method_defined?].bind_call(klass, name)
+        return protected_call?(receiver, name, caller) if StdLib[:Module_protected_method_defined?].bind_call(klass, name)
 
         if defined_implicit_method?(receiver, :respond_to_missing?)
-          BasicObject.instance_method(:__send__).bind_call(receiver, :respond_to_missing?, name, false)
+          StdLib[:BasicObject___send__].bind_call(receiver, :respond_to_missing?, name, false)
         else
           false
         end
       end
 
       def protected_call?(receiver, name, caller)
-        return false unless Kernel.instance_method(:protected_methods).bind_call(receiver).include?(name)
+        return false unless StdLib[:Kernel_protected_methods].bind_call(receiver).include?(name)
 
-        owner = Kernel.instance_method(:method).bind_call(receiver, name).owner
-        Module.instance_method(:===).bind_call(owner, caller)
+        owner = StdLib[:Kernel_method].bind_call(receiver, name).owner
+        StdLib[:"Module_==="].bind_call(owner, caller)
       end
 
       def raise_pattern_error(root, format, *arguments)
-        detail = Kernel.instance_method(:sprintf).bind_call(self, format, *arguments)
-        message = Kernel.instance_method(:sprintf).bind_call(self, "%p: %s", root, detail)
+        detail = StdLib[:Kernel_sprintf].bind_call(self, format, *arguments)
+        message = StdLib[:Kernel_sprintf].bind_call(self, "%p: %s", root, detail)
         raise NoMatchingPatternError, message
       end
 
       def rescue_match(exception, klass)
         raise TypeError, "class or module required for rescue clause" unless Module === klass
-        BasicObject.instance_method(:__send__).bind_call(klass, :===, exception)
+        StdLib[:BasicObject___send__].bind_call(klass, :===, exception)
       end
 
       def cvar_parent(nest)
-        nest[0...-1].find { |scope| !Module.instance_method(:singleton_class?).bind_call(scope) }
+        nest[0...-1].find { |scope| !StdLib[:Module_singleton_class?].bind_call(scope) }
       end
 
       ###
@@ -896,19 +922,21 @@ module Prism
         visibility = frame.visibility
 
         target = nil
-        callable = BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          if lambda
-            ->(*args, **kwargs, &passed_block) do
-              block_locals = Locals.new(graph.locals, locals)
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, frame.match_state, &block), args, kwargs, passed_block)
-            end
-          else
-            Proc.new do |*args, **kwargs, &passed_block|
-              block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, false, frame.match_state, &block), args, kwargs, passed_block)
+        callable =
+          StdLib[:BasicObject_instance_exec].bind_call(frame.recv) do
+            if lambda
+              ->(*args, **kwargs, &passed_block) do
+                block_locals = Locals.new(graph.locals, locals)
+                vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, frame.match_state, &block), args, kwargs, passed_block)
+              end
+            else
+              Proc.new do |*args, **kwargs, &passed_block|
+                block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
+                vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, false, frame.match_state, &block), args, kwargs, passed_block)
+              end
             end
           end
-        end
+
         lambda ? callable : (target = Block.new(callable, graph, frame))
       end
 
@@ -960,32 +988,34 @@ module Prism
 
       def const_get_nest_rel(nest, name)
         nest[0...-1].each do |scope|
-          if Module.instance_method(:const_defined?).bind_call(scope, name, false)
-            return Module.instance_method(:const_get).bind_call(scope, name, false)
+          if StdLib[:Module_const_defined?].bind_call(scope, name, false)
+            return StdLib[:Module_const_get].bind_call(scope, name, false)
           end
         end
 
-        Module.instance_method(:const_get).bind_call(nest[0], name)
+        StdLib[:Module_const_get].bind_call(nest[0], name)
       end
 
       def constant_owner(recv, name)
         check_module(recv)
-        owner = Module.instance_method(:ancestors).bind_call(recv).find do |ancestor|
-          Module.instance_method(:const_defined?).bind_call(ancestor, name, false)
-        end
+        owner =
+          StdLib[:Module_ancestors].bind_call(recv).find do |ancestor|
+            StdLib[:Module_const_defined?].bind_call(ancestor, name, false)
+          end
+
         owner unless owner == Object && recv != Object
       end
 
       def const_defined_recv_rel?(recv, name)
         owner = constant_owner(recv, name)
-        !!owner && Module.instance_method(:constants).bind_call(owner, false).include?(name)
+        !!owner && StdLib[:Module_constants].bind_call(owner, false).include?(name)
       end
 
       def const_get_recv_rel(recv, name)
         owner = constant_owner(recv, name)
         if owner
           check_public_const(owner, recv, name)
-          Module.instance_method(:const_get).bind_call(owner, name, false)
+          StdLib[:Module_const_get].bind_call(owner, name, false)
         else
           recv.const_missing(name)
         end
@@ -1019,12 +1049,12 @@ module Prism
 
       def check_superclass(superclass)
         unless Class === superclass
-          raise TypeError, "superclass must be an instance of Class (given an instance of #{Kernel.instance_method(:class).bind_call(superclass)})"
+          raise TypeError, "superclass must be an instance of Class (given an instance of #{StdLib[:Kernel_class].bind_call(superclass)})"
         end
       end
 
       def check_public_const(parent, recv, name)
-        unless Module.instance_method(:constants).bind_call(parent, false).include?(name)
+        unless StdLib[:Module_constants].bind_call(parent, false).include?(name)
           raise NameError.new("private constant #{recv}::#{name} referenced", name, receiver: recv)
         end
       end
