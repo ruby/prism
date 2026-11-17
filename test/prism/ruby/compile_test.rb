@@ -489,6 +489,44 @@ module Prism
       assert_run_raises(LocalJumpError, "class CompileTestYieldMissingBlock; def value; yield [1, 2]; 7; end; end; CompileTestYieldMissingBlock.new.value")
     end
 
+    def test_control_flow_effect_context
+      [
+        "if true; [1, 2]; else; [3, 4]; end; 7",
+        "if false; [1, 2]; elsif true; [3, 4]; end; 7",
+        "unless false; [1, 2]; else; [3, 4]; end; 7",
+        "true ? [1, 2] : [3, 4]; 7",
+        "false || [1, 2]; 7",
+        "([1, 2]); 7",
+        "i = 0; while i < 2; i += 1; [1, 2]; end; 7",
+        "i = 0; until i == 2; i += 1; [1, 2]; end; 7",
+        "while true; break 1; end; 7",
+        "until false; break 1; end; 7",
+        "while true; begin; break 1; ensure; end; end; 7"
+      ].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        graph = unit.graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+        assert_not_include(graph.blocks.flat_map(&:insns).map(&:kind), :new_array_static, source)
+      end
+      assert_run([1, 2], "result = while true; break [1, 2]; end; result")
+      assert_run([:break], "events = []; while true; break(events << :break); end; events")
+      assert_run([:next, :next], "events = []; i = 0; while i < 2; i += 1; next(events << :next); end; events")
+      assert_run([1, 2], "-> { return [1, 2]; 7 }.call")
+    end
+
+    def test_rescue_modifier_effect_context
+      ["[1, 2] rescue [3, 4]; 7", "raise rescue [3, 4]; 7"].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        instructions = unit.graphs[0].blocks.flat_map(&:insns)
+        assert_not_include(instructions.map(&:kind), :new_array_static, source)
+      end
+      assert_run([:body, :rescue], "events = []; (events << :body; raise) rescue events << :rescue; events")
+      assert_run([1, 2], "raise rescue [1, 2]")
+      assert_run_raises(SyntaxError, "raise SyntaxError rescue 1; 7")
+    end
+
     def test_literal_effect_context
       ["123", "2r", "3i", "nil", "true", '"text"', ":name", "__ENCODING__", "__FILE__", "__LINE__", "self"].each do |literal|
         source = "#{literal}; 7"
@@ -862,6 +900,14 @@ module Prism
 
       [
         "defined?(side_effect.foo); nil",
+        "(defined?(side_effect.foo)); nil",
+        "if true; defined?(side_effect.foo); end; nil",
+        "unless false; defined?(side_effect.foo); end; nil",
+        "true ? defined?(side_effect.foo) : nil; nil",
+        "false || defined?(side_effect.foo); nil",
+        "i = 0; while i < 1; i += 1; defined?(side_effect.foo); end; nil",
+        "defined?(side_effect.foo) rescue nil; nil",
+        "raise rescue defined?(side_effect.foo); nil",
         "[defined?(side_effect.foo)]; nil",
         "begin; defined?(side_effect.foo); rescue; end; nil",
         "begin; raise; rescue; defined?(side_effect.foo); end; nil",
