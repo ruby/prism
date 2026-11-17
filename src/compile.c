@@ -5681,7 +5681,9 @@ compile_integer_node(PrismBuilder *builder, PrismBuilderContext context, const p
  *    ^^^^^^^^^^^^
  */
 static uint32_t
-compile_interpolated_match_last_line_node(PrismBuilder *builder, const pm_interpolated_match_last_line_node_t *node) {
+compile_interpolated_match_last_line_node(PrismBuilder *builder, PrismBuilderContext context, const pm_interpolated_match_last_line_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     uint32_t regexp_id = compile_interpolated_regexp(builder, PM_NODE_UPCAST(node), &node->parts);
     uint32_t last_line_id = emit_load_gvar(builder, node->base.node_id, PM_CONSTANT_ID_LAST_LINE);
     return emit_call(builder, node->base.node_id, PM_CONSTANT_ID_MATCH, regexp_id, 1, &last_line_id, UINT32_MAX, false, false, 0, false);
@@ -5852,7 +5854,9 @@ compile_local_variable_write_node(PrismBuilder *builder, PrismBuilderContext con
  *    ^^^^^
  */
 static uint32_t
-compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_node_t *node) {
+compile_match_last_line_node(PrismBuilder *builder, PrismBuilderContext context, const pm_match_last_line_node_t *node) {
+    PM_ASSERT_VALUE_CONTEXT(context);
+
     uint32_t object_id = make_object(builder, kPrismObjectRegexp);
     PrismObject *object = builder->unit->objects + object_id;
     object->as.string.flags = node->base.flags;
@@ -5868,8 +5872,15 @@ compile_match_last_line_node(PrismBuilder *builder, const pm_match_last_line_nod
  * ^^^^^^^^^^
  */
 static uint32_t
-compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_node_t *node) {
+compile_match_predicate_node(PrismBuilder *builder, PrismBuilderContext context, const pm_match_predicate_node_t *node) {
     uint32_t value_id = compile_node(builder, kPrismBuilderValue, node->value);
+    if (context == kPrismBuilderEffect) {
+        uint32_t join_block_id = make_block(builder, 0);
+        compile_pattern_match(builder, node->pattern, value_id, value_id, join_block_id, (PrismPatternFailure) { .block_id = join_block_id });
+        builder->state.block_id = join_block_id;
+        return UINT32_MAX;
+    }
+
     uint32_t matched_block_id = make_block(builder, 0);
     uint32_t unmatched_block_id = make_block(builder, 0);
     uint32_t join_block_id = make_block(builder, 1);
@@ -5892,13 +5903,13 @@ compile_match_predicate_node(PrismBuilder *builder, const pm_match_predicate_nod
  * ^^^^^^^^^^
  */
 static uint32_t
-compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_t *node) {
+compile_match_required_node(PrismBuilder *builder, PrismBuilderContext context, const pm_match_required_node_t *node) {
     uint32_t value_id = compile_node(builder, kPrismBuilderValue, node->value);
     uint32_t matched_block_id = make_block(builder, 0);
     compile_pattern_match(builder, node->pattern, value_id, value_id, matched_block_id, (PrismPatternFailure) { .terminal = true });
 
     builder->state.block_id = matched_block_id;
-    return emit_load_nil(builder, node->base.node_id);
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
 /*
@@ -5906,8 +5917,8 @@ compile_match_required_node(PrismBuilder *builder, const pm_match_required_node_
  * ^^^^^^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *node) {
-    uint32_t result_id = compile_node(builder, kPrismBuilderValue, PM_NODE_UPCAST(node->call));
+compile_match_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_match_write_node_t *node) {
+    uint32_t result_id = compile_node(builder, context, PM_NODE_UPCAST(node->call));
     uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
 
     for (size_t idx = 0; idx < node->targets.size; ++idx) {
@@ -6584,7 +6595,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_INTEGER_NODE:
             return compile_integer_node(builder, context, (const pm_integer_node_t *) node);
         case PM_INTERPOLATED_MATCH_LAST_LINE_NODE:
-            return compile_interpolated_match_last_line_node(builder, (const pm_interpolated_match_last_line_node_t *) node);
+            return compile_interpolated_match_last_line_node(builder, context, (const pm_interpolated_match_last_line_node_t *) node);
         case PM_INTERPOLATED_REGULAR_EXPRESSION_NODE:
             return compile_interpolated_regular_expression_node(builder, context, (const pm_interpolated_regular_expression_node_t *) node);
         case PM_INTERPOLATED_STRING_NODE:
@@ -6610,13 +6621,13 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_LOCAL_VARIABLE_OR_WRITE_NODE:
             return compile_local_variable_or_write_node(builder, context, (const pm_local_variable_or_write_node_t *) node);
         case PM_MATCH_LAST_LINE_NODE:
-            return compile_match_last_line_node(builder, (const pm_match_last_line_node_t *) node);
+            return compile_match_last_line_node(builder, context, (const pm_match_last_line_node_t *) node);
         case PM_MATCH_PREDICATE_NODE:
-            return compile_match_predicate_node(builder, (const pm_match_predicate_node_t *) node);
+            return compile_match_predicate_node(builder, context, (const pm_match_predicate_node_t *) node);
         case PM_MATCH_REQUIRED_NODE:
-            return compile_match_required_node(builder, (const pm_match_required_node_t *) node);
+            return compile_match_required_node(builder, context, (const pm_match_required_node_t *) node);
         case PM_MATCH_WRITE_NODE:
-            return compile_match_write_node(builder, (const pm_match_write_node_t *) node);
+            return compile_match_write_node(builder, context, (const pm_match_write_node_t *) node);
         case PM_MODULE_NODE:
             return compile_module_node(builder, (const pm_module_node_t *) node);
         case PM_MULTI_WRITE_NODE:

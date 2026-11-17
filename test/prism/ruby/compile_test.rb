@@ -4297,6 +4297,41 @@ module Prism
       assert_run_raises(NoMatchingPatternError, "a = 2; 1 => ^a", "1: 2 === 1 does not return true")
     end
 
+    def test_matching_effect_context
+      ["1 in 1; 7", "1 in 2; 7", "1 => 1; 7"].each do |source|
+        unit = compile_unit(source)
+        assert_equal(7, vm.run(unit), source)
+        graph = unit.graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? }, source)
+        kinds = graph.blocks.flat_map(&:insns).map(&:kind)
+        [:load_true, :load_false, :load_nil].each { |kind| assert_not_include(kinds, kind, source) }
+      end
+      assert_run([1, 2], "[1, 2] in [a, b]; [a, b]")
+      assert_run([2, 3], "[1, 2, 3] => [1, *rest]; rest")
+      assert_run(2, "{a: 2} in {a:}; a")
+      assert_run_raises(NoMatchingPatternError, "1 => 2; 7")
+      assert_run("a", %q{/(?<capture>a)/ =~ "a"; capture})
+      assert_run(nil, %q{/(?<capture>a)/ =~ "b"; capture})
+    end
+
+    def test_discarded_pattern_deconstruction
+      scope = Module.new
+      events = []
+      result = [1, 2]
+      value = Object.new
+      value.define_singleton_method(:deconstruct) { events << :deconstruct; result }
+      scope.const_set(:Value, value)
+      graph = compile_unit("Value in [1, captured]; 7").graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_equal(7, vm.run_frame(frame.call))
+      assert_equal([:deconstruct], events)
+      result = [2, 3]
+      assert_equal(7, vm.run_frame(frame.call))
+      assert_equal([:deconstruct, :deconstruct], events)
+      result = nil
+      assert_raise(TypeError) { vm.run_frame(frame.call) }
+    end
+
     def test_match_required_evaluation
       scope = Module.new
       events = []
