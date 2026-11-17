@@ -5718,6 +5718,18 @@ module Prism
       assert_raise(TypeError) { vm.run(compile_unit("1.itself::Foo")) }
     end
 
+    def test_constant_read_effect_context
+      assert_run(7, "String; 7")
+      scope = Module.new
+      graph = compile_unit("Missing; 7").graphs[0]
+      frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
+      assert_raise(NameError) { vm.run_frame(frame.call) }
+      names = []
+      scope.define_singleton_method(:const_missing) { |name| names << name; 1 }
+      assert_equal(7, vm.run_frame(frame.call))
+      assert_equal([:Missing], names)
+    end
+
     def test_constant_path_effect_context
       assert_run(7, "::String; Float::INFINITY; 7")
       assert_run_raises(NameError, "String::CompileTestMissing; 7")
