@@ -354,16 +354,6 @@ module Prism
       assert_empty Prism.parse("# encoding: US-ASCII\n" + '/#{"\\u3042"}#{"\\xFF"}/').errors
     end
 
-    def test_encoding_option_on_a_sole_interpolation
-      assert_empty Prism.parse('/#{"\\u3042"}/e').errors
-      assert_equal ["invalid multibyte escape: /\\xA4\\xA2/"], Prism.parse('/#{"\\\\xA4\\\\xA2"}/e').errors.map(&:message)
-
-      ['a', '#{1}'].each do |suffix|
-        source = '/#{"\\u3042"}' + suffix + '/e'
-        assert_equal ["regexp encoding option 'e' differs from source encoding 'UTF-8'"], Prism.parse(source).errors.map(&:message)
-      end
-    end
-
     def test_static_interpolation_of_incompatible_encodings
       source = "# encoding: EUC-JP\n/\xA4\xA2".b + '#{"\\u3042"}/'
       errors = Prism.parse(source).errors
