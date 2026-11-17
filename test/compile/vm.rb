@@ -901,7 +901,12 @@ module Prism
       end
 
       def method_lookup_class(receiver)
-        StdLib[:Kernel_singleton_class].bind_call(receiver)
+        case receiver
+        when Integer, Float, Symbol
+          StdLib[:Kernel_class].bind_call(receiver)
+        else
+          StdLib[:Kernel_singleton_class].bind_call(receiver)
+        end
       rescue TypeError
         StdLib[:Kernel_class].bind_call(receiver)
       end

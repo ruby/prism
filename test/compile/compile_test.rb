@@ -4338,6 +4338,23 @@ module Prism
       assert_post_execution("outer\ninner\nfirst\n", 'END { puts "first" }; END { puts "outer"; END { puts "inner" } }')
     end
 
+    def test_post_execution_immediate_lookup_preserves_exception
+      source = <<~RUBY
+        END {
+          exception = $!
+          backtrace = $@
+          1.to_s
+          1.0.to_s
+          :symbol.to_s
+          p [$!.equal?(exception), $@ == backtrace]
+        }
+        raise "foo"
+      RUBY
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, File.expand_path("cli.rb", __dir__), "-e", source)
+      assert_equal(1, status.exitstatus, stderr)
+      assert_equal("[true, true]\n", stdout)
+    end
+
     def test_post_execution_registers_once
       assert_post_execution("3\n", 'a = 0; while a < 3; END { puts a }; a += 1; end')
       assert_post_execution("1\n", 'class CompileTestEndMethod; def value(a); END { puts a }; end; end; o = CompileTestEndMethod.new; o.value(1); o.value(2)')
