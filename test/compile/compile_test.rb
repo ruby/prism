@@ -7402,6 +7402,60 @@ module Prism
       RUBY
     end
 
+    def test_constant_primitives_ignore_method_overrides
+      scope = Module.new
+      [:const_defined?, :const_get, :const_set, :const_source_location].each do |name|
+        scope.define_singleton_method(name) { |*| raise "#{name} called" }
+      end
+      source = <<~RUBY
+        X = 1
+        self::Y = 2
+        module M; end
+        module M; end
+        class C; end
+        class C; end
+        class D < C; end
+        def D.superclass; raise "superclass called"; end
+        class D < C; end
+        [X, Y, M.class, C.class, D < C]
+      RUBY
+      graph = compile_unit(source).graphs[0]
+      assert_equal([1, 2, Module, Class, true], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+
+      [:class, :module].each do |kind|
+        graph = compile_unit("#{kind} X; end").graphs[0]
+        assert_raise(TypeError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+      end
+    end
+
+    def test_ivar_primitives_ignore_method_overrides
+      assert_run(3, <<~RUBY)
+        object = Object.new
+        def object.instance_variable_get(*); raise "instance_variable_get called"; end
+        def object.instance_variable_set(*); raise "instance_variable_set called"; end
+        def object.write
+          @value = 3
+          @value
+        end
+        object.write
+      RUBY
+    end
+
+    def test_coercion_dispatch_ignores_send_override
+      verbose = $VERBOSE
+      $VERBOSE = nil
+      assert_run(["text", true, true], <<~RUBY)
+        object = Object.new
+        def object.__send__(*); raise "__send__ called"; end
+        def object.to_s; "text"; end
+        def object.deconstruct; [1]; end
+        def object.deconstruct_keys(*); { key: 1 }; end
+        ["\#{object}", (object in [1]), (object in { key: 1 })]
+      RUBY
+    ensure
+      $VERBOSE = verbose
+    end
+
     def test_define_method_ignores_method_overrides
       Object.const_set(:CompileTestDefOverride, Class.new {
         def self.define_method(*) = raise("define_method called")

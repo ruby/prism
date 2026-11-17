@@ -56,10 +56,12 @@ module Prism
 
         instance_methods(Array, "Array", %i[+ to_a])
         instance_methods(BasicObject, "BasicObject", %i[equal? __send__ instance_exec])
-        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? lambda method protected_methods public_send respond_to? singleton_class sprintf to_s])
+        instance_methods(Class, "Class", %i[superclass])
+        instance_methods(Hash, "Hash", %i[merge])
+        instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method protected_methods public_send respond_to? singleton_class sprintf to_s])
         singleton_methods(Kernel, "Kernel", %i[lambda])
         singleton_methods(TOPLEVEL_BINDING.receiver, "main", %i[private public])
-        instance_methods(Module, "Module", %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method])
+        instance_methods(Module, "Module", %i[=== alias_method ancestors class_variable_defined? class_variable_get class_variable_set const_defined? const_get const_set const_source_location constants define_method instance_method module_function private private_method_defined? protected protected_method_defined? public public_method_defined? singleton_class? undef_method])
       end
 
       class Visibility
@@ -451,8 +453,8 @@ module Prism
               target = frame.break_target
               unless target && target.active
                 error = LocalJumpError.new("break from proc-closure")
-                error.instance_variable_set(:@exit_value, values[insn.opnds[0]])
-                error.instance_variable_set(:@reason, :break)
+                StdLib[:Kernel_instance_variable_set].bind_call(error, :@exit_value, values[insn.opnds[0]])
+                StdLib[:Kernel_instance_variable_set].bind_call(error, :@reason, :break)
                 raise error
               end
               throw target, values[insn.opnds[0]]
@@ -505,14 +507,14 @@ module Prism
               values[insn.opnds[0]] = NilClass === value ? {} : {}.update(value)
             when :coerce_string
               value = values[insn.opnds[1]]
-              string = value.__send__(:to_s)
+              string = StdLib[:BasicObject___send__].bind_call(value, :to_s)
               values[insn.opnds[0]] = String === string ? string : StdLib[:Kernel_to_s].bind_call(value)
             when :concat_array
               values[insn.opnds[0]] = StdLib[:"Array_+"].bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
             when :deconstruct_array
               value = values[insn.opnds[1]]
               if value.respond_to?(:deconstruct)
-                array = value.__send__(:deconstruct)
+                array = StdLib[:BasicObject___send__].bind_call(value, :deconstruct)
                 raise TypeError, "deconstruct must return Array" unless Array === array
                 values[insn.opnds[0]] = array
               else
@@ -521,7 +523,7 @@ module Prism
             when :deconstruct_hash
               value = values[insn.opnds[1]]
               if value.respond_to?(:deconstruct_keys)
-                hash = value.__send__(:deconstruct_keys, values[insn.opnds[2]])
+                hash = StdLib[:BasicObject___send__].bind_call(value, :deconstruct_keys, values[insn.opnds[2]])
                 raise TypeError, "deconstruct_keys must return Hash" unless Hash === hash
                 values[insn.opnds[0]] = hash
               else
@@ -662,7 +664,7 @@ module Prism
             when :load_gvar
               values[insn.opnds[0]] = eval(insn.data.name)
             when :load_ivar
-              values[insn.opnds[0]] = recv.instance_variable_get(insn.data)
+              values[insn.opnds[0]] = StdLib[:Kernel_instance_variable_get].bind_call(recv, insn.data)
             when :load_last_match
               values[insn.opnds[0]] = $~
             when :load_last_match_group, :load_last_match_named_group
@@ -689,7 +691,7 @@ module Prism
               value = values[insn.opnds[1]]
               values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| StdLib[:BasicObject___send__].bind_call(pattern, :===, value) }
             when :merge_hash
-              values[insn.opnds[0]] = values[insn.opnds[1]].merge(values[insn.opnds[2]])
+              values[insn.opnds[0]] = StdLib[:Hash_merge].bind_call(values[insn.opnds[1]], values[insn.opnds[2]])
             when :new_array
               values[insn.opnds[0]] = values.values_at(*insn.opnds[1..])
             when :new_array_static
@@ -773,26 +775,26 @@ module Prism
               target = frame.return_target
               unless target && target.return_fiber.equal?(Fiber.current)
                 error = LocalJumpError.new("unexpected return")
-                error.instance_variable_set(:@exit_value, values[insn.opnds[0]])
-                error.instance_variable_set(:@reason, :return)
+                StdLib[:Kernel_instance_variable_set].bind_call(error, :@exit_value, values[insn.opnds[0]])
+                StdLib[:Kernel_instance_variable_set].bind_call(error, :@reason, :return)
                 raise error
               end
               throw target, values[insn.opnds[0]]
             when :return_value
               return ExecutionResult.new(nil, values[insn.opnds[0]])
             when :store_const_abs
-              Object.const_set(insn.data, values[insn.opnds[0]])
+              StdLib[:Module_const_set].bind_call(Object, insn.data, values[insn.opnds[0]])
             when :store_const_nest_rel
-              nest[0].const_set(insn.data, values[insn.opnds[0]])
+              StdLib[:Module_const_set].bind_call(nest[0], insn.data, values[insn.opnds[0]])
             when :store_const_recv_rel
               check_module(values[insn.opnds[0]])
-              values[insn.opnds[0]].const_set(insn.data, values[insn.opnds[1]])
+              StdLib[:Module_const_set].bind_call(values[insn.opnds[0]], insn.data, values[insn.opnds[1]])
             when :store_cvar
               parent = cvar_parent(nest)
               check_cvar_parent(parent)
               StdLib[:Module_class_variable_set].bind_call(parent, insn.data, values[insn.opnds[0]])
             when :store_ivar
-              recv.instance_variable_set(insn.data, values[insn.opnds[0]])
+              StdLib[:Kernel_instance_variable_set].bind_call(recv, insn.data, values[insn.opnds[0]])
             when :store_flip_flop
               flip_flops[insn.data] = values[insn.opnds[0]]
             when :store_gvar
@@ -958,42 +960,42 @@ module Prism
       ###
 
       def define_module(parent, name, check_public)
-        if parent.const_defined?(name, false)
+        if StdLib[:Module_const_defined?].bind_call(parent, name, false)
           check_public_const(parent, parent, name) if check_public
-          const = parent.const_get(name, false)
+          const = StdLib[:Module_const_get].bind_call(parent, name, false)
           unless Module === const && !(Class === const)
             message = +"#{name} is not a module"
-            if (location = parent.const_source_location(name, false))
+            if (location = StdLib[:Module_const_source_location].bind_call(parent, name, false))
               message << "\n#{location[0]}:#{location[1]}: previous definition of #{name} was here"
             end
             raise TypeError, message
           end
           const
         else
-          parent.const_set(name, Module.new)
+          StdLib[:Module_const_set].bind_call(parent, name, Module.new)
         end
       end
 
       def define_class(parent, name, check_public)
-        existing_class(parent, name, check_public) || parent.const_set(name, Class.new)
+        existing_class(parent, name, check_public) || StdLib[:Module_const_set].bind_call(parent, name, Class.new)
       end
 
       def define_class_super(parent, name, check_public, superclass)
         if (klass = existing_class(parent, name, check_public))
-          unless klass.superclass.equal?(superclass)
+          unless StdLib[:BasicObject_equal?].bind_call(StdLib[:Class_superclass].bind_call(klass), superclass)
             raise TypeError, "superclass mismatch for class #{name}"
           end
 
           klass
         else
-          parent.const_set(name, Class.new(superclass))
+          StdLib[:Module_const_set].bind_call(parent, name, Class.new(superclass))
         end
       end
 
       def existing_class(parent, name, check_public)
-        if parent.const_defined?(name, false)
+        if StdLib[:Module_const_defined?].bind_call(parent, name, false)
           check_public_const(parent, parent, name) if check_public
-          const = parent.const_get(name, false)
+          const = StdLib[:Module_const_get].bind_call(parent, name, false)
           check_class(parent, name, const)
           const
         end
@@ -1032,7 +1034,7 @@ module Prism
           check_public_const(owner, recv, name)
           StdLib[:Module_const_get].bind_call(owner, name, false)
         else
-          recv.const_missing(name)
+          StdLib[:BasicObject___send__].bind_call(recv, :const_missing, name)
         end
       end
 
@@ -1042,7 +1044,7 @@ module Prism
         unless Class === const
           message = +"#{name} is not a class"
 
-          if (location = parent.const_source_location(name, false))
+          if (location = StdLib[:Module_const_source_location].bind_call(parent, name, false))
             message << "\n#{location[0]}:#{location[1]}: previous definition of #{name} was here"
           end
 
