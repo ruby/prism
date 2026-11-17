@@ -4655,12 +4655,12 @@ compile_class_variable_and_write_node(PrismBuilder *builder, PrismBuilderContext
  * ^^^^^^^^^^^^
  */
 static uint32_t
-compile_class_variable_operator_write_node(PrismBuilder *builder, const pm_class_variable_operator_write_node_t *node) {
+compile_class_variable_operator_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_class_variable_operator_write_node_t *node) {
     uint32_t receiver_id = emit_load_cvar(builder, node->base.node_id, node->name);
     uint32_t value_id = compile_node(builder, kPrismBuilderValue, node->value);
     uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, UINT32_MAX, false, false, 0, false);
     emit_store_cvar(builder, node->base.node_id, node->name, result_id);
-    return result_id;
+    return context == kPrismBuilderValue ? result_id : UINT32_MAX;
 }
 
 /*
@@ -6391,7 +6391,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CLASS_VARIABLE_WRITE_NODE:
             return compile_class_variable_write_node(builder, (const pm_class_variable_write_node_t *) node);
         case PM_CLASS_VARIABLE_OPERATOR_WRITE_NODE:
-            return compile_class_variable_operator_write_node(builder, (const pm_class_variable_operator_write_node_t *) node);
+            return compile_class_variable_operator_write_node(builder, context, (const pm_class_variable_operator_write_node_t *) node);
         case PM_CLASS_VARIABLE_AND_WRITE_NODE:
             return compile_class_variable_and_write_node(builder, context, (const pm_class_variable_and_write_node_t *) node);
         case PM_CLASS_VARIABLE_OR_WRITE_NODE:
