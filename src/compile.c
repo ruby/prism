@@ -4365,7 +4365,7 @@ compile_block_node(PrismBuilder *builder, PrismBuilderContext context, const pm_
  * ^^^^^^^^^
  */
 static uint32_t
-compile_break_node(PrismBuilder *builder, const pm_break_node_t *node) {
+compile_break_node(PrismBuilder *builder, PrismBuilderContext context, const pm_break_node_t *node) {
     uint32_t value_id = compile_jump_arguments(builder, node->base.node_id, node->arguments);
 
     if (builder->state.break_block_id != UINT32_MAX) {
@@ -4381,7 +4381,7 @@ compile_break_node(PrismBuilder *builder, const pm_break_node_t *node) {
     }
 
     builder->state.block_id = make_block(builder, 0);
-    return emit_load_nil(builder, node->base.node_id);
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
 /*
@@ -6356,7 +6356,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_BLOCK_NODE:
             return compile_block_node(builder, context, (const pm_block_node_t *) node);
         case PM_BREAK_NODE:
-            return compile_break_node(builder, (const pm_break_node_t *) node);
+            return compile_break_node(builder, context, (const pm_break_node_t *) node);
         case PM_CALL_AND_WRITE_NODE:
             return compile_call_and_write_node(builder, (const pm_call_and_write_node_t *) node);
         case PM_CALL_NODE:

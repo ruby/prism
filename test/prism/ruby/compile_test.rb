@@ -81,6 +81,7 @@ module Prism
         "while true; break nil; end",
         "while true; break false; end",
         "while true; break 3; end",
+        "while true; break [1, 2]; 99; end",
         "while true; break 1, 2; end",
         "while true; break *[1, 2]; end",
         "while true; break 1, *[2, 3], 4; end",
@@ -100,6 +101,9 @@ module Prism
       [
         "[1, 2].each { break }",
         "[1, 2].each { break 3 }",
+        "[1].each { break [1, 2]; 99 }",
+        "-> { break [1, 2]; 99 }.call",
+        "events = []; result = [1].each { break(events << 2); 99 }; [result, events]",
         "[1, 2].map { break 1, 2 }",
         "[1, 2].map { break 1, *[2, 3] }",
         "events = []; result = [1, 2].each { |i| events << i; break i if i == 2 }; [result, events]",
