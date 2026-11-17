@@ -147,8 +147,13 @@ module Prism
         exit(1)
       end
 
-      lookup_table(found)
-      unicode_lists if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
+      if found == Encoding::UTF_8 || found == Encoding::UTF8_MAC
+        unicode_lists
+      elsif found == Encoding::ASCII_8BIT
+        lookup_table(found)
+      else
+        uppercase_bitmap(found)
+      end
     end
 
     # bin/prism error [source]
@@ -428,18 +433,39 @@ module Prism
       end
     end
 
-    # Generate a lookup table for a given encoding.
+    # Generate the lookup table of the ASCII characters.
     def lookup_table(encoding)
-      encoding_values = lookup_table_values(encoding)
-      if encoding_values == lookup_table_values(Encoding::US_ASCII)
-        puts "static const uint8_t pm_encoding_ascii_table[256] = {"
-      else
-        puts "static const uint8_t pm_encoding_#{encoding.name.downcase}_table[256] = {"
+      puts "const uint8_t pm_encoding_ascii_table[256] = {"
+      puts "/*  #{(0...16).map { |value| value.to_s(16).upcase }.join("  ")} */"
+      lookup_table_values(encoding).each_with_index do |row, row_index|
+        puts "    #{row.join(", ")}, /* #{row_index.to_s(16).upcase}x */"
+      end
+      puts "};"
+    end
+
+    # Generate the bitmap of the bytes from 0x80 to 0xFF that begin a constant
+    # name in a single-byte encoding. The bit for a byte is bit (byte & 7) of
+    # element ((byte - 0x80) >> 3). The bytes below 0x80 are ASCII in every
+    # encoding that prism supports, so they need no bits.
+    def uppercase_bitmap(encoding)
+      bitmap = Array.new(16, 0)
+
+      (0x80...0x100).each do |byte|
+        next unless constant_start?(byte.chr(encoding))
+        bitmap[(byte - 0x80) >> 3] |= 1 << (byte & 7)
       end
 
-      puts "//  #{(0...16).map { |value| value.to_s(16).upcase }.join("  ")}"
-      encoding_values.each_with_index do |row, row_index|
-        puts "    #{row.join(", ")}, // #{row_index.to_s(16).upcase}x"
+      if bitmap.all?(0)
+        puts "/* No byte from 0x80 up begins a constant name in #{encoding.name}, so it needs no bitmap. */"
+        return
+      end
+
+      puts "/**"
+      puts " * The bytes from 0x80 up that begin a constant name in #{encoding.name}."
+      puts " */"
+      puts "static const uint8_t pm_encoding_#{encoding.name.downcase.tr("-", "_")}_uppercase[16] = {"
+      bitmap.each_slice(8).with_index do |row, row_index|
+        puts "    #{row.map { |value| "0x%02X" % value }.join(", ")}, /* 0x#{(0x80 + row_index * 64).to_s(16).upcase} */"
       end
       puts "};"
     end
