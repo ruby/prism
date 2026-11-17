@@ -4109,7 +4109,7 @@ compile_constant_value(PrismBuilder *builder, const pm_node_t *value, pm_node_fl
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_variable_node_t *node) {
+compile_alias_global_variable_node(PrismBuilder *builder, PrismBuilderContext context, const pm_alias_global_variable_node_t *node) {
     pm_constant_id_t new_name = ((const pm_global_variable_read_node_t *) node->new_name)->name;
     pm_constant_id_t old_name;
 
@@ -4123,7 +4123,7 @@ compile_alias_global_variable_node(PrismBuilder *builder, const pm_alias_global_
     uint32_t old_name_id = emit_load_object(builder, node->old_name->node_id, make_object_constant_id(builder, old_name));
 
     emit_alias_gvar(builder, node->base.node_id, new_name_id, old_name_id);
-    return emit_load_nil(builder, node->base.node_id);
+    return context == kPrismBuilderValue ? emit_load_nil(builder, node->base.node_id) : UINT32_MAX;
 }
 
 /*
@@ -6300,8 +6300,6 @@ compile_yield_node(PrismBuilder *builder, const pm_yield_node_t *node) {
 
 static uint32_t
 compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t *node) {
-    (void) context; /* temporary */
-
     if (PM_NODE_FLAG_P(node, PM_NODE_FLAG_NEWLINE)) {
         int32_t lineno = pm_line_offset_list_line(&builder->parser->line_offsets, node->location.start, builder->parser->start_line);
         if (builder->state.lineno != lineno) {
@@ -6312,7 +6310,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
 
     switch (PM_NODE_TYPE(node)) {
         case PM_ALIAS_GLOBAL_VARIABLE_NODE:
-            return compile_alias_global_variable_node(builder, (const pm_alias_global_variable_node_t *) node);
+            return compile_alias_global_variable_node(builder, context, (const pm_alias_global_variable_node_t *) node);
         case PM_ALIAS_METHOD_NODE:
             return compile_alias_method_node(builder, (const pm_alias_method_node_t *) node);
         case PM_AND_NODE:
