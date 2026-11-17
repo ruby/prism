@@ -4741,7 +4741,7 @@ compile_constant_and_write_node(PrismBuilder *builder, PrismBuilderContext conte
  * ^^^^^^^^^^
  */
 static uint32_t
-compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_operator_write_node_t *node, pm_node_flags_t shareability) {
+compile_constant_operator_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_constant_operator_write_node_t *node, pm_node_flags_t shareability) {
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
 
@@ -4750,7 +4750,7 @@ compile_constant_operator_write_node(PrismBuilder *builder, const pm_constant_op
     uint32_t result_id = emit_call(builder, node->base.node_id, node->binary_operator, receiver_id, 1, &value_id, UINT32_MAX, false, false, 0, false);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, result_id);
 
-    return result_id;
+    return context == kPrismBuilderValue ? result_id : UINT32_MAX;
 }
 
 /*
@@ -6113,7 +6113,7 @@ compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_consta
         case PM_CONSTANT_AND_WRITE_NODE:
             return compile_constant_and_write_node(builder, kPrismBuilderValue, (const pm_constant_and_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
-            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node->write, shareability);
+            return compile_constant_operator_write_node(builder, kPrismBuilderValue, (const pm_constant_operator_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OR_WRITE_NODE:
             return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node->write, shareability);
         case PM_CONSTANT_PATH_AND_WRITE_NODE:
@@ -6408,7 +6408,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_OR_WRITE_NODE:
             return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node, 0);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
-            return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node, 0);
+            return compile_constant_operator_write_node(builder, context, (const pm_constant_operator_write_node_t *) node, 0);
         case PM_CONSTANT_PATH_NODE:
             return compile_constant_path_node(builder, (const pm_constant_path_node_t *) node);
         case PM_CONSTANT_PATH_WRITE_NODE:
