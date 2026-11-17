@@ -163,6 +163,10 @@ module Prism
           required
         end
       end
+
+      def ruby2_keywords_eligible?
+        rest && posts.empty? && required_keywords.empty? && optional_keywords.empty? && !keyword_rest && !no_keywords
+      end
     end
 
     class Graph

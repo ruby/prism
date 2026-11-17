@@ -1002,6 +1002,60 @@ module Prism
       assert_run(true, "f = ->(&block) { block.nil? }; f.call { 1 }; f.call(&nil)")
     end
 
+    def test_ruby2_keywords_forwarding
+      assert_run([[[], { a: 1 }], [[{ a: 1 }], {}], [[], {}], [[], { a: 1 }], [[], { a: 1 }], [[], { a: 1 }], [[{ a: 1 }], {}], [[], { a: 1 }]], <<~RUBY)
+        class CompileRuby2KeywordsParent
+          def forward(*args, **kwargs)
+            [args, kwargs]
+          end
+        end
+        class CompileRuby2KeywordsChild < CompileRuby2KeywordsParent
+          def target(*args, **kwargs)
+            [args, kwargs]
+          end
+          ruby2_keywords def forward(*args)
+            target(*args)
+          end
+          ruby2_keywords def forward_super(*args)
+            forward(*args)
+          end
+          ruby2_keywords def through_yield(*args)
+            yield(*args)
+          end
+          ruby2_keywords def through_super(*args)
+            super
+          end
+          def unmarked(*args)
+            target(*args)
+          end
+          alias copied forward
+        end
+        class CompileRuby2KeywordsParent
+          def through_super(*args, **kwargs)
+            [args, kwargs]
+          end
+        end
+        object = CompileRuby2KeywordsChild.new
+        [object.forward(a: 1), object.forward({ a: 1 }), object.forward,
+          object.copied(a: 1), object.through_super(a: 1),
+          object.through_yield(a: 1) { |*args, **kwargs| [args, kwargs] }, object.unmarked(a: 1), object.forward_super(a: 1)]
+      RUBY
+    end
+
+    def test_ruby2_keywords_procs
+      assert_run([[[], { a: 1 }], [[{ a: 1 }], {}], [[], { a: 1 }], [[], { a: 1 }], [[{ a: 1 }], {}], [[], { a: 1 }]], <<~RUBY)
+        target = ->(*args, **kwargs) { [args, kwargs] }
+        forward = proc { |*args| target.call(*args) }.ruby2_keywords
+        callable = ->(*args) { target.call(*args) }.ruby2_keywords
+        klass = Class.new
+        klass.define_method(:forward, forward)
+        unmarked = proc { |*args| target.call(*args) }
+        klass.define_method(:marked_method, proc { |*args| target.call(*args) })
+        klass.send(:ruby2_keywords, :marked_method)
+        [forward.call(a: 1), forward.call({ a: 1 }), callable.call(a: 1), klass.new.forward(a: 1), unmarked.call(a: 1), klass.new.marked_method(a: 1)]
+      RUBY
+    end
+
     def test_call_visibility
       klass = Class.new do
         def secret(*args, **kwargs, &block)

@@ -59,6 +59,7 @@ module Prism
         instance_methods(Binding, "Binding", %i[eval])
         instance_methods(Class, "Class", %i[superclass])
         instance_methods(Hash, "Hash", %i[merge])
+        singleton_methods(Hash, "Hash", %i[ruby2_keywords_hash?])
         instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method public_send respond_to? singleton_class sprintf to_s])
         singleton_methods(Kernel, "Kernel", %i[lambda])
         singleton_methods(TOPLEVEL_BINDING.receiver, "main", %i[private public])
@@ -179,9 +180,23 @@ module Prism
 
         def define(parent, name)
           definition = self
-          StdLib[:Module_define_method].bind_call(parent, name) do |*args, **kwargs, &block|
-            super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
-            definition.call(self, args, kwargs, super_method, &block)
+
+          if @graph.signature.ruby2_keywords_eligible?
+            StdLib[:Module_define_method].bind_call(
+              parent,
+              name,
+              StdLib[:Binding_eval].bind_call(binding, <<~RUBY)
+                Proc.new do |*args, &block|
+                  super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
+                  definition.call(self, args, {}, super_method, &block)
+                end
+              RUBY
+            )
+          else
+            StdLib[:Module_define_method].bind_call(parent, name) do |*args, **kwargs, &block|
+              super_method = ->(forwarded_args, forwarded_kwargs, forwarded_block) { super(*forwarded_args, **forwarded_kwargs, &forwarded_block) }
+              definition.call(self, args, kwargs, super_method, &block)
+            end
           end
 
           @method = StdLib[:Module_instance_method].bind_call(parent, name)
@@ -465,6 +480,9 @@ module Prism
               passed_block = call.block ? arguments.pop : nil
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
+              if call.splat && !call.keywords && Hash === arguments.last && StdLib[:Hash_singleton_ruby2_keywords_hash?].bind_call(Hash, arguments.last)
+                keywords = arguments.pop
+              end
               receiver = values[insn.opnds[1]]
 
               if call.ignore_visibility && arguments.empty? && (Module === receiver || StdLib[:BasicObject_equal?].bind_call(receiver, TOPLEVEL_BINDING.receiver)) && (visibility = default_visibility(receiver, call.name))
@@ -492,6 +510,9 @@ module Prism
               arguments = values.values_at(*insn.opnds[1...-1])
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
+              if call.splat && !call.keywords && Hash === arguments.last && StdLib[:Hash_singleton_ruby2_keywords_hash?].bind_call(Hash, arguments.last)
+                keywords = arguments.pop
+              end
               passed_block = values[insn.opnds[-1]]
 
               values[insn.opnds[0]] =
@@ -812,6 +833,9 @@ module Prism
               arguments = values.values_at(*insn.opnds[1..])
               keywords = call.keywords ? arguments.pop : {}
               arguments.concat(arguments.pop) if call.splat
+              if call.splat && !call.keywords && Hash === arguments.last && StdLib[:Hash_singleton_ruby2_keywords_hash?].bind_call(Hash, arguments.last)
+                keywords = arguments.pop
+              end
               values[insn.opnds[0]] = frame.block.call(*arguments, **keywords)
             else
               raise "Unknown instruction kind: #{insn.kind}"
@@ -940,18 +964,22 @@ module Prism
         visibility = frame.visibility
 
         target = nil
+        invoke =
+          proc do |receiver, args, kwargs, passed_block|
+            block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
+            vm.run_frame(Frame.new(graph, receiver, nest, block_locals, flip_flops, super_method, visibility, target, return_target, lambda, frame.match_state, &block), args, kwargs, passed_block)
+          end
+
         callable =
           StdLib[:BasicObject_instance_exec].bind_call(frame.recv) do
-            if lambda
-              ->(*args, **kwargs, &passed_block) do
-                block_locals = Locals.new(graph.locals, locals)
-                vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, frame.match_state, &block), args, kwargs, passed_block)
-              end
+            if graph.signature.ruby2_keywords_eligible?
+              # Keep keyword flags independent of blocks compiled from other graphs.
+              source = lambda ? "->(*args, &passed_block) { invoke.call(self, args, {}, passed_block) }" : "Proc.new { |*args, &passed_block| invoke.call(self, args, {}, passed_block) }"
+              StdLib[:Binding_eval].bind_call(binding, source)
+            elsif lambda
+              ->(*args, **kwargs, &passed_block) { invoke.call(self, args, kwargs, passed_block) }
             else
-              Proc.new do |*args, **kwargs, &passed_block|
-                block_locals = graph.scope.equal?(graph) ? Locals.new(graph.locals, locals) : locals
-                vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, target, return_target, false, frame.match_state, &block), args, kwargs, passed_block)
-              end
+              Proc.new { |*args, **kwargs, &passed_block| invoke.call(self, args, kwargs, passed_block) }
             end
           end
 
