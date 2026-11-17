@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 # typed: ignore
 
-require_relative "../test_helper"
+require_relative "../prism/test_helper"
 require "open3"
+require_relative "vm"
+require_relative "disassembler"
 
 module Prism
   class CompileTest < TestCase
@@ -140,7 +142,7 @@ module Prism
         CompileTestRecursiveReturn.new.value(1)
       RUBY
       unit = compile_unit("def value; [1].each { return 7 }; end")
-      assert_include(unit.disasm, "return_nonlocal")
+      assert_include(disasm(unit), "return_nonlocal")
       block = unit.graphs.find { |graph| graph.kind == :block }
       assert_include(block.blocks.flat_map(&:insns).map(&:kind), :return_nonlocal)
     end
@@ -439,7 +441,7 @@ module Prism
 
     def test_disasm
       unit = compile_unit("a = 1; a + 2")
-      assert_equal(<<~TEXT, unit.disasm)
+      assert_equal(<<~TEXT, disasm(unit))
         g0 (program, scope=g0):
           r0 (default, entry=bb0):
           bb0: [region=r0]
@@ -974,9 +976,9 @@ module Prism
     end
 
     def test_call_info_flags_disasm
-      assert_include(compile_unit("target").disasm, "[ignore_visibility, variable_call]")
-      assert_include(compile_unit("target(&nil)").disasm, "[ignore_visibility, block_argument]")
-      assert_not_include(compile_unit("target {}").disasm, "block_argument")
+      assert_include(disasm(compile_unit("target")), "[ignore_visibility, variable_call]")
+      assert_include(disasm(compile_unit("target(&nil)")), "[ignore_visibility, block_argument]")
+      assert_not_include(disasm(compile_unit("target {}")), "block_argument")
     end
 
     def test_call_block_operands
@@ -1063,7 +1065,7 @@ module Prism
       block = Compile::Block.new(4, [insn], [], region)
       blocks << block
       graph = Compile::Graph.new(3, :program, nil, nil, blocks, [region], [local], 1, 0, Compile::Signature.new([], [], [], nil, [], {}, {}, {}, nil, nil, false, false, false))
-      output = Compile::Unit.new([graph]).disasm
+      output = disasm(Compile::Unit.new([graph]))
       assert_include(output, "g3 (program, scope=g3):")
       assert_include(output, "bb4:")
       assert_include(output, "r7 (default, entry=bb4):")
@@ -1074,14 +1076,14 @@ module Prism
     def test_disasm_blocks_and_branches
       source = "a = 1; proc { |b, c| if b; c + a; else; a; end }.call(2, 3)"
       unit = Prism.compile(source, freeze: true).value
-      output = unit.disasm
+      output = disasm(unit)
       assert_include(output, "g1(%0, %1) [autosplat] (block, parent=g0, scope=g1):")
       assert_include(output, "bb0(%0, %1):")
       assert_match(/call %\d+\.proc &%\d+/, output)
       assert_match(/branchif %\d+ bb\d+ bb\d+/, output)
       assert_match(/branch bb\d+\(%\d+\)/, output)
       assert_not_include(output, "#<Prism::Compile::")
-      assert_equal(output, unit.disasm)
+      assert_equal(output, disasm(unit))
       assert_equal(4, vm.run(unit))
     end
 
@@ -1713,18 +1715,32 @@ module Prism
     end
 
     def test_disasm_literals
-      output = compile_unit('"a\\nb"').disasm
+      output = disasm(compile_unit('"a\\nb"'))
       assert_include(output, 'load_object("a\nb")')
-      output = compile_unit("__ENCODING__").disasm
+      output = disasm(compile_unit("__ENCODING__"))
       assert_include(output, "load_object(encoding(UTF-8))")
-      output = compile_unit("/a/i").disasm
+      output = disasm(compile_unit("/a/i"))
       assert_include(output, "load_object(/a/i)")
     end
 
-    def test_compile_cli_disasm
-      stdout, stderr, status = Open3.capture3(RbConfig.ruby, File.expand_path("../../../bin/prism", __dir__), "compile", "-e", "1 + 2")
+    def test_graph_loading_does_not_load_verification_tools
+      script = <<~RUBY
+        unit = Prism.compile("1 + 2", raise_error: :plain).value
+        abort "missing graph" unless Prism::Compile::Unit === unit
+        abort "interpreter loaded" if Prism::Compile.const_defined?(:VM, false)
+        abort "disassembler loaded" if Prism::Compile.const_defined?(:Disassembler, false)
+        abort "disassembly exposed" if unit.respond_to?(:disasm)
+      RUBY
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, "-I", File.expand_path("../../lib", __dir__), "-rprism", "-e", script)
       assert_predicate(status, :success?, stderr)
-      assert_equal(compile_unit("1 + 2").disasm, stdout)
+      assert_empty(stdout)
+      assert_empty(stderr)
+    end
+
+    def test_compile_cli_disasm
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, File.expand_path("cli.rb", __dir__), "compile", "-e", "1 + 2")
+      assert_predicate(status, :success?, stderr)
+      assert_equal(disasm(compile_unit("1 + 2")), stdout)
     end
 
     def test_vm_compilation_warnings_across_files
@@ -1742,7 +1758,7 @@ module Prism
     end
 
     def test_compile_and_interpret_cli_warnings
-      cli = File.expand_path("../../../bin/prism", __dir__)
+      cli = File.expand_path("cli.rb", __dir__)
       ["compile", "interpret"].each do |command|
         stdout, stderr, status = Open3.capture3(RbConfig.ruby, cli, command, "-e", "\n{a: 1, a: 2}")
         assert_predicate(status, :success?, stderr)
@@ -1752,7 +1768,7 @@ module Prism
     end
 
     def test_interpret_cli_warning_levels
-      cli = File.expand_path("../../../bin/prism", __dir__)
+      cli = File.expand_path("cli.rb", __dir__)
       source = "unused = 1; puts :done"
       [[], ["-w"], ["-W0"]].each do |flags|
         stdout, stderr, status = Open3.capture3(RbConfig.ruby, *flags, cli, "interpret", "-e", source)
@@ -1951,8 +1967,8 @@ module Prism
       assert_equal([0, 1, 2], graph.blocks[0].params)
       assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :expand_array })
       assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :coerce_array_to_ary })
-      assert_include(unit.disasm, "coerce_array_to_ary(%0)")
-      assert_match(/expand_array %\d+, lefts=2, rights=0, rest=false/, unit.disasm)
+      assert_include(disasm(unit), "coerce_array_to_ary(%0)")
+      assert_match(/expand_array %\d+, lefts=2, rights=0, rest=false/, disasm(unit))
     end
 
     def test_keyword_rest_method_parameters
@@ -1992,7 +2008,7 @@ module Prism
       assert_equal({ y: 1 }, graph.signature.optional_keywords)
       assert_equal(3, graph.signature.keyword_rest)
       assert_equal([0, 1, 2, 3], graph.blocks[0].params)
-      assert_include(unit.disasm, "**%3")
+      assert_include(disasm(unit), "**%3")
       graph = compile_unit("proc { |**| 1 }").graphs[1]
       assert_equal(0, graph.signature.keyword_rest)
       assert_equal([0], graph.blocks[0].params)
@@ -2353,8 +2369,8 @@ module Prism
       assert_include(kinds, :call_super)
       assert_include(kinds, :load_block)
       assert_include(kinds, :coerce_array_to_a)
-      assert_include(unit.disasm, " = call_super(")
-      assert_include(unit.disasm, "load_block")
+      assert_include(disasm(unit), " = call_super(")
+      assert_include(disasm(unit), "load_block")
     end
 
     def test_expression_splat_coercion
@@ -2467,7 +2483,7 @@ module Prism
       assert_same(graph, graph.scope)
       assert_equal(false, graph.signature.autosplat)
       assert_equal(2, graph.signature.requireds.length)
-      assert_include(unit.disasm, "(lambda, parent=g0, scope=g1)")
+      assert_include(disasm(unit), "(lambda, parent=g0, scope=g1)")
       assert_include(graph.blocks[0].insns.map(&:kind), :trace_b_call)
       body = graph.blocks[0].insns.last.data
       assert_equal([:trace_b_return, :return_value], body.insns.last(2).map(&:kind))
@@ -2720,7 +2736,7 @@ module Prism
       assert_equal(true, call.data.splat)
       assert_equal(true, call.data.keywords)
       assert_equal(:target, call.data.name)
-      assert_include(unit.disasm, "[splat] [keywords]")
+      assert_include(disasm(unit), "[splat] [keywords]")
       assert_equal(false, compile_unit("target(1)").graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == :call }.data.splat)
     end
 
@@ -2775,7 +2791,7 @@ module Prism
       assert_nil(graph.signature.block)
       assert_empty(graph.blocks[0].params)
       assert_empty(graph.locals)
-      assert_include(unit.disasm, "g1(&nil)")
+      assert_include(disasm(unit), "g1(&nil)")
       assert_equal(false, compile_unit("proc {}").graphs[1].signature.no_block)
       assert_equal(true, compile_unit("def no_block(&nil); end").graphs[1].signature.no_block)
     end
@@ -2810,7 +2826,7 @@ module Prism
       assert_equal(true, graph.signature.no_keywords)
       assert_empty(graph.blocks[0].params)
       assert_empty(graph.locals)
-      assert_include(unit.disasm, "g1(**nil)")
+      assert_include(disasm(unit), "g1(**nil)")
       assert_equal(false, compile_unit("proc {}").graphs[1].signature.no_keywords)
       assert_equal(true, compile_unit("def no_keywords(**nil); end").graphs[1].signature.no_keywords)
     end
@@ -2873,7 +2889,7 @@ module Prism
       assert_predicate(graph.signature.optional_keywords, :frozen?)
       assert_predicate(graph.signature.optional_keyword_specifieds, :frozen?)
       assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :branch_if })
-      assert_include(unit.disasm, "y: %2?%3, z: %4?%5")
+      assert_include(disasm(unit), "y: %2?%3, z: %4?%5")
     end
 
     def test_required_keyword_method_parameters
@@ -2929,8 +2945,8 @@ module Prism
       call = unit.graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == :call && insn.data.name == :call }
       assert_equal(true, call.data.keywords)
       assert_predicate(call.data, :frozen?)
-      assert_include(unit.disasm, "x: %1, y: %2")
-      assert_include(unit.disasm, "[keywords]")
+      assert_include(disasm(unit), "x: %1, y: %2")
+      assert_include(disasm(unit), "[keywords]")
     end
 
     def test_optional_method_parameters
@@ -3008,7 +3024,7 @@ module Prism
       assert_predicate(signature.optionals, :frozen?)
       assert_predicate(signature.optional_specifieds, :frozen?)
       assert_equal(2, graph.blocks.flat_map(&:insns).count { |insn| insn.kind == :branch_if })
-      assert_include(unit.disasm, "%1?%2, %3?%4")
+      assert_include(disasm(unit), "%1?%2, %3?%4")
     end
 
     def test_post_block_parameters
@@ -3052,7 +3068,7 @@ module Prism
       assert_equal(true, graph.signature.autosplat)
       assert_predicate(graph.signature.posts, :frozen?)
       assert_equal([:store_lvar] * 4 + [:trace_b_call], graph.blocks[0].insns.first(5).map(&:kind))
-      assert_include(unit.disasm, "g1(%0, *%1, %2, %3) [autosplat]")
+      assert_include(disasm(unit), "g1(%0, *%1, %2, %3) [autosplat]")
       assert_empty(compile_unit("proc { _1 }").graphs[1].signature.posts)
     end
 
@@ -3254,7 +3270,7 @@ module Prism
       assert_not_nil(signature.block)
       assert_include(graph.blocks[0].params, signature.block)
       assert_equal(false, signature.autosplat)
-      assert_include(unit.disasm, "&%#{signature.block}")
+      assert_include(disasm(unit), "&%#{signature.block}")
     end
 
     def test_implicit_rest_block_parameters
@@ -3439,7 +3455,7 @@ module Prism
       assert_equal(false, insn.data.block)
       assert_nil(insn.data.name)
       assert_predicate(insn.data, :frozen?)
-      assert_match(/yield\([^\n]+\) \[splat\] \[keywords\]/, unit.disasm)
+      assert_match(/yield\([^\n]+\) \[splat\] \[keywords\]/, disasm(unit))
     end
 
     def test_yield_captured_block
@@ -3960,8 +3976,8 @@ module Prism
       assert_equal(0, graph.signature.rest)
       assert_equal(false, graph.signature.autosplat)
       assert_equal([0], graph.blocks[0].params)
-      assert_include(unit.disasm, "coerce_array_to_ary(")
-      assert_include(unit.disasm, "expand_array")
+      assert_include(disasm(unit), "coerce_array_to_ary(")
+      assert_include(disasm(unit), "expand_array")
     end
 
     def test_for_multi_target_yields
@@ -4471,8 +4487,8 @@ module Prism
       assert_equal(:once_return, region.entry.insns.last.kind)
       assert_same(region, region.entry.insns.last.data)
       assert_equal(0, insns.find { |insn| insn.kind == :new_regexp }.data.flags & Prism::RegularExpressionFlags::ONCE)
-      assert_include(unit.disasm, "once @site0, r1")
-      assert_include(unit.disasm, "once_return r1(")
+      assert_include(disasm(unit), "once @site0, r1")
+      assert_include(disasm(unit), "once_return r1(")
     end
 
     def test_once_caches_false_and_nil
@@ -5453,8 +5469,8 @@ module Prism
         ["{a: 1} => {**nil}", "raise_pattern_rest_empty"]
       ].each do |source, instruction|
         unit = compile_unit(source)
-        assert_include(unit.disasm, " = deconstruct_hash(")
-        assert_include(unit.disasm, "#{instruction}(")
+        assert_include(disasm(unit), " = deconstruct_hash(")
+        assert_include(disasm(unit), "#{instruction}(")
       end
     end
 
@@ -5557,8 +5573,8 @@ module Prism
 
     def test_find_pattern_disasm
       unit = compile_unit("[1, 2] => [*, 3, *]")
-      assert_include(unit.disasm, "raise_pattern_find(")
-      assert_include(unit.disasm, " = deconstruct_array(")
+      assert_include(disasm(unit), "raise_pattern_find(")
+      assert_include(disasm(unit), " = deconstruct_array(")
       assert_equal(1, unit.graphs[0].blocks.count { |block| !block.params.empty? })
     end
 
@@ -5821,9 +5837,9 @@ module Prism
 
     def test_array_pattern_disasm
       unit = compile_unit("[1, 2] => [a, *b]")
-      assert_include(unit.disasm, " = deconstruct_array(")
-      assert_include(unit.disasm, "raise_pattern_min_length(")
-      assert_include(unit.disasm, "raise_pattern_deconstruct(")
+      assert_include(disasm(unit), " = deconstruct_array(")
+      assert_include(disasm(unit), "raise_pattern_min_length(")
+      assert_include(disasm(unit), "raise_pattern_deconstruct(")
     end
 
     def test_raise_pattern_instructions
@@ -5988,8 +6004,8 @@ module Prism
         ["case 1; in 1 if false; end", :raise_pattern_guard, 1]
       ].each do |source, kind, noperands|
         unit = Prism.compile(source, freeze: true).value
-        assert_include(unit.disasm, " = match(")
-        assert_include(unit.disasm, "#{kind}(")
+        assert_include(disasm(unit), " = match(")
+        assert_include(disasm(unit), "#{kind}(")
         instruction = unit.graphs[0].blocks.flat_map(&:insns).find { |insn| insn.kind == kind }
         assert_nil(instruction.data)
         assert_equal(noperands, instruction.opnds.length)
@@ -6624,7 +6640,7 @@ module Prism
       assert_not_include(instructions.map(&:kind), :load_nil)
       assert_equal(:return, instructions.last.kind)
       assert_empty(instructions.last.opnds)
-      assert_match(/\breturn$/, unit.disasm)
+      assert_match(/\breturn$/, disasm(unit))
       assert_run([1, 2], "class CompileTestClassValue; [1, 2]; end")
       assert_run(3, "class CompileTestClassBodyEffect; @value = 3; def self.value; @value; end; self.value; end; CompileTestClassBodyEffect.value")
       assert_run(7, "class CompileTestClassEmptyEffect; end; 7")
@@ -6785,7 +6801,7 @@ module Prism
       insn = insns.find { |candidate| candidate.kind == :alias_gvar }
       names = insn.opnds.map { |id| insns.find { |candidate| candidate.kind == :load_object && candidate.opnds[0] == id }.data }
       assert_equal([:$compile_alias_metadata, :$compile_alias_original], names)
-      assert_include(unit.disasm, "alias_gvar")
+      assert_include(disasm(unit), "alias_gvar")
     end
 
     def test_alias
@@ -7103,9 +7119,9 @@ module Prism
       assert_equal([0, 1], entry.params)
       assert_equal([0], graph.signature.requireds)
       assert_equal(1, graph.signature.rest)
-      assert_include(unit.disasm, "g1(%0, *%1) (def, scope=g1):")
-      assert_include(unit.disasm, "bb0(%0, %1):")
-      assert_include(unit.disasm, "store_lvar v1, %1")
+      assert_include(disasm(unit), "g1(%0, *%1) (def, scope=g1):")
+      assert_include(disasm(unit), "bb0(%0, %1):")
+      assert_include(disasm(unit), "store_lvar v1, %1")
     end
 
     def test_define_method_basic_object
@@ -7427,10 +7443,10 @@ module Prism
       unit.graphs.each { |graph| assert_empty(graph.locals) }
       frame = Compile::VM::Frame.new(unit.graphs[0], self, [Object])
       assert_equal([false, false], frame.flip_flops)
-      assert_include(unit.disasm, "flip_flops=2")
-      assert_include(unit.disasm, "load_flip_flop 0")
-      assert_include(unit.disasm, "load_flip_flop 1")
-      assert_include(unit.disasm, "store_flip_flop")
+      assert_include(disasm(unit), "flip_flops=2")
+      assert_include(disasm(unit), "load_flip_flop 0")
+      assert_include(disasm(unit), "load_flip_flop 1")
+      assert_include(disasm(unit), "store_flip_flop")
     end
 
     def test_source_file
@@ -7438,7 +7454,7 @@ module Prism
       ["example.rb", "path/with spaces/example.rb", "例.rb"].each do |filepath|
         unit = Prism.compile("__FILE__", filepath: filepath, raise_error: :plain).value
         assert_equal(filepath, vm.run(unit))
-        assert_include(unit.disasm, filepath.inspect)
+        assert_include(disasm(unit), filepath.inspect)
       end
       unit = Prism.compile("proc { __FILE__ }.call", filepath: "block.rb", raise_error: :plain).value
       assert_equal("block.rb", vm.run(unit))
@@ -7666,9 +7682,9 @@ module Prism
       assert_equal(1, region.handler.params.length)
       assert_predicate(graph.regions, :frozen?)
       graph.regions.each { |candidate| assert_predicate(candidate, :frozen?) }
-      assert_include(unit.disasm, "rescue_match(")
-      assert_include(unit.disasm, "trace_rescue")
-      assert_include(unit.disasm, "reraise")
+      assert_include(disasm(unit), "rescue_match(")
+      assert_include(disasm(unit), "trace_rescue")
+      assert_include(disasm(unit), "reraise")
       assert_equal("failure", vm.run(unit))
     end
 
@@ -7716,7 +7732,7 @@ module Prism
       terminator = region.handler.insns.last
       assert_equal(:ensure_return, terminator.kind)
       assert_same(region, terminator.data)
-      assert_include(unit.disasm, "ensure_return r#{region.id}")
+      assert_include(disasm(unit), "ensure_return r#{region.id}")
       assert_equal(1, vm.run(unit))
     end
 
@@ -7772,9 +7788,9 @@ module Prism
       assert_same(region, region.entry.region)
       assert_same(region.parent, region.handler.region.parent)
       assert_equal(1, region.handler.params.length)
-      assert_include(unit.disasm, "rescue_match(")
-      assert_include(unit.disasm, "trace_rescue")
-      assert_include(unit.disasm, "reraise")
+      assert_include(disasm(unit), "rescue_match(")
+      assert_include(disasm(unit), "trace_rescue")
+      assert_include(disasm(unit), "reraise")
       assert_equal(2, vm.run(unit))
     end
 
@@ -7989,7 +8005,7 @@ module Prism
         [:experimental_everything, :make_shareable]
       ].each do |mode, kind|
         unit = Prism.compile("value = +'value';\n# shareable_constant_value: #{mode}\nValue = value", freeze: true).value
-        assert_include(unit.disasm, " = #{kind}(")
+        assert_include(disasm(unit), " = #{kind}(")
         insn = unit.graphs[0].blocks.flat_map(&:insns).find { |candidate| candidate.kind == kind }
         assert_equal(2, insn.opnds.length)
         assert_equal(mode == :literal ? "Value" : nil, insn.data)
@@ -8009,8 +8025,8 @@ module Prism
         assert_same(graph.blocks[0], region.entry)
         graph.blocks.each { |block| assert_same(region, block.region) }
       end
-      assert_include(unit.disasm, "r0 (default, entry=bb0):")
-      assert_include(unit.disasm, "[region=r0]")
+      assert_include(disasm(unit), "r0 (default, entry=bb0):")
+      assert_include(disasm(unit), "[region=r0]")
     end
 
     def test_compile_freeze
@@ -8104,9 +8120,13 @@ module Prism
 
     def assert_post_execution(expected, source)
       script = 'Prism::Compile::VM.new.run(Prism.compile(ARGV.fetch(0), raise_error: :plain).value)'
-      stdout, stderr, status = Open3.capture3(RbConfig.ruby, "-I", File.expand_path("../../../lib", __dir__), "-rprism", "-e", script, source)
+      stdout, stderr, status = Open3.capture3(RbConfig.ruby, "-I", File.expand_path("../../lib", __dir__), "-rprism", "-r", File.expand_path("vm.rb", __dir__), "-e", script, source)
       assert_predicate(status, :success?, stderr)
       assert_equal(expected, stdout)
+    end
+
+    def disasm(unit)
+      Compile::Disassembler.new(unit).disasm
     end
 
     def vm

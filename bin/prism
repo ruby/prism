@@ -10,12 +10,10 @@ module Prism
       case argv.shift
       when "bench"      then bench(argv)
       when "bundle"     then bundle(argv)
-      when "compile"    then compile(argv)
       when "console"    then console
       when "dot"        then dot(argv)
       when "encoding"   then encoding(argv)
       when "error"      then error(argv)
-      when "interpret"  then interpret(argv)
       when "keywords"   then keywords
       when "lex"        then lex(argv)
       when "lex_compat" then lex_compat(argv)
@@ -30,7 +28,6 @@ module Prism
           Usage:
             bin/prism bench [file ...]
             bin/prism bundle [...]
-            bin/prism compile [source]
             bin/prism console
             bin/prism dot [source]
             bin/prism encoding [encoding]
@@ -49,17 +46,6 @@ module Prism
     end
 
     private
-
-    def compile(argv)
-      source, filepath = read_source(argv)
-      puts Prism::Compile::VM.new.compile(source, filepath).disasm
-    end
-
-    def interpret(argv)
-      source, filepath = read_source(argv)
-      vm = Prism::Compile::VM.new
-      vm.run(vm.compile(source, filepath))
-    end
 
     ############################################################################
     # Commands
