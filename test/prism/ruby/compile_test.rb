@@ -6128,6 +6128,46 @@ module Prism
       RUBY
     end
 
+    def test_match_ignores_case_equality_visibility
+      [:private, :protected].each do |visibility|
+        scope = Module.new
+        events = []
+        matcher = Object.new
+        matcher.define_singleton_method(:===) { |value| events << value; value == 2 && :truthy }
+        matcher.singleton_class.send(visibility, :===)
+        later = Object.new
+        later.define_singleton_method(:===) { |_| raise 'later matcher ran' }
+        scope.const_set(:Matcher, matcher)
+        scope.const_set(:Later, later)
+        [
+          [2, :matched, "case 2; when Matcher; :matched; else; :missed; end"],
+          [1, :missed, "case 1; when Matcher; :matched; else; :missed; end"],
+          [2, :matched, "case 2; when *[Matcher, Later]; :matched; else; :missed; end"],
+          [2, :matched, "case 2; in Matcher; :matched; else; :missed; end"],
+          [1, :missed, "case 1; in Matcher; :matched; else; :missed; end"]
+        ].each do |value, expected, source|
+          events.clear
+          graph = compile_unit(source).graphs[0]
+          assert_equal(expected, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)), source)
+          assert_equal([value], events, source)
+        end
+      end
+      assert_run(["a", "b"], 'case "ab"; when /(a)(b)/; [$1, $2]; end')
+      assert_run(["a", "b"], 'case "ab"; when *[/(a)(b)/]; [$1, $2]; end')
+    end
+
+    def test_rescue_ignores_case_equality_visibility
+      scope = Module.new
+      matcher = Class.new(StandardError)
+      matcher.define_singleton_method(:===) { |value| RuntimeError === value }
+      matcher.singleton_class.send(:private, :===)
+      scope.const_set(:Matcher, matcher)
+      ["begin; raise 'error'; rescue Matcher; :rescued; end", "begin; raise 'error'; rescue *[Matcher]; :rescued; end"].each do |source|
+        graph = compile_unit(source).graphs[0]
+        assert_equal(:rescued, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      end
+    end
+
     def test_case_custom_match
       assert_run([:matched, [2]], <<~RUBY)
         class CompileTestCaseMatcher

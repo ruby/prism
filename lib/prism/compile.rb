@@ -1157,10 +1157,10 @@ module Prism
             when :make_shareable_copy
               values[insn.opnds[0]] = Ractor.make_shareable(values[insn.opnds[1]], copy: true)
             when :match
-              values[insn.opnds[0]] = values[insn.opnds[2]] === values[insn.opnds[1]]
+              values[insn.opnds[0]] = BasicObject.instance_method(:__send__).bind_call(values[insn.opnds[2]], :===, values[insn.opnds[1]])
             when :match_array
               value = values[insn.opnds[1]]
-              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| pattern === value }
+              values[insn.opnds[0]] = values[insn.opnds[2]].any? { |pattern| BasicObject.instance_method(:__send__).bind_call(pattern, :===, value) }
             when :merge_hash
               values[insn.opnds[0]] = values[insn.opnds[1]].merge(values[insn.opnds[2]])
             when :new_array
@@ -1366,7 +1366,7 @@ module Prism
 
       def rescue_match(exception, klass)
         raise TypeError, "class or module required for rescue clause" unless Module === klass
-        klass === exception
+        BasicObject.instance_method(:__send__).bind_call(klass, :===, exception)
       end
 
       def cvar_parent(nest)
