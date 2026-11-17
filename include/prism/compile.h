@@ -64,12 +64,6 @@ typedef enum {
     kPrismInsnEnsureReturn,
     kPrismInsnEnsureShareable,
     kPrismInsnExpandArray,
-    kPrismInsnExtractLastMatchGroup,
-    kPrismInsnExtractLastMatchNamedGroup,
-    kPrismInsnExtractLastMatchMatch,
-    kPrismInsnExtractLastMatchParen,
-    kPrismInsnExtractLastMatchPost,
-    kPrismInsnExtractLastMatchPre,
     kPrismInsnNilP,
     kPrismInsnLoadBlock,
     kPrismInsnLoadConstAbs,
@@ -80,6 +74,12 @@ typedef enum {
     kPrismInsnLoadGVar,
     kPrismInsnLoadIVar,
     kPrismInsnLoadLastMatch,
+    kPrismInsnLoadLastMatchGroup,
+    kPrismInsnLoadLastMatchMatch,
+    kPrismInsnLoadLastMatchNamedGroup,
+    kPrismInsnLoadLastMatchParen,
+    kPrismInsnLoadLastMatchPost,
+    kPrismInsnLoadLastMatchPre,
     kPrismInsnLoadLVar,
     kPrismInsnLoadObject,
     kPrismInsnLoadSelf,
@@ -282,7 +282,7 @@ PRISM_EXPORTED_FUNCTION uint32_t pm_insn_post_execution_graph_id(const PrismInsn
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_lefts(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_expand_array_rights(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION bool pm_insn_expand_array_rest(const PrismInsn *insn);
-PRISM_EXPORTED_FUNCTION uint32_t pm_insn_extract_group_number(const PrismInsn *insn);
+PRISM_EXPORTED_FUNCTION uint32_t pm_insn_last_match_group_number(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION const PrismConstantPath * pm_insn_constant_path(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_flip_flop_index(const PrismInsn *insn);
 PRISM_EXPORTED_FUNCTION uint32_t pm_insn_local_id(const PrismInsn *insn);

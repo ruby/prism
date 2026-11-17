@@ -1138,6 +1138,17 @@ module Prism
       assert_run(nil, 'defined?(missing_defined_result_method)')
     end
 
+    def test_back_reference_compilation_context
+      assert_run(["a", "x", "y", "a"], %q{/(a)/ =~ "xay"; [$&, $`, $', $+]})
+      unit = compile_unit(%q{/(a)/ =~ "xay"; $&; $`; $'; $+; $1})
+      assert_equal("a", vm.run(unit))
+      kinds = unit.graphs[0].blocks.flat_map(&:insns).map(&:kind)
+      assert_equal(1, kinds.count(:load_last_match))
+      [:load_last_match_match, :load_last_match_pre, :load_last_match_post, :load_last_match_paren].each do |kind|
+        assert_not_include(kinds, kind)
+      end
+    end
+
     def test_defined_wrappers
       [
         "defined?(())",

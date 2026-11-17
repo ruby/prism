@@ -63,12 +63,6 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnEnsureReturn: return rb_intern_const("ensure_return");
         case kPrismInsnEnsureShareable: return rb_intern_const("ensure_shareable");
         case kPrismInsnExpandArray: return rb_intern_const("expand_array");
-        case kPrismInsnExtractLastMatchGroup: return rb_intern_const("extract_last_match_group");
-        case kPrismInsnExtractLastMatchNamedGroup: return rb_intern_const("extract_last_match_named_group");
-        case kPrismInsnExtractLastMatchMatch: return rb_intern_const("extract_last_match_match");
-        case kPrismInsnExtractLastMatchParen: return rb_intern_const("extract_last_match_paren");
-        case kPrismInsnExtractLastMatchPost: return rb_intern_const("extract_last_match_post");
-        case kPrismInsnExtractLastMatchPre: return rb_intern_const("extract_last_match_pre");
         case kPrismInsnNilP: return rb_intern_const("nil_p");
         case kPrismInsnLoadBlock: return rb_intern_const("load_block");
         case kPrismInsnLoadConstAbs: return rb_intern_const("load_const_abs");
@@ -79,6 +73,12 @@ compile_insn_kind(PrismInsnKind kind) {
         case kPrismInsnLoadGVar: return rb_intern_const("load_gvar");
         case kPrismInsnLoadIVar: return rb_intern_const("load_ivar");
         case kPrismInsnLoadLastMatch: return rb_intern_const("load_last_match");
+        case kPrismInsnLoadLastMatchGroup: return rb_intern_const("load_last_match_group");
+        case kPrismInsnLoadLastMatchMatch: return rb_intern_const("load_last_match_match");
+        case kPrismInsnLoadLastMatchNamedGroup: return rb_intern_const("load_last_match_named_group");
+        case kPrismInsnLoadLastMatchParen: return rb_intern_const("load_last_match_paren");
+        case kPrismInsnLoadLastMatchPost: return rb_intern_const("load_last_match_post");
+        case kPrismInsnLoadLastMatchPre: return rb_intern_const("load_last_match_pre");
         case kPrismInsnLoadLVar: return rb_intern_const("load_lvar");
         case kPrismInsnLoadObject: return rb_intern_const("load_object");
         case kPrismInsnLoadSelf: return rb_intern_const("load_self");
@@ -197,7 +197,7 @@ compile_insn_data(VALUE vconstants, const PrismUnit *unit, VALUE vobjects_unit, 
             };
             return compile_freeze(rb_class_new_instance(7, argv, rb_cPrismCompileCallInfo), freeze);
         }
-        case kPrismInsnExtractLastMatchNamedGroup:
+        case kPrismInsnLoadLastMatchNamedGroup:
         case kPrismInsnDefinedConstAbs:
         case kPrismInsnDefinedConstNestRel:
         case kPrismInsnDefinedConstRecvRel:
@@ -243,8 +243,8 @@ compile_insn_data(VALUE vconstants, const PrismUnit *unit, VALUE vobjects_unit, 
         case kPrismInsnLoadFlipFlop:
         case kPrismInsnStoreFlipFlop:
             return UINT2NUM(pm_insn_flip_flop_index(insn));
-        case kPrismInsnExtractLastMatchGroup:
-            return UINT2NUM(pm_insn_extract_group_number(insn));
+        case kPrismInsnLoadLastMatchGroup:
+            return UINT2NUM(pm_insn_last_match_group_number(insn));
         case kPrismInsnLoadConstAbs:
         case kPrismInsnLoadConstNestRel:
         case kPrismInsnLoadConstRecvRel: {

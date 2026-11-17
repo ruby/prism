@@ -395,24 +395,6 @@ module Prism
           lefts, rights, rest = insn.data
           outputs = opnds[1..].map { |id| value(id) }
           "#{outputs.empty? ? "" : "#{outputs.join(', ')} = "}expand_array #{value(opnds[0])}, lefts=#{lefts}, rights=#{rights}, rest=#{rest}"
-        when :extract_last_match_group
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_group #{value(opnds[1])}, group=#{insn.data}"
-        when :extract_last_match_named_group
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_named_group(#{value(opnds[1])}, #{insn.data})"
-        when :extract_last_match_match
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_match#{values(opnds[1..])}"
-        when :extract_last_match_paren
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_paren#{values(opnds[1..])}"
-        when :extract_last_match_post
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_post#{values(opnds[1..])}"
-        when :extract_last_match_pre
-          opnds = insn.opnds
-          "#{value(opnds[0])} = extract_last_match_pre#{values(opnds[1..])}"
         when :nil_p
           opnds = insn.opnds
           "#{value(opnds[0])} = nil_p#{values(opnds[1..])}"
@@ -445,6 +427,24 @@ module Prism
         when :load_last_match
           opnds = insn.opnds
           "#{value(opnds[0])} = load_last_match#{values(opnds[1..])}"
+        when :load_last_match_group
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_group #{value(opnds[1])}, group=#{insn.data}"
+        when :load_last_match_match
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_match#{values(opnds[1..])}"
+        when :load_last_match_named_group
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_named_group(#{value(opnds[1])}, #{insn.data})"
+        when :load_last_match_paren
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_paren#{values(opnds[1..])}"
+        when :load_last_match_post
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_post#{values(opnds[1..])}"
+        when :load_last_match_pre
+          opnds = insn.opnds
+          "#{value(opnds[0])} = load_last_match_pre#{values(opnds[1..])}"
         when :load_lvar
           "#{value(insn.opnds[0])} = load_lvar #{local_ref(insn.data)}"
         when :load_object
@@ -1088,16 +1088,6 @@ module Prism
               leading << remaining.take([remaining.length - rights, 0].max) if rest
 
               insn.opnds[1..].zip(leading.concat(trailing)) { |opnd, element| values[opnd] = element }
-            when :extract_last_match_group, :extract_last_match_named_group
-              values[insn.opnds[0]] = values[insn.opnds[1]]&.[](insn.data)
-            when :extract_last_match_match
-              values[insn.opnds[0]] = values[insn.opnds[1]]&.[](0)
-            when :extract_last_match_paren
-              values[insn.opnds[0]] = values[insn.opnds[1]]&.captures&.reverse_each&.find(&:itself)
-            when :extract_last_match_post
-              values[insn.opnds[0]] = values[insn.opnds[1]]&.post_match
-            when :extract_last_match_pre
-              values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
             when :nil_p
               values[insn.opnds[0]] = NilClass === values[insn.opnds[1]]
             when :load_object
@@ -1123,6 +1113,16 @@ module Prism
               values[insn.opnds[0]] = recv.instance_variable_get(insn.data)
             when :load_last_match
               values[insn.opnds[0]] = $~
+            when :load_last_match_group, :load_last_match_named_group
+              values[insn.opnds[0]] = values[insn.opnds[1]]&.[](insn.data)
+            when :load_last_match_match
+              values[insn.opnds[0]] = values[insn.opnds[1]]&.[](0)
+            when :load_last_match_paren
+              values[insn.opnds[0]] = values[insn.opnds[1]]&.captures&.reverse_each&.find(&:itself)
+            when :load_last_match_post
+              values[insn.opnds[0]] = values[insn.opnds[1]]&.post_match
+            when :load_last_match_pre
+              values[insn.opnds[0]] = values[insn.opnds[1]]&.pre_match
             when :load_lvar
               values[insn.opnds[0]] = locals[insn.data.id]
             when :load_self

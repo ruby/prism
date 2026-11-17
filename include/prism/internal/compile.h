@@ -32,7 +32,7 @@ struct PrismInsn {
         struct { uint32_t region_id; uint32_t site_id; } once;
         struct { uint32_t graph_id; } new_block;
         struct { uint32_t lefts; uint32_t rights; bool rest; } expand_array;
-        struct { uint32_t number; } extract_group;
+        struct { uint32_t number; } last_match_group;
         struct { uint32_t local_id; } lvar;
         struct { uint32_t index; } flip_flop;
         struct { pm_constant_id_t name_id; } name;

@@ -641,8 +641,8 @@ pm_insn_expand_array_rest(const PrismInsn *insn) {
 }
 
 uint32_t
-pm_insn_extract_group_number(const PrismInsn *insn) {
-    return insn->as.extract_group.number;
+pm_insn_last_match_group_number(const PrismInsn *insn) {
+    return insn->as.last_match_group.number;
 }
 
 const PrismConstantPath *
@@ -1631,50 +1631,6 @@ emit_expand_array(PrismBuilder *builder, uint32_t node_id, uint32_t value_id, ui
 }
 
 static uint32_t
-emit_extract_last_match_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, uint32_t number) {
-    uint32_t value_id = make_value(builder);
-    PrismInsn *insn = emit_insn(builder, kPrismInsnExtractLastMatchGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    insn->as.extract_group.number = number;
-    return value_id;
-}
-
-static uint32_t
-emit_extract_last_match_named_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, pm_constant_id_t name_id) {
-    uint32_t value_id = make_value(builder);
-    PrismInsn *insn = emit_insn(builder, kPrismInsnExtractLastMatchNamedGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    insn->as.name.name_id = name_id;
-    return value_id;
-}
-
-static uint32_t
-emit_extract_last_match_match(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    uint32_t value_id = make_value(builder);
-    emit_insn(builder, kPrismInsnExtractLastMatchMatch, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    return value_id;
-}
-
-static uint32_t
-emit_extract_last_match_paren(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    uint32_t value_id = make_value(builder);
-    emit_insn(builder, kPrismInsnExtractLastMatchParen, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    return value_id;
-}
-
-static uint32_t
-emit_extract_last_match_post(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    uint32_t value_id = make_value(builder);
-    emit_insn(builder, kPrismInsnExtractLastMatchPost, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    return value_id;
-}
-
-static uint32_t
-emit_extract_last_match_pre(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
-    uint32_t value_id = make_value(builder);
-    emit_insn(builder, kPrismInsnExtractLastMatchPre, node_id, 2, (uint32_t[]) { value_id, last_match_id });
-    return value_id;
-}
-
-static uint32_t
 emit_load_block(PrismBuilder *builder, uint32_t node_id) {
     uint32_t value_id = make_value(builder);
     emit_insn(builder, kPrismInsnLoadBlock, node_id, 1, &value_id);
@@ -1740,6 +1696,50 @@ static uint32_t
 emit_load_last_match(PrismBuilder *builder, uint32_t node_id) {
     uint32_t value_id = make_value(builder);
     emit_insn(builder, kPrismInsnLoadLastMatch, node_id, 1, &value_id);
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, uint32_t number) {
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadLastMatchGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    insn->as.last_match_group.number = number;
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_match(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnLoadLastMatchMatch, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_named_group(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id, pm_constant_id_t name_id) {
+    uint32_t value_id = make_value(builder);
+    PrismInsn *insn = emit_insn(builder, kPrismInsnLoadLastMatchNamedGroup, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    insn->as.name.name_id = name_id;
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_paren(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnLoadLastMatchParen, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_post(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnLoadLastMatchPost, node_id, 2, (uint32_t[]) { value_id, last_match_id });
+    return value_id;
+}
+
+static uint32_t
+emit_load_last_match_pre(PrismBuilder *builder, uint32_t node_id, uint32_t last_match_id) {
+    uint32_t value_id = make_value(builder);
+    emit_insn(builder, kPrismInsnLoadLastMatchPre, node_id, 2, (uint32_t[]) { value_id, last_match_id });
     return value_id;
 }
 
@@ -4259,23 +4259,25 @@ compile_array_pattern_node(PrismBuilder *builder, const pm_array_pattern_node_t 
  * ^^
  */
 static uint32_t
-compile_back_reference_read_node(PrismBuilder *builder, const pm_back_reference_read_node_t *node) {
+compile_back_reference_read_node(PrismBuilder *builder, PrismBuilderContext context, const pm_back_reference_read_node_t *node) {
+    if (context == kPrismBuilderEffect) return UINT32_MAX;
+
     const pm_constant_t *constant = compile_constant(builder->parser, node->name);
     uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
     uint32_t value_id;
 
     switch (pm_constant_start(constant)[1]) {
         case '&':
-            value_id = emit_extract_last_match_match(builder, node->base.node_id, last_match_id);
+            value_id = emit_load_last_match_match(builder, node->base.node_id, last_match_id);
             break;
         case '`':
-            value_id = emit_extract_last_match_pre(builder, node->base.node_id, last_match_id);
+            value_id = emit_load_last_match_pre(builder, node->base.node_id, last_match_id);
             break;
         case '\'':
-            value_id = emit_extract_last_match_post(builder, node->base.node_id, last_match_id);
+            value_id = emit_load_last_match_post(builder, node->base.node_id, last_match_id);
             break;
         case '+':
-            value_id = emit_extract_last_match_paren(builder, node->base.node_id, last_match_id);
+            value_id = emit_load_last_match_paren(builder, node->base.node_id, last_match_id);
             break;
         default:
             assert(false && "unreachable");
@@ -5807,7 +5809,7 @@ compile_match_write_node(PrismBuilder *builder, const pm_match_write_node_t *nod
     for (size_t idx = 0; idx < node->targets.size; ++idx) {
         const pm_local_variable_target_node_t *target = (const pm_local_variable_target_node_t *) node->targets.nodes[idx];
         uint32_t local_id = resolve_local(builder, target->name, target->depth);
-        uint32_t value_id = emit_extract_last_match_named_group(builder, target->base.node_id, last_match_id, target->name);
+        uint32_t value_id = emit_load_last_match_named_group(builder, target->base.node_id, last_match_id, target->name);
         emit_store_lvar(builder, target->base.node_id, local_id, value_id);
     }
 
@@ -5891,7 +5893,7 @@ compile_nil_node(PrismBuilder *builder, const pm_nil_node_t *node) {
 static uint32_t
 compile_numbered_reference_read_node(PrismBuilder *builder, const pm_numbered_reference_read_node_t *node) {
     uint32_t last_match_id = emit_load_last_match(builder, node->base.node_id);
-    return emit_extract_last_match_group(builder, node->base.node_id, last_match_id, node->number);
+    return emit_load_last_match_group(builder, node->base.node_id, last_match_id, node->number);
 }
 
 /*
@@ -6334,7 +6336,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_ARRAY_NODE:
             return compile_array_node(builder, context, (const pm_array_node_t *) node);
         case PM_BACK_REFERENCE_READ_NODE:
-            return compile_back_reference_read_node(builder, (const pm_back_reference_read_node_t *) node);
+            return compile_back_reference_read_node(builder, context, (const pm_back_reference_read_node_t *) node);
         case PM_BEGIN_NODE:
             return compile_begin_node(builder, (const pm_begin_node_t *) node);
         case PM_BLOCK_ARGUMENT_NODE:
