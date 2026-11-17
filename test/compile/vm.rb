@@ -7,9 +7,9 @@ module Prism
   module Compile
     class VM
       visibility_methods = {}
-      [:public, :protected, :private].each do |visibility|
+      [:public, :protected, :private, :module_function].each do |visibility|
         definitions = [Module.instance_method(visibility)]
-          definitions << TOPLEVEL_BINDING.receiver.method(visibility).unbind unless visibility == :protected
+          definitions << TOPLEVEL_BINDING.receiver.method(visibility).unbind if visibility == :public || visibility == :private
           definitions.each do |method|
             visibility_methods[method] = visibility if method.source_location.nil?
           end
@@ -498,6 +498,11 @@ module Prism
             when :define_method
               name, method_graph = insn.data
               define_method(nest[0], name, method_graph, nest)
+
+              if frame.visibility.value == :module_function
+                VISIBILITY_METHODS.key(:module_function).bind_call(nest[0], name)
+                next
+              end
 
               visibility =
                 case name

@@ -7301,6 +7301,59 @@ module Prism
       assert_run([true, true], "class CompileTestPrivateSingletonDefault; private; def self.exposed; end; def hidden; end; end; [CompileTestPrivateSingletonDefault.singleton_class.public_method_defined?(:exposed), CompileTestPrivateSingletonDefault.private_method_defined?(:hidden)]")
     end
 
+    def test_bare_module_function
+      assert_run([1, true, true, false, true, true], <<~RUBY)
+        module CompileTestModuleFunction
+          module_function
+          def copied; 1; end
+          def initialize; end
+          public
+          def exposed; end
+          private
+          def hidden; end
+        end
+        [CompileTestModuleFunction.copied,
+          CompileTestModuleFunction.private_method_defined?(:copied),
+          CompileTestModuleFunction.singleton_class.public_method_defined?(:initialize),
+          CompileTestModuleFunction.respond_to?(:exposed),
+          CompileTestModuleFunction.public_method_defined?(:exposed),
+          CompileTestModuleFunction.private_method_defined?(:hidden)]
+      RUBY
+      assert_run([2, true, false, true], <<~RUBY)
+        module CompileTestModuleFunctionScopes
+          [1].each { module_function }
+          def copied; 2; end
+          module Inner
+            def ordinary; end
+          end
+        end
+        module CompileTestModuleFunctionScopes
+          def reopened; end
+        end
+        [CompileTestModuleFunctionScopes.copied,
+          CompileTestModuleFunctionScopes::Inner.public_method_defined?(:ordinary),
+          CompileTestModuleFunctionScopes.respond_to?(:reopened),
+          CompileTestModuleFunctionScopes.public_method_defined?(:reopened)]
+      RUBY
+      assert_run([3, true], <<~RUBY)
+        module CompileTestNamedModuleFunction
+          def copied; 3; end
+          module_function :copied
+          def ordinary; end
+        end
+        [CompileTestNamedModuleFunction.copied, CompileTestNamedModuleFunction.public_method_defined?(:ordinary)]
+      RUBY
+      assert_run([true, false], <<~RUBY)
+        module CompileTestModuleFunctionOverride
+          def self.module_function; end
+          module_function
+          def ordinary; end
+        end
+        [CompileTestModuleFunctionOverride.public_method_defined?(:ordinary), CompileTestModuleFunctionOverride.respond_to?(:ordinary)]
+      RUBY
+      assert_run_raises(NoMethodError, "class CompileTestClassModuleFunction; module_function; end")
+    end
+
     def test_special_method_default_visibility
       names = [:initialize, :initialize_copy, :initialize_dup, :initialize_clone, :respond_to_missing?]
       definitions = names.map { |name| "def #{name}(*); end" }.join("; ")
