@@ -4716,23 +4716,24 @@ compile_class_variable_write_node(PrismBuilder *builder, PrismBuilderContext con
  * ^^^^^^^^^^^
  */
 static uint32_t
-compile_constant_and_write_node(PrismBuilder *builder, const pm_constant_and_write_node_t *node, pm_node_flags_t shareability) {
+compile_constant_and_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_constant_and_write_node_t *node, pm_node_flags_t shareability) {
+    uint32_t nparams = context == kPrismBuilderValue;
     uint32_t set_block_id = make_block(builder, 0);
-    uint32_t join_block_id = make_block(builder, 1);
+    uint32_t join_block_id = make_block(builder, nparams);
 
     PrismConstantPath constant_path = PrismConstantPath_new(builder, 1);
     PrismConstantPath_set(&constant_path, 0, node->name);
     uint32_t current_id = emit_load_const_nest_rel(builder, node->base.node_id, constant_path);
 
-    emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, 1, &current_id);
+    emit_branchif(builder, node->base.node_id, current_id, set_block_id, 0, NULL, join_block_id, nparams, &current_id);
 
     builder->state.block_id = set_block_id;
     uint32_t value_id = compile_constant_value(builder, node->value, shareability, node->name, NULL);
     emit_store_const_nest_rel(builder, node->base.node_id, node->name, value_id);
-    emit_branch(builder, node->base.node_id, join_block_id, 1, &value_id);
+    emit_branch(builder, node->base.node_id, join_block_id, nparams, &value_id);
 
     builder->state.block_id = join_block_id;
-    return PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+    return nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
 }
 
 /*
@@ -6110,7 +6111,7 @@ compile_shareable_constant_node(PrismBuilder *builder, const pm_shareable_consta
     pm_node_flags_t shareability = node->base.flags & (PM_SHAREABLE_CONSTANT_NODE_FLAGS_LITERAL | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_COPY | PM_SHAREABLE_CONSTANT_NODE_FLAGS_EXPERIMENTAL_EVERYTHING);
     switch (PM_NODE_TYPE(node->write)) {
         case PM_CONSTANT_AND_WRITE_NODE:
-            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node->write, shareability);
+            return compile_constant_and_write_node(builder, kPrismBuilderValue, (const pm_constant_and_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:
             return compile_constant_operator_write_node(builder, (const pm_constant_operator_write_node_t *) node->write, shareability);
         case PM_CONSTANT_OR_WRITE_NODE:
@@ -6403,7 +6404,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CONSTANT_WRITE_NODE:
             return compile_constant_write_node(builder, (const pm_constant_write_node_t *) node, 0);
         case PM_CONSTANT_AND_WRITE_NODE:
-            return compile_constant_and_write_node(builder, (const pm_constant_and_write_node_t *) node, 0);
+            return compile_constant_and_write_node(builder, context, (const pm_constant_and_write_node_t *) node, 0);
         case PM_CONSTANT_OR_WRITE_NODE:
             return compile_constant_or_write_node(builder, (const pm_constant_or_write_node_t *) node, 0);
         case PM_CONSTANT_OPERATOR_WRITE_NODE:

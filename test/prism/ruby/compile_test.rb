@@ -5722,6 +5722,23 @@ module Prism
       assert_run_raises(TypeError, "1.itself::CompileTestNotModule = 1")
     end
 
+    def test_constant_and_write_effect_context
+      scope = Module.new
+      scope.const_set(:Value, true)
+      graph = compile_unit("Value &&= [1, 2]; Value").graphs[0]
+      assert(graph.blocks.all? { |block| block.params.empty? })
+      ignore_warnings do
+        assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      end
+      [nil, false].each do |value|
+        ignore_warnings { scope.const_set(:Value, value) }
+        graph = compile_unit("Value &&= raise('rhs ran'); Value").graphs[0]
+        assert_equal(value, vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      end
+      graph = compile_unit("Missing &&= 1; 7").graphs[0]
+      assert_raise(NameError) { vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)) }
+    end
+
     def test_constant_logical_write
       ["A", "self::A", "::CompileTestConstantAssignment"].each do |target|
         ["&&=", "||="].each do |operator|
