@@ -5790,6 +5790,26 @@ module Prism
       end
     end
 
+    def test_constant_path_or_write_effect_context
+      ["self::Value", "::CompileTestPathOrEffect"].each do |target|
+        scope = Module.new
+        owner, name = target.start_with?("::") ? [Object, :CompileTestPathOrEffect] : [scope, :Value]
+        graph = compile_unit("#{target} ||= [1, 2]; #{target}").graphs[0]
+        assert(graph.blocks.all? { |block| block.params.empty? })
+        assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+        [nil, false].each do |value|
+          ignore_warnings do
+            owner.const_set(name, value)
+            assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+          end
+        end
+        graph = compile_unit("#{target} ||= raise('rhs ran'); #{target}").graphs[0]
+        assert_equal([1, 2], vm.run_frame(Compile::VM::Frame.new(graph, scope, [scope, Object].freeze)))
+      ensure
+        owner.send(:remove_const, name) if owner&.const_defined?(name, false)
+      end
+    end
+
     def test_constant_logical_write
       ["A", "self::A", "::CompileTestConstantAssignment"].each do |target|
         ["&&=", "||="].each do |operator|
