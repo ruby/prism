@@ -107,6 +107,8 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   require "rake/extensiontask"
   require "shellwords"
 
+  build_variants = %w[debug minimal ndebug ubsan]
+
   extension = Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
     ext.ext_dir = "ext/prism"
     ext.lib_dir = "lib/prism"
@@ -140,7 +142,7 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
       argument
     end
 
-    variant = ["debug", "minimal", "ndebug", "ubsan"].filter_map do |name|
+    variant = build_variants.filter_map do |name|
       name if (
         options.include?("--enable-build-#{name}") ||
         (!options.include?("--disable-build-#{name}") && ENV.key?("PRISM_BUILD_#{name.upcase}"))
@@ -164,7 +166,22 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
     Dir["ext/prism/*.{c,h}", "src/**/*.c", "include/**/*.h"].sort.map { |path| "#{path}\n" }.join
   end
 
-  file "#{extension.tmp_dir}/#{extension.platform}/#{extension.name}/#{RUBY_VERSION}/Makefile" => extension_files
+  extension_directory = "#{extension.tmp_dir}/#{extension.platform}/#{extension.name}/#{RUBY_VERSION}"
+  extension_configuration = "#{extension_directory}/configuration"
+
+  # Variants keep their objects separate, but other extconf options can change
+  # within a variant. Record the Ruby configuration, arguments and environment
+  # that extconf reads so changing compiler or linker flags configures it again.
+  StampTask.define(extension_configuration) do
+    {
+      ruby: RbConfig.ruby,
+      config: RbConfig::CONFIG.sort,
+      options: extension.config_options + extension.extra_options,
+      environment: ["CONFIGURE_ARGS", *build_variants.map { |name| "PRISM_BUILD_#{name.upcase}" }].map { |name| [name, ENV[name]] }
+    }.inspect + "\n"
+  end
+
+  file "#{extension_directory}/Makefile" => [extension_files, extension_configuration]
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
 

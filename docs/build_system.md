@@ -32,6 +32,8 @@ loaded per process (i.e., at most one version of the prism *gem* loaded in a pro
 
 `rake` calls `make` and then uses `Rake::ExtensionTask` to compile the C extension (see above).
 
+Changes to the extension's configuration options, passed after `--` or through `CONFIGURE_ARGS`, rerun `extconf.rb` and rebuild the extension. For example, `bundle exec rake compile -- --with-cflags=-O0` changes its compiler flags without requiring `rake clobber`.
+
 ### Building the prism gem by `gem install/bundle install`
 
 The gem contains the pre-generated templates.
