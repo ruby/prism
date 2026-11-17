@@ -169,27 +169,31 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   # rake-compiler defines a Makefile task for every configured platform and
   # Ruby version, including cross-compilation targets.
   Rake::Task.tasks.each do |task|
-    if File.fnmatch?("#{extension.tmp_dir}/*/#{extension.name}/*/Makefile", task.name, File::FNM_PATHNAME)
-      task.enhance([extension_files])
+    next unless File.fnmatch?("#{extension.tmp_dir}/*/#{extension.name}/*/Makefile", task.name, File::FNM_PATHNAME)
+
+    extension_directory = File.dirname(task.name)
+    extension_configuration = "#{extension_directory}/configuration"
+    platform = extension_directory.delete_prefix("#{extension.tmp_dir}/").split("/").first
+    cross_options = if task.prerequisites.include?("#{extension_directory}/fake.rb")
+      extension.cross_config_options(platform)
+    else
+      []
     end
+
+    # Variants keep their objects separate, but other extconf options can change
+    # within a variant. Record the Ruby configuration, arguments and environment
+    # that extconf reads so changing compiler or linker flags configures it again.
+    StampTask.define(extension_configuration) do
+      {
+        ruby: RbConfig.ruby,
+        config: RbConfig::CONFIG.sort,
+        options: extension.config_options + cross_options + extension.extra_options,
+        environment: ["CONFIGURE_ARGS", *build_variants.map { |name| "PRISM_BUILD_#{name.upcase}" }].map { |name| [name, ENV[name]] }
+      }.inspect + "\n"
+    end
+
+    task.enhance([extension_files, extension_configuration])
   end
-
-  extension_directory = "#{extension.tmp_dir}/#{extension.platform}/#{extension.name}/#{RUBY_VERSION}"
-  extension_configuration = "#{extension_directory}/configuration"
-
-  # Variants keep their objects separate, but other extconf options can change
-  # within a variant. Record the Ruby configuration, arguments and environment
-  # that extconf reads so changing compiler or linker flags configures it again.
-  StampTask.define(extension_configuration) do
-    {
-      ruby: RbConfig.ruby,
-      config: RbConfig::CONFIG.sort,
-      options: extension.config_options + extension.extra_options,
-      environment: ["CONFIGURE_ARGS", *build_variants.map { |name| "PRISM_BUILD_#{name.upcase}" }].map { |name| [name, ENV[name]] }
-    }.inspect + "\n"
-  end
-
-  file "#{extension_directory}/Makefile" => extension_configuration
 elsif RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
 
