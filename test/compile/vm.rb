@@ -56,6 +56,7 @@ module Prism
 
         instance_methods(Array, "Array", %i[+ to_a])
         instance_methods(BasicObject, "BasicObject", %i[equal? __send__ instance_exec])
+        instance_methods(Binding, "Binding", %i[eval])
         instance_methods(Class, "Class", %i[superclass])
         instance_methods(Hash, "Hash", %i[merge])
         instance_methods(Kernel, "Kernel", %i[class instance_variable_defined? instance_variable_get instance_variable_set lambda method public_send respond_to? singleton_class sprintf to_s])
@@ -429,7 +430,7 @@ module Prism
             previous_match = frame.last_match = $~
             case insn.kind
             when :alias_gvar
-              eval("alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}", TOPLEVEL_BINDING)
+              StdLib[:Binding_eval].bind_call(TOPLEVEL_BINDING, "alias #{values[insn.opnds[0]]} #{values[insn.opnds[1]]}")
             when :alias_method
               StdLib[:Module_alias_method].bind_call(nest[0], values[insn.opnds[0]], values[insn.opnds[1]])
             when :any_truthy
@@ -613,13 +614,13 @@ module Prism
             when :defined_implicit_method
               values[insn.opnds[0]] = !!defined_implicit_method?(values[insn.opnds[1]], insn.data)
             when :defined_gvar
-              values[insn.opnds[0]] = !eval("defined?(#{insn.data})").nil?
+              values[insn.opnds[0]] = !StdLib[:Binding_eval].bind_call(binding, "defined?(#{insn.data})").nil?
             when :defined_ivar
               values[insn.opnds[0]] = StdLib[:Kernel_instance_variable_defined?].bind_call(recv, insn.data)
             when :defined_explicit_method
               values[insn.opnds[0]] = !!defined_explicit_method?(values[insn.opnds[1]], insn.data, recv)
             when :defined_super
-              values[insn.opnds[0]] = !!(super_method && super_method.binding.eval("defined?(super)"))
+              values[insn.opnds[0]] = !!(super_method && StdLib[:Binding_eval].bind_call(super_method.binding, "defined?(super)"))
             when :ensure_return
               return ExecutionResult.new(nil, nil, insn.data)
             when :ensure_shareable
@@ -662,7 +663,7 @@ module Prism
             when :load_flip_flop
               values[insn.opnds[0]] = flip_flops[insn.data]
             when :load_gvar
-              values[insn.opnds[0]] = eval(insn.data.name)
+              values[insn.opnds[0]] = StdLib[:Binding_eval].bind_call(binding, insn.data.name)
             when :load_ivar
               values[insn.opnds[0]] = StdLib[:Kernel_instance_variable_get].bind_call(recv, insn.data)
             when :load_last_match
@@ -798,7 +799,7 @@ module Prism
             when :store_flip_flop
               flip_flops[insn.data] = values[insn.opnds[0]]
             when :store_gvar
-              eval("#{insn.data} = values[#{insn.opnds[0]}]")
+              StdLib[:Binding_eval].bind_call(binding, "#{insn.data} = values[#{insn.opnds[0]}]")
             when :store_lvar
               locals[insn.data.id] = values[insn.opnds[0]]
             when :trace_b_call, :trace_b_return, :trace_call, :trace_class, :trace_end, :trace_line, :trace_rescue, :trace_return

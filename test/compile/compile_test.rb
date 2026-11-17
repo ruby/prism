@@ -1630,6 +1630,36 @@ module Prism
       ].each { |source| capture_warnings { assert_run(eval(source), source) } }
     end
 
+    def test_defined_super_method_context
+      assert_run(["super", "super"], <<~RUBY)
+        class CompileDefinedSuperContextParent
+          def value; raise "super must not run"; end
+        end
+        class CompileDefinedSuperContextChild < CompileDefinedSuperContextParent
+          def value
+            [defined?(super), proc { defined?(super()) }.call]
+          end
+        end
+        CompileDefinedSuperContextChild.new.value
+      RUBY
+      assert_run(nil, <<~RUBY)
+        class CompileDefinedSuperContextMissing
+          def value; defined?(super); end
+          def respond_to_missing?(*); true; end
+        end
+        CompileDefinedSuperContextMissing.new.value
+      RUBY
+      assert_run("super", <<~RUBY)
+        class CompileDefinedSuperSingletonParent
+          def self.value; raise "super must not run"; end
+        end
+        class CompileDefinedSuperSingletonChild < CompileDefinedSuperSingletonParent
+          def self.value; defined?(super); end
+        end
+        CompileDefinedSuperSingletonChild.value
+      RUBY
+    end
+
     def test_defined_regexp_references
       [
         "/a/ =~ ''; [defined?($&), defined?($`), defined?($'), defined?($+), defined?($1), defined?($2)]",
