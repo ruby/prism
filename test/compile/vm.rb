@@ -18,6 +18,9 @@ module Prism
       VISIBILITY_METHODS = visibility_methods.freeze
       private_constant :VISIBILITY_METHODS
 
+      LAMBDA_METHODS = [Kernel.instance_method(:lambda), Kernel.method(:lambda).unbind].select { |method| method.source_location.nil? }.freeze
+      private_constant :LAMBDA_METHODS
+
       class Visibility
         attr_accessor :value
 
@@ -57,8 +60,11 @@ module Prism
 
       class Block
         attr_accessor :active
+        attr_reader :graph, :frame
 
-        def initialize(callable)
+        def initialize(callable, graph, frame)
+          @graph = graph
+          @frame = frame
           @callable = callable
           @active = false
         end
@@ -69,10 +75,10 @@ module Prism
       end
 
       class Frame
-        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility
+        attr_reader :graph, :recv, :nest, :locals, :values, :flip_flops, :super_method, :block, :break_target, :return_target, :visibility, :lambda
         attr_accessor :last_match, :last_line, :return_fiber
 
-        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, &block)
+        def initialize(graph, recv, nest, locals = Locals.new(graph.locals), flip_flops = Array.new(graph.nflip_flops, false), super_method = nil, visibility = Visibility.new(graph.kind == :program ? :private : :public), break_target = nil, return_target = nil, lambda = graph.kind == :lambda, &block)
           @graph = graph
           @recv = recv
           @nest = nest
@@ -81,7 +87,8 @@ module Prism
           @last_match = nil
           @last_line = nil
           @flip_flops = flip_flops
-          @return_target = %i[def lambda program].include?(graph.kind) ? self : return_target
+          @lambda = lambda
+          @return_target = lambda || %i[def program].include?(graph.kind) ? self : return_target
           @return_fiber = nil
           @break_target = break_target
           @super_method = super_method
@@ -215,14 +222,14 @@ module Prism
           kwargs = {}
         end
 
-        if signature.autosplat && args.length == 1 && kwargs.empty?
+        if !frame.lambda && signature.autosplat && args.length == 1 && kwargs.empty?
           args = Array.try_convert(args[0]) || args
         end
 
         required = signature.requireds.length + signature.posts.length
         maximum = required + signature.optionals.length
 
-        if graph.kind == :block
+        if graph.kind == :block && !frame.lambda
           args = args.take(maximum) if !signature.rest && args.length > maximum
         else
           if args.length < required || (!signature.rest && args.length > maximum)
@@ -376,6 +383,7 @@ module Prism
               end
               break
             when :break
+              throw frame, values[insn.opnds[0]] if frame.lambda
               target = frame.break_target
               unless target && target.active
                 error = LocalJumpError.new("break from proc-closure")
@@ -395,6 +403,11 @@ module Prism
               if call.ignore_visibility && arguments.empty? && (Module === receiver || BasicObject.instance_method(:equal?).bind_call(receiver, TOPLEVEL_BINDING.receiver)) && (visibility = default_visibility(receiver, call.name))
                 frame.visibility.value = visibility
                 values[insn.opnds[0]] = nil
+                next
+              end
+
+              if !call.block_argument && Block === passed_block && arguments.empty? && keywords.empty? && builtin_lambda?(receiver, call.name) && (call.ignore_visibility || Module.instance_method(:public_method_defined?).bind_call(method_lookup_class(receiver), call.name))
+                values[insn.opnds[0]] = new_block(passed_block.graph, passed_block.frame, true)
                 next
               end
 
@@ -758,6 +771,13 @@ module Prism
         end
       end
 
+      def builtin_lambda?(receiver, name)
+        method = Module.instance_method(:instance_method).bind_call(method_lookup_class(receiver), name)
+        LAMBDA_METHODS.include?(method)
+      rescue NameError
+        false
+      end
+
       def default_visibility(receiver, name)
         method = Module.instance_method(:instance_method).bind_call(method_lookup_class(receiver), name)
         VISIBILITY_METHODS[method]
@@ -830,7 +850,7 @@ module Prism
         MethodDefinition.new(self, graph, nest).define(parent, name)
       end
 
-      def new_block(graph, frame)
+      def new_block(graph, frame, lambda = graph.kind == :lambda)
         vm = self
         locals = frame.locals
         flip_flops = frame.flip_flops
@@ -842,10 +862,10 @@ module Prism
 
         target = nil
         callable = BasicObject.instance_method(:instance_exec).bind_call(frame.recv) do
-          if graph.kind == :lambda
+          if lambda
             ->(*args, **kwargs, &passed_block) do
               block_locals = Locals.new(graph.locals, locals)
-              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, &block), args, kwargs, passed_block)
+              vm.run_frame(Frame.new(graph, self, nest, block_locals, flip_flops, super_method, visibility, nil, nil, true, &block), args, kwargs, passed_block)
             end
           else
             Proc.new do |*args, **kwargs, &passed_block|
@@ -854,7 +874,7 @@ module Prism
             end
           end
         end
-        graph.kind == :lambda ? callable : (target = Block.new(callable))
+        lambda ? callable : (target = Block.new(callable, graph, frame))
       end
 
       ###

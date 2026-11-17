@@ -2527,6 +2527,29 @@ module Prism
       ].each { |expected, source| assert_run(expected, source) }
     end
 
+    def test_kernel_lambda
+      [
+        [true, "lambda {}.lambda?"],
+        [3, "lambda { |x| x + 1 }.call(2)"],
+        [3, "Kernel.lambda { |x| x + 1 }.call(2)"],
+        [3, "lambda { |x = 3| x }.call"],
+        [3, "lambda { |x:| x }.call(x: 3)"],
+        [3, "lambda { return 3 }.call"],
+        [3, "lambda { break 3 }.call"],
+        [3, "lambda { lambda { return 3 }.call }.call"],
+        [3, "lambda(&->(x) { x }).call(3)"],
+        [false, "receiver = Object.new; def receiver.lambda(&block); block.lambda?; end; receiver.lambda {}"],
+        [false, "receiver = Object.new; def receiver.make; lambda {}; end; def receiver.lambda(&block); block.lambda?; end; receiver.make"]
+      ].each { |expected, source| assert_run(expected, source) }
+
+      assert_run_raises(ArgumentError, "lambda { |x| x }.call", "wrong number of arguments (given 0, expected 1)")
+      assert_run_raises(ArgumentError, "lambda { |x, y| [x, y] }.call([1, 2])", "wrong number of arguments (given 1, expected 2)")
+      assert_run_raises(ArgumentError, "lambda(&proc {})")
+      assert_run_raises(ArgumentError, "lambda")
+      assert_run_raises(ArgumentError, "lambda(1) {}")
+      assert_run_raises(NoMethodError, "Object.new.lambda {}")
+    end
+
     def test_lambda_arity
       [
         ["-> {}.call(1)", "wrong number of arguments (given 1, expected 0)"],
