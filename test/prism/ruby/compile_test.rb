@@ -4622,6 +4622,10 @@ module Prism
       frame = -> { Compile::VM::Frame.new(graph, scope, [scope, Object].freeze) }
       assert_same(result, vm.run_frame(frame.call))
       assert_equal([:receiver, :getter, :rhs, [:operator, 2], [:setter, result]], events)
+      events.clear
+      discarded = compile_unit("(Events << :receiver; Receiver)&.value += (Events << :rhs; 2); nil").graphs[0]
+      assert_nil(vm.run_frame(Compile::VM::Frame.new(discarded, scope, [scope, Object].freeze)))
+      assert_equal([:receiver, :getter, :rhs, [:operator, 2], [:setter, result]], events)
       { getter: [:receiver, :getter], operator: [:receiver, :getter, :rhs, [:operator, 2]],
         setter: [:receiver, :getter, :rhs, [:operator, 2], [:setter, result]] }.each do |stage, expected|
         events.clear
@@ -4629,6 +4633,16 @@ module Prism
         assert_raise_with_message(RuntimeError, "#{stage} failed") { vm.run_frame(frame.call) }
         assert_equal(expected, events)
       end
+    end
+
+    def test_call_operator_write_effect_context
+      assert_run(3, "o = Struct.new(:value).new(1); o.value += 2; o.value")
+      assert_run([1, 2], "o = Struct.new(:value).new([1]); o&.value += [2]; o.value")
+      assert_run(7, "nil&.value += raise('rhs ran'); 7")
+      assert_run_raises(NoMethodError, "false&.value += raise('rhs ran'); 7")
+
+      graph = compile_unit("receiver&.value += rhs; 7").graphs[0]
+      assert(graph.blocks.all? { |block| block.params.empty? })
     end
 
     def test_call_operator_write_safe_navigation

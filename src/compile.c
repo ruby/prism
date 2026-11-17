@@ -4416,15 +4416,16 @@ compile_call_node(PrismBuilder *builder, PrismBuilderContext context, const pm_c
  * ^^^^^^^^^^^^^^^
  */
 static uint32_t
-compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_write_node_t *node) {
+compile_call_operator_write_node(PrismBuilder *builder, PrismBuilderContext context, const pm_call_operator_write_node_t *node) {
+    uint32_t nparams = context == kPrismBuilderValue;
     uint32_t receiver_id = node->receiver ? compile_node(builder, kPrismBuilderValue, node->receiver) : emit_load_self(builder, node->base.node_id);
     uint32_t join_block_id = UINT32_MAX;
 
     if (PM_NODE_FLAG_P(node, PM_CALL_NODE_FLAGS_SAFE_NAVIGATION)) {
         uint32_t call_block_id = make_block(builder, 0);
-        join_block_id = make_block(builder, 1);
+        join_block_id = make_block(builder, nparams);
         uint32_t nil_id = emit_nil_p(builder, node->base.node_id, receiver_id);
-        emit_branchif(builder, node->base.node_id, nil_id, join_block_id, 1, &receiver_id, call_block_id, 0, NULL);
+        emit_branchif(builder, node->base.node_id, nil_id, join_block_id, nparams, &receiver_id, call_block_id, 0, NULL);
         builder->state.block_id = call_block_id;
     }
 
@@ -4434,12 +4435,12 @@ compile_call_operator_write_node(PrismBuilder *builder, const pm_call_operator_w
     emit_call(builder, node->base.node_id, node->write_name, receiver_id, 1, &result_id, UINT32_MAX, false, false, node->base.flags & PM_CALL_NODE_FLAGS_IGNORE_VISIBILITY, false);
 
     if (join_block_id != UINT32_MAX) {
-        emit_branch(builder, node->base.node_id, join_block_id, 1, &result_id);
+        emit_branch(builder, node->base.node_id, join_block_id, nparams, &result_id);
         builder->state.block_id = join_block_id;
-        result_id = PrismBuilder_graph(builder)->blocks[join_block_id].params[0];
+        result_id = nparams ? PrismBuilder_graph(builder)->blocks[join_block_id].params[0] : UINT32_MAX;
     }
 
-    return result_id;
+    return nparams ? result_id : UINT32_MAX;
 }
 
 /*
@@ -6364,7 +6365,7 @@ compile_node(PrismBuilder *builder, PrismBuilderContext context, const pm_node_t
         case PM_CALL_NODE:
             return compile_call_node(builder, context, (const pm_call_node_t *) node);
         case PM_CALL_OPERATOR_WRITE_NODE:
-            return compile_call_operator_write_node(builder, (const pm_call_operator_write_node_t *) node);
+            return compile_call_operator_write_node(builder, context, (const pm_call_operator_write_node_t *) node);
         case PM_CALL_OR_WRITE_NODE:
             return compile_call_or_write_node(builder, (const pm_call_or_write_node_t *) node);
         case PM_CASE_MATCH_NODE:
