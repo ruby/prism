@@ -25,6 +25,9 @@ endif
 ifneq ($(origin PRISM_BUILD_NDEBUG),undefined)
 CPPFLAGS += -DNDEBUG=1
 endif
+ifneq ($(origin PRISM_BUILD_ASAN),undefined)
+CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+endif
 ifneq ($(origin PRISM_BUILD_UBSAN),undefined)
 CFLAGS += -fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer
 endif

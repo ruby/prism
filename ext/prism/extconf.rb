@@ -20,6 +20,10 @@ if ARGV.delete("--help")
               Enable build without assertions.
               You may also set the PRISM_BUILD_NDEBUG environment variable.
 
+          --enable-build-asan
+              Enable build with the address sanitizer.
+              You may also set the PRISM_BUILD_ASAN environment variable.
+
           --enable-build-ubsan
               Enable build with the undefined behavior sanitizer.
               You may also set the PRISM_BUILD_UBSAN environment variable.
@@ -37,6 +41,9 @@ if ARGV.delete("--help")
 
           PRISM_BUILD_NDEBUG
               Equivalent to `--enable-build-ndebug` when set, even if nil or blank.
+
+          PRISM_BUILD_ASAN
+              Equivalent to `--enable-build-asan` when set, even if nil or blank.
 
           PRISM_BUILD_UBSAN
               Equivalent to `--enable-build-ubsan` when set, even if nil or blank.
@@ -126,6 +133,14 @@ end
 # The sources of libprism do not include ruby.h, so NDEBUG still applies to them.
 if enable_config("build-ndebug", ENV["PRISM_BUILD_NDEBUG"] || false)
   $defs << "-DNDEBUG=1"
+end
+
+# ASan instruments the extension's memory accesses. When loading the extension
+# into a regular Ruby build, preload the runtime with rake test:asan.
+if enable_config("build-asan", ENV["PRISM_BUILD_ASAN"] || false)
+  flags = "-fsanitize=address -fno-omit-frame-pointer"
+  $CFLAGS << " #{flags}"
+  $LDFLAGS << " #{flags}"
 end
 
 # If `--enable-build-ubsan` is passed to this script or the `PRISM_BUILD_UBSAN`
