@@ -27,7 +27,6 @@ module Prism
         :local_variable_target_node,      # In `case x; in {foo:}; end`, the capture excludes the label's colon.
         :match_predicate_node,            # In `if a in x: 1, then end`, the node excludes the trailing comma.
         :numbered_parameters_node,        # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
-        :parameters_node,                 # In `def f(a, b, *c,); end`, the node excludes the trailing comma.
         :parentheses_node,                # In `not()`, the parentheses are part of the not production.
         :program_node,                    # An empty source file produces a zero-width program node.
         :rational_node,                   # In `1ri`, the rational is part of one imaginary terminal.
@@ -75,23 +74,35 @@ module Prism
 
           location = node.location
           range = location.start_offset...location.end_offset
-          assert matching_range?(node, ranges, range), "No reduction at #{node.type} range #{range}"
+          assert matching_range?(node, ranges, range, source), "No reduction at #{node.type} range #{range}"
         end
       end
 
-      def matching_range?(node, ranges, range)
+      def matching_range?(node, ranges, range, source)
         candidates = ranges.fetch(range.begin) { [] }
 
         case node.type
         when :when_node
+          # The case_body reduction includes subsequent arms. Use the end
+          # of this arm's statements or its `when` header if the body is empty.
           candidates.any? do |reduction|
             reduction.rule.lhs.id.s_value == "case_body" &&
               (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[1, 2], node.then_keyword_loc)) == range.end
           end
         when :in_node
+          # The p_case_body reduction includes subsequent arms. Use the end of
+          # of this arm's statements or its `in` header if the body is empty.
           candidates.any? do |reduction|
             reduction.rule.lhs.id.s_value == "p_case_body" &&
               (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[4, 2], node.then_keyword_loc)) == range.end
+          end
+        when :parameters_node
+          # An f_args reduction can include a trailing comma outside the range
+          # of the node.
+          candidates.any? do |reduction|
+            reduction.range == range ||
+              (reduction.rule.lhs.id.s_value == "f_args" &&
+                source.byteslice(range.end...reduction.range.end).b.match?(/\A[ \t\r\n]*,\z/))
           end
         else
           candidates.any? { |reduction| reduction.range == range }
