@@ -45,7 +45,29 @@ module Prism
           when :block_node
             # In `Foo::Bar { |a| 42 }`, the block is part of the command production.
           when :call_node
-            # In `-1**2`, one production covers both exponentiation and negation.
+            if (receiver = node.receiver)&.type == :parentheses_node && node.message_loc&.slice == "not"
+              receiver_range = location_range(receiver.location)
+
+              # The regular traversal checks a receiver with its own reduction.
+              # Otherwise, check the parentheses as part of the not expression.
+              if ranges[receiver_range.begin].none? { |reduction| reduction.range == receiver_range }
+                recurse = false
+                stack.concat(receiver.compact_child_nodes)
+
+                assert_reduction(ranges, node) do |reduction, range|
+                  rule = reduction.rule
+
+                  reduction.range == range &&
+                    rule.lhs.id.s_value == "primary" &&
+                    rule.rhs.first.id.s_value == "keyword_not" &&
+                    rule.rhs.last.id.s_value == "rparen" &&
+                    reduction.child_ranges[1].begin == receiver_range.begin &&
+                    reduction.child_ranges[-1].end == receiver_range.end
+                end
+              end
+            else
+              # In `-1**2`, one production covers both exponentiation and negation.
+            end
           when :else_node
             # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
           when :implicit_node
@@ -58,8 +80,6 @@ module Prism
             # In `case x; in {foo:}; end`, the capture excludes the label's colon.
           when :numbered_parameters_node
             # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
-          when :parentheses_node
-            # In `not()`, the parentheses are part of the not production.
           when :rescue_modifier_node
             # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
           when :splat_node
