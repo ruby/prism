@@ -42,16 +42,12 @@ module Prism
           case node.type
           when :arguments_node
             # In `a[1] = 2`, the arguments include the assigned value.
-          when :back_reference_read_node
-            # In `alias $x $&`, the alias reduces both operands together.
           when :block_node
             # In `Foo::Bar { |a| 42 }`, the block is part of the command production.
           when :call_node
             # In `-1**2`, one production covers both exponentiation and negation.
           when :else_node
             # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
-          when :global_variable_read_node
-            # In `alias $x $y`, the alias reduces both operands together.
           when :implicit_node
             # In `case x; in {foo:}; end`, the label implies a capture of foo.
           when :implicit_rest_node
@@ -72,15 +68,30 @@ module Prism
             # In `%w(a b)`, the word reduces with its separator.
           when :symbol_node
             # In `%i(a b)`, the symbol reduces with its separator.
+          when :alias_global_variable_node
+            # A global alias reduces both operands with the alias keyword.
+            recurse = false
+            operands = node.compact_child_nodes.map { |operand| location_range(operand.location) }
+
+            assert_reduction(ranges, node) do |reduction, range|
+              rule = reduction.rule
+
+              reduction.range == range &&
+                rule.lhs.id.s_value == "stmt" &&
+                rule.rhs.first&.id&.s_value == "keyword_alias" &&
+                reduction.child_ranges.drop(1) == operands
+            end
           when :pinned_variable_node
+            # The pin and its local variable reduce together. Check the
+            # variable against the identifier child of p_var_ref.
             if node.variable.type == :local_variable_read_node
               recurse = false
-              location = node.variable.location
-              variable_range = location.start_offset...location.end_offset
+              variable_range = location_range(node.variable.location)
 
               assert_reduction(ranges, node) do |reduction, range|
                 reduction.rule.lhs.id.s_value == "p_var_ref" &&
-                  reduction.range == range && reduction.child_ranges.last == variable_range
+                  reduction.range == range &&
+                  reduction.child_ranges.last == variable_range
               end
             else
               assert_reduction(ranges, node)
@@ -197,9 +208,12 @@ module Prism
         end
       end
 
+      def location_range(location)
+        location.start_offset...location.end_offset
+      end
+
       def assert_reduction(ranges, node)
-        location = node.location
-        range = location.start_offset...location.end_offset
+        range = location_range(node.location)
         match =
           if block_given?
             ranges[range.begin].any? { |reduction| yield reduction, range }
