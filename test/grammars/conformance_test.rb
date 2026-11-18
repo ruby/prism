@@ -101,6 +101,13 @@ module Prism
                     reduction.child_ranges[-3].begin == block_range.begin &&
                     reduction.child_ranges[-1].end == block_range.end
                 end
+              else
+                # The reduction for the call must attach the block directly.
+                assert_reduction(ranges, node) do |reduction, range|
+                  reduction.range == range &&
+                    %w[brace_block cmd_brace_block do_block].include?(reduction.rule.rhs.last&.id&.s_value) &&
+                    reduction.child_ranges.last == block_range
+                end
               end
             else
               # In `-1**2`, one production covers both exponentiation and negation.
@@ -278,6 +285,38 @@ module Prism
 
                 (clause_body_end(reduction, ranges) || reduction.child_ranges.first(3).compact.last.end) == range.end
               end
+            end
+          when :return_node
+            arguments = node.arguments&.arguments
+            call = arguments&.length == 1 ? arguments.first : nil
+
+            if call&.type == :call_node && (block = call.block)&.type == :block_node && block.opening_loc.slice == "do"
+              call_range = location_range(call.location)
+
+              # In `return foo arg do end`, the grammar attaches the block
+              # to the return command. Both ASTs attach it to the returned call.
+              if ranges[call_range.begin].none? { |reduction| reduction.range == call_range }
+                recurse = false
+                stack.concat(call.compact_child_nodes)
+
+                block_range = location_range(block.location)
+                assert_reduction(ranges, node) do |reduction, range|
+                  rule = reduction.rule
+
+                  reduction.range == range &&
+                    rule.lhs.id.s_value == "block_call" &&
+                    rule.rhs.last.id.s_value == "do_block" &&
+                    reduction.child_ranges.last == block_range &&
+                    (command = reduction_for(ranges, reduction.child_ranges.first)) &&
+                    %w[k_return k_return_arg].include?(command.rule.rhs.first&.id&.s_value) &&
+                    command.child_ranges.last.begin == call_range.begin &&
+                    block_range.end == call_range.end
+                end
+              else
+                assert_reduction(ranges, node)
+              end
+            else
+              assert_reduction(ranges, node)
             end
           when :string_node
             if node.opening_loc
