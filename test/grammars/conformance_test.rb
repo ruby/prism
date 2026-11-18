@@ -14,7 +14,6 @@ module Prism
         :call_node,                       # In `-1**2`, one production covers both exponentiation and negation.
         :else_node,                       # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
         :global_variable_read_node,       # In `alias $x $y`, the alias reduces both operands together.
-        :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
         :implicit_rest_node,              # In `x, = y`, the trailing comma implies a rest target.
         :it_parameters_node,              # In `proc { it }`, the inferred parameter list has no dedicated reduction.
@@ -73,11 +72,19 @@ module Prism
         candidates = ranges[range.begin]
 
         case node.type
+        when :if_node
+          # An elsif arm reduces as if_tail. The surrounding if owns its end.
+          candidates.any? do |reduction|
+            reduction.range == range ||
+              (reduction.rule.lhs.id.s_value == "if_tail" &&
+                reduction.rule.rhs.first.id.s_value == "k_elsif" &&
+                matches_closing_end?(node, ranges, range, reduction))
+          end
         when :ensure_node
           # The clause starts at opt_ensure and ends at the enclosing k_end.
-          closing_start = node.end_keyword_loc.start_offset
-          candidates.any? { |reduction| reduction.rule.lhs.id.s_value == "opt_ensure" && reduction.range.end <= closing_start } &&
-            ranges[closing_start].any? { |reduction| reduction.rule.lhs.id.s_value == "k_end" && reduction.range.end == range.end }
+          candidates.any? do |reduction|
+            reduction.rule.lhs.id.s_value == "opt_ensure" && matches_closing_end?(node, ranges, range, reduction)
+          end
         when :interpolated_symbol_node
           # A quoted label reduces with its value. The tLABEL_END child
           # ends the symbol's range.
@@ -172,6 +179,13 @@ module Prism
         else
           candidates.any? { |reduction| reduction.range == range }
         end
+      end
+
+      def matches_closing_end?(node, ranges, range, reduction)
+        closing = node.end_keyword_loc
+        return false if closing.nil? || reduction.range.end > closing.start_offset
+
+        ranges[closing.start_offset].any? { |ending| ending.rule.lhs.id.s_value == "k_end" && ending.range.end == range.end }
       end
 
       def clause_body_end(reduction, ranges)
