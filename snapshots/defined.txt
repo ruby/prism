@@ -110,12 +110,20 @@
         │   └── keyword_loc: (12,0)-(12,8) = "defined?"
         ├── @ DefinedNode (location: (15,0)-(16,3))
         │   ├── flags: newline
-        │   ├── lparen_loc: (16,0)-(16,1) = "("
+        │   ├── lparen_loc: ∅
         │   ├── value:
-        │   │   @ IntegerNode (location: (16,1)-(16,2))
-        │   │   ├── flags: static_literal, decimal
-        │   │   └── value: 1
-        │   ├── rparen_loc: (16,2)-(16,3) = ")"
+        │   │   @ ParenthesesNode (location: (16,0)-(16,3))
+        │   │   ├── flags: ∅
+        │   │   ├── body:
+        │   │   │   @ StatementsNode (location: (16,1)-(16,2))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── body: (length: 1)
+        │   │   │       └── @ IntegerNode (location: (16,1)-(16,2))
+        │   │   │           ├── flags: newline, static_literal, decimal
+        │   │   │           └── value: 1
+        │   │   ├── opening_loc: (16,0)-(16,1) = "("
+        │   │   └── closing_loc: (16,2)-(16,3) = ")"
+        │   ├── rparen_loc: ∅
         │   └── keyword_loc: (15,0)-(15,8) = "defined?"
         └── @ DefinedNode (location: (18,0)-(19,2))
             ├── flags: newline
