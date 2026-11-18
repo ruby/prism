@@ -1,0 +1,41 @@
+@ ProgramNode (location: (1,0)-(1,27))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(1,27))
+    ├── flags: ∅
+    └── body: (length: 1)
+        └── @ CaseMatchNode (location: (1,0)-(1,27))
+            ├── flags: newline
+            ├── predicate:
+            │   @ SymbolNode (location: (1,5)-(1,8))
+            │   ├── flags: static_literal
+            │   ├── opening_loc: (1,5)-(1,7) = ":\""
+            │   ├── content_loc: (1,7)-(1,7) = ""
+            │   ├── closing_loc: (1,7)-(1,8) = "\""
+            │   └── unescaped: ""
+            ├── conditions: (length: 1)
+            │   └── @ InNode (location: (1,10)-(1,22))
+            │       ├── flags: ∅
+            │       ├── pattern:
+            │       │   @ SymbolNode (location: (1,13)-(1,17))
+            │       │   ├── flags: static_literal, forced_us_ascii_encoding
+            │       │   ├── opening_loc: (1,13)-(1,16) = "%s:"
+            │       │   ├── content_loc: (1,16)-(1,16) = ""
+            │       │   ├── closing_loc: (1,16)-(1,17) = ":"
+            │       │   └── unescaped: ""
+            │       ├── statements:
+            │       │   @ StatementsNode (location: (1,19)-(1,22))
+            │       │   ├── flags: ∅
+            │       │   └── body: (length: 1)
+            │       │       └── @ SymbolNode (location: (1,19)-(1,22))
+            │       │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+            │       │           ├── opening_loc: (1,19)-(1,20) = ":"
+            │       │           ├── content_loc: (1,20)-(1,22) = "ok"
+            │       │           ├── closing_loc: ∅
+            │       │           └── unescaped: "ok"
+            │       ├── in_keyword_loc: (1,10)-(1,12) = "in"
+            │       └── then_keyword_loc: ∅
+            ├── else_clause: ∅
+            ├── case_keyword_loc: (1,0)-(1,4) = "case"
+            └── end_keyword_loc: (1,24)-(1,27) = "end"

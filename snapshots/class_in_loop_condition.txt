@@ -1,0 +1,63 @@
+@ ProgramNode (location: (1,0)-(1,59))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(1,59))
+    ├── flags: ∅
+    └── body: (length: 1)
+        └── @ WhileNode (location: (1,0)-(1,59))
+            ├── flags: newline
+            ├── while_keyword_loc: (1,0)-(1,5) = "while"
+            ├── do_keyword_loc: (1,47)-(1,49) = "do"
+            ├── end_keyword_loc: (1,56)-(1,59) = "end"
+            ├── predicate:
+            │   @ SingletonClassNode (location: (1,6)-(1,46))
+            │   ├── flags: ∅
+            │   ├── locals: []
+            │   ├── class_keyword_loc: (1,6)-(1,11) = "class"
+            │   ├── operator_loc: (1,12)-(1,14) = "<<"
+            │   ├── expression:
+            │   │   @ CallNode (location: (1,15)-(1,21))
+            │   │   ├── flags: variable_call, ignore_visibility
+            │   │   ├── receiver: ∅
+            │   │   ├── call_operator_loc: ∅
+            │   │   ├── name: :target
+            │   │   ├── message_loc: (1,15)-(1,21) = "target"
+            │   │   ├── opening_loc: ∅
+            │   │   ├── arguments: ∅
+            │   │   ├── closing_loc: ∅
+            │   │   ├── equal_loc: ∅
+            │   │   └── block: ∅
+            │   ├── body:
+            │   │   @ StatementsNode (location: (1,23)-(1,41))
+            │   │   ├── flags: ∅
+            │   │   └── body: (length: 2)
+            │   │       ├── @ CallNode (location: (1,23)-(1,34))
+            │   │       │   ├── flags: newline, ignore_visibility
+            │   │       │   ├── receiver: ∅
+            │   │       │   ├── call_operator_loc: ∅
+            │   │       │   ├── name: :work
+            │   │       │   ├── message_loc: (1,23)-(1,27) = "work"
+            │   │       │   ├── opening_loc: ∅
+            │   │       │   ├── arguments: ∅
+            │   │       │   ├── closing_loc: ∅
+            │   │       │   ├── equal_loc: ∅
+            │   │       │   └── block:
+            │   │       │       @ BlockNode (location: (1,28)-(1,34))
+            │   │       │       ├── flags: ∅
+            │   │       │       ├── locals: []
+            │   │       │       ├── parameters: ∅
+            │   │       │       ├── body: ∅
+            │   │       │       ├── opening_loc: (1,28)-(1,30) = "do"
+            │   │       │       └── closing_loc: (1,31)-(1,34) = "end"
+            │   │       └── @ FalseNode (location: (1,36)-(1,41))
+            │   │           └── flags: newline, static_literal
+            │   └── end_keyword_loc: (1,43)-(1,46) = "end"
+            └── statements:
+                @ StatementsNode (location: (1,50)-(1,55))
+                ├── flags: ∅
+                └── body: (length: 1)
+                    └── @ BreakNode (location: (1,50)-(1,55))
+                        ├── flags: newline
+                        ├── arguments: ∅
+                        └── keyword_loc: (1,50)-(1,55) = "break"

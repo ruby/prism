@@ -1,0 +1,197 @@
+@ ProgramNode (location: (1,0)-(5,53))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(5,53))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ DefNode (location: (1,0)-(1,50))
+        │   ├── flags: newline
+        │   ├── name: :f
+        │   ├── name_loc: (1,4)-(1,5) = "f"
+        │   ├── receiver: ∅
+        │   ├── parameters: ∅
+        │   ├── body:
+        │   │   @ StatementsNode (location: (1,7)-(1,45))
+        │   │   ├── flags: ∅
+        │   │   └── body: (length: 1)
+        │   │       └── @ LocalVariableWriteNode (location: (1,7)-(1,45))
+        │   │           ├── flags: newline
+        │   │           ├── name: :x
+        │   │           ├── depth: 0
+        │   │           ├── name_loc: (1,7)-(1,8) = "x"
+        │   │           ├── value:
+        │   │           │   @ BeginNode (location: (1,11)-(1,45))
+        │   │           │   ├── flags: ∅
+        │   │           │   ├── begin_keyword_loc: (1,11)-(1,16) = "begin"
+        │   │           │   ├── statements:
+        │   │           │   │   @ StatementsNode (location: (1,18)-(1,24))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   └── body: (length: 1)
+        │   │           │   │       └── @ ReturnNode (location: (1,18)-(1,24))
+        │   │           │   │           ├── flags: newline
+        │   │           │   │           ├── keyword_loc: (1,18)-(1,24) = "return"
+        │   │           │   │           └── arguments: ∅
+        │   │           │   ├── rescue_clause:
+        │   │           │   │   @ RescueNode (location: (1,26)-(1,32))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── keyword_loc: (1,26)-(1,32) = "rescue"
+        │   │           │   │   ├── exceptions: (length: 0)
+        │   │           │   │   ├── operator_loc: ∅
+        │   │           │   │   ├── reference: ∅
+        │   │           │   │   ├── then_keyword_loc: ∅
+        │   │           │   │   ├── statements: ∅
+        │   │           │   │   └── subsequent: ∅
+        │   │           │   ├── else_clause: ∅
+        │   │           │   ├── ensure_clause:
+        │   │           │   │   @ EnsureNode (location: (1,34)-(1,45))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── ensure_keyword_loc: (1,34)-(1,40) = "ensure"
+        │   │           │   │   ├── statements: ∅
+        │   │           │   │   └── end_keyword_loc: (1,42)-(1,45) = "end"
+        │   │           │   └── end_keyword_loc: (1,42)-(1,45) = "end"
+        │   │           └── operator_loc: (1,9)-(1,10) = "="
+        │   ├── locals: [:x]
+        │   ├── def_keyword_loc: (1,0)-(1,3) = "def"
+        │   ├── operator_loc: ∅
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── end_keyword_loc: (1,47)-(1,50) = "end"
+        ├── @ DefNode (location: (3,0)-(3,79))
+        │   ├── flags: newline
+        │   ├── name: :f
+        │   ├── name_loc: (3,4)-(3,5) = "f"
+        │   ├── receiver: ∅
+        │   ├── parameters: ∅
+        │   ├── body:
+        │   │   @ StatementsNode (location: (3,7)-(3,74))
+        │   │   ├── flags: ∅
+        │   │   └── body: (length: 1)
+        │   │       └── @ LocalVariableWriteNode (location: (3,7)-(3,74))
+        │   │           ├── flags: newline
+        │   │           ├── name: :x
+        │   │           ├── depth: 0
+        │   │           ├── name_loc: (3,7)-(3,8) = "x"
+        │   │           ├── value:
+        │   │           │   @ BeginNode (location: (3,11)-(3,74))
+        │   │           │   ├── flags: ∅
+        │   │           │   ├── begin_keyword_loc: (3,11)-(3,16) = "begin"
+        │   │           │   ├── statements:
+        │   │           │   │   @ StatementsNode (location: (3,18)-(3,24))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   └── body: (length: 1)
+        │   │           │   │       └── @ ReturnNode (location: (3,18)-(3,24))
+        │   │           │   │           ├── flags: newline
+        │   │           │   │           ├── keyword_loc: (3,18)-(3,24) = "return"
+        │   │           │   │           └── arguments: ∅
+        │   │           │   ├── rescue_clause:
+        │   │           │   │   @ RescueNode (location: (3,26)-(3,61))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── keyword_loc: (3,26)-(3,32) = "rescue"
+        │   │           │   │   ├── exceptions: (length: 1)
+        │   │           │   │   │   └── @ ConstantReadNode (location: (3,33)-(3,42))
+        │   │           │   │   │       ├── flags: ∅
+        │   │           │   │   │       └── name: :TypeError
+        │   │           │   │   ├── operator_loc: ∅
+        │   │           │   │   ├── reference: ∅
+        │   │           │   │   ├── then_keyword_loc: ∅
+        │   │           │   │   ├── statements:
+        │   │           │   │   │   @ StatementsNode (location: (3,44)-(3,50))
+        │   │           │   │   │   ├── flags: ∅
+        │   │           │   │   │   └── body: (length: 1)
+        │   │           │   │   │       └── @ ReturnNode (location: (3,44)-(3,50))
+        │   │           │   │   │           ├── flags: newline
+        │   │           │   │   │           ├── keyword_loc: (3,44)-(3,50) = "return"
+        │   │           │   │   │           └── arguments: ∅
+        │   │           │   │   └── subsequent:
+        │   │           │   │       @ RescueNode (location: (3,52)-(3,61))
+        │   │           │   │       ├── flags: ∅
+        │   │           │   │       ├── keyword_loc: (3,52)-(3,58) = "rescue"
+        │   │           │   │       ├── exceptions: (length: 0)
+        │   │           │   │       ├── operator_loc: ∅
+        │   │           │   │       ├── reference: ∅
+        │   │           │   │       ├── then_keyword_loc: ∅
+        │   │           │   │       ├── statements:
+        │   │           │   │       │   @ StatementsNode (location: (3,60)-(3,61))
+        │   │           │   │       │   ├── flags: ∅
+        │   │           │   │       │   └── body: (length: 1)
+        │   │           │   │       │       └── @ IntegerNode (location: (3,60)-(3,61))
+        │   │           │   │       │           ├── flags: newline, static_literal, decimal
+        │   │           │   │       │           └── value: 1
+        │   │           │   │       └── subsequent: ∅
+        │   │           │   ├── else_clause: ∅
+        │   │           │   ├── ensure_clause:
+        │   │           │   │   @ EnsureNode (location: (3,63)-(3,74))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   ├── ensure_keyword_loc: (3,63)-(3,69) = "ensure"
+        │   │           │   │   ├── statements: ∅
+        │   │           │   │   └── end_keyword_loc: (3,71)-(3,74) = "end"
+        │   │           │   └── end_keyword_loc: (3,71)-(3,74) = "end"
+        │   │           └── operator_loc: (3,9)-(3,10) = "="
+        │   ├── locals: [:x]
+        │   ├── def_keyword_loc: (3,0)-(3,3) = "def"
+        │   ├── operator_loc: ∅
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── end_keyword_loc: (3,76)-(3,79) = "end"
+        └── @ DefNode (location: (5,0)-(5,53))
+            ├── flags: newline
+            ├── name: :f
+            ├── name_loc: (5,4)-(5,5) = "f"
+            ├── receiver: ∅
+            ├── parameters: ∅
+            ├── body:
+            │   @ StatementsNode (location: (5,7)-(5,48))
+            │   ├── flags: ∅
+            │   └── body: (length: 1)
+            │       └── @ LocalVariableWriteNode (location: (5,7)-(5,48))
+            │           ├── flags: newline
+            │           ├── name: :x
+            │           ├── depth: 0
+            │           ├── name_loc: (5,7)-(5,8) = "x"
+            │           ├── value:
+            │           │   @ BeginNode (location: (5,11)-(5,48))
+            │           │   ├── flags: ∅
+            │           │   ├── begin_keyword_loc: (5,11)-(5,16) = "begin"
+            │           │   ├── statements:
+            │           │   │   @ StatementsNode (location: (5,18)-(5,19))
+            │           │   │   ├── flags: ∅
+            │           │   │   └── body: (length: 1)
+            │           │   │       └── @ IntegerNode (location: (5,18)-(5,19))
+            │           │   │           ├── flags: newline, static_literal, decimal
+            │           │   │           └── value: 1
+            │           │   ├── rescue_clause:
+            │           │   │   @ RescueNode (location: (5,21)-(5,35))
+            │           │   │   ├── flags: ∅
+            │           │   │   ├── keyword_loc: (5,21)-(5,27) = "rescue"
+            │           │   │   ├── exceptions: (length: 0)
+            │           │   │   ├── operator_loc: ∅
+            │           │   │   ├── reference: ∅
+            │           │   │   ├── then_keyword_loc: ∅
+            │           │   │   ├── statements:
+            │           │   │   │   @ StatementsNode (location: (5,29)-(5,35))
+            │           │   │   │   ├── flags: ∅
+            │           │   │   │   └── body: (length: 1)
+            │           │   │   │       └── @ ReturnNode (location: (5,29)-(5,35))
+            │           │   │   │           ├── flags: newline
+            │           │   │   │           ├── keyword_loc: (5,29)-(5,35) = "return"
+            │           │   │   │           └── arguments: ∅
+            │           │   │   └── subsequent: ∅
+            │           │   ├── else_clause: ∅
+            │           │   ├── ensure_clause:
+            │           │   │   @ EnsureNode (location: (5,37)-(5,48))
+            │           │   │   ├── flags: ∅
+            │           │   │   ├── ensure_keyword_loc: (5,37)-(5,43) = "ensure"
+            │           │   │   ├── statements: ∅
+            │           │   │   └── end_keyword_loc: (5,45)-(5,48) = "end"
+            │           │   └── end_keyword_loc: (5,45)-(5,48) = "end"
+            │           └── operator_loc: (5,9)-(5,10) = "="
+            ├── locals: [:x]
+            ├── def_keyword_loc: (5,0)-(5,3) = "def"
+            ├── operator_loc: ∅
+            ├── lparen_loc: ∅
+            ├── rparen_loc: ∅
+            ├── equal_loc: ∅
+            └── end_keyword_loc: (5,50)-(5,53) = "end"

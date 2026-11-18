@@ -1,0 +1,79 @@
+@ ProgramNode (location: (1,0)-(5,17))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(5,17))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ HashNode (location: (1,0)-(1,30))
+        │   ├── flags: newline, static_literal
+        │   ├── opening_loc: (1,0)-(1,1) = "{"
+        │   ├── elements: (length: 2)
+        │   │   ├── @ AssocNode (location: (1,2)-(1,13))
+        │   │   │   ├── flags: static_literal
+        │   │   │   ├── key:
+        │   │   │   │   @ SymbolNode (location: (1,2)-(1,8))
+        │   │   │   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │   │   │   ├── opening_loc: ∅
+        │   │   │   │   ├── content_loc: (1,2)-(1,7) = "Flag?"
+        │   │   │   │   ├── closing_loc: (1,7)-(1,8) = ":"
+        │   │   │   │   └── unescaped: "Flag?"
+        │   │   │   ├── value:
+        │   │   │   │   @ TrueNode (location: (1,9)-(1,13))
+        │   │   │   │   └── flags: static_literal
+        │   │   │   └── operator_loc: ∅
+        │   │   └── @ AssocNode (location: (1,15)-(1,28))
+        │   │       ├── flags: static_literal
+        │   │       ├── key:
+        │   │       │   @ SymbolNode (location: (1,15)-(1,23))
+        │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │   ├── opening_loc: ∅
+        │   │       │   ├── content_loc: (1,15)-(1,22) = "Status!"
+        │   │       │   ├── closing_loc: (1,22)-(1,23) = ":"
+        │   │       │   └── unescaped: "Status!"
+        │   │       ├── value:
+        │   │       │   @ TrueNode (location: (1,24)-(1,28))
+        │   │       │   └── flags: static_literal
+        │   │       └── operator_loc: ∅
+        │   └── closing_loc: (1,29)-(1,30) = "}"
+        ├── @ HashNode (location: (3,0)-(3,9))
+        │   ├── flags: newline
+        │   ├── opening_loc: (3,0)-(3,1) = "{"
+        │   ├── elements: (length: 1)
+        │   │   └── @ AssocNode (location: (3,2)-(3,7))
+        │   │       ├── flags: ∅
+        │   │       ├── key:
+        │   │       │   @ SymbolNode (location: (3,2)-(3,7))
+        │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │   ├── opening_loc: ∅
+        │   │       │   ├── content_loc: (3,2)-(3,6) = "Flag"
+        │   │       │   ├── closing_loc: (3,6)-(3,7) = ":"
+        │   │       │   └── unescaped: "Flag"
+        │   │       ├── value:
+        │   │       │   @ ImplicitNode (location: (3,2)-(3,7))
+        │   │       │   ├── flags: ∅
+        │   │       │   └── value:
+        │   │       │       @ ConstantReadNode (location: (3,2)-(3,7))
+        │   │       │       ├── flags: ∅
+        │   │       │       └── name: :Flag
+        │   │       └── operator_loc: ∅
+        │   └── closing_loc: (3,8)-(3,9) = "}"
+        └── @ HashNode (location: (5,0)-(5,17))
+            ├── flags: newline, static_literal
+            ├── opening_loc: (5,0)-(5,1) = "{"
+            ├── elements: (length: 1)
+            │   └── @ AssocNode (location: (5,2)-(5,15))
+            │       ├── flags: static_literal
+            │       ├── key:
+            │       │   @ SymbolNode (location: (5,2)-(5,10))
+            │       │   ├── flags: static_literal, forced_us_ascii_encoding
+            │       │   ├── opening_loc: (5,2)-(5,5) = "%s:"
+            │       │   ├── content_loc: (5,5)-(5,9) = "name"
+            │       │   ├── closing_loc: (5,9)-(5,10) = ":"
+            │       │   └── unescaped: "name"
+            │       ├── value:
+            │       │   @ IntegerNode (location: (5,14)-(5,15))
+            │       │   ├── flags: static_literal, decimal
+            │       │   └── value: 1
+            │       └── operator_loc: (5,11)-(5,13) = "=>"
+            └── closing_loc: (5,16)-(5,17) = "}"
