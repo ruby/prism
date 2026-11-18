@@ -1,0 +1,153 @@
+@ ProgramNode (location: (1,0)-(13,3))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(13,3))
+    ├── flags: ∅
+    └── body: (length: 4)
+        ├── @ CallNode (location: (1,0)-(2,4))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :show
+        │   ├── message_loc: (1,0)-(1,4) = "show"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (2,0)-(2,4))
+        │   │   ├── flags: contains_keywords
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ KeywordHashNode (location: (2,0)-(2,4))
+        │   │           ├── flags: symbol_keys
+        │   │           └── elements: (length: 1)
+        │   │               └── @ AssocNode (location: (2,0)-(2,4))
+        │   │                   ├── flags: ∅
+        │   │                   ├── key:
+        │   │                   │   @ SymbolNode (location: (2,0)-(2,4))
+        │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │                   │   ├── opening_loc: ∅
+        │   │                   │   ├── content_loc: (2,0)-(2,3) = "and"
+        │   │                   │   ├── closing_loc: (2,3)-(2,4) = ":"
+        │   │                   │   └── unescaped: "and"
+        │   │                   ├── value:
+        │   │                   │   @ ImplicitNode (location: (2,0)-(2,4))
+        │   │                   │   ├── flags: ∅
+        │   │                   │   └── value:
+        │   │                   │       @ CallNode (location: (2,0)-(2,4))
+        │   │                   │       ├── flags: ignore_visibility
+        │   │                   │       ├── receiver: ∅
+        │   │                   │       ├── call_operator_loc: ∅
+        │   │                   │       ├── name: :and
+        │   │                   │       ├── message_loc: (2,0)-(2,3) = "and"
+        │   │                   │       ├── opening_loc: ∅
+        │   │                   │       ├── arguments: ∅
+        │   │                   │       ├── closing_loc: ∅
+        │   │                   │       ├── equal_loc: ∅
+        │   │                   │       └── block: ∅
+        │   │                   └── operator_loc: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (4,0)-(5,5))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :show
+        │   ├── message_loc: (4,0)-(4,4) = "show"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (5,0)-(5,5))
+        │   │   ├── flags: contains_keywords
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ KeywordHashNode (location: (5,0)-(5,5))
+        │   │           ├── flags: symbol_keys
+        │   │           └── elements: (length: 1)
+        │   │               └── @ AssocNode (location: (5,0)-(5,5))
+        │   │                   ├── flags: static_literal
+        │   │                   ├── key:
+        │   │                   │   @ SymbolNode (location: (5,0)-(5,3))
+        │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │                   │   ├── opening_loc: ∅
+        │   │                   │   ├── content_loc: (5,0)-(5,2) = "or"
+        │   │                   │   ├── closing_loc: (5,2)-(5,3) = ":"
+        │   │                   │   └── unescaped: "or"
+        │   │                   ├── value:
+        │   │                   │   @ IntegerNode (location: (5,4)-(5,5))
+        │   │                   │   ├── flags: static_literal, decimal
+        │   │                   │   └── value: 1
+        │   │                   └── operator_loc: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (7,0)-(9,6))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :show
+        │   ├── message_loc: (7,0)-(7,4) = "show"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (9,0)-(9,6))
+        │   │   ├── flags: contains_keywords
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ KeywordHashNode (location: (9,0)-(9,6))
+        │   │           ├── flags: symbol_keys
+        │   │           └── elements: (length: 1)
+        │   │               └── @ AssocNode (location: (9,0)-(9,6))
+        │   │                   ├── flags: static_literal
+        │   │                   ├── key:
+        │   │                   │   @ SymbolNode (location: (9,0)-(9,4))
+        │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │                   │   ├── opening_loc: ∅
+        │   │                   │   ├── content_loc: (9,0)-(9,3) = "and"
+        │   │                   │   ├── closing_loc: (9,3)-(9,4) = ":"
+        │   │                   │   └── unescaped: "and"
+        │   │                   ├── value:
+        │   │                   │   @ IntegerNode (location: (9,5)-(9,6))
+        │   │                   │   ├── flags: static_literal, decimal
+        │   │                   │   └── value: 1
+        │   │                   └── operator_loc: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        └── @ CallNode (location: (11,0)-(13,3))
+            ├── flags: newline, ignore_visibility
+            ├── receiver: ∅
+            ├── call_operator_loc: ∅
+            ├── name: :show
+            ├── message_loc: (11,0)-(11,4) = "show"
+            ├── opening_loc: ∅
+            ├── arguments:
+            │   @ ArgumentsNode (location: (13,0)-(13,3))
+            │   ├── flags: contains_keywords
+            │   └── arguments: (length: 1)
+            │       └── @ KeywordHashNode (location: (13,0)-(13,3))
+            │           ├── flags: symbol_keys
+            │           └── elements: (length: 1)
+            │               └── @ AssocNode (location: (13,0)-(13,3))
+            │                   ├── flags: ∅
+            │                   ├── key:
+            │                   │   @ SymbolNode (location: (13,0)-(13,3))
+            │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+            │                   │   ├── opening_loc: ∅
+            │                   │   ├── content_loc: (13,0)-(13,2) = "or"
+            │                   │   ├── closing_loc: (13,2)-(13,3) = ":"
+            │                   │   └── unescaped: "or"
+            │                   ├── value:
+            │                   │   @ ImplicitNode (location: (13,0)-(13,3))
+            │                   │   ├── flags: ∅
+            │                   │   └── value:
+            │                   │       @ CallNode (location: (13,0)-(13,3))
+            │                   │       ├── flags: ignore_visibility
+            │                   │       ├── receiver: ∅
+            │                   │       ├── call_operator_loc: ∅
+            │                   │       ├── name: :or
+            │                   │       ├── message_loc: (13,0)-(13,2) = "or"
+            │                   │       ├── opening_loc: ∅
+            │                   │       ├── arguments: ∅
+            │                   │       ├── closing_loc: ∅
+            │                   │       ├── equal_loc: ∅
+            │                   │       └── block: ∅
+            │                   └── operator_loc: ∅
+            ├── closing_loc: ∅
+            ├── equal_loc: ∅
+            └── block: ∅
