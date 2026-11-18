@@ -79,6 +79,10 @@ module Prism
                 case rule.lhs.id.s_value
                 when "string1", "xstring"
                   range = heredocs.fetch(range.begin, range)
+                when "stmts"
+                  # In `stmts terms stmt_or_begin`, the preceding list can be
+                  # empty. Start the span at the first statement in that case.
+                  range = parts.last.dup if parts.length == 3 && parts.first.nil?
                 end
 
                 reductions << Reduction.new(rule, range, parts)
