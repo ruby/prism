@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "set"
-
 require_relative "../prism/test_helper"
 require_relative "runner"
 require_relative "terminals"
@@ -22,7 +20,6 @@ module Prism
         :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
         :implicit_rest_node,              # In `x, = y`, the trailing comma implies a rest target.
-        :in_node,                         # In `case x; in A; a; in B; b; end`, the first arm's reduction includes the remaining arms.
         :integer_node,                    # In `1i`, the integer is part of one imaginary terminal.
         :interpolated_symbol_node,        # In `f("x#{y}": 1)`, the quoted label reduces with its value.
         :it_parameters_node,              # In `proc { it }`, the inferred parameter list has no dedicated reduction.
@@ -40,7 +37,6 @@ module Prism
         :statements_node,                 # An empty source file produces a zero-width statements node.
         :string_node,                     # In `%w(a b)`, the word reduces with its separator.
         :symbol_node,                     # In `%i(a b)`, the symbol reduces with its separator.
-        :when_node,                       # In `case x; when 1; a; when 2; b; end`, the first arm's reduction includes the remaining arms.
       ].freeze
 
       # It is unclear if these are supposed to be accepted by the 3.4 and 4.0
@@ -69,7 +65,7 @@ module Prism
         assert_predicate result, :success?, result.errors.first&.message
 
         ast, tokens = result.value
-        ranges = runner.run(Terminals.translate(tokens)).to_set(&:range)
+        ranges = runner.run(Terminals.translate(tokens)).group_by { |reduction| reduction.range.begin }
         stack = [ast]
 
         until stack.empty?
@@ -79,8 +75,38 @@ module Prism
 
           location = node.location
           range = location.start_offset...location.end_offset
-          assert ranges.include?(range), "No reduction at #{node.type} range #{range}"
+          assert matching_range?(node, ranges, range), "No reduction at #{node.type} range #{range}"
         end
+      end
+
+      def matching_range?(node, ranges, range)
+        candidates = ranges.fetch(range.begin) { [] }
+
+        case node.type
+        when :when_node
+          candidates.any? do |reduction|
+            reduction.rule.lhs.id.s_value == "case_body" &&
+              (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[1, 2], node.then_keyword_loc)) == range.end
+          end
+        when :in_node
+          candidates.any? do |reduction|
+            reduction.rule.lhs.id.s_value == "p_case_body" &&
+              (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[4, 2], node.then_keyword_loc)) == range.end
+          end
+        else
+          candidates.any? { |reduction| reduction.range == range }
+        end
+      end
+
+      def case_branch_body_end(reduction, ranges)
+        (body_range = reduction.child_ranges[-2]) &&
+          (matching_range = ranges.fetch(body_range.begin) { [] }.find { |candidate| candidate.range.equal?(body_range) }) &&
+          matching_range.child_ranges&.first&.end
+      end
+
+      def case_branch_decl_end(reduction, child_ranges, then_keyword_loc)
+        condition_range, separator_range = child_ranges
+        separator_range && then_keyword_loc ? separator_range.end : condition_range.end
       end
     end
   end
