@@ -30,7 +30,6 @@ module Prism
         :program_node,                    # An empty source file produces a zero-width program node.
         :rational_node,                   # In `1ri`, the rational is part of one imaginary terminal.
         :rescue_modifier_node,            # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
-        :rescue_node,                     # In `begin; x; rescue; y; end`, the reduction includes a trailing statement separator.
         :splat_node,                      # In `a, *b = c`, the splat is part of the multiple-assignment target.
         :statements_node,                 # An empty source file produces a zero-width statements node.
         :string_node,                     # In `%w(a b)`, the word reduces with its separator.
@@ -86,14 +85,14 @@ module Prism
           # of this arm's statements or its `when` header if the body is empty.
           candidates.any? do |reduction|
             reduction.rule.lhs.id.s_value == "case_body" &&
-              (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[1, 2], node.then_keyword_loc)) == range.end
+              (clause_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[1, 2], node.then_keyword_loc)) == range.end
           end
         when :in_node
           # The p_case_body reduction includes subsequent arms. Use the end of
           # of this arm's statements or its `in` header if the body is empty.
           candidates.any? do |reduction|
             reduction.rule.lhs.id.s_value == "p_case_body" &&
-              (case_branch_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[4, 2], node.then_keyword_loc)) == range.end
+              (clause_body_end(reduction, ranges) || case_branch_decl_end(reduction, reduction.child_ranges[4, 2], node.then_keyword_loc)) == range.end
           end
         when :parameters_node
           # An f_args reduction can include a trailing comma outside the range
@@ -107,7 +106,15 @@ module Prism
           # A compound assignment can reduce the constant path and assignment
           # together. The constant before tOP_ASGN ends the path.
           candidates.any? do |reduction|
-            reduction.range == range || constant_path_end(reduction) == range.end
+            reduction.range == range ||
+              constant_path_end(reduction) == range.end
+          end
+        when :rescue_node
+          # Prism includes subsequent rescue clauses and ends at the last
+          # clause's last statement or exception header.
+          candidates.any? do |reduction|
+            reduction.rule.lhs.id.s_value == "opt_rescue" &&
+              rescue_end(reduction, ranges) == range.end
           end
         else
           candidates.any? { |reduction| reduction.range == range }
@@ -116,6 +123,7 @@ module Prism
 
       def constant_path_end(reduction)
         prefix = reduction.rule.rhs.take(4).map { |symbol| symbol.id.s_value }
+
         if prefix == %w[primary_value tCOLON2 tCONSTANT tOP_ASGN]
           reduction.child_ranges[2].end
         elsif prefix.first(3) == %w[tCOLON3 tCONSTANT tOP_ASGN]
@@ -123,10 +131,20 @@ module Prism
         end
       end
 
-      def case_branch_body_end(reduction, ranges)
-        (body_range = reduction.child_ranges[-2]) &&
-          (matching_range = ranges.fetch(body_range.begin) { [] }.find { |candidate| candidate.range.equal?(body_range) }) &&
-          matching_range.child_ranges&.first&.end
+      def rescue_end(reduction, ranges)
+        while (subsequent = reduction_for(ranges, reduction.child_ranges.last))
+          reduction = subsequent
+        end
+
+        clause_body_end(reduction, ranges) || reduction.child_ranges.first(3).compact.last.end
+      end
+
+      def clause_body_end(reduction, ranges)
+        reduction_for(ranges, reduction.child_ranges[-2])&.child_ranges&.first&.end
+      end
+
+      def reduction_for(ranges, range)
+        range && ranges.fetch(range.begin) { [] }.find { |candidate| candidate.range.equal?(range) }
       end
 
       def case_branch_decl_end(reduction, child_ranges, then_keyword_loc)
