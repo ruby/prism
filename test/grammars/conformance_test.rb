@@ -119,7 +119,29 @@ module Prism
               # in `%w(a b)` or the text of an interpolated string.
             end
           when :symbol_node
-            # In `%i(a b)`, the symbol reduces with its separator.
+            if node.opening_loc
+              # A quoted hash label can reduce together with its value.
+              assert_reduction(ranges, node) do |reduction, range|
+                rule = reduction.rule
+
+                reduction.range == range ||
+                  (rule.lhs.id.s_value == "assoc" &&
+                    rule.rhs[2]&.id&.s_value == "tLABEL_END" &&
+                    reduction.child_ranges[2].end == range.end)
+              end
+            elsif node.closing_loc
+              # A bare hash label can reduce together with its value.
+              assert_reduction(ranges, node) do |reduction, range|
+                rule = reduction.rule
+
+                reduction.range == range ||
+                  (rule.lhs.id.s_value == "assoc" &&
+                    rule.rhs.first&.id&.s_value == "tLABEL" &&
+                    reduction.child_ranges.first == range)
+              end
+            else
+              # In `%i(a b)`, the symbol reduces with its separator.
+            end
           when :alias_global_variable_node
             # A global alias reduces both operands with the alias keyword.
             recurse = false
