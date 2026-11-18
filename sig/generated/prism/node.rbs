@@ -19702,6 +19702,12 @@ module Prism
     # : () -> String
     def inspect: () -> String
 
+    # :category: Flags
+    # the statement list directly contains a `BEGIN` block
+    #
+    # : () -> bool
+    def contains_pre_execution?: () -> bool
+
     # :call-seq:
     #   body -> Array[Node]
     #
@@ -21590,6 +21596,12 @@ module Prism
 
     # constant writes that should be modified with shareable constant value experimental copy
     EXPERIMENTAL_COPY: untyped
+  end
+
+  # Flags for statement lists.
+  module StatementsFlags
+    # the statement list directly contains a `BEGIN` block
+    CONTAINS_PRE_EXECUTION: untyped
   end
 
   # Flags for string nodes.
