@@ -109,8 +109,6 @@ module Prism
             # In `x, = y`, the trailing comma implies a rest target.
           when :local_variable_target_node
             # In `case x; in {foo:}; end`, the capture excludes the label's colon.
-          when :rescue_modifier_node
-            # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
           when :splat_node
             # In `a, *b = c`, the splat is part of the multiple-assignment target.
           when :string_node
@@ -236,6 +234,33 @@ module Prism
                   reduction.child_ranges[1].end == range.end
                 end
               end
+            end
+          when :multi_write_node
+            if (value = node.value).type == :rescue_modifier_node
+              value_range = location_range(value.location)
+
+              # A multiple assignment can reduce its RHS and rescue together
+              # with the targets. Use the RHS and fallback child spans then.
+              if ranges[value_range.begin].none? { |reduction| reduction.range == value_range }
+                recurse = false
+                stack.concat(node.compact_child_nodes.reject { |child| child.equal?(value) })
+                stack.concat(value.compact_child_nodes)
+
+                assert_reduction(ranges, node) do |reduction, range|
+                  rule = reduction.rule
+
+                  reduction.range == range &&
+                    rule.lhs.id.s_value == "stmt" &&
+                    rule.rhs.first.id.s_value == "mlhs" &&
+                    rule.rhs[4]&.id&.s_value == "modifier_rescue" &&
+                    reduction.child_ranges[3].begin == value_range.begin &&
+                    reduction.child_ranges[-1].end == value_range.end
+                end
+              else
+                assert_reduction(ranges, node)
+              end
+            else
+              assert_reduction(ranges, node)
             end
           when :rescue_node
             # Prism includes subsequent rescue clauses and ends at the last
