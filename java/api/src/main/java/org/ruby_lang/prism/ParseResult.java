@@ -25,6 +25,9 @@ public final class ParseResult {
 
         /** For errors that should raise SystemStackError. */
         ERROR_STACK,
+
+        /** For errors that should raise Encoding::CompatibilityError. */
+        ERROR_ENCODING_COMPATIBILITY,
     }
 
     public static ErrorLevel[] ERROR_LEVELS = ErrorLevel.values();

@@ -10474,6 +10474,9 @@ pub enum pm_error_level_t {
  invalid, so the same source may parse with more stack.
 */
     PM_ERROR_LEVEL_STACK = 3,
+    /** For errors that should raise an encoding compatibility error.
+*/
+    PM_ERROR_LEVEL_ENCODING_COMPATIBILITY = 4,
 }
 #[repr(u32)]
 #[non_exhaustive]
