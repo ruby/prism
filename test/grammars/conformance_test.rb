@@ -42,8 +42,6 @@ module Prism
           case node.type
           when :arguments_node
             # In `a[1] = 2`, the arguments include the assigned value.
-          when :block_node
-            # In `Foo::Bar { |a| 42 }`, the block is part of the command production.
           when :call_node
             if (receiver = node.receiver)&.type == :parentheses_node && node.message_loc&.slice == "not"
               receiver_range = location_range(receiver.location)
@@ -63,6 +61,26 @@ module Prism
                     rule.rhs.last.id.s_value == "rparen" &&
                     reduction.child_ranges[1].begin == receiver_range.begin &&
                     reduction.child_ranges[-1].end == receiver_range.end
+                end
+              end
+            elsif (block = node.block)&.type == :block_node
+              block_range = location_range(block.location)
+
+              # The regular traversal checks blocks with standalone reductions.
+              # In `Foo::Bar { ... }`, the command reduction owns the braces.
+              if ranges[block_range.begin].none? { |reduction| reduction.range == block_range }
+                recurse = false
+                stack.concat(node.compact_child_nodes.reject { |child| child.equal?(block) })
+                stack.concat(block.compact_child_nodes)
+
+                assert_reduction(ranges, node) do |reduction, range|
+                  rule = reduction.rule
+
+                  reduction.range == range &&
+                    rule.lhs.id.s_value == "command" &&
+                    rule.rhs[-2]&.id&.s_value == "brace_body" &&
+                    reduction.child_ranges[-3].begin == block_range.begin &&
+                    reduction.child_ranges[-1].end == block_range.end
                 end
               end
             else
