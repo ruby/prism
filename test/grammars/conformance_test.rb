@@ -71,7 +71,15 @@ module Prism
               if ranges[block_range.begin].none? { |reduction| reduction.range == block_range }
                 recurse = false
                 stack.concat(node.compact_child_nodes.reject { |child| child.equal?(block) })
-                stack.concat(block.compact_child_nodes)
+
+                parameters = block.parameters
+                if parameters&.type == :it_parameters_node || parameters&.type == :numbered_parameters_node
+                  # Inferred parameters use the full block span checked below.
+                  assert_equal block_range, location_range(parameters.location)
+                  stack << block.body if block.body
+                else
+                  stack.concat(block.compact_child_nodes)
+                end
 
                 assert_reduction(ranges, node) do |reduction, range|
                   rule = reduction.rule
@@ -99,12 +107,8 @@ module Prism
             end
           when :implicit_rest_node
             # In `x, = y`, the trailing comma implies a rest target.
-          when :it_parameters_node
-            # In `proc { it }`, the inferred parameter list has no dedicated reduction.
           when :local_variable_target_node
             # In `case x; in {foo:}; end`, the capture excludes the label's colon.
-          when :numbered_parameters_node
-            # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
           when :rescue_modifier_node
             # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
           when :splat_node
