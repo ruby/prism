@@ -14,7 +14,6 @@ module Prism
         :call_node,                       # In `-1**2`, one production covers both exponentiation and negation.
         :else_node,                       # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
         :ensure_node,                     # In `begin; x; ensure; y; end`, the node includes the enclosing end.
-        :float_node,                      # In `1.5i`, the float is part of one imaginary terminal.
         :global_variable_read_node,       # In `alias $x $y`, the alias reduces both operands together.
         :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
@@ -77,9 +76,9 @@ module Prism
         candidates = ranges[range.begin]
 
         case node.type
-        when :integer_node
+        when :integer_node, :float_node
           # An imaginary literal reduces as one number. Prism gives the
-          # integer coefficient a range that ends before the `i`.
+          # coefficient a range that ends before the `i`.
           candidates.any? do |reduction|
             next true if reduction.range == range
             next false if reduction.range.end != range.end + 1 || source.getbyte(range.end) != "i".ord
