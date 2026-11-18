@@ -112,7 +112,12 @@ module Prism
           when :splat_node
             # In `a, *b = c`, the splat is part of the multiple-assignment target.
           when :string_node
-            # In `%w(a b)`, the word reduces with its separator.
+            if node.opening_loc
+              assert_reduction(ranges, node)
+            else
+              # Undelimited fragments can reduce with surrounding syntax, as
+              # in `%w(a b)` or the text of an interpolated string.
+            end
           when :symbol_node
             # In `%i(a b)`, the symbol reduces with its separator.
           when :alias_global_variable_node
