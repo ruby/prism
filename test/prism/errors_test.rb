@@ -152,6 +152,11 @@ module Prism
       ].each do |source|
         assert_equal [:write_target_unexpected], Prism.parse(source).errors.map(&:type), source
       end
+
+      result = Prism.parse("first, not() = 1, 2")
+      target = result.statement.lefts.last
+      assert_kind_of ErrorRecoveryNode, target
+      assert_equal "not()", target.unexpected.location.slice
     end
 
     def test_mixed_encoding_locations
