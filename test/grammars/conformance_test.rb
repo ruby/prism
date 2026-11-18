@@ -63,8 +63,9 @@ module Prism
 
         ast, tokens = result.value
         ranges = runner.run(Terminals.translate(tokens)).group_by { |reduction| reduction.range.begin }
-        stack = [ast]
+        ranges.default = [].freeze
 
+        stack = [ast]
         until stack.empty?
           node = stack.pop
           stack.concat(node.compact_child_nodes)
@@ -77,7 +78,7 @@ module Prism
       end
 
       def matching_range?(node, ranges, range, source)
-        candidates = ranges.fetch(range.begin) { [] }
+        candidates = ranges[range.begin]
 
         case node.type
         when :when_node
@@ -144,7 +145,7 @@ module Prism
       end
 
       def reduction_for(ranges, range)
-        range && ranges.fetch(range.begin) { [] }.find { |candidate| candidate.range.equal?(range) }
+        range && ranges[range.begin].find { |candidate| candidate.range.equal?(range) }
       end
 
       def case_branch_decl_end(reduction, child_ranges, then_keyword_loc)
