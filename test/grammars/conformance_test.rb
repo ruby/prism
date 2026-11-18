@@ -71,7 +71,14 @@ module Prism
           when :else_node
             # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
           when :implicit_node
-            # In `case x; in {foo:}; end`, the label implies a capture of foo.
+            # In a shorthand hash pattern, p_kw includes the label's colon.
+            assert_reduction(ranges, node) do |reduction, range|
+              rule = reduction.rule
+
+              reduction.range == range ||
+                (rule.lhs.id.s_value == "p_kw" && rule.rhs.length == 1 &&
+                  reduction.range.end == range.end + 1 && source.getbyte(range.end) == ":".ord)
+            end
           when :implicit_rest_node
             # In `x, = y`, the trailing comma implies a rest target.
           when :it_parameters_node
