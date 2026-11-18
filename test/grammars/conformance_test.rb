@@ -24,7 +24,6 @@ module Prism
         :it_parameters_node,              # In `proc { it }`, the inferred parameter list has no dedicated reduction.
         :local_variable_read_node,        # In `x = 1; case y; in ^x; end`, the pin and its variable reduce together.
         :local_variable_target_node,      # In `case x; in {foo:}; end`, the capture excludes the label's colon.
-        :match_predicate_node,            # In `if a in x: 1, then end`, the node excludes the trailing comma.
         :numbered_parameters_node,        # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
         :parentheses_node,                # In `not()`, the parentheses are part of the not production.
         :rational_node,                   # In `1ri`, the rational is part of one imaginary terminal.
@@ -104,11 +103,20 @@ module Prism
               end
           end
         when :parameters_node
-          # An f_args reduction can include a trailing comma outside the range
-          # of the node.
+          # An f_args reduction can include a trailing comma outside Prism's
+          # parameter range.
           candidates.any? do |reduction|
             reduction.range == range ||
               (reduction.rule.lhs.id.s_value == "f_args" &&
+                source.byteslice(range.end...reduction.range.end).b.match?(/\A[ \t\r\n]*,\z/))
+          end
+        when :match_predicate_node
+          # The expr reduction for `a in x: 1,` includes the pattern's trailing
+          # comma outside Prism's match predicate range.
+          candidates.any? do |reduction|
+            rule = reduction.rule
+            reduction.range == range ||
+              (rule.lhs.id.s_value == "expr" && rule.rhs[1]&.id&.s_value == "keyword_in" &&
                 source.byteslice(range.end...reduction.range.end).b.match?(/\A[ \t\r\n]*,\z/))
           end
         when :constant_path_node
