@@ -95,7 +95,20 @@ module Prism
               # In `-1**2`, one production covers both exponentiation and negation.
             end
           when :else_node
-            # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
+            if node.end_keyword_loc&.slice == "end"
+              # A rescue body reduces the else keyword separately. Other
+              # clauses can reduce as opt_else. Both end at the enclosing k_end.
+              assert_reduction(ranges, node) do |reduction, range|
+                name = reduction.rule.lhs.id.s_value
+
+                reduction.range == range ||
+                  ((name == "opt_else" || name == "k_else") &&
+                    matches_closing_end?(node, ranges, range, reduction))
+              end
+            else
+              # The ternary reduces both branches together, and a rescue
+              # body's else node can include the following ensure keyword.
+            end
           when :implicit_node
             # In a shorthand hash pattern, p_kw includes the label's colon.
             assert_reduction(ranges, node) do |reduction, range|
