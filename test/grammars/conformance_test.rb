@@ -17,7 +17,6 @@ module Prism
         :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
         :implicit_rest_node,              # In `x, = y`, the trailing comma implies a rest target.
-        :interpolated_symbol_node,        # In `f("x#{y}": 1)`, the quoted label reduces with its value.
         :it_parameters_node,              # In `proc { it }`, the inferred parameter list has no dedicated reduction.
         :local_variable_read_node,        # In `x = 1; case y; in ^x; end`, the pin and its variable reduce together.
         :local_variable_target_node,      # In `case x; in {foo:}; end`, the capture excludes the label's colon.
@@ -79,6 +78,15 @@ module Prism
           closing_start = node.end_keyword_loc.start_offset
           candidates.any? { |reduction| reduction.rule.lhs.id.s_value == "opt_ensure" && reduction.range.end <= closing_start } &&
             ranges[closing_start].any? { |reduction| reduction.rule.lhs.id.s_value == "k_end" && reduction.range.end == range.end }
+        when :interpolated_symbol_node
+          # A quoted label reduces with its value. The tLABEL_END child
+          # ends the symbol's range.
+          candidates.any? do |reduction|
+            rule = reduction.rule
+            reduction.range == range ||
+              (rule.lhs.id.s_value == "assoc" && rule.rhs[2]&.id&.s_value == "tLABEL_END" &&
+                reduction.child_ranges[2].end == range.end)
+          end
         when :integer_node, :float_node, :rational_node
           # An imaginary literal reduces as one number. Prism gives the
           # coefficient a range that ends before the `i`.
