@@ -888,6 +888,11 @@ module Prism
     # : (Symbol name) -> Integer
     def shareable_constant_node_flag: (Symbol name) -> Integer
 
+    # Retrieve the value of one of the StatementsFlags flags.
+    #
+    # : (Symbol name) -> Integer
+    def statements_flag: (Symbol name) -> Integer
+
     # Retrieve the value of one of the StringFlags flags.
     #
     # : (Symbol name) -> Integer

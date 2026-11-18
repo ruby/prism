@@ -605,6 +605,11 @@ module Prism
     sig { params(node: ShareableConstantNode).returns(String) }
     private def shareable_constant_node_flags_inspect(node); end
 
+    # Inspect a node that has statements_flags flags to display the flags as a
+    # comma-separated list.
+    sig { params(node: StatementsNode).returns(String) }
+    private def statements_flags_inspect(node); end
+
     # Inspect a node that has string_flags flags to display the flags as a
     # comma-separated list.
     sig { params(node: ::T.any(SourceFileNode, StringNode)).returns(String) }

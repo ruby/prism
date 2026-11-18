@@ -3,7 +3,7 @@
 ├── locals: []
 └── statements:
     @ StatementsNode (location: (1,0)-(1,12))
-    ├── flags: ∅
+    ├── flags: contains_pre_execution
     └── body: (length: 1)
         └── @ PreExecutionNode (location: (1,0)-(1,12))
             ├── flags: newline

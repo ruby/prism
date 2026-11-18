@@ -620,6 +620,12 @@ module Prism
     # : (ShareableConstantNode node) -> String
     def shareable_constant_node_flags_inspect: (ShareableConstantNode node) -> String
 
+    # Inspect a node that has statements_flags flags to display the flags as a
+    # comma-separated list.
+    #
+    # : (StatementsNode node) -> String
+    def statements_flags_inspect: (StatementsNode node) -> String
+
     # Inspect a node that has string_flags flags to display the flags as a
     # comma-separated list.
     #

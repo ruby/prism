@@ -721,6 +721,10 @@ module Prism
     sig { params(name: Symbol).returns(Integer) }
     def shareable_constant_node_flag(name); end
 
+    # Retrieve the value of one of the StatementsFlags flags.
+    sig { params(name: Symbol).returns(Integer) }
+    def statements_flag(name); end
+
     # Retrieve the value of one of the StringFlags flags.
     sig { params(name: Symbol).returns(Integer) }
     def string_flag(name); end

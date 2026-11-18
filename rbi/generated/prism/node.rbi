@@ -13808,6 +13808,10 @@ module Prism
     sig { override.returns(String) }
     def inspect; end
 
+    # the statement list directly contains a `BEGIN` block
+    sig { returns(T::Boolean) }
+    def contains_pre_execution?; end
+
     # Returns the `body` attribute.
     sig { returns(T::Array[Node]) }
     def body; end
@@ -15101,6 +15105,12 @@ module Prism
 
     # constant writes that should be modified with shareable constant value experimental copy
     EXPERIMENTAL_COPY = T.let(nil, ::T.untyped)
+  end
+
+  # Flags for statement lists.
+  module StatementsFlags
+    # the statement list directly contains a `BEGIN` block
+    CONTAINS_PRE_EXECUTION = T.let(nil, ::T.untyped)
   end
 
   # Flags for string nodes.

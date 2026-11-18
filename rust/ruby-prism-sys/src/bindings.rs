@@ -2366,6 +2366,9 @@ pub type pm_splat_node_t = pm_splat_node;
 
  Type: ::PM_STATEMENTS_NODE
 
+ Flags (#pm_statements_flags):
+ * ::PM_STATEMENTS_FLAGS_CONTAINS_PRE_EXECUTION
+
  @extends pm_node_t
 */
 pub type pm_statements_node_t = pm_statements_node;
@@ -9108,6 +9111,9 @@ pub struct pm_splat_node {
 
  Type: ::PM_STATEMENTS_NODE
 
+ Flags (#pm_statements_flags):
+ * ::PM_STATEMENTS_FLAGS_CONTAINS_PRE_EXECUTION
+
  @extends pm_node_t
 */
 #[repr(C)]
@@ -10412,6 +10418,19 @@ pub enum pm_shareable_constant_node_flags {
     /** constant writes that should be modified with shareable constant value experimental copy
 */
     PM_SHAREABLE_CONSTANT_NODE_FLAGS_LAST = 17,
+}
+#[repr(u32)]
+#[non_exhaustive]
+/** Flags for statement lists.
+*/
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub enum pm_statements_flags {
+    /** the statement list directly contains a `BEGIN` block
+*/
+    PM_STATEMENTS_FLAGS_CONTAINS_PRE_EXECUTION = 4,
+    /** the statement list directly contains a `BEGIN` block
+*/
+    PM_STATEMENTS_FLAGS_LAST = 5,
 }
 #[repr(u32)]
 #[non_exhaustive]
