@@ -19,7 +19,6 @@ module Prism
         :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
         :implicit_rest_node,              # In `x, = y`, the trailing comma implies a rest target.
-        :integer_node,                    # In `1i`, the integer is part of one imaginary terminal.
         :interpolated_symbol_node,        # In `f("x#{y}": 1)`, the quoted label reduces with its value.
         :it_parameters_node,              # In `proc { it }`, the inferred parameter list has no dedicated reduction.
         :local_variable_read_node,        # In `x = 1; case y; in ^x; end`, the pin and its variable reduce together.
@@ -78,6 +77,21 @@ module Prism
         candidates = ranges[range.begin]
 
         case node.type
+        when :integer_node
+          # An imaginary literal reduces as one number. Prism gives the
+          # integer coefficient a range that ends before the `i`.
+          candidates.any? do |reduction|
+            next true if reduction.range == range
+            next false if reduction.range.end != range.end + 1 || source.getbyte(range.end) != "i".ord
+
+            if reduction.rule.lhs.id.s_value == "numeric"
+              # Unary minus is a separate terminal in the numeric production.
+              reduction = reduction_for(ranges, reduction.child_ranges.last)
+            end
+
+            reduction&.rule&.lhs&.id&.s_value == "simple_numeric" &&
+              reduction.rule.rhs.first.id.s_value == "tIMAGINARY"
+          end
         when :when_node
           # The case_body reduction includes subsequent arms. Use the end
           # of this arm's statements or its `when` header if the body is empty.
