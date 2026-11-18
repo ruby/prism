@@ -27,7 +27,6 @@ module Prism
         :match_predicate_node,            # In `if a in x: 1, then end`, the node excludes the trailing comma.
         :numbered_parameters_node,        # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
         :parentheses_node,                # In `not()`, the parentheses are part of the not production.
-        :program_node,                    # An empty source file produces a zero-width program node.
         :rational_node,                   # In `1ri`, the rational is part of one imaginary terminal.
         :rescue_modifier_node,            # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
         :splat_node,                      # In `a, *b = c`, the splat is part of the multiple-assignment target.

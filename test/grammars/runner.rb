@@ -83,6 +83,12 @@ module Prism
 
                 reductions << Reduction.new(rule, range, parts)
                 range
+              else
+                # Anchor an empty reduction at the end of the last shifted
+                # terminal. It contributes no span to its parent reduction.
+                offset = cursor.zero? ? 0 : terminals.fetch(cursor - 1).location.end_offset
+                reductions << Reduction.new(rule, offset...offset, parts)
+                nil
               end
             )
 
