@@ -8,11 +8,12 @@ module Prism
       class Error < StandardError; end
 
       class Reduction
-        attr_reader :rule, :range
+        attr_reader :rule, :range, :child_ranges
 
-        def initialize(rule, range)
+        def initialize(rule, range, child_ranges)
           @rule = rule
           @range = range
+          @child_ranges = child_ranges
         end
       end
 
@@ -71,16 +72,16 @@ module Prism
             rule = @rules.fetch(-action - 1)
             stack.pop(rule.rhs.length)
 
+            parts = spans.pop(rule.rhs.length)
             spans << (
-              if !(children = spans.pop(rule.rhs.length).compact).empty?
+              if !(children = parts.compact).empty?
                 range = children.first.begin...children.last.end
-
                 case rule.lhs.id.s_value
                 when "string1", "xstring"
                   range = heredocs.fetch(range.begin, range)
                 end
 
-                reductions << Reduction.new(rule, range)
+                reductions << Reduction.new(rule, range, parts)
                 range
               end
             )
