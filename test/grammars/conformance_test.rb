@@ -95,19 +95,15 @@ module Prism
               # In `-1**2`, one production covers both exponentiation and negation.
             end
           when :else_node
-            if node.end_keyword_loc&.slice == "end"
-              # A rescue body reduces the else keyword separately. Other
-              # clauses can reduce as opt_else. Both end at the enclosing k_end.
-              assert_reduction(ranges, node) do |reduction, range|
-                name = reduction.rule.lhs.id.s_value
+            # A rescue body reduces the else keyword separately, and the
+            # clause can extend through ensure as well as end.
+            closing_rule = "k_#{node.end_keyword_loc.slice}"
+            assert_reduction(ranges, node) do |reduction, range|
+              name = reduction.rule.lhs.id.s_value
 
-                reduction.range == range ||
-                  ((name == "opt_else" || name == "k_else") &&
-                    matches_closing_end?(node, ranges, range, reduction))
-              end
-            else
-              # The ternary reduces both branches together, and a rescue
-              # body's else node can include the following ensure keyword.
+              reduction.range == range ||
+                ((name == "opt_else" || name == "k_else") &&
+                  matches_closing_keyword?(node, ranges, range, reduction, closing_rule))
             end
           when :implicit_node
             # In a shorthand hash pattern, p_kw includes the label's colon.
@@ -184,17 +180,37 @@ module Prism
               assert_reduction(ranges, node)
             end
           when :if_node
-            # An elsif arm reduces as if_tail. The surrounding if owns its end.
-            assert_reduction(ranges, node) do |reduction, range|
-              reduction.range == range ||
-                (reduction.rule.lhs.id.s_value == "if_tail" &&
-                  reduction.rule.rhs.first.id.s_value == "k_elsif" &&
-                  matches_closing_end?(node, ranges, range, reduction))
+            if node.if_keyword_loc.nil?
+              # A ternary reduces both branches together. The colon and
+              # final expression delimit its ElseNode.
+              recurse = false
+              branch = node.subsequent
+              branch_range = location_range(branch.location)
+              stack.concat(node.compact_child_nodes.reject { |child| child.equal?(branch) })
+              stack.concat(branch.compact_child_nodes)
+
+              assert_reduction(ranges, node) do |reduction, range|
+                rhs = reduction.rule.rhs
+
+                reduction.range == range &&
+                  rhs[1]&.id&.s_value == "'?'" &&
+                  rhs[-2]&.id&.s_value == "':'" &&
+                  reduction.child_ranges[-2].begin == branch_range.begin &&
+                  reduction.child_ranges[-1].end == branch_range.end
+              end
+            else
+              # An elsif arm reduces as if_tail. The surrounding if owns its end.
+              assert_reduction(ranges, node) do |reduction, range|
+                reduction.range == range ||
+                  (reduction.rule.lhs.id.s_value == "if_tail" &&
+                    reduction.rule.rhs.first.id.s_value == "k_elsif" &&
+                    matches_closing_keyword?(node, ranges, range, reduction))
+              end
             end
           when :ensure_node
             # The clause starts at opt_ensure and ends at the enclosing k_end.
             assert_reduction(ranges, node) do |reduction, range|
-              reduction.rule.lhs.id.s_value == "opt_ensure" && matches_closing_end?(node, ranges, range, reduction)
+              reduction.rule.lhs.id.s_value == "opt_ensure" && matches_closing_keyword?(node, ranges, range, reduction)
             end
           when :interpolated_symbol_node
             # A quoted label reduces with its value. The tLABEL_END child
@@ -338,11 +354,11 @@ module Prism
         assert match, "No reduction at #{node.type} range #{range}"
       end
 
-      def matches_closing_end?(node, ranges, range, reduction)
+      def matches_closing_keyword?(node, ranges, range, reduction, closing_rule = "k_end")
         closing = node.end_keyword_loc
         return false if closing.nil? || reduction.range.end > closing.start_offset
 
-        ranges[closing.start_offset].any? { |ending| ending.rule.lhs.id.s_value == "k_end" && ending.range.end == range.end }
+        ranges[closing.start_offset].any? { |ending| ending.rule.lhs.id.s_value == closing_rule && ending.range.end == range.end }
       end
 
       def clause_body_end(reduction, ranges)
