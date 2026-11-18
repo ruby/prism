@@ -116,6 +116,7 @@ A build variant is chosen by an environment variable, which both the C extension
 * `PRISM_BUILD_DEBUG` - Defines the `PRISM_BUILD_DEBUG` build option below.
 * `PRISM_BUILD_MINIMAL` - Defines the `PRISM_BUILD_MINIMAL` build option below.
 * `PRISM_BUILD_NDEBUG` - Defines `NDEBUG`, which compiles out the assertions.
+* `PRISM_BUILD_ASAN` - Compiles with the address sanitizer. `rake test:asan` preloads the sanitizer runtime and runs the tests against this variant.
 * `PRISM_BUILD_UBSAN` - Compiles with the undefined behavior sanitizer, which aborts on the first undefined behavior it detects. `rake test:ubsan` runs the tests against this variant.
 
 For example, this builds the minimal variant and runs the tests against it:

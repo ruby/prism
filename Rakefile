@@ -107,7 +107,7 @@ if RUBY_ENGINE == "ruby" and !ENV["PRISM_FFI_BACKEND"]
   require "rake/extensiontask"
   require "shellwords"
 
-  build_variants = %w[debug minimal ndebug ubsan]
+  build_variants = %w[debug minimal ndebug asan ubsan]
 
   extension = Rake::ExtensionTask.new("prism", PRISM_SPEC) do |ext|
     ext.ext_dir = "ext/prism"

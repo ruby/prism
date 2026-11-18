@@ -70,6 +70,47 @@ namespace :test do
     sh({ "PRISM_BUILD_DEBUG" => "1" }, "bundle", "exec", "rake", "test:valgrind_internal")
   end
 
+  desc "Run tests with the address sanitizer"
+  task :asan do
+    sh({ "PRISM_BUILD_ASAN" => "1" }, "bundle", "exec", "rake", "compile")
+    Rake::Task["test:asan_internal"].invoke
+  end
+
+  class AsanTestTask < Rake::TestTask
+    def ruby(args, **options, &block)
+      require "shellwords"
+      compiler = Shellwords.split(RbConfig::CONFIG.fetch("CC"))
+
+      if RbConfig::CONFIG.fetch("host_os").start_with?("darwin")
+        preload = "DYLD_INSERT_LIBRARIES"
+        libraries = ["libclang_rt.asan_osx_dynamic.dylib"]
+      else
+        preload = "LD_PRELOAD"
+        cpu = RbConfig::CONFIG.fetch("host_cpu")
+        libraries = ["libclang_rt.asan-#{cpu}.so", "libasan.so"]
+      end
+
+      runtime =
+        libraries.find do |library|
+          path = IO.popen([*compiler, "-print-file-name=#{library}"], &:read).strip
+          break path if File.file?(path)
+        end
+
+      abort "Could not locate the AddressSanitizer runtime for #{compiler.join(' ')}" unless runtime
+
+      # Set the preload in the shell that starts the test runner, since macOS
+      # can strip DYLD_INSERT_LIBRARIES when launching the shell itself.
+      # Let Ruby manage alternate signal stacks and scan native stacks for GC
+      # roots. LeakSanitizer would also report allocations from the host VM.
+      preloads = [runtime, ENV[preload]].compact.join(":")
+      asan_options = ENV.fetch("ASAN_OPTIONS", "detect_leaks=0:use_sigaltstack=0:detect_stack_use_after_return=0")
+      sh("#{preload}=#{Shellwords.escape(preloads)} ASAN_OPTIONS=#{Shellwords.escape(asan_options)} #{Shellwords.escape(RUBY)} #{args}", **options, &block)
+    end
+  end
+
+  AsanTestTask.new(:asan_internal, &config)
+  Rake::Task["test:asan_internal"].clear_comments
+
   # The tests run against the variant built with the undefined behavior
   # sanitizer, which aborts on the first undefined behavior it detects. As with
   # test:valgrind, the variable is set for a new rake process.
