@@ -13,7 +13,6 @@ module Prism
         :block_node,                      # In `Foo::Bar { |a| 42 }`, the block is part of the command production.
         :call_node,                       # In `-1**2`, one production covers both exponentiation and negation.
         :else_node,                       # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
-        :ensure_node,                     # In `begin; x; ensure; y; end`, the node includes the enclosing end.
         :global_variable_read_node,       # In `alias $x $y`, the alias reduces both operands together.
         :if_node,                         # In `if a; b; elsif c; d; end`, the elsif node includes the enclosing end.
         :implicit_node,                   # In `case x; in {foo:}; end`, the label implies a capture of foo.
@@ -75,6 +74,11 @@ module Prism
         candidates = ranges[range.begin]
 
         case node.type
+        when :ensure_node
+          # The clause starts at opt_ensure and ends at the enclosing k_end.
+          closing_start = node.end_keyword_loc.start_offset
+          candidates.any? { |reduction| reduction.rule.lhs.id.s_value == "opt_ensure" && reduction.range.end <= closing_start } &&
+            ranges[closing_start].any? { |reduction| reduction.rule.lhs.id.s_value == "k_end" && reduction.range.end == range.end }
         when :integer_node, :float_node, :rational_node
           # An imaginary literal reduces as one number. Prism gives the
           # coefficient a range that ends before the `i`.
