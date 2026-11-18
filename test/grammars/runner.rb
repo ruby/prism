@@ -7,6 +7,15 @@ module Prism
     class Runner
       class Error < StandardError; end
 
+      class Reduction
+        attr_reader :rule, :range
+
+        def initialize(rule, range)
+          @rule = rule
+          @range = range
+        end
+      end
+
       def initialize(filepath)
         grammar = Lrama::Parser.new(File.read(filepath), filepath).parse
         grammar.prepare
@@ -26,13 +35,22 @@ module Prism
       end
 
       def run(terminals)
+        heredocs = {}
         input =
-          terminals.map do |name|
-            @terminals.fetch(name) { raise Error, "unknown grammar terminal #{name.inspect}" }
+          terminals.map do |terminal|
+            if terminal.heredoc?
+              location = terminal.location
+              heredocs[location.start_offset] = location.start_offset...location.end_offset
+            end
+
+            @terminals.fetch(terminal.type) { raise Error, "unknown grammar terminal #{terminal.type.inspect}" }
           end
 
         stack = [0]
         cursor = 0
+
+        spans = []
+        reductions = []
 
         until (state = stack.last) == @final
           terminal = input.fetch(cursor) { raise Error, "token stream ended before grammar accepted" }
@@ -42,14 +60,30 @@ module Prism
           action ||= -@tables.yydefact.fetch(state)
 
           if action.zero? || action == @tables.yytable_ninf
-            name = terminals.fetch(cursor)
+            name = terminals.fetch(cursor).type
             raise Error, "LR rejection in state #{state} at token #{cursor + 1}: #{name}"
           elsif action.positive?
             stack << action
+            location = terminals.fetch(cursor).location
+            spans << (location.start_offset...location.end_offset)
             cursor += 1
           else
             rule = @rules.fetch(-action - 1)
             stack.pop(rule.rhs.length)
+
+            spans << (
+              if !(children = spans.pop(rule.rhs.length).compact).empty?
+                range = children.first.begin...children.last.end
+
+                case rule.lhs.id.s_value
+                when "string1", "xstring"
+                  range = heredocs.fetch(range.begin, range)
+                end
+
+                reductions << Reduction.new(rule, range)
+                range
+              end
+            )
 
             nonterminal = rule.lhs.number - @tables.yyntokens
             stack << (table_entry(@pgoto.fetch(nonterminal), stack.last) || @tables.yydefgoto.fetch(nonterminal))
@@ -57,8 +91,10 @@ module Prism
         end
 
         if cursor < input.length
-          raise Error, "grammar accepted before token #{cursor + 1}: #{terminals.fetch(cursor)}"
+          raise Error, "grammar accepted before token #{cursor + 1}: #{terminals.fetch(cursor).type}"
         end
+
+        reductions
       end
 
       private

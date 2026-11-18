@@ -12,7 +12,7 @@ module Prism
         __END__
       ].freeze
 
-      TERMINALS = {
+      TYPES = {
         AMPERSAND: "'&'",
         AMPERSAND_AMPERSAND: "tANDOP",
         AMPERSAND_AMPERSAND_EQUAL: "tOP_ASGN",
@@ -185,6 +185,20 @@ module Prism
         end
       end
 
+      class Terminal
+        attr_reader :type, :location
+
+        def initialize(type, location, heredoc = false)
+          @type = type
+          @location = location
+          @heredoc = heredoc
+        end
+
+        def heredoc?
+          @heredoc
+        end
+      end
+
       def self.translate(tokens)
         terminals = []
         list_literal = false
@@ -204,11 +218,14 @@ module Prism
           # The grammar expects one content terminal per non-interpolated word.
           list_literal = true if type == :PERCENT_LOWER_W || type == :PERCENT_LOWER_I
           list_literal = false if type == :STRING_END
-          next if list_literal && type == :STRING_CONTENT && terminals.last == "tSTRING_CONTENT"
 
-          # Append the terminal corresponding to the token type, raising an
-          # error if it is unmapped.
-          terminals << TERMINALS.fetch(type) { raise Error, token }
+          if list_literal && type == :STRING_CONTENT && terminals.last&.type == "tSTRING_CONTENT"
+            previous = terminals.last
+            terminals[-1] = Terminal.new(previous.type, previous.location.join(token.location))
+            next
+          end
+
+          terminals << Terminal.new(TYPES.fetch(type) { raise Error, token }, token.location, token.type == :HEREDOC_START)
         end
 
         terminals
