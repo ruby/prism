@@ -147,15 +147,17 @@ directory "tmp/ruby" => "tmp" do |task|
   end
 end
 
-directory "grammars"
-["3.3", "3.4", "4.0", "master"].each do |version|
-  desc "Fetch the #{version} parse.y grammar"
-  file "grammars/#{version}.y" => ["tmp/ruby", "grammars"] do |task|
-    chdir "tmp/ruby" do
-      ref = version
+desc "Generate stripped CRuby grammars in test/grammars"
+task :grammars
 
-      if ref != "master"
-        major, minor = ref.split(".")
+["3.3", "3.4", "4.0", "4.1"].each do |version|
+  desc "Fetch the #{version} parse.y grammar"
+  file "test/grammars/#{version}.y" => "tmp/ruby" do |task|
+    chdir "tmp/ruby" do
+      ref = "master"
+
+      unless version == "4.1"
+        major, minor = version.split(".")
         refs = `git -c versionsort.suffix=_preview -c versionsort.suffix=_rc ls-remote --refs --sort=-version:refname origin "v#{major}_#{minor}_*" "v#{major}.#{minor}.*"`
         ref = refs[%r{refs/tags/(\S+)}, 1] or raise
       end
@@ -164,9 +166,16 @@ directory "grammars"
       sh "git reset --hard FETCH_HEAD"
     end
 
-    sh "ruby -p tmp/ruby/tool/id2token.rb < tmp/ruby/parse.y > #{task.name}"
-
     require "lrama"
-    File.write(task.name, ParseYGrammar.new(File.read(task.name), task.name).strip)
+    source = IO.popen([RbConfig.ruby, "-p", "tmp/ruby/tool/id2token.rb"], in: "tmp/ruby/parse.y", &:read)
+    raise "Could not expand parse.y tokens" unless $?.success?
+    File.write(task.name, ParseYGrammar.new(source, task.name).strip)
   end
+
+  task grammars: "test/grammars/#{version}.y"
+end
+
+desc "Replay Prism fixture tokens against the CRuby grammars"
+task "test:grammars" => [:compile, :grammars] do
+  ruby "-Ilib", "test/grammars/conformance_test.rb"
 end

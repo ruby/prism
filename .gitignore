@@ -8,7 +8,7 @@
 /doc/playground/
 /doc/rb/
 /doc/rust/
-/grammars/
+/test/grammars/*.y
 /pkg/
 /spec/reports/
 /top-100-gems/
