@@ -162,7 +162,8 @@ task :grammars
         ref = refs[%r{refs/tags/(\S+)}, 1] or raise
       end
 
-      sh "git fetch --depth=1 origin #{ref}"
+      # Keep background Git maintenance from racing the next shallow fetch.
+      sh "git fetch --no-auto-maintenance --depth=1 origin #{ref}"
       sh "git reset --hard FETCH_HEAD"
     end
 
