@@ -1,0 +1,62 @@
+@ ProgramNode (location: (1,0)-(2,11))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(2,11))
+    ├── flags: ∅
+    └── body: (length: 1)
+        └── @ DefinedNode (location: (1,0)-(2,11))
+            ├── flags: newline
+            ├── lparen_loc: ∅
+            ├── value:
+            │   @ CallNode (location: (2,0)-(2,11))
+            │   ├── flags: ∅
+            │   ├── receiver:
+            │   │   @ ParenthesesNode (location: (2,0)-(2,6))
+            │   │   ├── flags: multiple_statements
+            │   │   ├── body:
+            │   │   │   @ StatementsNode (location: (2,1)-(2,5))
+            │   │   │   ├── flags: ∅
+            │   │   │   └── body: (length: 2)
+            │   │   │       ├── @ CallNode (location: (2,1)-(2,2))
+            │   │   │       │   ├── flags: newline, variable_call, ignore_visibility
+            │   │   │       │   ├── receiver: ∅
+            │   │   │       │   ├── call_operator_loc: ∅
+            │   │   │       │   ├── name: :a
+            │   │   │       │   ├── message_loc: (2,1)-(2,2) = "a"
+            │   │   │       │   ├── opening_loc: ∅
+            │   │   │       │   ├── arguments: ∅
+            │   │   │       │   ├── closing_loc: ∅
+            │   │   │       │   ├── equal_loc: ∅
+            │   │   │       │   └── block: ∅
+            │   │   │       └── @ CallNode (location: (2,4)-(2,5))
+            │   │   │           ├── flags: newline, variable_call, ignore_visibility
+            │   │   │           ├── receiver: ∅
+            │   │   │           ├── call_operator_loc: ∅
+            │   │   │           ├── name: :b
+            │   │   │           ├── message_loc: (2,4)-(2,5) = "b"
+            │   │   │           ├── opening_loc: ∅
+            │   │   │           ├── arguments: ∅
+            │   │   │           ├── closing_loc: ∅
+            │   │   │           ├── equal_loc: ∅
+            │   │   │           └── block: ∅
+            │   │   ├── opening_loc: (2,0)-(2,1) = "("
+            │   │   └── closing_loc: (2,5)-(2,6) = ")"
+            │   ├── call_operator_loc: ∅
+            │   ├── name: :*
+            │   ├── message_loc: (2,7)-(2,8) = "*"
+            │   ├── opening_loc: ∅
+            │   ├── arguments:
+            │   │   @ ArgumentsNode (location: (2,9)-(2,11))
+            │   │   ├── flags: ∅
+            │   │   └── arguments: (length: 1)
+            │   │       └── @ ParenthesesNode (location: (2,9)-(2,11))
+            │   │           ├── flags: ∅
+            │   │           ├── body: ∅
+            │   │           ├── opening_loc: (2,9)-(2,10) = "("
+            │   │           └── closing_loc: (2,10)-(2,11) = ")"
+            │   ├── closing_loc: ∅
+            │   ├── equal_loc: ∅
+            │   └── block: ∅
+            ├── rparen_loc: ∅
+            └── keyword_loc: (1,0)-(1,8) = "defined?"

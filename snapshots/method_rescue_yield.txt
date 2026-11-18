@@ -1,0 +1,53 @@
+@ ProgramNode (location: (1,0)-(4,3))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(4,3))
+    ├── flags: ∅
+    └── body: (length: 1)
+        └── @ DefNode (location: (1,0)-(4,3))
+            ├── flags: newline
+            ├── name: :f
+            ├── name_loc: (1,4)-(1,5) = "f"
+            ├── receiver: ∅
+            ├── parameters: ∅
+            ├── body:
+            │   @ BeginNode (location: (1,0)-(4,3))
+            │   ├── flags: ∅
+            │   ├── begin_keyword_loc: ∅
+            │   ├── statements: ∅
+            │   ├── rescue_clause:
+            │   │   @ RescueNode (location: (2,2)-(3,12))
+            │   │   ├── flags: ∅
+            │   │   ├── keyword_loc: (2,2)-(2,8) = "rescue"
+            │   │   ├── exceptions: (length: 1)
+            │   │   │   └── @ YieldNode (location: (2,9)-(2,14))
+            │   │   │       ├── flags: ∅
+            │   │   │       ├── keyword_loc: (2,9)-(2,14) = "yield"
+            │   │   │       ├── lparen_loc: ∅
+            │   │   │       ├── arguments: ∅
+            │   │   │       └── rparen_loc: ∅
+            │   │   ├── operator_loc: ∅
+            │   │   ├── reference: ∅
+            │   │   ├── then_keyword_loc: ∅
+            │   │   ├── statements:
+            │   │   │   @ StatementsNode (location: (3,4)-(3,12))
+            │   │   │   ├── flags: ∅
+            │   │   │   └── body: (length: 1)
+            │   │   │       └── @ SymbolNode (location: (3,4)-(3,12))
+            │   │   │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+            │   │   │           ├── opening_loc: (3,4)-(3,5) = ":"
+            │   │   │           ├── content_loc: (3,5)-(3,12) = "rescued"
+            │   │   │           ├── closing_loc: ∅
+            │   │   │           └── unescaped: "rescued"
+            │   │   └── subsequent: ∅
+            │   ├── else_clause: ∅
+            │   ├── ensure_clause: ∅
+            │   └── end_keyword_loc: (4,0)-(4,3) = "end"
+            ├── locals: []
+            ├── def_keyword_loc: (1,0)-(1,3) = "def"
+            ├── operator_loc: ∅
+            ├── lparen_loc: ∅
+            ├── rparen_loc: ∅
+            ├── equal_loc: ∅
+            └── end_keyword_loc: (4,0)-(4,3) = "end"

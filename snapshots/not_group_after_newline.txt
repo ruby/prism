@@ -1,0 +1,39 @@
+@ ProgramNode (location: (1,0)-(2,12))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(2,12))
+    ├── flags: ∅
+    └── body: (length: 1)
+        └── @ CallNode (location: (1,0)-(2,12))
+            ├── flags: newline
+            ├── receiver:
+            │   @ OrNode (location: (2,0)-(2,12))
+            │   ├── flags: ∅
+            │   ├── left:
+            │   │   @ ParenthesesNode (location: (2,0)-(2,3))
+            │   │   ├── flags: multiple_statements
+            │   │   ├── body: ∅
+            │   │   ├── opening_loc: (2,0)-(2,1) = "("
+            │   │   └── closing_loc: (2,2)-(2,3) = ")"
+            │   ├── right:
+            │   │   @ CallNode (location: (2,7)-(2,12))
+            │   │   ├── flags: variable_call, ignore_visibility
+            │   │   ├── receiver: ∅
+            │   │   ├── call_operator_loc: ∅
+            │   │   ├── name: :raise
+            │   │   ├── message_loc: (2,7)-(2,12) = "raise"
+            │   │   ├── opening_loc: ∅
+            │   │   ├── arguments: ∅
+            │   │   ├── closing_loc: ∅
+            │   │   ├── equal_loc: ∅
+            │   │   └── block: ∅
+            │   └── operator_loc: (2,4)-(2,6) = "||"
+            ├── call_operator_loc: ∅
+            ├── name: :!
+            ├── message_loc: (1,0)-(1,3) = "not"
+            ├── opening_loc: ∅
+            ├── arguments: ∅
+            ├── closing_loc: ∅
+            ├── equal_loc: ∅
+            └── block: ∅
