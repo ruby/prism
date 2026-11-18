@@ -12,7 +12,6 @@ module Prism
         :back_reference_read_node,        # In `alias $x $&`, the alias reduces both operands together.
         :block_node,                      # In `Foo::Bar { |a| 42 }`, the block is part of the command production.
         :call_node,                       # In `-1**2`, one production covers both exponentiation and negation.
-        :constant_path_node,              # In `::X ||= 1`, the path is part of the assignment production.
         :else_node,                       # In `a ? b : c`, Prism creates an else node for the ternary's false branch.
         :ensure_node,                     # In `begin; x; ensure; y; end`, the node includes the enclosing end.
         :float_node,                      # In `1.5i`, the float is part of one imaginary terminal.
@@ -104,8 +103,23 @@ module Prism
               (reduction.rule.lhs.id.s_value == "f_args" &&
                 source.byteslice(range.end...reduction.range.end).b.match?(/\A[ \t\r\n]*,\z/))
           end
+        when :constant_path_node
+          # A compound assignment can reduce the constant path and assignment
+          # together. The constant before tOP_ASGN ends the path.
+          candidates.any? do |reduction|
+            reduction.range == range || constant_path_end(reduction) == range.end
+          end
         else
           candidates.any? { |reduction| reduction.range == range }
+        end
+      end
+
+      def constant_path_end(reduction)
+        prefix = reduction.rule.rhs.take(4).map { |symbol| symbol.id.s_value }
+        if prefix == %w[primary_value tCOLON2 tCONSTANT tOP_ASGN]
+          reduction.child_ranges[2].end
+        elsif prefix.first(3) == %w[tCOLON3 tCONSTANT tOP_ASGN]
+          reduction.child_ranges[1].end
         end
       end
 
