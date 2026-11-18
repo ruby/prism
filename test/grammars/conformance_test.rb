@@ -24,7 +24,6 @@ module Prism
         :local_variable_target_node,      # In `case x; in {foo:}; end`, the capture excludes the label's colon.
         :numbered_parameters_node,        # In `proc { _1 }`, the inferred parameter list has no dedicated reduction.
         :parentheses_node,                # In `not()`, the parentheses are part of the not production.
-        :rational_node,                   # In `1ri`, the rational is part of one imaginary terminal.
         :rescue_modifier_node,            # In `a, b = f rescue 42`, the rescue modifier is part of the assignment production.
         :splat_node,                      # In `a, *b = c`, the splat is part of the multiple-assignment target.
         :string_node,                     # In `%w(a b)`, the word reduces with its separator.
@@ -76,7 +75,7 @@ module Prism
         candidates = ranges[range.begin]
 
         case node.type
-        when :integer_node, :float_node
+        when :integer_node, :float_node, :rational_node
           # An imaginary literal reduces as one number. Prism gives the
           # coefficient a range that ends before the `i`.
           candidates.any? do |reduction|
