@@ -133,7 +133,7 @@ module Prism
           when :ensure_node
             # The clause starts at opt_ensure and ends at the enclosing k_end.
             assert_reduction(ranges, node) do |reduction, range|
-              reduction.rule.lhs.id.s_value == "opt_ensure" && matches_closing_keyword?(node, ranges, range, reduction)
+              reduction.rule.lhs.id.s_value == "opt_ensure" && matches_closing_keyword?(node, ranges, range, reduction, "k_end")
             end
           when :float_node, :integer_node, :rational_node
             # An imaginary literal reduces as one number. Prism gives the
@@ -175,7 +175,7 @@ module Prism
                 reduction.range == range ||
                   (reduction.rule.lhs.id.s_value == "if_tail" &&
                     reduction.rule.rhs.first.id.s_value == "k_elsif" &&
-                    matches_closing_keyword?(node, ranges, range, reduction))
+                    matches_closing_keyword?(node, ranges, range, reduction, "k_end"))
               end
             end
           when :implicit_node
@@ -354,7 +354,7 @@ module Prism
         assert match, "No reduction at #{node.type} range #{range}"
       end
 
-      def matches_closing_keyword?(node, ranges, range, reduction, closing_rule = "k_end")
+      def matches_closing_keyword?(node, ranges, range, reduction, closing_rule)
         closing = node.end_keyword_loc
         return false if closing.nil? || reduction.range.end > closing.start_offset
 
