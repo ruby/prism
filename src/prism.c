@@ -23385,6 +23385,19 @@ pm_parse_continuable(pm_parser_t *parser) {
             return;
         }
 
+        // A non-constant class/module name is non-continuable once anything
+        // other than whitespace follows it. Otherwise more input could still
+        // complete it (`class a` + `::B`, or `class a\n` + `.b::C`).
+        if (error->diag_id == PM_ERR_CLASS_NAME || error->diag_id == PM_ERR_MODULE_NAME) {
+            const uint8_t *cursor = parser->start + error_end;
+            while (cursor < parser->end && pm_char_is_whitespace(*cursor)) cursor++;
+
+            if (cursor < parser->end) {
+                parser->continuable = false;
+                return;
+            }
+        }
+
         // Track non-stray, non-fatal error positions in list order.
         if (error->diag_id != PM_ERR_UNEXPECTED_TOKEN_IGNORE &&
             error->diag_id != PM_ERR_UNEXPECTED_TOKEN_CLOSE_CONTEXT) {

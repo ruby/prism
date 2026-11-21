@@ -4,6 +4,19 @@ require_relative "../test_helper"
 
 module Prism
   class ContinuableTest < TestCase
+    def test_invalid_class_and_module_names
+      # Non-continuable once anything but whitespace follows a non-constant name.
+      refute_predicate Prism.parse("class a; end\n"), :continuable?
+      refute_predicate Prism.parse("module a; end\n"), :continuable?
+      refute_predicate Prism.parse("class Mine\n  self << class\n    self.class\n  end\nend\n"), :continuable?
+
+      # Followed only by whitespace (or EOF), the name may still continue:
+      # `class a::B` or `class a\n.b::C` are valid.
+      assert_predicate Prism.parse("class a"), :continuable?
+      assert_predicate Prism.parse("class a\n"), :continuable?
+      assert_predicate Prism.parse("module a"), :continuable?
+    end
+
     def test_valid_input
       # Valid input is not continuable (nothing to continue).
       refute_predicate Prism.parse("1 + 1"), :continuable?
