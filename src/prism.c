@@ -18654,7 +18654,8 @@ parse_class(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
     pm_parser_scope_pop(parser);
 
     if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
-        pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
+        // The name token check above already reported a non-constant name.
+        if (name.type == PM_TOKEN_CONSTANT) pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
         if (!PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
             constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
         }
@@ -23382,6 +23383,19 @@ pm_parse_continuable(pm_parser_t *parser) {
         if (pm_parse_err_is_fatal(error->diag_id) && !at_eof) {
             parser->continuable = false;
             return;
+        }
+
+        // A non-constant class/module name is non-continuable once anything
+        // other than whitespace follows it. Otherwise more input could still
+        // complete it (`class a` + `::B`, or `class a\n` + `.b::C`).
+        if (error->diag_id == PM_ERR_CLASS_NAME || error->diag_id == PM_ERR_MODULE_NAME) {
+            const uint8_t *cursor = parser->start + error_end;
+            while (cursor < parser->end && pm_char_is_whitespace(*cursor)) cursor++;
+
+            if (cursor < parser->end) {
+                parser->continuable = false;
+                return;
+            }
         }
 
         // Track non-stray, non-fatal error positions in list order.
