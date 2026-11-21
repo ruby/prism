@@ -18654,7 +18654,8 @@ parse_class(pm_parser_t *parser, uint8_t flags, uint16_t depth) {
     pm_parser_scope_pop(parser);
 
     if (!PM_NODE_TYPE_P(constant_path, PM_CONSTANT_PATH_NODE) && !(PM_NODE_TYPE_P(constant_path, PM_CONSTANT_READ_NODE))) {
-        pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
+        // The name token check above already reported a non-constant name.
+        if (name.type == PM_TOKEN_CONSTANT) pm_parser_err_node(parser, constant_path, PM_ERR_CLASS_NAME);
         if (!PM_NODE_TYPE_P(constant_path, PM_ERROR_RECOVERY_NODE)) {
             constant_path = UP(pm_error_recovery_node_create_unexpected(parser, constant_path));
         }
