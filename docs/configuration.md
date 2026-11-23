@@ -31,6 +31,83 @@ Whenever the structure of the nodes changes, you can run `rake templates` to reg
 
 `config.yml` has a couple of top level fields, which we'll describe below.
 
+## `errors` and `warnings`
+
+Each entry defines a diagnostic name, message, and level. Errors default to `syntax` and warnings default to `default`. The order determines the diagnostic IDs used in serialization.
+
+Each `{format}` consumes the next argument. For example, `key {slice} is duplicated and overwritten on line {line}` takes a `pm_string_t` followed by an `int32_t`. Its callers use `pm_diagnostic_list_append_slice_line`. Messages with no substitutions use `pm_diagnostic_list_append`.
+
+| Format | C argument | Display |
+| --- | --- | --- |
+| `slice` | `pm_string_t` | Text from a C string or a bounded source slice |
+| `byte` | `uint8_t` | One character |
+| `hex`, `hex2` | `uint8_t` | Uppercase hexadecimal, padded to two digits for `hex2` |
+| `line` | `int32_t` | Signed decimal line number |
+
+### Message composition
+
+When composing an error message, use sentence fragments.
+
+Try describing the property of the code that caused the error, rather than
+the rule that is being violated. It may help to use a fragment that completes
+a sentence beginning, "the parser encountered (a) ...". If appropriate, add a
+description of the rule violation (or other helpful context) after a
+semicolon.
+
+For example, instead of "control escape sequence cannot be doubled", prefer:
+
+> "invalid control escape sequence; control cannot be repeated"
+
+In some cases, where the failure is more general or syntax expectations are
+violated, it may make more sense to use a fragment that completes a sentence
+beginning, "the parser ...".
+
+For example:
+
+> "expected an expression after `(`"
+> "cannot parse the expression"
+
+### Message style guide
+
+- Use articles like "a", "an", and "the" when appropriate.
+  - e.g., prefer "cannot parse the expression" to "cannot parse expression".
+- Use the common name for tokens and nodes.
+  - e.g., prefer "keyword splat" to "assoc splat"
+  - e.g., prefer "embedded document" to "embdoc"
+- Do not capitalize the initial word of the message.
+- Use back ticks around token literals
+  - e.g., "Expected a `=>` between the hash key and value"
+- Do not use `.` or other punctuation at the end of the message.
+- Do not use contractions like "can't". Prefer "cannot" to "can not".
+- For tokens that can have multiple meanings, reference the token and its meaning.
+  - e.g., "`*` splat argument" is clearer and more complete than "splat argument" or "`*` argument"
+
+### Error names (PM_ERR_*)
+
+- When appropriate, prefer node name to token name.
+  - e.g., prefer "SPLAT" to "STAR" in the context of argument parsing.
+- Prefer token name to common name.
+  - e.g., prefer "STAR" to "ASTERISK".
+- Try to order the words in the name from more general to more specific,
+  - e.g., "INVALID_NUMBER_DECIMAL" is better than "DECIMAL_INVALID_NUMBER".
+  - When in doubt, look for similar patterns and name them so that they are grouped when lexically
+    sorted. See PM_ERR_ARGUMENT_NO_FORWARDING_* for an example.
+
+### Level
+
+For errors, they are:
+
+* `PM_ERROR_LEVEL_SYNTAX` - Errors that should raise SyntaxError.
+* `PM_ERROR_LEVEL_ARGUMENT` - Errors that should raise ArgumentError.
+* `PM_ERROR_LEVEL_LOAD` - Errors that should raise LoadError.
+* `PM_ERROR_LEVEL_STACK` - Errors that should raise SystemStackError.
+* `PM_ERROR_LEVEL_ENCODING_COMPATIBILITY` - Errors that should raise Encoding::CompatibilityError.
+
+For warnings, they are:
+
+* `PM_WARNING_LEVEL_DEFAULT` - Warnings that appear for `ruby -c -e 'code'`.
+* `PM_WARNING_LEVEL_VERBOSE` - Warnings that appear with `-w`, as in `ruby -w -c -e 'code'`.
+
 ## `tokens`
 
 This is a list of tokens to be used by the lexer. It is shared here so that it can be templated out into both an enum and a function that is used for debugging that returns the name of the token.
