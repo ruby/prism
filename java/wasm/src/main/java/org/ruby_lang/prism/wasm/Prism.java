@@ -27,10 +27,7 @@ public class Prism implements AutoCloseable {
     }
 
     public String version() {
-        int versionPointer = exports.pmVersion();
-        int length = exports.strchr(versionPointer, 0);
-
-        return new String(instance.memory().readBytes(versionPointer, length - versionPointer));
+        return instance.memory().readCString(exports.pmVersion());
     }
 
     public byte[] parse(byte[] sourceBytes, byte[] packedOptions) {
