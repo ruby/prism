@@ -82,7 +82,6 @@ Gem::Specification.new do |spec|
     "include/prism/internal/double.h",
     "include/prism/internal/encoding.h",
     "include/prism/internal/integer.h",
-    "include/prism/internal/isinf.h",
     "include/prism/internal/line_offset_list.h",
     "include/prism/internal/list.h",
     "include/prism/internal/magic_comments.h",
