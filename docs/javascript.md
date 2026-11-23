@@ -125,6 +125,8 @@ To build the WASM package yourself, first obtain a copy of `wasi-sdk`. You can r
 make wasm WASI_SDK_PATH=path/to/wasi-sdk
 ```
 
+The default build traps if an internal parser assertion fails. Add `PRISM_BUILD_DEBUG=1` to the build command to print the failed expression and its source location.
+
 This will generate `javascript/src/prism.wasm`. From there, you can run the tests to verify everything was generated correctly.
 
 ```sh

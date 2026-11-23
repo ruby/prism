@@ -4,6 +4,7 @@ on:
   push:
     paths: &paths
       - ".github/workflows/javascript-bindings.yml"
+      - "javascript/trap.h"
       - "include/**"
       - "src/**"
       - "*akefile*"
