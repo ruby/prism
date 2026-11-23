@@ -508,6 +508,13 @@ module Prism
       assert_false Prism.parse_success?("f(a, def g = obj.fetch x)", version: "4.0")
     end
 
+    def test_command_rhs_of_operator_assignment
+      assert Prism.parse_success?("a += f x")
+      assert Prism.parse_success?("a = b += f x")
+      assert Prism.parse_success?("not(a += f(x))")
+      assert_false Prism.parse_success?("not(a += f x)")
+    end
+
     def test_comma_after_nested_command_assignment
       source = "x = y = f 1 rescue 2, z"
       errors = Prism.parse(source).errors
