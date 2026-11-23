@@ -112,7 +112,7 @@ For warnings, they are:
 
 This is a list of tokens to be used by the lexer. It is shared here so that it can be templated out into both an enum and a function that is used for debugging that returns the name of the token.
 
-Each token is expected to have a `name` key and a `comment` key (both as strings). Optionally they can have a `value` key (an integer) which is used to represent the value in the enum.
+Each token has a `name`, a `comment`, and a `diagnostic_name`, all strings. Diagnostics use `diagnostic_name` verbatim, including any quotes around punctuation or keywords. An optional integer `value` sets the value in the enum.
 
 In C these tokens will be templated out with the prefix `PM_TOKEN_`. For example, if you have a `name` key with the value `PERCENT`, you can access this in C through `PM_TOKEN_PERCENT`.
 
