@@ -60,7 +60,6 @@ Gem::Specification.new do |spec|
     "include/prism/compiler/filesystem.h",
     "include/prism/compiler/flex_array.h",
     "include/prism/compiler/force_inline.h",
-    "include/prism/compiler/format.h",
     "include/prism/compiler/inline.h",
     "include/prism/compiler/lifetimebound.hpp",
     "include/prism/compiler/nodiscard.h",
