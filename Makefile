@@ -124,12 +124,13 @@ build/libprism.a: $(STATIC_OBJECTS) build/.flags build/.sources build/.arflags
 	$(Q) $(RMALL) $@
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
 
-javascript/src/prism.wasm: Makefile $(SOURCES) $(HEADERS) build/.sources build/.wasm.flags
+javascript/src/prism.wasm: Makefile javascript/trap.h $(SOURCES) $(HEADERS) build/.sources build/.wasm.flags
 	$(ECHO) "building $@"
 	$(Q) $(WASI_SDK_PATH)/bin/clang --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot/ \
 		$(DEBUG_FLAGS) \
 		-DPRISM_EXPORT_SYMBOLS -DPRISM_EXCLUDE_PRETTYPRINT -DPRISM_EXCLUDE_JSON \
 		-D_WASI_EMULATED_MMAN -lwasi-emulated-mman $(CPPFLAGS) $(CFLAGS) \
+		-include javascript/trap.h \
 		$(WASM_EXPORTS) -Wl,--gc-sections -Wl,--strip-all -Wl,--lto-O3 -Wl,--no-entry -mexec-model=reactor \
 		-Oz -g0 -flto -fdata-sections -ffunction-sections \
 		-o $@ $(SOURCES)
