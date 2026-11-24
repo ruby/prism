@@ -44,6 +44,21 @@ module Prism
       refute_predicate Prism.parse_statement("(\nx\n)").body, :leading_semicolon?
     end
 
+    def test_parenthesized_multiple_assignment_targets
+      result = Prism.parse("x, (a, b), (obj).c = values")
+      assert_predicate result, :success?
+      _, nested, field = result.statement.lefts
+      assert_instance_of MultiTargetNode, nested
+      assert_equal [:a, :b], nested.lefts.map(&:name)
+      assert_instance_of CallTargetNode, field
+      assert_equal "(obj)", field.receiver.slice
+
+      assert Prism.parse_success?("for ((a, b), c) in values; end")
+      assert Prism.parse_success?("(x, (a, b)\n) = values")
+      assert Prism.parse_success?("x, *(obj)[0] = values")
+      assert Prism.parse_success?("(; a, b = values).c, x = values")
+    end
+
     def test_parse_takes_file_path
       filepath = "filepath.rb"
       result = Prism.parse("def foo; __FILE__; end", filepath: filepath)
