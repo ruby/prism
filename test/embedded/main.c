@@ -1,5 +1,7 @@
 #include "prism.h"
 
+#include "prism/internal/memequal.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +38,7 @@ main(void) {
     bool found = false;
 
     for (const char *cursor = haystack; !found && (cursor = memchr(cursor, needle[0], (size_t) (haystack_end - cursor))) != NULL; cursor++) {
-        found = (size_t) (haystack_end - cursor) >= needle_length && memcmp(cursor, needle, needle_length) == 0;
+        found = (size_t) (haystack_end - cursor) >= needle_length && pm_memequal(cursor, needle, needle_length);
     }
 
     if (!found) {
