@@ -1,0 +1,63 @@
+@ ProgramNode (location: (1,0)-(3,20))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(3,20))
+    ├── flags: ∅
+    └── body: (length: 2)
+        ├── @ DefNode (location: (1,0)-(1,13))
+        │   ├── flags: newline
+        │   ├── name: :f
+        │   ├── name_loc: (1,4)-(1,5) = "f"
+        │   ├── receiver: ∅
+        │   ├── parameters:
+        │   │   @ ParametersNode (location: (1,6)-(1,7))
+        │   │   ├── flags: ∅
+        │   │   ├── requireds: (length: 1)
+        │   │   │   └── @ RequiredParameterNode (location: (1,6)-(1,7))
+        │   │   │       ├── flags: ∅
+        │   │   │       └── name: :x
+        │   │   ├── optionals: (length: 0)
+        │   │   ├── rest: ∅
+        │   │   ├── posts: (length: 0)
+        │   │   ├── keywords: (length: 0)
+        │   │   ├── keyword_rest: ∅
+        │   │   └── block: ∅
+        │   ├── body: ∅
+        │   ├── locals: [:x]
+        │   ├── def_keyword_loc: (1,0)-(1,3) = "def"
+        │   ├── operator_loc: ∅
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── end_keyword_loc: (1,10)-(1,13) = "end"
+        └── @ DefNode (location: (3,0)-(3,20))
+            ├── flags: newline
+            ├── name: :f
+            ├── name_loc: (3,9)-(3,10) = "f"
+            ├── receiver:
+            │   @ SelfNode (location: (3,4)-(3,8))
+            │   └── flags: ∅
+            ├── parameters:
+            │   @ ParametersNode (location: (3,11)-(3,14))
+            │   ├── flags: ∅
+            │   ├── requireds: (length: 0)
+            │   ├── optionals: (length: 0)
+            │   ├── rest:
+            │   │   @ RestParameterNode (location: (3,11)-(3,14))
+            │   │   ├── flags: ∅
+            │   │   ├── name: :xs
+            │   │   ├── name_loc: (3,12)-(3,14) = "xs"
+            │   │   └── operator_loc: (3,11)-(3,12) = "*"
+            │   ├── posts: (length: 0)
+            │   ├── keywords: (length: 0)
+            │   ├── keyword_rest: ∅
+            │   └── block: ∅
+            ├── body: ∅
+            ├── locals: [:xs]
+            ├── def_keyword_loc: (3,0)-(3,3) = "def"
+            ├── operator_loc: (3,8)-(3,9) = "."
+            ├── lparen_loc: ∅
+            ├── rparen_loc: ∅
+            ├── equal_loc: ∅
+            └── end_keyword_loc: (3,17)-(3,20) = "end"
