@@ -12224,8 +12224,10 @@ unsafe extern "C" {
  @param source The source to check.
  @param length The length of the source.
  @param encoding_name The name of the encoding of the source.
+ @param encoding_length The length of the encoding name in bytes.
  @param version The version of Ruby to answer for, as pm_options_version_set
    reads it, such as "3.4" or "latest". NULL is the latest version.
+ @param version_length The length of the version in bytes, or 0 for NULL.
  @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
    the query is false, PM_STRING_QUERY_ERROR if the encoding was invalid, and
    PM_STRING_QUERY_ERROR_VERSION if the version was invalid.
@@ -12234,15 +12236,19 @@ unsafe extern "C" {
         source: *const u8,
         length: usize,
         encoding_name: *const ::std::os::raw::c_char,
+        encoding_length: usize,
         version: *const ::std::os::raw::c_char,
+        version_length: usize,
     ) -> pm_string_query_t;
     /** Check that the slice is a valid constant name.
 
  @param source The source to check.
  @param length The length of the source.
  @param encoding_name The name of the encoding of the source.
+ @param encoding_length The length of the encoding name in bytes.
  @param version The version of Ruby to answer for, as pm_options_version_set
    reads it, such as "3.4" or "latest". NULL is the latest version.
+ @param version_length The length of the version in bytes, or 0 for NULL.
  @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
    the query is false, PM_STRING_QUERY_ERROR if the encoding was invalid, and
    PM_STRING_QUERY_ERROR_VERSION if the version was invalid.
@@ -12251,15 +12257,19 @@ unsafe extern "C" {
         source: *const u8,
         length: usize,
         encoding_name: *const ::std::os::raw::c_char,
+        encoding_length: usize,
         version: *const ::std::os::raw::c_char,
+        version_length: usize,
     ) -> pm_string_query_t;
     /** Check that the slice is a valid method name.
 
  @param source The source to check.
  @param length The length of the source.
  @param encoding_name The name of the encoding of the source.
+ @param encoding_length The length of the encoding name in bytes.
  @param version The version of Ruby to answer for, as pm_options_version_set
    reads it, such as "3.4" or "latest". NULL is the latest version.
+ @param version_length The length of the version in bytes, or 0 for NULL.
  @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
    the query is false, PM_STRING_QUERY_ERROR if the encoding was invalid, and
    PM_STRING_QUERY_ERROR_VERSION if the version was invalid.
@@ -12268,15 +12278,19 @@ unsafe extern "C" {
         source: *const u8,
         length: usize,
         encoding_name: *const ::std::os::raw::c_char,
+        encoding_length: usize,
         version: *const ::std::os::raw::c_char,
+        version_length: usize,
     ) -> pm_string_query_t;
     /** Check that the slice is a keyword.
 
  @param source The source to check.
  @param length The length of the source.
  @param encoding_name The name of the encoding of the source.
+ @param encoding_length The length of the encoding name in bytes.
  @param version The version of Ruby to answer for, as pm_options_version_set
    reads it, such as "3.4" or "latest". NULL is the latest version.
+ @param version_length The length of the version in bytes, or 0 for NULL.
  @returns PM_STRING_QUERY_TRUE if the query is true, PM_STRING_QUERY_FALSE if
    the query is false, PM_STRING_QUERY_ERROR if the encoding was invalid, and
    PM_STRING_QUERY_ERROR_VERSION if the version was invalid.
@@ -12285,7 +12299,9 @@ unsafe extern "C" {
         source: *const u8,
         length: usize,
         encoding_name: *const ::std::os::raw::c_char,
+        encoding_length: usize,
         version: *const ::std::os::raw::c_char,
+        version_length: usize,
     ) -> pm_string_query_t;
     /** The prism version and the serialization format.
 
