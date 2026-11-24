@@ -14,6 +14,8 @@ namespace :seattlerb do
   desc "Import the seattlerb tests"
   task import: ["tmp/seattlerb", "test/prism/fixtures/seattlerb"] do
     require "bundler/inline"
+    require "set"
+
     gemfile do
       source "https://rubygems.org"
       gem "minitest", require: "minitest/autorun"
@@ -76,7 +78,9 @@ namespace :seattlerb do
 
     RubyParserTestCase.prepend(Hook)
     Minitest.after_run do
-      Hook::COLLECTED.each do |(name, codes)|
+      # Sort by test name so Minitest's random seed cannot change which name gets a suffix.
+      used_names = Set.new
+      Hook::COLLECTED.sort.each do |name, codes|
         name = name.delete("?")
 
         # Clean up the names a bit
@@ -87,7 +91,15 @@ namespace :seattlerb do
           end
         end
 
-        filepath = "test/prism/fixtures/seattlerb/#{name}.txt"
+        # Keep fixtures such as pct_Q_backslash_nl and pct_q_backslash_nl distinct on every filesystem.
+        basename = name
+        suffix = 1
+        until used_names.add?(basename.downcase)
+          suffix += 1
+          basename = "#{name}-#{suffix}"
+        end
+
+        filepath = "test/prism/fixtures/seattlerb/#{basename}.txt"
         File.write(filepath, "#{codes.uniq.sort.join("\n\n")}\n")
       end
 
