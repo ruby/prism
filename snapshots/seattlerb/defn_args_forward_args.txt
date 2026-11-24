@@ -33,7 +33,7 @@
             │   └── block: ∅
             ├── body:
             │   @ StatementsNode (location: (1,21)-(1,36))
-            │   ├── flags: ∅
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (1,21)-(1,36))
             │           ├── flags: newline, ignore_visibility

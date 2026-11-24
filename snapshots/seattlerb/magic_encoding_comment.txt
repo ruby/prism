@@ -17,7 +17,7 @@
             ├── superclass: ∅
             ├── body:
             │   @ StatementsNode (location: (2,36)-(2,68))
-            │   ├── flags: ∅
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
             │       └── @ DefNode (location: (2,36)-(2,68))
             │           ├── flags: newline

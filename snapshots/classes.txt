@@ -168,7 +168,7 @@
         │   ├── superclass: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (14,9)-(14,35))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ SingletonClassNode (location: (14,9)-(14,35))
         │   │           ├── flags: newline
@@ -207,7 +207,7 @@
         │   ├── superclass: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (16,9)-(16,49))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ SingletonClassNode (location: (16,9)-(16,49))
         │   │           ├── flags: newline

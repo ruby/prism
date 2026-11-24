@@ -1469,7 +1469,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (108,10)-(108,14))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (108,10)-(108,14))
         │   │           ├── flags: newline
@@ -1529,7 +1529,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (110,10)-(110,17))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (110,10)-(110,17))
         │   │           ├── flags: newline
@@ -1592,7 +1592,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (112,10)-(112,18))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (112,10)-(112,18))
         │   │           ├── flags: newline, attribute_write
@@ -1655,7 +1655,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (114,10)-(114,21))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (114,10)-(114,21))
         │   │           ├── flags: newline, attribute_write
@@ -1721,7 +1721,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (116,10)-(116,19))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ IndexOperatorWriteNode (location: (116,10)-(116,19))
         │   │           ├── flags: newline
@@ -1784,7 +1784,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (118,10)-(118,23))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ IndexAndWriteNode (location: (118,10)-(118,23))
         │   │           ├── flags: newline

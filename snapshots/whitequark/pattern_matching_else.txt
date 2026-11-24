@@ -33,7 +33,7 @@
             │   ├── else_keyword_loc: (1,17)-(1,21) = "else"
             │   ├── statements:
             │   │   @ StatementsNode (location: (1,23)-(1,24))
-            │   │   ├── flags: ∅
+            │   │   ├── flags: leading_semicolon
             │   │   └── body: (length: 1)
             │   │       └── @ IntegerNode (location: (1,23)-(1,24))
             │   │           ├── flags: newline, static_literal, decimal

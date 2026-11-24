@@ -19708,6 +19708,12 @@ module Prism
     # : () -> bool
     def contains_pre_execution?: () -> bool
 
+    # :category: Flags
+    # a semicolon precedes the first statement in the list
+    #
+    # : () -> bool
+    def leading_semicolon?: () -> bool
+
     # :call-seq:
     #   body -> Array[Node]
     #
@@ -21602,6 +21608,9 @@ module Prism
   module StatementsFlags
     # the statement list directly contains a `BEGIN` block
     CONTAINS_PRE_EXECUTION: untyped
+
+    # a semicolon precedes the first statement in the list
+    LEADING_SEMICOLON: untyped
   end
 
   # Flags for string nodes.

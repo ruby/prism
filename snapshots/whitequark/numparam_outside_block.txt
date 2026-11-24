@@ -61,7 +61,7 @@
         │   ├── superclass: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (5,9)-(5,11))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (5,9)-(5,11))
         │   │           ├── flags: newline, variable_call, ignore_visibility
@@ -116,7 +116,7 @@
             │   └── name: :A
             ├── body:
             │   @ StatementsNode (location: (9,10)-(9,12))
-            │   ├── flags: ∅
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (9,10)-(9,12))
             │           ├── flags: newline, variable_call, ignore_visibility

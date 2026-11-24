@@ -26,7 +26,7 @@
                 │   ├── begin_keyword_loc: ∅
                 │   ├── statements:
                 │   │   @ StatementsNode (location: (1,9)-(1,12))
-                │   │   ├── flags: ∅
+                │   │   ├── flags: leading_semicolon
                 │   │   └── body: (length: 1)
                 │   │       └── @ CallNode (location: (1,9)-(1,12))
                 │   │           ├── flags: newline, variable_call, ignore_visibility

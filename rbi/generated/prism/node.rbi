@@ -13812,6 +13812,10 @@ module Prism
     sig { returns(T::Boolean) }
     def contains_pre_execution?; end
 
+    # a semicolon precedes the first statement in the list
+    sig { returns(T::Boolean) }
+    def leading_semicolon?; end
+
     # Returns the `body` attribute.
     sig { returns(T::Array[Node]) }
     def body; end
@@ -15111,6 +15115,9 @@ module Prism
   module StatementsFlags
     # the statement list directly contains a `BEGIN` block
     CONTAINS_PRE_EXECUTION = T.let(nil, ::T.untyped)
+
+    # a semicolon precedes the first statement in the list
+    LEADING_SEMICOLON = T.let(nil, ::T.untyped)
   end
 
   # Flags for string nodes.
