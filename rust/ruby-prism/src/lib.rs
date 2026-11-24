@@ -55,29 +55,23 @@ pub enum Version {
 impl Version {
     /// Returns the version string that prism's C functions take for this
     /// version, or `None` for `Latest`, which they take as `NULL`.
-    const fn as_c_str(self) -> Option<&'static std::ffi::CStr> {
+    const fn as_str(self) -> Option<&'static str> {
         match self {
             Self::Latest => None,
-            Self::CRuby3_3 => Some(c"3.3"),
-            Self::CRuby3_4 => Some(c"3.4"),
+            Self::CRuby3_3 => Some("3.3"),
+            Self::CRuby3_4 => Some("3.4"),
             #[allow(deprecated)]
-            Self::CRuby3_5 | Self::CRuby4_0 => Some(c"4.0"),
-            Self::CRuby4_1 => Some(c"4.1"),
+            Self::CRuby3_5 | Self::CRuby4_0 => Some("4.0"),
+            Self::CRuby4_1 => Some("4.1"),
         }
-    }
-
-    /// Returns a pointer to the version string that prism's C functions take
-    /// for this version, which is `NULL` for `Latest`.
-    fn as_ptr(self) -> *const std::ffi::c_char {
-        self.as_c_str().map_or(std::ptr::null(), std::ffi::CStr::as_ptr)
     }
 
     /// Calls `pm_options_version_set` with the appropriate version string.
     /// `Latest` needs no call, since the parser uses the latest version when
     /// none is set.
     unsafe fn set_on(self, opts: *mut pm_options_t) {
-        if let Some(version) = self.as_c_str() {
-            pm_options_version_set(opts, version.as_ptr(), version.to_bytes().len());
+        if let Some(version) = self.as_str() {
+            pm_options_version_set(opts, version.as_ptr().cast(), version.len());
         }
     }
 }

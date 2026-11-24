@@ -1,6 +1,6 @@
 //! Queries for whether a string is a valid name of a given kind in Ruby.
 
-use std::ffi::{c_char, CString};
+use std::ffi::c_char;
 use std::fmt;
 
 use ruby_prism_sys::{pm_string_query_constant, pm_string_query_keyword, pm_string_query_local, pm_string_query_method_name, pm_string_query_t, PM_STRING_QUERY_ERROR_VERSION, PM_STRING_QUERY_FALSE, PM_STRING_QUERY_TRUE};
@@ -71,7 +71,9 @@ impl<'a> StringQuery<'a> {
     /// Returns [`InvalidEncodingError`] if the encoding is unknown or not
     /// ASCII-compatible.
     pub fn is_local(&self) -> Result<bool, InvalidEncodingError> {
-        self.query(pm_string_query_local)
+        let (version, version_length) = self.version_parts();
+        let result = unsafe { pm_string_query_local(self.source.as_ptr(), self.source.len(), self.encoding.as_ptr().cast(), self.encoding.len(), version, version_length) };
+        query_result(result)
     }
 
     /// Returns whether the string is a valid constant name.
@@ -81,7 +83,9 @@ impl<'a> StringQuery<'a> {
     /// Returns [`InvalidEncodingError`] if the encoding is unknown or not
     /// ASCII-compatible.
     pub fn is_constant(&self) -> Result<bool, InvalidEncodingError> {
-        self.query(pm_string_query_constant)
+        let (version, version_length) = self.version_parts();
+        let result = unsafe { pm_string_query_constant(self.source.as_ptr(), self.source.len(), self.encoding.as_ptr().cast(), self.encoding.len(), version, version_length) };
+        query_result(result)
     }
 
     /// Returns whether the string is a valid method name.
@@ -91,7 +95,9 @@ impl<'a> StringQuery<'a> {
     /// Returns [`InvalidEncodingError`] if the encoding is unknown or not
     /// ASCII-compatible.
     pub fn is_method_name(&self) -> Result<bool, InvalidEncodingError> {
-        self.query(pm_string_query_method_name)
+        let (version, version_length) = self.version_parts();
+        let result = unsafe { pm_string_query_method_name(self.source.as_ptr(), self.source.len(), self.encoding.as_ptr().cast(), self.encoding.len(), version, version_length) };
+        query_result(result)
     }
 
     /// Returns whether the string is a keyword (reserved word), such as `if`,
@@ -102,19 +108,22 @@ impl<'a> StringQuery<'a> {
     /// Returns [`InvalidEncodingError`] if the encoding is unknown or not
     /// ASCII-compatible.
     pub fn is_keyword(&self) -> Result<bool, InvalidEncodingError> {
-        self.query(pm_string_query_keyword)
+        let (version, version_length) = self.version_parts();
+        let result = unsafe { pm_string_query_keyword(self.source.as_ptr(), self.source.len(), self.encoding.as_ptr().cast(), self.encoding.len(), version, version_length) };
+        query_result(result)
     }
 
-    fn query(&self, function: unsafe extern "C" fn(*const u8, usize, *const c_char, *const c_char) -> pm_string_query_t) -> Result<bool, InvalidEncodingError> {
-        // An encoding name with an interior null byte cannot name a known encoding.
-        let encoding = CString::new(self.encoding).map_err(|_| InvalidEncodingError)?;
+    fn version_parts(&self) -> (*const c_char, usize) {
+        self.version.as_str().map_or((std::ptr::null(), 0), |version| (version.as_ptr().cast(), version.len()))
+    }
+}
 
-        match unsafe { function(self.source.as_ptr(), self.source.len(), encoding.as_ptr(), self.version.as_ptr()) } {
-            PM_STRING_QUERY_TRUE => Ok(true),
-            PM_STRING_QUERY_FALSE => Ok(false),
-            PM_STRING_QUERY_ERROR_VERSION => unreachable!("every Version is a version that prism knows"),
-            _ => Err(InvalidEncodingError),
-        }
+fn query_result(result: pm_string_query_t) -> Result<bool, InvalidEncodingError> {
+    match result {
+        PM_STRING_QUERY_TRUE => Ok(true),
+        PM_STRING_QUERY_FALSE => Ok(false),
+        PM_STRING_QUERY_ERROR_VERSION => unreachable!("every Version is a version that prism knows"),
+        _ => Err(InvalidEncodingError),
     }
 }
 
@@ -195,6 +204,7 @@ mod tests {
         assert_eq!(Ok(true), StringQuery::new(&b"a!"[..1]).is_local());
         assert_eq!(Ok(true), StringQuery::new(&b"Foo="[..3]).is_constant());
         assert_eq!(Ok(true), StringQuery::new(&b"foo?"[..3]).is_method_name());
+        assert_eq!(Ok(true), query("end").encoding(&"US-ASCII!"[..8]).is_keyword());
     }
 
     #[test]
@@ -202,6 +212,8 @@ mod tests {
         assert_eq!(Err(InvalidEncodingError), query("A").encoding("UTF-16LE").is_local());
         assert_eq!(Err(InvalidEncodingError), query("end").encoding("UTF-16LE").is_keyword());
         assert_eq!(Err(InvalidEncodingError), query("end").encoding("UTF-\08").is_keyword());
+        assert_eq!(Err(InvalidEncodingError), query("end").encoding("UTF-8\0suffix").is_keyword());
+        assert_eq!(Err(InvalidEncodingError), query("end").encoding("UTF-8-UNIX").is_keyword());
         assert_eq!(Err(InvalidEncodingError), query("end").encoding("not-an-encoding").is_keyword());
     }
 }
