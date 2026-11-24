@@ -276,7 +276,7 @@ impl Options {
 
         let c_filepath = self.filepath.map(|filepath| {
             let cstring = CString::new(filepath).unwrap();
-            unsafe { pm_options_filepath_set(opts, cstring.as_ptr()) };
+            unsafe { pm_options_filepath_set(opts, cstring.as_ptr(), cstring.as_bytes().len()) };
             cstring
         });
 
@@ -286,7 +286,7 @@ impl Options {
 
         let c_encoding = self.encoding.map(|encoding| {
             let cstring = CString::new(encoding).unwrap();
-            unsafe { pm_options_encoding_set(opts, cstring.as_ptr()) };
+            unsafe { pm_options_encoding_set(opts, cstring.as_ptr(), cstring.as_bytes().len()) };
             cstring
         });
 
