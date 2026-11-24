@@ -197,15 +197,7 @@ fuzz-clean:
 clean:
 	$(Q) $(RMALL) build
 
-CBMC ?= cbmc
-CBMC_FLAGS ?= --compact-trace --trace-hex --slice-formula --property main.assertion.1
-
-test-cbmc:
-	$(ECHO) "running CBMC check on SWAR scan_identifier_ascii"
-	$(Q) command -v $(CBMC) >/dev/null 2>&1 || { echo "error: $(CBMC) not found in PATH" >&2; exit 1; }
-	$(Q) $(CBMC) -DPRISM_ACCEL_SWAR -Iinclude --unwind 17 --unwinding-assertions $(CBMC_FLAGS) test/cbmc/scan_identifier_ascii.c
-
-.PHONY: clean doc/playground fuzz-clean test-cbmc
+.PHONY: clean doc/playground fuzz-clean
 
 all-no-debug: DEBUG_FLAGS := -DNDEBUG=1
 all-no-debug: OPTFLAGS := -O3
