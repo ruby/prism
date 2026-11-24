@@ -368,6 +368,12 @@ module Prism
       assert_equal ["end pattern with unmatched parenthesis: /abc(/"], errors.map(&:message)
     end
 
+    def test_leading_semicolon_in_regexp_interpolation
+      assert_empty Prism.parse('/#{; "["}/').errors
+      assert_empty Prism.parse(%q{/#{; '\x'}/}).errors
+      assert_equal [:regexp_parse_error], Prism.parse(%q{/#{'\x';}/}).errors.map(&:type)
+    end
+
     # The content that a regular expression's parts join to takes the encoding
     # of its parts that are not ASCII, as joining strings does, so a string in
     # UTF-8 makes the content UTF-8 in a source in another encoding.
