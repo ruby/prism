@@ -11849,10 +11849,12 @@ unsafe extern "C" {
 
  @param options The options struct to set the filepath on.
  @param filepath The filepath to set.
+ @param length The length of the filepath in bytes.
 */
     pub fn pm_options_filepath_set(
         options: *mut pm_options_t,
         filepath: *const ::std::os::raw::c_char,
+        length: usize,
     );
     /** Set the line option on the given options struct.
 
@@ -11864,10 +11866,12 @@ unsafe extern "C" {
 
  @param options The options struct to set the encoding on.
  @param encoding The encoding to set.
+ @param length The length of the encoding name in bytes.
 */
     pub fn pm_options_encoding_set(
         options: *mut pm_options_t,
         encoding: *const ::std::os::raw::c_char,
+        length: usize,
     );
     /** Set the encoding_locked option on the given options struct.
 
