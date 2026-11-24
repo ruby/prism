@@ -210,6 +210,14 @@ module Prism
       assert Prism.parse_success?("foo(...)", scopes: [Prism.scope(forwarding: [:"..."])])
     end
 
+    def test_scope_local_with_embedded_nul
+      local = :"foo\0bar"
+      program = Prism.parse("foo", scopes: [[local]]).value
+
+      assert_equal [local], program.locals
+      assert_kind_of Prism::CallNode, program.statements.body.first
+    end
+
     def test_repeated_escape_prefixes
       count = 100_000
 
