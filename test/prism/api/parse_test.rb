@@ -136,6 +136,18 @@ module Prism
       assert_kind_of Errno::EISDIR, error
     end
 
+    def test_nested_index_writes
+      result = Prism.parse("self[k] = other[j] += y")
+      assert_predicate result, :success?
+      assert_predicate result.statement, :attribute_write?
+      assert_kind_of IndexOperatorWriteNode, result.statement.arguments.arguments.last
+
+      result = Prism.parse("(self[k] = x..)[j] += y")
+      assert_predicate result, :success?
+      assert_kind_of IndexOperatorWriteNode, result.statement
+      assert_predicate result.statement.receiver.body.body.first, :attribute_write?
+    end
+
     def test_end_block_jumps_by_version
       ["break", "break 1", "next", "next 1", "redo"].each do |jump|
         %w[while until].each do |modifier|
