@@ -1,0 +1,94 @@
+@ ProgramNode (location: (1,0)-(5,21))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(5,21))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ AndNode (location: (1,0)-(1,29))
+        │   ├── flags: newline
+        │   ├── left:
+        │   │   @ MatchPredicateNode (location: (1,0)-(1,12))
+        │   │   ├── flags: ∅
+        │   │   ├── value:
+        │   │   │   @ IntegerNode (location: (1,0)-(1,1))
+        │   │   │   ├── flags: static_literal, decimal
+        │   │   │   └── value: 1
+        │   │   ├── pattern:
+        │   │   │   @ ConstantReadNode (location: (1,5)-(1,12))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── name: :Integer
+        │   │   └── keyword_loc: (1,2)-(1,4) = "in"
+        │   ├── right:
+        │   │   @ MatchPredicateNode (location: (1,17)-(1,29))
+        │   │   ├── flags: ∅
+        │   │   ├── value:
+        │   │   │   @ IntegerNode (location: (1,17)-(1,18))
+        │   │   │   ├── flags: static_literal, decimal
+        │   │   │   └── value: 2
+        │   │   ├── pattern:
+        │   │   │   @ ConstantReadNode (location: (1,22)-(1,29))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── name: :Numeric
+        │   │   └── keyword_loc: (1,19)-(1,21) = "in"
+        │   └── operator_loc: (1,13)-(1,16) = "and"
+        ├── @ OrNode (location: (3,0)-(3,28))
+        │   ├── flags: newline
+        │   ├── left:
+        │   │   @ MatchPredicateNode (location: (3,0)-(3,12))
+        │   │   ├── flags: ∅
+        │   │   ├── value:
+        │   │   │   @ IntegerNode (location: (3,0)-(3,1))
+        │   │   │   ├── flags: static_literal, decimal
+        │   │   │   └── value: 1
+        │   │   ├── pattern:
+        │   │   │   @ ConstantReadNode (location: (3,5)-(3,12))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── name: :Integer
+        │   │   └── keyword_loc: (3,2)-(3,4) = "in"
+        │   ├── right:
+        │   │   @ MatchPredicateNode (location: (3,16)-(3,28))
+        │   │   ├── flags: ∅
+        │   │   ├── value:
+        │   │   │   @ IntegerNode (location: (3,16)-(3,17))
+        │   │   │   ├── flags: static_literal, decimal
+        │   │   │   └── value: 2
+        │   │   ├── pattern:
+        │   │   │   @ ConstantReadNode (location: (3,21)-(3,28))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── name: :Numeric
+        │   │   └── keyword_loc: (3,18)-(3,20) = "in"
+        │   └── operator_loc: (3,13)-(3,15) = "or"
+        └── @ IfNode (location: (5,0)-(5,21))
+            ├── flags: newline
+            ├── if_keyword_loc: (5,13)-(5,15) = "if"
+            ├── predicate:
+            │   @ CallNode (location: (5,16)-(5,21))
+            │   ├── flags: variable_call, ignore_visibility
+            │   ├── receiver: ∅
+            │   ├── call_operator_loc: ∅
+            │   ├── name: :ready
+            │   ├── message_loc: (5,16)-(5,21) = "ready"
+            │   ├── opening_loc: ∅
+            │   ├── arguments: ∅
+            │   ├── closing_loc: ∅
+            │   ├── equal_loc: ∅
+            │   └── block: ∅
+            ├── then_keyword_loc: ∅
+            ├── statements:
+            │   @ StatementsNode (location: (5,0)-(5,12))
+            │   ├── flags: ∅
+            │   └── body: (length: 1)
+            │       └── @ MatchPredicateNode (location: (5,0)-(5,12))
+            │           ├── flags: newline
+            │           ├── value:
+            │           │   @ IntegerNode (location: (5,0)-(5,1))
+            │           │   ├── flags: static_literal, decimal
+            │           │   └── value: 1
+            │           ├── pattern:
+            │           │   @ ConstantReadNode (location: (5,5)-(5,12))
+            │           │   ├── flags: ∅
+            │           │   └── name: :Integer
+            │           └── keyword_loc: (5,2)-(5,4) = "in"
+            ├── subsequent: ∅
+            └── end_keyword_loc: ∅

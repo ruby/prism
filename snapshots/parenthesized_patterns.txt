@@ -1,0 +1,284 @@
+@ ProgramNode (location: (1,0)-(13,16))
+├── flags: ∅
+├── locals: [:y]
+└── statements:
+    @ StatementsNode (location: (1,0)-(13,16))
+    ├── flags: ∅
+    └── body: (length: 7)
+        ├── @ MatchPredicateNode (location: (1,0)-(1,11))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (1,0)-(1,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (1,0)-(1,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ PinnedExpressionNode (location: (1,5)-(1,11))
+        │   │   ├── flags: ∅
+        │   │   ├── expression:
+        │   │   │   @ ParenthesesNode (location: (1,7)-(1,10))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── body:
+        │   │   │   │   @ StatementsNode (location: (1,8)-(1,9))
+        │   │   │   │   ├── flags: ∅
+        │   │   │   │   └── body: (length: 1)
+        │   │   │   │       └── @ CallNode (location: (1,8)-(1,9))
+        │   │   │   │           ├── flags: newline, variable_call, ignore_visibility
+        │   │   │   │           ├── receiver: ∅
+        │   │   │   │           ├── call_operator_loc: ∅
+        │   │   │   │           ├── name: :y
+        │   │   │   │           ├── message_loc: (1,8)-(1,9) = "y"
+        │   │   │   │           ├── opening_loc: ∅
+        │   │   │   │           ├── arguments: ∅
+        │   │   │   │           ├── closing_loc: ∅
+        │   │   │   │           ├── equal_loc: ∅
+        │   │   │   │           └── block: ∅
+        │   │   │   ├── opening_loc: (1,7)-(1,8) = "("
+        │   │   │   └── closing_loc: (1,9)-(1,10) = ")"
+        │   │   ├── operator_loc: (1,5)-(1,6) = "^"
+        │   │   ├── lparen_loc: (1,6)-(1,7) = "("
+        │   │   └── rparen_loc: (1,10)-(1,11) = ")"
+        │   └── keyword_loc: (1,2)-(1,4) = "in"
+        ├── @ MatchPredicateNode (location: (3,0)-(3,10))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (3,0)-(3,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (3,0)-(3,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ ParenthesesNode (location: (3,5)-(3,10))
+        │   │   ├── flags: ∅
+        │   │   ├── body:
+        │   │   │   @ ParenthesesNode (location: (3,6)-(3,9))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── body:
+        │   │   │   │   @ LocalVariableTargetNode (location: (3,7)-(3,8))
+        │   │   │   │   ├── flags: ∅
+        │   │   │   │   ├── name: :y
+        │   │   │   │   └── depth: 0
+        │   │   │   ├── opening_loc: (3,6)-(3,7) = "("
+        │   │   │   └── closing_loc: (3,8)-(3,9) = ")"
+        │   │   ├── opening_loc: (3,5)-(3,6) = "("
+        │   │   └── closing_loc: (3,9)-(3,10) = ")"
+        │   └── keyword_loc: (3,2)-(3,4) = "in"
+        ├── @ MatchRequiredNode (location: (5,0)-(5,18))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (5,0)-(5,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (5,0)-(5,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ ArrayPatternNode (location: (5,5)-(5,18))
+        │   │   ├── flags: ∅
+        │   │   ├── constant: ∅
+        │   │   ├── requireds: (length: 1)
+        │   │   │   └── @ ParenthesesNode (location: (5,6)-(5,9))
+        │   │   │       ├── flags: ∅
+        │   │   │       ├── body:
+        │   │   │       │   @ IntegerNode (location: (5,7)-(5,8))
+        │   │   │       │   ├── flags: static_literal, decimal
+        │   │   │       │   └── value: 1
+        │   │   │       ├── opening_loc: (5,6)-(5,7) = "("
+        │   │   │       └── closing_loc: (5,8)-(5,9) = ")"
+        │   │   ├── rest:
+        │   │   │   @ SplatNode (location: (5,11)-(5,12))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── operator_loc: (5,11)-(5,12) = "*"
+        │   │   │   └── expression: ∅
+        │   │   ├── posts: (length: 1)
+        │   │   │   └── @ ParenthesesNode (location: (5,14)-(5,17))
+        │   │   │       ├── flags: ∅
+        │   │   │       ├── body:
+        │   │   │       │   @ IntegerNode (location: (5,15)-(5,16))
+        │   │   │       │   ├── flags: static_literal, decimal
+        │   │   │       │   └── value: 2
+        │   │   │       ├── opening_loc: (5,14)-(5,15) = "("
+        │   │   │       └── closing_loc: (5,16)-(5,17) = ")"
+        │   │   ├── opening_loc: (5,5)-(5,6) = "["
+        │   │   └── closing_loc: (5,17)-(5,18) = "]"
+        │   └── operator_loc: (5,2)-(5,4) = "=>"
+        ├── @ MatchPredicateNode (location: (7,0)-(7,16))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (7,0)-(7,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (7,0)-(7,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ FindPatternNode (location: (7,5)-(7,16))
+        │   │   ├── flags: ∅
+        │   │   ├── constant: ∅
+        │   │   ├── left:
+        │   │   │   @ SplatNode (location: (7,6)-(7,7))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── operator_loc: (7,6)-(7,7) = "*"
+        │   │   │   └── expression: ∅
+        │   │   ├── requireds: (length: 1)
+        │   │   │   └── @ ParenthesesNode (location: (7,9)-(7,12))
+        │   │   │       ├── flags: ∅
+        │   │   │       ├── body:
+        │   │   │       │   @ IntegerNode (location: (7,10)-(7,11))
+        │   │   │       │   ├── flags: static_literal, decimal
+        │   │   │       │   └── value: 1
+        │   │   │       ├── opening_loc: (7,9)-(7,10) = "("
+        │   │   │       └── closing_loc: (7,11)-(7,12) = ")"
+        │   │   ├── right:
+        │   │   │   @ SplatNode (location: (7,14)-(7,15))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── operator_loc: (7,14)-(7,15) = "*"
+        │   │   │   └── expression: ∅
+        │   │   ├── opening_loc: (7,5)-(7,6) = "["
+        │   │   └── closing_loc: (7,15)-(7,16) = "]"
+        │   └── keyword_loc: (7,2)-(7,4) = "in"
+        ├── @ MatchPredicateNode (location: (9,0)-(9,15))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (9,0)-(9,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (9,0)-(9,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ HashPatternNode (location: (9,5)-(9,15))
+        │   │   ├── flags: ∅
+        │   │   ├── constant: ∅
+        │   │   ├── elements: (length: 1)
+        │   │   │   └── @ AssocNode (location: (9,6)-(9,14))
+        │   │   │       ├── flags: ∅
+        │   │   │       ├── key:
+        │   │   │       │   @ SymbolNode (location: (9,6)-(9,10))
+        │   │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │   │       │   ├── opening_loc: ∅
+        │   │   │       │   ├── content_loc: (9,6)-(9,9) = "key"
+        │   │   │       │   ├── closing_loc: (9,9)-(9,10) = ":"
+        │   │   │       │   └── unescaped: "key"
+        │   │   │       ├── value:
+        │   │   │       │   @ ParenthesesNode (location: (9,11)-(9,14))
+        │   │   │       │   ├── flags: ∅
+        │   │   │       │   ├── body:
+        │   │   │       │   │   @ IntegerNode (location: (9,12)-(9,13))
+        │   │   │       │   │   ├── flags: static_literal, decimal
+        │   │   │       │   │   └── value: 1
+        │   │   │       │   ├── opening_loc: (9,11)-(9,12) = "("
+        │   │   │       │   └── closing_loc: (9,13)-(9,14) = ")"
+        │   │   │       └── operator_loc: ∅
+        │   │   ├── rest: ∅
+        │   │   ├── opening_loc: (9,5)-(9,6) = "{"
+        │   │   └── closing_loc: (9,14)-(9,15) = "}"
+        │   └── keyword_loc: (9,2)-(9,4) = "in"
+        ├── @ MatchPredicateNode (location: (11,0)-(11,15))
+        │   ├── flags: newline
+        │   ├── value:
+        │   │   @ CallNode (location: (11,0)-(11,1))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (11,0)-(11,1) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── pattern:
+        │   │   @ ParenthesesNode (location: (11,5)-(11,15))
+        │   │   ├── flags: ∅
+        │   │   ├── body:
+        │   │   │   @ CapturePatternNode (location: (11,6)-(11,14))
+        │   │   │   ├── flags: ∅
+        │   │   │   ├── value:
+        │   │   │   │   @ ParenthesesNode (location: (11,6)-(11,9))
+        │   │   │   │   ├── flags: ∅
+        │   │   │   │   ├── body:
+        │   │   │   │   │   @ IntegerNode (location: (11,7)-(11,8))
+        │   │   │   │   │   ├── flags: static_literal, decimal
+        │   │   │   │   │   └── value: 1
+        │   │   │   │   ├── opening_loc: (11,6)-(11,7) = "("
+        │   │   │   │   └── closing_loc: (11,8)-(11,9) = ")"
+        │   │   │   ├── target:
+        │   │   │   │   @ LocalVariableTargetNode (location: (11,13)-(11,14))
+        │   │   │   │   ├── flags: ∅
+        │   │   │   │   ├── name: :y
+        │   │   │   │   └── depth: 0
+        │   │   │   └── operator_loc: (11,10)-(11,12) = "=>"
+        │   │   ├── opening_loc: (11,5)-(11,6) = "("
+        │   │   └── closing_loc: (11,14)-(11,15) = ")"
+        │   └── keyword_loc: (11,2)-(11,4) = "in"
+        └── @ MatchPredicateNode (location: (13,0)-(13,16))
+            ├── flags: newline
+            ├── value:
+            │   @ CallNode (location: (13,0)-(13,1))
+            │   ├── flags: variable_call, ignore_visibility
+            │   ├── receiver: ∅
+            │   ├── call_operator_loc: ∅
+            │   ├── name: :x
+            │   ├── message_loc: (13,0)-(13,1) = "x"
+            │   ├── opening_loc: ∅
+            │   ├── arguments: ∅
+            │   ├── closing_loc: ∅
+            │   ├── equal_loc: ∅
+            │   └── block: ∅
+            ├── pattern:
+            │   @ ParenthesesNode (location: (13,5)-(13,16))
+            │   ├── flags: ∅
+            │   ├── body:
+            │   │   @ AlternationPatternNode (location: (13,6)-(13,15))
+            │   │   ├── flags: ∅
+            │   │   ├── left:
+            │   │   │   @ ParenthesesNode (location: (13,6)-(13,9))
+            │   │   │   ├── flags: ∅
+            │   │   │   ├── body:
+            │   │   │   │   @ IntegerNode (location: (13,7)-(13,8))
+            │   │   │   │   ├── flags: static_literal, decimal
+            │   │   │   │   └── value: 1
+            │   │   │   ├── opening_loc: (13,6)-(13,7) = "("
+            │   │   │   └── closing_loc: (13,8)-(13,9) = ")"
+            │   │   ├── right:
+            │   │   │   @ ParenthesesNode (location: (13,12)-(13,15))
+            │   │   │   ├── flags: ∅
+            │   │   │   ├── body:
+            │   │   │   │   @ IntegerNode (location: (13,13)-(13,14))
+            │   │   │   │   ├── flags: static_literal, decimal
+            │   │   │   │   └── value: 2
+            │   │   │   ├── opening_loc: (13,12)-(13,13) = "("
+            │   │   │   └── closing_loc: (13,14)-(13,15) = ")"
+            │   │   └── operator_loc: (13,10)-(13,11) = "|"
+            │   ├── opening_loc: (13,5)-(13,6) = "("
+            │   └── closing_loc: (13,15)-(13,16) = ")"
+            └── keyword_loc: (13,2)-(13,4) = "in"

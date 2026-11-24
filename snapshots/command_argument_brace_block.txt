@@ -1,0 +1,550 @@
+@ ProgramNode (location: (1,0)-(19,24))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(19,24))
+    ├── flags: ∅
+    └── body: (length: 10)
+        ├── @ CallNode (location: (1,0)-(1,12))
+        │   ├── flags: newline
+        │   ├── receiver:
+        │   │   @ CallNode (location: (1,0)-(1,7))
+        │   │   ├── flags: ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :f
+        │   │   ├── message_loc: (1,0)-(1,1) = "f"
+        │   │   ├── opening_loc: (1,1)-(1,2) = "("
+        │   │   ├── arguments:
+        │   │   │   @ ArgumentsNode (location: (1,2)-(1,3))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── arguments: (length: 1)
+        │   │   │       └── @ CallNode (location: (1,2)-(1,3))
+        │   │   │           ├── flags: variable_call, ignore_visibility
+        │   │   │           ├── receiver: ∅
+        │   │   │           ├── call_operator_loc: ∅
+        │   │   │           ├── name: :x
+        │   │   │           ├── message_loc: (1,2)-(1,3) = "x"
+        │   │   │           ├── opening_loc: ∅
+        │   │   │           ├── arguments: ∅
+        │   │   │           ├── closing_loc: ∅
+        │   │   │           ├── equal_loc: ∅
+        │   │   │           └── block: ∅
+        │   │   ├── closing_loc: (1,3)-(1,4) = ")"
+        │   │   ├── equal_loc: ∅
+        │   │   └── block:
+        │   │       @ BlockNode (location: (1,5)-(1,7))
+        │   │       ├── flags: ∅
+        │   │       ├── locals: []
+        │   │       ├── parameters: ∅
+        │   │       ├── body: ∅
+        │   │       ├── opening_loc: (1,5)-(1,6) = "{"
+        │   │       └── closing_loc: (1,6)-(1,7) = "}"
+        │   ├── call_operator_loc: (1,7)-(1,8) = "."
+        │   ├── name: :tail
+        │   ├── message_loc: (1,8)-(1,12) = "tail"
+        │   ├── opening_loc: ∅
+        │   ├── arguments: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (3,0)-(3,11))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :f
+        │   ├── message_loc: (3,0)-(3,1) = "f"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (3,2)-(3,11))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CallNode (location: (3,2)-(3,11))
+        │   │           ├── flags: ∅
+        │   │           ├── receiver:
+        │   │           │   @ CallNode (location: (3,2)-(3,6))
+        │   │           │   ├── flags: ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :x
+        │   │           │   ├── message_loc: (3,2)-(3,3) = "x"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block:
+        │   │           │       @ BlockNode (location: (3,4)-(3,6))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── locals: []
+        │   │           │       ├── parameters: ∅
+        │   │           │       ├── body: ∅
+        │   │           │       ├── opening_loc: (3,4)-(3,5) = "{"
+        │   │           │       └── closing_loc: (3,5)-(3,6) = "}"
+        │   │           ├── call_operator_loc: (3,6)-(3,7) = "."
+        │   │           ├── name: :tail
+        │   │           ├── message_loc: (3,7)-(3,11) = "tail"
+        │   │           ├── opening_loc: ∅
+        │   │           ├── arguments: ∅
+        │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
+        │   │           └── block: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (5,0)-(5,16))
+        │   ├── flags: newline
+        │   ├── receiver:
+        │   │   @ CallNode (location: (5,0)-(5,11))
+        │   │   ├── flags: ∅
+        │   │   ├── receiver:
+        │   │   │   @ CallNode (location: (5,0)-(5,3))
+        │   │   │   ├── flags: variable_call, ignore_visibility
+        │   │   │   ├── receiver: ∅
+        │   │   │   ├── call_operator_loc: ∅
+        │   │   │   ├── name: :obj
+        │   │   │   ├── message_loc: (5,0)-(5,3) = "obj"
+        │   │   │   ├── opening_loc: ∅
+        │   │   │   ├── arguments: ∅
+        │   │   │   ├── closing_loc: ∅
+        │   │   │   ├── equal_loc: ∅
+        │   │   │   └── block: ∅
+        │   │   ├── call_operator_loc: (5,3)-(5,4) = "."
+        │   │   ├── name: :f
+        │   │   ├── message_loc: (5,4)-(5,5) = "f"
+        │   │   ├── opening_loc: (5,5)-(5,6) = "("
+        │   │   ├── arguments:
+        │   │   │   @ ArgumentsNode (location: (5,6)-(5,7))
+        │   │   │   ├── flags: ∅
+        │   │   │   └── arguments: (length: 1)
+        │   │   │       └── @ CallNode (location: (5,6)-(5,7))
+        │   │   │           ├── flags: variable_call, ignore_visibility
+        │   │   │           ├── receiver: ∅
+        │   │   │           ├── call_operator_loc: ∅
+        │   │   │           ├── name: :x
+        │   │   │           ├── message_loc: (5,6)-(5,7) = "x"
+        │   │   │           ├── opening_loc: ∅
+        │   │   │           ├── arguments: ∅
+        │   │   │           ├── closing_loc: ∅
+        │   │   │           ├── equal_loc: ∅
+        │   │   │           └── block: ∅
+        │   │   ├── closing_loc: (5,7)-(5,8) = ")"
+        │   │   ├── equal_loc: ∅
+        │   │   └── block:
+        │   │       @ BlockNode (location: (5,9)-(5,11))
+        │   │       ├── flags: ∅
+        │   │       ├── locals: []
+        │   │       ├── parameters: ∅
+        │   │       ├── body: ∅
+        │   │       ├── opening_loc: (5,9)-(5,10) = "{"
+        │   │       └── closing_loc: (5,10)-(5,11) = "}"
+        │   ├── call_operator_loc: (5,11)-(5,12) = "."
+        │   ├── name: :tail
+        │   ├── message_loc: (5,12)-(5,16) = "tail"
+        │   ├── opening_loc: ∅
+        │   ├── arguments: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (7,0)-(7,15))
+        │   ├── flags: newline
+        │   ├── receiver:
+        │   │   @ CallNode (location: (7,0)-(7,3))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :obj
+        │   │   ├── message_loc: (7,0)-(7,3) = "obj"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── call_operator_loc: (7,3)-(7,4) = "."
+        │   ├── name: :f
+        │   ├── message_loc: (7,4)-(7,5) = "f"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (7,6)-(7,15))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CallNode (location: (7,6)-(7,15))
+        │   │           ├── flags: ∅
+        │   │           ├── receiver:
+        │   │           │   @ CallNode (location: (7,6)-(7,10))
+        │   │           │   ├── flags: ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :x
+        │   │           │   ├── message_loc: (7,6)-(7,7) = "x"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block:
+        │   │           │       @ BlockNode (location: (7,8)-(7,10))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── locals: []
+        │   │           │       ├── parameters: ∅
+        │   │           │       ├── body: ∅
+        │   │           │       ├── opening_loc: (7,8)-(7,9) = "{"
+        │   │           │       └── closing_loc: (7,9)-(7,10) = "}"
+        │   │           ├── call_operator_loc: (7,10)-(7,11) = "."
+        │   │           ├── name: :tail
+        │   │           ├── message_loc: (7,11)-(7,15) = "tail"
+        │   │           ├── opening_loc: ∅
+        │   │           ├── arguments: ∅
+        │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
+        │   │           └── block: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (9,0)-(9,30))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :outer
+        │   ├── message_loc: (9,0)-(9,5) = "outer"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (9,6)-(9,23))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CallNode (location: (9,6)-(9,23))
+        │   │           ├── flags: ignore_visibility
+        │   │           ├── receiver: ∅
+        │   │           ├── call_operator_loc: ∅
+        │   │           ├── name: :inner
+        │   │           ├── message_loc: (9,6)-(9,11) = "inner"
+        │   │           ├── opening_loc: ∅
+        │   │           ├── arguments:
+        │   │           │   @ ArgumentsNode (location: (9,12)-(9,23))
+        │   │           │   ├── flags: ∅
+        │   │           │   └── arguments: (length: 1)
+        │   │           │       └── @ SuperNode (location: (9,12)-(9,23))
+        │   │           │           ├── flags: ∅
+        │   │           │           ├── keyword_loc: (9,12)-(9,17) = "super"
+        │   │           │           ├── lparen_loc: (9,17)-(9,18) = "("
+        │   │           │           ├── arguments:
+        │   │           │           │   @ ArgumentsNode (location: (9,18)-(9,19))
+        │   │           │           │   ├── flags: ∅
+        │   │           │           │   └── arguments: (length: 1)
+        │   │           │           │       └── @ CallNode (location: (9,18)-(9,19))
+        │   │           │           │           ├── flags: variable_call, ignore_visibility
+        │   │           │           │           ├── receiver: ∅
+        │   │           │           │           ├── call_operator_loc: ∅
+        │   │           │           │           ├── name: :x
+        │   │           │           │           ├── message_loc: (9,18)-(9,19) = "x"
+        │   │           │           │           ├── opening_loc: ∅
+        │   │           │           │           ├── arguments: ∅
+        │   │           │           │           ├── closing_loc: ∅
+        │   │           │           │           ├── equal_loc: ∅
+        │   │           │           │           └── block: ∅
+        │   │           │           ├── rparen_loc: (9,19)-(9,20) = ")"
+        │   │           │           └── block:
+        │   │           │               @ BlockNode (location: (9,21)-(9,23))
+        │   │           │               ├── flags: ∅
+        │   │           │               ├── locals: []
+        │   │           │               ├── parameters: ∅
+        │   │           │               ├── body: ∅
+        │   │           │               ├── opening_loc: (9,21)-(9,22) = "{"
+        │   │           │               └── closing_loc: (9,22)-(9,23) = "}"
+        │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
+        │   │           └── block: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block:
+        │       @ BlockNode (location: (9,24)-(9,30))
+        │       ├── flags: ∅
+        │       ├── locals: []
+        │       ├── parameters: ∅
+        │       ├── body: ∅
+        │       ├── opening_loc: (9,24)-(9,26) = "do"
+        │       └── closing_loc: (9,27)-(9,30) = "end"
+        ├── @ CallNode (location: (11,0)-(11,32))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :outer
+        │   ├── message_loc: (11,0)-(11,5) = "outer"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (11,6)-(11,25))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CallNode (location: (11,6)-(11,25))
+        │   │           ├── flags: ignore_visibility
+        │   │           ├── receiver: ∅
+        │   │           ├── call_operator_loc: ∅
+        │   │           ├── name: :inner
+        │   │           ├── message_loc: (11,6)-(11,11) = "inner"
+        │   │           ├── opening_loc: ∅
+        │   │           ├── arguments:
+        │   │           │   @ ArgumentsNode (location: (11,12)-(11,25))
+        │   │           │   ├── flags: ∅
+        │   │           │   └── arguments: (length: 1)
+        │   │           │       └── @ CallNode (location: (11,12)-(11,25))
+        │   │           │           ├── flags: ignore_visibility
+        │   │           │           ├── receiver: ∅
+        │   │           │           ├── call_operator_loc: ∅
+        │   │           │           ├── name: :inner2
+        │   │           │           ├── message_loc: (11,12)-(11,18) = "inner2"
+        │   │           │           ├── opening_loc: ∅
+        │   │           │           ├── arguments:
+        │   │           │           │   @ ArgumentsNode (location: (11,19)-(11,22))
+        │   │           │           │   ├── flags: ∅
+        │   │           │           │   └── arguments: (length: 1)
+        │   │           │           │       └── @ ParenthesesNode (location: (11,19)-(11,22))
+        │   │           │           │           ├── flags: ∅
+        │   │           │           │           ├── body:
+        │   │           │           │           │   @ StatementsNode (location: (11,20)-(11,21))
+        │   │           │           │           │   ├── flags: ∅
+        │   │           │           │           │   └── body: (length: 1)
+        │   │           │           │           │       └── @ CallNode (location: (11,20)-(11,21))
+        │   │           │           │           │           ├── flags: newline, variable_call, ignore_visibility
+        │   │           │           │           │           ├── receiver: ∅
+        │   │           │           │           │           ├── call_operator_loc: ∅
+        │   │           │           │           │           ├── name: :x
+        │   │           │           │           │           ├── message_loc: (11,20)-(11,21) = "x"
+        │   │           │           │           │           ├── opening_loc: ∅
+        │   │           │           │           │           ├── arguments: ∅
+        │   │           │           │           │           ├── closing_loc: ∅
+        │   │           │           │           │           ├── equal_loc: ∅
+        │   │           │           │           │           └── block: ∅
+        │   │           │           │           ├── opening_loc: (11,19)-(11,20) = "("
+        │   │           │           │           └── closing_loc: (11,21)-(11,22) = ")"
+        │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
+        │   │           │           └── block:
+        │   │           │               @ BlockNode (location: (11,23)-(11,25))
+        │   │           │               ├── flags: ∅
+        │   │           │               ├── locals: []
+        │   │           │               ├── parameters: ∅
+        │   │           │               ├── body: ∅
+        │   │           │               ├── opening_loc: (11,23)-(11,24) = "{"
+        │   │           │               └── closing_loc: (11,24)-(11,25) = "}"
+        │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
+        │   │           └── block: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block:
+        │       @ BlockNode (location: (11,26)-(11,32))
+        │       ├── flags: ∅
+        │       ├── locals: []
+        │       ├── parameters: ∅
+        │       ├── body: ∅
+        │       ├── opening_loc: (11,26)-(11,28) = "do"
+        │       └── closing_loc: (11,29)-(11,32) = "end"
+        ├── @ CallNode (location: (13,0)-(13,18))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :outer
+        │   ├── message_loc: (13,0)-(13,5) = "outer"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (13,6)-(13,15))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ SuperNode (location: (13,6)-(13,15))
+        │   │           ├── flags: ∅
+        │   │           ├── keyword_loc: (13,6)-(13,11) = "super"
+        │   │           ├── lparen_loc: ∅
+        │   │           ├── arguments:
+        │   │           │   @ ArgumentsNode (location: (13,12)-(13,15))
+        │   │           │   ├── flags: ∅
+        │   │           │   └── arguments: (length: 1)
+        │   │           │       └── @ ParenthesesNode (location: (13,12)-(13,15))
+        │   │           │           ├── flags: ∅
+        │   │           │           ├── body:
+        │   │           │           │   @ StatementsNode (location: (13,13)-(13,14))
+        │   │           │           │   ├── flags: ∅
+        │   │           │           │   └── body: (length: 1)
+        │   │           │           │       └── @ CallNode (location: (13,13)-(13,14))
+        │   │           │           │           ├── flags: newline, variable_call, ignore_visibility
+        │   │           │           │           ├── receiver: ∅
+        │   │           │           │           ├── call_operator_loc: ∅
+        │   │           │           │           ├── name: :x
+        │   │           │           │           ├── message_loc: (13,13)-(13,14) = "x"
+        │   │           │           │           ├── opening_loc: ∅
+        │   │           │           │           ├── arguments: ∅
+        │   │           │           │           ├── closing_loc: ∅
+        │   │           │           │           ├── equal_loc: ∅
+        │   │           │           │           └── block: ∅
+        │   │           │           ├── opening_loc: (13,12)-(13,13) = "("
+        │   │           │           └── closing_loc: (13,14)-(13,15) = ")"
+        │   │           ├── rparen_loc: ∅
+        │   │           └── block: ∅
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block:
+        │       @ BlockNode (location: (13,16)-(13,18))
+        │       ├── flags: ∅
+        │       ├── locals: []
+        │       ├── parameters: ∅
+        │       ├── body: ∅
+        │       ├── opening_loc: (13,16)-(13,17) = "{"
+        │       └── closing_loc: (13,17)-(13,18) = "}"
+        ├── @ CallNode (location: (15,0)-(15,17))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :outer
+        │   ├── message_loc: (15,0)-(15,5) = "outer"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (15,6)-(15,17))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ SuperNode (location: (15,6)-(15,17))
+        │   │           ├── flags: ∅
+        │   │           ├── keyword_loc: (15,6)-(15,11) = "super"
+        │   │           ├── lparen_loc: (15,11)-(15,12) = "("
+        │   │           ├── arguments:
+        │   │           │   @ ArgumentsNode (location: (15,12)-(15,13))
+        │   │           │   ├── flags: ∅
+        │   │           │   └── arguments: (length: 1)
+        │   │           │       └── @ CallNode (location: (15,12)-(15,13))
+        │   │           │           ├── flags: variable_call, ignore_visibility
+        │   │           │           ├── receiver: ∅
+        │   │           │           ├── call_operator_loc: ∅
+        │   │           │           ├── name: :x
+        │   │           │           ├── message_loc: (15,12)-(15,13) = "x"
+        │   │           │           ├── opening_loc: ∅
+        │   │           │           ├── arguments: ∅
+        │   │           │           ├── closing_loc: ∅
+        │   │           │           ├── equal_loc: ∅
+        │   │           │           └── block: ∅
+        │   │           ├── rparen_loc: (15,13)-(15,14) = ")"
+        │   │           └── block:
+        │   │               @ BlockNode (location: (15,15)-(15,17))
+        │   │               ├── flags: ∅
+        │   │               ├── locals: []
+        │   │               ├── parameters: ∅
+        │   │               ├── body: ∅
+        │   │               ├── opening_loc: (15,15)-(15,16) = "{"
+        │   │               └── closing_loc: (15,16)-(15,17) = "}"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ DefNode (location: (17,0)-(17,30))
+        │   ├── flags: newline
+        │   ├── name: :f
+        │   ├── name_loc: (17,4)-(17,5) = "f"
+        │   ├── receiver: ∅
+        │   ├── parameters: ∅
+        │   ├── body:
+        │   │   @ StatementsNode (location: (17,7)-(17,25))
+        │   │   ├── flags: ∅
+        │   │   └── body: (length: 1)
+        │   │       └── @ CallNode (location: (17,7)-(17,25))
+        │   │           ├── flags: newline, ignore_visibility
+        │   │           ├── receiver: ∅
+        │   │           ├── call_operator_loc: ∅
+        │   │           ├── name: :outer
+        │   │           ├── message_loc: (17,7)-(17,12) = "outer"
+        │   │           ├── opening_loc: ∅
+        │   │           ├── arguments:
+        │   │           │   @ ArgumentsNode (location: (17,13)-(17,22))
+        │   │           │   ├── flags: ∅
+        │   │           │   └── arguments: (length: 1)
+        │   │           │       └── @ YieldNode (location: (17,13)-(17,22))
+        │   │           │           ├── flags: ∅
+        │   │           │           ├── keyword_loc: (17,13)-(17,18) = "yield"
+        │   │           │           ├── lparen_loc: ∅
+        │   │           │           ├── arguments:
+        │   │           │           │   @ ArgumentsNode (location: (17,19)-(17,22))
+        │   │           │           │   ├── flags: ∅
+        │   │           │           │   └── arguments: (length: 1)
+        │   │           │           │       └── @ ParenthesesNode (location: (17,19)-(17,22))
+        │   │           │           │           ├── flags: ∅
+        │   │           │           │           ├── body:
+        │   │           │           │           │   @ StatementsNode (location: (17,20)-(17,21))
+        │   │           │           │           │   ├── flags: ∅
+        │   │           │           │           │   └── body: (length: 1)
+        │   │           │           │           │       └── @ CallNode (location: (17,20)-(17,21))
+        │   │           │           │           │           ├── flags: newline, variable_call, ignore_visibility
+        │   │           │           │           │           ├── receiver: ∅
+        │   │           │           │           │           ├── call_operator_loc: ∅
+        │   │           │           │           │           ├── name: :x
+        │   │           │           │           │           ├── message_loc: (17,20)-(17,21) = "x"
+        │   │           │           │           │           ├── opening_loc: ∅
+        │   │           │           │           │           ├── arguments: ∅
+        │   │           │           │           │           ├── closing_loc: ∅
+        │   │           │           │           │           ├── equal_loc: ∅
+        │   │           │           │           │           └── block: ∅
+        │   │           │           │           ├── opening_loc: (17,19)-(17,20) = "("
+        │   │           │           │           └── closing_loc: (17,21)-(17,22) = ")"
+        │   │           │           └── rparen_loc: ∅
+        │   │           ├── closing_loc: ∅
+        │   │           ├── equal_loc: ∅
+        │   │           └── block:
+        │   │               @ BlockNode (location: (17,23)-(17,25))
+        │   │               ├── flags: ∅
+        │   │               ├── locals: []
+        │   │               ├── parameters: ∅
+        │   │               ├── body: ∅
+        │   │               ├── opening_loc: (17,23)-(17,24) = "{"
+        │   │               └── closing_loc: (17,24)-(17,25) = "}"
+        │   ├── locals: []
+        │   ├── def_keyword_loc: (17,0)-(17,3) = "def"
+        │   ├── operator_loc: ∅
+        │   ├── lparen_loc: ∅
+        │   ├── rparen_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── end_keyword_loc: (17,27)-(17,30) = "end"
+        └── @ CallNode (location: (19,0)-(19,24))
+            ├── flags: newline, ignore_visibility
+            ├── receiver: ∅
+            ├── call_operator_loc: ∅
+            ├── name: :outer
+            ├── message_loc: (19,0)-(19,5) = "outer"
+            ├── opening_loc: ∅
+            ├── arguments:
+            │   @ ArgumentsNode (location: (19,6)-(19,17))
+            │   ├── flags: ∅
+            │   └── arguments: (length: 1)
+            │       └── @ CallNode (location: (19,6)-(19,17))
+            │           ├── flags: ignore_visibility
+            │           ├── receiver: ∅
+            │           ├── call_operator_loc: ∅
+            │           ├── name: :inner
+            │           ├── message_loc: (19,6)-(19,11) = "inner"
+            │           ├── opening_loc: (19,11)-(19,12) = "("
+            │           ├── arguments:
+            │           │   @ ArgumentsNode (location: (19,12)-(19,13))
+            │           │   ├── flags: ∅
+            │           │   └── arguments: (length: 1)
+            │           │       └── @ CallNode (location: (19,12)-(19,13))
+            │           │           ├── flags: variable_call, ignore_visibility
+            │           │           ├── receiver: ∅
+            │           │           ├── call_operator_loc: ∅
+            │           │           ├── name: :x
+            │           │           ├── message_loc: (19,12)-(19,13) = "x"
+            │           │           ├── opening_loc: ∅
+            │           │           ├── arguments: ∅
+            │           │           ├── closing_loc: ∅
+            │           │           ├── equal_loc: ∅
+            │           │           └── block: ∅
+            │           ├── closing_loc: (19,13)-(19,14) = ")"
+            │           ├── equal_loc: ∅
+            │           └── block:
+            │               @ BlockNode (location: (19,15)-(19,17))
+            │               ├── flags: ∅
+            │               ├── locals: []
+            │               ├── parameters: ∅
+            │               ├── body: ∅
+            │               ├── opening_loc: (19,15)-(19,16) = "{"
+            │               └── closing_loc: (19,16)-(19,17) = "}"
+            ├── closing_loc: ∅
+            ├── equal_loc: ∅
+            └── block:
+                @ BlockNode (location: (19,18)-(19,24))
+                ├── flags: ∅
+                ├── locals: []
+                ├── parameters: ∅
+                ├── body: ∅
+                ├── opening_loc: (19,18)-(19,20) = "do"
+                └── closing_loc: (19,21)-(19,24) = "end"

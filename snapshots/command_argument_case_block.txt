@@ -1,0 +1,550 @@
+@ ProgramNode (location: (1,0)-(11,117))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(11,117))
+    ├── flags: ∅
+    └── body: (length: 6)
+        ├── @ CallNode (location: (1,0)-(1,51))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :receive
+        │   ├── message_loc: (1,0)-(1,7) = "receive"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (1,8)-(1,51))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CaseNode (location: (1,8)-(1,51))
+        │   │           ├── flags: ∅
+        │   │           ├── predicate: ∅
+        │   │           ├── conditions: (length: 1)
+        │   │           │   └── @ WhenNode (location: (1,13)-(1,47))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── when_keyword_loc: (1,13)-(1,17) = "when"
+        │   │           │       ├── conditions: (length: 1)
+        │   │           │       │   └── @ CallNode (location: (1,18)-(1,23))
+        │   │           │       │       ├── flags: variable_call, ignore_visibility
+        │   │           │       │       ├── receiver: ∅
+        │   │           │       │       ├── call_operator_loc: ∅
+        │   │           │       │       ├── name: :ready
+        │   │           │       │       ├── message_loc: (1,18)-(1,23) = "ready"
+        │   │           │       │       ├── opening_loc: ∅
+        │   │           │       │       ├── arguments: ∅
+        │   │           │       │       ├── closing_loc: ∅
+        │   │           │       │       ├── equal_loc: ∅
+        │   │           │       │       └── block: ∅
+        │   │           │       ├── then_keyword_loc: (1,24)-(1,28) = "then"
+        │   │           │       └── statements:
+        │   │           │           @ StatementsNode (location: (1,29)-(1,47))
+        │   │           │           ├── flags: ∅
+        │   │           │           └── body: (length: 1)
+        │   │           │               └── @ CallNode (location: (1,29)-(1,47))
+        │   │           │                   ├── flags: newline, ignore_visibility
+        │   │           │                   ├── receiver: ∅
+        │   │           │                   ├── call_operator_loc: ∅
+        │   │           │                   ├── name: :produce
+        │   │           │                   ├── message_loc: (1,29)-(1,36) = "produce"
+        │   │           │                   ├── opening_loc: ∅
+        │   │           │                   ├── arguments: ∅
+        │   │           │                   ├── closing_loc: ∅
+        │   │           │                   ├── equal_loc: ∅
+        │   │           │                   └── block:
+        │   │           │                       @ BlockNode (location: (1,37)-(1,47))
+        │   │           │                       ├── flags: ∅
+        │   │           │                       ├── locals: []
+        │   │           │                       ├── parameters: ∅
+        │   │           │                       ├── body:
+        │   │           │                       │   @ StatementsNode (location: (1,40)-(1,43))
+        │   │           │                       │   ├── flags: ∅
+        │   │           │                       │   └── body: (length: 1)
+        │   │           │                       │       └── @ SymbolNode (location: (1,40)-(1,43))
+        │   │           │                       │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   │           │                       │           ├── opening_loc: (1,40)-(1,41) = ":"
+        │   │           │                       │           ├── content_loc: (1,41)-(1,43) = "ok"
+        │   │           │                       │           ├── closing_loc: ∅
+        │   │           │                       │           └── unescaped: "ok"
+        │   │           │                       ├── opening_loc: (1,37)-(1,39) = "do"
+        │   │           │                       └── closing_loc: (1,44)-(1,47) = "end"
+        │   │           ├── else_clause: ∅
+        │   │           ├── case_keyword_loc: (1,8)-(1,12) = "case"
+        │   │           └── end_keyword_loc: (1,48)-(1,51) = "end"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (3,0)-(3,58))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :receive
+        │   ├── message_loc: (3,0)-(3,7) = "receive"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (3,8)-(3,58))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CaseNode (location: (3,8)-(3,58))
+        │   │           ├── flags: ∅
+        │   │           ├── predicate:
+        │   │           │   @ CallNode (location: (3,13)-(3,18))
+        │   │           │   ├── flags: variable_call, ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :value
+        │   │           │   ├── message_loc: (3,13)-(3,18) = "value"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block: ∅
+        │   │           ├── conditions: (length: 1)
+        │   │           │   └── @ WhenNode (location: (3,20)-(3,54))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── when_keyword_loc: (3,20)-(3,24) = "when"
+        │   │           │       ├── conditions: (length: 1)
+        │   │           │       │   └── @ CallNode (location: (3,25)-(3,30))
+        │   │           │       │       ├── flags: variable_call, ignore_visibility
+        │   │           │       │       ├── receiver: ∅
+        │   │           │       │       ├── call_operator_loc: ∅
+        │   │           │       │       ├── name: :ready
+        │   │           │       │       ├── message_loc: (3,25)-(3,30) = "ready"
+        │   │           │       │       ├── opening_loc: ∅
+        │   │           │       │       ├── arguments: ∅
+        │   │           │       │       ├── closing_loc: ∅
+        │   │           │       │       ├── equal_loc: ∅
+        │   │           │       │       └── block: ∅
+        │   │           │       ├── then_keyword_loc: (3,31)-(3,35) = "then"
+        │   │           │       └── statements:
+        │   │           │           @ StatementsNode (location: (3,36)-(3,54))
+        │   │           │           ├── flags: ∅
+        │   │           │           └── body: (length: 1)
+        │   │           │               └── @ CallNode (location: (3,36)-(3,54))
+        │   │           │                   ├── flags: newline, ignore_visibility
+        │   │           │                   ├── receiver: ∅
+        │   │           │                   ├── call_operator_loc: ∅
+        │   │           │                   ├── name: :produce
+        │   │           │                   ├── message_loc: (3,36)-(3,43) = "produce"
+        │   │           │                   ├── opening_loc: ∅
+        │   │           │                   ├── arguments: ∅
+        │   │           │                   ├── closing_loc: ∅
+        │   │           │                   ├── equal_loc: ∅
+        │   │           │                   └── block:
+        │   │           │                       @ BlockNode (location: (3,44)-(3,54))
+        │   │           │                       ├── flags: ∅
+        │   │           │                       ├── locals: []
+        │   │           │                       ├── parameters: ∅
+        │   │           │                       ├── body:
+        │   │           │                       │   @ StatementsNode (location: (3,47)-(3,50))
+        │   │           │                       │   ├── flags: ∅
+        │   │           │                       │   └── body: (length: 1)
+        │   │           │                       │       └── @ SymbolNode (location: (3,47)-(3,50))
+        │   │           │                       │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   │           │                       │           ├── opening_loc: (3,47)-(3,48) = ":"
+        │   │           │                       │           ├── content_loc: (3,48)-(3,50) = "ok"
+        │   │           │                       │           ├── closing_loc: ∅
+        │   │           │                       │           └── unescaped: "ok"
+        │   │           │                       ├── opening_loc: (3,44)-(3,46) = "do"
+        │   │           │                       └── closing_loc: (3,51)-(3,54) = "end"
+        │   │           ├── else_clause: ∅
+        │   │           ├── case_keyword_loc: (3,8)-(3,12) = "case"
+        │   │           └── end_keyword_loc: (3,55)-(3,58) = "end"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (5,0)-(5,59))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :receive
+        │   ├── message_loc: (5,0)-(5,7) = "receive"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (5,8)-(5,59))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CaseNode (location: (5,8)-(5,59))
+        │   │           ├── flags: ∅
+        │   │           ├── predicate:
+        │   │           │   @ CallNode (location: (5,13)-(5,18))
+        │   │           │   ├── flags: variable_call, ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :value
+        │   │           │   ├── message_loc: (5,13)-(5,18) = "value"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block: ∅
+        │   │           ├── conditions: (length: 1)
+        │   │           │   └── @ WhenNode (location: (5,20)-(5,30))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── when_keyword_loc: (5,20)-(5,24) = "when"
+        │   │           │       ├── conditions: (length: 1)
+        │   │           │       │   └── @ CallNode (location: (5,25)-(5,30))
+        │   │           │       │       ├── flags: variable_call, ignore_visibility
+        │   │           │       │       ├── receiver: ∅
+        │   │           │       │       ├── call_operator_loc: ∅
+        │   │           │       │       ├── name: :ready
+        │   │           │       │       ├── message_loc: (5,25)-(5,30) = "ready"
+        │   │           │       │       ├── opening_loc: ∅
+        │   │           │       │       ├── arguments: ∅
+        │   │           │       │       ├── closing_loc: ∅
+        │   │           │       │       ├── equal_loc: ∅
+        │   │           │       │       └── block: ∅
+        │   │           │       ├── then_keyword_loc: ∅
+        │   │           │       └── statements: ∅
+        │   │           ├── else_clause:
+        │   │           │   @ ElseNode (location: (5,32)-(5,59))
+        │   │           │   ├── flags: ∅
+        │   │           │   ├── else_keyword_loc: (5,32)-(5,36) = "else"
+        │   │           │   ├── statements:
+        │   │           │   │   @ StatementsNode (location: (5,37)-(5,55))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   └── body: (length: 1)
+        │   │           │   │       └── @ CallNode (location: (5,37)-(5,55))
+        │   │           │   │           ├── flags: newline, ignore_visibility
+        │   │           │   │           ├── receiver: ∅
+        │   │           │   │           ├── call_operator_loc: ∅
+        │   │           │   │           ├── name: :produce
+        │   │           │   │           ├── message_loc: (5,37)-(5,44) = "produce"
+        │   │           │   │           ├── opening_loc: ∅
+        │   │           │   │           ├── arguments: ∅
+        │   │           │   │           ├── closing_loc: ∅
+        │   │           │   │           ├── equal_loc: ∅
+        │   │           │   │           └── block:
+        │   │           │   │               @ BlockNode (location: (5,45)-(5,55))
+        │   │           │   │               ├── flags: ∅
+        │   │           │   │               ├── locals: []
+        │   │           │   │               ├── parameters: ∅
+        │   │           │   │               ├── body:
+        │   │           │   │               │   @ StatementsNode (location: (5,48)-(5,51))
+        │   │           │   │               │   ├── flags: ∅
+        │   │           │   │               │   └── body: (length: 1)
+        │   │           │   │               │       └── @ SymbolNode (location: (5,48)-(5,51))
+        │   │           │   │               │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   │           │   │               │           ├── opening_loc: (5,48)-(5,49) = ":"
+        │   │           │   │               │           ├── content_loc: (5,49)-(5,51) = "ok"
+        │   │           │   │               │           ├── closing_loc: ∅
+        │   │           │   │               │           └── unescaped: "ok"
+        │   │           │   │               ├── opening_loc: (5,45)-(5,47) = "do"
+        │   │           │   │               └── closing_loc: (5,52)-(5,55) = "end"
+        │   │           │   └── end_keyword_loc: (5,56)-(5,59) = "end"
+        │   │           ├── case_keyword_loc: (5,8)-(5,12) = "case"
+        │   │           └── end_keyword_loc: (5,56)-(5,59) = "end"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (7,0)-(7,58))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :receive
+        │   ├── message_loc: (7,0)-(7,7) = "receive"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (7,8)-(7,58))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CaseMatchNode (location: (7,8)-(7,58))
+        │   │           ├── flags: ∅
+        │   │           ├── predicate:
+        │   │           │   @ CallNode (location: (7,13)-(7,18))
+        │   │           │   ├── flags: variable_call, ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :value
+        │   │           │   ├── message_loc: (7,13)-(7,18) = "value"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block: ∅
+        │   │           ├── conditions: (length: 1)
+        │   │           │   └── @ InNode (location: (7,20)-(7,54))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── pattern:
+        │   │           │       │   @ ConstantReadNode (location: (7,23)-(7,30))
+        │   │           │       │   ├── flags: ∅
+        │   │           │       │   └── name: :Integer
+        │   │           │       ├── statements:
+        │   │           │       │   @ StatementsNode (location: (7,36)-(7,54))
+        │   │           │       │   ├── flags: ∅
+        │   │           │       │   └── body: (length: 1)
+        │   │           │       │       └── @ CallNode (location: (7,36)-(7,54))
+        │   │           │       │           ├── flags: newline, ignore_visibility
+        │   │           │       │           ├── receiver: ∅
+        │   │           │       │           ├── call_operator_loc: ∅
+        │   │           │       │           ├── name: :produce
+        │   │           │       │           ├── message_loc: (7,36)-(7,43) = "produce"
+        │   │           │       │           ├── opening_loc: ∅
+        │   │           │       │           ├── arguments: ∅
+        │   │           │       │           ├── closing_loc: ∅
+        │   │           │       │           ├── equal_loc: ∅
+        │   │           │       │           └── block:
+        │   │           │       │               @ BlockNode (location: (7,44)-(7,54))
+        │   │           │       │               ├── flags: ∅
+        │   │           │       │               ├── locals: []
+        │   │           │       │               ├── parameters: ∅
+        │   │           │       │               ├── body:
+        │   │           │       │               │   @ StatementsNode (location: (7,47)-(7,50))
+        │   │           │       │               │   ├── flags: ∅
+        │   │           │       │               │   └── body: (length: 1)
+        │   │           │       │               │       └── @ SymbolNode (location: (7,47)-(7,50))
+        │   │           │       │               │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   │           │       │               │           ├── opening_loc: (7,47)-(7,48) = ":"
+        │   │           │       │               │           ├── content_loc: (7,48)-(7,50) = "ok"
+        │   │           │       │               │           ├── closing_loc: ∅
+        │   │           │       │               │           └── unescaped: "ok"
+        │   │           │       │               ├── opening_loc: (7,44)-(7,46) = "do"
+        │   │           │       │               └── closing_loc: (7,51)-(7,54) = "end"
+        │   │           │       ├── in_keyword_loc: (7,20)-(7,22) = "in"
+        │   │           │       └── then_keyword_loc: (7,31)-(7,35) = "then"
+        │   │           ├── else_clause: ∅
+        │   │           ├── case_keyword_loc: (7,8)-(7,12) = "case"
+        │   │           └── end_keyword_loc: (7,55)-(7,58) = "end"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        ├── @ CallNode (location: (9,0)-(9,59))
+        │   ├── flags: newline, ignore_visibility
+        │   ├── receiver: ∅
+        │   ├── call_operator_loc: ∅
+        │   ├── name: :receive
+        │   ├── message_loc: (9,0)-(9,7) = "receive"
+        │   ├── opening_loc: ∅
+        │   ├── arguments:
+        │   │   @ ArgumentsNode (location: (9,8)-(9,59))
+        │   │   ├── flags: ∅
+        │   │   └── arguments: (length: 1)
+        │   │       └── @ CaseMatchNode (location: (9,8)-(9,59))
+        │   │           ├── flags: ∅
+        │   │           ├── predicate:
+        │   │           │   @ CallNode (location: (9,13)-(9,18))
+        │   │           │   ├── flags: variable_call, ignore_visibility
+        │   │           │   ├── receiver: ∅
+        │   │           │   ├── call_operator_loc: ∅
+        │   │           │   ├── name: :value
+        │   │           │   ├── message_loc: (9,13)-(9,18) = "value"
+        │   │           │   ├── opening_loc: ∅
+        │   │           │   ├── arguments: ∅
+        │   │           │   ├── closing_loc: ∅
+        │   │           │   ├── equal_loc: ∅
+        │   │           │   └── block: ∅
+        │   │           ├── conditions: (length: 1)
+        │   │           │   └── @ InNode (location: (9,20)-(9,30))
+        │   │           │       ├── flags: ∅
+        │   │           │       ├── pattern:
+        │   │           │       │   @ ConstantReadNode (location: (9,23)-(9,30))
+        │   │           │       │   ├── flags: ∅
+        │   │           │       │   └── name: :Integer
+        │   │           │       ├── statements: ∅
+        │   │           │       ├── in_keyword_loc: (9,20)-(9,22) = "in"
+        │   │           │       └── then_keyword_loc: ∅
+        │   │           ├── else_clause:
+        │   │           │   @ ElseNode (location: (9,32)-(9,59))
+        │   │           │   ├── flags: ∅
+        │   │           │   ├── else_keyword_loc: (9,32)-(9,36) = "else"
+        │   │           │   ├── statements:
+        │   │           │   │   @ StatementsNode (location: (9,37)-(9,55))
+        │   │           │   │   ├── flags: ∅
+        │   │           │   │   └── body: (length: 1)
+        │   │           │   │       └── @ CallNode (location: (9,37)-(9,55))
+        │   │           │   │           ├── flags: newline, ignore_visibility
+        │   │           │   │           ├── receiver: ∅
+        │   │           │   │           ├── call_operator_loc: ∅
+        │   │           │   │           ├── name: :produce
+        │   │           │   │           ├── message_loc: (9,37)-(9,44) = "produce"
+        │   │           │   │           ├── opening_loc: ∅
+        │   │           │   │           ├── arguments: ∅
+        │   │           │   │           ├── closing_loc: ∅
+        │   │           │   │           ├── equal_loc: ∅
+        │   │           │   │           └── block:
+        │   │           │   │               @ BlockNode (location: (9,45)-(9,55))
+        │   │           │   │               ├── flags: ∅
+        │   │           │   │               ├── locals: []
+        │   │           │   │               ├── parameters: ∅
+        │   │           │   │               ├── body:
+        │   │           │   │               │   @ StatementsNode (location: (9,48)-(9,51))
+        │   │           │   │               │   ├── flags: ∅
+        │   │           │   │               │   └── body: (length: 1)
+        │   │           │   │               │       └── @ SymbolNode (location: (9,48)-(9,51))
+        │   │           │   │               │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+        │   │           │   │               │           ├── opening_loc: (9,48)-(9,49) = ":"
+        │   │           │   │               │           ├── content_loc: (9,49)-(9,51) = "ok"
+        │   │           │   │               │           ├── closing_loc: ∅
+        │   │           │   │               │           └── unescaped: "ok"
+        │   │           │   │               ├── opening_loc: (9,45)-(9,47) = "do"
+        │   │           │   │               └── closing_loc: (9,52)-(9,55) = "end"
+        │   │           │   └── end_keyword_loc: (9,56)-(9,59) = "end"
+        │   │           ├── case_keyword_loc: (9,8)-(9,12) = "case"
+        │   │           └── end_keyword_loc: (9,56)-(9,59) = "end"
+        │   ├── closing_loc: ∅
+        │   ├── equal_loc: ∅
+        │   └── block: ∅
+        └── @ CallNode (location: (11,0)-(11,117))
+            ├── flags: newline, ignore_visibility
+            ├── receiver: ∅
+            ├── call_operator_loc: ∅
+            ├── name: :receive
+            ├── message_loc: (11,0)-(11,7) = "receive"
+            ├── opening_loc: ∅
+            ├── arguments:
+            │   @ ArgumentsNode (location: (11,8)-(11,103))
+            │   ├── flags: ∅
+            │   └── arguments: (length: 1)
+            │       └── @ CaseMatchNode (location: (11,8)-(11,103))
+            │           ├── flags: ∅
+            │           ├── predicate:
+            │           │   @ CallNode (location: (11,13)-(11,18))
+            │           │   ├── flags: variable_call, ignore_visibility
+            │           │   ├── receiver: ∅
+            │           │   ├── call_operator_loc: ∅
+            │           │   ├── name: :value
+            │           │   ├── message_loc: (11,13)-(11,18) = "value"
+            │           │   ├── opening_loc: ∅
+            │           │   ├── arguments: ∅
+            │           │   ├── closing_loc: ∅
+            │           │   ├── equal_loc: ∅
+            │           │   └── block: ∅
+            │           ├── conditions: (length: 1)
+            │           │   └── @ InNode (location: (11,20)-(11,57))
+            │           │       ├── flags: ∅
+            │           │       ├── pattern:
+            │           │       │   @ ConstantReadNode (location: (11,23)-(11,30))
+            │           │       │   ├── flags: ∅
+            │           │       │   └── name: :Integer
+            │           │       ├── statements:
+            │           │       │   @ StatementsNode (location: (11,36)-(11,57))
+            │           │       │   ├── flags: ∅
+            │           │       │   └── body: (length: 1)
+            │           │       │       └── @ CallNode (location: (11,36)-(11,57))
+            │           │       │           ├── flags: newline, ignore_visibility
+            │           │       │           ├── receiver: ∅
+            │           │       │           ├── call_operator_loc: ∅
+            │           │       │           ├── name: :Produce
+            │           │       │           ├── message_loc: (11,36)-(11,43) = "Produce"
+            │           │       │           ├── opening_loc: ∅
+            │           │       │           ├── arguments: ∅
+            │           │       │           ├── closing_loc: ∅
+            │           │       │           ├── equal_loc: ∅
+            │           │       │           └── block:
+            │           │       │               @ BlockNode (location: (11,44)-(11,57))
+            │           │       │               ├── flags: ∅
+            │           │       │               ├── locals: []
+            │           │       │               ├── parameters: ∅
+            │           │       │               ├── body:
+            │           │       │               │   @ StatementsNode (location: (11,47)-(11,53))
+            │           │       │               │   ├── flags: ∅
+            │           │       │               │   └── body: (length: 1)
+            │           │       │               │       └── @ SymbolNode (location: (11,47)-(11,53))
+            │           │       │               │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+            │           │       │               │           ├── opening_loc: (11,47)-(11,48) = ":"
+            │           │       │               │           ├── content_loc: (11,48)-(11,53) = "first"
+            │           │       │               │           ├── closing_loc: ∅
+            │           │       │               │           └── unescaped: "first"
+            │           │       │               ├── opening_loc: (11,44)-(11,46) = "do"
+            │           │       │               └── closing_loc: (11,54)-(11,57) = "end"
+            │           │       ├── in_keyword_loc: (11,20)-(11,22) = "in"
+            │           │       └── then_keyword_loc: (11,31)-(11,35) = "then"
+            │           ├── else_clause:
+            │           │   @ ElseNode (location: (11,59)-(11,103))
+            │           │   ├── flags: ∅
+            │           │   ├── else_keyword_loc: (11,59)-(11,63) = "else"
+            │           │   ├── statements:
+            │           │   │   @ StatementsNode (location: (11,64)-(11,98))
+            │           │   │   ├── flags: ∅
+            │           │   │   └── body: (length: 1)
+            │           │   │       └── @ CallNode (location: (11,64)-(11,98))
+            │           │   │           ├── flags: newline, ignore_visibility
+            │           │   │           ├── receiver: ∅
+            │           │   │           ├── call_operator_loc: ∅
+            │           │   │           ├── name: :collect
+            │           │   │           ├── message_loc: (11,64)-(11,71) = "collect"
+            │           │   │           ├── opening_loc: ∅
+            │           │   │           ├── arguments:
+            │           │   │           │   @ ArgumentsNode (location: (11,72)-(11,83))
+            │           │   │           │   ├── flags: ∅
+            │           │   │           │   └── arguments: (length: 1)
+            │           │   │           │       └── @ CallNode (location: (11,72)-(11,83))
+            │           │   │           │           ├── flags: ignore_visibility
+            │           │   │           │           ├── receiver: ∅
+            │           │   │           │           ├── call_operator_loc: ∅
+            │           │   │           │           ├── name: :item
+            │           │   │           │           ├── message_loc: (11,72)-(11,76) = "item"
+            │           │   │           │           ├── opening_loc: ∅
+            │           │   │           │           ├── arguments:
+            │           │   │           │           │   @ ArgumentsNode (location: (11,77)-(11,80))
+            │           │   │           │           │   ├── flags: ∅
+            │           │   │           │           │   └── arguments: (length: 1)
+            │           │   │           │           │       └── @ ParenthesesNode (location: (11,77)-(11,80))
+            │           │   │           │           │           ├── flags: ∅
+            │           │   │           │           │           ├── body:
+            │           │   │           │           │           │   @ StatementsNode (location: (11,78)-(11,79))
+            │           │   │           │           │           │   ├── flags: ∅
+            │           │   │           │           │           │   └── body: (length: 1)
+            │           │   │           │           │           │       └── @ CallNode (location: (11,78)-(11,79))
+            │           │   │           │           │           │           ├── flags: newline, variable_call, ignore_visibility
+            │           │   │           │           │           │           ├── receiver: ∅
+            │           │   │           │           │           │           ├── call_operator_loc: ∅
+            │           │   │           │           │           │           ├── name: :x
+            │           │   │           │           │           │           ├── message_loc: (11,78)-(11,79) = "x"
+            │           │   │           │           │           │           ├── opening_loc: ∅
+            │           │   │           │           │           │           ├── arguments: ∅
+            │           │   │           │           │           │           ├── closing_loc: ∅
+            │           │   │           │           │           │           ├── equal_loc: ∅
+            │           │   │           │           │           │           └── block: ∅
+            │           │   │           │           │           ├── opening_loc: (11,77)-(11,78) = "("
+            │           │   │           │           │           └── closing_loc: (11,79)-(11,80) = ")"
+            │           │   │           │           ├── closing_loc: ∅
+            │           │   │           │           ├── equal_loc: ∅
+            │           │   │           │           └── block:
+            │           │   │           │               @ BlockNode (location: (11,81)-(11,83))
+            │           │   │           │               ├── flags: ∅
+            │           │   │           │               ├── locals: []
+            │           │   │           │               ├── parameters: ∅
+            │           │   │           │               ├── body: ∅
+            │           │   │           │               ├── opening_loc: (11,81)-(11,82) = "{"
+            │           │   │           │               └── closing_loc: (11,82)-(11,83) = "}"
+            │           │   │           ├── closing_loc: ∅
+            │           │   │           ├── equal_loc: ∅
+            │           │   │           └── block:
+            │           │   │               @ BlockNode (location: (11,84)-(11,98))
+            │           │   │               ├── flags: ∅
+            │           │   │               ├── locals: []
+            │           │   │               ├── parameters: ∅
+            │           │   │               ├── body:
+            │           │   │               │   @ StatementsNode (location: (11,87)-(11,94))
+            │           │   │               │   ├── flags: ∅
+            │           │   │               │   └── body: (length: 1)
+            │           │   │               │       └── @ SymbolNode (location: (11,87)-(11,94))
+            │           │   │               │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+            │           │   │               │           ├── opening_loc: (11,87)-(11,88) = ":"
+            │           │   │               │           ├── content_loc: (11,88)-(11,94) = "second"
+            │           │   │               │           ├── closing_loc: ∅
+            │           │   │               │           └── unescaped: "second"
+            │           │   │               ├── opening_loc: (11,84)-(11,86) = "do"
+            │           │   │               └── closing_loc: (11,95)-(11,98) = "end"
+            │           │   └── end_keyword_loc: (11,100)-(11,103) = "end"
+            │           ├── case_keyword_loc: (11,8)-(11,12) = "case"
+            │           └── end_keyword_loc: (11,100)-(11,103) = "end"
+            ├── closing_loc: ∅
+            ├── equal_loc: ∅
+            └── block:
+                @ BlockNode (location: (11,104)-(11,117))
+                ├── flags: ∅
+                ├── locals: []
+                ├── parameters: ∅
+                ├── body:
+                │   @ StatementsNode (location: (11,107)-(11,113))
+                │   ├── flags: ∅
+                │   └── body: (length: 1)
+                │       └── @ SymbolNode (location: (11,107)-(11,113))
+                │           ├── flags: newline, static_literal, forced_us_ascii_encoding
+                │           ├── opening_loc: (11,107)-(11,108) = ":"
+                │           ├── content_loc: (11,108)-(11,113) = "outer"
+                │           ├── closing_loc: ∅
+                │           └── unescaped: "outer"
+                ├── opening_loc: (11,104)-(11,106) = "do"
+                └── closing_loc: (11,114)-(11,117) = "end"

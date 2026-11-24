@@ -1,0 +1,374 @@
+@ ProgramNode (location: (1,0)-(10,13))
+├── flags: ∅
+├── locals: []
+└── statements:
+    @ StatementsNode (location: (1,0)-(10,13))
+    ├── flags: ∅
+    └── body: (length: 3)
+        ├── @ CaseMatchNode (location: (1,0)-(3,15))
+        │   ├── flags: newline
+        │   ├── predicate:
+        │   │   @ CallNode (location: (1,5)-(1,6))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (1,5)-(1,6) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── conditions: (length: 1)
+        │   │   └── @ InNode (location: (1,8)-(3,10))
+        │   │       ├── flags: ∅
+        │   │       ├── pattern:
+        │   │       │   @ IfNode (location: (1,11)-(1,21))
+        │   │       │   ├── flags: newline
+        │   │       │   ├── if_keyword_loc: (1,14)-(1,16) = "if"
+        │   │       │   ├── predicate:
+        │   │       │   │   @ CallNode (location: (1,17)-(1,21))
+        │   │       │   │   ├── flags: ignore_visibility
+        │   │       │   │   ├── receiver: ∅
+        │   │       │   │   ├── call_operator_loc: ∅
+        │   │       │   │   ├── name: :m
+        │   │       │   │   ├── message_loc: (1,17)-(1,18) = "m"
+        │   │       │   │   ├── opening_loc: ∅
+        │   │       │   │   ├── arguments:
+        │   │       │   │   │   @ ArgumentsNode (location: (1,19)-(1,21))
+        │   │       │   │   │   ├── flags: contains_keywords
+        │   │       │   │   │   └── arguments: (length: 1)
+        │   │       │   │   │       └── @ KeywordHashNode (location: (1,19)-(1,21))
+        │   │       │   │   │           ├── flags: symbol_keys
+        │   │       │   │   │           └── elements: (length: 1)
+        │   │       │   │   │               └── @ AssocNode (location: (1,19)-(1,21))
+        │   │       │   │   │                   ├── flags: ∅
+        │   │       │   │   │                   ├── key:
+        │   │       │   │   │                   │   @ SymbolNode (location: (1,19)-(1,21))
+        │   │       │   │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │   │   │                   │   ├── opening_loc: ∅
+        │   │       │   │   │                   │   ├── content_loc: (1,19)-(1,20) = "k"
+        │   │       │   │   │                   │   ├── closing_loc: (1,20)-(1,21) = ":"
+        │   │       │   │   │                   │   └── unescaped: "k"
+        │   │       │   │   │                   ├── value:
+        │   │       │   │   │                   │   @ ImplicitNode (location: (1,19)-(1,21))
+        │   │       │   │   │                   │   ├── flags: ∅
+        │   │       │   │   │                   │   └── value:
+        │   │       │   │   │                   │       @ CallNode (location: (1,19)-(1,21))
+        │   │       │   │   │                   │       ├── flags: ignore_visibility
+        │   │       │   │   │                   │       ├── receiver: ∅
+        │   │       │   │   │                   │       ├── call_operator_loc: ∅
+        │   │       │   │   │                   │       ├── name: :k
+        │   │       │   │   │                   │       ├── message_loc: (1,19)-(1,20) = "k"
+        │   │       │   │   │                   │       ├── opening_loc: ∅
+        │   │       │   │   │                   │       ├── arguments: ∅
+        │   │       │   │   │                   │       ├── closing_loc: ∅
+        │   │       │   │   │                   │       ├── equal_loc: ∅
+        │   │       │   │   │                   │       └── block: ∅
+        │   │       │   │   │                   └── operator_loc: ∅
+        │   │       │   │   ├── closing_loc: ∅
+        │   │       │   │   ├── equal_loc: ∅
+        │   │       │   │   └── block: ∅
+        │   │       │   ├── then_keyword_loc: ∅
+        │   │       │   ├── statements:
+        │   │       │   │   @ StatementsNode (location: (1,11)-(1,13))
+        │   │       │   │   ├── flags: ∅
+        │   │       │   │   └── body: (length: 1)
+        │   │       │   │       └── @ HashPatternNode (location: (1,11)-(1,13))
+        │   │       │   │           ├── flags: newline
+        │   │       │   │           ├── constant: ∅
+        │   │       │   │           ├── elements: (length: 0)
+        │   │       │   │           ├── rest: ∅
+        │   │       │   │           ├── opening_loc: (1,11)-(1,12) = "{"
+        │   │       │   │           └── closing_loc: (1,12)-(1,13) = "}"
+        │   │       │   ├── subsequent: ∅
+        │   │       │   └── end_keyword_loc: ∅
+        │   │       ├── statements:
+        │   │       │   @ StatementsNode (location: (2,0)-(3,10))
+        │   │       │   ├── flags: ∅
+        │   │       │   └── body: (length: 1)
+        │   │       │       └── @ CallNode (location: (2,0)-(3,10))
+        │   │       │           ├── flags: newline, ignore_visibility
+        │   │       │           ├── receiver: ∅
+        │   │       │           ├── call_operator_loc: ∅
+        │   │       │           ├── name: :work
+        │   │       │           ├── message_loc: (2,0)-(2,4) = "work"
+        │   │       │           ├── opening_loc: ∅
+        │   │       │           ├── arguments:
+        │   │       │           │   @ ArgumentsNode (location: (2,5)-(3,10))
+        │   │       │           │   ├── flags: contains_keywords
+        │   │       │           │   └── arguments: (length: 1)
+        │   │       │           │       └── @ KeywordHashNode (location: (2,5)-(3,10))
+        │   │       │           │           ├── flags: symbol_keys
+        │   │       │           │           └── elements: (length: 1)
+        │   │       │           │               └── @ AssocNode (location: (2,5)-(3,10))
+        │   │       │           │                   ├── flags: ∅
+        │   │       │           │                   ├── key:
+        │   │       │           │                   │   @ SymbolNode (location: (2,5)-(2,11))
+        │   │       │           │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │           │                   │   ├── opening_loc: ∅
+        │   │       │           │                   │   ├── content_loc: (2,5)-(2,10) = "value"
+        │   │       │           │                   │   ├── closing_loc: (2,10)-(2,11) = ":"
+        │   │       │           │                   │   └── unescaped: "value"
+        │   │       │           │                   ├── value:
+        │   │       │           │                   │   @ CallNode (location: (3,0)-(3,10))
+        │   │       │           │                   │   ├── flags: variable_call, ignore_visibility
+        │   │       │           │                   │   ├── receiver: ∅
+        │   │       │           │                   │   ├── call_operator_loc: ∅
+        │   │       │           │                   │   ├── name: :next_value
+        │   │       │           │                   │   ├── message_loc: (3,0)-(3,10) = "next_value"
+        │   │       │           │                   │   ├── opening_loc: ∅
+        │   │       │           │                   │   ├── arguments: ∅
+        │   │       │           │                   │   ├── closing_loc: ∅
+        │   │       │           │                   │   ├── equal_loc: ∅
+        │   │       │           │                   │   └── block: ∅
+        │   │       │           │                   └── operator_loc: ∅
+        │   │       │           ├── closing_loc: ∅
+        │   │       │           ├── equal_loc: ∅
+        │   │       │           └── block: ∅
+        │   │       ├── in_keyword_loc: (1,8)-(1,10) = "in"
+        │   │       └── then_keyword_loc: ∅
+        │   ├── else_clause: ∅
+        │   ├── case_keyword_loc: (1,0)-(1,4) = "case"
+        │   └── end_keyword_loc: (3,12)-(3,15) = "end"
+        ├── @ CaseMatchNode (location: (5,0)-(7,15))
+        │   ├── flags: newline
+        │   ├── predicate:
+        │   │   @ CallNode (location: (5,5)-(5,6))
+        │   │   ├── flags: variable_call, ignore_visibility
+        │   │   ├── receiver: ∅
+        │   │   ├── call_operator_loc: ∅
+        │   │   ├── name: :x
+        │   │   ├── message_loc: (5,5)-(5,6) = "x"
+        │   │   ├── opening_loc: ∅
+        │   │   ├── arguments: ∅
+        │   │   ├── closing_loc: ∅
+        │   │   ├── equal_loc: ∅
+        │   │   └── block: ∅
+        │   ├── conditions: (length: 1)
+        │   │   └── @ InNode (location: (5,8)-(7,10))
+        │   │       ├── flags: ∅
+        │   │       ├── pattern:
+        │   │       │   @ UnlessNode (location: (5,11)-(5,25))
+        │   │       │   ├── flags: newline
+        │   │       │   ├── unless_keyword_loc: (5,14)-(5,20) = "unless"
+        │   │       │   ├── predicate:
+        │   │       │   │   @ CallNode (location: (5,21)-(5,25))
+        │   │       │   │   ├── flags: ignore_visibility
+        │   │       │   │   ├── receiver: ∅
+        │   │       │   │   ├── call_operator_loc: ∅
+        │   │       │   │   ├── name: :m
+        │   │       │   │   ├── message_loc: (5,21)-(5,22) = "m"
+        │   │       │   │   ├── opening_loc: ∅
+        │   │       │   │   ├── arguments:
+        │   │       │   │   │   @ ArgumentsNode (location: (5,23)-(5,25))
+        │   │       │   │   │   ├── flags: contains_keywords
+        │   │       │   │   │   └── arguments: (length: 1)
+        │   │       │   │   │       └── @ KeywordHashNode (location: (5,23)-(5,25))
+        │   │       │   │   │           ├── flags: symbol_keys
+        │   │       │   │   │           └── elements: (length: 1)
+        │   │       │   │   │               └── @ AssocNode (location: (5,23)-(5,25))
+        │   │       │   │   │                   ├── flags: ∅
+        │   │       │   │   │                   ├── key:
+        │   │       │   │   │                   │   @ SymbolNode (location: (5,23)-(5,25))
+        │   │       │   │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │   │   │                   │   ├── opening_loc: ∅
+        │   │       │   │   │                   │   ├── content_loc: (5,23)-(5,24) = "k"
+        │   │       │   │   │                   │   ├── closing_loc: (5,24)-(5,25) = ":"
+        │   │       │   │   │                   │   └── unescaped: "k"
+        │   │       │   │   │                   ├── value:
+        │   │       │   │   │                   │   @ ImplicitNode (location: (5,23)-(5,25))
+        │   │       │   │   │                   │   ├── flags: ∅
+        │   │       │   │   │                   │   └── value:
+        │   │       │   │   │                   │       @ CallNode (location: (5,23)-(5,25))
+        │   │       │   │   │                   │       ├── flags: ignore_visibility
+        │   │       │   │   │                   │       ├── receiver: ∅
+        │   │       │   │   │                   │       ├── call_operator_loc: ∅
+        │   │       │   │   │                   │       ├── name: :k
+        │   │       │   │   │                   │       ├── message_loc: (5,23)-(5,24) = "k"
+        │   │       │   │   │                   │       ├── opening_loc: ∅
+        │   │       │   │   │                   │       ├── arguments: ∅
+        │   │       │   │   │                   │       ├── closing_loc: ∅
+        │   │       │   │   │                   │       ├── equal_loc: ∅
+        │   │       │   │   │                   │       └── block: ∅
+        │   │       │   │   │                   └── operator_loc: ∅
+        │   │       │   │   ├── closing_loc: ∅
+        │   │       │   │   ├── equal_loc: ∅
+        │   │       │   │   └── block: ∅
+        │   │       │   ├── then_keyword_loc: ∅
+        │   │       │   ├── statements:
+        │   │       │   │   @ StatementsNode (location: (5,11)-(5,13))
+        │   │       │   │   ├── flags: ∅
+        │   │       │   │   └── body: (length: 1)
+        │   │       │   │       └── @ HashPatternNode (location: (5,11)-(5,13))
+        │   │       │   │           ├── flags: newline
+        │   │       │   │           ├── constant: ∅
+        │   │       │   │           ├── elements: (length: 0)
+        │   │       │   │           ├── rest: ∅
+        │   │       │   │           ├── opening_loc: (5,11)-(5,12) = "{"
+        │   │       │   │           └── closing_loc: (5,12)-(5,13) = "}"
+        │   │       │   ├── else_clause: ∅
+        │   │       │   └── end_keyword_loc: ∅
+        │   │       ├── statements:
+        │   │       │   @ StatementsNode (location: (6,0)-(7,10))
+        │   │       │   ├── flags: ∅
+        │   │       │   └── body: (length: 1)
+        │   │       │       └── @ CallNode (location: (6,0)-(7,10))
+        │   │       │           ├── flags: newline, ignore_visibility
+        │   │       │           ├── receiver: ∅
+        │   │       │           ├── call_operator_loc: ∅
+        │   │       │           ├── name: :work
+        │   │       │           ├── message_loc: (6,0)-(6,4) = "work"
+        │   │       │           ├── opening_loc: ∅
+        │   │       │           ├── arguments:
+        │   │       │           │   @ ArgumentsNode (location: (6,5)-(7,10))
+        │   │       │           │   ├── flags: contains_keywords
+        │   │       │           │   └── arguments: (length: 1)
+        │   │       │           │       └── @ KeywordHashNode (location: (6,5)-(7,10))
+        │   │       │           │           ├── flags: symbol_keys
+        │   │       │           │           └── elements: (length: 1)
+        │   │       │           │               └── @ AssocNode (location: (6,5)-(7,10))
+        │   │       │           │                   ├── flags: ∅
+        │   │       │           │                   ├── key:
+        │   │       │           │                   │   @ SymbolNode (location: (6,5)-(6,11))
+        │   │       │           │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+        │   │       │           │                   │   ├── opening_loc: ∅
+        │   │       │           │                   │   ├── content_loc: (6,5)-(6,10) = "value"
+        │   │       │           │                   │   ├── closing_loc: (6,10)-(6,11) = ":"
+        │   │       │           │                   │   └── unescaped: "value"
+        │   │       │           │                   ├── value:
+        │   │       │           │                   │   @ CallNode (location: (7,0)-(7,10))
+        │   │       │           │                   │   ├── flags: variable_call, ignore_visibility
+        │   │       │           │                   │   ├── receiver: ∅
+        │   │       │           │                   │   ├── call_operator_loc: ∅
+        │   │       │           │                   │   ├── name: :next_value
+        │   │       │           │                   │   ├── message_loc: (7,0)-(7,10) = "next_value"
+        │   │       │           │                   │   ├── opening_loc: ∅
+        │   │       │           │                   │   ├── arguments: ∅
+        │   │       │           │                   │   ├── closing_loc: ∅
+        │   │       │           │                   │   ├── equal_loc: ∅
+        │   │       │           │                   │   └── block: ∅
+        │   │       │           │                   └── operator_loc: ∅
+        │   │       │           ├── closing_loc: ∅
+        │   │       │           ├── equal_loc: ∅
+        │   │       │           └── block: ∅
+        │   │       ├── in_keyword_loc: (5,8)-(5,10) = "in"
+        │   │       └── then_keyword_loc: ∅
+        │   ├── else_clause: ∅
+        │   ├── case_keyword_loc: (5,0)-(5,4) = "case"
+        │   └── end_keyword_loc: (7,12)-(7,15) = "end"
+        └── @ DefNode (location: (9,0)-(10,13))
+            ├── flags: newline
+            ├── name: :f
+            ├── name_loc: (9,4)-(9,5) = "f"
+            ├── receiver: ∅
+            ├── parameters:
+            │   @ ParametersNode (location: (9,6)-(10,8))
+            │   ├── flags: ∅
+            │   ├── requireds: (length: 0)
+            │   ├── optionals: (length: 0)
+            │   ├── rest: ∅
+            │   ├── posts: (length: 0)
+            │   ├── keywords: (length: 1)
+            │   │   └── @ OptionalKeywordParameterNode (location: (9,6)-(10,8))
+            │   │       ├── flags: ∅
+            │   │       ├── name: :opt
+            │   │       ├── name_loc: (9,6)-(9,10) = "opt:"
+            │   │       └── value:
+            │   │           @ ParenthesesNode (location: (9,11)-(10,8))
+            │   │           ├── flags: ∅
+            │   │           ├── body:
+            │   │           │   @ StatementsNode (location: (9,12)-(10,7))
+            │   │           │   ├── flags: ∅
+            │   │           │   └── body: (length: 1)
+            │   │           │       └── @ MatchPredicateNode (location: (9,12)-(10,7))
+            │   │           │           ├── flags: newline
+            │   │           │           ├── value:
+            │   │           │           │   @ CallNode (location: (9,12)-(9,13))
+            │   │           │           │   ├── flags: variable_call, ignore_visibility
+            │   │           │           │   ├── receiver: ∅
+            │   │           │           │   ├── call_operator_loc: ∅
+            │   │           │           │   ├── name: :x
+            │   │           │           │   ├── message_loc: (9,12)-(9,13) = "x"
+            │   │           │           │   ├── opening_loc: ∅
+            │   │           │           │   ├── arguments: ∅
+            │   │           │           │   ├── closing_loc: ∅
+            │   │           │           │   ├── equal_loc: ∅
+            │   │           │           │   └── block: ∅
+            │   │           │           ├── pattern:
+            │   │           │           │   @ HashPatternNode (location: (9,17)-(10,7))
+            │   │           │           │   ├── flags: ∅
+            │   │           │           │   ├── constant: ∅
+            │   │           │           │   ├── elements: (length: 1)
+            │   │           │           │   │   └── @ AssocNode (location: (9,18)-(10,6))
+            │   │           │           │   │       ├── flags: ∅
+            │   │           │           │   │       ├── key:
+            │   │           │           │   │       │   @ SymbolNode (location: (9,18)-(9,22))
+            │   │           │           │   │       │   ├── flags: static_literal, forced_us_ascii_encoding
+            │   │           │           │   │       │   ├── opening_loc: ∅
+            │   │           │           │   │       │   ├── content_loc: (9,18)-(9,21) = "key"
+            │   │           │           │   │       │   ├── closing_loc: (9,21)-(9,22) = ":"
+            │   │           │           │   │       │   └── unescaped: "key"
+            │   │           │           │   │       ├── value:
+            │   │           │           │   │       │   @ PinnedExpressionNode (location: (9,23)-(10,6))
+            │   │           │           │   │       │   ├── flags: ∅
+            │   │           │           │   │       │   ├── expression:
+            │   │           │           │   │       │   │   @ CallNode (location: (9,25)-(10,5))
+            │   │           │           │   │       │   │   ├── flags: ignore_visibility
+            │   │           │           │   │       │   │   ├── receiver: ∅
+            │   │           │           │   │       │   │   ├── call_operator_loc: ∅
+            │   │           │           │   │       │   │   ├── name: :m
+            │   │           │           │   │       │   │   ├── message_loc: (9,25)-(9,26) = "m"
+            │   │           │           │   │       │   │   ├── opening_loc: ∅
+            │   │           │           │   │       │   │   ├── arguments:
+            │   │           │           │   │       │   │   │   @ ArgumentsNode (location: (9,27)-(10,5))
+            │   │           │           │   │       │   │   │   ├── flags: contains_keywords
+            │   │           │           │   │       │   │   │   └── arguments: (length: 1)
+            │   │           │           │   │       │   │   │       └── @ KeywordHashNode (location: (9,27)-(10,5))
+            │   │           │           │   │       │   │   │           ├── flags: symbol_keys
+            │   │           │           │   │       │   │   │           └── elements: (length: 1)
+            │   │           │           │   │       │   │   │               └── @ AssocNode (location: (9,27)-(10,5))
+            │   │           │           │   │       │   │   │                   ├── flags: ∅
+            │   │           │           │   │       │   │   │                   ├── key:
+            │   │           │           │   │       │   │   │                   │   @ SymbolNode (location: (9,27)-(9,29))
+            │   │           │           │   │       │   │   │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+            │   │           │           │   │       │   │   │                   │   ├── opening_loc: ∅
+            │   │           │           │   │       │   │   │                   │   ├── content_loc: (9,27)-(9,28) = "k"
+            │   │           │           │   │       │   │   │                   │   ├── closing_loc: (9,28)-(9,29) = ":"
+            │   │           │           │   │       │   │   │                   │   └── unescaped: "k"
+            │   │           │           │   │       │   │   │                   ├── value:
+            │   │           │           │   │       │   │   │                   │   @ CallNode (location: (10,0)-(10,5))
+            │   │           │           │   │       │   │   │                   │   ├── flags: variable_call, ignore_visibility
+            │   │           │           │   │       │   │   │                   │   ├── receiver: ∅
+            │   │           │           │   │       │   │   │                   │   ├── call_operator_loc: ∅
+            │   │           │           │   │       │   │   │                   │   ├── name: :value
+            │   │           │           │   │       │   │   │                   │   ├── message_loc: (10,0)-(10,5) = "value"
+            │   │           │           │   │       │   │   │                   │   ├── opening_loc: ∅
+            │   │           │           │   │       │   │   │                   │   ├── arguments: ∅
+            │   │           │           │   │       │   │   │                   │   ├── closing_loc: ∅
+            │   │           │           │   │       │   │   │                   │   ├── equal_loc: ∅
+            │   │           │           │   │       │   │   │                   │   └── block: ∅
+            │   │           │           │   │       │   │   │                   └── operator_loc: ∅
+            │   │           │           │   │       │   │   ├── closing_loc: ∅
+            │   │           │           │   │       │   │   ├── equal_loc: ∅
+            │   │           │           │   │       │   │   └── block: ∅
+            │   │           │           │   │       │   ├── operator_loc: (9,23)-(9,24) = "^"
+            │   │           │           │   │       │   ├── lparen_loc: (9,24)-(9,25) = "("
+            │   │           │           │   │       │   └── rparen_loc: (10,5)-(10,6) = ")"
+            │   │           │           │   │       └── operator_loc: ∅
+            │   │           │           │   ├── rest: ∅
+            │   │           │           │   ├── opening_loc: (9,17)-(9,18) = "{"
+            │   │           │           │   └── closing_loc: (10,6)-(10,7) = "}"
+            │   │           │           └── keyword_loc: (9,14)-(9,16) = "in"
+            │   │           ├── opening_loc: (9,11)-(9,12) = "("
+            │   │           └── closing_loc: (10,7)-(10,8) = ")"
+            │   ├── keyword_rest: ∅
+            │   └── block: ∅
+            ├── body: ∅
+            ├── locals: [:opt]
+            ├── def_keyword_loc: (9,0)-(9,3) = "def"
+            ├── operator_loc: ∅
+            ├── lparen_loc: ∅
+            ├── rparen_loc: ∅
+            ├── equal_loc: ∅
+            └── end_keyword_loc: (10,10)-(10,13) = "end"

@@ -1,25 +1,86 @@
-@ ProgramNode (location: (1,0)-(1,23))
+@ ProgramNode (location: (1,0)-(5,40))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(1,23))
+    @ StatementsNode (location: (1,0)-(5,40))
     ├── flags: ∅
-    └── body: (length: 1)
-        └── @ SingletonClassNode (location: (1,0)-(1,23))
+    └── body: (length: 3)
+        ├── @ SingletonClassNode (location: (1,0)-(1,23))
+        │   ├── flags: newline
+        │   ├── locals: []
+        │   ├── class_keyword_loc: (1,0)-(1,5) = "class"
+        │   ├── operator_loc: (1,6)-(1,8) = "<<"
+        │   ├── expression:
+        │   │   @ ConstantReadNode (location: (1,9)-(1,10))
+        │   │   ├── flags: ∅
+        │   │   └── name: :A
+        │   ├── body:
+        │   │   @ StatementsNode (location: (1,12)-(1,18))
+        │   │   ├── flags: ∅
+        │   │   └── body: (length: 1)
+        │   │       └── @ ReturnNode (location: (1,12)-(1,18))
+        │   │           ├── flags: newline
+        │   │           ├── keyword_loc: (1,12)-(1,18) = "return"
+        │   │           └── arguments: ∅
+        │   └── end_keyword_loc: (1,20)-(1,23) = "end"
+        ├── @ LambdaNode (location: (3,0)-(3,33))
+        │   ├── flags: newline
+        │   ├── locals: []
+        │   ├── operator_loc: (3,0)-(3,2) = "->"
+        │   ├── opening_loc: (3,3)-(3,4) = "{"
+        │   ├── closing_loc: (3,32)-(3,33) = "}"
+        │   ├── parameters: ∅
+        │   └── body:
+        │       @ StatementsNode (location: (3,5)-(3,31))
+        │       ├── flags: ∅
+        │       └── body: (length: 1)
+        │           └── @ SingletonClassNode (location: (3,5)-(3,31))
+        │               ├── flags: newline
+        │               ├── locals: []
+        │               ├── class_keyword_loc: (3,5)-(3,10) = "class"
+        │               ├── operator_loc: (3,11)-(3,13) = "<<"
+        │               ├── expression:
+        │               │   @ SelfNode (location: (3,14)-(3,18))
+        │               │   └── flags: ∅
+        │               ├── body:
+        │               │   @ StatementsNode (location: (3,20)-(3,26))
+        │               │   ├── flags: ∅
+        │               │   └── body: (length: 1)
+        │               │       └── @ ReturnNode (location: (3,20)-(3,26))
+        │               │           ├── flags: newline
+        │               │           ├── keyword_loc: (3,20)-(3,26) = "return"
+        │               │           └── arguments: ∅
+        │               └── end_keyword_loc: (3,28)-(3,31) = "end"
+        └── @ ClassNode (location: (5,0)-(5,40))
             ├── flags: newline
             ├── locals: []
-            ├── class_keyword_loc: (1,0)-(1,5) = "class"
-            ├── operator_loc: (1,6)-(1,8) = "<<"
-            ├── expression:
-            │   @ ConstantReadNode (location: (1,9)-(1,10))
+            ├── class_keyword_loc: (5,0)-(5,5) = "class"
+            ├── constant_path:
+            │   @ ConstantReadNode (location: (5,6)-(5,7))
             │   ├── flags: ∅
-            │   └── name: :A
+            │   └── name: :C
+            ├── inheritance_operator_loc: ∅
+            ├── superclass: ∅
             ├── body:
-            │   @ StatementsNode (location: (1,12)-(1,18))
-            │   ├── flags: ∅
+            │   @ StatementsNode (location: (5,9)-(5,35))
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
-            │       └── @ ReturnNode (location: (1,12)-(1,18))
+            │       └── @ SingletonClassNode (location: (5,9)-(5,35))
             │           ├── flags: newline
-            │           ├── keyword_loc: (1,12)-(1,18) = "return"
-            │           └── arguments: ∅
-            └── end_keyword_loc: (1,20)-(1,23) = "end"
+            │           ├── locals: []
+            │           ├── class_keyword_loc: (5,9)-(5,14) = "class"
+            │           ├── operator_loc: (5,15)-(5,17) = "<<"
+            │           ├── expression:
+            │           │   @ SelfNode (location: (5,18)-(5,22))
+            │           │   └── flags: ∅
+            │           ├── body:
+            │           │   @ StatementsNode (location: (5,24)-(5,30))
+            │           │   ├── flags: ∅
+            │           │   └── body: (length: 1)
+            │           │       └── @ ReturnNode (location: (5,24)-(5,30))
+            │           │           ├── flags: newline
+            │           │           ├── keyword_loc: (5,24)-(5,30) = "return"
+            │           │           └── arguments: ∅
+            │           └── end_keyword_loc: (5,32)-(5,35) = "end"
+            ├── end_keyword_loc: (5,37)-(5,40) = "end"
+            └── name: :C
