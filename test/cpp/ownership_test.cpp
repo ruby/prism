@@ -58,12 +58,13 @@ PRISM_TEST(moving_a_parser_keeps_its_tree_usable) {
 }
 
 PRISM_TEST(options_reach_the_parser) {
+    constexpr std::string_view filepath = "example.rb";
     prism::unique_options options = prism::make_options();
-    pm_options_filepath_set(options.get(), "example.rb");
+    pm_options_filepath_set(options.get(), filepath.data(), filepath.size());
     pm_options_line_set(options.get(), 10);
 
     prism_test::parse_result result("foo\nbar", options.get());
-    CHECK(prism::view(*pm_parser_filepath(result.parser.get())) == "example.rb");
+    CHECK(prism::view(*pm_parser_filepath(result.parser.get())) == filepath);
     CHECK(prism::line_column(result.parser.get(), result.statement(1)->location.start).line == 11);
 }
 
