@@ -1034,7 +1034,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (110,10)-(110,14))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (110,10)-(110,14))
         │   │           ├── flags: newline, ignore_visibility
@@ -1088,7 +1088,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (112,14)-(112,28))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (112,14)-(112,28))
         │   │           ├── flags: newline, ignore_visibility
@@ -1162,7 +1162,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (114,12)-(114,18))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (114,12)-(114,18))
         │   │           ├── flags: newline, ignore_visibility
@@ -1206,7 +1206,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (116,12)-(116,24))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (116,12)-(116,24))
         │   │           ├── flags: newline, ignore_visibility
@@ -1445,7 +1445,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (138,12)-(138,26))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ InterpolatedStringNode (location: (138,12)-(138,26))
         │   │           ├── flags: newline
@@ -1968,7 +1968,7 @@
         │   │   └── block: ∅
         │   ├── body:
         │   │   @ StatementsNode (location: (169,10)-(169,13))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ ArrayNode (location: (169,10)-(169,13))
         │   │           ├── flags: newline, contains_splat

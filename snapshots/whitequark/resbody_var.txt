@@ -10,7 +10,7 @@
         │   ├── begin_keyword_loc: (1,0)-(1,5) = "begin"
         │   ├── statements:
         │   │   @ StatementsNode (location: (1,7)-(1,11))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (1,7)-(1,11))
         │   │           ├── flags: newline, variable_call, ignore_visibility
@@ -58,7 +58,7 @@
             ├── begin_keyword_loc: (3,0)-(3,5) = "begin"
             ├── statements:
             │   @ StatementsNode (location: (3,7)-(3,11))
-            │   ├── flags: ∅
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
             │       └── @ CallNode (location: (3,7)-(3,11))
             │           ├── flags: newline, variable_call, ignore_visibility

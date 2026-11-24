@@ -33,7 +33,7 @@
             │   └── block: ∅
             ├── body:
             │   @ StatementsNode (location: (1,19)-(1,21))
-            │   ├── flags: ∅
+            │   ├── flags: leading_semicolon
             │   └── body: (length: 1)
             │       └── @ LocalVariableReadNode (location: (1,19)-(1,21))
             │           ├── flags: newline

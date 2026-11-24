@@ -190,7 +190,7 @@
         │   ├── begin_keyword_loc: (16,0)-(16,5) = "begin"
         │   ├── statements:
         │   │   @ StatementsNode (location: (16,7)-(16,8))
-        │   │   ├── flags: ∅
+        │   │   ├── flags: leading_semicolon
         │   │   └── body: (length: 1)
         │   │       └── @ CallNode (location: (16,7)-(16,8))
         │   │           ├── flags: newline, variable_call, ignore_visibility

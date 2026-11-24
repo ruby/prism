@@ -134,7 +134,7 @@
         │   ├── parameters: ∅
         │   └── body:
         │       @ StatementsNode (location: (15,7)-(15,10))
-        │       ├── flags: ∅
+        │       ├── flags: leading_semicolon
         │       └── body: (length: 1)
         │           └── @ CallNode (location: (15,7)-(15,10))
         │               ├── flags: newline, variable_call, ignore_visibility
