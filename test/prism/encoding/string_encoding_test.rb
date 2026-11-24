@@ -96,6 +96,18 @@ module Prism
       end
     end
 
+    def test_encoding_at_adjacent_literal_text
+      source = 'if false; "#{x}\u3042" "\xD4#{x}"; end'
+      errors = Prism.parse(source, encoding: "ASCII-8BIT").errors
+      assert_equal [:string_concatenation_encoding], errors.map(&:type)
+      assert_equal :syntax, errors.first.level
+      assert_equal "string literal encodings differ (UTF-8 / ASCII-8BIT)", errors.first.message
+
+      ['"\u3042#{x}" "\xD4"', '"\u3042" "#{x}\xD4"'].each do |source|
+        assert_predicate Prism.parse(source, encoding: "ASCII-8BIT"), :success?, source
+      end
+    end
+
     def test_incompatible_encodings_in_string_interpolation
       [
         '"\u3042#{"\xD4"}"',
