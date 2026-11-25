@@ -410,8 +410,8 @@ module Prism
 
     # Create a new ImplicitNode node.
     #
-    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?value: (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)) -> ImplicitNode
-    def implicit_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?value: LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) -> ImplicitNode
+    # : (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?value: (LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)) -> ImplicitNode
+    def implicit_node: (?source: Source, ?node_id: Integer, ?location: Location, ?flags: Integer, ?value: LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) -> ImplicitNode
 
     # Create a new ImplicitRestNode node.
     #
