@@ -10387,12 +10387,12 @@ module Prism
   #
   # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBmb286IH0KCnsgRm9vOiB9Cgpmb28gaW4geyBiYXI6IH0K)
   class ImplicitNode < Node
-    @value: LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode
+    @value: LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode
 
     # Initialize a new ImplicitNode node.
     #
-    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) value) -> void
-    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode value) -> void
+    # : (Source source, Integer node_id, Location location, Integer flags, (LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) value) -> void
+    def initialize: (Source source, Integer node_id, Location location, Integer flags, LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode value) -> void
 
     # See Node.accept.
     #
@@ -10421,8 +10421,8 @@ module Prism
     #
     # Creates a copy of self with the given fields, using self as the template.
     #
-    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?value: (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)) -> ImplicitNode
-    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?value: LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) -> ImplicitNode
+    # : (?node_id: Integer, ?location: Location, ?flags: Integer, ?value: (LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)) -> ImplicitNode
+    def copy: (?node_id: Integer, ?location: Location, ?flags: Integer, ?value: LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode) -> ImplicitNode
 
     alias deconstruct child_nodes
 
@@ -10443,12 +10443,12 @@ module Prism
     def inspect: () -> String
 
     # :call-seq:
-    #   value -> LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode
+    #   value -> LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode
     #
     # Returns the `value` attribute.
     #
-    # : () -> (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
-    def value: () -> (LocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
+    # : () -> (LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
+    def value: () -> (LocalVariableReadNode | ItLocalVariableReadNode | CallNode | ConstantReadNode | LocalVariableTargetNode)
 
     # : (untyped other) -> boolish
     def ===: (untyped other) -> boolish

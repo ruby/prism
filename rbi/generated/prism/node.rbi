@@ -7365,7 +7365,7 @@ module Prism
   # [Explore code sample](https://ruby.github.io/prism/playground.html#eyBmb286IH0KCnsgRm9vOiB9Cgpmb28gaW4geyBiYXI6IH0K)
   class ImplicitNode < Node
     # Initialize a new ImplicitNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, ItLocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).void }
     def initialize(source, node_id, location, flags, value); end
 
     # See Node.accept.
@@ -7386,7 +7386,7 @@ module Prism
     def compact_child_nodes; end
 
     # Creates a copy of self with the given fields, using self as the template.
-    sig { params(node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
+    sig { params(node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, ItLocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
     def copy(node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
     sig { override.returns(T::Array[::T.nilable(Node)]) }
@@ -7407,7 +7407,7 @@ module Prism
     def inspect; end
 
     # Returns the `value` attribute.
-    sig { returns(::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)) }
+    sig { returns(::T.any(LocalVariableReadNode, ItLocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)) }
     def value; end
 
     sig { params(other: ::T.untyped).returns(::T.nilable(T::Boolean)) }

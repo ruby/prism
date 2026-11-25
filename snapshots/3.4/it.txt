@@ -1,10 +1,10 @@
-@ ProgramNode (location: (1,0)-(5,9))
+@ ProgramNode (location: (1,0)-(7,12))
 ├── flags: ∅
 ├── locals: []
 └── statements:
-    @ StatementsNode (location: (1,0)-(5,9))
+    @ StatementsNode (location: (1,0)-(7,12))
     ├── flags: ∅
-    └── body: (length: 2)
+    └── body: (length: 3)
         ├── @ CallNode (location: (1,0)-(3,3))
         │   ├── flags: newline, ignore_visibility
         │   ├── receiver: ∅
@@ -30,18 +30,74 @@
         │       │           └── flags: newline
         │       ├── opening_loc: (1,2)-(1,4) = "do"
         │       └── closing_loc: (3,0)-(3,3) = "end"
-        └── @ LambdaNode (location: (5,0)-(5,9))
-            ├── flags: newline
-            ├── locals: []
-            ├── operator_loc: (5,0)-(5,2) = "->"
-            ├── opening_loc: (5,3)-(5,4) = "{"
-            ├── closing_loc: (5,8)-(5,9) = "}"
-            ├── parameters:
-            │   @ ItParametersNode (location: (5,0)-(5,9))
-            │   └── flags: ∅
-            └── body:
-                @ StatementsNode (location: (5,5)-(5,7))
+        ├── @ LambdaNode (location: (5,0)-(5,9))
+        │   ├── flags: newline
+        │   ├── locals: []
+        │   ├── operator_loc: (5,0)-(5,2) = "->"
+        │   ├── opening_loc: (5,3)-(5,4) = "{"
+        │   ├── closing_loc: (5,8)-(5,9) = "}"
+        │   ├── parameters:
+        │   │   @ ItParametersNode (location: (5,0)-(5,9))
+        │   │   └── flags: ∅
+        │   └── body:
+        │       @ StatementsNode (location: (5,5)-(5,7))
+        │       ├── flags: ∅
+        │       └── body: (length: 1)
+        │           └── @ ItLocalVariableReadNode (location: (5,5)-(5,7))
+        │               └── flags: newline
+        └── @ CallNode (location: (7,0)-(7,12))
+            ├── flags: newline, ignore_visibility
+            ├── receiver: ∅
+            ├── call_operator_loc: ∅
+            ├── name: :x
+            ├── message_loc: (7,0)-(7,1) = "x"
+            ├── opening_loc: ∅
+            ├── arguments: ∅
+            ├── closing_loc: ∅
+            ├── equal_loc: ∅
+            └── block:
+                @ BlockNode (location: (7,2)-(7,12))
                 ├── flags: ∅
-                └── body: (length: 1)
-                    └── @ ItLocalVariableReadNode (location: (5,5)-(5,7))
-                        └── flags: newline
+                ├── locals: []
+                ├── parameters:
+                │   @ ItParametersNode (location: (7,2)-(7,12))
+                │   └── flags: ∅
+                ├── body:
+                │   @ StatementsNode (location: (7,4)-(7,10))
+                │   ├── flags: ∅
+                │   └── body: (length: 1)
+                │       └── @ CallNode (location: (7,4)-(7,10))
+                │           ├── flags: newline, ignore_visibility
+                │           ├── receiver: ∅
+                │           ├── call_operator_loc: ∅
+                │           ├── name: :f
+                │           ├── message_loc: (7,4)-(7,5) = "f"
+                │           ├── opening_loc: (7,5)-(7,6) = "("
+                │           ├── arguments:
+                │           │   @ ArgumentsNode (location: (7,6)-(7,9))
+                │           │   ├── flags: contains_keywords
+                │           │   └── arguments: (length: 1)
+                │           │       └── @ KeywordHashNode (location: (7,6)-(7,9))
+                │           │           ├── flags: symbol_keys
+                │           │           └── elements: (length: 1)
+                │           │               └── @ AssocNode (location: (7,6)-(7,9))
+                │           │                   ├── flags: ∅
+                │           │                   ├── key:
+                │           │                   │   @ SymbolNode (location: (7,6)-(7,9))
+                │           │                   │   ├── flags: static_literal, forced_us_ascii_encoding
+                │           │                   │   ├── opening_loc: ∅
+                │           │                   │   ├── content_loc: (7,6)-(7,8) = "it"
+                │           │                   │   ├── closing_loc: (7,8)-(7,9) = ":"
+                │           │                   │   └── unescaped: "it"
+                │           │                   ├── value:
+                │           │                   │   @ ImplicitNode (location: (7,6)-(7,9))
+                │           │                   │   ├── flags: ∅
+                │           │                   │   └── value:
+                │           │                   │       @ ItLocalVariableReadNode (location: (7,6)-(7,9))
+                │           │                   │       └── flags: ∅
+                │           │                   └── operator_loc: ∅
+                │           ├── closing_loc: (7,9)-(7,10) = ")"
+                │           ├── equal_loc: ∅
+                │           └── block: ∅
+                ├── opening_loc: (7,2)-(7,3) = "{"
+                └── closing_loc: (7,11)-(7,12) = "}"

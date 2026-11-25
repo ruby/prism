@@ -338,7 +338,7 @@ module Prism
     def imaginary_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), numeric: T.unsafe(nil)); end
 
     # Create a new ImplicitNode node.
-    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
+    sig { params(source: Source, node_id: Integer, location: Location, flags: Integer, value: ::T.any(LocalVariableReadNode, ItLocalVariableReadNode, CallNode, ConstantReadNode, LocalVariableTargetNode)).returns(ImplicitNode) }
     def implicit_node(source: T.unsafe(nil), node_id: T.unsafe(nil), location: T.unsafe(nil), flags: T.unsafe(nil), value: T.unsafe(nil)); end
 
     # Create a new ImplicitRestNode node.
