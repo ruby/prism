@@ -299,16 +299,16 @@ module Prism
     end
 
     def test_shorthand_hash_labels_resolve_block_parameters
-      assert_equal [:it_not_allowed_ordinary], Prism.parse("proc { |x| {it:} }").errors.map(&:type)
-      assert_equal [:it_not_allowed_numbered], Prism.parse("proc { _1; {it:} }").errors.map(&:type)
-      assert_equal [:numbered_parameter_it], Prism.parse("proc { it; {_2:} }").errors.map(&:type)
+      assert_equal [:it_not_allowed_ordinary], Prism.parse("proc { |x| {it:} }", version: "3.4").errors.map(&:type)
+      assert_equal [:it_not_allowed_numbered], Prism.parse("proc { _1; {it:} }", version: "3.4").errors.map(&:type)
+      assert_equal [:numbered_parameter_it], Prism.parse("proc { it; {_2:} }", version: "3.4").errors.map(&:type)
 
       numbered = Prism.parse_statement("proc { {_2:} }").block.parameters
       assert_instance_of NumberedParametersNode, numbered
       assert_equal 2, numbered.maximum
 
       assert_nil Prism.parse_statement("proc { {it:} }", version: "3.3.0").block.parameters
-      assert_nil Prism.parse("it = 1; proc { {it:} }").value.statements.body.last.block.parameters
+      assert_nil Prism.parse("it = 1; proc { {it:} }", version: "3.4").value.statements.body.last.block.parameters
     end
 
     def test_uppercase_shorthand_hash_labels_reject_method_suffixes
