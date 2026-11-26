@@ -329,6 +329,27 @@ module Prism
       assert_equal "\\x00a(", Prism.parse_statement("/\\C-\\C-a(/").unescaped
     end
 
+    def test_crlf_in_braced_unicode_escape
+      assert_equal "\\u{E\r\n}", Prism.parse_statement("/\\u{E\r\n}/").unescaped
+
+      result = Prism.parse("%r!\\u{41\r\n42\r\n}\r\n!")
+      assert_empty result.errors
+      assert_equal "\\u{41\r\n42\n}\n", result.statement.unescaped
+      assert_equal 4, result.statement.closing_loc.start_line
+    end
+
+    def test_braced_unicode_escape_at_newline_delimiter
+      result = Prism.parse("%r\n#\\u{E\r\nx")
+      assert_empty result.errors
+      assert_equal "#\\u{E\r", result.statement.unescaped
+      assert_equal "\r\nx", result.statement.closing_loc.slice
+
+      result = Prism.parse("%r\n#\\u{E\\\n}\nx")
+      assert_empty result.errors
+      assert_equal "#\\u{E\\\n}", result.statement.unescaped
+      assert_equal 3, result.statement.closing_loc.start_line
+    end
+
     def test_malformed_unicode_list_does_not_close_brace_delimited_regexp
       ["\\u{s}", "\\u{41 z}", "\\u{z\\}z}"].each do |escape|
         source = "if false; %r{ #{escape} } + 1; end"
