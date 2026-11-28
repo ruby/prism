@@ -37,6 +37,16 @@ module Prism
       end
     end
 
+    def test_quoted_labels_in_patterns
+      ['o=>1,"":', 'o in [1, "key":]', 'o in 1 | "key":'].each do |source|
+        assert_equal [:unexpected_label], Prism.parse(source).errors.map(&:type), source
+      end
+
+      ['o => "key": 1', 'o => [1, {"": 2}]', 'o => 1, :""'].each do |source|
+        assert Prism.parse_success?(source), source
+      end
+    end
+
     def test_unclosed_array_location_covers_last_element
       source = '[r="#{ '
       result = Prism.parse(source)
@@ -78,6 +88,27 @@ module Prism
       assert_nil splat.expression
     end
 
+    def test_anonymous_splat_before_a_comma_in_a_rescue_list
+      result = Prism.parse("def f(*)rescue*,();end")
+      assert_empty result.errors
+      splat, last = result.statement.body.rescue_clause.exceptions
+      assert_instance_of SplatNode, splat
+      assert_nil splat.expression
+      assert_instance_of ParenthesesNode, last
+
+      assert Prism.parse_success?("def f(*); rescue TypeError, *, IOError => e; end")
+      refute Prism.parse_success?("def f(*); rescue TypeError, *; end")
+      refute Prism.parse_success?("def f(*); rescue * => e; end")
+      assert_equal [:argument_no_forwarding_star], Prism.parse("begin; rescue *, IOError; end").errors.map(&:type)
+    end
+
+    def test_anonymous_splat_before_a_comma_in_assignment_values
+      assert Prism.parse_success?("def f(*); a = *, 1; end")
+      assert Prism.parse_success?("def f(*); a, b = 1, *, 2; end")
+      refute Prism.parse_success?("def f(*); a = 1, *; end")
+      refute Prism.parse_success?("def f(*); g(a = *, 1); end")
+    end
+
     def test_trailing_star_with_whitespace_requires_an_operand
       [" ", "\n"].each do |whitespace|
         result = Prism.parse("def f(*) = g *#{whitespace}")
@@ -89,6 +120,15 @@ module Prism
       errors = Prism.parse("if false; x rescue f { retry }; end").errors
       assert_equal [:invalid_retry_without_rescue], errors.map(&:type)
       assert_equal "retry", errors.first.location.slice
+    end
+
+    def test_end_block_exit_after_nested_defined_expressions
+      nested = "defined?(" * 32 + "nil" + ")" * 32
+      source = "defined?(begin; #{nested}; END { break }; end)\nEND { break }"
+
+      errors = Prism.parse(source, version: "4.1").errors
+      assert_equal [:invalid_block_exit], errors.map(&:type)
+      assert_equal 2, errors.first.location.start_line
     end
 
     def test_top_level_yield_is_invalid_in_dead_code
@@ -231,6 +271,25 @@ module Prism
       assert_instance_of ReturnNode, call.receiver
     end
 
+    def test_jump_with_a_chained_command_block_in_call_arguments
+      %w[return break next].each do |keyword|
+        argument = "#{keyword} r z do end.t"
+        result = Prism.parse("loop { o(#{argument}) }")
+        assert_equal [:void_expression], result.errors.map(&:type), keyword
+        assert_equal argument, result.errors.first.location.slice
+
+        jump = result.statement.block.body.body.first.arguments.arguments.first
+        assert_equal keyword, jump.keyword
+        assert_equal :t, jump.arguments.arguments.first.name
+
+        grouped = Prism.parse("loop { o((#{argument})) }")
+        assert_empty grouped.errors
+        call = grouped.statement.block.body.body.first.arguments.arguments.first.body.body.first
+        assert_equal :t, call.name
+        assert_equal keyword, call.receiver.keyword
+      end
+    end
+
     def test_parenthesized_targets_reject_newline_before_assignment
       ["(first, second\n= [1, 2])", "((first, second), third\n= [1, 2, 3])"].each do |source|
         result = Prism.parse(source)
@@ -350,6 +409,15 @@ module Prism
       assert_equal "Integer", result.statement.conditions.first.pattern.slice
     end
 
+    def test_unwritable_assignment_uses_the_visible_local
+      result = Prism.parse("def f(self:); -> { self = 1 }; end")
+      assert_equal [:expression_not_writable_self], result.errors.map(&:type)
+
+      lambda_node = result.statement.body.body.first
+      assert_empty lambda_node.locals
+      assert_equal 1, lambda_node.body.body.first.depth
+    end
+
     def test_keyword_not_is_not_a_write_target
       [
         "not() = :value",
@@ -407,6 +475,16 @@ module Prism
         assert_not_nil error
         assert_equal 6, error.location.start_offset
         assert_equal extra, error.location.slice
+      end
+    end
+
+    def test_backslash_n_in_braced_unicode_escape
+      self.class.each_encoding([Encoding::UTF_8, Encoding::Windows_1257]) do |encoding|
+        ['f"\u{\n}"', '"\u{ \n41}"'].each do |source|
+          errors = Prism.parse(source, encoding: encoding.name).errors
+          assert_equal [:escape_invalid_unicode, :escape_invalid_unicode_term], errors.map(&:type), source
+          assert_equal source.index('\n'), errors.first.location.start_offset
+        end
       end
     end
 
@@ -557,6 +635,18 @@ module Prism
     def test_heredoc_diagnostic_with_embedded_nul
       result = Prism.parse("<<\"BEFORE\0AFTER\"\n")
       assert_equal ["unterminated heredoc; can't find string \"BEFORE\" anywhere before EOF"], result.errors.map(&:message)
+    end
+
+    def test_unterminated_quoted_heredoc_identifier_at_eof
+      ["'", '"', "`"].each do |quote|
+        ["<<", "<<-", "<<~"].each do |opener|
+          source = "alias#{opener}#{quote}"
+          error = Prism.parse(source).errors.find { |diagnostic| diagnostic.type == :heredoc_identifier }
+          assert_not_nil error, source
+          assert_equal source.bytesize, error.location.start_offset
+          assert_equal 0, error.location.length
+        end
+      end
     end
 
     def test_unexpected_statement_as_argument

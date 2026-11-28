@@ -57,6 +57,14 @@ module Prism
   class PercentDelimiterStringTest < TestCase
     include PercentDelimiterTests
 
+    def test_escaped_carriage_return_in_non_interpolating_literals
+      %w[%s %q].each do |literal|
+        assert_equal "\r", Prism.parse_statement("#{literal}\r\\\r\r").unescaped
+        assert_equal "\\\r", Prism.parse_statement("#{literal}(\\\r)").unescaped
+        assert_equal "\\\n", Prism.parse_statement("#{literal}\r\\\r\n\r").unescaped
+      end
+    end
+
     def find_node(str)
       tree = Prism.parse str
       tree.value.breadth_first_search { |x| Prism::StringNode === x }

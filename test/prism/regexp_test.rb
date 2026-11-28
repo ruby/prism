@@ -55,6 +55,30 @@ module Prism
       assert_equal "\\u3042", result.value.statements.body.first.targets.first.location.slice
     end
 
+    def test_named_capture_locals_when_a_unicode_escape_sets_the_regexp_encoding
+      source = '/(?<\ueee5>)(?<ascii>)(?<a\u3042>)\k<\ueee5>/ =~ ""'
+      self.class.each_encoding([Encoding::CESU_8, Encoding::ASCII_8BIT, Encoding::UTF_8]) do |encoding|
+        result = Prism.parse(source, encoding: encoding)
+        assert_empty result.errors, encoding.name
+
+        expected = encoding == Encoding::UTF_8 ? [:"\uEEE5", :ascii, :aあ] : [:ascii]
+        assert_equal expected, result.value.locals, encoding.name
+        assert_equal expected, result.statement.targets.map(&:name), encoding.name
+      end
+    end
+
+    def test_non_ascii_named_capture_in_a_binary_regexp
+      source = '/(?<\xC3\xA9>)/n =~ ""'
+      binary = Prism.parse(source, encoding: Encoding::ASCII_8BIT)
+      assert_empty binary.errors
+      assert_equal ["\xC3\xA9".b.to_sym], binary.value.locals
+
+      utf8 = Prism.parse(source, encoding: Encoding::UTF_8)
+      assert_empty utf8.errors
+      assert_empty utf8.value.locals
+      assert_kind_of CallNode, utf8.statement
+    end
+
     def test_nested_matches_keep_their_own_captures
       result = Prism.parse('/(?<outer>x)/ =~ (/(?<inner>y)/ =~ "y"); [outer, inner]')
       assert_empty result.errors
@@ -327,6 +351,27 @@ module Prism
       assert_equal "\\x80-a", Prism.parse_statement("/\\M-\\M-a/").unescaped
       assert_equal "(\\x00", Prism.parse_statement("/(\\cé/").unescaped
       assert_equal "\\x00a(", Prism.parse_statement("/\\C-\\C-a(/").unescaped
+    end
+
+    def test_crlf_in_braced_unicode_escape
+      assert_equal "\\u{E\r\n}", Prism.parse_statement("/\\u{E\r\n}/").unescaped
+
+      result = Prism.parse("%r!\\u{41\r\n42\r\n}\r\n!")
+      assert_empty result.errors
+      assert_equal "\\u{41\r\n42\n}\n", result.statement.unescaped
+      assert_equal 4, result.statement.closing_loc.start_line
+    end
+
+    def test_braced_unicode_escape_at_newline_delimiter
+      result = Prism.parse("%r\n#\\u{E\r\nx")
+      assert_empty result.errors
+      assert_equal "#\\u{E\r", result.statement.unescaped
+      assert_equal "\r\nx", result.statement.closing_loc.slice
+
+      result = Prism.parse("%r\n#\\u{E\\\n}\nx")
+      assert_empty result.errors
+      assert_equal "#\\u{E\\\n}", result.statement.unescaped
+      assert_equal 3, result.statement.closing_loc.start_line
     end
 
     def test_malformed_unicode_list_does_not_close_brace_delimited_regexp

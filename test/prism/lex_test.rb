@@ -30,6 +30,38 @@ module Prism
       assert_equal 5, tokens.length
     end
 
+    def test_carriage_return_before_crlf_in_call_chain
+      result = Prism.lex("r\r\r\n.O")
+
+      assert_empty result.errors
+      assert_equal %i[IDENTIFIER IGNORED_NEWLINE DOT CONSTANT EOF], result.value.map(&:type)
+      assert_equal "\r\n", result.value[1].value
+    end
+
+    def test_modifier_after_symbol_in_undef_and_alias
+      {
+        "undef:f while:c" => :KEYWORD_WHILE_MODIFIER,
+        "undef f, :+ until:c" => :KEYWORD_UNTIL_MODIFIER,
+        "alias :new :old if:c" => :KEYWORD_IF_MODIFIER
+      }.each do |source, modifier|
+        result = Prism.lex(source)
+        assert_empty result.errors, source
+        assert_include result.value.map(&:type), modifier, source
+      end
+    end
+
+    def test_forwarding_parameter_in_a_nested_method_definition
+      [
+        "def outer value = def inner...\nend, range = 1...2\nend",
+        "def outer(value: [def self.inner...; end, 1...2]); end"
+      ].each do |source|
+        result = Prism.lex(source)
+        assert_empty result.errors, source
+        ellipses = result.value.select { |token| token.value == "..." }
+        assert_equal %i[UDOT_DOT_DOT DOT_DOT_DOT], ellipses.map(&:type), source
+      end
+    end
+
     def test_do_after_a_command_with_a_brace_block
       {
         "outer def f = super A::B() {} do end" => :KEYWORD_DO_BLOCK,
@@ -86,6 +118,24 @@ module Prism
         assert_equal(token, token[0])
         assert(token[1])
         assert_equal(token, token.first)
+      end
+    end
+
+    def test_whitespace_after_question_mark
+      encodings = [Encoding::ISO_8859_1, Encoding::KOI8_R, Encoding::Windows_1258, Encoding::ASCII_8BIT, Encoding::UTF_8]
+      self.class.each_encoding(encodings) do |encoding|
+        [0x85, 0x9A, 0xA0].each do |byte|
+          character = byte.chr.force_encoding(encoding)
+          source = "# coding: #{encoding.name}\nx=?#{character}^()"
+          whitespace = character.valid_encoding? && character.match?(/[[:space:]]/)
+          result = Prism.lex(source)
+          assert_equal whitespace, result.value.any? { |token| token.type == :QUESTION_MARK }, source.inspect
+          assert_predicate result, :failure?, source.inspect if whitespace || !source.valid_encoding?
+        end
+      end
+
+      ["\u0085", "\u00A0"].each do |character|
+        assert_equal character, Prism.parse("?#{character}").value.statements.body.first.unescaped
       end
     end
 

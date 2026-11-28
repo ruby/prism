@@ -148,6 +148,31 @@ module Prism
       end
     end
 
+    def test_dangling_escape_in_quoted_magic_comment
+      comment = '#|:"coding:\\'
+      result = Prism.parse(comment)
+      assert_empty result.magic_comments
+      assert_equal [:invalid_encoding_magic_comment], result.errors.map(&:type)
+      assert_equal "", result.errors.first.location.slice
+
+      result = Prism.parse('#|:"coding:binary\\')
+      assert_predicate result, :success?
+      assert_empty result.magic_comments
+      assert_equal Encoding::BINARY, result.encoding
+
+      ["\\", "\n", "\r\n"].each do |suffix|
+        result = Prism.parse(comment + suffix)
+        assert_predicate result, :success?
+        assert_equal ["coding:\\" + suffix], result.magic_comments.map(&:value)
+      end
+    end
+
+    def test_quoted_magic_comment_escape_before_emacs_marker
+      result = Prism.parse('# -*- note:"value\-*-')
+      assert_predicate result, :success?
+      assert_equal ['value\-'], result.magic_comments.map(&:value)
+    end
+
     def test_encoding_after_leading_delimiters
       ['"', "'", ";", ":"].each do |delimiter|
         ["coding", "encoding"].each do |key|
@@ -171,16 +196,39 @@ module Prism
     end
 
     def test_empty_shebang_in_main_script
-      ["#!", "#!\n", "#!\n# encoding: US-ASCII\n__ENCODING__"].each do |source|
-        result = Prism.parse(source, main_script: true)
-        assert_predicate result, :success?, source
-      end
+      assert_predicate Prism.parse("#!", main_script: true), :success?
 
-      result = Prism.parse("#!\n# encoding: US-ASCII\n__ENCODING__", main_script: true)
-      assert_equal Encoding::US_ASCII, result.encoding
+      ["#!\n", "#!\r\n", "#!\n!#coding:ASCII-8BIT\n__ENCODING__"].each do |source|
+        assert_equal [:script_not_found], Prism.parse(source, main_script: true).errors.map(&:type)
+      end
 
       result = Prism.parse("#!", main_script: true, command_line: "x")
       assert_equal [:script_not_found], result.errors.map(&:type)
+    end
+
+    def test_encoding_comment_after_a_token_following_a_shebang
+      ["#coding:ASCII-8BIT", "# vim: set fileencoding=ASCII-8BIT"].each do |comment|
+        ["#!\n", "#!ruby\r\n"].each do |shebang|
+          source = "#{shebang}!#{comment}\n__ENCODING__"
+          result = Prism.parse(source)
+          assert_predicate result, :success?
+          assert_equal Encoding::BINARY, result.encoding
+          assert_equal Encoding::UTF_8, Prism.parse(source, version: "3.3").encoding
+          assert_equal Encoding::BINARY, Prism.parse("#{shebang}%q{#}#{comment}\n__ENCODING__").encoding
+
+          assert_equal Encoding::UTF_8, Prism.parse("#{shebang}!!#{comment}\n__ENCODING__").encoding
+          assert_equal Encoding::UTF_8, Prism.parse("#{shebang}\n!#{comment}\n__ENCODING__").encoding
+        end
+
+        assert_equal Encoding::UTF_8, Prism.parse("!#{comment}\n__ENCODING__").encoding
+      end
+    end
+
+    def test_empty_shebang_in_command_line_source
+      source = "#!\n!#coding:ASCII-8BIT\n__ENCODING__"
+      result = Prism.parse(source, main_script: true, command_line: "e")
+      assert_predicate result, :success?
+      assert_equal Encoding::BINARY, result.encoding
     end
 
     def test_shebang_is_not_an_encoding_comment
